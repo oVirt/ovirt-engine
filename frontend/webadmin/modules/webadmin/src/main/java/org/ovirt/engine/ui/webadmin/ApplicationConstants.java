@@ -10,9 +10,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("About")
     String aboutPopupCaption();
 
-    @DefaultStringValue("This Browser version isn't optimal for displaying the application graphics (refer to Documentation for details)")
-    String browserNotSupported();
-
     @DefaultStringValue("oVirt Engine Version:")
     String ovirtVersionAbout();
 

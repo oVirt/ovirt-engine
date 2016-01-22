@@ -2247,6 +2247,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     DisplayUncaughtUIExceptions,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    DisplaySupportedBrowserWarning,
+
     Invalid
 
 }

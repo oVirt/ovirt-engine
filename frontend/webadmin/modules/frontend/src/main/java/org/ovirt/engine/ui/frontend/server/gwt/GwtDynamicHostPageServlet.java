@@ -212,7 +212,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * @param value The {@code String} value to use as the value of the object.
      * @return A String representation of the Javascript object.
      */
-    private String getValueObject(final String value) {
+    protected String getValueObject(final String value) {
         ObjectNode node = mapper.createObjectNode();
         node.put("value", value); //$NON-NLS-1$
         return node.toString();

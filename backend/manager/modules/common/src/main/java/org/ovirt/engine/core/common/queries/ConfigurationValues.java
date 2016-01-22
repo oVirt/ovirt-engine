@@ -168,6 +168,7 @@ public enum ConfigurationValues {
     MaxIoThreadsPerVm(ConfigAuthType.User),
     MultipleGraphicsSupported(ConfigAuthType.User),
     DisplayUncaughtUIExceptions,
+    DisplaySupportedBrowserWarning,
     RefreshLunSupported;
 
     public static enum ConfigAuthType {

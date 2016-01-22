@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -19,8 +20,12 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.DisplayBrowserCompatibilityWarning;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -32,6 +37,10 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     private final ApplicationDynamicMessages dynamicMessages;
 
     private final Provider<CommonModel> commonModelProvider;
+
+    private final InternalConfiguration internalConfiguration;
+
+    private final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
@@ -47,13 +56,15 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             RestApiSessionManager restApiSessionManager,
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
-            Provider<CommonModel> commonModelProvider) {
+            Provider<CommonModel> commonModelProvider,
+            InternalConfiguration internalConfiguration) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager,
                 localStorageLogHandler, frontend, currentUserRole, restApiSessionManager);
         this.placeManager = placeManager;
         this.dynamicMessages = dynamicMessages;
         this.commonModelProvider = commonModelProvider;
+        this.internalConfiguration = internalConfiguration;
     }
 
     @Override
@@ -96,6 +107,14 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         });
 
         performLogin(loginModel);
+        displayBrowserCompatibilityWarning();
+    }
+
+    private void displayBrowserCompatibilityWarning() {
+        if (!internalConfiguration.isCurrentBrowserSupported() && DisplayBrowserCompatibilityWarning.getValue()) {
+            getAlertManager().showAlert(Type.WARNING, SafeHtmlUtils.fromSafeConstant(
+                            messages.browserNotSupported(dynamicMessages.compatibleBrowserDocsUrl())), 5000);
+        }
     }
 
     @Override

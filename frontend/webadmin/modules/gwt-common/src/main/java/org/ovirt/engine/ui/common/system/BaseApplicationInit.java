@@ -96,6 +96,10 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.alertManager = alertManager;
     }
 
+    protected AlertManager getAlertManager() {
+        return this.alertManager;
+    }
+
     @Override
     public final void onBootstrap() {
         Logger rootLogger = Logger.getLogger(""); //$NON-NLS-1$

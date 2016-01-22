@@ -42,6 +42,9 @@
         <c:if test="${requestScope['DISPLAY_UNCAUGHT_UI_EXCEPTIONS'] != null}">
             var displayUncaughtUIExceptions = <c:out value="${requestScope['DISPLAY_UNCAUGHT_UI_EXCEPTIONS']}" escapeXml="false"/>;
         </c:if>
+        <c:if test="${requestScope['DISPLAY_SUPPORTED_BROWSER_WARNING'] != null}">
+            var displaySupportedBrowserWarning = <c:out value="${requestScope['DISPLAY_SUPPORTED_BROWSER_WARNING']}" escapeXml="false"/>;
+        </c:if>
     </script>
 </head>
 <body>

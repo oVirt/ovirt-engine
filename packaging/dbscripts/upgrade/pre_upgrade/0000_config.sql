@@ -299,6 +299,8 @@ select fn_db_add_config_value_for_versions_up_to('LiveStorageMigrationBetweenDif
 select fn_db_add_config_value_for_versions_up_to('VmStatsEventsSupported','false','3.5');
 
 select fn_db_add_config_value('MaxIoThreadsPerVm','127','general');
+-- Display browser not in tier 1 support to user.
+select fn_db_add_config_value('DisplaySupportedBrowserWarning', 'true', 'general');
 
 -- Display browser not in tier 1 support to user.
 select fn_db_add_config_value('DisplayUncaughtUIExceptions', 'true', 'general');
