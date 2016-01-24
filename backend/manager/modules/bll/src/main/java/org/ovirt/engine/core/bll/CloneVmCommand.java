@@ -129,6 +129,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
                     StringUtils.defaultString(getParameters().getNewName()));
+            jobProperties.put("sourcevm",
+                    StringUtils.defaultString(getSourceVmFromDb().getName()));
         }
         return jobProperties;
     }
