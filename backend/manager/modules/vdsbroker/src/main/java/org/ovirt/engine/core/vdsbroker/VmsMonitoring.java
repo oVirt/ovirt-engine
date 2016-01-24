@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -74,7 +72,6 @@ public class VmsMonitoring {
     private List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
 
     //*** data collectors ***//
-    private final Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave = new LinkedList<>();
     private final List<VmDevice> vmDeviceToSave = new ArrayList<>();
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
@@ -324,11 +321,18 @@ public class VmsMonitoring {
         saveVmDynamic();
         saveVmStatistics();
         saveVmInterfaceStatistics();
-        getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmDiskImageDynamicToSave);
+        saveVmDiskImageStatistics();
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         saveVmJobsToDb();
+    }
+
+    private void saveVmDiskImageStatistics() {
+        getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmAnalyzers.stream()
+                .map(VmAnalyzer::getVmDiskImageDynamicToSave)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList()));
     }
 
     private void saveVmDynamic() {
@@ -661,10 +665,6 @@ public class VmsMonitoring {
 
     protected IVdsEventListener getVdsEventListener() {
         return ResourceManager.getInstance().getEventListener();
-    }
-
-    public void addDiskImageDynamicToSave(Pair<Guid, DiskImageDynamic> imageDynamicByVmId) {
-        vmDiskImageDynamicToSave.add(imageDynamicByVmId);
     }
 
     public List<Guid> getExistingVmJobIds() {

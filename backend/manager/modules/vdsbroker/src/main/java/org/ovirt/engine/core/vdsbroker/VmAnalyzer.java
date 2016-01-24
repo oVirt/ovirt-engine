@@ -83,6 +83,7 @@ public class VmAnalyzer {
     private boolean coldRebootVmToRun;
     private Map<Guid, VmJob> vmJobsToUpdate;
     private List<Guid> vmJobIdsToRemove;
+    private Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave;
 
     //dependencies
     private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
@@ -771,10 +772,14 @@ public class VmAnalyzer {
             saveVmInterfaces();
             updateInterfaceStatistics();
             updateVmNumaNodeRuntimeInfo();
-            for (DiskImageDynamic diskImageDynamic : vdsmVm.getVmDynamic().getDisks()) {
-                vmsMonitoring.addDiskImageDynamicToSave(new Pair<>(dbVm.getId(), diskImageDynamic));
-            }
+            updateDiskImageDynamics();
         }
+    }
+
+    private void updateDiskImageDynamics() {
+        vmDiskImageDynamicToSave =  vdsmVm.getVmDynamic().getDisks().stream()
+                .map(diskImageDynamic -> new Pair<>(dbVm.getId(), diskImageDynamic))
+                .collect(Collectors.toList());
     }
 
     private void updateInterfaceStatistics() {
@@ -1104,5 +1109,9 @@ public class VmAnalyzer {
 
     public List<Guid> getVmJobIdsToRemove() {
         return vmJobIdsToRemove != null ? vmJobIdsToRemove : Collections.emptyList();
+    }
+
+    public Collection<Pair<Guid, DiskImageDynamic>> getVmDiskImageDynamicToSave() {
+        return vmDiskImageDynamicToSave != null ? vmDiskImageDynamicToSave : Collections.emptyList();
     }
 }
