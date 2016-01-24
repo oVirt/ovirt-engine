@@ -235,6 +235,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getClusterNetworks(),
                 getExistingNicsBusinessEntityMap());
         labelsCompleter.completeNetworkAttachments();
+
+        fillInUnsetIpConfigs();
     }
 
     private boolean validateEntitiesFromRequest(List<? extends BusinessEntity<?>> newOrUpdateBusinessEntities) {
@@ -396,6 +398,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 bond.setBondOptions(DEFAULT_BOND_OPTIONS);
             }
         }
+    }
+
+    private void fillInUnsetIpConfigs() {
+        getParameters().getNetworkAttachments()
+                .stream()
+                .filter(attachment -> attachment.getIpConfiguration() == null)
+                .forEach(attachment -> attachment.setIpConfiguration(NetworkUtils.createDefaultIpConfiguration()));
     }
 
     private ValidationResult checkForOutOfSyncNetworks() {
