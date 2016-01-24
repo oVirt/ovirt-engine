@@ -84,6 +84,7 @@ public class VmAnalyzer {
     private Map<Guid, VmJob> vmJobsToUpdate;
     private List<Guid> vmJobIdsToRemove;
     private Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave;
+    private List<LUNs> vmLunDisksToSave;
 
     //dependencies
     private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
@@ -890,6 +891,7 @@ public class VmAnalyzer {
                 return;
             }
 
+            vmLunDisksToSave = new ArrayList<>();
             List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vdsmVm.getVmDynamic().getId(), true);
             for (Disk disk : vmDisks) {
                 if (disk.getDiskStorageType() != DiskStorageType.LUN) {
@@ -907,7 +909,7 @@ public class VmAnalyzer {
                             lunFromDB.getLUNId(), lunFromDB.getDeviceSize(), lunFromMap.getDeviceSize());
 
                     lunFromDB.setDeviceSize(lunFromMap.getDeviceSize());
-                    vmsMonitoring.getVmLunDisksToSave().add(lunFromDB);
+                    vmLunDisksToSave.add(lunFromDB);
                 }
             }
         }
@@ -1114,4 +1116,9 @@ public class VmAnalyzer {
     public Collection<Pair<Guid, DiskImageDynamic>> getVmDiskImageDynamicToSave() {
         return vmDiskImageDynamicToSave != null ? vmDiskImageDynamicToSave : Collections.emptyList();
     }
+
+    public List<LUNs> getVmLunDisksToSave() {
+        return vmLunDisksToSave != null ? vmLunDisksToSave : Collections.emptyList();
+    }
+
 }

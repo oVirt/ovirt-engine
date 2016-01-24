@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -76,7 +75,6 @@ public class VmsMonitoring {
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
-    private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
     private final List<Guid> existingVmJobIds = new ArrayList<>();
     //*** data collectors ***//
 
@@ -322,10 +320,17 @@ public class VmsMonitoring {
         saveVmStatistics();
         saveVmInterfaceStatistics();
         saveVmDiskImageStatistics();
-        getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
+        saveVmLunDiskStatistics();
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         saveVmJobsToDb();
+    }
+
+    private void saveVmLunDiskStatistics() {
+        getDbFacade().getLunDao().updateAllInBatch(vmAnalyzers.stream()
+                .map(VmAnalyzer::getVmLunDisksToSave)
+                .flatMap(List::stream)
+                .collect(Collectors.toList()));
     }
 
     private void saveVmDiskImageStatistics() {
@@ -644,15 +649,6 @@ public class VmsMonitoring {
      */
     private void addVmDeviceToList(VmDevice vmDevice) {
         vmDeviceToSave.add(vmDevice);
-    }
-
-    /**
-     * An access method for test usages
-     *
-     * @return The LUNs to update in DB
-     */
-    protected List<LUNs> getVmLunDisksToSave() {
-        return vmLunDisksToSave;
     }
 
     protected DbFacade getDbFacade() {
