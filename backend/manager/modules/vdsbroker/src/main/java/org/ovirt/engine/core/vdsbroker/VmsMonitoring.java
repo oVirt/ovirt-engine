@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -81,8 +80,6 @@ public class VmsMonitoring {
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
-    private final Map<Guid, VmJob> vmJobsToUpdate = new HashMap<>();
-    private final List<Guid> vmJobIdsToRemove = new ArrayList<>();
     private final List<Guid> existingVmJobIds = new ArrayList<>();
     //*** data collectors ***//
 
@@ -407,8 +404,15 @@ public class VmsMonitoring {
     }
 
     private void saveVmJobsToDb() {
-        getDbFacade().getVmJobDao().updateAllInBatch(vmJobsToUpdate.values());
+        getDbFacade().getVmJobDao().updateAllInBatch(vmAnalyzers.stream()
+                .map(VmAnalyzer::getVmJobsToUpdate)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList()));
 
+        List<Guid> vmJobIdsToRemove = vmAnalyzers.stream()
+                .map(VmAnalyzer::getVmJobIdsToRemove)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
         if (!vmJobIdsToRemove.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     () -> {
@@ -665,14 +669,6 @@ public class VmsMonitoring {
 
     public List<Guid> getExistingVmJobIds() {
         return existingVmJobIds;
-    }
-
-    public Map<Guid, VmJob> getVmJobsToUpdate() {
-        return vmJobsToUpdate;
-    }
-
-    public List<Guid> getVmJobIdsToRemove() {
-        return vmJobIdsToRemove;
     }
 
     public VdsManager getVdsManager() {

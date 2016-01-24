@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -80,6 +81,8 @@ public class VmAnalyzer {
     private boolean externalVm;
     private boolean hostedEngineUnmanaged;
     private boolean coldRebootVmToRun;
+    private Map<Guid, VmJob> vmJobsToUpdate;
+    private List<Guid> vmJobIdsToRemove;
 
     //dependencies
     private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
@@ -912,6 +915,9 @@ public class VmAnalyzer {
             return;
         }
 
+        vmJobsToUpdate = new HashMap<>();
+        vmJobIdsToRemove = new ArrayList<>();
+
         // Only jobs that were in the DB before our update may be updated/removed;
         // others are completely ignored for the time being
         Map<Guid, VmJob> jobsFromDb = getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId()).stream()
@@ -928,16 +934,16 @@ public class VmAnalyzer {
                 vmJobIdsToIgnore.add(job.getId());
                 log.info("VM job '{}': In progress (no change)", job.getId());
             } else {
-                vmsMonitoring.getVmJobsToUpdate().put(job.getId(), job);
+                vmJobsToUpdate.put(job.getId(), job);
                 log.info("VM job '{}': In progress, updating", job.getId());
             }
         });
 
         // Any existing jobs not saved need to be removed
         jobsFromDb.keySet().stream()
-        .filter(jobId -> !vmsMonitoring.getVmJobsToUpdate().containsKey(jobId) && !vmJobIdsToIgnore.contains(jobId))
+        .filter(jobId -> !vmJobsToUpdate.containsKey(jobId) && !vmJobIdsToIgnore.contains(jobId))
         .forEach(jobId -> {
-            vmsMonitoring.getVmJobIdsToRemove().add(jobId);
+            vmJobIdsToRemove.add(jobId);
             log.info("VM job '{}': Deleting", jobId);
         });
     }
@@ -1090,5 +1096,13 @@ public class VmAnalyzer {
 
     public boolean isColdRebootVmToRun() {
         return coldRebootVmToRun;
+    }
+
+    public Collection<VmJob> getVmJobsToUpdate() {
+        return vmJobsToUpdate != null ? vmJobsToUpdate.values() : Collections.emptyList();
+    }
+
+    public List<Guid> getVmJobIdsToRemove() {
+        return vmJobIdsToRemove != null ? vmJobIdsToRemove : Collections.emptyList();
     }
 }
