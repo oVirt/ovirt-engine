@@ -16,6 +16,8 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
+import static java.util.stream.Collectors.joining;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,16 +25,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
 
-import org.ovirt.engine.api.common.util.JAXBHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Api;
@@ -41,8 +40,6 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Link;
-import org.ovirt.engine.api.model.LinkHeader;
-import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.ProductInfo;
 import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.SpecialObjects;
@@ -85,6 +82,7 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviders
 import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
+import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
@@ -127,7 +125,6 @@ public class BackendApiResource
     // The RSDL objects, indexed by version of the API:
     private Map<String, Rsdl> rsdlByApiVersion = new HashMap<>();
 
-    protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
     ApplicationMode appMode = ApplicationMode.AllModes;
 
     public BackendApiResource() {
@@ -135,11 +132,18 @@ public class BackendApiResource
     }
 
     private Collection<DetailedLink> getLinks() {
-        return ApiRootLinksCreator.getLinks(getUriInfo().getBaseUri().getPath());
+        return ApiRootLinksCreator.getLinks(getLinkBase());
     }
 
     private Collection<DetailedLink> getGlusterLinks() {
-        return ApiRootLinksCreator.getGlusterLinks(getUriInfo().getBaseUri().getPath());
+        return ApiRootLinksCreator.getGlusterLinks(getLinkBase());
+    }
+
+    private String getLinkBase() {
+        Current current = getCurrent();
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(current.getPrefix());
+        return buffer.toString();
     }
 
     private Link createBlankTemplateLink() {
@@ -195,59 +199,30 @@ public class BackendApiResource
     }
 
     private String getTagRootUri() {
-        return LinkHelper.combine(getUriInfo().getBaseUri().getPath(), "tags/00000000-0000-0000-0000-000000000000");
+        return LinkHelper.combine(getLinkBase(), "tags/00000000-0000-0000-0000-000000000000");
     }
 
     private String getTemplateBlankUri() {
-        return LinkHelper.combine(getUriInfo().getBaseUri().getPath(), "templates/00000000-0000-0000-0000-000000000000");
+        return LinkHelper.combine(getLinkBase(), "templates/00000000-0000-0000-0000-000000000000");
     }
 
-    private String addPath(UriBuilder uriBuilder, Link link) {
-        String query = "";
-        String matrix = "";
-        String path = relative(link);
-
-        // otherwise UriBuilder.build() will substitute {query}
-        if (path.contains("?")) {
-            query = path.substring(path.indexOf("?"));
-            path = path.substring(0, path.indexOf("?"));
-        }
-
-        // otherwise UriBuilder.build() will substitute {matrix}
-        if (path.contains(";")) {
-            matrix = path.substring(path.indexOf(";"));
-            path = path.substring(0, path.indexOf(";"));
-        }
-
-        link = JAXBHelper.clone(OBJECT_FACTORY.createLink(link));
-        link.setHref(uriBuilder.clone().path(path).build().toString() + matrix + query);
-
-        return LinkHeader.format(link);
-    }
-
-    private void addHeader(BaseResource response, Response.ResponseBuilder responseBuilder, UriBuilder uriBuilder) {
-        // concantenate links in a single header with a comma-separated value,
-        // which is the canonical form according to:
-        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
-        //
-        final StringBuilder header = new StringBuilder(response.getLinks().size() * 16);
-
-        for (Link l : response.getLinks()) {
-            header.append(addPath(uriBuilder, l)).append(",");
-        }
-
-        header.setLength(header.length() - 1);
-
+    private void addHeader(BaseResource response, Response.ResponseBuilder responseBuilder) {
+        // Concatenate links in a single header with a comma-separated value, which is the canonical form according
+        // to http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2.
+        String root = getCurrent().getRoot();
+        String header = response.getLinks().stream()
+            .map(Link::getHref)
+            .sorted()
+            .map(href -> root + href)
+            .collect(joining(","));
         responseBuilder.header("Link", header);
     }
 
     private Response.ResponseBuilder getResponseBuilder(BaseResource response) {
-        UriBuilder uriBuilder = getUriInfo().getBaseUriBuilder();
-
         Response.ResponseBuilder responseBuilder = Response.ok();
 
-        if(response instanceof Api) {
-            addHeader(response, responseBuilder, uriBuilder);
+        if (response instanceof Api) {
+            addHeader(response, responseBuilder);
         }
 
         return responseBuilder;
@@ -436,10 +411,6 @@ public class BackendApiResource
 
     private long get(HashMap<String, Integer> stats, String key) {
         return stats.get(key).longValue();
-    }
-
-    private String relative(Link link) {
-        return link.getHref().substring(link.getHref().indexOf(link.getRel().split("/")[0]), link.getHref().length());
     }
 
     @Override

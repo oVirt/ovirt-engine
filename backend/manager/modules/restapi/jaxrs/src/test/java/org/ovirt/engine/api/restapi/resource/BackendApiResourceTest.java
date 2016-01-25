@@ -8,12 +8,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -28,6 +26,7 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
+import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -62,9 +61,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
     protected static final String DOMAIN = "Maghreb";
 
     protected static final String URI_ROOT = "http://localhost:8099";
-    protected static final String SLASH = "/";
     protected static final String BASE_PATH = "/ovirt-engine/api";
-    protected static final String URI_BASE = URI_ROOT + BASE_PATH;
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
     protected static final String SESSION_ID = Guid.newGuid().toString();
     private static String USER_FILTER_HEADER = "Filter";
@@ -238,6 +235,11 @@ public class BackendApiResourceTest extends EasyMockSupport {
         current = new Current();
         current.setUser(currentUser);
         current.setSessionId(SESSION_ID);
+        current.setRoot(URI_ROOT);
+        current.setPrefix(BASE_PATH);
+        current.setPath("");
+        current.setVersion("4");
+        current.setVersionSource(VersionSource.DEFAULT);
         CurrentManager.put(current);
 
         backend = createMock(BackendLocal.class);
@@ -289,19 +291,19 @@ public class BackendApiResourceTest extends EasyMockSupport {
     }
 
     protected void doTestGet(ApplicationMode appMode) {
-        setupExpectations(appMode, relationships);
+        setupExpectations(appMode);
         verifyResponse(resource.get());
     }
 
-    private void setupExpectations(ApplicationMode appMode, String[] relationships) {
+    private void setupExpectations(ApplicationMode appMode) {
         current.setApplicationMode(appMode);
-        resource.setUriInfo(setUpUriInfo(URI_BASE + "/", relationships));
+        resource.setUriInfo(setUpUriInfo());
         setUpGetSystemVersionExpectations();
         setUpGetSystemStatisticsExpectations();
     }
 
     protected void doTestGlusterOnlyGet() {
-        setupExpectations(ApplicationMode.GlusterOnly, relationshipsGlusterOnly);
+        setupExpectations(ApplicationMode.GlusterOnly);
         verifyResponseGlusterOnly(resource.get());
     }
 
@@ -416,23 +418,11 @@ public class BackendApiResourceTest extends EasyMockSupport {
         fail();
     }
 
-    protected UriInfo setUpUriInfo(String base, String[] relationships) {
+    protected UriInfo setUpUriInfo() {
         UriBuilder uriBuilder = createMock(UriBuilder.class);
         expect(uriBuilder.clone()).andReturn(uriBuilder).anyTimes();
 
-        for (String rel : relationships) {
-            UriBuilder colUriBuilder = createMock(UriBuilder.class);
-            expect(colUriBuilder.build()).andReturn(URI.create(URI_ROOT + SLASH + rel+ "/")).anyTimes();
-            if (rel.endsWith("/search")) {
-                expect(uriBuilder.path(rel.replace("/search", ""))).andReturn(colUriBuilder);
-            } else {
-                expect(uriBuilder.path(rel)).andReturn(colUriBuilder);
-            }
-        }
-
         UriInfo uriInfo = createMock(UriInfo.class);
-        expect(uriInfo.getBaseUri()).andReturn(URI.create(base)).anyTimes();
-        expect(uriInfo.getBaseUriBuilder()).andReturn(uriBuilder);
         for (int i = 0; i < 2; i++) {
             expect(uriInfo.getQueryParameters()).andReturn(null);
         }
