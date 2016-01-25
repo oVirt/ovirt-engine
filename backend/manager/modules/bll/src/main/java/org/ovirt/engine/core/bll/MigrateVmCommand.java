@@ -447,7 +447,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 && schedulingManager.canSchedule(getVdsGroup(),
                         getVm(),
                         getVdsBlackList(),
-                        getParameters().getInitialHosts(),
+                        getVdsWhiteList(),
                         getDestinationHostList(),
                         getReturnValue().getCanDoActionMessages());
     }
