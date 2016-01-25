@@ -296,8 +296,8 @@ public class BackendApiResource
         byte[] buffer = new byte[4096];
         try {
             baos = new ByteArrayOutputStream();
-            String apiVersion = getCurrent().getApiVersion();
-            String resourcePath = String.format("/v%s/%s", apiVersion, API_SCHEMA);
+            String version = getCurrent().getVersion();
+            String resourcePath = String.format("/v%s/%s", version, API_SCHEMA);
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
             int count;
             while ((count = is.read(buffer)) != -1) {
@@ -335,15 +335,15 @@ public class BackendApiResource
     }
 
     public synchronized Rsdl getRSDL() throws ClassNotFoundException, IOException {
-        String apiVersion = getCurrent().getApiVersion();
-        Rsdl rsdl = rsdlByApiVersion.get(apiVersion);
+        String version = getCurrent().getVersion();
+        Rsdl rsdl = rsdlByApiVersion.get(version);
         if (rsdl == null) {
             rsdl = RsdlManager.loadRsdl(
-                apiVersion,
+                version,
                 getCurrent().getApplicationMode(),
                 getUriInfo().getBaseUri().getPath()
             );
-            rsdlByApiVersion.put(apiVersion, rsdl);
+            rsdlByApiVersion.put(version, rsdl);
         }
         return rsdl;
     }

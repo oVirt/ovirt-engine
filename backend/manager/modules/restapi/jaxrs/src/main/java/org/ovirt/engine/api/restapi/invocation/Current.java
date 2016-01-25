@@ -1,3 +1,19 @@
+/*
+Copyright (c) 2015-2016 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package org.ovirt.engine.api.restapi.invocation;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -8,9 +24,31 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
  */
 public class Current {
     /**
-     * The version of the API.
+     * The requested version of the API.
      */
-    private String apiVersion;
+    private String version;
+
+    /**
+     * The place where the version was extracted from.
+     */
+    private VersionSource versionSource;
+
+    /**
+     * The reconstructed root of the request URI, including only the protocol, the host and the port number, for example
+     * {@code https://engine.example.com}.
+     */
+    private String root;
+
+    /**
+     * The prefix of the path of the application, for example {@code /ovirt-engine/api}.
+     */
+    private String prefix;
+
+    /**
+     * The relative path of the current request, without the prefix of the application, for example
+     * {@code /vms/123/disks}.
+     */
+    private String path;
 
     /**
      * The identifier of the backend session.
@@ -27,12 +65,61 @@ public class Current {
      */
     private DbUser user;
 
-    public String getApiVersion() {
-        return apiVersion;
+    /**
+     * Returns the request version of the API.
+     */
+    public String getVersion() {
+        return version;
     }
 
-    public void setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * Returns the place where the requested version of the API was extracted from.
+     */
+    public VersionSource getVersionSource() {
+        return versionSource;
+    }
+
+    public void setVersionSource(VersionSource versionSource) {
+        this.versionSource = versionSource;
+    }
+
+    /**
+     * Returns the reconstructed root of the request URI, including only the protocol, the host and the port number, for
+     * example {@code https://engine.example.com}.
+     */
+    public String getRoot() {
+        return root;
+    }
+
+    public void setRoot(String root) {
+        this.root = root;
+    }
+
+    /**
+     * Returns the prefix of the path of the application, for example {@code /ovirt-engine/api}.
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
+     * Return the relative path of the current request, without the prefix of the application, for example
+     * {@code /vms/123/disks}.
+     */
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getSessionId() {

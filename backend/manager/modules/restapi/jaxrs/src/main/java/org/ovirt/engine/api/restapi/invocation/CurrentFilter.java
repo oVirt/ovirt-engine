@@ -1,7 +1,22 @@
+/*
+Copyright (c) 2015-2016 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package org.ovirt.engine.api.restapi.invocation;
 
 import java.io.IOException;
-
 import javax.ejb.EJB;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,12 +42,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
  * This filter is responsible for initializing and cleaning the information that is associated to the current request.
  */
 public class CurrentFilter implements Filter {
-    // Names of headers:
-    private static final String API_VERSION_HEADER = "Version";
-
-    // Default values of headers:
-    private static final String API_VERSION_DEFAULT = "4";
-
     /**
      * The reference to the backend bean.
      */
@@ -56,22 +65,18 @@ public class CurrentFilter implements Filter {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-
-        String apiVersion = request.getHeader(API_VERSION_HEADER);
-        if (apiVersion == null || apiVersion.isEmpty()) {
-            apiVersion = API_VERSION_DEFAULT;
-        }
-
         String sessionId = (String) request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
         if (sessionId == null) {
             throw new ServletException("Engine session missing");
         }
 
         Current current = new Current();
-        current.setApiVersion(apiVersion);
         current.setSessionId(sessionId);
         current.setApplicationMode(findApplicationMode(sessionId));
         current.setUser(findPrincipal(sessionId));
+        current.setRoot(getRoot(request));
+        current.setPrefix(getPrefix(request));
+        current.setPath(getPath(request));
         CurrentManager.put(current);
 
         try {
@@ -95,5 +100,47 @@ public class CurrentFilter implements Filter {
     private DbUser findPrincipal(String sessionId) {
         VdcQueryReturnValue result = backend.runPublicQuery(VdcQueryType.GetDbUserBySession, new VdcQueryParametersBase(sessionId));
         return result.getReturnValue();
+    }
+
+    private String getRoot(HttpServletRequest request) {
+        StringBuilder buffer = new StringBuilder();
+        String scheme = request.getScheme();
+        buffer.append(scheme);
+        buffer.append("://");
+        String host = request.getServerName();
+        buffer.append(host);
+        int port = request.getServerPort();
+        switch (scheme) {
+        case "http":
+            if (port != 80) {
+                buffer.append(":");
+                buffer.append(port);
+            }
+            break;
+        case "https":
+            if (port != 443) {
+                buffer.append(":");
+                buffer.append(port);
+            }
+            break;
+        default:
+            buffer.append(":");
+            buffer.append(port);
+        }
+        return buffer.toString();
+    }
+
+    private String getPrefix(HttpServletRequest request) {
+        return request.getContextPath();
+    }
+
+    private String getPath(HttpServletRequest request) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(request.getServletPath());
+        String info = request.getPathInfo();
+        if (info != null) {
+            buffer.append(info);
+        }
+        return buffer.toString();
     }
 }
