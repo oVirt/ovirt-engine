@@ -857,19 +857,25 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         T newSelectedItem = null;
         for (T newItem : newItems) {
             // Search for selected item
-            if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) lastSelectedItem).getQueryableId())) {
+            if (itemsEqual(newItem, lastSelectedItem)) {
                 newSelectedItem = newItem;
             } else {
                 // Search for selected items
                 for (T item : lastSelectedItems) {
-                    if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) item)
-                            .getQueryableId())) {
+                    if (itemsEqual(newItem, item)) {
                         selectedItems.add(newItem);
                     }
                 }
             }
         }
         return newSelectedItem;
+    }
+
+    private static <T> boolean itemsEqual(T item1, T item2) {
+        if (item1 instanceof IVdcQueryable && item2 instanceof IVdcQueryable) {
+            return ((IVdcQueryable) item1).getQueryableId().equals(((IVdcQueryable) item2).getQueryableId());
+        }
+        return Objects.equals(item1, item2);
     }
 
     public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
