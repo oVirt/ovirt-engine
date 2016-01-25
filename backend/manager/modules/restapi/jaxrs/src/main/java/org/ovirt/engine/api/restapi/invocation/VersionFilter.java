@@ -91,7 +91,15 @@ public class VersionFilter implements Filter {
         current.setVersionSource(source);
         current.setPath(path);
 
-        // Pass the request to the next filter of the chain:
-        chain.doFilter(request, response);
+        // If the version was extracted from the URL then we can pass the request directly to the next filter of the
+        // chain. Otherwise we need to modify the path, adding the version prefix, and then we need to forward the
+        // modified request.
+        switch (source) {
+        case URL:
+            chain.doFilter(request, response);
+            break;
+        default:
+            request.getRequestDispatcher("/v" + version + path).forward(request, response);
+        }
     }
 }

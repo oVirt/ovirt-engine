@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ApplicationPath("/")
+@ApplicationPath("/v4")
 public class BackendApplication extends Application {
     // The log:
     private static final Logger log = LoggerFactory.getLogger(BackendApplication.class);

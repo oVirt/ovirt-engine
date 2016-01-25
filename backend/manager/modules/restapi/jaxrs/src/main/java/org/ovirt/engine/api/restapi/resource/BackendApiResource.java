@@ -83,6 +83,7 @@ import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
@@ -143,6 +144,10 @@ public class BackendApiResource
         Current current = getCurrent();
         StringBuilder buffer = new StringBuilder();
         buffer.append(current.getPrefix());
+        if (current.getVersionSource() == VersionSource.URL) {
+            buffer.append("/v");
+            buffer.append(current.getVersion());
+        }
         return buffer.toString();
     }
 
