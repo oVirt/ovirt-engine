@@ -197,12 +197,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                     ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
             }
         });
-        hostsEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
-            @Override
-            public String render(VDS object) {
-                return object.getName();
-            }
-        });
+        hostsEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
         vmwareProvidersEditor = new ListModelListBoxEditor<>(new AbstractRenderer<Provider<VmwareVmProviderProperties>>() {
             @Override
             public String render(Provider<VmwareVmProviderProperties> provider) {
