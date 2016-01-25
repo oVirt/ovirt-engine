@@ -17,7 +17,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.api.restapi.resource.BackendStatisticsResource;
 import org.ovirt.engine.api.restapi.resource.VolumeStatisticalQuery;
 import org.ovirt.engine.api.restapi.types.GlusterVolumeProfileInfoMapper;
-import org.ovirt.engine.api.utils.LinkHelper;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;

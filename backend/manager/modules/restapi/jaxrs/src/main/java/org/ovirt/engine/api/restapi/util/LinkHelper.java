@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.utils;
+package org.ovirt.engine.api.restapi.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.ActionableResource;
-import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Application;

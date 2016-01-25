@@ -14,11 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.api.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.ovirt.engine.api.utils.LinkCreator;
 
 public class LinkCreatorTest extends Assert {
     @Test
