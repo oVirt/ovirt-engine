@@ -1,0 +1,291 @@
+/*
+Copyright (c) 2016 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package org.ovirt.engine.api.v3.servers;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
+import org.ovirt.engine.api.model.Actionable;
+import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.types.V3Action;
+import org.ovirt.engine.api.v3.types.V3VM;
+
+@Produces({"application/xml", "application/json"})
+public class V3VmServer extends V3Server<VmResource> {
+    public V3VmServer(VmResource delegate) {
+        super(delegate);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("cancelmigration")
+    public Response cancelMigration(V3Action action) {
+        return adaptAction(delegate::cancelMigration, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("commitsnapshot")
+    public Response commitSnapshot(V3Action action) {
+        return adaptAction(delegate::commitSnapshot, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("clone")
+    public Response clone(V3Action action) {
+        return adaptAction(delegate::clone, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("detach")
+    public Response detach(V3Action action) {
+        return adaptAction(delegate::detach, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("export")
+    public Response export(V3Action action) {
+        return adaptAction(delegate::export, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("freezefilesystems")
+    public Response freezeFilesystems(V3Action action) {
+        return adaptAction(delegate::freezeFilesystems, action);
+    }
+
+    @GET
+    public V3VM get() {
+        return adaptGet(delegate::get);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("logon")
+    public Response logon(V3Action action) {
+        return adaptAction(delegate::logon, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("maintenance")
+    public Response maintenance(V3Action action) {
+        return adaptAction(delegate::maintenance, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("migrate")
+    public Response migrate(V3Action action) {
+        return adaptAction(delegate::migrate, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("move")
+    public Response move(V3Action action) {
+        return adaptAction(delegate::move, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("previewsnapshot")
+    public Response previewSnapshot(V3Action action) {
+        return adaptAction(delegate::previewSnapshot, action);
+    }
+
+    @PUT
+    @Consumes({"application/xml", "application/json"})
+    public V3VM update(V3VM vm) {
+        return adaptUpdate(delegate::update, vm);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("reboot")
+    public Response reboot(V3Action action) {
+        return adaptAction(delegate::reboot, action);
+    }
+
+    @DELETE
+    public Response remove() {
+        return adaptRemove(delegate::remove);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("reordermacaddresses")
+    public Response reorderMacAddresses(V3Action action) {
+        return adaptAction(delegate::reorderMacAddresses, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("shutdown")
+    public Response shutdown(V3Action action) {
+        return adaptAction(delegate::shutdown, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("start")
+    public Response start(V3Action action) {
+        return adaptAction(delegate::start, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("stop")
+    public Response stop(V3Action action) {
+        return adaptAction(delegate::stop, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("suspend")
+    public Response suspend(V3Action action) {
+        return adaptAction(delegate::suspend, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("thawfilesystems")
+    public Response thawFilesystems(V3Action action) {
+        return adaptAction(delegate::thawFilesystems, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("ticket")
+    public Response ticket(V3Action action) {
+        return adaptAction(delegate::ticket, action);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("undosnapshot")
+    public Response undoSnapshot(V3Action action) {
+        return adaptAction(delegate::undoSnapshot, action);
+    }
+
+    @Path("permissions")
+    public V3AssignedPermissionsServer getPermissionsResource() {
+        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+    }
+
+    @Path("tags")
+    public V3AssignedTagsServer getTagsResource() {
+        return new V3AssignedTagsServer(delegate.getTagsResource());
+    }
+
+    @Path("graphicsconsoles")
+    public V3GraphicsConsolesServer getGraphicsConsolesResource() {
+        return new V3GraphicsConsolesServer(delegate.getGraphicsConsolesResource());
+    }
+
+    @Path("katelloerrata")
+    public V3KatelloErrataServer getKatelloErrataResource() {
+        return new V3KatelloErrataServer(delegate.getKatelloErrataResource());
+    }
+
+    @Path("snapshots")
+    public V3SnapshotsServer getSnapshotsResource() {
+        return new V3SnapshotsServer(delegate.getSnapshotsResource());
+    }
+
+    @Path("applications")
+    public V3VmApplicationsServer getApplicationsResource() {
+        return new V3VmApplicationsServer(delegate.getApplicationsResource());
+    }
+
+    @Path("cdroms")
+    public V3VmCdromsServer getCdromsResource() {
+        return new V3VmCdromsServer(delegate.getCdromsResource());
+    }
+
+    @Path("disks")
+    public V3VmDisksServer getDisksResource() {
+        return new V3VmDisksServer(delegate.getDisksResource());
+    }
+
+    @Path("hostdevices")
+    public V3VmHostDevicesServer getHostDevicesResource() {
+        return new V3VmHostDevicesServer(delegate.getHostDevicesResource());
+    }
+
+    @Path("nics")
+    public V3VmNicsServer getNicsResource() {
+        return new V3VmNicsServer(delegate.getNicsResource());
+    }
+
+    @Path("numanodes")
+    public V3VmNumaNodesServer getNumaNodesResource() {
+        return new V3VmNumaNodesServer(delegate.getNumaNodesResource());
+    }
+
+    @Path("reporteddevices")
+    public V3VmReportedDevicesServer getReportedDevicesResource() {
+        return new V3VmReportedDevicesServer(delegate.getReportedDevicesResource());
+    }
+
+    @Path("sessions")
+    public V3VmSessionsServer getSessionsResource() {
+        return new V3VmSessionsServer(delegate.getSessionsResource());
+    }
+
+    @Path("watchdogs")
+    public V3VmWatchdogsServer getWatchdogsResource() {
+        return new V3VmWatchdogsServer(delegate.getWatchdogsResource());
+    }
+
+    @Path("{action: (cancelmigration|clone|commitsnapshot|detach|export|freezefilesystems|logon|maintenance|migrate|move|previewsnapshot|reboot|reordermacaddresses|shutdown|start|stop|suspend|thawfilesystems|ticket|undosnapshot)}/{oid}")
+    public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
+        return new V3ActionServer(delegate.getActionResource(action, oid));
+    }
+}

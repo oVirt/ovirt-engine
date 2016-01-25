@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBElement;
 import javax.xml.parsers.DocumentBuilder;
@@ -98,7 +97,8 @@ public class RsdlManager {
         serializeRsdl(rsdl, outputFileName);
     }
 
-    public static Rsdl loadRsdl(String apiVersion, ApplicationMode applicationMode, String prefix) throws IOException {
+    public static <RSDL> RSDL loadRsdl(String apiVersion, ApplicationMode applicationMode, String prefix,
+            Class<RSDL> clazz) throws IOException {
         // Decide what version of the RSDL document to load:
         String fileName = applicationMode == ApplicationMode.GlusterOnly? "rsdl_gluster.xml": "rsdl.xml";
         String resourcePath = String.format("/v%s/%s", apiVersion, fileName);
@@ -134,8 +134,8 @@ public class RsdlManager {
             throw new IOException(exception);
         }
 
-        // Convert the modified DOM tree to the RSDL object:
-        return JAXB.unmarshal(new DOMSource(document), Rsdl.class);
+        // Create the RSDL object:
+        return JAXB.unmarshal(new DOMSource(document), clazz);
     }
 
     private static void serializeRsdl(Rsdl rsdl, String rsdlLocation) {

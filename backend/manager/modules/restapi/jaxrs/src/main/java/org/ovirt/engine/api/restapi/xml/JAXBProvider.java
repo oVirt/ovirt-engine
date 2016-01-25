@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -46,6 +45,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ObjectFactory;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +59,19 @@ import org.slf4j.LoggerFactory;
 @Produces(MediaType.APPLICATION_XML)
 public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
     /**
+     * The version of the API supported by this provider.
+     */
+    private static final String SUPPORTED_VERSION = "4";
+
+    /**
      * The logger used by this class.
      */
     private static final Logger log = LoggerFactory.getLogger(JAXBProvider.class);
+
+    /**
+     * The package of the classes that this provider supports.
+     */
+    private static final Package typesPackage = Api.class.getPackage();
 
     /**
      * The factory used to create JAXB elements.
@@ -105,13 +115,12 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
         parserFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
         parserFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
-        // Create a JAXB context for the model package:
-        String modelPackage = Api.class.getPackage().getName();
+        // Create a JAXB context for the tyeps package:
         try {
-            jaxbContext = JAXBContext.newInstance(modelPackage);
+            jaxbContext = JAXBContext.newInstance(typesPackage.getName());
         }
         catch (JAXBException exception) {
-            log.error("Can't create JAXB context for package \"{}\".", modelPackage, exception);
+            log.error("Can't create JAXB context for package \"{}\"", typesPackage.getName(), exception);
         }
     }
 
@@ -120,7 +129,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
      */
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return true;
+        return SUPPORTED_VERSION.equals(CurrentManager.get().getVersion());
     }
 
     /**
@@ -128,7 +137,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
      */
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return true;
+        return SUPPORTED_VERSION.equals(CurrentManager.get().getVersion());
     }
 
     /**

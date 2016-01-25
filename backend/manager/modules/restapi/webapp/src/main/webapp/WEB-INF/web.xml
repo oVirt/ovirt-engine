@@ -127,11 +127,11 @@ limitations under the License.
     </servlet>
     <servlet-mapping>
         <servlet-name>ModelServlet</servlet-name>
-        <url-pattern>/model</url-pattern>
-        <url-pattern>/model.xml</url-pattern>
-        <url-pattern>/model.json</url-pattern>
-        <url-pattern>/model.jar</url-pattern>
-        <url-pattern>/model.zip</url-pattern>
+        <url-pattern>/v4/model</url-pattern>
+        <url-pattern>/v4/model.xml</url-pattern>
+        <url-pattern>/v4/model.json</url-pattern>
+        <url-pattern>/v4/model.jar</url-pattern>
+        <url-pattern>/v4/model.zip</url-pattern>
     </servlet-mapping>
 
     <!-- confidentiality -->

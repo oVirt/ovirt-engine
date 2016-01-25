@@ -1,0 +1,145 @@
+/*
+Copyright (c) 2016 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package org.ovirt.engine.api.v3.adapters;
+
+import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+
+import org.ovirt.engine.api.model.DiskSnapshot;
+import org.ovirt.engine.api.v3.V3Adapter;
+import org.ovirt.engine.api.v3.types.V3DiskSnapshot;
+import org.ovirt.engine.api.v3.types.V3Statistics;
+import org.ovirt.engine.api.v3.types.V3StorageDomains;
+import org.ovirt.engine.api.v3.types.V3VMs;
+
+public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskSnapshot> {
+    @Override
+    public V3DiskSnapshot adapt(DiskSnapshot from) {
+        V3DiskSnapshot to = new V3DiskSnapshot();
+        if (from.isSetActive()) {
+            to.setActive(from.isActive());
+        }
+        if (from.isSetActualSize()) {
+            to.setActualSize(from.getActualSize());
+        }
+        if (from.isSetAlias()) {
+            to.setAlias(from.getAlias());
+        }
+        if (from.isSetBootable()) {
+            to.setBootable(from.isBootable());
+        }
+        if (from.isSetComment()) {
+            to.setComment(from.getComment());
+        }
+        if (from.isSetDescription()) {
+            to.setDescription(from.getDescription());
+        }
+        if (from.isSetDisk()) {
+            to.setDisk(adaptOut(from.getDisk()));
+        }
+        if (from.isSetDiskProfile()) {
+            to.setDiskProfile(adaptOut(from.getDiskProfile()));
+        }
+        if (from.isSetFormat()) {
+            to.setFormat(from.getFormat());
+        }
+        if (from.isSetId()) {
+            to.setId(from.getId());
+        }
+        if (from.isSetHref()) {
+            to.setHref(from.getHref());
+        }
+        if (from.isSetImageId()) {
+            to.setImageId(from.getImageId());
+        }
+        if (from.isSetInstanceType()) {
+            to.setInstanceType(adaptOut(from.getInstanceType()));
+        }
+        if (from.isSetInterface()) {
+            to.setInterface(from.getInterface());
+        }
+        if (from.isSetLogicalName()) {
+            to.setLogicalName(from.getLogicalName());
+        }
+        if (from.isSetLunStorage()) {
+            to.setLunStorage(adaptOut(from.getLunStorage()));
+        }
+        if (from.isSetName()) {
+            to.setName(from.getName());
+        }
+        if (from.isSetOpenstackVolumeType()) {
+            to.setOpenstackVolumeType(adaptOut(from.getOpenstackVolumeType()));
+        }
+        if (from.isSetPropagateErrors()) {
+            to.setPropagateErrors(from.isPropagateErrors());
+        }
+        if (from.isSetProvisionedSize()) {
+            to.setProvisionedSize(from.getProvisionedSize());
+        }
+        if (from.isSetQuota()) {
+            to.setQuota(adaptOut(from.getQuota()));
+        }
+        if (from.isSetReadOnly()) {
+            to.setReadOnly(from.isReadOnly());
+        }
+        if (from.isSetSgio()) {
+            to.setSgio(from.getSgio());
+        }
+        if (from.isSetShareable()) {
+            to.setShareable(from.isShareable());
+        }
+        if (from.isSetSnapshot()) {
+            to.setSnapshot(adaptOut(from.getSnapshot()));
+        }
+        if (from.isSetSparse()) {
+            to.setSparse(from.isSparse());
+        }
+        if (from.isSetStatistics()) {
+            to.setStatistics(new V3Statistics());
+            to.getStatistics().getStatistics().addAll(adaptOut(from.getStatistics().getStatistics()));
+        }
+        if (from.isSetStatus()) {
+            to.setStatus(adaptOut(from.getStatus()));
+        }
+        if (from.isSetStorageDomain()) {
+            to.setStorageDomain(adaptOut(from.getStorageDomain()));
+        }
+        if (from.isSetStorageDomains()) {
+            to.setStorageDomains(new V3StorageDomains());
+            to.getStorageDomains().getStorageDomains().addAll(adaptOut(from.getStorageDomains().getStorageDomains()));
+        }
+        if (from.isSetStorageType()) {
+            to.setStorageType(from.getStorageType());
+        }
+        if (from.isSetTemplate()) {
+            to.setTemplate(adaptOut(from.getTemplate()));
+        }
+        if (from.isSetUsesScsiReservation()) {
+            to.setUsesScsiReservation(from.isUsesScsiReservation());
+        }
+        if (from.isSetVm()) {
+            to.setVm(adaptOut(from.getVm()));
+        }
+        if (from.isSetVms()) {
+            to.setVms(new V3VMs());
+            to.getVms().getVMs().addAll(adaptOut(from.getVms().getVms()));
+        }
+        if (from.isSetWipeAfterDelete()) {
+            to.setWipeAfterDelete(from.isWipeAfterDelete());
+        }
+        return to;
+    }
+}
