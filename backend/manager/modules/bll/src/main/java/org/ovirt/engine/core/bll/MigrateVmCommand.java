@@ -453,7 +453,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 && schedulingManager.canSchedule(getCluster(),
                         getVm(),
                         getVdsBlackList(),
-                        getParameters().getInitialHosts(),
+                        getVdsWhiteList(),
                         getDestinationHostList(),
                         getReturnValue().getValidationMessages());
     }
