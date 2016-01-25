@@ -922,11 +922,12 @@ public class VmAnalyzer {
 
         vmJobsToUpdate = new HashMap<>();
         vmJobIdsToRemove = new ArrayList<>();
+        List<Guid> existingVmJobIds = getDbFacade().getVmJobDao().getAllIds();
 
         // Only jobs that were in the DB before our update may be updated/removed;
         // others are completely ignored for the time being
         Map<Guid, VmJob> jobsFromDb = getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId()).stream()
-                .filter(job -> vmsMonitoring.getExistingVmJobIds().contains(job.getId()))
+                .filter(job -> existingVmJobIds.contains(job.getId()))
                 .collect(Collectors.toMap(VmJob::getId, Function.identity()));
 
         Set<Guid> vmJobIdsToIgnore = new HashSet<>();

@@ -56,10 +56,6 @@ public class VmsMonitoring {
      */
     private List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
 
-    //*** data collectors ***//
-    private final List<Guid> existingVmJobIds = new ArrayList<>();
-    //*** data collectors ***//
-
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
     /**
@@ -96,7 +92,6 @@ public class VmsMonitoring {
      */
     public void perform() {
         try {
-            refreshExistingVmJobList();
             refreshVmStats();
             afterVMsRefreshTreatment();
             vdsManager.vmsMonitoringInitFinished();
@@ -363,10 +358,6 @@ public class VmsMonitoring {
         }
     }
 
-    private void refreshExistingVmJobList() {
-        existingVmJobIds.clear();
-        existingVmJobIds.addAll(getDbFacade().getVmJobDao().getAllIds());
-    }
 
     // ***** Helpers and sub-methods *****
 
@@ -402,10 +393,6 @@ public class VmsMonitoring {
 
     protected IVdsEventListener getVdsEventListener() {
         return ResourceManager.getInstance().getEventListener();
-    }
-
-    public List<Guid> getExistingVmJobIds() {
-        return existingVmJobIds;
     }
 
     public VdsManager getVdsManager() {
