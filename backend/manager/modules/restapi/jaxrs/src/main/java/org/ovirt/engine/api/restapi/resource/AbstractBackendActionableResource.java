@@ -4,7 +4,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.ge
 
 import java.net.URI;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -15,6 +14,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -99,7 +99,6 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
      * Perform an action, managing asynchrony and returning an appropriate
      * response with entity returned by backend in action body.
      *
-     * @param uriInfo  wraps the URI for the current request
      * @param task     the backend task
      * @param params   the task parameters
      * @param action   action representation
@@ -113,7 +112,6 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
      * Perform an action, managing asynchrony and returning an appropriate
      * response.
      *
-     * @param uriInfo  wraps the URI for the current request
      * @param task     the backend task
      * @param params   the task parameters
      * @param action   action representation
@@ -199,7 +197,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     }
 
     private String getPath(UriInfo uriInfo) {
-        return LinkHelper.combine(uriInfo.getBaseUri().getPath(), uriInfo.getPath());
+        return LinkCreator.combine(uriInfo.getBaseUri().getPath(), uriInfo.getPath());
     }
 
     protected Guid getStorageDomainId(Action action) {

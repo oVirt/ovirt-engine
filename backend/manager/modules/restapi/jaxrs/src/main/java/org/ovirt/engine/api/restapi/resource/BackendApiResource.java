@@ -96,7 +96,7 @@ import org.ovirt.engine.api.restapi.types.VersionMapper;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.rsdl.RsdlManager;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
-import org.ovirt.engine.api.utils.LinkHelper;
+import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -165,10 +165,10 @@ public class BackendApiResource
         api.setTime(DateMapper.map(new Date(), null));
         for (DetailedLink detailedLink : getLinks()) {
             //add thin link
-            api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel()));
+            api.getLinks().add(LinkCreator.createLink(detailedLink.getHref(), detailedLink.getRel()));
             //when required - add extra link for search
             if (detailedLink.isSetLinkCapabilities() && detailedLink.getLinkCapabilities().isSetSearchable() && detailedLink.getLinkCapabilities().isSearchable()) {
-                api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel(), detailedLink.getRequest().getUrl().getParametersSets()));
+                api.getLinks().add(LinkCreator.createLink(detailedLink.getHref(), detailedLink.getRel(), detailedLink.getRequest().getUrl().getParametersSets()));
             }
             //add special links
             api.setSpecialObjects(new SpecialObjects());
@@ -183,11 +183,11 @@ public class BackendApiResource
         api.setTime(DateMapper.map(new Date(), null));
         for (DetailedLink detailedLink : getGlusterLinks()) {
             // add thin link
-            api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel()));
+            api.getLinks().add(LinkCreator.createLink(detailedLink.getHref(), detailedLink.getRel()));
             // when required - add extra link for search
             if (detailedLink.isSetLinkCapabilities() && detailedLink.getLinkCapabilities().isSetSearchable()
                     && detailedLink.getLinkCapabilities().isSearchable()) {
-                api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(),
+                api.getLinks().add(LinkCreator.createLink(detailedLink.getHref(),
                         detailedLink.getRel(),
                         detailedLink.getRequest().getUrl().getParametersSets()));
             }
@@ -199,11 +199,11 @@ public class BackendApiResource
     }
 
     private String getTagRootUri() {
-        return LinkHelper.combine(getLinkBase(), "tags/00000000-0000-0000-0000-000000000000");
+        return LinkCreator.combine(getLinkBase(), "tags/00000000-0000-0000-0000-000000000000");
     }
 
     private String getTemplateBlankUri() {
-        return LinkHelper.combine(getLinkBase(), "templates/00000000-0000-0000-0000-000000000000");
+        return LinkCreator.combine(getLinkBase(), "templates/00000000-0000-0000-0000-000000000000");
     }
 
     private void addHeader(BaseResource response, Response.ResponseBuilder responseBuilder) {

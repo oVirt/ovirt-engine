@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -13,6 +12,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.types.Mapper;
+import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -187,7 +187,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
      *       return network;
      *   }
      *
-     * @param the resource representation
+     * @param model the resource representation
      * @return the model with any parent references added
      */
     protected R addParents(R model) {
@@ -286,7 +286,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     protected R injectSearchLinks(R resource, String[] rels){
         for(String rel : rels){
-            resource.getLinks().add(LinkHelper.createSearchLink(resource.getHref(), rel));
+            resource.getLinks().add(LinkCreator.createSearchLink(resource.getHref(), rel));
         }
         return resource;
     }

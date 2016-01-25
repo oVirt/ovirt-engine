@@ -24,12 +24,10 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.AffinityGroup;
@@ -42,7 +40,6 @@ import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
-import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskSnapshot;
@@ -74,8 +71,6 @@ import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.KatelloErratum;
 import org.ovirt.engine.api.model.Label;
-import org.ovirt.engine.api.model.Link;
-import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkAttachment;
@@ -90,8 +85,6 @@ import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.model.OperatingSystemInfo;
-import org.ovirt.engine.api.model.Parameter;
-import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Qos;
@@ -99,7 +92,6 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.ReportedDevice;
-import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
@@ -113,7 +105,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.UnmanagedNetwork;
-import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VirtualNumaNode;
@@ -1007,108 +998,6 @@ public class LinkHelper {
     }
 
     /**
-     * Create a search link with the given parameters
-     *
-     * @param url the url
-     * @param rel the link to add
-     * @param flags flags for this link, e.g: 'searchable'
-     * @return the link the was created
-     */
-    public static DetailedLink createLink(String url, String rel, LinkFlags flags) {
-        return createLink(url, rel, flags, new ParametersSet());
-    }
-
-    /**
-     * Create a search link with the given parameters
-     *
-     * @param url the url
-     * @param rel the link to add
-     * @param flags flags for this link, e.g: 'searchable'
-     * @param params url parameters
-     * @return the link the was created
-     */
-    public static DetailedLink createLink(String url, String rel, LinkFlags flags, ParametersSet params) {
-        DetailedLink link = new DetailedLink();
-        link.setRel(rel);
-        link.setHref(combine(url, rel));
-        if (flags == LinkFlags.SEARCHABLE) {
-            LinkCapabilities capabilities = new LinkCapabilities();
-            capabilities.setSearchable(true);
-            link.setLinkCapabilities(capabilities);
-        }
-        link.setRequest(new Request());
-        link.getRequest().setUrl(new Url());
-        link.getRequest().getUrl().getParametersSets().add(params);
-        return link;
-    }
-
-    /**
-     * Create a search link with the given parameters
-     *
-     * @param url the url
-     * @param rel the link to add
-     * @param params url parameters
-     * @return the link the was created
-     */
-    public static Link createLink(String url, String rel, List<ParametersSet> params) {
-        Link link = new Link();
-        link.setRel(rel + SEARCH_RELATION);
-        link.setHref(combine(url, params) + SEARCH_TEMPLATE);
-        return link;
-    }
-
-    public static Link createLink(String url, String rel) {
-        Link link = new Link();
-        link.setRel(rel);
-        link.setHref(url);
-        return link;
-    }
-
-    /**
-     * Create a search link with the given parameters
-     * @param url the url
-     * @param rel the link to add
-     * @return link with search
-     */
-    public static Link createSearchLink(String url, String rel) {
-        Link link = new Link();
-        link.setRel(rel + SEARCH_RELATION);
-        link.setHref(combine(url, rel) + SEARCH_TEMPLATE);
-        return link;
-    }
-
-    /**
-     * Combine head and tail portions of a URI path.
-     *
-     * @param head the path head
-     * @param tail the path tail
-     * @return the combined head and tail
-     */
-    public static String combine(String head, String tail) {
-        return StringUtils.removeEnd(head, "/") + "/" + StringUtils.removeStart(tail, "/");
-    }
-
-    /**
-     * Combine URL params to URI path.
-     *
-     * @param head the path head
-     * @param params the URL params to append
-     * @return the combined head and params
-     */
-    public static String combine(String head, List<ParametersSet> params) {
-        StringBuilder combined_params = new StringBuilder();
-        if (params != null) {
-           for (ParametersSet ps : params) {
-               for (Parameter param : ps.getParameters()) {
-                   combined_params.append(String.format(MATRIX_PARAMETER_TEMPLATE, param.getName(), param.getValue()));
-              }
-           }
-        }
-        combined_params.insert(0, head);
-        return combined_params.toString();
-    }
-
-    /**
      * A #Map sub-class which maps a model type (e.g. Tag.class) to a
      * set of suitable collection definitions.
      */
@@ -1177,9 +1066,4 @@ public class LinkHelper {
             return parentType;
         }
     }
-
-    /**
-     * Used to specify link options
-     */
-    public enum LinkFlags { NONE, SEARCHABLE; }
 }

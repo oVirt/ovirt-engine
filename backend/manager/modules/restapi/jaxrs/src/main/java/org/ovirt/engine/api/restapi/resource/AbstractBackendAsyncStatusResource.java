@@ -2,14 +2,13 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.utils.LinkHelper;
+import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,6 +48,6 @@ public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
         for (String p : uriInfo.getPath().split("/")) {
             (path.length() == 0 ? path : path.append("/")).append(urlEncode(p));
         }
-        return LinkHelper.combine(uriInfo.getBaseUri().getPath(), path.toString());
+        return LinkCreator.combine(uriInfo.getBaseUri().getPath(), path.toString());
     }
 }

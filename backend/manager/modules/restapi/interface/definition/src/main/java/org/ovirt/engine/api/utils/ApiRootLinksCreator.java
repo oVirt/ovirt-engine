@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
-import org.ovirt.engine.api.utils.LinkHelper.LinkFlags;
+import org.ovirt.engine.api.utils.LinkCreator.LinkFlags;
 
 public class ApiRootLinksCreator {
 
@@ -84,15 +84,15 @@ public class ApiRootLinksCreator {
     }
 
     private static DetailedLink createLink(String rel, LinkFlags flags, String baseUri) {
-        return LinkHelper.createLink(baseUri, rel, flags);
+        return LinkCreator.createLink(baseUri, rel, flags);
     }
 
     private static DetailedLink createLink(String rel, LinkFlags flags, ParametersSet params, String baseUri) {
-        return LinkHelper.createLink(baseUri, rel, flags, params);
+        return LinkCreator.createLink(baseUri, rel, flags, params);
     }
 
     private static DetailedLink createLink(String rel, String baseUri) {
-        return LinkHelper.createLink(baseUri, rel, LinkFlags.NONE);
+        return LinkCreator.createLink(baseUri, rel, LinkFlags.NONE);
     }
 
     private static ParametersSet getEventParams() {
