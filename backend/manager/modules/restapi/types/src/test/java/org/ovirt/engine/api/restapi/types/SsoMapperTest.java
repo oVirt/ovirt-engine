@@ -22,7 +22,7 @@ public class SsoMapperTest {
         assertNotNull(restSso.getMethods());
         assertNotNull(restSso.getMethods().getMethods());
         assertEquals(1, restSso.getMethods().getMethods().size());
-        assertEquals(org.ovirt.engine.api.model.SsoMethod.GUEST_AGENT.toString(), restSso.getMethods().getMethods().get(0).getId());
+        assertEquals(org.ovirt.engine.api.model.SsoMethod.GUEST_AGENT, restSso.getMethods().getMethods().get(0).getId());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class SsoMapperTest {
         Sso restSso = new Sso();
         restSso.setMethods(new Methods());
         Method guestAgent = new Method();
-        guestAgent.setId(org.ovirt.engine.api.model.SsoMethod.GUEST_AGENT.toString());
+        guestAgent.setId(org.ovirt.engine.api.model.SsoMethod.GUEST_AGENT);
         restSso.getMethods().getMethods().add(guestAgent);
 
         SsoMethod expectedBackendSsoMethod = SsoMethod.GUEST_AGENT;
@@ -66,16 +66,4 @@ public class SsoMapperTest {
 
         assertEquals(null, SsoMapper.map(restSso, null));
     }
-
-    @Test
-    public void mapNonsenseFromRestToBackend() throws Exception {
-        Sso restSso = new Sso();
-        restSso.setMethods(new Methods());
-        Method unknownMethod = new Method();
-        unknownMethod.setId("žbrkmrkfrk");
-        restSso.getMethods().getMethods().add(unknownMethod);
-
-        assertEquals(null, SsoMapper.map(restSso, null));
-    }
-
 }

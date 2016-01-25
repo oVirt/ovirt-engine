@@ -18,7 +18,11 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.Versions;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Cluster;
@@ -92,7 +96,7 @@ public class V3ClusterInAdapter implements V3Adapter<V3Cluster, Cluster> {
         }
         if (from.isSetRequiredRngSources()) {
             to.setRequiredRngSources(new Cluster.RequiredRngSourcesList());
-            to.getRequiredRngSources().getRequiredRngSources().addAll(from.getRequiredRngSources().getRngSources());
+            to.getRequiredRngSources().getRequiredRngSources().addAll(adaptRngSources(from));
         }
         if (from.isSetSchedulingPolicy()) {
             to.setSchedulingPolicy(adaptIn(from.getSchedulingPolicy()));
@@ -120,5 +124,13 @@ public class V3ClusterInAdapter implements V3Adapter<V3Cluster, Cluster> {
             to.setVirtService(from.isVirtService());
         }
         return to;
+    }
+
+    private List<RngSource> adaptRngSources(V3Cluster from) {
+        List<RngSource> results = new LinkedList<>();
+        for (String s : from.getRequiredRngSources().getRngSources()) {
+            results.add(RngSource.fromValue(s));
+        }
+        return results;
     }
 }

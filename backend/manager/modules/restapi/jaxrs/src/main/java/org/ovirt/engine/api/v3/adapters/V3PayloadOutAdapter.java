@@ -32,7 +32,7 @@ public class V3PayloadOutAdapter implements V3Adapter<Payload, V3Payload> {
             to.getFiles().getFiles().addAll(adaptOut(from.getFiles().getFiles()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         if (from.isSetVolumeId()) {
             to.setVolumeId(from.getVolumeId());

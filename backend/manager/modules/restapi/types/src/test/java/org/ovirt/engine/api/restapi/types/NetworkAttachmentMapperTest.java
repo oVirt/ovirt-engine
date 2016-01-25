@@ -47,7 +47,7 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
     @Override
     protected org.ovirt.engine.api.model.NetworkAttachment postPopulate(org.ovirt.engine.api.model.NetworkAttachment model) {
         model.getIpAddressAssignments().getIpAddressAssignments().get(0).setAssignmentMethod("dhcp");
-        model.getQos().setType(QosType.HOSTNETWORK.name().toLowerCase());
+        model.getQos().setType(QosType.HOSTNETWORK);
         return super.postPopulate(model);
     }
 }

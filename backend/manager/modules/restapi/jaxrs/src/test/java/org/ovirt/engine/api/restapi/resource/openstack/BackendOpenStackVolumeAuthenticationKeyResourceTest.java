@@ -88,7 +88,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
         OpenStackVolumeProvider provider = new OpenStackVolumeProvider();
         provider.setId(GUIDS[0].toString());
         model.setOpenstackVolumeProvider(provider);
-        model.setUsageType(OpenstackVolumeAuthenticationKeyUsageType.CEPH.name());
+        model.setUsageType(OpenstackVolumeAuthenticationKeyUsageType.CEPH);
         return model;
     }
 

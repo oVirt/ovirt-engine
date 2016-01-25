@@ -25,7 +25,7 @@ public class V3SELinuxOutAdapter implements V3Adapter<SELinux, V3SELinux> {
     public V3SELinux adapt(SELinux from) {
         V3SELinux to = new V3SELinux();
         if (from.isSetMode()) {
-            to.setMode(from.getMode());
+            to.setMode(from.getMode().value());
         }
         return to;
     }

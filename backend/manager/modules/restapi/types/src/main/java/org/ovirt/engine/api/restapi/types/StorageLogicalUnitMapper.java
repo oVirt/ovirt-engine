@@ -6,7 +6,6 @@ import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.LunStatus;
-import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -39,7 +38,7 @@ public class StorageLogicalUnitMapper {
             model.setDiskId(entity.getDiskId().toString());
         }
         if (entity.getStatus() != null) {
-            model.setStatus(map(entity.getStatus(), null).value());
+            model.setStatus(map(entity.getStatus(), null));
         }
         model.setSize(SizeConverter.convert((long)entity.getDeviceSize(),
                 SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
@@ -85,10 +84,7 @@ public class StorageLogicalUnitMapper {
             entity.setLunConnections(connections);
         }
         if (model.isSetType()) {
-            StorageType storageType = StorageType.fromValue(model.getType());
-            if (storageType != null) {
-                entity.setLunType(StorageDomainMapper.map(storageType, null));
-            }
+            entity.setLunType(StorageDomainMapper.map(model.getType(), null));
         }
         return entity;
     }

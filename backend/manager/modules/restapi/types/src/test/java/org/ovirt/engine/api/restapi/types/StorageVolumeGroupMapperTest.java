@@ -13,7 +13,7 @@ public class StorageVolumeGroupMapperTest extends AbstractInvertibleMappingTest<
 
     @Override
     protected HostStorage postPopulate(HostStorage from) {
-        from.setType(MappingTestHelper.shuffle(StorageType.class).value());
+        from.setType(MappingTestHelper.shuffle(StorageType.class));
         from.setVolumeGroup(new VolumeGroup());
         from.getVolumeGroup().setId(from.getId());
         return from;

@@ -93,7 +93,6 @@ import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExtern
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProvidersResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource;
-import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
@@ -167,9 +166,6 @@ public class BackendApiResource
         mappingLocator = new MappingLocator();
         mappingLocator.populate();
 
-        // Create and populate the validator locator:
-        validatorLocator = new ValidatorLocator();
-        validatorLocator.populate();
     }
 
 

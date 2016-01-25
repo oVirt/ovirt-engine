@@ -65,10 +65,7 @@ public class OpenStackVolumeAuthenticationKeyMapper {
             entity.setValue(model.getValue());
         }
         if (model.isSetUsageType()) {
-            OpenstackVolumeAuthenticationKeyUsageType usageType = OpenstackVolumeAuthenticationKeyUsageType.fromValue(model.getUsageType());
-            if (usageType != null) {
-                entity.setUsageType(map(usageType, null));
-            }
+            entity.setUsageType(map(model.getUsageType(), null));
         }
         if (model.isSetOpenstackVolumeProvider() && model.getOpenstackVolumeProvider().isSetId()) {
             entity.setProviderId(GuidUtils.asGuid(model.getOpenstackVolumeProvider().getId()));
@@ -77,12 +74,12 @@ public class OpenStackVolumeAuthenticationKeyMapper {
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType.class,
-            to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType usageType,
-            String template) {
+            to = OpenstackVolumeAuthenticationKeyUsageType.class)
+    public static OpenstackVolumeAuthenticationKeyUsageType map(org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType usageType,
+            OpenstackVolumeAuthenticationKeyUsageType template) {
         switch (usageType) {
         case CEPH:
-            return OpenstackVolumeAuthenticationKeyUsageType.CEPH.value();
+            return OpenstackVolumeAuthenticationKeyUsageType.CEPH;
         default:
             return null;
         }

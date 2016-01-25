@@ -18,9 +18,14 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.model.TransportType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3GlusterVolume;
 
@@ -77,11 +82,19 @@ public class V3GlusterVolumeInAdapter implements V3Adapter<V3GlusterVolume, Glus
         }
         if (from.isSetTransportTypes()) {
             to.setTransportTypes(new GlusterVolume.TransportTypesList());
-            to.getTransportTypes().getTransportTypes().addAll(from.getTransportTypes().getTransportTypes());
+            to.getTransportTypes().getTransportTypes().addAll(adaptTransportTypes(from));
         }
         if (from.isSetVolumeType()) {
-            to.setVolumeType(from.getVolumeType());
+            to.setVolumeType(GlusterVolumeType.valueOf(from.getVolumeType()));
         }
         return to;
+    }
+
+    private List<TransportType> adaptTransportTypes(V3GlusterVolume from) {
+        List<TransportType> results = new LinkedList<>();
+        for (String s : from.getTransportTypes().getTransportTypes()) {
+            results.add(TransportType.valueOf(s));
+            }
+        return results;
     }
 }

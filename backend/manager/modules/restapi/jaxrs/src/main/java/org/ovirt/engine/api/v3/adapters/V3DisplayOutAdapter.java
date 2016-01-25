@@ -66,7 +66,7 @@ public class V3DisplayOutAdapter implements V3Adapter<Display, V3Display> {
             to.setSmartcardEnabled(from.isSmartcardEnabled());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         return to;
     }

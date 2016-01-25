@@ -55,7 +55,7 @@ public class DisplayHelper {
      */
     public static void setGraphicsToParams(Display display, HasGraphicsDevices params) {
         if (display != null && display.isSetType()) {
-            DisplayType newDisplayType = DisplayType.fromValue(display.getType());
+            DisplayType newDisplayType = display.getType();
 
             if (newDisplayType != null) {
                 for (GraphicsType graphicsType : GraphicsType.values()) {
@@ -94,9 +94,9 @@ public class DisplayHelper {
             List<GraphicsType> graphicsTypes = getGraphicsTypesForEntity(backendResource, new Guid(res.getId()));
 
             if (graphicsTypes.contains(GraphicsType.SPICE)) {
-                display.setType(DisplayType.SPICE.value());
+                display.setType(DisplayType.SPICE);
             } else if (graphicsTypes.contains(GraphicsType.VNC)) {
-                display.setType(DisplayType.VNC.value());
+                display.setType(DisplayType.VNC);
             } else {
                 resetDisplay(res);
             }

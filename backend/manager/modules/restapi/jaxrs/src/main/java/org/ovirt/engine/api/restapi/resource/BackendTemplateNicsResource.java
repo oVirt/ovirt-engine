@@ -38,7 +38,6 @@ public class BackendTemplateNicsResource extends AbstractBackendNicsResource imp
     }
 
     public Response add(Nic nic) {
-        validateEnums(Nic.class, nic);
         validateParameters(nic, "name");
         return performCreate(
             VdcActionType.AddVmTemplateInterface,

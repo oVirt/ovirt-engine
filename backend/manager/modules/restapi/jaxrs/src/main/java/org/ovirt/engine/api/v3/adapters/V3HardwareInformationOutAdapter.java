@@ -16,7 +16,11 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.api.model.HardwareInformation;
+import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3HardwareInformation;
 import org.ovirt.engine.api.v3.types.V3RngSources;
@@ -39,7 +43,7 @@ public class V3HardwareInformationOutAdapter implements V3Adapter<HardwareInform
         }
         if (from.isSetSupportedRngSources()) {
             to.setSupportedRngSources(new V3RngSources());
-            to.getSupportedRngSources().getRngSources().addAll(from.getSupportedRngSources().getSupportedRngSources());
+            to.getSupportedRngSources().getRngSources().addAll(adaptRngSources(from));
         }
         if (from.isSetUuid()) {
             to.setUuid(from.getUuid());
@@ -48,5 +52,13 @@ public class V3HardwareInformationOutAdapter implements V3Adapter<HardwareInform
             to.setVersion(from.getVersion());
         }
         return to;
+    }
+
+    private List<String> adaptRngSources(HardwareInformation from) {
+        List<String> results = new LinkedList<>();
+        for (RngSource source : from.getSupportedRngSources().getSupportedRngSources()) {
+            results.add(source.value());
+        }
+        return results;
     }
 }

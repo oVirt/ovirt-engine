@@ -52,7 +52,7 @@ public class V3GlusterHookOutAdapter implements V3Adapter<GlusterHook, V3Gluster
             to.setContent(from.getContent());
         }
         if (from.isSetContentType()) {
-            to.setContentType(from.getContentType());
+            to.setContentType(from.getContentType().value());
         }
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());
@@ -74,7 +74,7 @@ public class V3GlusterHookOutAdapter implements V3Adapter<GlusterHook, V3Gluster
             to.getServerHooks().getGlusterServerHooks().addAll(adaptOut(from.getServerHooks().getGlusterServerHooks()));
         }
         if (from.isSetStage()) {
-            to.setStage(from.getStage());
+            to.setStage(from.getStage().value());
         }
         if (from.isSetStatus()) {
             to.setStatus(adaptOut(from.getStatus()));

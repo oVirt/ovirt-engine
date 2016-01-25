@@ -55,13 +55,13 @@ public class V3DataCenterOutAdapter implements V3Adapter<DataCenter, V3DataCente
             to.setName(from.getName());
         }
         if (from.isSetQuotaMode()) {
-            to.setQuotaMode(from.getQuotaMode());
+            to.setQuotaMode(from.getQuotaMode().value());
         }
         if (from.isSetStatus()) {
             to.setStatus(adaptOut(from.getStatus()));
         }
         if (from.isSetStorageFormat()) {
-            to.setStorageFormat(from.getStorageFormat());
+            to.setStorageFormat(from.getStorageFormat().value());
         }
         if (from.isSetSupportedVersions()) {
             to.setSupportedVersions(new V3SupportedVersions());

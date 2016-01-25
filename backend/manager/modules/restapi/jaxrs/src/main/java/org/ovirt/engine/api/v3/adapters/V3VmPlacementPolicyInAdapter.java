@@ -20,6 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
+import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3VmPlacementPolicy;
@@ -29,7 +30,7 @@ public class V3VmPlacementPolicyInAdapter implements V3Adapter<V3VmPlacementPoli
     public VmPlacementPolicy adapt(V3VmPlacementPolicy from) {
         VmPlacementPolicy to = new VmPlacementPolicy();
         if (from.isSetAffinity()) {
-            to.setAffinity(from.getAffinity());
+            to.setAffinity(VmAffinity.fromValue(from.getAffinity()));
         }
         if (from.isSetHosts()) {
             to.setHosts(new Hosts());

@@ -15,11 +15,11 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<org.ovirt.e
     @Override
     protected org.ovirt.engine.api.model.Cluster postPopulate(org.ovirt.engine.api.model.Cluster model) {
         ErrorHandling errorHandling = new ErrorHandling();
-        errorHandling.setOnError(MappingTestHelper.shuffle(MigrateOnError.class).value());
+        errorHandling.setOnError(MappingTestHelper.shuffle(MigrateOnError.class));
         model.setErrorHandling(errorHandling);
-        model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
+        model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM);
         model.getRequiredRngSources().getRequiredRngSources().clear();
-        model.getRequiredRngSources().getRequiredRngSources().add(RngSource.RANDOM.name());
+        model.getRequiredRngSources().getRequiredRngSources().add(RngSource.RANDOM);
         return model;
     }
 

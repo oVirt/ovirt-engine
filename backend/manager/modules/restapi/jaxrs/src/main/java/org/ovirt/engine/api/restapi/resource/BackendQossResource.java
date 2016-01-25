@@ -10,7 +10,6 @@ import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.Qoss;
 import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.resource.QossResource;
-import org.ovirt.engine.api.restapi.types.QosTypeMapper;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -41,9 +40,8 @@ public class BackendQossResource extends AbstractBackendCollectionResource<Qos, 
     @Override
     public Response add(Qos qos) {
         validateParameters(qos, "name", "type");
-        validateEnums(Qos.class, qos);
         QosParametersBase<QosBase> params = new QosParametersBase<>();
-        org.ovirt.engine.api.model.QosType qosType = QosTypeMapper.map(qos.getType(), null);
+        org.ovirt.engine.api.model.QosType qosType = qos.getType();
         QosBase qosEntity = createNewQosEntityForQosType(qosType);
 
         params.setQos(map(qos, qosEntity));

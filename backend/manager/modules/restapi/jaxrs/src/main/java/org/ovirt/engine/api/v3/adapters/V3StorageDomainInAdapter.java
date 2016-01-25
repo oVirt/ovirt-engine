@@ -20,6 +20,8 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.DataCenters;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.StorageDomainType;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3StorageDomain;
 
@@ -83,10 +85,10 @@ public class V3StorageDomainInAdapter implements V3Adapter<V3StorageDomain, Stor
             to.setStorage(adaptIn(from.getStorage()));
         }
         if (from.isSetStorageFormat()) {
-            to.setStorageFormat(from.getStorageFormat());
+            to.setStorageFormat(StorageFormat.valueOf(from.getStorageFormat()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(StorageDomainType.valueOf(from.getType()));
         }
         if (from.isSetUsed()) {
             to.setUsed(from.getUsed());

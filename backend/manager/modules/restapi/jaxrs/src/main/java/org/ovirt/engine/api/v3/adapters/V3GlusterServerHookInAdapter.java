@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.GlusterServerHook;
+import org.ovirt.engine.api.model.HookContentType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3GlusterServerHook;
 
@@ -39,7 +40,7 @@ public class V3GlusterServerHookInAdapter implements V3Adapter<V3GlusterServerHo
             to.setComment(from.getComment());
         }
         if (from.isSetContentType()) {
-            to.setContentType(from.getContentType());
+            to.setContentType(HookContentType.valueOf(from.getContentType()));
         }
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());

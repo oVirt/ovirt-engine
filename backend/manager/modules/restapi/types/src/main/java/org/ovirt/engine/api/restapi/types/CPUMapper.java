@@ -37,17 +37,17 @@ public class CPUMapper {
         return null;
     }
 
-    @Mapping(from = ArchitectureType.class, to = String.class)
-    public static String map(ArchitectureType model,
+    @Mapping(from = ArchitectureType.class, to = Architecture.class)
+    public static Architecture map(ArchitectureType model,
             String template) {
         if (model != null) {
             switch (model) {
             case undefined:
-                return Architecture.UNDEFINED.value();
+                return Architecture.UNDEFINED;
             case x86_64:
-                return Architecture.X86_64.value();
+                return Architecture.X86_64;
             case ppc64:
-                return Architecture.PPC64.value();
+                return Architecture.PPC64;
             default:
                 return null;
             }

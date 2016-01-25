@@ -16,7 +16,7 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
 
     @Override
     protected HostStorage postPopulate(HostStorage from) {
-        from.setType(MappingTestHelper.shuffle(StorageType.class).value());
+        from.setType(MappingTestHelper.shuffle(StorageType.class));
         LogicalUnit unit = new LogicalUnit();
         unit.setId(from.getId());
         from.getLogicalUnits().unsetLogicalUnits();
@@ -55,7 +55,7 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         assertEquals(entity.getVolumeGroupId(), "volume_group_id_1");
         assertEquals(entity.getStorageDomainId(), Guid.Empty.toString());
         assertEquals(entity.getDiskId(), Guid.Empty.toString());
-        assertEquals(entity.getStatus(), LunStatus.FREE.value());
+        assertEquals(entity.getStatus(), LunStatus.FREE);
     }
 
     @Test

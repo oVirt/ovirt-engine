@@ -46,7 +46,6 @@ public class BackendOpenStackVolumeAuthenticationKeyResource
 
     @Override
     public OpenstackVolumeAuthenticationKey update(OpenstackVolumeAuthenticationKey resource) {
-        validateEnums(OpenstackVolumeAuthenticationKey.class, resource);
         return performUpdate(
                 resource,
                 new QueryIdResolver<>(VdcQueryType.GetLibvirtSecretById, IdQueryParameters.class),

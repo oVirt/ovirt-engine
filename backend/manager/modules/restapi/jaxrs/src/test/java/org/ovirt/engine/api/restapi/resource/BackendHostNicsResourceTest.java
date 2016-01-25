@@ -200,7 +200,7 @@ public class BackendHostNicsResourceTest
         assertEquals(calcSpeed(NIC_SPEED), model.getSpeed());
         assertNotNull(model.getStatus());
         assertEquals(map(NIC_STATUS, null).value(), model.getStatus().getState());
-        assertEquals(map(BOOT_PROTOCOL, null).value(), model.getBootProtocol());
+        assertEquals(map(BOOT_PROTOCOL, null), model.getBootProtocol());
     }
 
     private Long calcSpeed(Integer nicSpeed) {

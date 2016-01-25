@@ -19,8 +19,10 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3VM;
 
@@ -147,7 +149,7 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
             to.setNics(adaptIn(from.getNics()));
         }
         if (from.isSetNumaTuneMode()) {
-            to.setNumaTuneMode(from.getNumaTuneMode());
+            to.setNumaTuneMode(NumaTuneMode.valueOf(from.getNumaTuneMode()));
         }
         if (from.isSetOrigin()) {
             to.setOrigin(from.getOrigin());
@@ -228,7 +230,7 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(VmType.valueOf(from.getType()));
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptIn(from.getUsb()));

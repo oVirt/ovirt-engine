@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.GraphicsConsole;
+import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3GraphicsConsole;
 
@@ -57,7 +58,7 @@ public class V3GraphicsConsoleInAdapter implements V3Adapter<V3GraphicsConsole, 
             to.setPort(from.getPort());
         }
         if (from.isSetProtocol()) {
-            to.setProtocol(from.getProtocol());
+            to.setProtocol(GraphicsType.valueOf(from.getProtocol()));
         }
         if (from.isSetTemplate()) {
             to.setTemplate(adaptIn(from.getTemplate()));

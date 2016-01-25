@@ -90,7 +90,6 @@ public class BackendOpenStackNetworkProvidersResource
     @Override
     public Response add(OpenStackNetworkProvider provider) {
         validateParameters(provider, "name");
-        validateEnums(OpenStackNetworkProvider.class, provider);
         return performCreate(
             VdcActionType.AddProvider,
             new ProviderParameters(map(provider)),

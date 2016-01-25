@@ -41,7 +41,6 @@ public class BackendVmNicsResource extends AbstractBackendNicsResource implement
 
     @Override
     public Response add(Nic nic) {
-        validateEnums(Nic.class, nic);
         validateParameters(nic, "name");
         return performCreate(
             VdcActionType.AddVmInterface,

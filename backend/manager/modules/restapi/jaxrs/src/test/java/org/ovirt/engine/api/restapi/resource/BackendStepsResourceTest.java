@@ -101,7 +101,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
         Status status = new Status();
         status.setState("started");
         model.setStatus(status);
-        model.setType(StepEnum.EXECUTING.value());
+        model.setType(StepEnum.EXECUTING);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Step);

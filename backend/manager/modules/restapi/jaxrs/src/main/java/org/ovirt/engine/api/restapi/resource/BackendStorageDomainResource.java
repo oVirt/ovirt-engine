@@ -81,7 +81,6 @@ public class BackendStorageDomainResource
 
     @Override
     public StorageDomain update(StorageDomain incoming) {
-        validateEnums(StorageDomain.class, incoming);
         QueryIdResolver<Guid> storageDomainResolver =
                 new QueryIdResolver<>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = getEntity(storageDomainResolver, true);
@@ -198,7 +197,7 @@ public class BackendStorageDomainResource
     }
 
     public static synchronized boolean isIsoDomain(StorageDomain storageDomain) {
-        StorageDomainType type = StorageDomainType.fromValue(storageDomain.getType());
+        StorageDomainType type = storageDomain.getType();
         return type != null && type == StorageDomainType.ISO ? true : false;
     }
 
@@ -209,12 +208,12 @@ public class BackendStorageDomainResource
     }
 
     public static synchronized boolean isExportDomain(StorageDomain storageDomain) {
-        StorageDomainType type = StorageDomainType.fromValue(storageDomain.getType());
+        StorageDomainType type = storageDomain.getType();
         return type != null && type == StorageDomainType.EXPORT ? true : false;
     }
 
     public static synchronized boolean isImageDomain(StorageDomain storageDomain) {
-        StorageDomainType type = StorageDomainType.fromValue(storageDomain.getType());
+        StorageDomainType type = storageDomain.getType();
         return type != null && type == StorageDomainType.IMAGE;
     }
 

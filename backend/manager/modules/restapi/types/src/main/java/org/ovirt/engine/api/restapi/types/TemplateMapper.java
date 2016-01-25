@@ -4,7 +4,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
-import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.Boot;
 
 import org.ovirt.engine.api.model.OperatingSystem;
@@ -34,11 +33,7 @@ public class TemplateMapper extends VmBaseMapper {
         }
 
         if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
-            Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
-
-            if (archType != null) {
-                entity.setClusterArch(CPUMapper.map(archType, null));
-            }
+            entity.setClusterArch(CPUMapper.map(model.getCpu().getArchitecture(), null));
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             if (entity.getVmInit() == null) {

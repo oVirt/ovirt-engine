@@ -7,7 +7,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -111,8 +110,7 @@ public class BackendStorageDomainVmResource
                     continue;
                 }
                 if (modelDisk.isSetFormat()) {
-                    DiskFormat modelDiskFormat = DiskFormat.fromValue(modelDisk.getFormat());
-                    VolumeFormat entityDiskFormat = DiskMapper.map(modelDiskFormat, null);
+                    VolumeFormat entityDiskFormat = DiskMapper.map(modelDisk.getFormat(), null);
                     entityDisk.setvolumeFormat(entityDiskFormat);
                 }
                 if (modelDisk.isSetSparse()) {

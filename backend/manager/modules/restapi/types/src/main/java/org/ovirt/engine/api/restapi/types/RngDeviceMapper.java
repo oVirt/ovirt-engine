@@ -26,7 +26,7 @@ public class RngDeviceMapper {
         }
 
         RngSource restSource = map(entity.getSource(), null);
-        model.setSource(restSource.toString());
+        model.setSource(restSource);
 
         return model;
     }
@@ -60,8 +60,7 @@ public class RngDeviceMapper {
                 }
             }
 
-            RngSource restSource = RngSource.fromValue(model.getSource());
-            VmRngDevice.Source source = VmRngDevice.Source.valueOf(restSource.name());
+            VmRngDevice.Source source = VmRngDevice.Source.valueOf(model.getSource().name());
 
             if (source != null) {
                 dev.setSource(source);
@@ -72,27 +71,22 @@ public class RngDeviceMapper {
         return null;
     }
 
-    public static List<VmRngDevice.Source> mapRngSources(List<String> model) {
+    public static List<VmRngDevice.Source> mapRngSources(List<RngSource> model) {
         List<VmRngDevice.Source> result = new ArrayList<>(model != null? model.size(): 0);
         if (model != null) {
-            for (String sourceString : model) {
-                try {
-                    RngSource source = RngSource.fromValue(sourceString);
-                    result.add(map(source, null));
-                } catch (IllegalArgumentException iae) {
-                    // do nothing - we have illegal string here
-                }
+            for (RngSource source : model) {
+                result.add(map(source, null));
             }
         }
         return result;
     }
 
-    public static List<String> mapRngSources(Collection<VmRngDevice.Source> entity) {
-        List<String> result = new ArrayList<>(entity != null ? entity.size(): 0);
+    public static List<RngSource> mapRngSources(Collection<VmRngDevice.Source> entity) {
+        List<RngSource> result = new ArrayList<>(entity != null ? entity.size(): 0);
         if (entity != null) {
             for (VmRngDevice.Source source : entity) {
                 RngSource restSource = map(source, null);
-                result.add(restSource.name());
+                result.add(restSource);
             }
         }
         return result;

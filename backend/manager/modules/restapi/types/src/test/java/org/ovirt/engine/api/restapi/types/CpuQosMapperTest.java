@@ -16,7 +16,7 @@ public class CpuQosMapperTest extends QosMapperTest {
     @Override
     protected Qos postPopulate(Qos model) {
         model = super.postPopulate(model);
-        model.setType(QosType.CPU.name().toLowerCase());
+        model.setType(QosType.CPU);
         return model;
 
     }

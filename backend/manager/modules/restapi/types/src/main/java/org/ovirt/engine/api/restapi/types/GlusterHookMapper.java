@@ -122,27 +122,27 @@ public class GlusterHookMapper {
         return serverHookModel;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType hookContentType,
-            String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType.class, to = HookContentType.class)
+    public static HookContentType map(org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType hookContentType,
+             HookContentType template) {
         switch (hookContentType) {
         case BINARY:
-            return HookContentType.BINARY.toString();
+            return HookContentType.BINARY;
         case TEXT:
-            return HookContentType.TEXT.toString();
+            return HookContentType.TEXT;
         default:
             return null;
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage hookStage,
-            String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage.class, to = HookStage.class)
+    public static HookStage map(org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage hookStage,
+            HookStage template) {
         switch (hookStage) {
         case POST:
-            return HookStage.POST.toString();
+            return HookStage.POST;
         case PRE:
-            return HookStage.PRE.toString();
+            return HookStage.PRE;
         default:
             return null;
         }

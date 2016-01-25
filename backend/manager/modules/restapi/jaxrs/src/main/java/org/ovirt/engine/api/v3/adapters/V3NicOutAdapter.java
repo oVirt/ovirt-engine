@@ -37,7 +37,7 @@ public class V3NicOutAdapter implements V3Adapter<Nic, V3NIC> {
             to.setActions(adaptOut(from.getActions()));
         }
         if (from.isSetBootProtocol()) {
-            to.setBootProtocol(from.getBootProtocol());
+            to.setBootProtocol(from.getBootProtocol().value());
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
@@ -55,7 +55,7 @@ public class V3NicOutAdapter implements V3Adapter<Nic, V3NIC> {
             to.setInstanceType(adaptOut(from.getInstanceType()));
         }
         if (from.isSetInterface()) {
-            to.setInterface(from.getInterface());
+            to.setInterface(from.getInterface().value());
         }
         if (from.isSetLinked()) {
             to.setLinked(from.isLinked());

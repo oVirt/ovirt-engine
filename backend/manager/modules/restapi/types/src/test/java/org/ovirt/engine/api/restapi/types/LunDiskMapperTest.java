@@ -19,8 +19,8 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
 
     @Override
     protected Disk postPopulate(Disk model) {
-        model.setFormat(MappingTestHelper.shuffle(DiskFormat.class).value());
-        model.setInterface(MappingTestHelper.shuffle(DiskInterface.class).value());
+        model.setFormat(MappingTestHelper.shuffle(DiskFormat.class));
+        model.setInterface(MappingTestHelper.shuffle(DiskInterface.class));
         model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
         model.setLunStorage(new HostStorage());
         return model;

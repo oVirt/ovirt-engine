@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3LogicalUnit;
 
@@ -58,7 +59,7 @@ public class V3LogicalUnitInAdapter implements V3Adapter<V3LogicalUnit, LogicalU
             to.setSize(from.getSize());
         }
         if (from.isSetStatus()) {
-            to.setStatus(from.getStatus());
+            to.setStatus(LunStatus.valueOf(from.getStatus()));
         }
         if (from.isSetStorageDomainId()) {
             to.setStorageDomainId(from.getStorageDomainId());

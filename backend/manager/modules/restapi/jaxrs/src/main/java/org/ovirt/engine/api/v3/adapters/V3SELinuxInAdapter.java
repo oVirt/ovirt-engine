@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import org.ovirt.engine.api.model.SELinux;
+import org.ovirt.engine.api.model.SELinuxMode;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3SELinux;
 
@@ -25,7 +26,7 @@ public class V3SELinuxInAdapter implements V3Adapter<V3SELinux, SELinux> {
     public SELinux adapt(V3SELinux from) {
         SELinux to = new SELinux();
         if (from.isSetMode()) {
-            to.setMode(from.getMode());
+            to.setMode(SELinuxMode.fromValue(from.getMode()));
         }
         return to;
     }

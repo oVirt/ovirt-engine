@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Display;
 
@@ -66,7 +67,7 @@ public class V3DisplayInAdapter implements V3Adapter<V3Display, Display> {
             to.setSmartcardEnabled(from.isSmartcardEnabled());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(DisplayType.valueOf(from.getType()));
         }
         return to;
     }

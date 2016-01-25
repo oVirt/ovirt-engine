@@ -22,8 +22,6 @@ public class BackendVnicProfileResource extends AbstractBackendVnicProfileResour
 
     @Override
     public VnicProfile update(VnicProfile resource) {
-        validateEnums(VnicProfile.class, resource);
-
         return performUpdate(resource,
                 new QueryIdResolver<>(VdcQueryType.GetVnicProfileById, IdQueryParameters.class),
                 VdcActionType.UpdateVnicProfile,

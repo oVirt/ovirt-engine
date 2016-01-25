@@ -30,7 +30,7 @@ public class V3RngDeviceOutAdapter implements V3Adapter<RngDevice, V3RngDevice> 
             to.setRate(adaptOut(from.getRate()));
         }
         if (from.isSetSource()) {
-            to.setSource(from.getSource());
+            to.setSource(from.getSource().value());
         }
         return to;
     }

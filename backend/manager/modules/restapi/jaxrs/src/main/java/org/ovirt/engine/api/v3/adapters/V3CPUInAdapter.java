@@ -18,8 +18,10 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.Cores;
 import org.ovirt.engine.api.model.Cpu;
+import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3CPU;
 
@@ -28,7 +30,7 @@ public class V3CPUInAdapter implements V3Adapter<V3CPU, Cpu> {
     public Cpu adapt(V3CPU from) {
         Cpu to = new Cpu();
         if (from.isSetArchitecture()) {
-            to.setArchitecture(from.getArchitecture());
+            to.setArchitecture(Architecture.valueOf(from.getArchitecture()));
         }
         if (from.isSetCores()) {
             to.setCores(new Cores());
@@ -41,7 +43,7 @@ public class V3CPUInAdapter implements V3Adapter<V3CPU, Cpu> {
             to.setLevel(from.getLevel());
         }
         if (from.isSetMode()) {
-            to.setMode(from.getMode());
+            to.setMode(CpuMode.valueOf(from.getMode()));
         }
         if (from.isSetName()) {
             to.setName(from.getName());

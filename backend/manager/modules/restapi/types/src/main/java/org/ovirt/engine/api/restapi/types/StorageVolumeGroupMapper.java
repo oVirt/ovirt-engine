@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.HostStorage;
-import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
 
 
@@ -22,10 +21,7 @@ public class StorageVolumeGroupMapper {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = template != null ? template : new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setStorage(model.getId());
         if (model.isSetType()) {
-            StorageType storageType = StorageType.fromValue(model.getType());
-            if (storageType != null) {
-                entity.setStorageType(StorageDomainMapper.map(storageType, null));
-            }
+            entity.setStorageType(StorageDomainMapper.map(model.getType(), null));
         }
         return entity;
     }

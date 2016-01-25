@@ -7,8 +7,8 @@ import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageType;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
@@ -23,9 +23,9 @@ public class StorageDomainMapperTest extends
 
     @Override
     protected StorageDomain postPopulate(StorageDomain model) {
-        model.setType(MappingTestHelper.shuffle(StorageDomainType.class).value());
-        model.getStorage().setType(MappingTestHelper.shuffle(StorageType.class).value());
-        model.setStorageFormat(MappingTestHelper.shuffle(StorageFormat.class).value());
+        model.setType(MappingTestHelper.shuffle(StorageDomainType.class));
+        model.getStorage().setType(MappingTestHelper.shuffle(StorageType.class));
+        model.setStorageFormat(MappingTestHelper.shuffle(StorageFormat.class));
         return model;
     }
 
@@ -90,11 +90,11 @@ public class StorageDomainMapperTest extends
                 StorageDomainMapper.map(NfsVersion.V4, null));
         assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.AUTO,
                 StorageDomainMapper.map(NfsVersion.AUTO, null));
-        assertEquals(NfsVersion.V3.value(), StorageDomainMapper.map(org.ovirt.engine.core.common
+        assertEquals(NfsVersion.V3, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.NfsVersion.V3, null));
-        assertEquals(NfsVersion.V4.value(), StorageDomainMapper.map(org.ovirt.engine.core.common
+        assertEquals(NfsVersion.V4, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.NfsVersion.V4, null));
-        assertEquals(NfsVersion.AUTO.value(), StorageDomainMapper.map(org.ovirt.engine.core.common
+        assertEquals(NfsVersion.AUTO, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.NfsVersion.AUTO, null));
     }
 
@@ -112,7 +112,7 @@ public class StorageDomainMapperTest extends
 
         HostStorage RESTConnection = new HostStorage();
         RESTConnection.setId(connId.toString());
-        RESTConnection.setType(StorageType.ISCSI.toString().toLowerCase());
+        RESTConnection.setType(StorageType.ISCSI);
         RESTConnection.setPort(3260);
         RESTConnection.setTarget("iqn.my.target1");
         RESTConnection.setAddress("1.2.135.255");
@@ -143,12 +143,12 @@ public class StorageDomainMapperTest extends
 
         HostStorage RESTConnection = new HostStorage();
         RESTConnection.setId(connId.toString());
-        RESTConnection.setType(StorageType.NFS.toString().toLowerCase());
+        RESTConnection.setType(StorageType.NFS);
         RESTConnection.setAddress("1.2.135.255");
         RESTConnection.setPath("/myshare/data");
         RESTConnection.setNfsRetrans(200);
         RESTConnection.setNfsTimeo(400);
-        RESTConnection.setNfsVersion(NfsVersion.V3.toString());
+        RESTConnection.setNfsVersion(NfsVersion.V3);
         RESTConnection.setMountOptions("tcp");
 
         StorageConnection mappedResult = StorageDomainMapper.map(connection, null);
@@ -174,7 +174,7 @@ public class StorageDomainMapperTest extends
 
         HostStorage RESTConnection = new HostStorage();
         RESTConnection.setId(connId.toString());
-        RESTConnection.setType(StorageType.POSIXFS.toString().toLowerCase());
+        RESTConnection.setType(StorageType.POSIXFS);
         RESTConnection.setAddress("1.2.135.255");
         RESTConnection.setPath("/myshare/data");
         RESTConnection.setVfsType("nfs");
@@ -201,7 +201,7 @@ public class StorageDomainMapperTest extends
 
         StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
-        RESTConnection.setType(StorageType.POSIXFS.toString().toLowerCase());
+        RESTConnection.setType(StorageType.POSIXFS);
         RESTConnection.setAddress("1.2.135.255");
         RESTConnection.setPath("/myshare/data");
         RESTConnection.setVfsType("nfs");
@@ -229,12 +229,12 @@ public class StorageDomainMapperTest extends
 
         StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
-        RESTConnection.setType(StorageType.NFS.toString().toLowerCase());
+        RESTConnection.setType(StorageType.NFS);
         RESTConnection.setAddress("1.2.135.255");
         RESTConnection.setPath("/myshare/data");
         RESTConnection.setNfsRetrans(200);
         RESTConnection.setNfsTimeo(400);
-        RESTConnection.setNfsVersion(NfsVersion.V3.toString());
+        RESTConnection.setNfsVersion(NfsVersion.V3);
         RESTConnection.setMountOptions("tcp");
 
         StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
@@ -261,7 +261,7 @@ public class StorageDomainMapperTest extends
 
         StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
-        RESTConnection.setType(StorageType.ISCSI.toString().toLowerCase());
+        RESTConnection.setType(StorageType.ISCSI);
         RESTConnection.setPort(3260);
         RESTConnection.setTarget("iqn.my.target1");
         RESTConnection.setAddress("1.2.135.255");

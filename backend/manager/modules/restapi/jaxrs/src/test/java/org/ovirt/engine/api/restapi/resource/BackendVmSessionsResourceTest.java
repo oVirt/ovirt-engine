@@ -32,7 +32,6 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
     protected void init() {
         resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
-        resource.setValidatorLocator(validatorLocator);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
     }

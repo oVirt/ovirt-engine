@@ -75,7 +75,6 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     @Override
     public Response add(org.ovirt.engine.api.model.Cluster cluster) {
         validateParameters(cluster, getMandatoryParameters());
-        validateEnums(org.ovirt.engine.api.model.Cluster.class, cluster);
         StoragePool dataCenter = getDataCenter(cluster);
         return performCreate(VdcActionType.AddCluster,
                 createAddCommandParams(cluster, dataCenter),

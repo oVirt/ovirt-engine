@@ -54,7 +54,7 @@ public class V3OpenstackVolumeAuthenticationKeyOutAdapter implements V3Adapter<O
             to.setOpenstackVolumeProvider(adaptOut(from.getOpenstackVolumeProvider()));
         }
         if (from.isSetUsageType()) {
-            to.setUsageType(from.getUsageType());
+            to.setUsageType(from.getUsageType().value());
         }
         if (from.isSetUuid()) {
             to.setUuid(from.getUuid());

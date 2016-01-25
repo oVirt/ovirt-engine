@@ -28,7 +28,7 @@ public class V3AgentConfigurationOutAdapter implements V3Adapter<AgentConfigurat
             to.setAddress(from.getAddress());
         }
         if (from.isSetBrokerType()) {
-            to.setBrokerType(from.getBrokerType());
+            to.setBrokerType(from.getBrokerType().value());
         }
         if (from.isSetNetworkMappings()) {
             to.setNetworkMappings(from.getNetworkMappings());

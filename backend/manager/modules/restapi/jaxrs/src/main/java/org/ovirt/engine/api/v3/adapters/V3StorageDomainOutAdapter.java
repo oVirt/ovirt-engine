@@ -83,10 +83,10 @@ public class V3StorageDomainOutAdapter implements V3Adapter<StorageDomain, V3Sto
             to.setStorage(adaptOut(from.getStorage()));
         }
         if (from.isSetStorageFormat()) {
-            to.setStorageFormat(from.getStorageFormat());
+            to.setStorageFormat(from.getStorageFormat().value());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         if (from.isSetUsed()) {
             to.setUsed(from.getUsed());

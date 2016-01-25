@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.model.VmPoolType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3VmPool;
 
@@ -72,7 +73,7 @@ public class V3VmPoolInAdapter implements V3Adapter<V3VmPool, VmPool> {
             to.setTemplate(adaptIn(from.getTemplate()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(VmPoolType.valueOf(from.getType()));
         }
         if (from.isSetUseLatestTemplateVersion()) {
             to.setUseLatestTemplateVersion(from.isUseLatestTemplateVersion());

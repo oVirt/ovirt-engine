@@ -22,8 +22,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Watchdog;
-import org.ovirt.engine.api.model.WatchdogAction;
-import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.api.resource.VmWatchdogResource;
 import org.ovirt.engine.api.resource.VmWatchdogsResource;
@@ -61,10 +59,9 @@ public class BackendVmWatchdogsResource
 
     public Response add(Watchdog watchdog) {
         validateParameters(watchdog, "action", "model");
-        validateEnums(Watchdog.class, watchdog);
         WatchdogParameters parameters = new WatchdogParameters();
-        parameters.setAction(WatchdogMapper.map(WatchdogAction.fromValue(watchdog.getAction())));
-        parameters.setModel(WatchdogMapper.map(WatchdogModel.fromValue(watchdog.getModel())));
+        parameters.setAction(WatchdogMapper.map(watchdog.getAction()));
+        parameters.setModel(WatchdogMapper.map(watchdog.getModel()));
         parameters.setId(vmId);
         parameters.setVm(true);
         return performCreate(VdcActionType.AddWatchdog, parameters, new WatchdogResolver());

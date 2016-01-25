@@ -166,7 +166,7 @@ public class V3SnapshotOutAdapter implements V3Adapter<Snapshot, V3Snapshot> {
             to.getNics().getNics().addAll(adaptOut(from.getNics().getNics()));
         }
         if (from.isSetNumaTuneMode()) {
-            to.setNumaTuneMode(from.getNumaTuneMode());
+            to.setNumaTuneMode(from.getNumaTuneMode().value());
         }
         if (from.isSetOrigin()) {
             to.setOrigin(from.getOrigin());
@@ -208,7 +208,7 @@ public class V3SnapshotOutAdapter implements V3Adapter<Snapshot, V3Snapshot> {
             to.setSmallIcon(adaptOut(from.getSmallIcon()));
         }
         if (from.isSetSnapshotStatus()) {
-            to.setSnapshotStatus(from.getSnapshotStatus());
+            to.setSnapshotStatus(from.getSnapshotStatus().value());
         }
         if (from.isSetSnapshots()) {
             to.setSnapshots(new V3Snapshots());
@@ -259,7 +259,7 @@ public class V3SnapshotOutAdapter implements V3Adapter<Snapshot, V3Snapshot> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptOut(from.getUsb()));

@@ -19,15 +19,15 @@ public class WatchdogMapperTest {
         entity.setId(Guid.Empty);
         Watchdog model = WatchdogMapper.map(entity, null);
         Assert.assertNotNull(model);
-        Assert.assertEquals(model.getAction(), "reset");
-        Assert.assertEquals(model.getModel(), "i6300esb");
+        Assert.assertEquals(model.getAction(), WatchdogAction.RESET);
+        Assert.assertEquals(model.getModel(), WatchdogModel.I6300ESB);
     }
 
     @Test
     public void mapWatchdog() {
         Watchdog model = new Watchdog();
-        model.setAction("reset");
-        model.setModel("i6300esb");
+        model.setAction(WatchdogAction.RESET);
+        model.setModel(WatchdogModel.I6300ESB);
         model.setId(Guid.Empty.toString());
         VmWatchdog entity = WatchdogMapper.map(model, null);
         Assert.assertNotNull(entity);

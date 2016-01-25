@@ -99,8 +99,8 @@ public class BackendVmWatchdogsResourceTest
 
     private Watchdog getModel() {
         Watchdog watchDog = new Watchdog();
-        watchDog.setAction(WatchdogAction.RESET.name().toLowerCase());
-        watchDog.setModel(WatchdogModel.I6300ESB.name().toLowerCase());
+        watchDog.setAction(WatchdogAction.RESET);
+        watchDog.setModel(WatchdogModel.I6300ESB);
         watchDog.setId(WATCHDOG_ID.toString());
         return watchDog;
     }

@@ -45,7 +45,7 @@ public class V3StepOutAdapter implements V3Adapter<Step, V3Step> {
             to.setExternal(from.isExternal());
         }
         if (from.isSetExternalType()) {
-            to.setExternalType(from.getExternalType());
+            to.setExternalType(from.getExternalType().value());
         }
         if (from.isSetId()) {
             to.setId(from.getId());
@@ -72,7 +72,7 @@ public class V3StepOutAdapter implements V3Adapter<Step, V3Step> {
             to.setStatus(adaptOut(from.getStatus()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         return to;
     }

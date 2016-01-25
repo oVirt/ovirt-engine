@@ -52,7 +52,6 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
     @Override
     public Response add(OpenstackVolumeAuthenticationKey authenticationKey) {
         validateParameters(authenticationKey, "uuid", "value", "usageType");
-        validateEnums(OpenstackVolumeAuthenticationKey.class, authenticationKey);
         return performCreate(
                 VdcActionType.AddLibvirtSecret,
                 new LibvirtSecretParameters(map(addProvider(authenticationKey))),

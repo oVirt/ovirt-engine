@@ -136,6 +136,44 @@
               <includeProjectDependencies>false</includeProjectDependencies>
             </configuration>
           </execution>
+            <execution>
+            <id>generate-enums</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.ovirt.api.metamodel.tool.MainEnums</mainClass>
+              <arguments>
+                <argument>--model</argument>
+                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
+                <argument>--java</argument>
+                <argument>${project.basedir}/target/generated-sources/model</argument>
+                <argument>--version-prefix</argument>
+                <argument>V4</argument>
+              </arguments>
+              <includePluginDependencies>true</includePluginDependencies>
+              <includeProjectDependencies>false</includeProjectDependencies>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-enums-jaxb</id>
+            <phase>process-sources</phase> <!-- TODO: REVISIT phase -->
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>org.ovirt.api.metamodel.tool.MainEnumsJaxb</mainClass>
+              <arguments>
+                <argument>--model</argument>
+                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
+                <argument>--xjc</argument>
+                <argument>${project.basedir}/target/generated-sources/xjc-v4</argument>
+              </arguments>
+              <includePluginDependencies>true</includePluginDependencies>
+              <includeProjectDependencies>false</includeProjectDependencies>
+            </configuration>
+          </execution>
         </executions>
         <dependencies>
           <dependency>

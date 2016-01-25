@@ -15,7 +15,7 @@ public class PolicyUnitMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
-        model.setType(map(entity.getPolicyUnitType(), null).name().toLowerCase());
+        model.setType(map(entity.getPolicyUnitType(), null));
         model.setEnabled(entity.isEnabled());
         model.setInternal(entity.isInternal());
         if (entity.getParameterRegExMap() != null && !entity.getParameterRegExMap().isEmpty()) {
@@ -40,8 +40,7 @@ public class PolicyUnitMapper {
             entity.setDescription(model.getDescription());
         }
         if (model.isSetType()) {
-            entity.setPolicyUnitType(map(org.ovirt.engine.api.model.PolicyUnitType.valueOf(model.getType()
-                    .toUpperCase()), null));
+            entity.setPolicyUnitType(map(model.getType(), null));
         }
         if (model.isSetEnabled()) {
             entity.setEnabled(model.isEnabled());

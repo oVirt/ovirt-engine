@@ -73,13 +73,12 @@ public class VnicProfileMapper {
             model.getQos().setId(entity.getNetworkQosId().toString());
         }
         final VnicPassThrough vnicPassThrough = new VnicPassThrough();
-        vnicPassThrough.setMode(map(entity.isPassthrough()).value());
+        vnicPassThrough.setMode(map(entity.isPassthrough()));
         model.setPassThrough(vnicPassThrough);
         return model;
     }
 
-    private static boolean map(String value) {
-        final VnicPassThroughMode vnicPassThroughMode = VnicPassThroughMode.fromValue(value);
+    private static boolean map(VnicPassThroughMode vnicPassThroughMode) {
         return VnicPassThroughMode.ENABLED == vnicPassThroughMode;
     }
 

@@ -57,7 +57,7 @@ public class V3GraphicsConsoleOutAdapter implements V3Adapter<GraphicsConsole, V
             to.setPort(from.getPort());
         }
         if (from.isSetProtocol()) {
-            to.setProtocol(from.getProtocol());
+            to.setProtocol(from.getProtocol().value());
         }
         if (from.isSetTemplate()) {
             to.setTemplate(adaptOut(from.getTemplate()));

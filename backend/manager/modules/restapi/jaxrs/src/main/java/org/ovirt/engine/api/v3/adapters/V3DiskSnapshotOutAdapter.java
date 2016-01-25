@@ -60,7 +60,7 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
             to.setDiskProfile(adaptOut(from.getDiskProfile()));
         }
         if (from.isSetFormat()) {
-            to.setFormat(from.getFormat());
+            to.setFormat(from.getFormat().value());
         }
         if (from.isSetId()) {
             to.setId(from.getId());
@@ -75,7 +75,7 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
             to.setInstanceType(adaptOut(from.getInstanceType()));
         }
         if (from.isSetInterface()) {
-            to.setInterface(from.getInterface());
+            to.setInterface(from.getInterface().value());
         }
         if (from.isSetLogicalName()) {
             to.setLogicalName(from.getLogicalName());
@@ -102,7 +102,7 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
             to.setReadOnly(from.isReadOnly());
         }
         if (from.isSetSgio()) {
-            to.setSgio(from.getSgio());
+            to.setSgio(from.getSgio().value());
         }
         if (from.isSetShareable()) {
             to.setShareable(from.isShareable());
@@ -128,7 +128,7 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
             to.getStorageDomains().getStorageDomains().addAll(adaptOut(from.getStorageDomains().getStorageDomains()));
         }
         if (from.isSetStorageType()) {
-            to.setStorageType(from.getStorageType());
+            to.setStorageType(from.getStorageType().value());
         }
         if (from.isSetTemplate()) {
             to.setTemplate(adaptOut(from.getTemplate()));

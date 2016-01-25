@@ -19,6 +19,8 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.api.model.QuotaModeType;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.model.Versions;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3DataCenter;
@@ -55,13 +57,13 @@ public class V3DataCenterInAdapter implements V3Adapter<V3DataCenter, DataCenter
             to.setName(from.getName());
         }
         if (from.isSetQuotaMode()) {
-            to.setQuotaMode(from.getQuotaMode());
+            to.setQuotaMode(QuotaModeType.valueOf(from.getQuotaMode()));
         }
         if (from.isSetStatus()) {
             to.setStatus(adaptIn(from.getStatus()));
         }
         if (from.isSetStorageFormat()) {
-            to.setStorageFormat(from.getStorageFormat());
+            to.setStorageFormat(StorageFormat.valueOf(from.getStorageFormat()));
         }
         if (from.isSetSupportedVersions()) {
             to.setSupportedVersions(new Versions());

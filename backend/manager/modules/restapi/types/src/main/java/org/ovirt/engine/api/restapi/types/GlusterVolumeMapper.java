@@ -30,15 +30,11 @@ public class GlusterVolumeMapper {
         }
 
         if(fromVolume.isSetVolumeType()) {
-            GlusterVolumeType volumeType = GlusterVolumeType.fromValue(fromVolume.getVolumeType().toUpperCase());
-            if (volumeType != null) {
-                volume.setVolumeType(map(volumeType, null));
-            }
+            volume.setVolumeType(map(fromVolume.getVolumeType(), null));
         }
 
         if(fromVolume.isSetTransportTypes()) {
-            for (String transportTypeStr : fromVolume.getTransportTypes().getTransportTypes()) {
-                TransportType transportType = TransportType.fromValue(transportTypeStr.toUpperCase());
+            for (TransportType transportType : fromVolume.getTransportTypes().getTransportTypes()) {
                 if (transportType != null) {
                     volume.addTransportType(map(transportType, null));
                 }
@@ -92,7 +88,7 @@ public class GlusterVolumeMapper {
         }
 
         if (fromVolume.getTransportTypes() != null) {
-            ArrayList<String> transportTypeList = new ArrayList<>();
+            ArrayList<TransportType> transportTypeList = new ArrayList<>();
             for (org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType : fromVolume.getTransportTypes()) {
                 transportTypeList.add(map(transportType, null));
             }
@@ -159,28 +155,28 @@ public class GlusterVolumeMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType glusterVolumeType,
-            String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.class, to = GlusterVolumeType.class)
+    public static GlusterVolumeType map(org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType glusterVolumeType,
+            GlusterVolumeType template) {
         switch (glusterVolumeType) {
         case DISTRIBUTE:
-            return GlusterVolumeType.DISTRIBUTE.value();
+            return GlusterVolumeType.DISTRIBUTE;
         case REPLICATE:
-            return GlusterVolumeType.REPLICATE.value();
+            return GlusterVolumeType.REPLICATE;
         case DISTRIBUTED_REPLICATE:
-            return GlusterVolumeType.DISTRIBUTED_REPLICATE.value();
+            return GlusterVolumeType.DISTRIBUTED_REPLICATE;
         case STRIPE:
-            return GlusterVolumeType.STRIPE.value();
+            return GlusterVolumeType.STRIPE;
         case DISTRIBUTED_STRIPE:
-            return GlusterVolumeType.DISTRIBUTED_STRIPE.value();
+            return GlusterVolumeType.DISTRIBUTED_STRIPE;
         case STRIPED_REPLICATE:
-            return GlusterVolumeType.STRIPED_REPLICATE.value();
+            return GlusterVolumeType.STRIPED_REPLICATE;
         case DISTRIBUTED_STRIPED_REPLICATE:
-            return GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE.value();
+            return GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE;
         case DISPERSE:
-            return GlusterVolumeType.DISPERSE.value();
+            return GlusterVolumeType.DISPERSE;
         case DISTRIBUTED_DISPERSE:
-            return GlusterVolumeType.DISTRIBUTED_DISPERSE.value();
+            return GlusterVolumeType.DISTRIBUTED_DISPERSE;
         default:
             return null;
         }
@@ -200,14 +196,14 @@ public class GlusterVolumeMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.TransportType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType,
-            String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.TransportType.class, to = TransportType.class)
+    public static TransportType map(org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType,
+            TransportType template) {
         switch (transportType) {
         case TCP:
-            return TransportType.TCP.value();
+            return TransportType.TCP;
         case RDMA:
-            return TransportType.RDMA.value();
+            return TransportType.RDMA;
         default:
             return null;
         }
@@ -229,16 +225,16 @@ public class GlusterVolumeMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol accessProtocol,
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.class, to = AccessProtocol.class)
+    public static AccessProtocol map(org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol accessProtocol,
             String template) {
         switch (accessProtocol) {
         case GLUSTER:
-            return AccessProtocol.GLUSTER.value();
+            return AccessProtocol.GLUSTER;
         case NFS:
-            return AccessProtocol.NFS.value();
+            return AccessProtocol.NFS;
         case CIFS:
-            return AccessProtocol.CIFS.value();
+            return AccessProtocol.CIFS;
         default:
             return null;
         }

@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 
 public class PolicyUnitMapperTest extends AbstractInvertibleMappingTest<SchedulingPolicyUnit, PolicyUnit, PolicyUnit> {
 
@@ -29,7 +28,7 @@ public class PolicyUnitMapperTest extends AbstractInvertibleMappingTest<Scheduli
     @Override
     protected SchedulingPolicyUnit postPopulate(SchedulingPolicyUnit model) {
         model = super.postPopulate(model);
-        model.setType(MappingTestHelper.shuffle(PolicyUnitType.class).name().toLowerCase());
+        model.setType(MappingTestHelper.shuffle(org.ovirt.engine.api.model.PolicyUnitType.class));
         return model;
     }
 

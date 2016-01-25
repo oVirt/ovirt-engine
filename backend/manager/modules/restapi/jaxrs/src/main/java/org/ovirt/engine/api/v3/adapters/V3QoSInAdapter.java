@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Qos;
+import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3QoS;
 
@@ -99,7 +100,7 @@ public class V3QoSInAdapter implements V3Adapter<V3QoS, Qos> {
             to.setOutboundPeak(from.getOutboundPeak());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(QosType.valueOf(from.getType()));
         }
         return to;
     }

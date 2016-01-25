@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -36,22 +35,13 @@ public class StorageDomainMapper {
             entity.setComment(model.getComment());
         }
         if (model.isSetType()) {
-            StorageDomainType storageDomainType = StorageDomainType.fromValue(model.getType());
-            if (storageDomainType != null) {
-                entity.setStorageDomainType(map(storageDomainType, null));
-            }
+            entity.setStorageDomainType(map(model.getType(), null));
         }
         if (model.isSetStorage() && model.getStorage().isSetType()) {
-            StorageType storageType = StorageType.fromValue(model.getStorage().getType());
-            if (storageType != null) {
-                entity.setStorageType(map(storageType, null));
-            }
+            entity.setStorageType(map(model.getStorage().getType(), null));
         }
         if (model.isSetStorageFormat()) {
-            StorageFormat storageFormat = StorageFormat.fromValue(model.getStorageFormat());
-            if (storageFormat != null) {
-                entity.setStorageFormat(StorageFormatMapper.map(storageFormat, null));
-            }
+            entity.setStorageFormat(StorageFormatMapper.map(model.getStorageFormat(), null));
         }
         if (model.isSetWipeAfterDelete()) {
             entity.setWipeAfterDelete(model.isWipeAfterDelete());
@@ -70,7 +60,7 @@ public class StorageDomainMapper {
         StorageServerConnections entity = template != null ? template : new StorageServerConnections();
         if (model.isSetStorage() && model.getStorage().isSetType()) {
             HostStorage storage = model.getStorage();
-            StorageType storageType = StorageType.fromValue(storage.getType());
+            StorageType storageType = storage.getType();
             if (storageType != null) {
                 entity.setStorageType(map(storageType, null));
                 switch (storageType) {
@@ -91,10 +81,7 @@ public class StorageDomainMapper {
                         entity.setNfsTimeo(storage.getNfsTimeo().shortValue());
                     }
                     if(storage.getNfsVersion() != null) {
-                        NfsVersion nfsVersion = NfsVersion.fromValue(storage.getNfsVersion());
-                        if (nfsVersion != null) {
-                            entity.setNfsVersion(map(nfsVersion, null));
-                        }
+                        entity.setNfsVersion(map(storage.getNfsVersion(), null));
                     }
                     if (storage.isSetMountOptions()) {
                         entity.setMountOptions(storage.getMountOptions());
@@ -167,10 +154,7 @@ public class StorageDomainMapper {
         model.setCommitted(SizeConverter.convert(entity.getCommittedDiskSize(),
                 SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
         if (entity.getStorageFormat()!= null) {
-            String storageFormat = StorageFormatMapper.map(entity.getStorageFormat(), null).value();
-            if (storageFormat != null) {
-                model.setStorageFormat(storageFormat);
-            }
+            model.setStorageFormat(StorageFormatMapper.map(entity.getStorageFormat(), null));
         }
         model.setWipeAfterDelete(entity.getWipeAfterDelete());
         return model;
@@ -184,7 +168,7 @@ public class StorageDomainMapper {
         }
         org.ovirt.engine.core.common.businessentities.storage.StorageType storageType = null;
         if (model.getType() != null) {
-           storageType = map(StorageType.fromValue(model.getType()), null);
+           storageType = map(model.getType(), null);
         }
         else if (template != null) {
            storageType = template.getStorageType();
@@ -242,10 +226,7 @@ public class StorageDomainMapper {
                     entity.setNfsTimeo(model.getNfsTimeo().shortValue());
                 }
                 if (model.getNfsVersion() != null) {
-                    NfsVersion nfsVersion = NfsVersion.fromValue(model.getNfsVersion());
-                    if (nfsVersion != null) {
-                        entity.setNfsVersion(map(nfsVersion, null));
-                    }
+                    entity.setNfsVersion(map(model.getNfsVersion(), null));
                 }
                 if (model.isSetMountOptions()) {
                     entity.setMountOptions(model.getMountOptions());
@@ -294,7 +275,7 @@ public class StorageDomainMapper {
         }
         if (entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS)) {
             if (entity.getNfsVersion() != null) {
-                model.setNfsVersion(entity.getNfsVersion().toString());
+                model.setNfsVersion(map(entity.getNfsVersion(), null));
             }
             if (entity.getNfsRetrans() != null) {
                 model.setNfsRetrans(entity.getNfsRetrans().intValue());
@@ -350,25 +331,25 @@ public class StorageDomainMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.StorageType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.storage.StorageType storageType, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.StorageType.class, to = StorageType.class)
+    public static StorageType map(org.ovirt.engine.core.common.businessentities.storage.StorageType storageType, StorageType template) {
         switch (storageType) {
         case ISCSI:
-            return StorageType.ISCSI.value();
+            return StorageType.ISCSI;
         case FCP:
-            return StorageType.FCP.value();
+            return StorageType.FCP;
         case NFS:
-            return StorageType.NFS.value();
+            return StorageType.NFS;
         case LOCALFS:
-            return StorageType.LOCALFS.value();
+            return StorageType.LOCALFS;
         case POSIXFS:
-            return StorageType.POSIXFS.value();
+            return StorageType.POSIXFS;
         case GLUSTERFS:
-            return StorageType.GLUSTERFS.value();
+            return StorageType.GLUSTERFS;
         case GLANCE:
-            return StorageType.GLANCE.value();
+            return StorageType.GLANCE;
         case CINDER:
-            return StorageType.CINDER.value();
+            return StorageType.CINDER;
         default:
             return null;
         }
@@ -394,22 +375,22 @@ public class StorageDomainMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageDomainType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.StorageDomainType storageDomainType,
-            String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageDomainType.class, to = StorageDomainType.class)
+    public static StorageDomainType map(org.ovirt.engine.core.common.businessentities.StorageDomainType storageDomainType,
+            StorageDomainType template) {
         switch (storageDomainType) {
         case Master:
-            return StorageDomainType.DATA.value();
+            return StorageDomainType.DATA;
         case Data:
-            return StorageDomainType.DATA.value();
+            return StorageDomainType.DATA;
         case ISO:
-            return StorageDomainType.ISO.value();
+            return StorageDomainType.ISO;
         case ImportExport:
-            return StorageDomainType.EXPORT.value();
+            return StorageDomainType.EXPORT;
         case Image:
-            return StorageDomainType.IMAGE.value();
+            return StorageDomainType.IMAGE;
         case Volume:
-            return StorageDomainType.VOLUME.value();
+            return StorageDomainType.VOLUME;
         case Unknown:
         default:
             return null;
@@ -464,17 +445,17 @@ public class StorageDomainMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.NfsVersion.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.NfsVersion version, String outgoing) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.NfsVersion.class, to = NfsVersion.class)
+    public static NfsVersion map(org.ovirt.engine.core.common.businessentities.NfsVersion version, NfsVersion outgoing) {
         switch(version) {
         case V3:
-            return NfsVersion.V3.value();
+            return NfsVersion.V3;
         case V4:
-            return NfsVersion.V4.value();
+            return NfsVersion.V4;
         case V4_1:
-            return NfsVersion.V4_1.value();
+            return NfsVersion.V4_1;
         case AUTO:
-            return NfsVersion.AUTO.value();
+            return NfsVersion.AUTO;
         default:
             return null;
         }

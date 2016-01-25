@@ -58,7 +58,7 @@ public class V3LogicalUnitOutAdapter implements V3Adapter<LogicalUnit, V3Logical
             to.setSize(from.getSize());
         }
         if (from.isSetStatus()) {
-            to.setStatus(from.getStatus());
+            to.setStatus(from.getStatus().value());
         }
         if (from.isSetStorageDomainId()) {
             to.setStorageDomainId(from.getStorageDomainId());

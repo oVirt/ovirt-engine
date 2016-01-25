@@ -20,6 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Ips;
 import org.ovirt.engine.api.model.ReportedDevice;
+import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3ReportedDevice;
 
@@ -56,7 +57,7 @@ public class V3ReportedDeviceInAdapter implements V3Adapter<V3ReportedDevice, Re
             to.setName(from.getName());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(ReportedDeviceType.valueOf(from.getType()));
         }
         if (from.isSetVm()) {
             to.setVm(adaptIn(from.getVm()));

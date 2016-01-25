@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.model.Architecture;
+import org.ovirt.engine.api.model.Cluster.RequiredRngSourcesList;
 import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
@@ -43,11 +43,7 @@ public class ClusterMapper {
             entity.setCpuName(model.getCpu().getType());
         }
         if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
-            Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
-
-            if (archType != null) {
-                entity.setArchitecture(CPUMapper.map(archType, null));
-            }
+            entity.setArchitecture(CPUMapper.map(model.getCpu().getArchitecture(), null));
         }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
             entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter().getId()));
@@ -191,7 +187,7 @@ public class ClusterMapper {
         }
 
         if (entity.getRequiredRngSources() != null) {
-            model.setRequiredRngSources(new org.ovirt.engine.api.model.Cluster.RequiredRngSourcesList());
+            model.setRequiredRngSources(new RequiredRngSourcesList());
             model.getRequiredRngSources().getRequiredRngSources().addAll(RngDeviceMapper.mapRngSources(entity.getRequiredRngSources()));
         }
         model.setMigration(MigrationOptionsMapper.map(entity, null));
@@ -272,16 +268,6 @@ public class ClusterMapper {
         }
     }
 
-    @Mapping(from = String.class, to = MigrateOnErrorOptions.class)
-    private static MigrateOnErrorOptions map(String migrateOnError, MigrateOnErrorOptions template) {
-        try {
-            MigrateOnError value = MigrateOnError.fromValue(migrateOnError);
-            return map(value, template);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
     @Mapping(from = MigrateOnErrorOptions.class, to = ErrorHandling.class)
     private static ErrorHandling map(MigrateOnErrorOptions migrateOnError, ErrorHandling template) {
         MigrateOnError value = map(migrateOnError, (MigrateOnError)null);
@@ -289,7 +275,7 @@ public class ClusterMapper {
             return null;
         } else {
             template = template==null ? new ErrorHandling() : template;
-            template.setOnError(value.value());
+            template.setOnError(value);
             return template;
         }
     }

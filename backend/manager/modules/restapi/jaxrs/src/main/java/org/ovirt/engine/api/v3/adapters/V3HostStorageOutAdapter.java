@@ -66,7 +66,7 @@ public class V3HostStorageOutAdapter implements V3Adapter<HostStorage, V3Storage
             to.setNfsTimeo(from.getNfsTimeo());
         }
         if (from.isSetNfsVersion()) {
-            to.setNfsVersion(from.getNfsVersion());
+            to.setNfsVersion(from.getNfsVersion().value());
         }
         if (from.isSetOverrideLuns()) {
             to.setOverrideLuns(from.isOverrideLuns());
@@ -87,7 +87,7 @@ public class V3HostStorageOutAdapter implements V3Adapter<HostStorage, V3Storage
             to.setTarget(from.getTarget());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         if (from.isSetUsername()) {
             to.setUsername(from.getUsername());

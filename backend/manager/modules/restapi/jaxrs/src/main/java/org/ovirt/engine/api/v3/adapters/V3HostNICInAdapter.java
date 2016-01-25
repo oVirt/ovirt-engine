@@ -18,6 +18,7 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.model.Properties;
@@ -42,7 +43,7 @@ public class V3HostNICInAdapter implements V3Adapter<V3HostNIC, HostNic> {
             to.setBonding(adaptIn(from.getBonding()));
         }
         if (from.isSetBootProtocol()) {
-            to.setBootProtocol(from.getBootProtocol());
+            to.setBootProtocol(BootProtocol.valueOf(from.getBootProtocol()));
         }
         if (from.isSetBridged()) {
             to.setBridged(from.isBridged());

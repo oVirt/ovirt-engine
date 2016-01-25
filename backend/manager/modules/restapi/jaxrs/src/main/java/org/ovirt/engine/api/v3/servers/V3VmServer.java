@@ -67,8 +67,8 @@ public class V3VmServer extends V3Server<VmResource> {
     @Consumes({"application/xml", "application/json"})
     @Actionable
     @Path("clone")
-    public Response clone(V3Action action) {
-        return adaptAction(getDelegate()::clone, action);
+    public Response doClone(V3Action action) {
+        return adaptAction(getDelegate()::doClone, action);
     }
 
     @POST

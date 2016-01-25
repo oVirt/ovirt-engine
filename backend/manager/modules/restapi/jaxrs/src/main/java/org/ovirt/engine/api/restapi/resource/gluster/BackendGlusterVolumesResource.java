@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -84,8 +82,6 @@ public class BackendGlusterVolumesResource
     public Response add(GlusterVolume volume) {
         validateParameters(volume, "name", "volumeType", "bricks");
 
-        validateEnumParameters(volume);
-
         GlusterVolumeEntity volumeEntity = getMapper(GlusterVolume.class, GlusterVolumeEntity.class).map(volume, null);
         volumeEntity.setClusterId(asGuid(parent.get().getId()));
         mapBricks(volume, volumeEntity);
@@ -94,14 +90,6 @@ public class BackendGlusterVolumesResource
                 new CreateGlusterVolumeParameters(volumeEntity, isForce()),
                 new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
                 true);
-    }
-
-    private void validateEnumParameters(GlusterVolume volume) {
-        validateEnum(GlusterVolumeType.class, volume.getVolumeType().toUpperCase());
-
-        if (volume.isSetTransportTypes()) {
-            validateEnumValues(TransportType.class, convertToUppercase(volume.getTransportTypes().getTransportTypes()));
-        }
     }
 
     public static List<String> convertToUppercase(List<String> list) {

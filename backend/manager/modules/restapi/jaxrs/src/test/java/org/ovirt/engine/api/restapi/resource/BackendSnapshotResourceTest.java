@@ -76,7 +76,7 @@ public class BackendSnapshotResourceTest
         assertNotNull(snapshot.getInitialization());
         assertNotNull(snapshot.getInitialization().getConfiguration());
         assertEquals(ovfData, snapshot.getInitialization().getConfiguration().getData());
-        assertEquals(ConfigurationType.OVF.value(), snapshot.getInitialization().getConfiguration().getType());
+        assertEquals(ConfigurationType.OVF, snapshot.getInitialization().getConfiguration().getType());
     }
 
     @Test

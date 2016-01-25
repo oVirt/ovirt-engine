@@ -27,11 +27,11 @@ public class MigrationOptionsMapper {
         }
     }
 
-    private static String mapToInheritableBoolean(Boolean value) {
-        return InheritableBooleanMapper.map(value).value();
+    private static InheritableBoolean mapToInheritableBoolean(Boolean value) {
+        return InheritableBooleanMapper.map(value);
     }
 
-    public static Boolean mapFromInheritableBoolean(String value) {
-        return InheritableBooleanMapper.map(InheritableBoolean.fromValue(value));
+    public static Boolean mapFromInheritableBoolean(InheritableBoolean value) {
+        return InheritableBooleanMapper.map(value);
     }
 }

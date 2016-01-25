@@ -49,7 +49,7 @@ public class BackendDisksResource
     private void updateStorageTypeForDisk(Disk disk, Guid storageDomainId) {
         org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(storageDomainId);
         if (storageDomain != null) {
-            disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
+            disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()));
         }
     }
 
@@ -76,7 +76,7 @@ public class BackendDisksResource
         validateParameters(disk, 2, "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
             validateParameters(disk.getLunStorage(), 2, "type"); // when creating a LUN disk, user must specify type.
-            StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
+            StorageType storageType = disk.getLunStorage().getType();
             if (storageType != null && storageType == StorageType.ISCSI) {
                 validateParameters(disk.getLunStorage().getLogicalUnits().getLogicalUnits().get(0), 3, "address",
                         "target", "port", "id");
@@ -90,7 +90,6 @@ public class BackendDisksResource
         } else {
             validateParameters(disk, 2, "provisionedSize|size", "format"); // Non lun disks require size and format
         }
-        validateEnums(Disk.class, disk);
     }
 
     private Guid getStorageDomainIdByName(String storageDomainName) {

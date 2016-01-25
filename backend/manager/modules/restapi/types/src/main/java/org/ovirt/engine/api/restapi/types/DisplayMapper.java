@@ -74,7 +74,7 @@ public class DisplayMapper {
         }
 
         if (vm.isSetDisplay() && vm.getDisplay().isSetType()) {
-            DisplayType displayType = DisplayType.fromValue(vm.getDisplay().getType());
+            DisplayType displayType = vm.getDisplay().getType();
             if (displayType != null) {
                 org.ovirt.engine.core.common.businessentities.DisplayType display = mapDisplayType(displayType, null);
                 if (display != null) {

@@ -962,9 +962,9 @@
   </xs:complexType>
 
   <!-- Users & Roles -->
-  <xs:element name="authentication_methods" type="AuthenticationMethod"/>
+  <xs:element name="authentication_methods" type="AuthenticationMethods"/>
 
-  <xs:complexType name="AuthenticationMethod">
+  <xs:complexType name="AuthenticationMethods">
     <xs:sequence>
       <xs:element name="authentication_method" type="xs:string" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>

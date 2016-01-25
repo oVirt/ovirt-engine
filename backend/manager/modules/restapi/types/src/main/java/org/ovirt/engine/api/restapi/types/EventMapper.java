@@ -26,7 +26,7 @@ public class EventMapper {
         Event model = event != null ? event : new Event();
         model.setId(String.valueOf(entity.getAuditLogId()));
         model.setCode(entity.getLogType().getValue());
-        model.setSeverity(map(entity.getSeverity(), null).value());
+        model.setSeverity(map(entity.getSeverity(), null));
         model.setTime(TypeConversionHelper.toXMLGregorianCalendar(entity
                 .getLogTime(), null));
         model.setDescription(entity.getMessage());
@@ -141,6 +141,7 @@ public class EventMapper {
         }
         return auditLog;
     }
+
     @Mapping(from = AuditLogSeverity.class, to = LogSeverity.class)
     public static LogSeverity map(AuditLogSeverity entityStatus,
             LogSeverity template) {
@@ -158,21 +159,18 @@ public class EventMapper {
         }
     }
 
-    @Mapping(from = String.class, to = AuditLogSeverity.class)
-    public static AuditLogSeverity map(String template, AuditLogSeverity entityStatus) {
-        if (AuditLogSeverity.NORMAL.name().equalsIgnoreCase(template)) {
-            return AuditLogSeverity.NORMAL;
-        }
-        else if (AuditLogSeverity.WARNING.name().equalsIgnoreCase(template)) {
-            return AuditLogSeverity.WARNING;
-        }
-        else if (AuditLogSeverity.ERROR.name().equalsIgnoreCase(template)) {
-            return AuditLogSeverity.ERROR;
-        }
-        else if (AuditLogSeverity.ALERT.name().equalsIgnoreCase(template)) {
+    @Mapping(from = LogSeverity.class, to = AuditLogSeverity.class)
+    public static AuditLogSeverity map(LogSeverity template, AuditLogSeverity entityStatus) {
+        switch (template) {
+        case ALERT:
             return AuditLogSeverity.ALERT;
-        }
-        else {
+        case ERROR:
+            return AuditLogSeverity.ERROR;
+        case NORMAL:
+            return AuditLogSeverity.NORMAL;
+        case WARNING:
+            return AuditLogSeverity.WARNING;
+        default:
             return null;
         }
     }

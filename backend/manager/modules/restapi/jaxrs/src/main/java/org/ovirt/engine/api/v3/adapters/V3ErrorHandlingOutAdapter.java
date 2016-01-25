@@ -25,7 +25,7 @@ public class V3ErrorHandlingOutAdapter implements V3Adapter<ErrorHandling, V3Err
     public V3ErrorHandling adapt(ErrorHandling from) {
         V3ErrorHandling to = new V3ErrorHandling();
         if (from.isSetOnError()) {
-            to.setOnError(from.getOnError());
+            to.setOnError(from.getOnError().value());
         }
         return to;
     }

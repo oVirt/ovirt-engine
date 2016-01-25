@@ -15,7 +15,6 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.api.restapi.resource.validation.Validator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
@@ -321,14 +320,6 @@ public class BackendResource extends BaseBackendResource {
 
     static String asString(Version version) {
         return version == null ? null : MessageFormat.format(VERSION_FORMAT, version.getMajor(), version.getMinor());
-    }
-
-    protected <E> Validator<E> getValidator(Class<E> validatedClass) {
-        return getValidatorLocator().getValidator(validatedClass);
-    }
-
-    protected <E> void validateEnums(Class<E> validatedClass, E instance) {
-        getValidator(validatedClass).validateEnums(instance);
     }
 
     /**

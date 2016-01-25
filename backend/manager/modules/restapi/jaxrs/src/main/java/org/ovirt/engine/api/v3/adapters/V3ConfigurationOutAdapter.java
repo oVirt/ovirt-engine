@@ -28,7 +28,7 @@ public class V3ConfigurationOutAdapter implements V3Adapter<Configuration, V3Con
             to.setData(from.getData());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         return to;
     }

@@ -80,7 +80,6 @@ public class BackendOpenStackSubnetsResource
 
     @Override
     public Response add(OpenStackSubnet subnet) {
-        validateEnums(OpenStackSubnet.class, subnet);
         AddExternalSubnetParameters parameters = new AddExternalSubnetParameters();
         parameters.setSubnet(map(subnet));
         parameters.setProviderId(asGuid(providerId));

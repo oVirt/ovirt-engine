@@ -90,7 +90,7 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNic, Vd
     protected HostNic postPopulate(HostNic model) {
         HostNic hostNIC = super.postPopulate(model);
         Qos qos = hostNIC.getQos();
-        qos.setType(QosType.HOSTNETWORK.name());
+        qos.setType(QosType.HOSTNETWORK);
         qos.setName(null);
         qos.setDataCenter(null);
         return hostNIC;

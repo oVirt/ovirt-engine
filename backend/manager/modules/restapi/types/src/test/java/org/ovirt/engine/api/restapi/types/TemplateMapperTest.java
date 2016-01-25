@@ -28,11 +28,11 @@ public class TemplateMapperTest
 
     @Override
     protected Template postPopulate(Template from) {
-        from.setType(MappingTestHelper.shuffle(VmType.class).value());
+        from.setType(MappingTestHelper.shuffle(VmType.class));
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
-        List<String> devices = from.getOs().getBoot().getDevices().getDevices();
+        List<BootDevice> devices = from.getOs().getBoot().getDevices().getDevices();
         for (int i = 0; i < devices.size(); i++) {
-            devices.set(i, MappingTestHelper.shuffle(BootDevice.class).value());
+            devices.set(i, MappingTestHelper.shuffle(BootDevice.class));
         }
         while (from.getCpu().getTopology().getSockets() == 0) {
             from.getCpu().getTopology().setSockets(MappingTestHelper.rand(100));
@@ -42,9 +42,9 @@ public class TemplateMapperTest
         }
         from.setTimeZone(new TimeZone());
         from.getTimeZone().setName("Australia/Darwin");
-        from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
-        from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
-        from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
+        from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM);
+        from.getMigration().setAutoConverge(InheritableBoolean.TRUE);
+        from.getMigration().setCompressed(InheritableBoolean.TRUE);
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
         return from;
     }

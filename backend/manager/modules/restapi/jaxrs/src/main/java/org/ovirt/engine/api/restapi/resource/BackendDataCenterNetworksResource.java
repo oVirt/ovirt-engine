@@ -27,7 +27,6 @@ public class BackendDataCenterNetworksResource extends BackendNetworksResource {
     @Override
     public Response add(Network network) {
         validateParameters(network, getRequiredAddFields());
-        validateEnums(Network.class, network);
         DataCenter dataCenter = new DataCenter();
         dataCenter.setId(dataCenterId.toString());
         network.setDataCenter(dataCenter);

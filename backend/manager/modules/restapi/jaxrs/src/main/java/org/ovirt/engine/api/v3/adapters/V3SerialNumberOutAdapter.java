@@ -25,7 +25,7 @@ public class V3SerialNumberOutAdapter implements V3Adapter<SerialNumber, V3Seria
     public V3SerialNumber adapt(SerialNumber from) {
         V3SerialNumber to = new V3SerialNumber();
         if (from.isSetPolicy()) {
-            to.setPolicy(from.getPolicy());
+            to.setPolicy(from.getPolicy().value());
         }
         if (from.isSetValue()) {
             to.setValue(from.getValue());

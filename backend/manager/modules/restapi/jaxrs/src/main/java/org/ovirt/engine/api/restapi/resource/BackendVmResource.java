@@ -150,7 +150,6 @@ public class BackendVmResource
 
     @Override
     public Vm update(Vm incoming) {
-        validateEnums(Vm.class, incoming);
         validateParameters(incoming);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
@@ -328,7 +327,7 @@ public class BackendVmResource
     }
 
     @Override
-    public Response clone(Action action) {
+    public Response doClone(Action action) {
         validateParameters(action, "vm.name");
 
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(
@@ -393,7 +392,6 @@ public class BackendVmResource
         VdcActionType actionType;
         if (action.isSetVm()) {
             Vm vm = action.getVm();
-            validateEnums(Vm.class, vm);
             actionType = VdcActionType.RunVmOnce;
             params = createRunVmOnceParams(vm);
         } else {

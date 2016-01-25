@@ -90,7 +90,6 @@ public class BackendVmNicResource
 
     @Override
     public Nic update(Nic nic) {
-        validateEnums(Nic.class, nic);
         return performUpdate(
                 nic,
                 new NicResolver(),

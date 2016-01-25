@@ -34,6 +34,7 @@ import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
+import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -143,8 +144,8 @@ public class BackendVmDisksResourceTest
 
     static Disk getModel(int index) {
         Disk model = new Disk();
-        model.setFormat(DiskFormat.COW.toString());
-        model.setInterface(DiskInterface.VirtIO.toString());
+        model.setFormat(DiskFormat.COW);
+        model.setInterface(org.ovirt.engine.api.model.DiskInterface.VIRTIO);
         model.setSparse(true);
         model.setBootable(false);
         model.setShareable(false);
@@ -649,7 +650,7 @@ public class BackendVmDisksResourceTest
     private Disk createIscsiLunDisk() {
         Disk model = getModel(0);
         model.setLunStorage(new HostStorage());
-        model.getLunStorage().setType("iscsi");
+        model.getLunStorage().setType(StorageType.ISCSI);
         model.getLunStorage().setLogicalUnits(new LogicalUnits());
         model.getLunStorage().getLogicalUnits().getLogicalUnits().add(new LogicalUnit());
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setId(GUIDS[0].toString());

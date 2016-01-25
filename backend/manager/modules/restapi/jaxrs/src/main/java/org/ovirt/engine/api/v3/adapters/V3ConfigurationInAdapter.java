@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import org.ovirt.engine.api.model.Configuration;
+import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Configuration;
 
@@ -28,7 +29,7 @@ public class V3ConfigurationInAdapter implements V3Adapter<V3Configuration, Conf
             to.setData(from.getData());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(ConfigurationType.valueOf(from.getType()));
         }
         return to;
     }

@@ -180,7 +180,7 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
             to.getNics().getNics().addAll(adaptOut(from.getNics().getNics()));
         }
         if (from.isSetNumaTuneMode()) {
-            to.setNumaTuneMode(from.getNumaTuneMode());
+            to.setNumaTuneMode(from.getNumaTuneMode().value());
         }
         if (from.isSetOrigin()) {
             to.setOrigin(from.getOrigin());
@@ -267,7 +267,7 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptOut(from.getUsb()));

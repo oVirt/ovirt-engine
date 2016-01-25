@@ -16,16 +16,10 @@ public class WatchdogMapper {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetAction()) {
-            WatchdogAction wdAction = WatchdogAction.fromValue(model.getAction());
-            if (wdAction != null) {
-                entity.setAction(map(wdAction));
-            }
+            entity.setAction(map(model.getAction()));
         }
         if (model.isSetModel()) {
-            WatchdogModel wdModel = WatchdogModel.fromValue(model.getModel());
-            if (wdModel != null) {
-                entity.setModel(map(wdModel));
-            }
+            entity.setModel(map(model.getModel()));
         }
         return entity;
     }
@@ -34,16 +28,10 @@ public class WatchdogMapper {
     public static Watchdog map(VmWatchdog entity, Watchdog template) {
         Watchdog model = template == null ? new Watchdog() : template;
         if (entity.getAction() != null) {
-            WatchdogAction action = map(entity.getAction());
-            if (action != null) {
-                model.setAction(action.name().toLowerCase());
-            }
+            model.setAction(map(entity.getAction()));
         }
         if (entity.getModel() != null) {
-            WatchdogModel wdModel = map(entity.getModel());
-            if (wdModel != null) {
-                model.setModel(wdModel.name().toLowerCase());
-            }
+            model.setModel(map(entity.getModel()));
         }
         model.setId(entity.getId().toString());
         return model;

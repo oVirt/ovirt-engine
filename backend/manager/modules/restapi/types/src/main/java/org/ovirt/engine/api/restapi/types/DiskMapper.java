@@ -35,16 +35,14 @@ public class DiskMapper {
             if (disk.isSetLunStorage()) {
                 engineDisk = new LunDisk();
             } else if (disk.getStorageType() != null) {
-                DiskStorageType diskStorageType = DiskStorageType.fromValue(disk.getStorageType());
-                if (diskStorageType != null) {
-                    switch (diskStorageType) {
-                        case CINDER:
-                            engineDisk = new CinderDisk();
-                            break;
-                        case IMAGE:
-                            engineDisk = new DiskImage();
-                            break;
-                    }
+                DiskStorageType diskStorageType = disk.getStorageType();
+                switch (diskStorageType) {
+                case CINDER:
+                    engineDisk = new CinderDisk();
+                    break;
+                case IMAGE:
+                    engineDisk = new DiskImage();
+                    break;
                 }
             }
             if (engineDisk == null) {
@@ -87,10 +85,7 @@ public class DiskMapper {
         }
 
         if (disk.isSetInterface()) {
-            DiskInterface diskInterface = DiskInterface.fromValue(disk.getInterface());
-            if (diskInterface != null) {
-                engineDisk.setDiskInterface(map(diskInterface, null));
-            }
+            engineDisk.setDiskInterface(map(disk.getInterface(), null));
         }
         if (disk.isSetShareable()) {
             engineDisk.setShareable(disk.isShareable());
@@ -101,9 +96,8 @@ public class DiskMapper {
                 ((LunDisk) engineDisk).setUsingScsiReservation(disk.isUsesScsiReservation());
             }
             if (disk.isSetSgio() && engineDisk.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
-                ScsiGenericIO scsiGenericIO = ScsiGenericIO.fromValue(disk.getSgio());
-                if (scsiGenericIO != null) {
-                    engineDisk.setSgio(map(scsiGenericIO, null));
+                if (disk.isSetSgio()) {
+                    engineDisk.setSgio(map(disk.getSgio(), null));
                 }
             }
         } else {
@@ -121,10 +115,7 @@ public class DiskMapper {
             diskImage.setSize(disk.getProvisionedSize());
         }
         if (disk.isSetFormat()) {
-            DiskFormat diskFormat = DiskFormat.fromValue(disk.getFormat());
-            if (diskFormat != null) {
-                diskImage.setvolumeFormat(map(diskFormat, null));
-            }
+            diskImage.setvolumeFormat(map(disk.getFormat(), null));
         }
         if (disk.isSetStatus()) {
             diskImage.setImageStatus(map(DiskStatus.fromValue(disk.getStatus().getState())));
@@ -250,13 +241,13 @@ public class DiskMapper {
         }
     }
 
-    @Mapping(from = VolumeFormat.class, to = String.class)
-    public static String map(VolumeFormat volumeFormat, String template) {
+    @Mapping(from = VolumeFormat.class, to = DiskFormat.class)
+    public static DiskFormat map(VolumeFormat volumeFormat, DiskFormat template) {
         switch (volumeFormat) {
         case COW:
-            return DiskFormat.COW.value();
+            return DiskFormat.COW;
         case RAW:
-            return DiskFormat.RAW.value();
+            return DiskFormat.RAW;
         default:
             return null;
         }
@@ -280,17 +271,17 @@ public class DiskMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.storage.DiskInterface diskInterface, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class, to = DiskInterface.class)
+    public static DiskInterface map(org.ovirt.engine.core.common.businessentities.storage.DiskInterface diskInterface, DiskInterface template) {
         switch (diskInterface) {
         case IDE:
-            return DiskInterface.IDE.value();
+            return DiskInterface.IDE;
         case VirtIO:
-            return DiskInterface.VIRTIO.value();
+            return DiskInterface.VIRTIO;
         case VirtIO_SCSI:
-            return DiskInterface.VIRTIO_SCSI.value();
+            return DiskInterface.VIRTIO_SCSI;
         case SPAPR_VSCSI:
-            return DiskInterface.SPAPR_VSCSI.value();
+            return DiskInterface.SPAPR_VSCSI;
         default:
             return null;
         }
@@ -310,27 +301,27 @@ public class DiskMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO scsiGenericIO, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.class, to = ScsiGenericIO.class)
+    public static ScsiGenericIO map(org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO scsiGenericIO, ScsiGenericIO template) {
         switch (scsiGenericIO) {
         case FILTERED:
-            return ScsiGenericIO.FILTERED.value();
+            return ScsiGenericIO.FILTERED;
         case UNFILTERED:
-            return ScsiGenericIO.UNFILTERED.value();
+            return ScsiGenericIO.UNFILTERED;
         default:
             return null;
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.storage.DiskStorageType diskStorageType) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.class, to = DiskStorageType.class)
+    public static DiskStorageType map(org.ovirt.engine.core.common.businessentities.storage.DiskStorageType diskStorageType) {
         switch (diskStorageType) {
             case IMAGE:
-                return DiskStorageType.IMAGE.value();
+                return DiskStorageType.IMAGE;
             case CINDER:
-                return DiskStorageType.CINDER.value();
+                return DiskStorageType.CINDER;
             case LUN:
-                return DiskStorageType.LUN.value();
+                return DiskStorageType.LUN;
             default:
                 return null;
         }

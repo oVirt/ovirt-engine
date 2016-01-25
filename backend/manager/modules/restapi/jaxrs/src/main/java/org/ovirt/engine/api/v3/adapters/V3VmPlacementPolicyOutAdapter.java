@@ -32,7 +32,7 @@ public class V3VmPlacementPolicyOutAdapter implements V3Adapter<VmPlacementPolic
     public V3VmPlacementPolicy adapt(VmPlacementPolicy from) {
         V3VmPlacementPolicy to = new V3VmPlacementPolicy();
         if (from.isSetAffinity()) {
-            to.setAffinity(from.getAffinity());
+            to.setAffinity(from.getAffinity().value());
         }
         if (from.isSetHosts()) {
             to.setHosts(new V3Hosts());

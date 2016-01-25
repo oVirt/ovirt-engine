@@ -89,7 +89,7 @@ public class HostNicMapper {
             }
         }
         if(model.isSetBootProtocol()){
-            NetworkBootProtocol networkBootProtocol = BootProtocolMapper.map(BootProtocol.fromValue(model.getBootProtocol()), null);
+            NetworkBootProtocol networkBootProtocol = BootProtocolMapper.map(model.getBootProtocol(), null);
             if(networkBootProtocol != null){
                 entity.setBootProtocol(networkBootProtocol);
             }
@@ -224,7 +224,7 @@ public class HostNicMapper {
 
         BootProtocol bootProtocol = BootProtocolMapper.map(entity.getBootProtocol(), null);
         if(bootProtocol!=null){
-            model.setBootProtocol(bootProtocol.value());
+            model.setBootProtocol(bootProtocol);
         }
         model.setMtu(entity.getMtu());
         model.setBridged(entity.isBridged());

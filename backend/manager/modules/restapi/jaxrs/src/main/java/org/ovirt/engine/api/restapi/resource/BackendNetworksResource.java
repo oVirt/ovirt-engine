@@ -32,7 +32,6 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     @Override
     public Response add(Network network) {
         validateParameters(network, getRequiredAddFields());
-        validateEnums(Network.class, network);
         org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         AddNetworkStoragePoolParameters params = getAddParameters(network, entity);
         return performCreate(addAction,

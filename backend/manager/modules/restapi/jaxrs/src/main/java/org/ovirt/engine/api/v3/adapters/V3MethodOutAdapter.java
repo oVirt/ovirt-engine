@@ -25,7 +25,7 @@ public class V3MethodOutAdapter implements V3Adapter<Method, V3Method> {
     public V3Method adapt(Method from) {
         V3Method to = new V3Method();
         if (from.isSetId()) {
-            to.setId(from.getId());
+            to.setId(from.getId().value());
         }
         return to;
     }

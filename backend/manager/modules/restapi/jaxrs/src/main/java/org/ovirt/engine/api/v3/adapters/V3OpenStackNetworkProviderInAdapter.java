@@ -18,6 +18,7 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.NetworkPluginType;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -58,7 +59,7 @@ public class V3OpenStackNetworkProviderInAdapter implements V3Adapter<V3OpenStac
             to.setPassword(from.getPassword());
         }
         if (from.isSetPluginType()) {
-            to.setPluginType(from.getPluginType());
+            to.setPluginType(NetworkPluginType.valueOf(from.getPluginType()));
         }
         if (from.isSetProperties()) {
             to.setProperties(new Properties());

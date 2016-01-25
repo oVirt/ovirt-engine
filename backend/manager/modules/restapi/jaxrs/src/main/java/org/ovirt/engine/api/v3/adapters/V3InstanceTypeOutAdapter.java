@@ -150,7 +150,7 @@ public class V3InstanceTypeOutAdapter implements V3Adapter<InstanceType, V3Insta
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptOut(from.getUsb()));

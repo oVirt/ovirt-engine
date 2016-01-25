@@ -22,7 +22,7 @@ public class SnapshotMapper {
             model.setSnapshotStatus(map(entity.getStatus(), null));
         }
         if (entity.getType() != null) {
-            model.setType(map(entity.getType(), null));
+            model.setSnapshotType(map(entity.getType(), null));
         }
         if (entity.getMemoryVolume() != null) {
             model.setPersistMemorystate(!entity.getMemoryVolume().isEmpty());
@@ -30,31 +30,31 @@ public class SnapshotMapper {
         return model;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType snapshotType, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType.class, to = SnapshotType.class)
+    public static SnapshotType map(org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType snapshotType, SnapshotType template) {
         switch (snapshotType) {
         case ACTIVE:
-            return SnapshotType.ACTIVE.value();
+            return SnapshotType.ACTIVE;
         case PREVIEW:
-            return SnapshotType.PREVIEW.value();
+            return SnapshotType.PREVIEW;
         case REGULAR:
-            return SnapshotType.REGULAR.value();
+            return SnapshotType.REGULAR;
         case STATELESS:
-            return SnapshotType.STATELESS.value();
+            return SnapshotType.STATELESS;
         default:
             return null;
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus snapshotStatus, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus.class, to = SnapshotStatus.class)
+    public static SnapshotStatus map(org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus snapshotStatus, SnapshotStatus template) {
         switch (snapshotStatus) {
         case IN_PREVIEW:
-            return SnapshotStatus.IN_PREVIEW.value();
+            return SnapshotStatus.IN_PREVIEW;
         case LOCKED:
-            return SnapshotStatus.LOCKED.value();
+            return SnapshotStatus.LOCKED;
         case OK:
-            return SnapshotStatus.OK.value();
+            return SnapshotStatus.OK;
         default:
             return null;
         }
@@ -70,7 +70,7 @@ public class SnapshotMapper {
         snapshot.setInitialization(new Initialization());
         snapshot.getInitialization().setConfiguration(new Configuration());
         snapshot.getInitialization().getConfiguration().setData(configuration);
-        snapshot.getInitialization().getConfiguration().setType(type.value());
+        snapshot.getInitialization().getConfiguration().setType(type);
         return snapshot;
     }
 }

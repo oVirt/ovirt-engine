@@ -13,7 +13,6 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
-import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -198,7 +197,7 @@ public class VmMapper extends VmBaseMapper {
         }
         if (vm.isSetCpu()) {
             if (vm.getCpu().isSetMode()) {
-                staticVm.setUseHostCpuFlags(CpuMode.fromValue(vm.getCpu().getMode()) == CpuMode.HOST_PASSTHROUGH);
+                staticVm.setUseHostCpuFlags(vm.getCpu().getMode() == CpuMode.HOST_PASSTHROUGH);
             }
             if (vm.getCpu().isSetCpuTune()) {
                 staticVm.setCpuPinning(cpuTuneToString(vm.getCpu().getCpuTune()));
@@ -208,10 +207,7 @@ public class VmMapper extends VmBaseMapper {
         if (vm.isSetPlacementPolicy()) {
             if (vm.getPlacementPolicy().isSetAffinity()) {
                 // read migration policy
-                VmAffinity vmAffinity = VmAffinity.fromValue(vm.getPlacementPolicy().getAffinity());
-                if (vmAffinity != null) {
-                    staticVm.setMigrationSupport(map(vmAffinity, null));
-                }
+                staticVm.setMigrationSupport(map(vm.getPlacementPolicy().getAffinity(), null));
             }
            // reset previous dedicated host or hosts
             Set<Guid> hostGuidsSet = new HashSet<>();
@@ -252,10 +248,7 @@ public class VmMapper extends VmBaseMapper {
         }
 
         if (vm.isSetNumaTuneMode()) {
-            NumaTuneMode mode = NumaTuneMode.fromValue(vm.getNumaTuneMode());
-            if (mode != null) {
-                staticVm.setNumaTuneMode(map(mode, null));
-            }
+            staticVm.setNumaTuneMode(map(vm.getNumaTuneMode(), null));
         }
 
         if (vm.isSetExternalHostProvider()) {
@@ -355,7 +348,7 @@ public class VmMapper extends VmBaseMapper {
             model.setOs(os);
         }
         if(entity.isUseHostCpuFlags()) {
-            model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH.value());
+            model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH);
         }
         model.getCpu().setCpuTune(stringToCpuTune(entity.getCpuPinning()));
 
@@ -442,7 +435,7 @@ public class VmMapper extends VmBaseMapper {
             model.setRunOnce(entity.isRunOnce());
             org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = deriveGraphicsType(entity.getGraphicsInfos());
             if (graphicsType != null) {
-                model.getDisplay().setType(DisplayMapper.map(graphicsType, null).value());
+                model.getDisplay().setType(DisplayMapper.map(graphicsType, null));
 
                 GraphicsInfo graphicsInfo = entity.getGraphicsInfos().get(graphicsType);
                 model.getDisplay().setAddress(graphicsInfo == null ? null : graphicsInfo.getIp());
@@ -479,7 +472,7 @@ public class VmMapper extends VmBaseMapper {
         }
         VmAffinity vmAffinity = map(entity.getMigrationSupport(), null);
         if (vmAffinity != null) {
-            model.getPlacementPolicy().setAffinity(vmAffinity.value());
+            model.getPlacementPolicy().setAffinity(vmAffinity);
         }
         if (!entity.getDedicatedVmForVdsList().isEmpty()) {
             Hosts hostsList = new Hosts();
@@ -625,10 +618,10 @@ public class VmMapper extends VmBaseMapper {
     public static GraphicsConsole map(Map.Entry<org.ovirt.engine.core.common.businessentities.GraphicsType, GraphicsInfo> graphicsInfo, GraphicsConsole template) {
         GraphicsConsole model = template != null ? template : new GraphicsConsole();
 
-        String graphicsTypeString = map(graphicsInfo.getKey(), null).toString();
-        if (graphicsTypeString != null) {
-            model.setId(HexUtils.string2hex(graphicsTypeString));
-            model.setProtocol(graphicsTypeString);
+        GraphicsType graphicsType = map(graphicsInfo.getKey(), null);
+        if (graphicsType != null) {
+            model.setId(HexUtils.string2hex(graphicsType.value()));
+            model.setProtocol(graphicsType);
         }
 
         if (graphicsInfo.getValue() != null) {
@@ -642,12 +635,11 @@ public class VmMapper extends VmBaseMapper {
 
     @Mapping(from = GraphicsConsole.class, to = GraphicsDevice.class)
     public static GraphicsDevice map(GraphicsConsole graphicsConsole, GraphicsDevice template) {
-        GraphicsType type = GraphicsType.valueOf(graphicsConsole.getProtocol());
         if (template != null) {
             return template;
         }
 
-        switch (type) {
+        switch (graphicsConsole.getProtocol()) {
             case SPICE:
                 return new GraphicsDevice(VmDeviceType.SPICE);
             case VNC:
@@ -745,13 +737,13 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.VmType type, String incoming) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmType.class, to = VmType.class)
+    public static VmType map(org.ovirt.engine.core.common.businessentities.VmType type, VmType incoming) {
         switch (type) {
         case Desktop:
-            return VmType.DESKTOP.value();
+            return VmType.DESKTOP;
         case Server:
-            return VmType.SERVER.value();
+            return VmType.SERVER;
         default:
             return null;
         }
@@ -794,7 +786,7 @@ public class VmMapper extends VmBaseMapper {
             initialization.setConfiguration(configuration);
         }
         configuration.setData(data);
-        configuration.setType(type.value());
+        configuration.setType(type);
         return vm;
     }
 
@@ -844,70 +836,70 @@ public class VmMapper extends VmBaseMapper {
         Boot boot = template != null ? template : new Boot();
         Boot.DevicesList list = new Boot.DevicesList();
         boot.setDevices(list);
-        List<String> devices = list.getDevices();
+        List<BootDevice> devices = list.getDevices();
         switch (bootSequence) {
         case C:
-            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.HD);
             break;
         case DC:
-            devices.add(BootDevice.CDROM.value());
-            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.CDROM);
+            devices.add(BootDevice.HD);
             break;
         case N:
-            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.NETWORK);
             break;
         case CDN:
-            devices.add(BootDevice.HD.value());
-            devices.add(BootDevice.CDROM.value());
-            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.HD);
+            devices.add(BootDevice.CDROM);
+            devices.add(BootDevice.NETWORK);
             break;
         case CND:
-            devices.add(BootDevice.HD.value());
-            devices.add(BootDevice.NETWORK.value());
-            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.HD);
+            devices.add(BootDevice.NETWORK);
+            devices.add(BootDevice.CDROM);
             break;
         case DCN:
-            devices.add(BootDevice.CDROM.value());
-            devices.add(BootDevice.HD.value());
-            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.CDROM);
+            devices.add(BootDevice.HD);
+            devices.add(BootDevice.NETWORK);
             break;
         case DNC:
-            devices.add(BootDevice.CDROM.value());
-            devices.add(BootDevice.NETWORK.value());
-            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.CDROM);
+            devices.add(BootDevice.NETWORK);
+            devices.add(BootDevice.HD);
             break;
         case NCD:
-            devices.add(BootDevice.NETWORK.value());
-            devices.add(BootDevice.HD.value());
-            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.NETWORK);
+            devices.add(BootDevice.HD);
+            devices.add(BootDevice.CDROM);
             break;
         case NDC:
-            devices.add(BootDevice.NETWORK.value());
-            devices.add(BootDevice.CDROM.value());
-            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.NETWORK);
+            devices.add(BootDevice.CDROM);
+            devices.add(BootDevice.HD);
             break;
         case CD:
-            devices.add(BootDevice.HD.value());
-            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.HD);
+            devices.add(BootDevice.CDROM);
             break;
         case D:
-            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.CDROM);
             break;
         case CN:
-            devices.add(BootDevice.HD.value());
-            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.HD);
+            devices.add(BootDevice.NETWORK);
             break;
         case DN:
-            devices.add(BootDevice.CDROM.value());
-            devices.add(BootDevice.NETWORK.value());
+            devices.add(BootDevice.CDROM);
+            devices.add(BootDevice.NETWORK);
             break;
         case NC:
-            devices.add(BootDevice.NETWORK.value());
-            devices.add(BootDevice.HD.value());
+            devices.add(BootDevice.NETWORK);
+            devices.add(BootDevice.HD);
             break;
         case ND:
-            devices.add(BootDevice.NETWORK.value());
-            devices.add(BootDevice.CDROM.value());
+            devices.add(BootDevice.NETWORK);
+            devices.add(BootDevice.CDROM);
             break;
         }
         return boot;
@@ -916,10 +908,9 @@ public class VmMapper extends VmBaseMapper {
     @Mapping(from = Boot.class, to = List.class)
     public static BootSequence map(Boot boot, BootSequence template) {
         Set<BootDevice> devSet = new LinkedHashSet<>();
-        for (String device : boot.getDevices().getDevices()) {
-            BootDevice dev = BootDevice.fromValue(device);
-            if (dev != null) {
-                devSet.add(dev);
+        for (BootDevice device : boot.getDevices().getDevices()) {
+            if (device != null) {
+                devSet.add(device);
             }
         }
 
@@ -998,7 +989,7 @@ public class VmMapper extends VmBaseMapper {
             if (entity.getDeviceType() != null) {
                 org.ovirt.engine.api.model.VmDeviceType deviceType = map(entity.getDeviceType(), null);
                 if (deviceType != null) {
-                    model.setType(deviceType.value());
+                    model.setType(deviceType);
                 }
             }
             model.setVolumeId(entity.getVolumeId());
@@ -1020,10 +1011,7 @@ public class VmMapper extends VmBaseMapper {
     public static VmPayload map(Payload model, VmPayload template) {
         VmPayload entity = template != null ? template : new VmPayload();
         if (model.getType() != null) {
-            org.ovirt.engine.api.model.VmDeviceType deviceType = org.ovirt.engine.api.model.VmDeviceType.fromValue(model.getType());
-            if (deviceType!=null) {
-                entity.setDeviceType(map(deviceType, null));
-            }
+            entity.setDeviceType(map(model.getType(), null));
         }
         if (model.isSetVolumeId()) {
             entity.setVolumeId(model.getVolumeId());
@@ -1071,8 +1059,7 @@ public class VmMapper extends VmBaseMapper {
                     }
                     interfaces.add(vmInitInterface);
                     if (iface.isSetBootProtocol()) {
-                        NetworkBootProtocol protocol = BootProtocolMapper.map
-                                (BootProtocol.fromValue(iface.getBootProtocol()), vmInitInterface.getBootProtocol());
+                        NetworkBootProtocol protocol = BootProtocolMapper.map(iface.getBootProtocol(), vmInitInterface.getBootProtocol());
                         vmInitInterface.setBootProtocol(protocol);
                         if (protocol != NetworkBootProtocol.DHCP && iface.isSetNetwork() && iface.getNetwork().isSetIp()) {
                             if (iface.getNetwork().getIp().isSetAddress()) {
@@ -1242,7 +1229,7 @@ public class VmMapper extends VmBaseMapper {
 
             UsbType usbType = getUsbType(usb);
             if (usbType != null) {
-                return getUsbPolicyAccordingToUsbType(UsbType.fromValue(usb.getType()));
+                return getUsbPolicyAccordingToUsbType(usb.getType());
             }
             else {
                 return currentPolicy;
@@ -1251,7 +1238,7 @@ public class VmMapper extends VmBaseMapper {
     }
 
     private static UsbType getUsbType(Usb usb) {
-        return usb.isSetType() ? UsbType.fromValue(usb.getType()) : null;
+        return usb.isSetType() ? usb.getType() : null;
     }
 
     private static UsbPolicy getUsbPolicyAccordingToUsbType(UsbType usbType) {
@@ -1368,18 +1355,18 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.NumaTuneMode mode, String incoming) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class, to = NumaTuneMode.class)
+    public static NumaTuneMode map(org.ovirt.engine.core.common.businessentities.NumaTuneMode mode, NumaTuneMode incoming) {
         if (mode == null) {
             return null;
         }
         switch (mode) {
         case STRICT:
-            return NumaTuneMode.STRICT.value();
+            return NumaTuneMode.STRICT;
         case INTERLEAVE:
-            return NumaTuneMode.INTERLEAVE.value();
+            return NumaTuneMode.INTERLEAVE;
         case PREFERRED:
-            return NumaTuneMode.PREFERRED.value();
+            return NumaTuneMode.PREFERRED;
         default:
             return null;
         }

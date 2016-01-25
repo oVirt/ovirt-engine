@@ -97,9 +97,9 @@ public class BackendStorageDomainResourceTest
     private void verifyGetFcp(StorageDomain model) {
         assertEquals(GUIDS[0].toString(), model.getId());
         assertEquals(NAMES[0], model.getName());
-        assertEquals(StorageDomainType.DATA.value(), model.getType());
+        assertEquals(StorageDomainType.DATA, model.getType());
         assertNotNull(model.getStorage());
-        assertEquals(StorageType.FCP.value(), model.getStorage().getType());
+        assertEquals(StorageType.FCP, model.getStorage().getType());
         assertNotNull(model.getLinks().get(0).getHref());
     }
 

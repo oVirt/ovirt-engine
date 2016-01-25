@@ -28,7 +28,7 @@ public class V3UsbOutAdapter implements V3Adapter<Usb, V3Usb> {
             to.setEnabled(from.isEnabled());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         return to;
     }

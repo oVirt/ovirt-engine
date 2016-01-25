@@ -119,8 +119,8 @@ public class BackendTemplateDisksResourceTest
 
     static Disk getModel(int index) {
         Disk model = new Disk();
-        model.setFormat(DiskFormat.COW.toString());
-        model.setInterface(DiskInterface.VirtIO.toString());
+        model.setFormat(DiskFormat.COW);
+        model.setInterface(org.ovirt.engine.api.model.DiskInterface.VIRTIO);
         model.setSparse(true);
         model.setBootable(false);
         model.setShareable(false);

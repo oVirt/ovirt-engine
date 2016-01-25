@@ -39,7 +39,7 @@ public class V3GlusterServerHookOutAdapter implements V3Adapter<GlusterServerHoo
             to.setComment(from.getComment());
         }
         if (from.isSetContentType()) {
-            to.setContentType(from.getContentType());
+            to.setContentType(from.getContentType().value());
         }
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());

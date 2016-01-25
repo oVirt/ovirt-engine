@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import org.ovirt.engine.api.model.AgentConfiguration;
+import org.ovirt.engine.api.model.MessageBrokerType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3AgentConfiguration;
 
@@ -28,7 +29,7 @@ public class V3AgentConfigurationInAdapter implements V3Adapter<V3AgentConfigura
             to.setAddress(from.getAddress());
         }
         if (from.isSetBrokerType()) {
-            to.setBrokerType(from.getBrokerType());
+            to.setBrokerType(MessageBrokerType.valueOf(from.getBrokerType()));
         }
         if (from.isSetNetworkMappings()) {
             to.setNetworkMappings(from.getNetworkMappings());

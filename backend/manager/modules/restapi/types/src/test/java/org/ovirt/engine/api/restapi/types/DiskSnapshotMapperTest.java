@@ -20,9 +20,9 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
 
     @Override
     protected DiskSnapshot postPopulate(DiskSnapshot model) {
-        model.setFormat(MappingTestHelper.shuffle(DiskFormat.class).value());
-        model.setInterface(MappingTestHelper.shuffle(DiskInterface.class).value());
-        model.setSgio(MappingTestHelper.shuffle(ScsiGenericIO.class).value());
+        model.setFormat(MappingTestHelper.shuffle(DiskFormat.class));
+        model.setInterface(MappingTestHelper.shuffle(DiskInterface.class));
+        model.setSgio(MappingTestHelper.shuffle(ScsiGenericIO.class));
         model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
         model.setLunStorage(null);
         return model;

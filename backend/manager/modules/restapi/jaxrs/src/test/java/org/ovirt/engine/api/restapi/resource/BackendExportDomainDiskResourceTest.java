@@ -57,7 +57,6 @@ public class BackendExportDomainDiskResourceTest
         AbstractBackendResource parent = resource.getParent().getParent().getParent();
         parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
-        parent.setValidatorLocator(validatorLocator);
         parent.setMessageBundle(messageBundle);
         parent.setHttpHeaders(httpHeaders);
     }

@@ -21,7 +21,9 @@ import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNe
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.resource.openstack.OpenstackNetworkResource;
@@ -74,6 +76,11 @@ public class BackendOpenStackNetworkResource
             notFound();
         }
         return addLinks(populate(map(network), network));
+    }
+
+    @Override
+    public Response doImport(Action action) {
+        return null;
     }
 
     @Override

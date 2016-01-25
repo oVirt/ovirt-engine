@@ -21,7 +21,7 @@ public class StorageQosMapperTest extends QosMapperTest {
     @Override
     protected Qos postPopulate(Qos model) {
         model = super.postPopulate(model);
-        model.setType(QosType.STORAGE.name().toLowerCase());
+        model.setType(QosType.STORAGE);
         return model;
 
     }

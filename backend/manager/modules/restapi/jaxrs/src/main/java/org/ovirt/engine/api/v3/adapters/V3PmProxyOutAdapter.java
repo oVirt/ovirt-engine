@@ -25,7 +25,7 @@ public class V3PmProxyOutAdapter implements V3Adapter<PmProxy, V3PmProxy> {
     public V3PmProxy adapt(PmProxy from) {
         V3PmProxy to = new V3PmProxy();
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         return to;
     }

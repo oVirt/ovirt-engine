@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import org.ovirt.engine.api.model.SerialNumber;
+import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3SerialNumber;
 
@@ -25,7 +26,7 @@ public class V3SerialNumberInAdapter implements V3Adapter<V3SerialNumber, Serial
     public SerialNumber adapt(V3SerialNumber from) {
         SerialNumber to = new SerialNumber();
         if (from.isSetPolicy()) {
-            to.setPolicy(from.getPolicy());
+            to.setPolicy(SerialNumberPolicy.fromValue(from.getPolicy()));
         }
         if (from.isSetValue()) {
             to.setValue(from.getValue());

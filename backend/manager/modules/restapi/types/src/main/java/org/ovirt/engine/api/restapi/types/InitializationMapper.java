@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.NicConfiguration;
@@ -28,7 +27,7 @@ public class InitializationMapper {
         }
 
         if (model.isSetBootProtocol()) {
-            entity.setBootProtocol(BootProtocolMapper.map(BootProtocol.fromValue(model.getBootProtocol()), NetworkBootProtocol.NONE));
+            entity.setBootProtocol(BootProtocolMapper.map(model.getBootProtocol(), NetworkBootProtocol.NONE));
         }
 
         if (model.isSetIp()) {
@@ -54,7 +53,7 @@ public class InitializationMapper {
         model.setName(entity.getName());
         model.setOnBoot(entity.getStartOnBoot());
         if (entity.getBootProtocol() != null) {
-            model.setBootProtocol(BootProtocolMapper.map(entity.getBootProtocol(), null).value());
+            model.setBootProtocol(BootProtocolMapper.map(entity.getBootProtocol(), null));
         }
         Ip ip = new Ip();
         model.setIp(ip);

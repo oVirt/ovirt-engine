@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Step;
+import org.ovirt.engine.api.model.StepEnum;
 
 public class StepMapperTest extends AbstractInvertibleMappingTest<Step, org.ovirt.engine.core.common.job.Step, org.ovirt.engine.core.common.job.Step> {
 
@@ -24,7 +25,7 @@ public class StepMapperTest extends AbstractInvertibleMappingTest<Step, org.ovir
     @Override
     protected Step postPopulate(Step model) {
         model.getStatus().setState("started");
-        model.setType("validating");
+        model.setType(StepEnum.VALIDATING);
         return super.postPopulate(model);
     }
 

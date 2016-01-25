@@ -81,7 +81,7 @@ public class BackendAttachedStorageDomainResource
     @Override
     public Response remove() {
         StorageDomain storageDomain = get();
-        if (storageDomain.getStorage().getType().equals(StorageType.LOCALFS.value())) {
+        if (storageDomain.getStorage().getType().equals(StorageType.LOCALFS)) {
             RemoveStorageDomainParameters params = new RemoveStorageDomainParameters(guid);
             params.setDoFormat(true);
             return performAction(VdcActionType.RemoveStorageDomain, params);

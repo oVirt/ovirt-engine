@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Rate;
 import org.ovirt.engine.api.model.RngDevice;
+import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 
 
@@ -21,7 +22,7 @@ public class RngDeviceMapperTest {
         expected.setRate(new Rate());
         expected.getRate().setBytes(11);
         expected.getRate().setPeriod(10);
-        expected.setSource(VmRngDevice.Source.RANDOM.toString());
+        expected.setSource(RngSource.RANDOM);
 
         assertEquals(expected.getRate().getBytes(), RngDeviceMapper.map(entity, null).getRate().getBytes());
         assertEquals(expected.getRate().getPeriod(), RngDeviceMapper.map(entity, null).getRate().getPeriod());
@@ -31,7 +32,7 @@ public class RngDeviceMapperTest {
     @Test
     public void testMapFromRestToBackend() throws Exception {
         RngDevice model = new RngDevice();
-        model.setSource(VmRngDevice.Source.HWRNG.toString());
+        model.setSource(RngSource.HWRNG);
         model.setRate(new Rate());
         model.getRate().setBytes(10);
         model.getRate().setPeriod(11);

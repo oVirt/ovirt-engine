@@ -23,6 +23,7 @@ import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
+import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VcpuPin;
 import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.Vm;
@@ -80,13 +81,13 @@ public class VmMapperTest extends
 
     @Override
     protected Vm postPopulate(Vm from) {
-        from.setType(MappingTestHelper.shuffle(VmType.class).value());
+        from.setType(MappingTestHelper.shuffle(VmType.class));
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
-        from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class).value());
-        from.getPayloads().getPayloads().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class).value());
-        List<String> devices = from.getOs().getBoot().getDevices().getDevices();
+        from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class));
+        from.getPayloads().getPayloads().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class));
+        List<BootDevice> devices = from.getOs().getBoot().getDevices().getDevices();
         for (int i = 0; i < devices.size(); i++) {
-            devices.set(i, MappingTestHelper.shuffle(BootDevice.class).value());
+            devices.set(i, MappingTestHelper.shuffle(BootDevice.class));
         }
         while (from.getCpu().getTopology().getSockets() == 0) {
             from.getCpu().getTopology().setSockets(MappingTestHelper.rand(100));
@@ -108,14 +109,14 @@ public class VmMapperTest extends
         from.setPlacementPolicy(createPlacementPolicy(Guid.EVERYONE, Guid.SYSTEM));
         // Guest Nics configurations
         for (NicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
-            guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
+            guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class));
         }
-        from.getDisplay().setType("spice");
-        from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
+        from.getDisplay().setType(DisplayType.SPICE);
+        from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM);
         from.getDisplay().setFileTransferEnabled(true);
         from.getDisplay().setCopyPasteEnabled(true);
-        from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
-        from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
+        from.getMigration().setAutoConverge(InheritableBoolean.TRUE);
+        from.getMigration().setCompressed(InheritableBoolean.TRUE);
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
         return from;
     }
@@ -205,17 +206,17 @@ public class VmMapperTest extends
         vmPayload.setDeviceType(org.ovirt.engine.core.common.utils.VmDeviceType.CDROM);
         vmPayload.setVolumeId("CD-VOL");
         Payload payload = VmMapper.map(vmPayload, null);
-        assertEquals(vmPayload.getDeviceType().name().toLowerCase(), payload.getType());
+        assertEquals(vmPayload.getDeviceType().name(), payload.getType().name());
         assertEquals(vmPayload.getVolumeId(), payload.getVolumeId());
     }
 
     @Test
     public void testPayloadMapToVmPaylod() {
         Payload payload = new Payload();
-        payload.setType("CDROM");
+        payload.setType(VmDeviceType.CDROM);
         payload.setVolumeId("CD-VOL");
         VmPayload vmPayload = VmMapper.map(payload, null);
-        assertEquals(payload.getType(), vmPayload.getDeviceType().name());
+        assertEquals(payload.getType().name(), vmPayload.getDeviceType().name());
         assertEquals(payload.getVolumeId(), vmPayload.getVolumeId());
     }
 
@@ -244,7 +245,7 @@ public class VmMapperTest extends
         assertNotNull(model.getInitialization());
         assertNotNull(model.getInitialization().getConfiguration());
         assertEquals(model.getInitialization().getConfiguration().getData(), ovfConfig);
-        assertEquals(ConfigurationType.fromValue(model.getInitialization().getConfiguration().getType()),
+        assertEquals(model.getInitialization().getConfiguration().getType(),
                 configurationType);
     }
 
@@ -484,7 +485,7 @@ public class VmMapperTest extends
     public void getUsbPolicyUsbTypeNative() {
         Usb usb = new Usb();
         usb.setEnabled(true);
-        usb.setType("native");
+        usb.setType(UsbType.NATIVE);
         assertEquals(VmMapper.getUsbPolicyOnCreate(usb), UsbPolicy.ENABLED_NATIVE);
     }
 
@@ -492,7 +493,7 @@ public class VmMapperTest extends
     public void getUsbPolicyUsbTypeLegacy() {
         Usb usb = new Usb();
         usb.setEnabled(true);
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnCreate(usb), UsbPolicy.ENABLED_LEGACY);
     }
 
@@ -541,42 +542,42 @@ public class VmMapperTest extends
     @Test
     public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNotSetLegacyPolicyUsb() {
         Usb usb = new Usb();
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNotSetNativePolicyUsb() {
         Usb usb = new Usb();
-        usb.setType("native");
+        usb.setType(UsbType.NATIVE);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledNotSetLegacyPolicyUsb() {
         Usb usb = new Usb();
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY), UsbPolicy.ENABLED_LEGACY);
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNotSetLegacyPolicyUsb() {
         Usb usb = new Usb();
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_LEGACY);
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledNotSetNativePolicyUsb() {
         Usb usb = new Usb();
-        usb.setType("native");
+        usb.setType(UsbType.NATIVE);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY), UsbPolicy.ENABLED_NATIVE);
     }
 
     @Test
     public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNotSetNativePolicyUsb() {
         Usb usb = new Usb();
-        usb.setType("native");
+        usb.setType(UsbType.NATIVE);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_NATIVE);
     }
 
@@ -584,7 +585,7 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyDisabledGotDisabledLegacyPolicyUsb() {
         Usb usb = new Usb();
         usb.setEnabled(false);
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
     }
 
@@ -592,7 +593,7 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyDisabledGotDisabledNativePolicyUsb() {
         Usb usb = new Usb();
         usb.setEnabled(false);
-        usb.setType("native");
+        usb.setType(UsbType.NATIVE);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.DISABLED);
     }
 
@@ -600,7 +601,7 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyLegacyGotDisabledLegacyPolicyUsb() {
         Usb usb = new Usb();
         usb.setEnabled(false);
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY), UsbPolicy.DISABLED);
     }
 
@@ -608,7 +609,7 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyNativeGotDisabledLegacyPolicyUsb() {
         Usb usb = new Usb();
         usb.setEnabled(false);
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.DISABLED);
     }
 
@@ -616,7 +617,7 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledLegacyPolicyUsb() {
         Usb usb = new Usb();
         usb.setEnabled(true);
-        usb.setType("legacy");
+        usb.setType(UsbType.LEGACY);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_LEGACY);
     }
 
@@ -624,7 +625,7 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNativePolicyUsb() {
         Usb usb = new Usb();
         usb.setEnabled(true);
-        usb.setType("native");
+        usb.setType(UsbType.NATIVE);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE), UsbPolicy.ENABLED_NATIVE);
     }
 
@@ -632,7 +633,7 @@ public class VmMapperTest extends
     public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNativePolicyUsb() {
         Usb usb = new Usb();
         usb.setEnabled(true);
-        usb.setType("native");
+        usb.setType(UsbType.NATIVE);
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED), UsbPolicy.ENABLED_NATIVE);
     }
 

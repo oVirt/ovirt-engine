@@ -99,7 +99,7 @@ public class V3QosOutAdapter implements V3Adapter<Qos, V3QoS> {
             to.setOutboundPeak(from.getOutboundPeak());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         return to;
     }

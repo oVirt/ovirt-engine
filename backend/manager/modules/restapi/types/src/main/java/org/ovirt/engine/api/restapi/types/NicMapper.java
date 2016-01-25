@@ -28,10 +28,7 @@ public class NicMapper {
             entity.setLinked(model.isLinked());
         }
         if (model.isSetInterface()) {
-            NicInterface nicType = NicInterface.fromValue(model.getInterface());
-            if (nicType != null) {
-                entity.setType(map(nicType));
-            }
+            entity.setType(map(model.getInterface()));
         }
         if (model.isSetPlugged()) {
             entity.setPlugged(model.isPlugged());
@@ -99,21 +96,21 @@ public class NicMapper {
         }
     }
 
-    @Mapping(from = Integer.class, to = String.class)
-    public static String map(Integer type) {
+    @Mapping(from = Integer.class, to = NicInterface.class)
+    public static NicInterface map(Integer type) {
         switch (type) {
         case 0:
-            return NicInterface.RTL8139_VIRTIO.value();
+            return NicInterface.RTL8139_VIRTIO;
         case 1:
-            return NicInterface.RTL8139.value();
+            return NicInterface.RTL8139;
         case 2:
-            return NicInterface.E1000.value();
+            return NicInterface.E1000;
         case 3:
-            return NicInterface.VIRTIO.value();
+            return NicInterface.VIRTIO;
         case 4:
-            return NicInterface.SPAPR_VLAN.value();
+            return NicInterface.SPAPR_VLAN;
         case 5:
-            return NicInterface.PCI_PASSTHROUGH.value();
+            return NicInterface.PCI_PASSTHROUGH;
         default:
             return null;
         }

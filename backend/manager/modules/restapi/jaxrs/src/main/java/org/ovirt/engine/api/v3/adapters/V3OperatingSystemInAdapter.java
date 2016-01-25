@@ -18,9 +18,11 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Boot;
+import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Boot;
@@ -33,7 +35,7 @@ public class V3OperatingSystemInAdapter implements V3Adapter<V3OperatingSystem, 
         if (from.isSetBoot()) {
             Boot toBoot = new Boot();
             Boot.DevicesList toDevicesList = new Boot.DevicesList();
-            List<String> toDevices = toDevicesList.getDevices();
+            List<String> toDevices = getDevices(toDevicesList);
             from.getBoot().stream().map(V3Boot::getDev).forEach(toDevices::add);
             toBoot.setDevices(toDevicesList);
             to.setBoot(toBoot);
@@ -54,5 +56,13 @@ public class V3OperatingSystemInAdapter implements V3Adapter<V3OperatingSystem, 
             to.setVersion(adaptIn(from.getVersion()));
         }
         return to;
+    }
+
+    private List<String> getDevices(Boot.DevicesList toDevicesList) {
+        List<String> results = new LinkedList<>();
+        for (BootDevice device : toDevicesList.getDevices()) {
+            results.add(device.value());
+            }
+        return results;
     }
 }

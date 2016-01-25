@@ -111,7 +111,7 @@ public class BackendStorageDomainsResourceTest
         StorageDomain model = new StorageDomain();
         model.setName(getSafeEntry(POSIX_IDX, NAMES));
         model.setDescription(getSafeEntry(POSIX_IDX, DESCRIPTIONS));
-        model.setType(getSafeEntry(POSIX_IDX, TYPES).value());
+        model.setType(getSafeEntry(POSIX_IDX, TYPES));
         model.setStorage(new HostStorage());
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
@@ -132,7 +132,7 @@ public class BackendStorageDomainsResourceTest
         StorageDomain model = new StorageDomain();
         model.setName(getSafeEntry(POSIX_IDX, NAMES));
         model.setDescription(getSafeEntry(POSIX_IDX, DESCRIPTIONS));
-        model.setType(getSafeEntry(POSIX_IDX, TYPES).value());
+        model.setType(getSafeEntry(POSIX_IDX, TYPES));
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
 
@@ -518,7 +518,7 @@ public class BackendStorageDomainsResourceTest
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
         model.setStorage(new HostStorage());
-        model.getStorage().setType(StorageType.NFS.value());
+        model.getStorage().setType(StorageType.NFS);
         model.getStorage().setPath(PATHS[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -641,9 +641,9 @@ public class BackendStorageDomainsResourceTest
         StorageDomain model = new StorageDomain();
         model.setName(getSafeEntry(index, NAMES));
         model.setDescription(getSafeEntry(index, DESCRIPTIONS));
-        model.setType(getSafeEntry(index, TYPES).value());
+        model.setType(getSafeEntry(index, TYPES));
         model.setStorage(new HostStorage());
-        model.getStorage().setType(getSafeEntry(index, STORAGE_TYPES).value());
+        model.getStorage().setType(getSafeEntry(index, STORAGE_TYPES));
         model.getStorage().setAddress(getSafeEntry(index, ADDRESSES));
         model.getStorage().setPath(getSafeEntry(index, PATHS));
         model.getStorage().setMountOptions(getSafeEntry(index, MOUNT_OPTIONS));
@@ -676,19 +676,19 @@ public class BackendStorageDomainsResourceTest
         assertEquals(getSafeEntry(index, NAMES), model.getName());
         // REVIST No descriptions for storage domains
         // assertEquals(DESCRIPTIONS[index], model.getDescription());
-        assertEquals(getSafeEntry(index, TYPES).value(), model.getType());
+        assertEquals(getSafeEntry(index, TYPES), model.getType());
         assertNotNull(model.getStorage());
-        assertEquals(getSafeEntry(index, STORAGE_TYPES).value(), model.getStorage().getType());
+        assertEquals(getSafeEntry(index, STORAGE_TYPES), model.getStorage().getType());
         if (index != LOCAL_IDX && index != POSIX_IDX) {
             assertEquals(getSafeEntry(index, ADDRESSES), model.getStorage().getAddress());
         }
         assertEquals(PATHS[index], model.getStorage().getPath());
         assertEquals("permissions", model.getLinks().get(0).getRel());
-        if (StorageDomainType.fromValue(model.getType()) == StorageDomainType.ISO) {
+        if (model.getType() == StorageDomainType.ISO) {
             assertEquals(5, model.getLinks().size());
             assertEquals("files", model.getLinks().get(1).getRel());
 
-        } else if (model.getType().equals(TYPES[2].value())) {
+        } else if (model.getType().equals(TYPES[2])) {
             assertEquals(7, model.getLinks().size());
             assertEquals("templates", model.getLinks().get(1).getRel());
             assertEquals("vms", model.getLinks().get(2).getRel());
@@ -698,7 +698,7 @@ public class BackendStorageDomainsResourceTest
 
     protected StorageDomain getIscsi() {
         StorageDomain model = getModel(0);
-        model.getStorage().setType(StorageType.ISCSI.value());
+        model.getStorage().setType(StorageType.ISCSI);
         model.getStorage().setAddress(null);
         model.getStorage().setPath(null);
         model.getStorage().setVolumeGroup(new VolumeGroup());
@@ -715,9 +715,9 @@ public class BackendStorageDomainsResourceTest
     protected void verifyIscsi(StorageDomain model) {
         assertEquals(GUIDS[0].toString(), model.getId());
         assertEquals(NAMES[0], model.getName());
-        assertEquals(TYPES[0].value(), model.getType());
+        assertEquals(TYPES[0], model.getType());
         assertNotNull(model.getStorage());
-        assertEquals(StorageType.ISCSI.value(), model.getStorage().getType());
+        assertEquals(StorageType.ISCSI, model.getStorage().getType());
         assertNotNull(model.getStorage().getVolumeGroup());
         assertEquals(GUIDS[GUIDS.length - 1].toString(), model.getStorage().getVolumeGroup().getId());
         assertTrue(model.getStorage().getVolumeGroup().isSetLogicalUnits());

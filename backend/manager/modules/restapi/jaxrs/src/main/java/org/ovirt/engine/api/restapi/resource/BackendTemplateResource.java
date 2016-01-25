@@ -65,7 +65,6 @@ public class BackendTemplateResource
 
     @Override
     public Template update(Template incoming) {
-        validateEnums(Template.class, incoming);
         validateIconParams(incoming);
         Template result = performUpdate(
             incoming,

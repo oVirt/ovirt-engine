@@ -224,7 +224,7 @@ public class BackendSnapshotsResourceTest
         assertNotNull(model.getInitialization());
         assertNotNull(model.getInitialization().getConfiguration());
         assertEquals(data, model.getInitialization().getConfiguration().getData());
-        assertEquals(type.value(), model.getInitialization().getConfiguration().getType());
+        assertEquals(type, model.getInitialization().getConfiguration().getType());
     }
 
     @Override

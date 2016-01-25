@@ -22,11 +22,11 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
         // The model is pre-populated with randomly generated values.
         // This won't work for enum fields like volume type since it
         // must be a valid value from corresponding enum
-        model.setVolumeType(GlusterVolumeType.DISTRIBUTE.name().toLowerCase());
+        model.setVolumeType(GlusterVolumeType.DISTRIBUTE);
 
-        List<String> transportTypes = model.getTransportTypes().getTransportTypes();
+        List<TransportType> transportTypes = model.getTransportTypes().getTransportTypes();
         transportTypes.clear();
-        transportTypes.add(TransportType.TCP.name().toLowerCase());
+        transportTypes.add(TransportType.TCP);
 
         return model;
     }

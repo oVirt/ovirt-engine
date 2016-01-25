@@ -619,7 +619,7 @@ public class BackendVmsResourceTest
         model.getInitialization().setRegenerateIds(Boolean.TRUE);
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
-        model.getInitialization().getConfiguration().setType("ovf");
+        model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
         setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[]{"VmConfiguration", "ConfigurationType"},
@@ -664,7 +664,7 @@ public class BackendVmsResourceTest
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
-        model.getInitialization().getConfiguration().setType("ovf");
+        model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
         setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[] { "VmConfiguration", "ConfigurationType" },
@@ -705,7 +705,7 @@ public class BackendVmsResourceTest
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
-        model.getInitialization().getConfiguration().setType("ovf");
+        model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
         model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setName(NAMES[1]);
         setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
@@ -753,7 +753,7 @@ public class BackendVmsResourceTest
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
-        model.getInitialization().getConfiguration().setType("ovf");
+        model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
         setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[] { "VmConfiguration", "ConfigurationType" },

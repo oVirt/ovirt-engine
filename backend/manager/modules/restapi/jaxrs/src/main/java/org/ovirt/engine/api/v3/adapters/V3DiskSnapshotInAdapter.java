@@ -18,7 +18,11 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.DiskFormat;
+import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskSnapshot;
+import org.ovirt.engine.api.model.DiskStorageType;
+import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Vms;
@@ -60,7 +64,7 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
             to.setDiskProfile(adaptIn(from.getDiskProfile()));
         }
         if (from.isSetFormat()) {
-            to.setFormat(from.getFormat());
+            to.setFormat(DiskFormat.fromValue(from.getFormat()));
         }
         if (from.isSetId()) {
             to.setId(from.getId());
@@ -75,7 +79,7 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
             to.setInstanceType(adaptIn(from.getInstanceType()));
         }
         if (from.isSetInterface()) {
-            to.setInterface(from.getInterface());
+            to.setInterface(DiskInterface.valueOf(from.getInterface()));
         }
         if (from.isSetLogicalName()) {
             to.setLogicalName(from.getLogicalName());
@@ -102,7 +106,7 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
             to.setReadOnly(from.isReadOnly());
         }
         if (from.isSetSgio()) {
-            to.setSgio(from.getSgio());
+            to.setSgio(ScsiGenericIO.valueOf(from.getSgio()));
         }
         if (from.isSetShareable()) {
             to.setShareable(from.isShareable());
@@ -128,7 +132,7 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
             to.getStorageDomains().getStorageDomains().addAll(adaptIn(from.getStorageDomains().getStorageDomains()));
         }
         if (from.isSetStorageType()) {
-            to.setStorageType(from.getStorageType());
+            to.setStorageType(DiskStorageType.valueOf(from.getStorageType()));
         }
         if (from.isSetTemplate()) {
             to.setTemplate(adaptIn(from.getTemplate()));

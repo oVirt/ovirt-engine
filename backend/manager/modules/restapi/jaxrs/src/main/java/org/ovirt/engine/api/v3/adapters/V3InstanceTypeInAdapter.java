@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.TimeZone;
+import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3InstanceType;
 
@@ -150,7 +151,7 @@ public class V3InstanceTypeInAdapter implements V3Adapter<V3InstanceType, Instan
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(VmType.valueOf(from.getType()));
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptIn(from.getUsb()));

@@ -31,7 +31,7 @@ public class ReportedDeviceMapper {
         model.setName(entity.getInterfaceName());
         model.setDescription("guest reported data");
         model.setId(generateDeviceId(entity).toString());
-        model.setType(ReportedDeviceType.NETWORK.value());
+        model.setType(ReportedDeviceType.NETWORK);
         mapIps(entity, model);
         return model;
     }

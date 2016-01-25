@@ -21,6 +21,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageDomainServerConnectionsResource> {
+    protected static final org.ovirt.engine.api.model.StorageType[] STORAGE_TYPES = {
+        org.ovirt.engine.api.model.StorageType.NFS,
+        org.ovirt.engine.api.model.StorageType.LOCALFS,
+        org.ovirt.engine.api.model.StorageType.POSIXFS,
+        org.ovirt.engine.api.model.StorageType.ISCSI };
+
     protected static final StorageType[] STORAGE_TYPES_MAPPED = {
             StorageType.NFS,
             StorageType.LOCALFS,
@@ -120,7 +126,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
 
      StorageConnection getModel(int index) {
         StorageConnection model = new StorageConnection();
-        model.setType(STORAGE_TYPES_MAPPED[index].toString());
+        model.setType(STORAGE_TYPES[index]);
         if ( index == 0 || index == 3 ) {
             model.setAddress("1.1.1.1");
         }

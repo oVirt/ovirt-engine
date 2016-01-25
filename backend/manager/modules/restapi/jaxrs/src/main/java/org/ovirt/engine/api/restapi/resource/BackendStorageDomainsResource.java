@@ -258,7 +258,6 @@ public class BackendStorageDomainsResource
     public Response add(StorageDomain storageDomain) {
         validateParameters(storageDomain, "host.id|name", "type", "storage");
         HostStorage storageConnectionFromUser = storageDomain.getStorage();
-        validateEnums(StorageDomain.class, storageDomain);
         Guid hostId = getHostId(storageDomain);
         StorageServerConnections cnx = null;
 
@@ -320,8 +319,8 @@ public class BackendStorageDomainsResource
         return getMapper(modelType, StorageDomainStatic.class).map(model, null);
     }
 
-    protected String mapType(StorageType type) {
-        return getMapper(StorageType.class, String.class).map(type, null);
+    protected org.ovirt.engine.api.model.StorageType mapType(StorageType type) {
+        return getMapper(StorageType.class, org.ovirt.engine.api.model.StorageType.class).map(type, null);
     }
 
     @Override

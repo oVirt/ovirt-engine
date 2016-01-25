@@ -18,7 +18,9 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.ExternalSystemType;
 import org.ovirt.engine.api.model.Step;
+import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Step;
 
@@ -45,7 +47,7 @@ public class V3StepInAdapter implements V3Adapter<V3Step, Step> {
             to.setExternal(from.isExternal());
         }
         if (from.isSetExternalType()) {
-            to.setExternalType(from.getExternalType());
+            to.setExternalType(ExternalSystemType.valueOf(from.getExternalType()));
         }
         if (from.isSetId()) {
             to.setId(from.getId());
@@ -72,7 +74,7 @@ public class V3StepInAdapter implements V3Adapter<V3Step, Step> {
             to.setStatus(adaptIn(from.getStatus()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(StepEnum.valueOf(from.getType()));
         }
         return to;
     }

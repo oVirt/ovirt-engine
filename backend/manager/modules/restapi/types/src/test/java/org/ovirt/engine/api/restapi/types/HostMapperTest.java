@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PmProxies;
+import org.ovirt.engine.api.model.PmProxyType;
 import org.ovirt.engine.api.model.Ssh;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -27,7 +28,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         while (from.getPort() == 0) {
             from.setPort(MappingTestHelper.rand(65535));
         }
-        from.setProtocol(MappingTestHelper.shuffle(HostProtocol.class).value());
+        from.setProtocol(MappingTestHelper.shuffle(HostProtocol.class));
         from.getSpm().setPriority(3);
         from.getPowerManagement().setPmProxies(new PmProxies());
         return from;
@@ -158,8 +159,8 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setFenceProxySources(Arrays.asList(FenceProxySourceType.CLUSTER, FenceProxySourceType.DC));
         Host host = HostMapper.map(vds, (Host) null);
         assertEquals(host.getPowerManagement().getPmProxies().getPmProxies().size(), 2);
-        assertTrue(host.getPowerManagement().getPmProxies().getPmProxies().get(0).getType().equalsIgnoreCase("cluster"));
-        assertTrue(host.getPowerManagement().getPmProxies().getPmProxies().get(1).getType().equalsIgnoreCase("dc"));
+        assertEquals(host.getPowerManagement().getPmProxies().getPmProxies().get(0).getType(), PmProxyType.CLUSTER);
+        assertEquals(host.getPowerManagement().getPmProxies().getPmProxies().get(1).getType(), PmProxyType.DC);
     }
 
     @Test

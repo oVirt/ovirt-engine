@@ -24,13 +24,16 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Floppies;
 import org.ovirt.engine.api.model.KatelloErrata;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.Payloads;
 import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.Snapshot;
+import org.ovirt.engine.api.model.SnapshotStatus;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
+import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Snapshot;
@@ -166,7 +169,7 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.getNics().getNics().addAll(adaptIn(from.getNics().getNics()));
         }
         if (from.isSetNumaTuneMode()) {
-            to.setNumaTuneMode(from.getNumaTuneMode());
+            to.setNumaTuneMode(NumaTuneMode.valueOf(from.getNumaTuneMode()));
         }
         if (from.isSetOrigin()) {
             to.setOrigin(from.getOrigin());
@@ -208,7 +211,7 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.setSmallIcon(adaptIn(from.getSmallIcon()));
         }
         if (from.isSetSnapshotStatus()) {
-            to.setSnapshotStatus(from.getSnapshotStatus());
+            to.setSnapshotStatus(SnapshotStatus.fromValue(from.getSnapshotStatus()));
         }
         if (from.isSetSnapshots()) {
             to.setSnapshots(new Snapshots());
@@ -259,7 +262,7 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(VmType.valueOf(from.getType()));
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptIn(from.getUsb()));

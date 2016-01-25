@@ -121,7 +121,6 @@ public class BackendVmsResource extends
     @Override
     public Response add(Vm vm) {
         validateParameters(vm, "cluster.id|name");
-        validateEnums(Vm.class, vm);
         validateIconParameters(vm);
         Response response = null;
         if (vm.isSetInitialization() && vm.getInitialization().isSetConfiguration()) {
@@ -269,7 +268,7 @@ public class BackendVmsResource extends
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration =
                 getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                         VdcQueryType.GetVmFromConfiguration,
-                        new GetVmFromConfigurationQueryParameters(VmMapper.map(ConfigurationType.fromValue(config.getType()), null), config.getData().trim()),
+                        new GetVmFromConfigurationQueryParameters(VmMapper.map(config.getType(), null), config.getData().trim()),
                         "");
 
         VmMapper.map(vm, vmConfiguration.getStaticData());

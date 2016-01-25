@@ -47,7 +47,6 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public org.ovirt.engine.api.model.Cluster update(org.ovirt.engine.api.model.Cluster incoming) {
-        validateEnums(org.ovirt.engine.api.model.Cluster.class, incoming);
         return performUpdate(incoming,
                              new QueryIdResolver<>(VdcQueryType.GetClusterById, IdQueryParameters.class),
                              VdcActionType.UpdateCluster,

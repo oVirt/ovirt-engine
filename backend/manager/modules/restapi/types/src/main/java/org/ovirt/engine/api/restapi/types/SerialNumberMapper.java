@@ -10,8 +10,7 @@ public class SerialNumberMapper {
         if (template == null) {
             template = new SerialNumber();
         }
-        SerialNumberPolicy policy = map(entity.getSerialNumberPolicy(), null);
-        template.setPolicy(policy == null ? "" : policy.value());
+        template.setPolicy(map(entity.getSerialNumberPolicy(), null));
         template.setValue(entity.getCustomSerialNumber());
 
         return template;
@@ -19,8 +18,7 @@ public class SerialNumberMapper {
 
     public static void copySerialNumber(SerialNumber serialNumber, HasSerialNumberPolicy entity) {
         if (serialNumber.isSetPolicy()) {
-            SerialNumberPolicy serialNumberPolicy = SerialNumberPolicy.fromValue(serialNumber.getPolicy());
-            entity.setSerialNumberPolicy(map(serialNumberPolicy, null));
+            entity.setSerialNumberPolicy(map(serialNumber.getPolicy(), null));
         }
         if (serialNumber.isSetValue()) {
             String customSerialNumber = "".equals(serialNumber.getValue()) ? null : serialNumber.getValue();

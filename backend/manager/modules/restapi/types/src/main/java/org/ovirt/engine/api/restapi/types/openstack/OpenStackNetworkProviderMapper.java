@@ -76,7 +76,7 @@ public class OpenStackNetworkProviderMapper {
             additionalProperties.setTenantName(model.getTenantName());
         }
         if (model.isSetPluginType()) {
-            additionalProperties.setPluginType(map(NetworkPluginType.fromValue(model.getPluginType())));
+            additionalProperties.setPluginType(map(model.getPluginType()));
         }
         if (model.isSetAgentConfiguration()) {
             additionalProperties.setAgentConfiguration(map(model.getAgentConfiguration(), null));
@@ -129,7 +129,7 @@ public class OpenStackNetworkProviderMapper {
                 model.setTenantName(additionalProperties.getTenantName());
             }
             if (additionalProperties.getPluginType() != null) {
-                model.setPluginType(map(additionalProperties.getPluginType()).value());
+                model.setPluginType(map(additionalProperties.getPluginType()));
             }
             if (additionalProperties.getAgentConfiguration() != null) {
                 model.setAgentConfiguration(map(additionalProperties.getAgentConfiguration(), null));
@@ -149,7 +149,7 @@ public class OpenStackNetworkProviderMapper {
             entity.getMessagingConfiguration();
         if (messagingConfiguration != null) {
             if (messagingConfiguration.getBrokerType() != null) {
-                model.setBrokerType(map(messagingConfiguration.getBrokerType()).value());
+                model.setBrokerType(map(messagingConfiguration.getBrokerType()));
             }
             if (messagingConfiguration.getAddress() != null) {
                 model.setAddress(messagingConfiguration.getAddress());
@@ -179,7 +179,7 @@ public class OpenStackNetworkProviderMapper {
         OpenstackNetworkProviderProperties.MessagingConfiguration messagingConfiguration =
             new OpenstackNetworkProviderProperties.MessagingConfiguration();
         if (model.isSetBrokerType()) {
-            messagingConfiguration.setBrokerType(map(MessageBrokerType.fromValue(model.getBrokerType())));
+            messagingConfiguration.setBrokerType(map(model.getBrokerType()));
         }
         if (model.isSetAddress()) {
             messagingConfiguration.setAddress(model.getAddress());

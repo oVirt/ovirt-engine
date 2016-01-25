@@ -191,10 +191,7 @@ public class VmBaseMapper {
             entity.setSsoMethod(SsoMapper.map(model.getSso(), null));
         }
         if (model.isSetType()) {
-            VmType vmType = VmType.fromValue(model.getType());
-            if (vmType != null) {
-                entity.setVmType(VmMapper.map(vmType, null));
-            }
+            entity.setVmType(VmMapper.map(model.getType(), null));
         }
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
@@ -244,7 +241,7 @@ public class VmBaseMapper {
             usb.setEnabled(UsbMapperUtils.getIsUsbEnabled(entity.getUsbPolicy()));
             UsbType usbType = UsbMapperUtils.getUsbType(entity.getUsbPolicy());
             if (usbType != null) {
-                usb.setType(usbType.value());
+                usb.setType(usbType);
             }
             model.setUsb(usb);
         }
@@ -398,13 +395,13 @@ public class VmBaseMapper {
         return type.name().toLowerCase();
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.VmType type, String incoming) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmType.class, to = VmType.class)
+    public static VmType map(org.ovirt.engine.core.common.businessentities.VmType type, VmType incoming) {
         switch (type) {
         case Desktop:
-            return VmType.DESKTOP.value();
+            return VmType.DESKTOP;
         case Server:
-            return VmType.SERVER.value();
+            return VmType.SERVER;
         default:
             return null;
         }

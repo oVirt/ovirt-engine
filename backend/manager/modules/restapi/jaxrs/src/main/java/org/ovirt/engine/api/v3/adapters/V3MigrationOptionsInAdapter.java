@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
+import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.MigrationOptions;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3MigrationOptions;
@@ -25,10 +26,10 @@ public class V3MigrationOptionsInAdapter implements V3Adapter<V3MigrationOptions
     public MigrationOptions adapt(V3MigrationOptions from) {
         MigrationOptions to = new MigrationOptions();
         if (from.isSetAutoConverge()) {
-            to.setAutoConverge(from.getAutoConverge());
+            to.setAutoConverge(InheritableBoolean.valueOf(from.getAutoConverge()));
         }
         if (from.isSetCompressed()) {
-            to.setCompressed(from.getCompressed());
+            to.setCompressed(InheritableBoolean.valueOf(from.getCompressed()));
         }
         return to;
     }

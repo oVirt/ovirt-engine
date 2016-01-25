@@ -77,7 +77,6 @@ public class BackendTemplatesResource
     @Override
     public Response add(Template template) {
         validateParameters(template, "name", "vm.id|name");
-        validateEnums(Template.class, template);
         validateIconParameters(template);
         Guid clusterId = null;
         Cluster cluster = null;

@@ -7,7 +7,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Step;
-import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.Steps;
 import org.ovirt.engine.api.resource.StepResource;
 import org.ovirt.engine.api.resource.StepsResource;
@@ -38,7 +37,6 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
     @Override
     public Response add(Step step) {
         validateParameters(step, "type", "description");
-        validateEnums(Step.class, step);
         String id;
         if (step.isSetParentStep()) {
             validateParameters(step, "parentStep.id");
@@ -49,7 +47,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
         }
 
         return performCreate(VdcActionType.AddExternalStep,
-                new AddExternalStepParameters(asGuid(id), step.getDescription(), StepMapper.map(StepEnum.fromValue(step.getType()))),
+                new AddExternalStepParameters(asGuid(id), step.getDescription(), StepMapper.map(step.getType())),
                 new QueryIdResolver<Guid>(VdcQueryType.GetStepByStepId, IdQueryParameters.class));
     }
 

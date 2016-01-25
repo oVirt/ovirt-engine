@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.AutoNumaStatus;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Cpu;
@@ -32,8 +33,10 @@ import org.ovirt.engine.api.model.Ksm;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxy;
+import org.ovirt.engine.api.model.PmProxyType;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SELinux;
 import org.ovirt.engine.api.model.SELinuxMode;
@@ -45,7 +48,6 @@ import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
-import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
@@ -144,7 +146,7 @@ public class HostMapper {
                     model.getPmProxies()
                             .getPmProxies()
                             .stream()
-                            .map(pmProxy -> FenceProxySourceType.forValue(pmProxy.getType()))
+                            .map(pmProxy -> FenceProxySourceType.forValue(pmProxy.getType().toString()))
                             .collect(toCollection(LinkedList::new));
             entity.setFenceProxySources(fenceProxySources);
         }
@@ -193,8 +195,7 @@ public class HostMapper {
         if (entity.getPort() > 0) {
             model.setPort(entity.getPort());
         }
-        HostProtocol protocol = map(entity.getProtocol(), null);
-        model.setProtocol(protocol != null ? protocol.value() : null);
+        model.setProtocol(map(entity.getProtocol(), null));
         HostStatus status = map(entity.getStatus(), null);
         model.setStatus(StatusUtils.create(status));
         if (entity.getExternalStatus() != null) {
@@ -339,6 +340,11 @@ public class HostMapper {
         return os;
     }
 
+    @Mapping(from = String.class, to = OsType.class)
+    public static OsType map(String osType, OsType template) {
+        return OsType.fromValue(osType);
+    }
+
     private static Integer getIntegerValue(String[] hostOsInfo, int indx) {
         if (hostOsInfo.length <= indx) {
             return null;
@@ -392,7 +398,7 @@ public class HostMapper {
             PmProxies pmProxies = new PmProxies();
             for (FenceProxySourceType fenceProxySource : entity.getFenceProxySources()) {
                 PmProxy pmProxy = new PmProxy();
-                pmProxy.setType(fenceProxySource.getValue());
+                pmProxy.setType(map(fenceProxySource, null));
                 pmProxies.getPmProxies().add(pmProxy);
             }
             model.setPmProxies(pmProxies);
@@ -570,16 +576,16 @@ public class HostMapper {
             return model;
         }
 
-        String mode = null;
+        SELinuxMode mode = null;
         switch (entity.getSELinuxEnforceMode()) {
             case DISABLED:
-                mode = SELinuxMode.DISABLED.value();
+                mode = SELinuxMode.DISABLED;
                 break;
             case PERMISSIVE:
-                mode = SELinuxMode.PERMISSIVE.value();
+                mode = SELinuxMode.PERMISSIVE;
                 break;
             case ENFORCING:
-                mode = SELinuxMode.ENFORCING.value();
+                mode = SELinuxMode.ENFORCING;
         }
         model.setMode(mode);
 
@@ -604,19 +610,19 @@ public class HostMapper {
         hook.setId(guid.toString());
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.KdumpStatus.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.KdumpStatus kdumpStatus, String template) {
-        String result = null;
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.KdumpStatus.class, to = KdumpStatus.class)
+    public static KdumpStatus map(org.ovirt.engine.core.common.businessentities.KdumpStatus kdumpStatus, KdumpStatus template) {
+        KdumpStatus result = null;
         if (kdumpStatus != null) {
             switch (kdumpStatus) {
                 case UNKNOWN:
-                    result = KdumpStatus.UNKNOWN.value();
+                    result = KdumpStatus.UNKNOWN;
                     break;
                 case DISABLED:
-                    result = KdumpStatus.DISABLED.value();
+                    result = KdumpStatus.DISABLED;
                     break;
                 case ENABLED:
-                    result = KdumpStatus.ENABLED.value();
+                    result = KdumpStatus.ENABLED;
                     break;
                 default:
                     break;
@@ -625,19 +631,19 @@ public class HostMapper {
         return result;
     }
 
-    @Mapping(from = AutoNumaBalanceStatus.class, to = String.class)
-    public static String map(AutoNumaBalanceStatus autoNumaStatus, String template) {
-        String result = null;
+    @Mapping(from = AutoNumaBalanceStatus.class, to = AutoNumaStatus.class)
+    public static AutoNumaStatus map(AutoNumaBalanceStatus autoNumaStatus, AutoNumaStatus template) {
+        AutoNumaStatus result = null;
         if (autoNumaStatus != null) {
             switch (autoNumaStatus) {
             case DISABLE:
-                result = AutoNumaStatus.DISABLE.value();
+                result = AutoNumaStatus.DISABLE;
                 break;
             case ENABLE:
-                result = AutoNumaStatus.ENABLE.value();
+                result = AutoNumaStatus.ENABLE;
                 break;
             case UNKNOWN:
-                result = AutoNumaStatus.UNKNOWN.value();
+                result = AutoNumaStatus.UNKNOWN;
                 break;
             default:
                 break;
@@ -663,12 +669,11 @@ public class HostMapper {
         return result;
     }
 
-    @Mapping(from = String.class, to = VdsStatic.class)
-    public static VdsStatic map(String protocol, VdsStatic template) {
+    @Mapping(from = HostProtocol.class, to = VdsStatic.class)
+    public static VdsStatic map(HostProtocol protocol, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
-        HostProtocol hostProtocol = HostProtocol.fromValue(protocol);
         VdsProtocol result = null;
-        switch (hostProtocol) {
+        switch (protocol) {
             case STOMP:
                 result =  VdsProtocol.STOMP;
                 break;
@@ -694,4 +699,19 @@ public class HostMapper {
                 return null;
         }
     }
+
+    @Mapping(from = FenceProxySourceType.class, to = PmProxyType.class)
+    private static PmProxyType map(FenceProxySourceType fenceProxySource, PmProxyType template) {
+        switch (fenceProxySource) {
+        case CLUSTER :
+            return PmProxyType.CLUSTER;
+        case DC:
+            return PmProxyType.DC;
+        case OTHER_DC:
+            return PmProxyType.OTHER_DC;
+        default:
+            return null;
+        }
+    }
+
  }

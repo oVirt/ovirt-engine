@@ -150,7 +150,7 @@ public class V3TemplateOutAdapter implements V3Adapter<Template, V3Template> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptOut(from.getUsb()));

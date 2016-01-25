@@ -40,7 +40,7 @@ public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
             to.setAddress(from.getAddress());
         }
         if (from.isSetAutoNumaStatus()) {
-            to.setAutoNumaStatus(from.getAutoNumaStatus());
+            to.setAutoNumaStatus(from.getAutoNumaStatus().value());
         }
         if (from.isSetCertificate()) {
             to.setCertificate(adaptOut(from.getCertificate()));
@@ -93,7 +93,7 @@ public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
             to.getKatelloErrata().getKatelloErrata().addAll(adaptOut(from.getKatelloErrata().getKatelloErrata()));
         }
         if (from.isSetKdumpStatus()) {
-            to.setKdumpStatus(from.getKdumpStatus());
+            to.setKdumpStatus(from.getKdumpStatus().value());
         }
         if (from.isSetKsm()) {
             to.setKsm(adaptOut(from.getKsm()));
@@ -129,7 +129,7 @@ public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
             to.setPowerManagement(adaptOut(from.getPowerManagement()));
         }
         if (from.isSetProtocol()) {
-            to.setProtocol(from.getProtocol());
+            to.setProtocol(from.getProtocol().value());
         }
         if (from.isSetRootPassword()) {
             to.setRootPassword(from.getRootPassword());

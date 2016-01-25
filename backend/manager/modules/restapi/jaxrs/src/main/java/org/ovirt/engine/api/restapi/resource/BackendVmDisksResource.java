@@ -72,8 +72,6 @@ public class BackendVmDisksResource
 
     @Override
     public Response add(Disk disk) {
-        validateEnums(Disk.class, disk);
-
         if (disk.isSetId()) {
             return attachDiskToVm(disk);
         }
@@ -93,7 +91,7 @@ public class BackendVmDisksResource
         if (storageDomainId != null) {
             org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(storageDomainId);
             if (storageDomain != null) {
-                disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
+                disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()));
             }
         }
     }
@@ -210,7 +208,7 @@ public class BackendVmDisksResource
         validateParameters(disk, 3, "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
             validateParameters(disk.getLunStorage(), 3, "type"); // when creating a LUN disk, user must specify type.
-            StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
+            StorageType storageType = disk.getLunStorage().getType();
             if (storageType != null && storageType == StorageType.ISCSI) {
                 validateParameters(disk.getLunStorage().getLogicalUnits().getLogicalUnits().get(0), 3, "address", "target", "port", "id");
             }
@@ -223,7 +221,6 @@ public class BackendVmDisksResource
         } else {
             validateParameters(disk, 3, "provisionedSize|size", "format"); // Non lun disks require size and format
         }
-        validateEnums(Disk.class, disk);
     }
 
     @Override

@@ -20,6 +20,8 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnits;
+import org.ovirt.engine.api.model.NfsVersion;
+import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Storage;
 
@@ -68,7 +70,7 @@ public class V3StorageInAdapter implements V3Adapter<V3Storage, HostStorage> {
             to.setNfsTimeo(from.getNfsTimeo());
         }
         if (from.isSetNfsVersion()) {
-            to.setNfsVersion(from.getNfsVersion());
+            to.setNfsVersion(NfsVersion.valueOf(from.getNfsVersion()));
         }
         if (from.isSetOverrideLuns()) {
             to.setOverrideLuns(from.isOverrideLuns());
@@ -89,7 +91,7 @@ public class V3StorageInAdapter implements V3Adapter<V3Storage, HostStorage> {
             to.setTarget(from.getTarget());
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(StorageType.valueOf(from.getType()));
         }
         if (from.isSetUsername()) {
             to.setUsername(from.getUsername());

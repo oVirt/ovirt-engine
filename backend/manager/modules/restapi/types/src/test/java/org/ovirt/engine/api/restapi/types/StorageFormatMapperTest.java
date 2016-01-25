@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 
 public class StorageFormatMapperTest {

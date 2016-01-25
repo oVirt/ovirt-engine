@@ -215,8 +215,7 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
     protected void verifyModel(GlusterVolume model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index], model.getName());
-        assertEquals(org.ovirt.engine.api.model.GlusterVolumeType.DISTRIBUTE.name().toLowerCase(),
-                model.getVolumeType());
+        assertEquals(org.ovirt.engine.api.model.GlusterVolumeType.DISTRIBUTE, model.getVolumeType());
         assertEquals(clusterId.toString(), model.getCluster().getId());
         verifyLinks(model);
     }
@@ -226,7 +225,7 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
         volume.setName("testVol1");
         volume.setCluster(new Cluster());
         volume.getCluster().setId(clusterId.toString());
-        volume.setVolumeType(org.ovirt.engine.api.model.GlusterVolumeType.DISTRIBUTE.toString());
+        volume.setVolumeType(org.ovirt.engine.api.model.GlusterVolumeType.DISTRIBUTE);
         volume.setBricks(new GlusterBricks());
         volume.getBricks().getGlusterBricks().add(createBrick("/export/vol1/brick1"));
         return volume;

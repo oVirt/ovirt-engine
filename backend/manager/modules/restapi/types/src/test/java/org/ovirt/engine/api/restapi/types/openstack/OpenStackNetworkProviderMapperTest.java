@@ -32,9 +32,9 @@ public class OpenStackNetworkProviderMapperTest
 
     @Override
     protected OpenStackNetworkProvider postPopulate(OpenStackNetworkProvider model) {
-        model.setPluginType(MappingTestHelper.shuffle(NetworkPluginType.class).value());
+        model.setPluginType(MappingTestHelper.shuffle(NetworkPluginType.class));
         AgentConfiguration agentConfiguration = model.getAgentConfiguration();
-        agentConfiguration.setBrokerType(MappingTestHelper.shuffle(MessageBrokerType.class).value());
+        agentConfiguration.setBrokerType(MappingTestHelper.shuffle(MessageBrokerType.class));
         return model;
     }
 

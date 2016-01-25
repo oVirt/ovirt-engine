@@ -34,7 +34,7 @@ public class V3WatchdogOutAdapter implements V3Adapter<Watchdog, V3WatchDog> {
             to.setActions(adaptOut(from.getActions()));
         }
         if (from.isSetAction()) {
-            to.setAction(from.getAction());
+            to.setAction(from.getAction().value());
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
@@ -52,7 +52,7 @@ public class V3WatchdogOutAdapter implements V3Adapter<Watchdog, V3WatchDog> {
             to.setInstanceType(adaptOut(from.getInstanceType()));
         }
         if (from.isSetModel()) {
-            to.setModel(from.getModel());
+            to.setModel(from.getModel().value());
         }
         if (from.isSetName()) {
             to.setName(from.getName());

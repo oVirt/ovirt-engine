@@ -35,7 +35,6 @@ import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
-import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
@@ -111,7 +110,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected BackendLocal backend;
     protected MappingLocator mapperLocator;
-    protected ValidatorLocator validatorLocator;
     protected Locale locale;
     protected HttpHeaders httpHeaders;
     protected List<Locale> locales;
@@ -155,8 +153,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
         mapperLocator = new MappingLocator();
         mapperLocator.populate();
-        validatorLocator = new ValidatorLocator();
-        validatorLocator.populate();
         locale = Locale.getDefault();
         Locale.setDefault(Locale.GERMANY);
         messageBundle = new MessageBundle();
@@ -657,7 +653,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected void initBackendResource(BackendResource resource) {
         resource.setBackend(backend);
-        resource.setValidatorLocator(validatorLocator);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
     }

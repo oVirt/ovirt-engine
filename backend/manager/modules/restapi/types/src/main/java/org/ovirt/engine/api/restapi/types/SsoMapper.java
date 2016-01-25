@@ -17,7 +17,7 @@ public class SsoMapper {
 
         if (entity == SsoMethod.GUEST_AGENT) {
             Method method = new Method();
-            method.setId(org.ovirt.engine.api.model.SsoMethod.GUEST_AGENT.toString());
+            method.setId(org.ovirt.engine.api.model.SsoMethod.GUEST_AGENT);
             model.getMethods().getMethods().add(method);
         }
 
@@ -30,7 +30,7 @@ public class SsoMapper {
             if (model.getMethods().getMethods().size() == 0) {
                 return SsoMethod.NONE;
             }
-            if (model.getMethods().getMethods().size() == 1 && SsoMethod.fromString(model.getMethods().getMethods().get(0).getId()) == SsoMethod.GUEST_AGENT) {
+            if (model.getMethods().getMethods().size() == 1 && model.getMethods().getMethods().get(0).getId() == org.ovirt.engine.api.model.SsoMethod.GUEST_AGENT) {
                 return SsoMethod.GUEST_AGENT;
             }
         }

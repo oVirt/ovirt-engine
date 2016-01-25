@@ -85,7 +85,7 @@ public class BackendHostStorageResourceTest
 
     @Override
     protected void verifyModel(HostStorage model, int index) {
-        assertEquals(StorageType.ISCSI.value(), model.getType());
+        assertEquals(StorageType.ISCSI, model.getType());
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(1, model.getLogicalUnits().getLogicalUnits().size());
         assertEquals(GUIDS[index].toString(), model.getLogicalUnits().getLogicalUnits().get(0).getId());

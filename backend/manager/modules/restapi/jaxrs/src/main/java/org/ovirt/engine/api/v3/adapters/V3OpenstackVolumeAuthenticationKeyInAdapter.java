@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
+import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeyUsageType;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3OpenstackVolumeAuthenticationKey;
 
@@ -54,7 +55,7 @@ public class V3OpenstackVolumeAuthenticationKeyInAdapter implements V3Adapter<V3
             to.setOpenstackVolumeProvider(adaptIn(from.getOpenstackVolumeProvider()));
         }
         if (from.isSetUsageType()) {
-            to.setUsageType(from.getUsageType());
+            to.setUsageType(OpenstackVolumeAuthenticationKeyUsageType.valueOf(from.getUsageType()));
         }
         if (from.isSetUuid()) {
             to.setUuid(from.getUuid());

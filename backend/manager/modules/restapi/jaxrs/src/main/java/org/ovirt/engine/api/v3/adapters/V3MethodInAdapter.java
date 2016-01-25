@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import org.ovirt.engine.api.model.Method;
+import org.ovirt.engine.api.model.SsoMethod;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Method;
 
@@ -25,7 +26,7 @@ public class V3MethodInAdapter implements V3Adapter<V3Method, Method> {
     public Method adapt(V3Method from) {
         Method to = new Method();
         if (from.isSetId()) {
-            to.setId(from.getId());
+            to.setId(SsoMethod.valueOf(from.getId()));
         }
         return to;
     }

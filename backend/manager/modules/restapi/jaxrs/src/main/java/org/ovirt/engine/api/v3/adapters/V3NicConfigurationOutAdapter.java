@@ -27,7 +27,7 @@ public class V3NicConfigurationOutAdapter implements V3Adapter<NicConfiguration,
     public V3GuestNicConfiguration adapt(NicConfiguration from) {
         V3GuestNicConfiguration to = new V3GuestNicConfiguration();
         if (from.isSetBootProtocol()) {
-            to.setBootProtocol(from.getBootProtocol());
+            to.setBootProtocol(from.getBootProtocol().value());
         }
         if (from.isSetIp()) {
             to.setIp(adaptOut(from.getIp()));

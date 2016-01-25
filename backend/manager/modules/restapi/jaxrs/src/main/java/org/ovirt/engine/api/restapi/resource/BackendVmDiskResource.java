@@ -191,7 +191,6 @@ public class BackendVmDiskResource
 
     @Override
     public Disk update(Disk disk) {
-        validateEnums(Disk.class, disk);
         return performUpdate(disk, new DiskResolver(), VdcActionType.UpdateVmDisk, new UpdateParametersProvider());
     }
 

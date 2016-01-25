@@ -28,7 +28,7 @@ public class V3CpuOutAdapter implements V3Adapter<Cpu, V3CPU> {
     public V3CPU adapt(Cpu from) {
         V3CPU to = new V3CPU();
         if (from.isSetArchitecture()) {
-            to.setArchitecture(from.getArchitecture());
+            to.setArchitecture(from.getArchitecture().value());
         }
         if (from.isSetCores()) {
             to.setCores(new V3Cores());
@@ -41,7 +41,7 @@ public class V3CpuOutAdapter implements V3Adapter<Cpu, V3CPU> {
             to.setLevel(from.getLevel());
         }
         if (from.isSetMode()) {
-            to.setMode(from.getMode());
+            to.setMode(from.getMode().value());
         }
         if (from.isSetName()) {
             to.setName(from.getName());

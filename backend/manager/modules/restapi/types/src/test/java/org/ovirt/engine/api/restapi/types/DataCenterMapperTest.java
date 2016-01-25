@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.model.QuotaModeType;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 
@@ -17,8 +17,8 @@ public class DataCenterMapperTest extends
 
     @Override
     protected DataCenter postPopulate(DataCenter model) {
-        model.setStorageFormat(MappingTestHelper.shuffle(StorageFormat.class).value());
-        model.setQuotaMode(MappingTestHelper.shuffle(QuotaModeType.class).value());
+        model.setStorageFormat(MappingTestHelper.shuffle(StorageFormat.class));
+        model.setQuotaMode(MappingTestHelper.shuffle(QuotaModeType.class));
         return model;
     }
 

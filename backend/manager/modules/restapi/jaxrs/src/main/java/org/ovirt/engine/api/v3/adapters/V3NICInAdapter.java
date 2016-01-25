@@ -18,7 +18,9 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.Nic;
+import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Vms;
@@ -36,7 +38,7 @@ public class V3NICInAdapter implements V3Adapter<V3NIC, Nic> {
             to.setActions(adaptIn(from.getActions()));
         }
         if (from.isSetBootProtocol()) {
-            to.setBootProtocol(from.getBootProtocol());
+            to.setBootProtocol(BootProtocol.valueOf(from.getBootProtocol()));
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
@@ -54,7 +56,7 @@ public class V3NICInAdapter implements V3Adapter<V3NIC, Nic> {
             to.setInstanceType(adaptIn(from.getInstanceType()));
         }
         if (from.isSetInterface()) {
-            to.setInterface(from.getInterface());
+            to.setInterface(NicInterface.valueOf(from.getInterface()));
         }
         if (from.isSetLinked()) {
             to.setLinked(from.isLinked());

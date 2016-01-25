@@ -19,8 +19,6 @@ public class QosMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
 
-        model.setType(QosTypeMapper.qosTypeToString(entity.getQosType()));
-
         Guid storagePoolId = entity.getStoragePoolId();
         if (storagePoolId != null) {
             DataCenter dataCenter = new DataCenter();
@@ -30,7 +28,9 @@ public class QosMapper {
 
         model.setDescription(entity.getDescription());
         mapQosTypeToModel(entity, model);
-
+        if (entity.getQosType() != null) {
+            model.setType(QosTypeMapper.map(entity.getQosType(), null));
+        }
         return model;
     }
 
@@ -128,49 +128,51 @@ public class QosMapper {
 
     @Mapping(from = Qos.class, to = QosBase.class)
     public static QosBase map(Qos model, QosBase template) {
-        QosBase entity = template == null ? null : template;
-        QosType qosType = QosTypeMapper.map (model.getType(), entity == null ? null : entity.getQosType());
-
-        if (entity == null) {
-            entity = createNewQosEntityForQosType(qosType);
+        if (template == null) {
+            template = createNewQosEntityForQosType(model.getType());
         }
 
         if (model.isSetId()) {
-            entity.setId(GuidUtils.asGuid(model.getId()));
+            template.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setName(model.getName());
+            template.setName(model.getName());
         }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
-            entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter()
+            template.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter()
                 .getId()));
         }
         if (model.isSetDescription()) {
-            entity.setDescription(model.getDescription());
+            template.setDescription(model.getDescription());
         }
 
-        mapQosToEntity(model, entity, qosType);
+        mapQosToEntity(model, template);
 
-
-        return entity;
+        return template;
     }
 
-    private static void mapQosToEntity(Qos model, QosBase entity, QosType qosType) {
-        switch (qosType) {
-        case STORAGE:
-            mapStorageQosToEntity(model, (StorageQos) entity);
-            break;
-        case CPU:
-            mapCpuQosToEntity(model, (CpuQos) entity);
-            break;
-        case NETWORK:
-            mapNetworkQosToEntity(model, (NetworkQoS) entity);
-            break;
-        case HOSTNETWORK:
-            mapHostNetworkQosToEntity(model, (HostNetworkQos) entity);
-            break;
-        default:
-            break;
+    private static void mapQosToEntity(Qos model, QosBase entity) {
+        QosType qosType = model.getType();
+        if (qosType == null && entity.getQosType() != null) {
+            qosType = QosTypeMapper.map(entity.getQosType(), null);
+        }
+        if (qosType != null) {
+            switch (qosType) {
+            case STORAGE:
+                mapStorageQosToEntity(model, (StorageQos) entity);
+                break;
+            case CPU:
+                mapCpuQosToEntity(model, (CpuQos) entity);
+                break;
+            case NETWORK:
+                mapNetworkQosToEntity(model, (NetworkQoS) entity);
+                break;
+            case HOSTNETWORK:
+                mapHostNetworkQosToEntity(model, (HostNetworkQos) entity);
+                break;
+            default:
+                break;
+            }
         }
     }
 

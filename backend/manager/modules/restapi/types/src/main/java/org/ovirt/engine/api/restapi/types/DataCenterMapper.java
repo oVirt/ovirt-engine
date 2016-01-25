@@ -6,8 +6,8 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.QuotaModeType;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -34,10 +34,7 @@ public class DataCenterMapper {
             entity.setIsLocal(model.isLocal());
         }
         if (model.isSetStorageFormat()) {
-            StorageFormat storageFormat =  StorageFormat.fromValue(model.getStorageFormat());
-            if (storageFormat!=null) {
-                entity.setStoragePoolFormatType(StorageFormatMapper.map(storageFormat, null));
-            }
+            entity.setStoragePoolFormatType(StorageFormatMapper.map(model.getStorageFormat(), null));
         }
         if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
             entity.setCompatibilityVersion(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
@@ -49,7 +46,7 @@ public class DataCenterMapper {
         }
 
         if (model.isSetQuotaMode()) {
-            entity.setQuotaEnforcementType(map(QuotaModeType.fromValue(model.getQuotaMode())));
+            entity.setQuotaEnforcementType(map(model.getQuotaMode()));
         }
 
         return entity;
@@ -79,7 +76,7 @@ public class DataCenterMapper {
         if (entity.getStoragePoolFormatType()!=null) {
             StorageFormat storageFormat = StorageFormatMapper.map(entity.getStoragePoolFormatType(), null);
             if (storageFormat!=null) {
-                model.setStorageFormat(storageFormat.value());
+                model.setStorageFormat(storageFormat);
             }
         }
 
@@ -89,7 +86,7 @@ public class DataCenterMapper {
         }
 
         if (entity.getQuotaEnforcementType() != null) {
-            model.setQuotaMode(map(entity.getQuotaEnforcementType()).value());
+            model.setQuotaMode(map(entity.getQuotaEnforcementType()));
         }
 
         return model;

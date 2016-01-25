@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.restapi.model.StorageFormat;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 
 public class StorageFormatMapper {

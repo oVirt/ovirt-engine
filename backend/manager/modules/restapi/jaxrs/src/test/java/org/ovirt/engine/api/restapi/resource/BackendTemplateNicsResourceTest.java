@@ -119,7 +119,7 @@ public class BackendTemplateNicsResourceTest
     static Nic getModel(int index) {
         Nic model = new Nic();
         model.setName(NAMES[index]);
-        model.setInterface(NicInterface.RTL8139_VIRTIO.value());
+        model.setInterface(NicInterface.RTL8139_VIRTIO);
         return model;
     }
 

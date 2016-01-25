@@ -59,7 +59,7 @@ public class V3SchedulingPolicyUnitOutAdapter implements V3Adapter<SchedulingPol
             to.getPropertiesMetaData().getProperties().addAll(adaptOut(from.getProperties().getProperties()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(from.getType().value());
         }
         return to;
     }

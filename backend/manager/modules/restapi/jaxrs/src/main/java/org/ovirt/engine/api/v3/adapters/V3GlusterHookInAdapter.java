@@ -20,6 +20,8 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.model.GlusterServerHooks;
+import org.ovirt.engine.api.model.HookContentType;
+import org.ovirt.engine.api.model.HookStage;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3GlusterHook;
 
@@ -52,7 +54,7 @@ public class V3GlusterHookInAdapter implements V3Adapter<V3GlusterHook, GlusterH
             to.setContent(from.getContent());
         }
         if (from.isSetContentType()) {
-            to.setContentType(from.getContentType());
+            to.setContentType(HookContentType.valueOf(from.getContentType()));
         }
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());
@@ -74,7 +76,7 @@ public class V3GlusterHookInAdapter implements V3Adapter<V3GlusterHook, GlusterH
             to.getServerHooks().getGlusterServerHooks().addAll(adaptIn(from.getServerHooks().getGlusterServerHooks()));
         }
         if (from.isSetStage()) {
-            to.setStage(from.getStage());
+            to.setStage(HookStage.valueOf(from.getStage()));
         }
         if (from.isSetStatus()) {
             to.setStatus(adaptIn(from.getStatus()));

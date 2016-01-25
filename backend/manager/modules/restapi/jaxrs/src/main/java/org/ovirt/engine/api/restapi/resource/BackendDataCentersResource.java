@@ -46,7 +46,6 @@ public class BackendDataCentersResource extends
     @Override
     public Response add(DataCenter dataCenter) {
         validateParameters(dataCenter, "name");
-        validateEnums(DataCenter.class, dataCenter);
         if(!dataCenter.isSetLocal()) {
             validateParameters(dataCenter, "local");
         }

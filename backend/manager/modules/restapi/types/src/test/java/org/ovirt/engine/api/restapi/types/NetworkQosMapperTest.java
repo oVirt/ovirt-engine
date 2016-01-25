@@ -21,7 +21,7 @@ public class NetworkQosMapperTest extends QosMapperTest {
     @Override
     protected Qos postPopulate(Qos model) {
         model = super.postPopulate(model);
-        model.setType(QosType.NETWORK.name().toLowerCase());
+        model.setType(QosType.NETWORK);
         return model;
 
     }

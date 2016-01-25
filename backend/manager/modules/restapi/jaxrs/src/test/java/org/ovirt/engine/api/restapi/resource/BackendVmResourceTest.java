@@ -612,7 +612,7 @@ public class BackendVmResourceTest
         DisplayType display = (graphicsType == GraphicsType.VNC)
                 ? DisplayType.VNC
                 : DisplayType.SPICE;
-        action.getVm().getDisplay().setType(display.value());
+        action.getVm().getDisplay().setType(display);
 
         verifyActionResponse(resource.start(action));
     }
@@ -630,7 +630,7 @@ public class BackendVmResourceTest
         action.getVm().setOs(new OperatingSystem());
         action.getVm().getOs().setBoot(new Boot());
         action.getVm().getOs().getBoot().setDevices(new Boot.DevicesList());
-        action.getVm().getOs().getBoot().getDevices().getDevices().add(BootDevice.NETWORK.value());
+        action.getVm().getOs().getBoot().getDevices().getDevices().add(BootDevice.NETWORK);
 
         verifyActionResponse(resource.start(action));
     }
@@ -937,7 +937,7 @@ public class BackendVmResourceTest
         vm.setName("someNewName");
         action.setVm(vm);
 
-        Response response = resource.clone(action);
+        Response response = resource.doClone(action);
         verifyActionResponse(response);
         Action actionResponse = (Action)response.getEntity();
         assertTrue(actionResponse.isSetStatus());

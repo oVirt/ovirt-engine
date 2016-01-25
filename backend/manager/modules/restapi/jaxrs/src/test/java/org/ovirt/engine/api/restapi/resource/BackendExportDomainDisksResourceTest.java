@@ -62,7 +62,6 @@ public class BackendExportDomainDisksResourceTest
         AbstractBackendResource parent = collection.getParent().getParent();
         parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
-        parent.setValidatorLocator(validatorLocator);
         parent.setMessageBundle(messageBundle);
         parent.setHttpHeaders(httpHeaders);
     }
@@ -114,8 +113,8 @@ public class BackendExportDomainDisksResourceTest
     static Disk getModel(int index) {
         Disk model = new Disk();
         model.setProvisionedSize(1024 * 1024L);
-        model.setFormat(DiskFormat.COW.value());
-        model.setInterface(org.ovirt.engine.api.model.DiskInterface.IDE.value());
+        model.setFormat(DiskFormat.COW);
+        model.setInterface(org.ovirt.engine.api.model.DiskInterface.IDE);
         model.setSparse(true);
         model.setBootable(false);
         model.setShareable(false);

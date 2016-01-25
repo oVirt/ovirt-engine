@@ -43,16 +43,9 @@ public class BackendGraphicsConsoleResource
 
     protected org.ovirt.engine.core.common.businessentities.GraphicsType asGraphicsType() {
         String consoleString = HexUtils.hex2string(consoleId);
-        validateGraphicsEnum(consoleString);
 
         GraphicsType type = GraphicsType.valueOf(consoleString);
         return getMappingLocator().getMapper(GraphicsType.class, org.ovirt.engine.core.common.businessentities.GraphicsType.class).map(type, null);
-    }
-
-    private void validateGraphicsEnum(String consoleString) {
-        GraphicsConsole console = new GraphicsConsole();
-        console.setProtocol(consoleString);
-        validateEnums(GraphicsConsole.class, console);
     }
 
     @Override

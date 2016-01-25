@@ -20,6 +20,8 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.model.Watchdog;
+import org.ovirt.engine.api.model.WatchdogAction;
+import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3WatchDog;
 
@@ -34,7 +36,7 @@ public class V3WatchDogInAdapter implements V3Adapter<V3WatchDog, Watchdog> {
             to.setActions(adaptIn(from.getActions()));
         }
         if (from.isSetAction()) {
-            to.setAction(from.getAction());
+            to.setAction(WatchdogAction.valueOf(from.getAction()));
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
@@ -52,7 +54,7 @@ public class V3WatchDogInAdapter implements V3Adapter<V3WatchDog, Watchdog> {
             to.setInstanceType(adaptIn(from.getInstanceType()));
         }
         if (from.isSetModel()) {
-            to.setModel(from.getModel());
+            to.setModel(WatchdogModel.valueOf(from.getModel()));
         }
         if (from.isSetName()) {
             to.setName(from.getName());

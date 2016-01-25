@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.FenceType;
@@ -35,7 +36,6 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionExtensionsResource;
 import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
-import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKatelloErrataResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -105,7 +105,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host update(Host incoming) {
-        validateEnums(Host.class, incoming);
         QueryIdResolver<Guid> hostResolver = new QueryIdResolver<>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
         VDS entity = getEntity(hostResolver, true);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
@@ -134,7 +133,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Response install(Action action) {
         // REVISIT fencing options
         VDS vds = getEntity();
-        validateEnums(Action.class, action);
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
         params = (UpdateVdsActionParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, params);
@@ -173,7 +171,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (action.isSetCluster() && (action.getCluster().isSetId() || action.getCluster().isSetName())) {
             update(setCluster(get(), action.getCluster()));
         }
-        validateEnums(Action.class, action);
         ApproveVdsParameters params = new ApproveVdsParameters(guid);
         params = (ApproveVdsParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, params);

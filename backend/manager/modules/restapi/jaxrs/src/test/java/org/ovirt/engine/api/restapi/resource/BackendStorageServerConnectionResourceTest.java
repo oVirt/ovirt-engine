@@ -16,6 +16,12 @@ import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParamete
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageServerConnectionResourceTest extends AbstractBackendSubResourceTest<StorageConnection, StorageServerConnections, BackendStorageServerConnectionResource> {
+    protected static final org.ovirt.engine.api.model.StorageType[] STORAGE_TYPES = {
+        org.ovirt.engine.api.model.StorageType.NFS,
+        org.ovirt.engine.api.model.StorageType.LOCALFS,
+        org.ovirt.engine.api.model.StorageType.POSIXFS,
+        org.ovirt.engine.api.model.StorageType.ISCSI };
+
     protected static final StorageType[] STORAGE_TYPES_MAPPED = {
             StorageType.NFS,
             StorageType.LOCALFS,
@@ -232,7 +238,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
 
     StorageConnection getModel(int index) {
         StorageConnection model = new StorageConnection();
-        model.setType(STORAGE_TYPES_MAPPED[index].toString());
+        model.setType(STORAGE_TYPES[index]);
         model.setAddress("1.122.10.125");
         Host host = new Host();
         host.setId(GUIDS[1].toString());
@@ -248,7 +254,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
 
     protected void verifyModel(StorageConnection model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(STORAGE_TYPES_MAPPED[index].toString().toLowerCase(), model.getType());
+        assertEquals(STORAGE_TYPES_MAPPED[index].toString().toLowerCase(), model.getType().value());
         verifyLinks(model);
     }
 }

@@ -38,7 +38,6 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
 
     @Override
     public Network update(Network incoming) {
-        validateEnums(Network.class, incoming);
         return performUpdate(incoming,
                              getParent().getNetworkIdResolver(),
                              VdcActionType.UpdateNetwork,

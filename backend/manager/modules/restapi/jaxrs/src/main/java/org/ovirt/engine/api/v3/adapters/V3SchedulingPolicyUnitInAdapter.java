@@ -18,6 +18,7 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.PolicyUnitType;
 import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -59,7 +60,7 @@ public class V3SchedulingPolicyUnitInAdapter implements V3Adapter<V3SchedulingPo
             to.getProperties().getProperties().addAll(adaptIn(from.getPropertiesMetaData().getProperties()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            to.setType(PolicyUnitType.valueOf(from.getType()));
         }
         return to;
     }

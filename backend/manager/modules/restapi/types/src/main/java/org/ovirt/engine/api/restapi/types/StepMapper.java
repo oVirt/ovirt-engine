@@ -26,8 +26,7 @@ public class StepMapper {
         Job job = new Job();
         job.setId(entity.getJobId().toString());
         model.setJob(job);
-        StepEnum type = map(entity.getStepType());
-        model.setType(type == null ? null : type.value());
+        model.setType(map(entity.getStepType()));
         model.setDescription(entity.getDescription());
         model.setNumber(entity.getStepNumber());
         model.setStatus(JobMapper.map(entity.getStatus(), null));
@@ -54,10 +53,7 @@ public class StepMapper {
         }
         target.setJobId(GuidUtils.asGuid(step.getJob().getId()));
         if (step.isSetType()) {
-            StepEnum type = StepEnum.fromValue(step.getType());
-            if (type != null) {
-                target.setStepType(map(type));
-            }
+            target.setStepType(map(step.getType()));
         }
         if (step.isSetDescription()) {
             target.setDescription(step.getDescription());
@@ -120,12 +116,12 @@ public class StepMapper {
 
     @Mapping(from = org.ovirt.engine.core.common.job.ExternalSystemType.class,
             to = ExternalSystemType.class)
-    public static String map(org.ovirt.engine.core.common.job.ExternalSystemType type) {
+    public static ExternalSystemType map(org.ovirt.engine.core.common.job.ExternalSystemType type) {
         switch (type) {
         case VDSM:
-            return ExternalSystemType.VDSM.toString();
+            return ExternalSystemType.VDSM;
         case GLUSTER:
-            return ExternalSystemType.GLUSTER.toString();
+            return ExternalSystemType.GLUSTER;
         default:
             return null;
         }

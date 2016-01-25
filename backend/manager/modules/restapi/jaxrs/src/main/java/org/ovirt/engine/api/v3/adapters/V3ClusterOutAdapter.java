@@ -19,8 +19,12 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 import static org.ovirt.engine.api.v3.helpers.V3ClusterHelper.getIntegerProperty;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Properties;
+import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyResource;
@@ -102,7 +106,7 @@ public class V3ClusterOutAdapter implements V3Adapter<Cluster, V3Cluster> {
         }
         if (from.isSetRequiredRngSources()) {
             to.setRequiredRngSources(new V3RngSources());
-            to.getRequiredRngSources().getRngSources().addAll(from.getRequiredRngSources().getRequiredRngSources());
+            to.getRequiredRngSources().getRngSources().addAll(adaptRngSources(from));
         }
         if (from.isSetSerialNumber()) {
             to.setSerialNumber(adaptOut(from.getSerialNumber()));
@@ -182,5 +186,13 @@ public class V3ClusterOutAdapter implements V3Adapter<Cluster, V3Cluster> {
         }
 
         return to;
+    }
+
+    private List<String> adaptRngSources(Cluster from) {
+        List<String> results = new LinkedList<>();
+        for (RngSource source : from.getRequiredRngSources().getRequiredRngSources()) {
+            results.add(source.value());
+        }
+        return results;
     }
 }

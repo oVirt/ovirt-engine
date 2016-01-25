@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.ArchitectureCapabilities;
 import org.ovirt.engine.api.model.ArchitectureCapability;
+import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootDevices;
 import org.ovirt.engine.api.model.BootProtocol;
@@ -112,6 +113,7 @@ import org.ovirt.engine.api.model.StorageDomainStates;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageDomainTypes;
+import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageFormats;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.StorageTypes;
@@ -139,8 +141,6 @@ import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.model.WatchdogModels;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
-import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
 import org.ovirt.engine.api.restapi.types.CPUMapper;
 import org.ovirt.engine.api.restapi.types.IpVersion;
@@ -801,7 +801,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addAuthenticationMethods(VersionCaps version, AuthenticationMethod[] values) {
-        version.setAuthenticationMethods(new org.ovirt.engine.api.model.AuthenticationMethod());
+        version.setAuthenticationMethods(new org.ovirt.engine.api.model.AuthenticationMethods());
         for (AuthenticationMethod authType : values) {
             version.getAuthenticationMethods().getAuthenticationMethod().add(authType.value());
         }
