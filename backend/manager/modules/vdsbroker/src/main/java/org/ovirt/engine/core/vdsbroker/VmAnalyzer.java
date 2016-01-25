@@ -85,6 +85,7 @@ public class VmAnalyzer {
     private List<Guid> vmJobIdsToRemove;
     private Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave;
     private List<LUNs> vmLunDisksToSave;
+    private List<VmGuestAgentInterface> vmGuestAgentNics;
 
     //dependencies
     private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
@@ -1010,7 +1011,7 @@ public class VmAnalyzer {
             int guestAgentNicHash) {
         vmDynamic.setGuestAgentNicsHash(guestAgentNicHash);
         vmDynamic.setVmIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
-        vmsMonitoring.addVmGuestAgentNics(dbVm.getId(), vmGuestAgentInterfaces);
+        vmGuestAgentNics = vmGuestAgentInterfaces;
     }
 
     private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
@@ -1119,6 +1120,10 @@ public class VmAnalyzer {
 
     public List<LUNs> getVmLunDisksToSave() {
         return vmLunDisksToSave != null ? vmLunDisksToSave : Collections.emptyList();
+    }
+
+    public List<VmGuestAgentInterface> getVmGuestAgentNics() {
+        return vmGuestAgentNics != null ? vmGuestAgentNics : Collections.emptyList();
     }
 
 }

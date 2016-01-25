@@ -72,7 +72,6 @@ public class VmsMonitoring {
 
     //*** data collectors ***//
     private final List<VmDevice> vmDeviceToSave = new ArrayList<>();
-    private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
     private final List<Guid> existingVmJobIds = new ArrayList<>();
@@ -372,6 +371,10 @@ public class VmsMonitoring {
     // ***** DB interaction *****
 
     private void saveVmGuestAgentNetworkDevices() {
+        Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = vmAnalyzers.stream()
+                .filter(analyzer -> !analyzer.getVmGuestAgentNics().isEmpty())
+                .map(analyzer -> new Pair<>(analyzer.getDbVm().getId(), analyzer.getVmGuestAgentNics()))
+                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         if (!vmGuestAgentNics.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     () -> {
@@ -675,7 +678,4 @@ public class VmsMonitoring {
         return vmManagers.get(vmId);
     }
 
-    public void addVmGuestAgentNics(Guid id, List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
-        vmGuestAgentNics.put(id, vmGuestAgentInterfaces);
-    }
 }
