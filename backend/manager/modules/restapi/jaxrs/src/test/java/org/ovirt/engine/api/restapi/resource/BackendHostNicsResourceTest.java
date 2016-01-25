@@ -238,8 +238,8 @@ public class BackendHostNicsResourceTest
         assertNotNull(list.getActions());
         assertNotNull(list.getActions().getLinks());
         assertNotNull(list.getActions().getLinks().get(0));
-        assertEquals(list.getActions().getLinks().get(0).getHref(), SETUPNETWORKS_ACTION_URL);
-        assertEquals(list.getActions().getLinks().get(0).getRel(), SETUPNETWORKS_ACTION_REL);
+        assertEquals(SETUPNETWORKS_ACTION_URL, list.getActions().getLinks().get(0).getHref());
+        assertEquals(SETUPNETWORKS_ACTION_REL, list.getActions().getLinks().get(0).getRel());
     }
 
 
