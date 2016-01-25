@@ -236,6 +236,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getClusterNetworks(),
                 getExistingNicsBusinessEntityMap());
         labelsCompleter.completeNetworkAttachments();
+
+        fillInUnsetIpConfigs();
     }
 
     private boolean validateEntitiesFromRequest(List<? extends BusinessEntity<?>> newOrUpdateBusinessEntities) {
@@ -396,6 +398,15 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         for (Bond bond : getParameters().getBonds()) {
             if (StringUtils.isEmpty(bond.getBondOptions())) {
                 bond.setBondOptions(DEFAULT_BOND_OPTIONS);
+            }
+        }
+    }
+
+    private void fillInUnsetIpConfigs() {
+        for (NetworkAttachment networkAttachment : getParameters().getNetworkAttachments()) {
+            if (networkAttachment.getIpConfiguration() == null) {
+                IpConfiguration ipConfiguration = NetworkUtils.createDefaultIpConfiguration();
+                networkAttachment.setIpConfiguration(ipConfiguration);
             }
         }
     }
