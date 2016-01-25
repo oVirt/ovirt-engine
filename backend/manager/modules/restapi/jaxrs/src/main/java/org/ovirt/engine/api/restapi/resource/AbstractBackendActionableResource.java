@@ -139,7 +139,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         return new ActionResource() {
                     @Override
                     public Response get() {
-                        URI uri = URI.create(LinkHelper.addLinks(getUriInfo(), newModel(id)).getHref());
+                        URI uri = URI.create(LinkHelper.addLinks(newModel(id)).getHref());
                         Response.Status status = Response.Status.MOVED_PERMANENTLY;
                         return Response.status(status).location(uri).build();
                     }
@@ -292,7 +292,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             try {
                 BaseResource apiObject = apiClass.getConstructor().newInstance();
                 apiObject.setId(blEntity.getId().toString());
-                return LinkHelper.addLinks(getUriInfo(), apiObject);
+                return LinkHelper.addLinks(apiObject);
             } catch (ReflectiveOperationException e) {
                 // Shouldn't happen, all models have public no-args constructor.
                 log.error("Failed to instantiate BackendResource", e);

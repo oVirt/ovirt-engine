@@ -17,10 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.util;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Actions;
@@ -30,18 +27,17 @@ import org.ovirt.engine.api.utils.ArrayUtils;
 public class ActionsBuilder {
 
     private static final String URL_SEPARATOR  = "/";
-    private UriBuilder uriBuilder;
     private Class<?> service;
-    UriInfo uriInfo;
-    Class<?> collection;
+    private Class<?> collection;
+    private String base;
 
-    public ActionsBuilder(UriBuilder uriBuilder, Class<?> service) {
-        this.uriBuilder = uriBuilder;
+    public ActionsBuilder(String base, Class<?> service) {
+        this.base = base;
         this.service = service;
     }
 
-    public ActionsBuilder(UriInfo uriInfo, Class<?> service, Class<?> collection) {
-        this.uriInfo = uriInfo;
+    public ActionsBuilder(String base, Class<?> service, Class<?> collection) {
+        this.base = base;
         this.service = service;
         this.collection = collection;
     }
@@ -56,15 +52,7 @@ public class ActionsBuilder {
             if (actionable != null && path != null) {
                 Link link = new Link();
                 link.setRel(path.value());
-                if (uriBuilder != null) {
-                    URI uri = uriBuilder.clone().path(path.value()).build();
-                    link.setHref(uri.toString());
-                } else {
-                    link.setHref(this.uriInfo.getBaseUri().getPath() +
-                                 this.uriInfo.getPath().substring(1) +
-                                 URL_SEPARATOR +
-                                 link.getRel());
-                }
+                link.setHref(base + URL_SEPARATOR + link.getRel());
                 if (actions == null) {
                     actions = new Actions();
                 }

@@ -50,10 +50,7 @@ public class BackendNicHelper {
         List<ReportedDevice> devices = new ArrayList<>();
         for (VmGuestAgentInterface iface : getDevicesCollection(resource, vmId)) {
             if (StringUtils.equals(iface.getMacAddress(), mac)) {
-                ReportedDevice device = LinkHelper.addLinks(
-                    resource.getUriInfo(),
-                    ReportedDeviceMapper.map(iface, new ReportedDevice())
-                );
+                ReportedDevice device = LinkHelper.addLinks(ReportedDeviceMapper.map(iface, new ReportedDevice()));
                 devices.add(device);
             }
         }
@@ -68,12 +65,12 @@ public class BackendNicHelper {
         );
     }
 
-    public static void addStatistics(BackendResource resource, Nic model, VmNetworkInterface entity) {
+    public static void addStatistics(Nic model, VmNetworkInterface entity) {
         model.setStatistics(new Statistics());
         NicStatisticalQuery query = new NicStatisticalQuery(model);
         List<Statistic> statistics = query.getStatistics(entity);
         for (Statistic statistic : statistics) {
-            LinkHelper.addLinks(resource.getUriInfo(), statistic, query.getParentType());
+            LinkHelper.addLinks(statistic, query.getParentType());
         }
         model.getStatistics().getStatistics().addAll(statistics);
     }

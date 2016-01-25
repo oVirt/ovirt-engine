@@ -86,7 +86,7 @@ public class BackendVmDiskResource
         DiskStatisticalQuery query = new DiskStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);
         for (Statistic statistic : statistics) {
-            LinkHelper.addLinks(uriInfo, statistic, query.getParentType());
+            LinkHelper.addLinks(statistic, query.getParentType());
         }
         model.getStatistics().getStatistics().addAll(statistics);
     }
@@ -166,7 +166,7 @@ public class BackendVmDiskResource
             vm.setId(snapshot.getVmId().toString());
             snapshotInfo.setVm(vm);
             model.setSnapshot(snapshotInfo);
-            LinkHelper.addLinks(getUriInfo(), snapshotInfo, null, false);
+            LinkHelper.addLinks(snapshotInfo, null, false);
             model.setSnapshot(snapshotInfo);
         }
 

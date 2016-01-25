@@ -16,14 +16,9 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.util;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-
-import java.net.URI;
-import javax.ws.rs.core.UriInfo;
-
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
@@ -43,6 +38,8 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 
 public class LinkHelperTest extends Assert {
 
@@ -66,7 +63,7 @@ public class LinkHelperTest extends Assert {
     private static final String STATISTIC_ID = "bleedindeadly";
 
     private static final String URI_ROOT = "http://localhost:8700";
-    private static final String BASE_PATH = "/restapi-definition-powershell";
+    private static final String BASE_PATH = "/ovirt-engine/api";
 
     private static final String VM_HREF = BASE_PATH + "/vms/" + VM_ID;
     private static final String CLUSTER_HREF = BASE_PATH + "/clusters/" + CLUSTER_ID;
@@ -94,12 +91,26 @@ public class LinkHelperTest extends Assert {
     private static final String EVENT_HREF = BASE_PATH + "/events/" + EVENT_ID;
     private static final String STATISTIC_HREF = VM_HREF + "/statistics/" + STATISTIC_ID;
 
+    @Before
+    public void setUp() {
+        Current current = new Current();
+        current.setRoot(URI_ROOT);
+        current.setPrefix(BASE_PATH);
+        current.setPath("");
+        CurrentManager.put(current);
+    }
+
+    @After
+    public void tearDown() {
+        CurrentManager.remove();
+    }
+
     @Test
     public void testEventLinks() throws Exception {
         Event event = new Event();
         event.setId(EVENT_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), event);
+        LinkHelper.addLinks(event);
 
         assertEquals(EVENT_HREF, event.getHref());
     }
@@ -125,9 +136,9 @@ public class LinkHelperTest extends Assert {
         vm.getVmPool().setId(VM_POOL_ID);
 
         if (suggestParent) {
-            LinkHelper.addLinks(setUpUriExpectations(), vm, Vm.class);
+            LinkHelper.addLinks(vm, Vm.class);
         } else {
-            LinkHelper.addLinks(setUpUriExpectations(), vm);
+            LinkHelper.addLinks(vm);
         }
 
         assertEquals(VM_HREF, vm.getHref());
@@ -143,7 +154,7 @@ public class LinkHelperTest extends Assert {
         cluster.setDataCenter(new DataCenter());
         cluster.getDataCenter().setId(DATA_CENTER_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), cluster);
+        LinkHelper.addLinks(cluster);
 
         assertEquals(CLUSTER_HREF, cluster.getHref());
         assertEquals(DATA_CENTER_HREF, cluster.getDataCenter().getHref());
@@ -154,7 +165,7 @@ public class LinkHelperTest extends Assert {
         Host host = new Host();
         host.setId(HOST_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), host);
+        LinkHelper.addLinks(host);
 
         assertEquals(HOST_HREF, host.getHref());
     }
@@ -167,7 +178,7 @@ public class LinkHelperTest extends Assert {
         storageDomain.setStorage(new HostStorage());
         storageDomain.getStorage().setPath("foo");
 
-        LinkHelper.addLinks(setUpUriExpectations(), storageDomain);
+        LinkHelper.addLinks(storageDomain);
 
         assertEquals(STORAGE_DOMAIN_HREF, storageDomain.getHref());
         assertNull(storageDomain.getStorage().getHref());
@@ -181,7 +192,7 @@ public class LinkHelperTest extends Assert {
         storageDomain.setDataCenter(new DataCenter());
         storageDomain.getDataCenter().setId(DATA_CENTER_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), storageDomain);
+        LinkHelper.addLinks(storageDomain);
 
         assertEquals(ATTACHED_STORAGE_DOMAIN_HREF, storageDomain.getHref());
     }
@@ -194,7 +205,7 @@ public class LinkHelperTest extends Assert {
         vm.setStorageDomain(new StorageDomain());
         vm.getStorageDomain().setId(STORAGE_DOMAIN_ID);
 
-        vm = LinkHelper.addLinks(setUpUriExpectations(), vm);
+        vm = LinkHelper.addLinks(vm);
 
         assertEquals(STORAGE_DOMAIN_VM_HREF, vm.getHref());
         assertEquals(STORAGE_DOMAIN_HREF, vm.getStorageDomain().getHref());
@@ -208,7 +219,7 @@ public class LinkHelperTest extends Assert {
         template.setStorageDomain(new StorageDomain());
         template.getStorageDomain().setId(STORAGE_DOMAIN_ID);
 
-        template = LinkHelper.addLinks(setUpUriExpectations(), template);
+        template = LinkHelper.addLinks(template);
 
         assertEquals(STORAGE_DOMAIN_TEMPLATE_HREF, template.getHref());
         assertEquals(STORAGE_DOMAIN_HREF, template.getStorageDomain().getHref());
@@ -219,7 +230,7 @@ public class LinkHelperTest extends Assert {
         DataCenter dataCenter = new DataCenter();
         dataCenter.setId(DATA_CENTER_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), dataCenter);
+        LinkHelper.addLinks(dataCenter);
 
         assertEquals(DATA_CENTER_HREF, dataCenter.getHref());
     }
@@ -229,7 +240,7 @@ public class LinkHelperTest extends Assert {
         Network network = new Network();
         network.setId(NETWORK_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), network);
+        LinkHelper.addLinks(network);
 
         assertEquals(NETWORK_HREF, network.getHref());
     }
@@ -241,7 +252,7 @@ public class LinkHelperTest extends Assert {
         network.setCluster(new Cluster());
         network.getCluster().setId(CLUSTER_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), network);
+        LinkHelper.addLinks(network);
 
         assertEquals(CLUSTER_NETWORK_HREF, network.getHref());
     }
@@ -251,7 +262,7 @@ public class LinkHelperTest extends Assert {
         Tag tag = new Tag();
         tag.setId(TAG_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), tag);
+        LinkHelper.addLinks(tag);
 
         assertEquals(TAG_HREF, tag.getHref());
     }
@@ -263,7 +274,7 @@ public class LinkHelperTest extends Assert {
         tag.setVm(new Vm());
         tag.getVm().setId(VM_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), tag);
+        LinkHelper.addLinks(tag);
 
         assertEquals(VM_TAG_HREF, tag.getHref());
     }
@@ -275,7 +286,7 @@ public class LinkHelperTest extends Assert {
         tag.setHost(new Host());
         tag.getHost().setId(HOST_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), tag);
+        LinkHelper.addLinks(tag);
 
         assertEquals(HOST_TAG_HREF, tag.getHref());
     }
@@ -287,7 +298,7 @@ public class LinkHelperTest extends Assert {
         tag.setTemplate(new Template());
         tag.getTemplate().setId(TEMPLATE_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), tag);
+        LinkHelper.addLinks(tag);
 
         assertEquals(TEMPLATE_TAG_HREF, tag.getHref());
     }
@@ -299,7 +310,7 @@ public class LinkHelperTest extends Assert {
         tag.setUser(new User());
         tag.getUser().setId(USER_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), tag);
+        LinkHelper.addLinks(tag);
 
         assertEquals(USER_TAG_HREF, tag.getHref());
     }
@@ -312,7 +323,7 @@ public class LinkHelperTest extends Assert {
         file.setStorageDomain(new StorageDomain());
         file.getStorageDomain().setId(STORAGE_DOMAIN_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), file);
+        LinkHelper.addLinks(file);
 
         assertEquals(FILE_HREF, file.getHref());
     }
@@ -325,7 +336,7 @@ public class LinkHelperTest extends Assert {
         cdrom.setVm(new Vm());
         cdrom.getVm().setId(VM_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), cdrom);
+        LinkHelper.addLinks(cdrom);
 
         assertEquals(CDROM_HREF, cdrom.getHref());
     }
@@ -338,7 +349,7 @@ public class LinkHelperTest extends Assert {
         disk.setVm(new Vm());
         disk.getVm().setId(VM_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), disk);
+        LinkHelper.addLinks(disk);
 
         assertEquals(DISK_HREF, disk.getHref());
     }
@@ -351,7 +362,7 @@ public class LinkHelperTest extends Assert {
         nic.setVm(new Vm());
         nic.getVm().setId(VM_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), nic);
+        LinkHelper.addLinks(nic);
 
         assertEquals(NIC_HREF, nic.getHref());
     }
@@ -364,7 +375,7 @@ public class LinkHelperTest extends Assert {
         storage.setHost(new Host());
         storage.getHost().setId(HOST_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), storage);
+        LinkHelper.addLinks(storage);
 
         assertEquals(STORAGE_HREF, storage.getHref());
         assertEquals(HOST_HREF, storage.getHost().getHref());
@@ -375,7 +386,7 @@ public class LinkHelperTest extends Assert {
         Group group = new Group();
         group.setId(GROUP_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), group);
+        LinkHelper.addLinks(group);
 
         assertEquals(GROUP_HREF, group.getHref());
     }
@@ -388,15 +399,8 @@ public class LinkHelperTest extends Assert {
         statistic.setVm(new Vm());
         statistic.getVm().setId(VM_ID);
 
-        LinkHelper.addLinks(setUpUriExpectations(), statistic);
+        LinkHelper.addLinks(statistic);
 
         assertEquals(STATISTIC_HREF, statistic.getHref());
-    }
-
-    private UriInfo setUpUriExpectations() {
-        UriInfo uriInfo = createMock(UriInfo.class);
-        expect(uriInfo.getBaseUri()).andReturn(URI.create(URI_ROOT + BASE_PATH)).anyTimes();
-        replay(uriInfo);
-        return uriInfo;
     }
 }

@@ -34,6 +34,7 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
+import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.Mapper;
@@ -138,6 +139,11 @@ public abstract class AbstractBackendBaseTest extends Assert {
         Current current = new Current();
         current.setUser(currentUser);
         current.setSessionId(SESSION_ID);
+        current.setRoot(URI_ROOT);
+        current.setPrefix(BASE_PATH);
+        current.setPath("");
+        current.setVersion("4");
+        current.setVersionSource(VersionSource.DEFAULT);
         CurrentManager.put(current);
 
         httpHeaders = control.createMock(HttpHeaders.class);
@@ -185,6 +191,9 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
         expect(uriInfo.getBaseUri()).andReturn(baseUri).anyTimes();
         expect(uriInfo.getPath()).andReturn(path).anyTimes();
+
+        Current current = CurrentManager.get();
+        current.setPath(path);
 
         return uriInfo;
     }

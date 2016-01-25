@@ -171,7 +171,7 @@ public class BackendGlusterVolumeResource
                 && result.getReturnValue() != null) {
             GlusterVolumeProfileInfo info = result.getReturnValue();
             GlusterVolumeProfileDetails statistics = GlusterVolumeProfileInfoMapper.map(info, null);
-            statistics = LinkHelper.addLinks(uriInfo, statistics);
+            statistics = LinkHelper.addLinks(statistics);
             return Response.ok(statistics).build();
         } else {
             //throw exception

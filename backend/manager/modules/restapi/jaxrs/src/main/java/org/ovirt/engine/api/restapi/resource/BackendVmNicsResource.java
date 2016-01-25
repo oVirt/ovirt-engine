@@ -55,7 +55,7 @@ public class BackendVmNicsResource extends AbstractBackendNicsResource implement
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         BackendNicHelper.addReportedDevices(this, model, entity);
         if (details.contains("statistics")) {
-            BackendNicHelper.addStatistics(this, model, entity);
+            BackendNicHelper.addStatistics( model, entity);
         }
         return model;
     }

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
@@ -583,7 +582,7 @@ public class BackendVmResource
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         parent.addInlineDetails(details, model);
         if (details.contains("statistics")) {
-            addStatistics(model, entity, uriInfo);
+            addStatistics(model, entity);
         }
         parent.setPayload(model);
         parent.setCertificateInfo(model);
@@ -591,12 +590,12 @@ public class BackendVmResource
         return model;
     }
 
-    private void addStatistics(Vm model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui) {
+    private void addStatistics(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         model.setStatistics(new Statistics());
         VmStatisticalQuery query = new VmStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);
         for (Statistic statistic : statistics) {
-            LinkHelper.addLinks(ui, statistic, query.getParentType());
+            LinkHelper.addLinks(statistic, query.getParentType());
         }
         model.getStatistics().getStatistics().addAll(statistics);
     }

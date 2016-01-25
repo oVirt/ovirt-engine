@@ -206,13 +206,13 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         model = addParents(model);
         // linkSubCollections called first as addLinks unsets the grandparent model
         model = linkSubCollections(model, suggestedParent, subCollectionMembersToExclude);
-        model = LinkHelper.addLinks(getUriInfo(), model, suggestedParent);
+        model = LinkHelper.addLinks(model, suggestedParent);
         return model;
     }
 
     protected R addLinks(R model, Class<? extends BaseResource> suggestedParent, boolean doNotLinkSubCollections) {
         return doNotLinkSubCollections?
-                LinkHelper.addLinks(getUriInfo(), addParents(model), suggestedParent)
+                LinkHelper.addLinks(addParents(model), suggestedParent)
                 :
                 addLinks(model, suggestedParent);
     }
@@ -255,7 +255,8 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     }
 
     protected R linkSubResource(R model, String subResource, String oid) {
-        addOrUpdateLink(model, subResource, LinkHelper.getUriBuilder(getUriInfo(), model).path(subResource).path(oid).build().toString());
+        String href = String.join("/", LinkHelper.getPath(model), oid, subResource);
+        addOrUpdateLink(model, subResource, href);
         return model;
     }
 
@@ -263,7 +264,8 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         if (subCollections != null) {
             for (String relation : subCollections) {
                 if(!shouldExclude(relation, subCollectionMembersToExclude)) {
-                    addOrUpdateLink(model, relation, LinkHelper.getUriBuilder(getUriInfo(), model, suggestedParent).path(relation).build().toString());
+                    String href = String.join("/", LinkHelper.getPath(model, suggestedParent), relation);
+                    addOrUpdateLink(model, relation, href);
                 }
                 else{
                     removeIfExist(model, relation);

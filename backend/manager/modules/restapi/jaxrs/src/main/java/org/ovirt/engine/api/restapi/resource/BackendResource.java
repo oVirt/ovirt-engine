@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
@@ -220,7 +219,7 @@ public class BackendResource extends BaseBackendResource {
     protected void setJobLink(final Action action, VdcReturnValueBase actionResult) {
         Job job = new Job();
         job.setId(actionResult.getJobId().toString());
-        LinkHelper.addLinks(getUriInfo(), job, null, false);
+        LinkHelper.addLinks(job, null, false);
         action.setJob(job);
     }
 

@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
@@ -119,7 +118,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         HostStatisticalQuery query = new HostStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);
         for (Statistic statistic : statistics) {
-            LinkHelper.addLinks(uriInfo, statistic, query.getParentType());
+            LinkHelper.addLinks(statistic, query.getParentType());
         }
         model.getStatistics().getStatistics().addAll(statistics);
     }

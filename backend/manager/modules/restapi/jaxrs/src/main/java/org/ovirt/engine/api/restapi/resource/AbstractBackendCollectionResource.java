@@ -178,7 +178,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
      * @return collection with action links
      */
     protected <C extends ActionableResource> C addActions(C model) {
-        LinkHelper.addActions(getUriInfo(), model, this);
+        LinkHelper.addActions(model, this);
         return model;
     }
 

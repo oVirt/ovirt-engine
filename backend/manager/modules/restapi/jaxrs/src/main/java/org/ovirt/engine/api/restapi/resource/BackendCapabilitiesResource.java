@@ -323,7 +323,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setCurrent(false);
         }
 
-        LinkHelper.<VersionCaps> addLinks(getUriInfo(), version);
+        LinkHelper.<VersionCaps> addLinks(version);
 
         return version;
     }

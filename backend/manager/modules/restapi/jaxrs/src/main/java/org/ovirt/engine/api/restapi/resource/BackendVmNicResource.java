@@ -83,7 +83,7 @@ public class BackendVmNicResource
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         BackendNicHelper.addReportedDevices(this, model, entity);
         if (details.contains("statistics")) {
-            BackendNicHelper.addStatistics(this, model, entity);
+            BackendNicHelper.addStatistics(model, entity);
         }
         return model;
     }

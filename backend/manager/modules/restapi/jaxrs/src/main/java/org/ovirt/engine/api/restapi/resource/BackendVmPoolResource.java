@@ -4,7 +4,6 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource.SUB_COLLECTION;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -186,7 +185,7 @@ public class BackendVmPoolResource
                     query, getQueryParams(queryParamsClass, id), id.toString());
             org.ovirt.engine.api.model.Vm model = new org.ovirt.engine.api.model.Vm();
             model.setId(vm.getId().toString());
-            return LinkHelper.addLinks(getUriInfo(), model);
+            return LinkHelper.addLinks(model);
         }
     }
 

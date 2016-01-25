@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -297,7 +296,7 @@ public class BackendHostNicsResource
 
         slave.setHost(new Host());
         slave.getHost().setId(hostId);
-        slave = LinkHelper.addLinks(getUriInfo(), slave);
+        slave = LinkHelper.addLinks(slave);
         slave.setHost(null);
 
         return slave;
@@ -325,7 +324,7 @@ public class BackendHostNicsResource
         master.setId(id);
         master.setHost(new Host());
         master.getHost().setId(hostId);
-        return LinkHelper.addLinks(getUriInfo(), master).getHref();
+        return LinkHelper.addLinks(master).getHref();
     }
 
     protected org.ovirt.engine.core.common.businessentities.network.Network lookupNetwork(Network network) {
@@ -376,7 +375,7 @@ public class BackendHostNicsResource
         HostNicStatisticalQuery query = new HostNicStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);
         for (Statistic statistic : statistics) {
-            LinkHelper.addLinks(uriInfo, statistic, query.getParentType());
+            LinkHelper.addLinks(statistic, query.getParentType());
         }
         model.getStatistics().getStatistics().addAll(statistics);
     }

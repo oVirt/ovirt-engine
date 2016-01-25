@@ -25,8 +25,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.AffinityGroup;
@@ -307,6 +305,8 @@ import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypesResource;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -673,7 +673,7 @@ public class LinkHelper {
      * @param clz the collection resource type
      * @return the relative path to the collection
      */
-    private static String getPath(Class<?> clz) {
+    private static String getRelativePath(Class<?> clz) {
         for (Method method : SystemResource.class.getMethods()) {
             if (method.getReturnType() == clz) {
                 Path annotation = method.getAnnotation(Path.class);
@@ -696,7 +696,7 @@ public class LinkHelper {
      * @param parent the parent resource type (e.g. VmResource)
      * @return       the relative path to the collection
      */
-    private static String getPath(Class<?> clz, Class<?> parent) {
+    private static String getRelativePath(Class<?> clz, Class<?> parent) {
         for (Method method : parent.getMethods()) {
             if (method.getName().startsWith("get") && method.getReturnType() == clz) {
                 Path pathAnnotation = method.getAnnotation(Path.class);
@@ -852,54 +852,45 @@ public class LinkHelper {
     }
 
     /**
-     * Create a #UriBuilder which encapsulates the path to an object
+     * Computes the path for the given object. For example, for a tag of a virtual machine returns the path
+     * {@code /ovirt-engine/api/vms/{vm:id}/tags/{tag:id}}.
      *
-     * i.e. for a VM tag, return a UriBuilder which encapsulates
-     * '/restapi-definition/vms/{vm_id}/tags/{tag_id}'
-     *
-     * @param uriInfo the URI info
-     * @param model   the object
-     * @return        the #UriBuilder encapsulating the object's path
+     * @param object the object
+     * @return the path for the object
      */
-    public static <R extends BaseResource> UriBuilder getUriBuilder(UriInfo uriInfo, R model) {
-        return getUriBuilder(uriInfo, model, null);
+    public static String getPath(BaseResource object) {
+        return getPath(object, null);
     }
 
     /**
-     * Create a #UriBuilder which encapsulates the path to an object
+     * Computes the path for the given object, using the given type to find out what is the type of the parent.
      *
-     * i.e. for a VM tag, return a UriBuilder which encapsulates
-     * '/restapi-definition/vms/{vm_id}/tags/{tag_id}'
-     *
-     * @param uriInfo              the URI info
-     * @param model                the object
-     * @param suggestedParentType  the suggested parent type
-     * @return                     the #UriBuilder encapsulating the object's path
+     * @param object the object
+     * @param suggestedParentType the suggested parent type
+     * @return the path for the object
      */
-    public static <R extends BaseResource> UriBuilder getUriBuilder(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType) {
-        Collection collection = getCollection(model, suggestedParentType);
+    public static String getPath(BaseResource object, Class<? extends BaseResource> suggestedParentType) {
+        Collection collection = getCollection(object, suggestedParentType);
         if (collection == null) {
             return null;
         }
 
-        UriBuilder uriBuilder;
-
         if (collection.getParentType() != NO_PARENT) {
-            BaseResource parent = getParentModel(model, collection.getParentType());
-
+            BaseResource parent = getParentModel(object, collection.getParentType());
             Collection parentCollection = getCollection(parent, suggestedParentType);
-
-            String path = getPath(collection.getCollectionType(), parentCollection.getResourceType());
-
-            uriBuilder = getUriBuilder(uriInfo, parent).path(path);
-        } else {
-            String path = getPath(collection.getCollectionType());
-            uriBuilder = uriInfo != null
-                         ? UriBuilder.fromPath(uriInfo.getBaseUri().getPath()).path(path)
-                         : UriBuilder.fromPath(path);
+            String parentPath = getPath(parent);
+            String relativePath = getRelativePath(collection.getCollectionType(), parentCollection.getResourceType());
+            return String.join("/", parentPath, relativePath, object.getId());
         }
 
-        return uriBuilder.path(model.getId());
+        Current current = CurrentManager.get();
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(current.getPrefix());
+        buffer.append("/");
+        buffer.append(getRelativePath(collection.getCollectionType()));
+        buffer.append("/");
+        buffer.append(object.getId());
+        return buffer.toString();
     }
 
     /**
@@ -907,11 +898,10 @@ public class LinkHelper {
      *
      * e.g. set href = '/restapi-definition/vms/{vm_id}/tags/{tag_id}' on a VM tag
      *
-     * @param uriInfo  the URI info
-     * @param model    the object
+     * @param model the object
      */
-    private static <R extends BaseResource> void setHref(UriInfo uriInfo, R model) {
-        setHref(uriInfo, model, null);
+    private static void setHref(BaseResource model) {
+        setHref(model, null);
     }
 
     /**
@@ -919,29 +909,27 @@ public class LinkHelper {
      *
      * e.g. set href = '/restapi-definition/vms/{vm_id}/tags/{tag_id}' on a VM tag
      *
-     * @param uriInfo              the URI info
-     * @param model                the object
+     * @param model the object
      * @param suggestedParentType  the suggested parent type
      */
-    private static <R extends BaseResource> void setHref(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType) {
-        UriBuilder uriBuilder = getUriBuilder(uriInfo, model, suggestedParentType);
-        if (uriBuilder != null) {
-            model.setHref(uriBuilder.build().toString());
+    private static void setHref(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
+        String path = getPath(model, suggestedParentType);
+        if (path != null) {
+            model.setHref(path);
         }
     }
 
     /**
      * Construct the set of action links for an object
      *
-     * @param uriInfo the URI info
      * @param model   the object
      * @param suggestedParentType  the suggested parent type
      */
-    private static <R extends BaseResource> void setActions(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType) {
+    private static void setActions(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
         Collection collection = getCollection(model);
-        UriBuilder uriBuilder = getUriBuilder(uriInfo, model, suggestedParentType);
-        if (uriBuilder != null) {
-            ActionsBuilder actionsBuilder = new ActionsBuilder(uriBuilder, collection.getResourceType());
+        String path = getPath(model, suggestedParentType);
+        if (path != null) {
+            ActionsBuilder actionsBuilder = new ActionsBuilder(path, collection.getResourceType());
             model.setActions(actionsBuilder.build());
         }
     }
@@ -949,15 +937,14 @@ public class LinkHelper {
     /**
      * Adds the set of action links for an object
      *
-     * @param uriInfo the URI info
      * @param model the object to add actions to
      * @param collection the object to get implemented methods from
      */
-    public static <R extends ActionableResource> void addActions(UriInfo uriInfo, R model, Object collection) {
-        if (uriInfo != null) {
-            ActionsBuilder actionsBuilder = new ActionsBuilder(uriInfo,
-                                                               model.getClass(),
-                                                               collection.getClass());
+    public static <R extends ActionableResource> void addActions(R model, Object collection) {
+        Current current = CurrentManager.get();
+        String base = current.getPrefix() + current.getPath();
+        if (base != null) {
+            ActionsBuilder actionsBuilder = new ActionsBuilder(base, model.getClass(), collection.getClass());
             model.setActions(actionsBuilder.build());
         }
     }
@@ -966,27 +953,26 @@ public class LinkHelper {
      * Set the href attribute on the object (and its inline objects)
      * and construct its set of action links
      *
-     * @param uriInfo  the URI info
-     * @param model    the object
-     * @return         the object, with href attributes and action links
+     * @param model the object
+     * @return the object, with href attributes and action links
      */
-    public static <R extends BaseResource> R addLinks(UriInfo uriInfo, R model) {
-        return addLinks(uriInfo, model, null);
+    public static <R extends BaseResource> R addLinks(R model) {
+        return addLinks(model, null);
     }
 
-    public static <R extends BaseResource> R addLinks(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType) {
-        return addLinks(uriInfo, model, suggestedParentType, true);
+    public static <R extends BaseResource> R addLinks(R model, Class<? extends BaseResource> suggestedParentType) {
+        return addLinks(model, suggestedParentType, true);
     }
 
-    public static <R extends BaseResource> R addLinks(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType, boolean addActions) {
-        setHref(uriInfo, model, suggestedParentType);
+    public static <R extends BaseResource> R addLinks(R model, Class<? extends BaseResource> suggestedParentType, boolean addActions) {
+        setHref(model, suggestedParentType);
         if (addActions) {
-            setActions(uriInfo, model, suggestedParentType);
+            setActions(model, suggestedParentType);
         }
 
         for (BaseResource inline : getInlineResources(model)) {
             if (inline.getId() != null) {
-                setHref(uriInfo, inline);
+                setHref(inline);
             }
             for (BaseResource grandParent : getInlineResources(inline)) {
                 unsetInlineResource(inline, grandParent.getClass());
