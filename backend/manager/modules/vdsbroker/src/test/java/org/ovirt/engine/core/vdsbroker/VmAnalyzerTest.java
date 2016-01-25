@@ -14,6 +14,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -377,7 +378,8 @@ public class VmAnalyzerTest {
         // dst VM is in DB under the same Guid
         mockVmInDbForDstVms(vmData);
         // -- end of behaviors --
-        vmAnalyzer = new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), vmsMonitoring, auditLogDirector);
+        vmAnalyzer = spy(new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), vmsMonitoring));
+        doReturn(auditLogDirector).when(vmAnalyzer).getAuditLogDirector();
         if (run) {
             vmAnalyzer.analyze();
         }

@@ -105,15 +105,12 @@ public class VmAnalyzer {
         UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
     }
 
-    private final AuditLogDirector auditLogDirector;
+    private AuditLogDirector auditLogDirector;
 
-    // FIXME auditlogger is a dependency and realy doesn't belong in the constructor but
-    // there is no way to mock it otherwise.
-    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring, AuditLogDirector auditLogDirector) {
+    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
         this.vmsMonitoring = vmsMonitoring;
-        this.auditLogDirector = auditLogDirector;
     }
 
     /**
@@ -420,7 +417,7 @@ public class VmAnalyzer {
             if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.setVmId(vmId);
-                auditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
+                auditLog(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
                 vmsWithUncontrolledBalloon.put(vmId, 0);
             }
         }
@@ -442,7 +439,7 @@ public class VmAnalyzer {
             if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.setVmId(vmId);
-                auditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
+                auditLog(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
                 vmsWithBalloonDriverProblem.put(vmId, 0);
             }
         }
@@ -763,7 +760,7 @@ public class VmAnalyzer {
         final AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.setVmId(dbVm.getId());
         auditLogable.addCustomValue("VmStatus", vdsmVm.getVmDynamic().getStatus().toString());
-        auditLogDirector.log(auditLogable, AuditLogType.VM_STATUS_RESTORED);
+        auditLog(auditLogable, AuditLogType.VM_STATUS_RESTORED);
     }
 
     private void updateVmStatistics() {
@@ -1038,7 +1035,7 @@ public class VmAnalyzer {
     }
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
-        auditLogDirector.log(auditLogable, logType);
+        getAuditLogDirector().log(auditLogable, logType);
     }
 
     private void setColdRebootFlag() {
@@ -1124,6 +1121,14 @@ public class VmAnalyzer {
 
     public List<VmGuestAgentInterface> getVmGuestAgentNics() {
         return vmGuestAgentNics != null ? vmGuestAgentNics : Collections.emptyList();
+    }
+
+    protected AuditLogDirector getAuditLogDirector() {
+        return auditLogDirector;
+    }
+
+    protected void setAuditLogDirector(AuditLogDirector auditLogDirector) {
+        this.auditLogDirector = auditLogDirector;
     }
 
 }

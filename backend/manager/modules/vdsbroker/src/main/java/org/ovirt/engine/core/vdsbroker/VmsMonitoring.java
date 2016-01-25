@@ -173,11 +173,9 @@ public class VmsMonitoring {
     }
 
     protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> pair) {
-        return new VmAnalyzer(
-                pair.getFirst(),
-                pair.getSecond(),
-                this,
-                auditLogDirector);
+        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), this);
+        vmAnalyzer.setAuditLogDirector(auditLogDirector);
+        return vmAnalyzer;
     }
 
     private void afterVMsRefreshTreatment() {
