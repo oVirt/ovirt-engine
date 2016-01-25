@@ -60,7 +60,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                     convertEvent(changedVms, map);
 
                     if (!changedVms.isEmpty()) {
-                        getVmsMonitoring(changedVms).perform();
+                        getVmsMonitoring().perform(changedVms);
                         processDevices(changedVms.stream().map(pair -> pair.getSecond().getVmDynamic()),
                                 System.nanoTime());
                     }
@@ -79,8 +79,8 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 log.debug("processing event for host {} data:\n{}", vdsManager.getVdsName(), sb);
             }
 
-            private VmsMonitoring getVmsMonitoring(List<Pair<VM, VmInternalData>> changedVms) {
-                return new VmsMonitoring(vdsManager, changedVms, auditLogDirector, System.nanoTime());
+            private VmsMonitoring getVmsMonitoring() {
+                return new VmsMonitoring(vdsManager, auditLogDirector, System.nanoTime());
             }
 
             @SuppressWarnings("unchecked")

@@ -38,12 +38,6 @@ public class VmsMonitoring {
     private final boolean timeToUpdateVmStatistics;
     private final long fetchTime;
     private VdsManager vdsManager;
-    /**
-     * The Vms we want to monitor and analyze for changes.
-     * VM object represent the persisted object(namely the one in db) and the VmInternalData
-     * is the running one as reported from VDSM
-     */
-    private List<Pair<VM, VmInternalData>> monitoredVms;
 
     private final AuditLogDirector auditLogDirector;
     /**
@@ -66,20 +60,17 @@ public class VmsMonitoring {
      */
     public VmsMonitoring(
             VdsManager vdsManager,
-            List<Pair<VM, VmInternalData>> monitoredVms,
             AuditLogDirector auditLogDirector,
             long fetchTime) {
-        this(vdsManager, monitoredVms, auditLogDirector, fetchTime, false);
+        this(vdsManager, auditLogDirector, fetchTime, false);
     }
 
     public VmsMonitoring(
             VdsManager vdsManager,
-            List<Pair<VM, VmInternalData>> monitoredVms,
             AuditLogDirector auditLogDirector,
             long fetchTime,
             boolean timeToUpdateVmStatistics) {
         this.vdsManager = vdsManager;
-        this.monitoredVms = monitoredVms;
         this.auditLogDirector = auditLogDirector;
         this.fetchTime = fetchTime;
         this.timeToUpdateVmStatistics = timeToUpdateVmStatistics;
@@ -89,10 +80,15 @@ public class VmsMonitoring {
      * analyze and react upon changes on the monitoredVms. relevant changes would
      * be persisted and state transitions and internal commands would
      * take place accordingly.
+     *
+     * @param monitoredVms The Vms we want to monitor and analyze for changes.
+-    * VM object represent the persisted object(namely the one in db) and the VmInternalData
+-    * is the running one as reported from VDSM
+     *
      */
-    public void perform() {
+    public void perform(List<Pair<VM, VmInternalData>> monitoredVms) {
         try {
-            refreshVmStats();
+            refreshVmStats(monitoredVms);
             afterVMsRefreshTreatment();
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
@@ -153,7 +149,7 @@ public class VmsMonitoring {
      * note: metrics calculation like memCommited and vmsCoresCount should be calculated *before*
      *   this filtering.
      */
-    private void refreshVmStats() {
+    private void refreshVmStats(List<Pair<VM, VmInternalData>> monitoredVms) {
         for (Pair<VM, VmInternalData> monitoredVm : monitoredVms) {
             // TODO filter out migratingTo VMs if no action is taken on them
             if (tryLockVmForUpdate(monitoredVm)) {
