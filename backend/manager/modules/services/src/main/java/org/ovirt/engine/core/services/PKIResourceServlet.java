@@ -18,17 +18,22 @@ public class PKIResourceServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(PKIResourceServlet.class);
 
+    private static boolean resourcesInitialized = false;
+
     private static Map<String, PKIResources.Resource> resources;
     private static Map<String, PKIResources.Format> formats;
 
-    static {
-        resources = new HashMap<String, PKIResources.Resource>();
-        resources.put("ca-certificate", PKIResources.Resource.CACertificate);
-        resources.put("engine-certificate", PKIResources.Resource.EngineCertificate);
-        formats = new HashMap<String, PKIResources.Format>();
-        formats.put("X509-PEM", PKIResources.Format.X509_PEM);
-        formats.put("X509-PEM-CA", PKIResources.Format.X509_PEM_CA);
-        formats.put("OPENSSH-PUBKEY", PKIResources.Format.OPENSSH_PUBKEY);
+    private static synchronized void initResources() {
+        if (!resourcesInitialized) {
+            resources = new HashMap<>();
+            resources.put("ca-certificate", PKIResources.getCaCertificate());
+            resources.put("engine-certificate", PKIResources.getEngineCertificate());
+            formats = new HashMap<>();
+            formats.put("X509-PEM", PKIResources.Format.X509_PEM);
+            formats.put("X509-PEM-CA", PKIResources.Format.X509_PEM_CA);
+            formats.put("OPENSSH-PUBKEY", PKIResources.Format.OPENSSH_PUBKEY);
+            resourcesInitialized = true;
+        }
     }
 
     private String getMyParameter(String name, HttpServletRequest request) {
@@ -42,6 +47,20 @@ public class PKIResourceServlet extends HttpServlet {
             value = getInitParameter(name);
         }
         return value;
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (!resourcesInitialized) {
+            try {
+                initResources();
+            } catch (NullPointerException ex) {
+                throw new ServletException(
+                        "Certificate is not available yet, as engine startup has not yet finished",
+                        ex);
+            }
+        }
     }
 
     @Override
