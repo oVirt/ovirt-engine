@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 
-public abstract class SortedMultipleActionsRunnerBase extends MultipleActionsRunner {
+public abstract class SortedMultipleActionsRunnerBase extends PrevalidatingMultipleActionsRunner {
     public SortedMultipleActionsRunnerBase(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);

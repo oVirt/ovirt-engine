@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.di.Injector;
 
 public final class MultipleActionsRunnersFactory {
     public static MultipleActionsRunner createMultipleActionsRunner(VdcActionType actionType,
@@ -52,7 +53,7 @@ public final class MultipleActionsRunnersFactory {
             if (containsGlusterServer(parameters)) {
                 runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             } else {
-                runner = new MultipleActionsRunner(actionType, parameters, commandContext, isInternal);
+                runner = new PrevalidatingMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             }
 
             break;
@@ -68,12 +69,15 @@ public final class MultipleActionsRunnersFactory {
         case UpdateNetworkAttachment:
         case RemoveNetworkAttachment:
             throw new UnsupportedOperationException("AddNetworkAttachment, UpdateNetworkAttachment, and RemoveNetworkAttachment cannot be run using MultipleActionsRunner");
-
+        case RemoveDiskProfile:
+        case RemoveCpuProfile:
+            runner = new SequentialMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
+            break;
         default:
-            runner = new MultipleActionsRunner(actionType, parameters, commandContext, isInternal);
+            runner = new PrevalidatingMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
-        return runner;
+        return Injector.injectMembers(runner);
     }
 
     private static boolean containsGlusterServer(ArrayList<VdcActionParametersBase> parameters) {

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
+public class RemoveVmFromPoolRunner extends PrevalidatingMultipleActionsRunner {
 
     public RemoveVmFromPoolRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);

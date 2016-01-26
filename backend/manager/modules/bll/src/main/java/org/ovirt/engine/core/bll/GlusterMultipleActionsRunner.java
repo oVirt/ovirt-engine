@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
-public class GlusterMultipleActionsRunner extends MultipleActionsRunner {
+public class GlusterMultipleActionsRunner extends PrevalidatingMultipleActionsRunner {
 
     public GlusterMultipleActionsRunner(VdcActionType actionType,
             List<VdcActionParametersBase> parameters,

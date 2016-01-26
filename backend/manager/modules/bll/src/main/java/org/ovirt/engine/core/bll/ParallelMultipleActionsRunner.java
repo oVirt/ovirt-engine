@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
-public class ParallelMultipleActionsRunner extends MultipleActionsRunner {
+public class ParallelMultipleActionsRunner extends PrevalidatingMultipleActionsRunner {
 
     public ParallelMultipleActionsRunner(VdcActionType actionType,
             List<VdcActionParametersBase> parameters,
