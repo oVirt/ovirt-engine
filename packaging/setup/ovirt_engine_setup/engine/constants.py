@@ -375,7 +375,6 @@ class Defaults(object):
         ',ovirt-engine-cli'
         ',ovirt-image-uploader'
         ',ovirt-iso-uploader'
-        ',ovirt-log-collector'
     )
 
 
