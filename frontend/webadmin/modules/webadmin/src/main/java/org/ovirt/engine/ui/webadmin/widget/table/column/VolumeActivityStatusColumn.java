@@ -11,7 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends AbstractColumn<T, GlusterTaskSupport> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public VolumeActivityStatusColumn() {
         super(new VolumeActivityStatusCell<>());

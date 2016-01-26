@@ -59,7 +59,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     int maxSpmPriority;
     int defaultSpmPriority;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabHostView(MainModelProvider<VDS, HostListModel<Void>> modelProvider) {

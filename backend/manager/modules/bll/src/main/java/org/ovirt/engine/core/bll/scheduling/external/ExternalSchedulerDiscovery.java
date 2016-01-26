@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class ExternalSchedulerDiscovery {
 
-    private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerDiscovery.class);
+    private static final Logger log = LoggerFactory.getLogger(ExternalSchedulerDiscovery.class);
 
     @Inject
     private PolicyUnitDao policyUnitDao;

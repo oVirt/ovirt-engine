@@ -30,7 +30,7 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
     EngineErrataListModel, EntityModel<Erratum>, SubTabEngineErrataDetailsPresenter.ViewDef,
     SubTabEngineErrataDetailsPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.errataDetailsSubTabPlace)

@@ -35,9 +35,9 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
     private EntityModelCellTable<ListModel> statisticsTable;
     private EntityModelCellTable<ListModel> guestAgentDataTable;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public VmInterfaceInfoPanel(VmInterfaceListModel vmInterfaceListModel) {
         super(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);

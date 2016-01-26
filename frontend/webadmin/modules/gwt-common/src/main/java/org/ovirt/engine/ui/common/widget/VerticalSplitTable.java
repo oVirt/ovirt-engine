@@ -15,7 +15,7 @@ public class VerticalSplitTable<M extends ListModel<T>, T> extends SplitTable<M,
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public VerticalSplitTable(EntityModelCellTable<M> excludedTable,
             EntityModelCellTable<M> includedTable,

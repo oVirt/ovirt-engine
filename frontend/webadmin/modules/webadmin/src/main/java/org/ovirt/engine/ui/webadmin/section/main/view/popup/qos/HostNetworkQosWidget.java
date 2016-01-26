@@ -55,7 +55,7 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
     @UiField
     Style style;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public HostNetworkQosWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));

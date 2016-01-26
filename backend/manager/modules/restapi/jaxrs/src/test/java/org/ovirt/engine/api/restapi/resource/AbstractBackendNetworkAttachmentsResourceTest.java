@@ -205,7 +205,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     }
 
     @Override
-    final protected void verifyModel(org.ovirt.engine.api.model.NetworkAttachment model, int index) {
+    protected final void verifyModel(org.ovirt.engine.api.model.NetworkAttachment model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(GUIDS[index].toString(), model.getNetwork().getId());
         verifyModel(model);
@@ -223,7 +223,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         return model;
     }
 
-    final protected NetworkAttachment setUpEntityExpectations(NetworkAttachment entity, int index) {
+    protected final NetworkAttachment setUpEntityExpectations(NetworkAttachment entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getNetworkId()).andReturn(GUIDS[index]).anyTimes();
         setUpEntityExpectations(entity);

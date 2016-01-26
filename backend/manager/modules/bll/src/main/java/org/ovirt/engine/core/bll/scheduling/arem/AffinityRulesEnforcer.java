@@ -232,7 +232,7 @@ public class AffinityRulesEnforcer {
      * @param vmToHost       Mapping of VM to currently assigned VDS
      * @return broken AffinityGroups
      */
-    static protected Set<AffinityGroup> checkForAffinityGroupViolations(Iterable<AffinityGroup> affinityGroups,
+    protected static Set<AffinityGroup> checkForAffinityGroupViolations(Iterable<AffinityGroup> affinityGroups,
             Map<Guid, Guid> vmToHost, FailMode mode) {
 
         Set<AffinityGroup> broken = new HashSet<>();

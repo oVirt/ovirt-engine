@@ -28,7 +28,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VDS, HostListModel<Void>, MainTabHostPresenter.ViewDef, MainTabHostPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class HostSelectionChange {

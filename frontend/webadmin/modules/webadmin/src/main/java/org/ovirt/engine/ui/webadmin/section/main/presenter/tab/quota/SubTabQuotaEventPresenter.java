@@ -24,7 +24,7 @@ public class SubTabQuotaEventPresenter
     extends AbstractSubTabQuotaPresenter<QuotaEventListModel, SubTabQuotaEventPresenter.ViewDef,
         SubTabQuotaEventPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.quotaEventSubTabPlace)

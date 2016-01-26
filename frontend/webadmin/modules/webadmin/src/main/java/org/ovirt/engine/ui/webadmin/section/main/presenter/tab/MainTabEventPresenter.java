@@ -27,7 +27,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<AuditLog, EventListModel<Void>,
     MainTabEventPresenter.ViewDef, MainTabEventPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class EventSelectionChange {

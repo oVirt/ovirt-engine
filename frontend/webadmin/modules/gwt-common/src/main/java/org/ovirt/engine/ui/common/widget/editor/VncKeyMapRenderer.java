@@ -9,7 +9,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 public class VncKeyMapRenderer extends AbstractRenderer<String> {
 
     final String globalLayout;
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public VncKeyMapRenderer() {
         globalLayout = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);

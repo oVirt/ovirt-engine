@@ -27,7 +27,7 @@ public class VmGuestInfoModelForm extends AbstractModelBoundFormWidget<VmGuestIn
     StringValueLabel consoleUserName = new StringValueLabel();
     StringValueLabel clientIp = new StringValueLabel();
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmGuestInfoModelForm(ModelProvider<VmGuestInfoModel> modelProvider) {
         super(modelProvider, 3, 4);

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjectsBaseAutoCompleter;
  * can be filtered by a particular cluster.
  */
 public class GlusterVolumeCrossRefAutoCompleter extends SearchObjectsBaseAutoCompleter {
-    public final static GlusterVolumeCrossRefAutoCompleter INSTANCE = new GlusterVolumeCrossRefAutoCompleter();
+    public static final GlusterVolumeCrossRefAutoCompleter INSTANCE = new GlusterVolumeCrossRefAutoCompleter();
 
     private GlusterVolumeCrossRefAutoCompleter() {
         super(SearchObjects.VDC_CLUSTER_OBJ_NAME);

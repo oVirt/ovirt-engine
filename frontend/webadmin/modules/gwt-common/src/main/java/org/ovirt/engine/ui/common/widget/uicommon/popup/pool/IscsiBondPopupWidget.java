@@ -62,7 +62,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public IscsiBondPopupWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

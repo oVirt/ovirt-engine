@@ -347,8 +347,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @WithElementId
     StringEntityModelTextBoxEditor dnsSearchDomains;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmInitWidget(BasicStyle style) {
         style.ensureInjected();

@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VolumeBrickStatusCell extends AbstractCell<GlusterVolumeEntity> {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb, String id) {

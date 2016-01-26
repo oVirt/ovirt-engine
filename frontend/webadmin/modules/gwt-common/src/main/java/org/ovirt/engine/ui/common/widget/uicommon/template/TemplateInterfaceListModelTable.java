@@ -19,7 +19,7 @@ import com.google.gwt.event.shared.EventBus;
 
 public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidget<VmNetworkInterface, TemplateInterfaceListModel> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public TemplateInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, TemplateInterfaceListModel> modelProvider,

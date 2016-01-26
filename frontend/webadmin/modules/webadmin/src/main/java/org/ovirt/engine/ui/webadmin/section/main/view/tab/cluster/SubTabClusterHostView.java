@@ -30,7 +30,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS,
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel> modelProvider) {

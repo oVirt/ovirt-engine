@@ -30,11 +30,11 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static String searchRegexTypeClause = "\\s*((and|or)\\s+)?type\\s*=\\s*\\S+"; //$NON-NLS-1$
-    private final static String searchRegexFlags = "ig"; //$NON-NLS-1$
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final String searchRegexTypeClause = "\\s*((and|or)\\s+)?type\\s*=\\s*\\S+"; //$NON-NLS-1$
+    private static final String searchRegexFlags = "ig"; //$NON-NLS-1$
 
-    private final static RegExp searchPatternDiskTypeClause = RegExp.compile(searchRegexTypeClause, searchRegexFlags);
+    private static final RegExp searchPatternDiskTypeClause = RegExp.compile(searchRegexTypeClause, searchRegexFlags);
 
     private AbstractTextColumn<DbUser> firstNameColumn;
     private AbstractTextColumn<DbUser> groupNameColumn;

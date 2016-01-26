@@ -11,8 +11,8 @@ public class ADSyntaxChecker implements ISyntaxChecker {
     private BaseAutoCompleter colonAC;
     private BaseAutoCompleter pluralAC;
     private HashMap<SyntaxObjectType, SyntaxObjectType[]> stateMap;
-    protected final static String USER_ACCOUNT_TYPE = "$USER_ACCOUNT_TYPE";
-    private final static String LDAP_GROUP_CATEGORY = "$LDAP_GROUP_CATEGORY";
+    protected static final String USER_ACCOUNT_TYPE = "$USER_ACCOUNT_TYPE";
+    private static final String LDAP_GROUP_CATEGORY = "$LDAP_GROUP_CATEGORY";
 
     private Regex firstDQRegexp;
     private Regex nonSpaceRegexp;

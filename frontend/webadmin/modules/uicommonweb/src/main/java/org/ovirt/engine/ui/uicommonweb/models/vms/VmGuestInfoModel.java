@@ -16,7 +16,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 
 public class VmGuestInfoModel extends EntityModel<VM> {
 
-    private final static UIMessages messages = ConstantsManager.getInstance().getMessages();
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
     private String guestUserName;
     private OsType guestOsType;
     private ArchitectureType guestOsArch;

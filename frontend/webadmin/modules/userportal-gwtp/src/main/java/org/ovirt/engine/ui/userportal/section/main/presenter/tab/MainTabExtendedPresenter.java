@@ -27,7 +27,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainTabExtendedPresenter extends TabContainerPresenter<MainTabExtendedPresenter.ViewDef, MainTabExtendedPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     public interface ProxyDef extends NonLeafTabContentProxy<MainTabExtendedPresenter> {

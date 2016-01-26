@@ -23,7 +23,7 @@ public class SubTabDataCenterStoragePresenter
     extends AbstractSubTabDataCenterPresenter<DataCenterStorageListModel, SubTabDataCenterStoragePresenter.ViewDef,
         SubTabDataCenterStoragePresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterStorageSubTabPlace)

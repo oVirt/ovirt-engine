@@ -19,8 +19,8 @@ public class VmStatusColumn extends AbstractDecoratedImageColumn<UserPortalItemM
     private static final int DECORATOR_POSITION_LEFT = 16;
     private static final int DECORATOR_POSITION_TOP = -9;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public ImageWithDecorator getValue(UserPortalItemModel item) {

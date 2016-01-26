@@ -4,7 +4,7 @@ public enum ExternalSystemType {
     VDSM,
     GLUSTER;
 
-    static public ExternalSystemType safeValueOf(String value) {
+    public static ExternalSystemType safeValueOf(String value) {
         if (value == null) {
             return null;
         }

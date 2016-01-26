@@ -35,7 +35,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, ListModel> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public SanStorageLunToTargetList(SanStorageModelBase model) {
         super(model);

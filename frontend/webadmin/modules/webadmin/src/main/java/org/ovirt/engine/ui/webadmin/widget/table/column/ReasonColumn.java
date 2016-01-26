@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public abstract class ReasonColumn<T> extends AbstractColumn<T, SafeHtml> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     public ReasonColumn() {
         super(new SafeHtmlWithStyleCell());

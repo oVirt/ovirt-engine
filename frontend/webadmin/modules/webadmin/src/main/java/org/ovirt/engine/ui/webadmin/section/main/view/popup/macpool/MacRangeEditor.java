@@ -46,7 +46,7 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
     @WithElementId
     StringEntityModelTextBoxEditor rightBound;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private boolean enabled = true;
 

@@ -11,7 +11,7 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public class SimpleStatusImageComparator implements Comparator<ImageResource> {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final ImageResource downImage = resources.downImage();
 
     @Override

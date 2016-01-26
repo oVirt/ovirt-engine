@@ -48,7 +48,7 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
     @Ignore
     StringEntityModelTextAreaLabelEditor eventMessageTextArea;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public EventPopupView(EventBus eventBus) {

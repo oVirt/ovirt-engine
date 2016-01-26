@@ -33,7 +33,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 public class DataCenterQosSubTabPanelPresenter extends
     AbstractSubTabPanelPresenter<DataCenterQosSubTabPanelPresenter.ViewDef, DataCenterQosSubTabPanelPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterQosSubTabPlace)

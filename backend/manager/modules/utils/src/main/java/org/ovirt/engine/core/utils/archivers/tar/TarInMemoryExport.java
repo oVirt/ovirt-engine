@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TarInMemoryExport implements AutoCloseable {
-    protected final static Logger log = LoggerFactory.getLogger(TarInMemoryExport.class);
+    protected static final Logger log = LoggerFactory.getLogger(TarInMemoryExport.class);
 
     private TarArchiveInputStream tarInputStream;
 

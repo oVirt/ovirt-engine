@@ -25,7 +25,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainTabQuotaPresenter extends AbstractMainTabWithDetailsPresenter<Quota, QuotaListModel, MainTabQuotaPresenter.ViewDef, MainTabQuotaPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class QuotaSelectionChange {

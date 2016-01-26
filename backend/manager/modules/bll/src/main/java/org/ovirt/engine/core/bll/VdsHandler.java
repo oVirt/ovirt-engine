@@ -69,7 +69,7 @@ public class VdsHandler extends BaseHandler {
      *            the ovirt host which its OS version in a format of: [OS Name - OS Version - OS release]
      * @return a version class of the oVirt OS version, or null if failed to parse.
      */
-    static public RpmVersion getOvirtHostOsVersion(VDS vds) {
+    public static RpmVersion getOvirtHostOsVersion(VDS vds) {
         try {
             return new RpmVersion(vds.getHostOs(), "RHEV Hypervisor -", true);
         } catch (RuntimeException e) {

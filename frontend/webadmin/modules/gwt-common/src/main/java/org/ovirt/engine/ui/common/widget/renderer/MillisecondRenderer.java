@@ -17,7 +17,7 @@ public class MillisecondRenderer extends AbstractRenderer<Integer> {
      */
     private static final MillisecondRenderer INSTANCE = new MillisecondRenderer();
 
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     /**
      * Get the object instance.

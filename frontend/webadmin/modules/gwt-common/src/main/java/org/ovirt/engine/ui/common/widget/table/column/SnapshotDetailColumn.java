@@ -9,8 +9,8 @@ import com.google.gwt.resources.client.ImageResource;
 
 public class SnapshotDetailColumn extends AbstractImageResourceColumn<SnapshotDetailModel> {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public ImageResource getValue(SnapshotDetailModel snapshotDetailModel) {

@@ -59,8 +59,8 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     private final ErrorPopupManager errorPopupManager;
     private final Map<ConsoleProtocol, String> consoleTypeToName = new HashMap<>();
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public MainTabBasicDetailsPresenterWidget(EventBus eventBus,

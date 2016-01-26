@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class CpuProfileBaseModel extends ProfileBaseModel<CpuProfile, CpuQos, Cluster> {
 
-    private final static CpuQos EMPTY_QOS;
+    private static final CpuQos EMPTY_QOS;
 
     static {
         EMPTY_QOS = new CpuQos();

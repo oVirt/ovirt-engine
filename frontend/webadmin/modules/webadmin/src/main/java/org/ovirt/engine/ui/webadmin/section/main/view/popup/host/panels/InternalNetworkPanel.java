@@ -8,7 +8,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 public class InternalNetworkPanel extends NetworkPanel {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public InternalNetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style) {
         this(item, style, true);

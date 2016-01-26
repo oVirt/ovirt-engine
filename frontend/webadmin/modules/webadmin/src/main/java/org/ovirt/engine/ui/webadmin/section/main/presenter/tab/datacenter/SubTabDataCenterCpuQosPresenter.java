@@ -23,7 +23,7 @@ public class SubTabDataCenterCpuQosPresenter extends AbstractSubTabDataCenterPre
         DataCenterCpuQosListModel, SubTabDataCenterCpuQosPresenter.ViewDef,
         SubTabDataCenterCpuQosPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterCpuQosSubTabPlace)

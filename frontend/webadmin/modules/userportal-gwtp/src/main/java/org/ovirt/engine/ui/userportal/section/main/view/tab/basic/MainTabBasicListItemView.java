@@ -122,8 +122,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     private MainTabBasicListItemActionButton suspendButton;
     private MainTabBasicListItemActionButton rebootButton;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabBasicListItemView(ErrorPopupManager errorPopupManager,

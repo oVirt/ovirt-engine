@@ -372,10 +372,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public HostPopupView(EventBus eventBus, FenceAgentsEditor fenceAgentEditor,

@@ -15,9 +15,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public ImageResource getValue(VM vm) {
@@ -180,8 +180,8 @@ enum VmTypeConfig {
     private final boolean stateless;
     private final boolean nextRunConfigurationExists;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     VmTypeConfig(VmType vmType, boolean stateless, boolean nextRunConfigurationExists) {
         this.vmType = vmType;

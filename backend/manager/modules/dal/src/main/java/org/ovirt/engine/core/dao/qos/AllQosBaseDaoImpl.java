@@ -41,7 +41,7 @@ public class AllQosBaseDaoImpl extends QosBaseDaoImpl<QosBase> implements QosBas
     }
 
     protected static class AllQosBaseDaoFacadaeImplMapper extends QosBaseDaoFacadaeImplMapper<QosBase> {
-        public final static AllQosBaseDaoFacadaeImplMapper MAPPER = new AllQosBaseDaoFacadaeImplMapper();
+        public static final AllQosBaseDaoFacadaeImplMapper MAPPER = new AllQosBaseDaoFacadaeImplMapper();
 
         @Override
         protected QosBase createQosEntity(ResultSet rs) throws SQLException {

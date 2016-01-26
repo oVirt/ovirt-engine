@@ -23,7 +23,7 @@ public class SubTabClusterHostPresenter
     extends AbstractSubTabClusterPresenter<ClusterHostListModel, SubTabClusterHostPresenter.ViewDef,
         SubTabClusterHostPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterHostSubTabPlace)

@@ -92,9 +92,9 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     @Path(value = "latch.entity")
     EntityModelCheckBoxEditor vmUnpinnedLatchEditor;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public VmNextRunConfigurationWidget() {
         initEditors();

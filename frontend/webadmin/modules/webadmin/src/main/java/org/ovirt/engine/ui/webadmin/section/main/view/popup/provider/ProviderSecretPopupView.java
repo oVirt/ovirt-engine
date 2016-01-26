@@ -64,7 +64,7 @@ public class ProviderSecretPopupView extends AbstractModelBoundPopupView<Libvirt
     @WithElementId
     StringEntityModelTextBoxEditor descriptionEditor;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Inject

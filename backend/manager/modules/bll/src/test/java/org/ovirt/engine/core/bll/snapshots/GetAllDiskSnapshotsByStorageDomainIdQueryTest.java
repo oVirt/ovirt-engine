@@ -45,7 +45,7 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
     private DiskImage disk2;
     private DiskImage disk3;
 
-    private final static String snapshotDescription = "Test Snapshot";
+    private static final String snapshotDescription = "Test Snapshot";
 
     @Before
     @Override

@@ -13,7 +13,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, GlusterBrickEntity> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public BrickStatusColumn() {
         super(new BrickStatusCell());

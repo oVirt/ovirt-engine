@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public class ImageResourceHeader extends SafeHtmlHeader {
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private ImageResource headerImage;
     private boolean inline = false;

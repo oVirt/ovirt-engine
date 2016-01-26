@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 public class MainTabSessionPresenter
         extends AbstractMainTabWithDetailsPresenter<UserSession, SessionListModel, MainTabSessionPresenter.ViewDef, MainTabSessionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class SessionSelectionChange {

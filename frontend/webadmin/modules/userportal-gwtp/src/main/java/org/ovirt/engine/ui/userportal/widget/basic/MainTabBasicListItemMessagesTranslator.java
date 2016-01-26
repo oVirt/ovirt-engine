@@ -11,7 +11,7 @@ public class MainTabBasicListItemMessagesTranslator {
 
     private Map<String, String> dictionary = new HashMap<>();
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabBasicListItemMessagesTranslator() {

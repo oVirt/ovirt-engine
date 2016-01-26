@@ -127,8 +127,8 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     @WithElementId
     Anchor nfsProfileAnchor;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

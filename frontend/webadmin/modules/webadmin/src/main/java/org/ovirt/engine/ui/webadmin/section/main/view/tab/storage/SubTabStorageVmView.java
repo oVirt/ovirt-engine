@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree<StorageVmListModel>, StorageDomain, VM, StorageListModel, StorageVmListModel>
         implements SubTabStorageVmPresenter.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabStorageVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> modelProvider) {

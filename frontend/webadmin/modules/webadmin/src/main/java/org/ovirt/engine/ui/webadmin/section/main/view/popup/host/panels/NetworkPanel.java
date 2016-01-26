@@ -24,8 +24,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     Label titleLabel;
 

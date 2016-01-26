@@ -136,9 +136,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     private UICommand newVMCommand;
 
-    private final static String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
-    private final static String STOP     = "Stop"; //$NON-NLS-1$
-    private final static String REBOOT   = "Reboot"; //$NON-NLS-1$
+    private static final String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
+    private static final String STOP     = "Stop"; //$NON-NLS-1$
+    private static final String REBOOT   = "Reboot"; //$NON-NLS-1$
 
     public UICommand getNewVmCommand() {
         return newVMCommand;

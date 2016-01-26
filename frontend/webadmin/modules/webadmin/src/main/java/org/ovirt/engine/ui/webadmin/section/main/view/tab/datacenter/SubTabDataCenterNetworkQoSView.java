@@ -25,7 +25,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabDataCenterNetworkQoSView(SearchableDetailModelProvider<NetworkQoS,

@@ -112,7 +112,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         throw new NotImplementedException();
     }
 
-    private final static class VdsStaticRowMapper implements RowMapper<VdsStatic> {
+    private static final class VdsStaticRowMapper implements RowMapper<VdsStatic> {
         public static final VdsStaticRowMapper instance = new VdsStaticRowMapper();
 
         @Override

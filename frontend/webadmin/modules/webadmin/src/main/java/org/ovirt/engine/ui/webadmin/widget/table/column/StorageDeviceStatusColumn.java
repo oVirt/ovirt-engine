@@ -12,8 +12,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class StorageDeviceStatusColumn extends AbstractImageResourceColumn<StorageDevice> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public ImageResource getValue(StorageDevice device) {

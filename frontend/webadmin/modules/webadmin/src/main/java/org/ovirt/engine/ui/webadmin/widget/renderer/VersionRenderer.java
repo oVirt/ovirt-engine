@@ -8,7 +8,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 public class VersionRenderer extends AbstractRenderer<RpmVersion> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public String render(RpmVersion version) {

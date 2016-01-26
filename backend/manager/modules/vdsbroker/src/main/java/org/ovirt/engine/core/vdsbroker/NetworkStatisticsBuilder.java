@@ -7,8 +7,8 @@ import org.ovirt.engine.core.compat.Version;
 
 public class NetworkStatisticsBuilder {
 
-    private final static int BITS_IN_BYTE = 8;
-    private final static int BITS_IN_MEGABIT = 1000000;
+    private static final int BITS_IN_BYTE = 8;
+    private static final int BITS_IN_MEGABIT = 1000000;
 
     private final boolean totalStatsReported;
     private Integer speed;

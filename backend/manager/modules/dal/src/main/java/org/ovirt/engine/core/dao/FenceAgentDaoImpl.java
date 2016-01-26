@@ -104,7 +104,7 @@ public class FenceAgentDaoImpl extends BaseDao implements FenceAgentDao {
 
     static final class FenceAgentRowMapper implements RowMapper<FenceAgent> {
 
-        public final static FenceAgentRowMapper instance = new FenceAgentRowMapper();
+        public static final FenceAgentRowMapper instance = new FenceAgentRowMapper();
 
         @Override
         public FenceAgent mapRow(ResultSet rs, int rowNum) throws SQLException {

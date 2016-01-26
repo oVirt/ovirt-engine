@@ -65,7 +65,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
     @UiField
     ValidatedPanelWidget storageDomainsPanel;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public ImportIscsiStorageView() {
         initViews();

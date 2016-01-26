@@ -196,7 +196,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
 
     private static final class NetworkClusterRowMapper extends NetworkRowMapper
             implements RowMapper<Network> {
-        public final static NetworkClusterRowMapper INSTANCE = new NetworkClusterRowMapper();
+        public static final NetworkClusterRowMapper INSTANCE = new NetworkClusterRowMapper();
 
         @Override
         public Network mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -243,11 +243,11 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
             return entity;
         }
 
-        abstract protected T createNetworkEntity();
+        protected abstract T createNetworkEntity();
     }
 
     static class NetworkRowMapper extends NetworkRowMapperBase<Network> {
-        public final static NetworkRowMapper instance = new NetworkRowMapper();
+        public static final NetworkRowMapper instance = new NetworkRowMapper();
 
         @Override
         protected Network createNetworkEntity() {

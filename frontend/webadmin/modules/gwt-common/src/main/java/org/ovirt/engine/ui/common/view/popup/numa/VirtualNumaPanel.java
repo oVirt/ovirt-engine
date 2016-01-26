@@ -41,9 +41,9 @@ public class VirtualNumaPanel extends Composite implements HasWidgets {
     ImageResource pinnedVNumaIcon;
     ImageResource pinnedPartialVNumaIcon;
 
-    @UiField(provided=true)
-    final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    @UiField(provided = true)
+    static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public VirtualNumaPanel() {

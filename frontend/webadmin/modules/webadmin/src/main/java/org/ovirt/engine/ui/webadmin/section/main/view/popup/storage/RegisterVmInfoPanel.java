@@ -22,7 +22,7 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
     private ImportVmGeneralSubTabView generalView;
     private VmImportGeneralModel vmImportGeneralModel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public RegisterVmInfoPanel(RegisterEntityModel<VM> model) {
         super(model);

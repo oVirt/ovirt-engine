@@ -52,9 +52,9 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private final ViewRadioGroup<NetworkHostFilter> viewRadioGroup;
     private final SafeHtml labelImage;
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider) {

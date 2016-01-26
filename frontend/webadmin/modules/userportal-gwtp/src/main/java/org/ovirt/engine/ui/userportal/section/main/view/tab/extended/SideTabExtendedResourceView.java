@@ -60,7 +60,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     interface Style extends CssResource {
         String quotaNameText();

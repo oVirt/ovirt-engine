@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 
 public class HostManagementPopupView extends HostInterfacePopupView implements HostManagementPopupPresenterWidget.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public HostManagementPopupView(EventBus eventBus) {

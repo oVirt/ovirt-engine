@@ -53,7 +53,7 @@ public class VnicProfileDaoImpl extends DefaultGenericDao<VnicProfile, Guid> imp
         return VnicProfileRowMapper.INSTANCE;
     }
 
-    static abstract class VnicProfileRowMapperBase<T extends VnicProfile> implements RowMapper<T> {
+    abstract static class VnicProfileRowMapperBase<T extends VnicProfile> implements RowMapper<T> {
 
         @Override
         @SuppressWarnings("unchecked")
@@ -71,7 +71,7 @@ public class VnicProfileDaoImpl extends DefaultGenericDao<VnicProfile, Guid> imp
             return entity;
         }
 
-        abstract protected T createVnicProfileEntity();
+        protected abstract T createVnicProfileEntity();
     }
 
     private static class VnicProfileRowMapper extends VnicProfileRowMapperBase<VnicProfile> {

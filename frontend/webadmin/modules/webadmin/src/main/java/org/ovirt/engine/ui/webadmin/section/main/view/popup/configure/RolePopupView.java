@@ -98,7 +98,7 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
 
     private RoleModel roleModel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public RolePopupView(EventBus eventBus) {

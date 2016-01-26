@@ -87,7 +87,7 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
     private BaseNetworkQosModel model;
     private final IEventListener<PropertyChangedEventArgs> availabilityListener;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public NetworkQosWidget() {
         inboundEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);

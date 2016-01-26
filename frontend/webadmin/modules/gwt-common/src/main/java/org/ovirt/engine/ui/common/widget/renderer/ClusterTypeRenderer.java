@@ -7,7 +7,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 public class ClusterTypeRenderer extends AbstractRenderer<ClusterGeneralModel.ClusterType> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public String render(ClusterGeneralModel.ClusterType object) {

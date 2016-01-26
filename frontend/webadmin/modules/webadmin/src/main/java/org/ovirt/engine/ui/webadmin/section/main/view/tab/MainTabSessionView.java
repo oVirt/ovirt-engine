@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<UserSession, SessionListModel>
         implements MainTabSessionPresenter.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabSessionView(MainModelProvider<UserSession, SessionListModel> modelProvider) {

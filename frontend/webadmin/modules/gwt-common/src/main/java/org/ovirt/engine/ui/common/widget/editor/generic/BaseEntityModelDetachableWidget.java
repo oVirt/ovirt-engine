@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.UIObject;
 
 public abstract class BaseEntityModelDetachableWidget extends Composite implements HasDetachable {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     WidgetTooltip tooltip;

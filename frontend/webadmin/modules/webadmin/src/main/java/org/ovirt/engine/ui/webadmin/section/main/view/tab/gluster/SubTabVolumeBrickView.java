@@ -37,7 +37,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabVolumeBrickView(SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider) {

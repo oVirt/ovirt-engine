@@ -22,7 +22,7 @@ public class SubTabExtendedVmGuestInfoPresenter
       extends AbstractSubTabExtendedVmPresenter<VmGuestInfoModel, SubTabExtendedVmGuestInfoPresenter.ViewDef,
           SubTabExtendedVmGuestInfoPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineGuestInfoSubTabPlace)

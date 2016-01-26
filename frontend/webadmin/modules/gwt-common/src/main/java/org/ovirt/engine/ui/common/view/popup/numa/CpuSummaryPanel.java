@@ -16,7 +16,7 @@ public class CpuSummaryPanel extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
     LabelWithTextTruncation nameLabel;

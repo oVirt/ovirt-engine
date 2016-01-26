@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 @RunWith(Parameterized.class)
 public class MacAddressPatternTest {
 
-    private final static Class<?>[] ALL_GROUPS = { CreateEntity.class, UpdateEntity.class };
-    private final static Class<?>[] CREATE_GROUP = { CreateEntity.class };
-    private final static Class<?>[] UPDATE_GROUP = { UpdateEntity.class };
+    private static final Class<?>[] ALL_GROUPS = { CreateEntity.class, UpdateEntity.class };
+    private static final Class<?>[] CREATE_GROUP = { CreateEntity.class };
+    private static final Class<?>[] UPDATE_GROUP = { UpdateEntity.class };
 
     private Validator validator;
     private String address;

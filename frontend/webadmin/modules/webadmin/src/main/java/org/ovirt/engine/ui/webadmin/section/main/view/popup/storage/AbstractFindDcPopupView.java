@@ -26,7 +26,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
     @UiField
     Label messageLabel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public AbstractFindDcPopupView(EventBus eventBus, boolean multiSelection) {
         super(eventBus);

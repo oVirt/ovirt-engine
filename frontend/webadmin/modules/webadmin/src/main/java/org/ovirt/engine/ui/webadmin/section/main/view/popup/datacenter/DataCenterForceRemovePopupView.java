@@ -11,8 +11,8 @@ import com.google.inject.Inject;
 public class DataCenterForceRemovePopupView extends ForceRemoveConfirmationPopupView
         implements DataCenterForceRemovePopupPresenterWidget.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public DataCenterForceRemovePopupView(EventBus eventBus) {

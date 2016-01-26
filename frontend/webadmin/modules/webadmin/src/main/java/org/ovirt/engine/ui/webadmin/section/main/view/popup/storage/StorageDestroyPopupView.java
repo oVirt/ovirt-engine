@@ -12,8 +12,8 @@ public class StorageDestroyPopupView extends ForceRemoveConfirmationPopupView
         implements StorageDestroyPopupPresenterWidget.ViewDef {
 
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public StorageDestroyPopupView(EventBus eventBus) {

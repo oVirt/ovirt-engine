@@ -25,7 +25,7 @@ public class SubTabNetworkVmPresenter
     extends AbstractSubTabNetworkPresenter<NetworkVmListModel, SubTabNetworkVmPresenter.ViewDef,
         SubTabNetworkVmPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkVmSubTabPlace)

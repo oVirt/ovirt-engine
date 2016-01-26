@@ -12,7 +12,7 @@ import com.google.gwt.event.shared.EventBus;
 
 public class PermissionWithInheritedPermissionListModelTable<P extends PermissionListModel<?>> extends PermissionListModelTable<P> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PermissionWithInheritedPermissionListModelTable(
             SearchableTableModelProvider<Permission, P> modelProvider,

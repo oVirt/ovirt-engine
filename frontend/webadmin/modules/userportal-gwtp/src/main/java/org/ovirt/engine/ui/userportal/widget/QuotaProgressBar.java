@@ -13,8 +13,8 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar {
 
     protected QuotaUsagePerUser quotaUsagePerUser;
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public QuotaProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
         setQuotaUsagePerUser(quotaUsagePerUser);

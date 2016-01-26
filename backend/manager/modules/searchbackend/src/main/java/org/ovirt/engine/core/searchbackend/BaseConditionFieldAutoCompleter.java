@@ -187,16 +187,16 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return sb.toString();
     }
 
-    final static Regex validChar = new Regex("^[^\\<\\>&^!']*$");
+    static final Regex validChar = new Regex("^[^\\<\\>&^!']*$");
 
-    public final static ValueValidationFunction validCharacters = new ValueValidationFunction() {
+    public static final ValueValidationFunction validCharacters = new ValueValidationFunction() {
         @Override
         public boolean isValid(String field, String value) {
             return validChar.isMatch(value);
         }
     };
 
-    public final static ValueValidationFunction validDateTime = new ValueValidationFunction() {
+    public static final ValueValidationFunction validDateTime = new ValueValidationFunction() {
         @Override
         public boolean isValid(String field, String value) {
             Date test = DateUtils.parse(value);
@@ -219,21 +219,21 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public final static ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
+    public static final ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
         @Override
         public boolean isValid(String field, String value) {
             return TimeSpan.tryParse(value) != null;
         }
     };
 
-    public final static ValueValidationFunction validInteger = new ValueValidationFunction() {
+    public static final ValueValidationFunction validInteger = new ValueValidationFunction() {
         @Override
         public boolean isValid(String field, String value) {
             return IntegerCompat.tryParse(value) != null;
         }
     };
 
-    public final static ValueValidationFunction validDecimal = new ValueValidationFunction() {
+    public static final ValueValidationFunction validDecimal = new ValueValidationFunction() {
         @Override
         public boolean isValid(String field, String value) {
             try {

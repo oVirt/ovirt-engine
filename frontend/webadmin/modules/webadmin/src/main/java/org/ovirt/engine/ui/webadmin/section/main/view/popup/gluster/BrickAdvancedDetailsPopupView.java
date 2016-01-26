@@ -183,7 +183,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public BrickAdvancedDetailsPopupView(EventBus eventBus) {

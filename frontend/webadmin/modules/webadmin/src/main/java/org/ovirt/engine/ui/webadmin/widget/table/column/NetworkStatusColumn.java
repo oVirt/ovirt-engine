@@ -12,7 +12,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class NetworkStatusColumn extends AbstractImageResourceColumn<Network> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(Network nwk) {

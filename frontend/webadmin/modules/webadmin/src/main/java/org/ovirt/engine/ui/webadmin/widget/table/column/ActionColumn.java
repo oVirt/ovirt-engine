@@ -36,7 +36,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      * @param <C>
      *            The Action Column Type
      */
-    public static abstract class ActionCellDelegate<C> implements Delegate<C> {
+    public abstract static class ActionCellDelegate<C> implements Delegate<C> {
 
         @Override
         public final void execute(C object) {
@@ -100,7 +100,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      */
     private static class FloatingActionCell<C> extends ActionCell<C> {
         private final ActionCellDelegate<C> delegate;
-        private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+        private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
         public FloatingActionCell(ActionCellDelegate<C> delegate) {
             super("", delegate); //$NON-NLS-1$

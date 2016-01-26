@@ -51,7 +51,7 @@ public class VLanPanel extends VerticalPanel {
 
 class VLanElementPanel extends TogglePanel {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     private boolean isSelectionAvailable = false;
 

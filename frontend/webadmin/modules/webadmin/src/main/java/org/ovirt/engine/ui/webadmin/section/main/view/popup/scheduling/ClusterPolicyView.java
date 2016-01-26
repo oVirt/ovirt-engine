@@ -47,8 +47,8 @@ public class ClusterPolicyView extends Composite {
     private final EventBus eventBus;
     private final ClientStorage clientStorage;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ClusterPolicyView(ClusterPolicyModelProvider clusterPolicyModelProvider,

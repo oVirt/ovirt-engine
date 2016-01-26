@@ -88,9 +88,9 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
         }
     }
 
-    abstract protected void selectionChanged(Boolean value);
+    protected abstract void selectionChanged(Boolean value);
 
-    abstract public boolean isEnabled();
+    public abstract boolean isEnabled();
 
     @Override
     public SafeHtml getTooltip() {

@@ -22,7 +22,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabExtendedTemplateVirtualDisksPresenter
         extends AbstractSubTabExtendedTemplatePresenter<UserPortalTemplateDiskListModel, SubTabExtendedTemplateVirtualDisksPresenter.ViewDef, SubTabExtendedTemplateVirtualDisksPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedTempplateVirtualDisksSubTabPlace)

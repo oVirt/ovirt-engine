@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class BondPanel extends TogglePanel {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public BondPanel(HostInterfaceLineModel lineModel, boolean isSelectionEnabled) {
         super(lineModel);

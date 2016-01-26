@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTest {
 
     BackendVmApplicationsResource resource;
-    protected final static Guid VM_ID = GUIDS[1];
+    protected static final Guid VM_ID = GUIDS[1];
 
     public BackendVmApplicationsResourceTest() {
         resource = new BackendVmApplicationsResource(VM_ID);

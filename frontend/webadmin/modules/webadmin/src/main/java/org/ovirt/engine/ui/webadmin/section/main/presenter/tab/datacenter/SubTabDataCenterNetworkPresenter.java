@@ -23,7 +23,7 @@ public class SubTabDataCenterNetworkPresenter
     extends AbstractSubTabDataCenterPresenter<DataCenterNetworkListModel, SubTabDataCenterNetworkPresenter.ViewDef,
         SubTabDataCenterNetworkPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterNetworkSubTabPlace)

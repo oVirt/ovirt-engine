@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class StorageDeviceStatusCell extends AbstractCell<StorageDevice> {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public void render(Context context, StorageDevice device, SafeHtmlBuilder sb, String id) {

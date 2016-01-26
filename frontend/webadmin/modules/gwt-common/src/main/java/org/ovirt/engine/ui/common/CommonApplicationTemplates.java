@@ -6,7 +6,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     // TODO this doesn't belong here
-    public final static int TAB_BAR_HEIGHT = 24;
+    public static final int TAB_BAR_HEIGHT = 24;
 
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")

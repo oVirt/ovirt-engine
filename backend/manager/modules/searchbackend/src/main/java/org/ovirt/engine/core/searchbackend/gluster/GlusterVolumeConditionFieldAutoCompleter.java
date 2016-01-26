@@ -24,7 +24,7 @@ import org.ovirt.engine.core.searchbackend.StringConditionRelationAutoCompleter;
  * <li>status - {@link GlusterStatus} - status<br>
  */
 public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
-    public final static GlusterVolumeConditionFieldAutoCompleter INSTANCE = new GlusterVolumeConditionFieldAutoCompleter();
+    public static final GlusterVolumeConditionFieldAutoCompleter INSTANCE = new GlusterVolumeConditionFieldAutoCompleter();
 
     public enum FIELDS {
         NAME,

@@ -33,10 +33,10 @@ public class AutoScrollAdapter implements
 
 
 
-    final protected Logger log = Logger.getLogger(AutoScrollAdapter.class.getName());
-    final protected ScrollPanel sp;
+    protected final Logger log = Logger.getLogger(AutoScrollAdapter.class.getName());
+    protected final ScrollPanel sp;
 
-    final protected Timer scrollCheck = new Timer() {
+    protected final Timer scrollCheck = new Timer() {
         @Override
         public void run() {
             if (!enabled) {

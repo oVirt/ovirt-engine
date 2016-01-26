@@ -27,7 +27,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
     private static final Object[] EMPTY = new Object[] {};
 
-    private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerImpl.class);
 
     private XmlRpcClientConfigImpl config = null;
 

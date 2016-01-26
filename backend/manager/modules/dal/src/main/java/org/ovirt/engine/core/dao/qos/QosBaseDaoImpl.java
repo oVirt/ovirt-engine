@@ -65,7 +65,7 @@ public abstract class QosBaseDaoImpl<T extends QosBase> extends DefaultGenericDa
                 .addValue("id", guid);
     }
 
-    protected static abstract class QosBaseDaoFacadaeImplMapper<M extends QosBase> implements RowMapper<M> {
+    protected abstract static class QosBaseDaoFacadaeImplMapper<M extends QosBase> implements RowMapper<M> {
         @Override
         public M mapRow(ResultSet rs, int rowNum) throws SQLException {
             M entity = createQosEntity(rs);

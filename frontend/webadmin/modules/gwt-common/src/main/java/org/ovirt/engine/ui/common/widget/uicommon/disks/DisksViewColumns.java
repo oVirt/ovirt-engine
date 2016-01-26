@@ -39,9 +39,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DisksViewColumns {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public static AbstractTextColumn<Disk> getAliasColumn(String sortBy) {
         AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {

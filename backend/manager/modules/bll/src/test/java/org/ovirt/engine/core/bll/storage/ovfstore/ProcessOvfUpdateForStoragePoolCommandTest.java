@@ -67,7 +67,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
-    private final static int ITEMS_COUNT_PER_UPDATE = 100;
+    private static final int ITEMS_COUNT_PER_UPDATE = 100;
     private ProcessOvfUpdateForStoragePoolCommand<ProcessOvfUpdateForStoragePoolParameters> command;
 
     @Mock

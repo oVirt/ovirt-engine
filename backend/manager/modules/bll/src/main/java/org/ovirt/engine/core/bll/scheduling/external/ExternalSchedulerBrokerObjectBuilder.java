@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExternalSchedulerBrokerObjectBuilder {
-    private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerObjectBuilder.class);
-    private final static int RESULT_OK = 0;
+    private static final Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerObjectBuilder.class);
+    private static final int RESULT_OK = 0;
     private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private static void auditLogPluginError(String pluginName, String errorMessage) {

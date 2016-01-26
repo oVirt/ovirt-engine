@@ -108,7 +108,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
 
     private static class ProviderRowMapper implements ParameterizedRowMapper<Provider<?>> {
 
-        public final static ProviderRowMapper INSTANCE = new ProviderRowMapper();
+        public static final ProviderRowMapper INSTANCE = new ProviderRowMapper();
 
         private ProviderRowMapper() {
         }

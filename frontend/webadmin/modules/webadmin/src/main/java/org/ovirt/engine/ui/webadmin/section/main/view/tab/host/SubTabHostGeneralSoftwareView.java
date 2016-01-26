@@ -39,7 +39,7 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

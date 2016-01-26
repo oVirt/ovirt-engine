@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class MultipleActionsRunner {
 
     private static final Logger log = LoggerFactory.getLogger(MultipleActionsRunner.class);
-    private final static int CONCURRENT_ACTIONS = 10;
+    private static final int CONCURRENT_ACTIONS = 10;
 
     private VdcActionType actionType = VdcActionType.Unknown;
     private final Set<VdcActionParametersBase> parameters;

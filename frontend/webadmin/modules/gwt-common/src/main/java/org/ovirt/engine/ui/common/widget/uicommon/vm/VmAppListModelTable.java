@@ -12,7 +12,7 @@ import com.google.gwt.event.shared.EventBus;
 
 public class VmAppListModelTable extends AbstractModelBoundTableWidget<String, VmAppListModel<VM>> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmAppListModelTable(
             SearchableTableModelProvider<String, VmAppListModel<VM>> modelProvider,

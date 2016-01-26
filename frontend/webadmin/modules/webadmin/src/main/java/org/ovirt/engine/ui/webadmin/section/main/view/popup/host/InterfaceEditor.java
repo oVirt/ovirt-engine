@@ -61,7 +61,7 @@ public class InterfaceEditor extends Composite implements HasEditorDriver<Networ
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public InterfaceEditor() {
         protocolEditor = new ValueListBox<>(new EnumRenderer<NetworkBootProtocol>());

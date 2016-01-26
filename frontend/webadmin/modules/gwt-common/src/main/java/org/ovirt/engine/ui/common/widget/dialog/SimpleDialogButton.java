@@ -10,8 +10,8 @@ public class SimpleDialogButton extends AbstractDialogButton {
     private static final String BUTTON_STYLE = "dialog-button-text"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_DISABLED = "dialog-button-text-disabled"; //$NON-NLS-1$
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public SimpleDialogButton() {
         super(""); //$NON-NLS-1$

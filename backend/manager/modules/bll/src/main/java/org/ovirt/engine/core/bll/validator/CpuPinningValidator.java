@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class CpuPinningValidator {
 
-    private final static Pattern cpuPinningPattern =
+    private static final Pattern cpuPinningPattern =
             Pattern.compile("\\d+#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*" +
                     "(_\\d+#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*)*");
 

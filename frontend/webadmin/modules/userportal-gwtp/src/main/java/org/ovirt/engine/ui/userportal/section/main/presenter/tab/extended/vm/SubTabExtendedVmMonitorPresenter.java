@@ -24,7 +24,7 @@ public class SubTabExtendedVmMonitorPresenter
             SubTabExtendedVmMonitorPresenter.ProxyDef>
         implements VmMonitorValueChangeHandler {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineMonitorSubTabPlace)

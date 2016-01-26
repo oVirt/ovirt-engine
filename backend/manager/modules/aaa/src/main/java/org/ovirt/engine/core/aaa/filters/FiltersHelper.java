@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class FiltersHelper {
 
     public static final String VERSION = "0";
-    private final static Logger log = LoggerFactory.getLogger(FiltersHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(FiltersHelper.class);
     private static SecureRandom secureRandom;
     public static class Constants {
         public static final String REQUEST_AUTH_RECORD_KEY = "ovirt_aaa_auth_record";

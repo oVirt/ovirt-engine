@@ -158,7 +158,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
     }
 
     private static final class VmPoolFullRowMapper implements RowMapper<VmPool> {
-        public final static VmPoolFullRowMapper instance = new VmPoolFullRowMapper();
+        public static final VmPoolFullRowMapper instance = new VmPoolFullRowMapper();
 
         @Override
         public VmPool mapRow(final ResultSet rs, final int rowNum) throws SQLException {
@@ -184,7 +184,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
     }
 
     private static final class VmPoolNonFullRowMapper implements RowMapper<VmPool> {
-        public final static VmPoolNonFullRowMapper instance = new VmPoolNonFullRowMapper();
+        public static final VmPoolNonFullRowMapper instance = new VmPoolNonFullRowMapper();
 
         @Override
         public VmPool mapRow(final ResultSet rs, final int rowNum) throws SQLException {

@@ -25,7 +25,7 @@ public class AbstractPolicyUnitTest {
         return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
-    public final static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale.ENGLISH);
+    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     @SuppressWarnings("unchecked")
     Object convert(Class<?> type, String value, Map<Guid, BusinessEntity<Guid>> cache) throws ParseException {

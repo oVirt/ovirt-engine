@@ -72,7 +72,7 @@ public class SearchSuggestBox extends SuggestBox implements HasElementId {
     }
 
     // Represent a table column with SearchSuggestion cells
-    public static abstract class SearchSuggestionColumn<T> extends Column<T, SearchSuggestion> {
+    public abstract static class SearchSuggestionColumn<T> extends Column<T, SearchSuggestion> {
         public SearchSuggestionColumn() {
             super(new SearchSuggestionCell());
         }

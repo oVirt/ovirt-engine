@@ -58,7 +58,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     @UiField
     public WidgetStyle style;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     protected final List<Pair<T, V>> items;
     private final IEventListener<EventArgs> itemsChangedListener;

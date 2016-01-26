@@ -36,17 +36,17 @@ public abstract class NumberRangeValidation<T extends Number> implements IValida
      *            a {@link String} representation of the required value
      * @return T initiated with value in case of success, null otherwise
      */
-    abstract protected T parse(String value);
+    protected abstract T parse(String value);
 
-    abstract protected boolean belowMinimum(T value);
+    protected abstract boolean belowMinimum(T value);
 
-    abstract protected boolean aboveMaximum(T value);
+    protected abstract boolean aboveMaximum(T value);
 
     /***
      * @return A {@link String} of the required number type name represented in human-readable constant which will be
      *         presented via application's user interface.
      */
-    abstract protected String getValueTypeName();
+    protected abstract String getValueTypeName();
 
     @Override
     public ValidationResult validate(Object value) {

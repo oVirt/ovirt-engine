@@ -23,7 +23,7 @@ public class SubTabTemplatePermissionPresenter
     extends AbstractSubTabTemplatePresenter<PermissionListModel<VmTemplate>, SubTabTemplatePermissionPresenter.ViewDef,
     SubTabTemplatePermissionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.templatePermissionSubTabPlace)

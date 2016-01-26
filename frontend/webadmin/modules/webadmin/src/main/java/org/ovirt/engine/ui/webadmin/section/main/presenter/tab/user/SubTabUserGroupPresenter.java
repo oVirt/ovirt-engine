@@ -24,7 +24,7 @@ public class SubTabUserGroupPresenter
     extends AbstractSubTabUserPresenter<UserGroupListModel, SubTabUserGroupPresenter.ViewDef,
         SubTabUserGroupPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.userGroupSubTabPlace)

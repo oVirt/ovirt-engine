@@ -60,7 +60,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private static final String DEVICES = "devices";
     private static final String USB_BUS = "usb";
-    private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
+    private static final String FIRST_MASTER_MODEL = "ich9-ehci1";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
     private static final Base64 BASE_64 = new Base64(0, null);
     private final List<Map<String, Object>> devices = new ArrayList<>();

@@ -10,7 +10,7 @@ import com.google.gwt.user.cellview.client.Column;
 
 public abstract class AbstractLunAvailableSizeColumn extends Column<LunModel, LunModel> {
 
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public AbstractLunAvailableSizeColumn() {
         super(new AbstractToggleButtonCell<LunModel>() {

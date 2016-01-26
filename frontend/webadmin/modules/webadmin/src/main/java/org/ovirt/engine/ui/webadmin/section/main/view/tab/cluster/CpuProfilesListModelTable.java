@@ -55,7 +55,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
 
     private final CpuProfilePermissionModelProvider cpuProfilePermissionModelProvider;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public CpuProfilesListModelTable(SearchableTableModelProvider<CpuProfile, CpuProfileListModel> modelProvider,
             CpuProfilePermissionModelProvider cpuProfilePermissionModelProvider,

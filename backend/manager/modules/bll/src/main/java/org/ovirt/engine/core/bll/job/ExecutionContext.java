@@ -28,7 +28,7 @@ public class ExecutionContext implements Serializable{
     /**
      * A default list of steps
      */
-    final static List<StepEnum> DEFAULT_STEPS_LIST = Arrays.asList(StepEnum.VALIDATING, StepEnum.EXECUTING);
+    static final List<StepEnum> DEFAULT_STEPS_LIST = Arrays.asList(StepEnum.VALIDATING, StepEnum.EXECUTING);
 
     /**
      * Determines how the current command execution should be performed

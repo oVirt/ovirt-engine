@@ -13,7 +13,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class StorageDomainSharedStatusColumn extends AbstractImageResourceColumn<StorageDomain> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(StorageDomain sp) {

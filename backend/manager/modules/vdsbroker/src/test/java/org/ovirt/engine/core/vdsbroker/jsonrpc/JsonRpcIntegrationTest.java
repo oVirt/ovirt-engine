@@ -21,12 +21,12 @@ import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
 public class JsonRpcIntegrationTest {
 
     // Please customize HOST_ADDRESS for your vdsm location
-    private final static String HOST_ADDRESS = "192.168.1.10";
-    private final static int PORT = 4044;
-    private final static int TIMEOUT = 5000;
-    private final static String DEFAULT_REQUEST_QUEUE = "jms.queue.requests";
-    private final static String DEFAULT_RESPONSE_QUEUE = "jms.queue.reponses";
-    private final static String DEFAULT_EVENTS_QUEUE = "jms.queue.events";
+    private static final String HOST_ADDRESS = "192.168.1.10";
+    private static final int PORT = 4044;
+    private static final int TIMEOUT = 5000;
+    private static final String DEFAULT_REQUEST_QUEUE = "jms.queue.requests";
+    private static final String DEFAULT_RESPONSE_QUEUE = "jms.queue.reponses";
+    private static final String DEFAULT_EVENTS_QUEUE = "jms.queue.events";
 
     @Test
     public void testGetVdsCapabilities() throws InterruptedException, ExecutionException, ClientConnectionException {

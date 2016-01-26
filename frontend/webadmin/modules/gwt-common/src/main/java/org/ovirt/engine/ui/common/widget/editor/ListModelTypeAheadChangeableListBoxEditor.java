@@ -42,7 +42,7 @@ public class ListModelTypeAheadChangeableListBoxEditor extends AbstractValidated
         return getContentWidget();
     }
 
-    public static abstract class NullSafeSuggestBoxRenderer extends ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<String> {
+    public abstract static class NullSafeSuggestBoxRenderer extends ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<String> {
         @Override
         public String getReplacementStringNullSafe(String data) {
             return data; // for string objects the replacement value is the object itself (null safe)

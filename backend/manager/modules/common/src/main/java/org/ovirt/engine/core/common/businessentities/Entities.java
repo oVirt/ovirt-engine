@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Entities {
 
-    private final static Logger log = LoggerFactory.getLogger(Entities.class);
+    private static final Logger log = LoggerFactory.getLogger(Entities.class);
 
     /**
      * Map entity's name to entity object. A lot of logic code does filtering of data from 2 collections by quad

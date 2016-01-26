@@ -39,6 +39,7 @@
     <module name="IllegalInstantiation"/>
     <module name="LeftCurly"/>
     <module name="MethodName" />
+    <module name="ModifierOrder" />
     <module name="MultipleVariableDeclarations" />
     <module name="NeedBraces" />
     <module name="NonEmptyAtclauseDescription" />

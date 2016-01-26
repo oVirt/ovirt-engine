@@ -40,7 +40,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPresenter<Erratum,
     EngineErrataListModel, MainTabEngineErrataPresenter.ViewDef, MainTabEngineErrataPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class ErrataSelectionChange {

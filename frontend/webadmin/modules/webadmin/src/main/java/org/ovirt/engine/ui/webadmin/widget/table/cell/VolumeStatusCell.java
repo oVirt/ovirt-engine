@@ -24,8 +24,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
     private UICommand onClickCommand = null;
 
     protected ImageResource downImage = resources.downImage();

@@ -96,7 +96,7 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
     @WithElementId
     IntegerEntityModelTextBoxOnlyEditor iopsWriteEditor;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public StorageQosWidget() {
         throughputTotalRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$

@@ -23,7 +23,7 @@ public class SubTabUserQuotaPresenter
     extends AbstractSubTabUserPresenter<UserQuotaListModel, SubTabUserQuotaPresenter.ViewDef,
         SubTabUserQuotaPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.userQuotaSubTabPlace)

@@ -23,7 +23,7 @@ public class SubTabVolumePermissionPresenter
     extends AbstractSubTabGlusterPresenter<PermissionListModel<GlusterVolumeEntity>,
         SubTabVolumePermissionPresenter.ViewDef, SubTabVolumePermissionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.volumePermissionSubTabPlace)

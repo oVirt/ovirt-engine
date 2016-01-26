@@ -38,7 +38,7 @@ public class HostSummaryContentPanel extends Composite {
     @Inject
     Provider<VirtualNumaPanel> virtualNumaPanelProvider;
 
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public HostSummaryContentPanel() {

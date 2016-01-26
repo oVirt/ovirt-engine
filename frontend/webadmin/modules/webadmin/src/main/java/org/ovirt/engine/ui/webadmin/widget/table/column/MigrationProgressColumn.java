@@ -11,7 +11,7 @@ public class MigrationProgressColumn extends AbstractOneColorPercentColumn<VM> {
 
     private EnumRenderer<VMStatus> renderer = new EnumRenderer<>();
 
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     public MigrationProgressColumn() {
         super(AbstractProgressBarColumn.ProgressBarColors.GREEN);

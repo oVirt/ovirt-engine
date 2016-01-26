@@ -152,17 +152,17 @@ public abstract class SqlInjectionChecker {
     /**
      * gets the database vendor specific sql command separator
      */
-    abstract protected String getSqlCommandSeperator();
+    protected abstract String getSqlCommandSeperator();
     /**
      * gets the database vendor specific sql string concatenation
      */
-    abstract protected String getSqlConcat();
+    protected abstract String getSqlConcat();
     /**
      * gets the database vendor specific sql comment begin/end definition
      */
-    abstract protected HashSet<String> getCommentExpressions();
+    protected abstract HashSet<String> getCommentExpressions();
     /**
      * gets the database vendor specific functions that are considered as sql injection.
      */
-    abstract protected HashSet<String> getInjectionFunctions();
+    protected abstract HashSet<String> getInjectionFunctions();
 }

@@ -148,7 +148,7 @@ public class InternalClusterPolicies {
         return builder;
     }
 
-    protected final static class PolicyBuilder {
+    protected static final class PolicyBuilder {
         final ClusterPolicy policy;
 
         private PolicyBuilder(Guid id) {

@@ -22,8 +22,8 @@ import org.junit.Test;
  * Authentication and sanity.
  */
 public class BasicTest {
-    final static String hello_command = "echo test";
-    final static String hello_result = "test\n";
+    static final String hello_command = "echo test";
+    static final String hello_result = "test\n";
     SSHClient client;
 
     @BeforeClass

@@ -58,7 +58,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
     @Ignore
     EntityModelCellTable<ListModel<ImportEntityData<E>>> entityTable;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public RegisterEntityPopupView(EventBus eventBus,
@@ -74,8 +74,8 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
         asWidget().enableResizeSupport(true);
     }
 
-    abstract protected void createEntityTable(RegisterEntityModel<E> model);
-    abstract protected void createInfoPanel(RegisterEntityModel<E> model);
+    protected abstract void createEntityTable(RegisterEntityModel<E> model);
+    protected abstract void createInfoPanel(RegisterEntityModel<E> model);
 
     private void initTables() {
         // Create the entities main table

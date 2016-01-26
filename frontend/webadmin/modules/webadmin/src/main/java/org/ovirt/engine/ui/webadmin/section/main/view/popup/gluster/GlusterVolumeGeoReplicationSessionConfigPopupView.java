@@ -44,7 +44,7 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
     @WithElementId
     EntityModelCellTable<ListModel<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>> geoReplicationConfigTable;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

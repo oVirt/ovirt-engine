@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
 public class JAXBHelper {
-    private final static Map<Class<?>, JAXBContextHolder> contexts = new HashMap<>();
+    private static final Map<Class<?>, JAXBContextHolder> contexts = new HashMap<>();
 
     private JAXBHelper() {}
 
@@ -76,7 +76,7 @@ public class JAXBHelper {
         }
     }
 
-    private synchronized static JAXBContextHolder getContext(Class<?> clz) throws JAXBException {
+    private static synchronized JAXBContextHolder getContext(Class<?> clz) throws JAXBException {
         if (!contexts.containsKey(clz)) {
             contexts.put(clz, new JAXBContextHolder(JAXBContext.newInstance(clz)));
         }

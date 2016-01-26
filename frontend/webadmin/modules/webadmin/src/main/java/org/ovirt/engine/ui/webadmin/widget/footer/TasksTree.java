@@ -26,8 +26,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public TasksTree() {
         super();

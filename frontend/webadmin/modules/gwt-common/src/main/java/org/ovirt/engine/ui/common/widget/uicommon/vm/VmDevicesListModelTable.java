@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import com.google.gwt.event.shared.EventBus;
 
 public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDevice, VmDevicesListModel<VM>> {
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmDevicesListModelTable(
             SearchableTableModelProvider<VmDevice, VmDevicesListModel<VM>> modelProvider,

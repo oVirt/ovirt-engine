@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
-abstract public class AbstractVdsNetworkInterfacePredicateTest {
+public abstract class AbstractVdsNetworkInterfacePredicateTest {
 
     private static final String VALID = "VALID";
     private static final String INVALID = "INVALID";
@@ -24,7 +24,7 @@ abstract public class AbstractVdsNetworkInterfacePredicateTest {
         this.underTest = underTest;
     }
 
-    abstract public VdsNetworkInterface generateVdsNetworkInterface(String value);
+    public abstract VdsNetworkInterface generateVdsNetworkInterface(String value);
 
     @Test
     public void checkNullAddress() {

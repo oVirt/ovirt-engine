@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetVolumeDescriptionVDSCommand<P extends SetVolumeDescriptionVDSCommandParameters> extends IrsBrokerCommand<P> {
-    private final static Logger log = LoggerFactory.getLogger(SetVolumeDescriptionVDSCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(SetVolumeDescriptionVDSCommand.class);
 
     public SetVolumeDescriptionVDSCommand(P parameters) {
         super(parameters);

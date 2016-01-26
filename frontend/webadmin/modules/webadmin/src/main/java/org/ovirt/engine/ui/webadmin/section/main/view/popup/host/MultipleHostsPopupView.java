@@ -79,7 +79,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MultipleHostsPopupView(EventBus eventBus) {

@@ -14,7 +14,7 @@ import com.google.inject.Inject;
 public class SystemPermissionsRemoveConfirmationPopupView extends RemoveConfirmationPopupView implements
     SystemPermissionsRemoveConfirmationPopupPresenterWidget.ViewDef {
 
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public SystemPermissionsRemoveConfirmationPopupView(EventBus eventBus) {

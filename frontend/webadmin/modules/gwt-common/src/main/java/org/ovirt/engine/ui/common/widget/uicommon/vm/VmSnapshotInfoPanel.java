@@ -34,8 +34,8 @@ import com.google.gwt.view.client.NoSelectionModel;
 
 public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private VmSnapshotInfoGeneral generalForm;
     private EntityModelCellTable<ListModel> disksTable;

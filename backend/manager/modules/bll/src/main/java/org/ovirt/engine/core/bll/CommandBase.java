@@ -1166,7 +1166,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return true;
     }
 
-    final public boolean checkSinglePermission(PermissionSubject permSubject, Collection<String> messages) {
+    public final boolean checkSinglePermission(PermissionSubject permSubject, Collection<String> messages) {
         final Guid objectId = permSubject.getObjectId();
         final VdcObjectType objectType = permSubject.getObjectType();
         final ActionGroup objectActionGroup = permSubject.getActionGroup();

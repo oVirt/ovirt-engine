@@ -317,7 +317,7 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
         assertEquals(existingVdsInterface, result.get(0));
     }
 
-    static private void assertCorrectGetManagedInterfaceForVdsResult(VdsNetworkInterface result) {
+    private static void assertCorrectGetManagedInterfaceForVdsResult(VdsNetworkInterface result) {
         assertNotNull(result);
         assertTrue(result.getIsManagement());
     }

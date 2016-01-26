@@ -23,7 +23,7 @@ public class SubTabVolumeParameterPresenter
     extends AbstractSubTabGlusterPresenter<VolumeParameterListModel, SubTabVolumeParameterPresenter.ViewDef,
         SubTabVolumeParameterPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.volumeParameterSubTabPlace)

@@ -14,7 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
 
     @Override

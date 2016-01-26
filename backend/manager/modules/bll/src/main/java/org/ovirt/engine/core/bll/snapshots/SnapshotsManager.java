@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * The {@link Snapshot} manager is used to easily add/update/remove snapshots.
  */
 public class SnapshotsManager {
-    private final static Logger log = LoggerFactory.getLogger(SnapshotsManager.class);
+    private static final Logger log = LoggerFactory.getLogger(SnapshotsManager.class);
 
     private final MacPoolPerDc poolPerDc;
 

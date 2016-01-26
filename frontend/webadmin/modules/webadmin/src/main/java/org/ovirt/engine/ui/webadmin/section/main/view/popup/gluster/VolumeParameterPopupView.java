@@ -67,7 +67,7 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public VolumeParameterPopupView(EventBus eventBus) {

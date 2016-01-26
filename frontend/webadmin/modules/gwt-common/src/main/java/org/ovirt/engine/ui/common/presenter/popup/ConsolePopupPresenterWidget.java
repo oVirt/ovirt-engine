@@ -124,7 +124,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private boolean spiceProxyUserPreference;
     private boolean spiceProxyDefinedOnCluster;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,

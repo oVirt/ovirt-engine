@@ -16,7 +16,7 @@ import com.google.gwt.user.client.DOM;
  */
 public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColumn<T> {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     public static enum ProgressBarColors {
         GREEN("#669966"), //$NON-NLS-1$

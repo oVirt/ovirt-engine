@@ -260,7 +260,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         return parameterSource;
     }
 
-    private final static class ClusterHostsAndVMsRowMapper implements RowMapper<ClusterHostsAndVMs> {
+    private static final class ClusterHostsAndVMsRowMapper implements RowMapper<ClusterHostsAndVMs> {
         public static final RowMapper<ClusterHostsAndVMs> instance = new ClusterHostsAndVMsRowMapper();
 
         @Override
@@ -273,7 +273,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         }
 
     }
-    private final static class ClusterRowMapper implements RowMapper<Cluster> {
+    private static final class ClusterRowMapper implements RowMapper<Cluster> {
         public static final RowMapper<Cluster> instance = new ClusterRowMapper();
         @Override
         public Cluster mapRow(ResultSet rs, int rowNum)
@@ -331,7 +331,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         }
     }
 
-    private final static class BooleanRowMapper implements RowMapper<Boolean> {
+    private static final class BooleanRowMapper implements RowMapper<Boolean> {
         public static final RowMapper<Boolean> instance = new BooleanRowMapper();
 
         @Override

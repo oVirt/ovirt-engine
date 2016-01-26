@@ -76,7 +76,7 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public EditQuotaClusterPopupView(EventBus eventBus) {

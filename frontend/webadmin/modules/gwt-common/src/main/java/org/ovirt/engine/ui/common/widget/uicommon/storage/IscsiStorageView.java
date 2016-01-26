@@ -76,7 +76,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public IscsiStorageView(boolean multiSelection) {
         this.multiSelection = multiSelection;

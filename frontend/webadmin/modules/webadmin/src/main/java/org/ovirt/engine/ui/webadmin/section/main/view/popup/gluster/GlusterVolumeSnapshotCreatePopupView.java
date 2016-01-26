@@ -158,8 +158,8 @@ public class GlusterVolumeSnapshotCreatePopupView extends
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public GlusterVolumeSnapshotCreatePopupView(EventBus eventBus) {

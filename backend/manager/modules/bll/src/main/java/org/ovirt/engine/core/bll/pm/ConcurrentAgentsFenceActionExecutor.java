@@ -140,7 +140,7 @@ public class ConcurrentAgentsFenceActionExecutor implements FenceActionExecutor 
     /**
      * Base class to manage processing of fence action for concurrent agents
      */
-    protected static abstract class BaseTaskProcessor {
+    protected abstract static class BaseTaskProcessor {
         protected final VDS fencedHost;
 
         public BaseTaskProcessor(VDS fencedHost) {
@@ -153,7 +153,7 @@ public class ConcurrentAgentsFenceActionExecutor implements FenceActionExecutor 
          *               result of a finished task
          * @return {@code true} if fence action goal was reached, otherwise {@code false}
          */
-        abstract public boolean isGoalReached(FenceOperationResult result);
+        public abstract boolean isGoalReached(FenceOperationResult result);
 
         /**
          * Creates a result the whole fence action on concurrent agents
@@ -161,7 +161,7 @@ public class ConcurrentAgentsFenceActionExecutor implements FenceActionExecutor 
          *               list of results of all tasks
          * @return result the whole fence action on concurrent agents
          */
-        abstract public FenceOperationResult createActionResult(List<FenceOperationResult> taskResults);
+        public abstract FenceOperationResult createActionResult(List<FenceOperationResult> taskResults);
     }
 
     /**

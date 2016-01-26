@@ -63,9 +63,9 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     @Path("customSerialNumber.entity")
     public StringEntityModelTextBoxOnlyEditor customSerialNumber;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SerialNumberPolicyWidget() {

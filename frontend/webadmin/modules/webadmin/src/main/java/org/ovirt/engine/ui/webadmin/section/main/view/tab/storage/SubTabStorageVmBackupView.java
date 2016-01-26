@@ -62,7 +62,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
 
     ActionCellTable<String> applicationsTable;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabStorageVmBackupView(SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> modelProvider) {

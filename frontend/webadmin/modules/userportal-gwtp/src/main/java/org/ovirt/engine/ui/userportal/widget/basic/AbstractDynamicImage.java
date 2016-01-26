@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Image;
  */
 public abstract class AbstractDynamicImage<T> extends Image implements IsEditor<TakesValueEditor<T>>, TakesValue<T> {
 
-    private final static ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
+    private static final ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
 
     private T value;
 

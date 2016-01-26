@@ -28,7 +28,7 @@ public class StatisticsPanel extends VerticalPanel {
 
 class StatisticsElementPanel extends TogglePanel {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final NullableNumberLabel<Long> rxTotalLabel;
     private final NullableNumberLabel<Long> txTotalLabel;

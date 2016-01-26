@@ -33,8 +33,8 @@ public class SubTabClusterGeneralPresenter
     extends AbstractSubTabClusterPresenter<ClusterGeneralModel, SubTabClusterGeneralPresenter.ViewDef,
         SubTabClusterGeneralPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterGeneralSubTabPlace)

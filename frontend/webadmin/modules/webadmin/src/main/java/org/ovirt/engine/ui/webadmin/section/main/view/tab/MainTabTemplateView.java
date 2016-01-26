@@ -30,7 +30,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabTemplateView(MainModelProvider<VmTemplate, TemplateListModel> modelProvider) {

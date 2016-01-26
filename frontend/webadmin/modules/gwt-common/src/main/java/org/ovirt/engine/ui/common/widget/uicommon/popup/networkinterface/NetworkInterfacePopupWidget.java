@@ -114,9 +114,9 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Ignore
     Label macExample;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

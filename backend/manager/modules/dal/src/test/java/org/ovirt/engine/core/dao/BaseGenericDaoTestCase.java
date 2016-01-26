@@ -30,7 +30,7 @@ D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
         assertEquals(newEntity, result);
     }
 
-    abstract protected T generateNewEntity();
+    protected abstract T generateNewEntity();
 
     /**
     * Ensures that updating a disk image works as expected.
@@ -47,7 +47,7 @@ D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
         assertEquals(existingEntity, result);
     }
 
-    abstract protected void updateExistingEntity();
+    protected abstract void updateExistingEntity();
 
     /**
     * Ensures that removing a disk image works as expected.

@@ -32,9 +32,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * </pre>
  */
 public class VmCountColumn extends AbstractSafeHtmlColumn<VDS> {
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     private static SafeHtml rightArrowImageHtml =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.rightArrowImage()).getHTML());

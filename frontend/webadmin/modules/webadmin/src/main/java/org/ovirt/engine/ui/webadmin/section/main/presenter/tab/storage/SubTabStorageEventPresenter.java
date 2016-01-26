@@ -24,7 +24,7 @@ public class SubTabStorageEventPresenter
     extends AbstractSubTabStoragePresenter<StorageEventListModel, SubTabStorageEventPresenter.ViewDef,
         SubTabStorageEventPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageEventSubTabPlace)

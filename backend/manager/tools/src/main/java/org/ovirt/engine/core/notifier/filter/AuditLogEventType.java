@@ -22,7 +22,7 @@ public enum AuditLogEventType {
         return value;
     }
 
-    static public String getMessageByEventType(int value) {
+    public static String getMessageByEventType(int value) {
         for (AuditLogEventType m : values()) {
             if (value == m.value) {
                 return m.message;

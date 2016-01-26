@@ -14,7 +14,7 @@ public class NotificationPropertiesTest {
     private static NotificationProperties prop = null;
 
     @BeforeClass
-    static public void beforeClass() throws UnsupportedEncodingException {
+    public static void beforeClass() throws UnsupportedEncodingException {
         NotificationProperties.release();
         NotificationProperties.setDefaults(
                 URLDecoder.decode(ClassLoader.getSystemResource("conf/notifier-prop-test.conf").getPath(), "UTF-8"),

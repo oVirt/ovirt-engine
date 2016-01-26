@@ -40,7 +40,7 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final HasDataListModelEditorAdapter<M, T> editorAdapter;
 

@@ -23,7 +23,7 @@ public class SubTabPoolPermissionPresenter
     extends AbstractSubTabPoolPresenter<PermissionListModel<VmPool>, SubTabPoolPermissionPresenter.ViewDef,
         SubTabPoolPermissionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.poolPermissionSubTabPlace)

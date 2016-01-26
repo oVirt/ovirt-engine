@@ -17,7 +17,7 @@ public class BookmarkListItemCell extends AbstractCell<Bookmark> implements HasE
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     private String elementId = DOM.createUniqueId();
 

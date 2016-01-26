@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class RemoveStorageDomainParameters extends StorageDomainParametersBase {
     private static final long serialVersionUID = -4687251701380479912L;
 
-    transient private boolean destroyingPool;
+    private transient boolean destroyingPool;
 
     public RemoveStorageDomainParameters(Guid storageDomainId) {
         super(storageDomainId);

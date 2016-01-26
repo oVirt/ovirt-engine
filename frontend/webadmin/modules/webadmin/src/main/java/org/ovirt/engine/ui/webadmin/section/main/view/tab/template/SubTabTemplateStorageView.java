@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 
 public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTree, VmTemplate, StorageDomain, TemplateListModel, TemplateStorageListModel> implements SubTabTemplateStoragePresenter.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabTemplateStorageView(final SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> modelProvider,

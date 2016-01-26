@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class HostStatusCell extends AbstractCell<VDS> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public void render(Context context, VDS vds, SafeHtmlBuilder sb, String id) {

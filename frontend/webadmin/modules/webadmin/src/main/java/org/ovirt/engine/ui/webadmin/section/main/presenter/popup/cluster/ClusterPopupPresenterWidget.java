@@ -22,7 +22,7 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
         void setSpiceProxyOverrideExplanation(String explanation);
     }
 
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public ClusterPopupPresenterWidget(EventBus eventBus, ViewDef view) {

@@ -34,7 +34,7 @@ public class PolicyUnitPanel extends FocusPanel {
 
     private static String lastDragData = ""; //$NON-NLS-1$
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public PolicyUnitPanel(PolicyUnit policyUnit,
             NewClusterPolicyModel model,

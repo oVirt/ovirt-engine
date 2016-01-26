@@ -33,7 +33,7 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
 
     private static final TagTreeResources res = GWT.create(TagTreeResources.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public TagList(TagModelProvider modelProvider) {
         super(modelProvider);

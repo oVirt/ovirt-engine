@@ -21,7 +21,7 @@ public class FunctionPolicyUnitPanel extends PolicyUnitPanel {
     public static final String FUNCTION = "Function"; //$NON-NLS-1$
     private Integer factor;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public FunctionPolicyUnitPanel(PolicyUnit policyUnit,
             NewClusterPolicyModel model,

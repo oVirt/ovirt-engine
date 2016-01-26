@@ -13,8 +13,8 @@ public class SchedulingWeightMapperTest extends AbstractInvertibleMappingTest<We
                 ClusterPolicy.class);
     }
 
-    private final static String ID = Guid.newGuid().toString();
-    private final static int FACTOR = 1;
+    private static final String ID = Guid.newGuid().toString();
+    private static final int FACTOR = 1;
 
     @Override
     protected Weight postPopulate(Weight model) {

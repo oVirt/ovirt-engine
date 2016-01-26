@@ -21,7 +21,7 @@ public class ShellLikeConfdTest {
     private static ShellLikeConfd config;
 
     @BeforeClass
-    static public void beforeClass() throws Exception {
+    public static void beforeClass() throws Exception {
         config = new ShellLikeConfd();
 
         config.loadConfig(

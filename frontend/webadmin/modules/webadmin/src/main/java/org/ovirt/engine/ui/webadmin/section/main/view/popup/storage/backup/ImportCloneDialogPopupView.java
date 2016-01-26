@@ -32,8 +32,8 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
     @Path(value = "name.entity")

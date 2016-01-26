@@ -51,7 +51,7 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
 
     FormBuilder formBuilder;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabProviderGeneralView(DetailModelProvider<ProviderListModel, ProviderGeneralModel> modelProvider) {

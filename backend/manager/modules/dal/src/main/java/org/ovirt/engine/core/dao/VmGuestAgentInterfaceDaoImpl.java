@@ -59,7 +59,7 @@ public class VmGuestAgentInterfaceDaoImpl extends BaseDao implements VmGuestAgen
         return StringUtils.join(ipAddresses, DELIMITER);
     }
 
-    protected final static class VmGuestAgentInterfaceRowMapper implements RowMapper<VmGuestAgentInterface> {
+    protected static final class VmGuestAgentInterfaceRowMapper implements RowMapper<VmGuestAgentInterface> {
         public static final VmGuestAgentInterfaceRowMapper instance = new VmGuestAgentInterfaceRowMapper();
 
         @Override

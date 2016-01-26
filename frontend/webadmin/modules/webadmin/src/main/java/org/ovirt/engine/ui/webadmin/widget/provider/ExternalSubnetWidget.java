@@ -30,7 +30,7 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     @Path("name.entity")

@@ -27,7 +27,7 @@ public class SubTabVirtualMachineGeneralPresenter
     extends AbstractSubTabVirtualMachinePresenter<VmGeneralModel, SubTabVirtualMachineGeneralPresenter.ViewDef,
         SubTabVirtualMachineGeneralPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace)

@@ -933,7 +933,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
-    public final static class PrivateAsyncCallback<E, T> {
+    public static final class PrivateAsyncCallback<E, T> {
         private final SearchableListModel<E, T> model;
         private boolean searchRequested;
 

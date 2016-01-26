@@ -24,7 +24,7 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplat
         super(model);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     protected void init() {

@@ -42,8 +42,8 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
     private AbstractLinkColumn<NetworkView> providerColumn;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider) {

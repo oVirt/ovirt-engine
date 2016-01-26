@@ -9,7 +9,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 public class GlusterHookSyncStatusColumn extends AbstractImageResourceColumn<GlusterHookEntity> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(GlusterHookEntity hookEntity) {

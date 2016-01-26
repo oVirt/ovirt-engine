@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 public class FrontendFailureEventListener implements IEventListener<FrontendFailureEventArgs> {
 
     private final ErrorPopupManager errorPopupManager;
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public FrontendFailureEventListener(ErrorPopupManager errorPopupManager) {

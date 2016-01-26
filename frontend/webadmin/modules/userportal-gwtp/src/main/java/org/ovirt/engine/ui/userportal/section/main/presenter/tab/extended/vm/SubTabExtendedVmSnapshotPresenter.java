@@ -21,7 +21,7 @@ public class SubTabExtendedVmSnapshotPresenter
         extends AbstractSubTabExtendedVmPresenter<UserPortalVmSnapshotListModel,
             SubTabExtendedVmSnapshotPresenter.ViewDef, SubTabExtendedVmSnapshotPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineSnapshotSubTabPlace)

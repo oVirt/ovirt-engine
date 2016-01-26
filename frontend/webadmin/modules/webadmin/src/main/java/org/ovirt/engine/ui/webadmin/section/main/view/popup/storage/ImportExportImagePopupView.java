@@ -89,9 +89,9 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Inject
     public ImportExportImagePopupView(EventBus eventBus) {

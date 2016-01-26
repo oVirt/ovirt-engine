@@ -120,7 +120,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
                 getCustomMapSqlParameterSource());
     }
 
-    private static abstract class BaseHostDeviceRowMapper<T extends HostDevice> implements RowMapper<T> {
+    private abstract static class BaseHostDeviceRowMapper<T extends HostDevice> implements RowMapper<T> {
 
         protected void map(ResultSet rs, HostDevice device) throws SQLException{
             device.setHostId(getGuid(rs, "host_id"));

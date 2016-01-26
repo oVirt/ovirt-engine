@@ -176,7 +176,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @Path("exportDescription")
     StringEntityModelLabelEditor exportDomainDescription;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ImportVmsPopupView(EventBus eventBus) {

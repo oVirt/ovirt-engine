@@ -93,8 +93,8 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static UIConstants uiConstants = ConstantsManager.getInstance().getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final UIConstants uiConstants = ConstantsManager.getInstance().getConstants();
 
     @Inject
     public NfsStorageView() {

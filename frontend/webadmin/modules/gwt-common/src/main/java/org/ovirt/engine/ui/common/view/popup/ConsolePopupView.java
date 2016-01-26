@@ -197,8 +197,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     private ConsolePopupModel model;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
 
     @Inject

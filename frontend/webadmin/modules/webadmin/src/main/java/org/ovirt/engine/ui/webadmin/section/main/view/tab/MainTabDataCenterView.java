@@ -39,8 +39,8 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabDataCenterView(MainModelProvider<StoragePool, DataCenterListModel> modelProvider) {

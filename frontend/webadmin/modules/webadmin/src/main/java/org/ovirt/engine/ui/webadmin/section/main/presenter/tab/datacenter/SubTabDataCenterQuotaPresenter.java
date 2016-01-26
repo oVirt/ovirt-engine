@@ -23,7 +23,7 @@ public class SubTabDataCenterQuotaPresenter
     extends AbstractSubTabDataCenterPresenter<DataCenterQuotaListModel, SubTabDataCenterQuotaPresenter.ViewDef,
         SubTabDataCenterQuotaPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterQuotaSubTabPlace)

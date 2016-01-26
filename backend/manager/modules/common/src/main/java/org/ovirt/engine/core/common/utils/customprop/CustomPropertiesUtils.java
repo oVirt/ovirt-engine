@@ -25,32 +25,32 @@ public class CustomPropertiesUtils {
     /**
      * Delimiter of each property definition
      */
-    protected final static String PROPERTIES_DELIMETER = ";";
+    protected static final String PROPERTIES_DELIMETER = ";";
 
     /**
      * Delimiter of property name and value
      */
-    protected final static String KEY_VALUE_DELIMETER = "=";
+    protected static final String KEY_VALUE_DELIMETER = "=";
 
     /**
      * Regex describing legitimate characters for property name - alphanumeric characters and underscore
      */
-    protected final static String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
+    protected static final String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
 
     /**
      * Regex describing property name
      */
-    protected final static String KEY_REGEX = "(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+";
+    protected static final String KEY_REGEX = "(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+";
 
     /**
      * Regex describing legitimate characters for property value - all except {@code PROPERTIES_DELIMITER}
      */
-    protected final static String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]";
+    protected static final String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]";
 
     /**
      * Regex describing property value
      */
-    protected final static String VALUE_REGEX = "(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")*";
+    protected static final String VALUE_REGEX = "(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")*";
 
     /**
      * Regex describing property definition - key=value

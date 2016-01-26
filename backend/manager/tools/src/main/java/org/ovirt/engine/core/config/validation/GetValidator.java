@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 public class GetValidator implements EngineConfigValidator {
 
-    private final static Logger log = LoggerFactory.getLogger(GetValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(GetValidator.class);
 
     /**
      * Validates that the 'get' action has a key.

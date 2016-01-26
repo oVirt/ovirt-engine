@@ -274,7 +274,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     }
 
     @SuppressWarnings("serial")
-    private final static Map<String, EntitySearchInfo> entitySearchInfo = Collections.unmodifiableMap(
+    private static final Map<String, EntitySearchInfo> entitySearchInfo = Collections.unmodifiableMap(
             new HashMap<String, SearchObjectAutoCompleter.EntitySearchInfo>() {
                 {
                     put(SearchObjects.AUDIT_OBJ_NAME, new EntitySearchInfo(new AuditCrossRefAutoCompleter(),
@@ -429,7 +429,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     }
 
     @SuppressWarnings("serial")
-    private final static Map<String, String> singulars = Collections.unmodifiableMap(new HashMap<String, String>() {
+    private static final Map<String, String> singulars = Collections.unmodifiableMap(new HashMap<String, String>() {
         {
             put(SearchObjects.AUDIT_PLU_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME);
             put(SearchObjects.TEMPLATE_PLU_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME);

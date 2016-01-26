@@ -13,7 +13,7 @@ public class SchedulingFilterMapperTest extends AbstractInvertibleMappingTest<Fi
                 ClusterPolicy.class);
     }
 
-    private final static String ID = Guid.newGuid().toString();
+    private static final String ID = Guid.newGuid().toString();
 
     @Override
     protected Filter postPopulate(Filter model) {

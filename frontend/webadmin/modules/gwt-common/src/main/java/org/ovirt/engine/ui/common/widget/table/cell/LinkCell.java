@@ -28,7 +28,7 @@ public class LinkCell extends TextCell {
         return set;
     }
 
-    private final static String CONTENT_ID_SUFFIX = "_content"; //$NON-NLS-1$
+    private static final String CONTENT_ID_SUFFIX = "_content"; //$NON-NLS-1$
 
     public interface CellTemplate extends SafeHtmlTemplates {
         @Template("<a id='{0}' href='javascript:;' style='display: inline-block'>")

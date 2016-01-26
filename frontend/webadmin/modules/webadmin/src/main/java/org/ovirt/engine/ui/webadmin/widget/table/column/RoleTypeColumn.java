@@ -11,7 +11,7 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public class RoleTypeColumn extends AbstractImageResourceColumn<Role> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(Role role) {

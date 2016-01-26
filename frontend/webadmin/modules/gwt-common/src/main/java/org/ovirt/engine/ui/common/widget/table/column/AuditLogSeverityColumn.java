@@ -11,7 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  */
 public class AuditLogSeverityColumn extends AbstractImageResourceColumn<AuditLog> {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(AuditLog log) {

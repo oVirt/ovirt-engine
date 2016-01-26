@@ -25,8 +25,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class TagItemCell extends CompositeCell<TagModel> {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     private static class TagItemTextCell extends Column<TagModel, SafeHtml> {
 

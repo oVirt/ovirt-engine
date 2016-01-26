@@ -50,7 +50,7 @@ public class SubTabExtendedVmMonitorView extends AbstractSubTabFormView<UserPort
     @WithElementId("networkUsage")
     PercentageProgressBar networkUsageProgressBar;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabExtendedVmMonitorView(VmMonitorModelProvider modelProvider) {

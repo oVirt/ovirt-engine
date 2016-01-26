@@ -22,15 +22,15 @@ public class PatternflyConstants {
 
     // TODO insert all classes from PatternFly's less/icons.less
 
-    public final static String PFICON = "pficon"; //$NON-NLS-1$
-    public final static String PFICON_ERROR_CIRCLE_O = "pficon-error-circle-o"; //$NON-NLS-1$
-    public final static String PFICON_WARNING_TRIANGLE_O = "pficon-warning-triangle-o"; //$NON-NLS-1$
-    public final static String PFICON_OK = "pficon-ok"; //$NON-NLS-1$
-    public final static String PFICON_INFO = "pficon-info"; //$NON-NLS-1$
+    public static final String PFICON = "pficon"; //$NON-NLS-1$
+    public static final String PFICON_ERROR_CIRCLE_O = "pficon-error-circle-o"; //$NON-NLS-1$
+    public static final String PFICON_WARNING_TRIANGLE_O = "pficon-warning-triangle-o"; //$NON-NLS-1$
+    public static final String PFICON_OK = "pficon-ok"; //$NON-NLS-1$
+    public static final String PFICON_INFO = "pficon-info"; //$NON-NLS-1$
 
     // things in ovirt-patternfly-compat.css
 
-    public final static String TEMP_LINK_COLOR = "temp-link-color"; //$NON-NLS-1$
+    public static final String TEMP_LINK_COLOR = "temp-link-color"; //$NON-NLS-1$
 
 
 }

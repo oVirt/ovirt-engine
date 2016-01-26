@@ -19,7 +19,7 @@ public class TokenCleanupUtility {
     private static long lastCleanup = 0;
     private static Logger log = LoggerFactory.getLogger(TokenCleanupUtility.class);
 
-    public synchronized static void cleanupExpiredTokens(ServletContext ctx) {
+    public static synchronized void cleanupExpiredTokens(ServletContext ctx) {
         SSOContext ssoContext = SSOUtils.getSsoContext(ctx);
         long currentTime = System.nanoTime();
         if (currentTime - lastCleanup < (ssoContext.getSsoLocalConfig().getLong("SSO_HOUSE_KEEPING_INTERVAL") * 1000000000)) {

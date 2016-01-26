@@ -77,7 +77,7 @@ import com.google.gwt.user.client.ui.RequiresResize;
 public class SliderBar extends FocusPanel implements RequiresResize,
         HasValue<Integer>, HasValueChangeHandlers<Integer> {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     /**
      * A formatter used to format the labels displayed in the widget.

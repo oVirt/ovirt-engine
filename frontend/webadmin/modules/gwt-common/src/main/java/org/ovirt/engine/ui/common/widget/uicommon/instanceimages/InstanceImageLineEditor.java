@@ -49,8 +49,8 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
 
     private final Driver driver = GWT.create(Driver.class);
 
-    @UiField(provided=true)
-    final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    @UiField(provided = true)
+    static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     interface WidgetUiBinder extends UiBinder<FlowPanel, InstanceImageLineEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

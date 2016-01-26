@@ -25,7 +25,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SideTabExtendedResourcePresenter extends AbstractModelActivationPresenter<VM, ResourcesModel,
     SideTabExtendedResourcePresenter.ViewDef, SideTabExtendedResourcePresenter.ProxyDef> implements DataChangeListener<VM> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider;
 

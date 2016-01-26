@@ -86,7 +86,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     @WithElementId
     Label tagsHeader;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainSectionView(SystemTreeModelProvider treeModelProvider,

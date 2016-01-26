@@ -23,7 +23,7 @@ public class SubTabExtendedPoolNetworkInterfacePresenter
         extends AbstractSubTabExtendedVmPresenter<PoolInterfaceListModel,
             SubTabExtendedPoolNetworkInterfacePresenter.ViewDef, SubTabExtendedPoolNetworkInterfacePresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedPoolNetworkInterfaceSubTabPlace)

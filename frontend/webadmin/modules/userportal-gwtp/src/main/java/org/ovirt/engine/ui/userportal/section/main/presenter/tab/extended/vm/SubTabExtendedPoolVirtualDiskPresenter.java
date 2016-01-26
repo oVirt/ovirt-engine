@@ -23,7 +23,7 @@ public class SubTabExtendedPoolVirtualDiskPresenter
         extends AbstractSubTabExtendedVmPresenter<PoolDiskListModel, SubTabExtendedPoolVirtualDiskPresenter.ViewDef,
             SubTabExtendedPoolVirtualDiskPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualPoolDiskSubTabPlace)

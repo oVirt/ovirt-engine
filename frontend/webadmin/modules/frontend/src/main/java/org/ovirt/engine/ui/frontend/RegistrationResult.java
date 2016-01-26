@@ -22,7 +22,7 @@ public final class RegistrationResult {
         privateRetrievedEvent = value;
     }
 
-    public final static EventDefinition RetrievedEventDefinition;
+    public static final EventDefinition RetrievedEventDefinition;
 
     private Guid privateId = Guid.Empty;
 

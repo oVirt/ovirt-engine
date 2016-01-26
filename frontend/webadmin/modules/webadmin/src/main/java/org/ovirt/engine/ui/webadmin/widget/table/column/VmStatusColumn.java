@@ -23,7 +23,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public VmStatusColumn() {
         super(new VmStatusCell());

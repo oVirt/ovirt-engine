@@ -10,7 +10,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
-    private final static UIMessages messages = ConstantsManager.getInstance().getMessages();
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     @Override
     public String render(T size) {

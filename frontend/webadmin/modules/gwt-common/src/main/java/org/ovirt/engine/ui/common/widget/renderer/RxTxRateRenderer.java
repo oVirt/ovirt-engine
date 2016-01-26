@@ -9,7 +9,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
  */
 public class RxTxRateRenderer extends AbstractRenderer<Double[]> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private static final String NO_VALUE = constants.unAvailablePropertyLabel();
     private static final String ZERO_VALUE = "0"; //$NON-NLS-1$

@@ -23,7 +23,7 @@ public class SubTabClusterAffinityGroupPresenter
     extends AbstractSubTabClusterPresenter<ClusterAffinityGroupListModel, SubTabClusterAffinityGroupPresenter.ViewDef,
         SubTabClusterAffinityGroupPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterAffinityGroupsSubTabPlace)

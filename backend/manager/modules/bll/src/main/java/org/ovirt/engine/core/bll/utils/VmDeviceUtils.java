@@ -48,13 +48,13 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
 
-    private final static String EHCI_MODEL = "ich9-ehci";
-    private final static String UHCI_MODEL = "ich9-uhci";
-    private final static int SLOTS_PER_CONTROLLER = 6;
-    private final static int COMPANION_USB_CONTROLLERS = 3;
-    private final static int VNC_MIN_MONITORS = 1;
-    private final static int SINGLE_QXL_MONITORS = 1;
-    public final static Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
+    private static final String EHCI_MODEL = "ich9-ehci";
+    private static final String UHCI_MODEL = "ich9-uhci";
+    private static final int SLOTS_PER_CONTROLLER = 6;
+    private static final int COMPANION_USB_CONTROLLERS = 3;
+    private static final int VNC_MIN_MONITORS = 1;
+    private static final int SINGLE_QXL_MONITORS = 1;
+    public static final Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
     private static OsRepository osRepository;
     private static DbFacade dbFacade;
     private static VmDeviceDao dao;

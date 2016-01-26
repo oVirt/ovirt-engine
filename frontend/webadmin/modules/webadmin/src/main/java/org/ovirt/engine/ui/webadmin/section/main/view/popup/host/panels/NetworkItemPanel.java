@@ -44,14 +44,14 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
     public static final String SETUP_NETWORKS_DATA = "SetupNetworksData"; //$NON-NLS-1$
     public static final String SETUP_NETWORKS_TYPE = "SetupNetworksType"; //$NON-NLS-1$
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     final Image dragImage = new Image(resources.itemDraggable());
     final PushButton actionButton;
     final T item;
 
-    final private boolean draggable;
-    final protected NetworkPanelsStyle style;
+    private final boolean draggable;
+    protected final NetworkPanelsStyle style;
     protected NetworkItemPanel<?> parentPanel;
     private MenuBar menu;
 

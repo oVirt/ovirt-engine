@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 
 public class RemoveBrickStatusPopupView extends VolumeRebalanceStatusPopupView implements RemoveBrickStatusPopupPresenterWidget.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public RemoveBrickStatusPopupView(EventBus eventBus) {

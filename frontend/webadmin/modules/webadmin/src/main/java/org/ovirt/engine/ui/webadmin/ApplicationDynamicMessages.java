@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 public class ApplicationDynamicMessages extends BaseDynamicMessages {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public ApplicationDynamicMessages() {
         super();

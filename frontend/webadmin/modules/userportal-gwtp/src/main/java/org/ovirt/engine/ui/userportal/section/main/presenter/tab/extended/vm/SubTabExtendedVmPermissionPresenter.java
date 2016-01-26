@@ -22,7 +22,7 @@ public class SubTabExtendedVmPermissionPresenter
         extends AbstractSubTabExtendedVmPresenter<UserPortalPermissionListModel<UserPortalListModel>,
             SubTabExtendedVmPermissionPresenter.ViewDef, SubTabExtendedVmPermissionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachinePermissionSubTabPlace)

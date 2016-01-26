@@ -19,7 +19,7 @@ import com.google.gwt.event.shared.EventBus;
 
 public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permission, P> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PermissionListModelTable(
             SearchableTableModelProvider<Permission, P> modelProvider,

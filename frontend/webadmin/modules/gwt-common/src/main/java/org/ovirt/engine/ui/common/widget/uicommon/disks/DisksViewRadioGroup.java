@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DisksViewRadioGroup extends Composite {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     RadioButton allButton;
     RadioButton imagesButton;

@@ -55,7 +55,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private static final String CMD_APPROVE = "OnApprove"; //$NON-NLS-1$
     private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
 
-    public final static HostNetworkQos EMPTY_HOST_NETWORK_QOS = createEmptyHostNetworkQos();
+    public static final HostNetworkQos EMPTY_HOST_NETWORK_QOS = createEmptyHostNetworkQos();
 
     public static HostNetworkQos createEmptyHostNetworkQos() {
         HostNetworkQos qos = new HostNetworkQos();

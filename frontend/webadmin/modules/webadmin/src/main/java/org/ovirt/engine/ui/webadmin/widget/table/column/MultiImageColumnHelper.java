@@ -11,8 +11,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class MultiImageColumnHelper {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public static SafeHtml getValue(List<SafeHtml> imagesHtml) {
         String images = ""; //$NON-NLS-1$

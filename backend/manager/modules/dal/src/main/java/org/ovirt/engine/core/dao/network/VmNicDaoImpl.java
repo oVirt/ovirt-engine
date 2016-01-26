@@ -85,7 +85,7 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
         return VnicRowMapper.INSTANCE;
     }
 
-    static abstract class VmNicRowMapperBase<T extends VmNic> implements RowMapper<T> {
+    abstract static class VmNicRowMapperBase<T extends VmNic> implements RowMapper<T> {
 
         @Override
         public T mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -102,7 +102,7 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
             return entity;
         }
 
-        abstract protected T createVmNicEntity();
+        protected abstract T createVmNicEntity();
     }
 
     private static class VnicRowMapper extends VmNicRowMapperBase<VmNic> {

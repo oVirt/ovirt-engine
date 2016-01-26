@@ -21,7 +21,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class ErrorMessageFormatter {
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     public static String formatMessages(List<Message> values) {
         // If one error message without description no need to format

@@ -87,10 +87,10 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     private PreviewSnapshotModel previewSnapshotModel;
     private VmSnapshotInfoPanel vmSnapshotInfoPanel;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final Driver driver = GWT.create(Driver.class);
 

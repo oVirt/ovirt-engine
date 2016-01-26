@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
  * by the caller, both rendered horizontally
  */
 public class InLineAlertWidget extends FlowPanel {
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public static enum AlertType {
         ALERT(resources.alertImage()),

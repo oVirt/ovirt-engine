@@ -46,8 +46,8 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<Cluster, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {

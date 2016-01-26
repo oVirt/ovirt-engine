@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollectionResourceTest<ReportedDevice, VmGuestAgentInterface, BackendVmReportedDevicesResource> {
 
-    protected final static Guid PARENT_ID = GUIDS[1];
+    protected static final Guid PARENT_ID = GUIDS[1];
     protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
 
     public BackendVmReportedDevicesResourceTest() {

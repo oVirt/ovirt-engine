@@ -23,7 +23,7 @@ public class SubTabTemplateInterfacePresenter
     extends AbstractSubTabTemplatePresenter<TemplateInterfaceListModel, SubTabTemplateInterfacePresenter.ViewDef,
         SubTabTemplateInterfacePresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.templateInterfaceSubTabPlace)

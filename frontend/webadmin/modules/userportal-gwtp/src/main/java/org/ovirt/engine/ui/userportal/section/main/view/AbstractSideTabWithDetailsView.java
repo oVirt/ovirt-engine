@@ -29,7 +29,7 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     private final ClientStorage clientStorage;
     private boolean subTabPanelVisible;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public AbstractSideTabWithDetailsView(
             SearchableTableModelProvider<T, M> modelProvider, final ClientStorage clientStorage) {

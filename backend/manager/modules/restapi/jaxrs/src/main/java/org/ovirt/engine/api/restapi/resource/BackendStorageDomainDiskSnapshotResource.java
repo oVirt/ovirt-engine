@@ -15,7 +15,7 @@ public class BackendStorageDomainDiskSnapshotResource
         extends AbstractBackendActionableResource<DiskSnapshot, Disk>
         implements DiskSnapshotResource {
 
-    final private String storageDomainId;
+    private final String storageDomainId;
 
     protected BackendStorageDomainDiskSnapshotResource(String id, BackendStorageDomainDiskSnapshotsResource parent) {
         super(id, DiskSnapshot.class, Disk.class);

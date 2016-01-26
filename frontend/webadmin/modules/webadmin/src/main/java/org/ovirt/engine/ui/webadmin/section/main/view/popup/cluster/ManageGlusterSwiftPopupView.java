@@ -81,7 +81,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     @Ignore
     Label messageLabel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ManageGlusterSwiftPopupView(EventBus eventBus) {

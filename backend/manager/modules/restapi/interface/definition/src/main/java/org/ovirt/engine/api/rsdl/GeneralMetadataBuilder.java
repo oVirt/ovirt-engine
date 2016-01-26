@@ -23,7 +23,7 @@ import org.ovirt.engine.api.model.Request;
 
 public class GeneralMetadataBuilder {
 
-    public final static String SESSION_TTL_HEADER_FIELD = "Session-TTL";
+    public static final String SESSION_TTL_HEADER_FIELD = "Session-TTL";
     private GeneralMetadata generalMetadata;
 
     public GeneralMetadataBuilder() {

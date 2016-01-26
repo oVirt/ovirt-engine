@@ -35,7 +35,7 @@ public abstract class AbstractToggleButtonCell<T> extends AbstractCell<T> {
 
     protected static final ToggleButtonCellTemplate templates = GWT.create(ToggleButtonCellTemplate.class);
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public AbstractToggleButtonCell() {
     }

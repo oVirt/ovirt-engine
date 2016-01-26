@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public abstract class AbstractMaskedVmImageColumn<T> extends AbstractImageResourceColumn<T> {
 
-    private final static ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
+    private static final ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
 
     public interface ShowMask<T> {
         boolean showMask(T value);

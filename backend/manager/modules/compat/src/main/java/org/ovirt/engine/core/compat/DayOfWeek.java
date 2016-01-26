@@ -34,7 +34,7 @@ public enum DayOfWeek {
     private int intValue;
     private static HashMap<Integer, DayOfWeek> mappings;
 
-    private synchronized static HashMap<Integer, DayOfWeek> getMappings() {
+    private static synchronized HashMap<Integer, DayOfWeek> getMappings() {
         if (mappings == null) {
             mappings = new HashMap<>();
         }

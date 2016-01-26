@@ -23,7 +23,7 @@ public class SubTabQuotaStoragePresenter
     extends AbstractSubTabQuotaPresenter<QuotaStorageListModel, SubTabQuotaStoragePresenter.ViewDef,
         SubTabQuotaStoragePresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.quotaStorageSubTabPlace)

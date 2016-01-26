@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SetValidator implements EngineConfigValidator {
 
-    private final static Logger log = LoggerFactory.getLogger(SetValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(SetValidator.class);
 
     /**
      * Validates that the 'set' action has a key and value.

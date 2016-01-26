@@ -34,7 +34,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 @RunWith(MockitoJUnitRunner.class)
 public class MultipleStorageDomainsValidatorTest {
 
-    private final static int CRITICAL_SPACE_THRESHOLD = 5;
+    private static final int CRITICAL_SPACE_THRESHOLD = 5;
 
     @Mock
     private StorageDomainDao dao;

@@ -9,7 +9,7 @@ import com.google.gwt.resources.client.ResourcePrototype;
 
 public class VmImageColumn<T> extends AbstractImageResourceColumn<T> {
 
-    private final static ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
+    private static final ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
 
     public interface OsTypeExtractor<T> {
         int extractOsType(T item);

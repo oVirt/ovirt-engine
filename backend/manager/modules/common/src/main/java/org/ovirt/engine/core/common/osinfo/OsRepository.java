@@ -18,14 +18,14 @@ import org.ovirt.engine.core.compat.Version;
  */
 public interface OsRepository {
 
-    public final static int DEFAULT_X86_OS = 0;
-    public final static int DEFAULT_PPC_OS = 1001;
+    public static final int DEFAULT_X86_OS = 0;
+    public static final int DEFAULT_PPC_OS = 1001;
 
     /*
      * This value is used to enable the auto selection of an appropriate OS when
      * the user does not set a OS in the REST API.
      */
-    public final static int AUTO_SELECT_OS = -1;
+    public static final int AUTO_SELECT_OS = -1;
 
     /**
      * @return all loaded os ids

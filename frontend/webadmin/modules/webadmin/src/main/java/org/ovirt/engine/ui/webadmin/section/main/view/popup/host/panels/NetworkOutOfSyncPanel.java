@@ -20,16 +20,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class NetworkOutOfSyncPanel extends FlowPanel {
 
-    private final static String FONT = "Arial Unicode MS,Arial,sans-serif";//$NON-NLS-1$
-    private final static String MAIN_COLUMN_SIZE = "LG_13";//$NON-NLS-1$
-    private final static String PROPERTY_COLUMN_SIZE = "LG_6";//$NON-NLS-1$
-    private final static String COLUMN_SIZE = "LG_3";//$NON-NLS-1$
-    private final static String BACKGROUND_COLOR = "rgb(67, 67, 67)";//$NON-NLS-1$
-    private final static String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
-    private final static String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
+    private static final String FONT = "Arial Unicode MS,Arial,sans-serif";//$NON-NLS-1$
+    private static final String MAIN_COLUMN_SIZE = "LG_13";//$NON-NLS-1$
+    private static final String PROPERTY_COLUMN_SIZE = "LG_6";//$NON-NLS-1$
+    private static final String COLUMN_SIZE = "LG_3";//$NON-NLS-1$
+    private static final String BACKGROUND_COLOR = "rgb(67, 67, 67)";//$NON-NLS-1$
+    private static final String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
+    private static final String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
     private FlowPanel flowPanel;
     private final List<ReportedConfiguration> reportedConfigurationList;
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public NetworkOutOfSyncPanel(List<ReportedConfiguration> reportedConfigurationList) {
         this.flowPanel = new FlowPanel();

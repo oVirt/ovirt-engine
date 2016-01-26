@@ -16,7 +16,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public HostStatusColumn() {
         super(new HostStatusCell());

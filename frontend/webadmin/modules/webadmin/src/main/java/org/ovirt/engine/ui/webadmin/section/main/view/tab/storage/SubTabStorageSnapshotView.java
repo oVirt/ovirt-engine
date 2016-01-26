@@ -23,7 +23,7 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabStorageSnapshotView(SearchableDetailModelProvider<Disk, StorageListModel,

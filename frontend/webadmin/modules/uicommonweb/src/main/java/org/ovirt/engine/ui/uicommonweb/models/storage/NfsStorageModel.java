@@ -31,9 +31,9 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 public class NfsStorageModel extends FileStorageModel {
 
     //retrans nfs option max value
-    private final static short RETRANS_MAX = 32767;
+    private static final short RETRANS_MAX = 32767;
     //timeo nfs option max value
-    private final static short TIMEOUT_MAX = 6000;
+    private static final short TIMEOUT_MAX = 6000;
 
     public static final EventDefinition pathChangedEventDefinition;
     private Event<EventArgs> pathChangedEvent;

@@ -27,8 +27,8 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
     private ImageUiCommandButtonDefinition<Disk> plugButtonDefinition;
     private ImageUiCommandButtonDefinition<Disk> unPlugButtonDefinition;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmDiskListModelTable(
             SearchableTableModelProvider<Disk, VmDiskListModel> modelProvider,

@@ -41,7 +41,7 @@ public class NetworkGroup extends FocusPanel {
     private final NetworkPanelsStyle style;
     private final NetworkInterfaceModel nicModel;
     private final FlexTable table;
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
 
     private int dragCounter = 0; // handle enter/leaves on children, only need to actually enter and leave once.

@@ -50,7 +50,7 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public NetworkQoSPopupView(EventBus eventBus) {

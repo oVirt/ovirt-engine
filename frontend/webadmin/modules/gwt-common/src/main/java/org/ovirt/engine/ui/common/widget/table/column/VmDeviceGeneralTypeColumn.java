@@ -15,8 +15,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VmDeviceGeneralTypeColumn<T> extends AbstractSafeHtmlColumn<T> {
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     private ImageResource getImage(T object) {
         VmDevice device = getDeviceFromObject(object);

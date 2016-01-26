@@ -20,7 +20,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplat
     interface Driver extends SimpleBeanEditorDriver<RegisterEntityModel<VmTemplate>, RegisterEntityPopupView<VmTemplate>> {
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public RegisterTemplatePopupView(EventBus eventBus, Driver driver) {

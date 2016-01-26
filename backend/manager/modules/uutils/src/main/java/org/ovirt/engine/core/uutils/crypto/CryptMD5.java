@@ -12,7 +12,7 @@ import java.security.SecureRandom;
  */
 public class CryptMD5 {
 
-    private final static char[] b64t = {
+    private static final char[] b64t = {
         '.', '/',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -21,9 +21,9 @@ public class CryptMD5 {
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     };
 
-    private final static String SALT_PREFIX = "$1$";
-    private final static String SALT_DELIMITER = "$";
-    private final static int SALT_MAX_LENGTH = 8;
+    private static final String SALT_PREFIX = "$1$";
+    private static final String SALT_DELIMITER = "$";
+    private static final int SALT_MAX_LENGTH = 8;
 
     protected static String encode(byte b1, byte b2, byte b3, int n) {
         StringBuilder result = new StringBuilder();

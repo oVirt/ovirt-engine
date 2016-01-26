@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 public class VmTemplateHandler {
     private static final Logger log = LoggerFactory.getLogger(VmTemplateHandler.class);
 
-    public final static Guid BLANK_VM_TEMPLATE_ID = Guid.Empty;
-    public final static String BLANK_VM_TEMPLATE_NAME = "Blank";
+    public static final Guid BLANK_VM_TEMPLATE_ID = Guid.Empty;
+    public static final String BLANK_VM_TEMPLATE_NAME = "Blank";
     private static ObjectIdentityChecker updateVmTemplate;
 
     /**

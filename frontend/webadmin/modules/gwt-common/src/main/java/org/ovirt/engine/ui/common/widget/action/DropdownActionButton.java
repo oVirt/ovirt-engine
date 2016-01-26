@@ -47,7 +47,7 @@ public class DropdownActionButton<T> extends AbstractActionButton {
 
     private final SelectedItemsProvider<T> selectedItemsProvider;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public DropdownActionButton(List<ActionButtonDefinition<T>> actions, SelectedItemsProvider<T> selectedItemsProvider) {
         this.selectedItemsProvider = selectedItemsProvider;

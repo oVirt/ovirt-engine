@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 public class StorageDomainValidatorTest {
     private StorageDomain domain;
     private StorageDomainValidator validator;
-    private final static int CRITICAL_SPACE_THRESHOLD = 5;
+    private static final int CRITICAL_SPACE_THRESHOLD = 5;
 
     @Before
     public void setUp() {

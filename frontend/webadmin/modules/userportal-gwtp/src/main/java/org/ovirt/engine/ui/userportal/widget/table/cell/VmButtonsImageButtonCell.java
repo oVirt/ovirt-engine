@@ -8,7 +8,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 public abstract class VmButtonsImageButtonCell extends AbstractImageButtonCell<UserPortalItemModel> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public VmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
         super(enabledImage, resources.sideTabExtendedVmStyle().vmButtonEnabled(),

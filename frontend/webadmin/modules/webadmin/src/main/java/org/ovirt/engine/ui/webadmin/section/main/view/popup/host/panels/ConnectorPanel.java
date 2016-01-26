@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.HTML;
 
 public class ConnectorPanel extends FlexTable {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     public ConnectorPanel(NetworkInterfaceModel nicModel, NetworkPanelsStyle style) {
         super();

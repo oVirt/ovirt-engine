@@ -255,7 +255,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
 
     static final class VdsRowMapper implements RowMapper<VDS> {
         // single instance
-        public final static VdsRowMapper instance = new VdsRowMapper();
+        public static final VdsRowMapper instance = new VdsRowMapper();
 
         @Override
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {

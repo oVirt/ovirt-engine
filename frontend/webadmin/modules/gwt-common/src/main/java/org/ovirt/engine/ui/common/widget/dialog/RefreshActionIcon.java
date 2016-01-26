@@ -14,7 +14,7 @@ public class RefreshActionIcon extends FocusPanel {
     private final DecoratedPopupPanel refreshPanel = new DecoratedPopupPanel(true);
     private ClickHandler refreshIconClickListener;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public RefreshActionIcon(SafeHtml text) {
         super();

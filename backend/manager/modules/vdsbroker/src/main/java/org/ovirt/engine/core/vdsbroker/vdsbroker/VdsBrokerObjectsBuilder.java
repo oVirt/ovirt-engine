@@ -105,8 +105,8 @@ public class VdsBrokerObjectsBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(VdsBrokerObjectsBuilder.class);
 
-    private final static int VNC_START_PORT = 5900;
-    private final static double NANO_SECONDS = 1000000000;
+    private static final int VNC_START_PORT = 5900;
+    private static final double NANO_SECONDS = 1000000000;
     private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private static final Comparator<VdsNumaNode> numaNodeComparator = Comparator.comparing(VdsNumaNode::getIndex);

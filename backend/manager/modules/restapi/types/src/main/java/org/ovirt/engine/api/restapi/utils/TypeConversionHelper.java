@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class TypeConversionHelper {
 
-    private volatile static DatatypeFactory datatypeFactory;
+    private static volatile DatatypeFactory datatypeFactory;
     private static final Logger log = LoggerFactory.getLogger(SnapshotMapper.class);
     protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed.";
 

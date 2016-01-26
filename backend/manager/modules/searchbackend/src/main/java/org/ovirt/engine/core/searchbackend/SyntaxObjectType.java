@@ -23,7 +23,7 @@ public enum SyntaxObjectType {
     private int intValue;
     private static HashMap<Integer, SyntaxObjectType> mappings;
 
-    private synchronized static HashMap<Integer, SyntaxObjectType> getMappings() {
+    private static synchronized HashMap<Integer, SyntaxObjectType> getMappings() {
         if (mappings == null) {
             mappings = new HashMap<>();
         }

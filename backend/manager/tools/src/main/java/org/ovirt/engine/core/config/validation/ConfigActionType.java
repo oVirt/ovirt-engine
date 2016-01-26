@@ -27,7 +27,7 @@ public enum ConfigActionType {
         this.validatorTypes = validationTypes;
     }
 
-    static public ConfigActionType getActionType(String arg) {
+    public static ConfigActionType getActionType(String arg) {
         for (ConfigActionType type : ConfigActionType.values()) {
             if (type.optionalStrings.contains(arg)) {
                 return type;

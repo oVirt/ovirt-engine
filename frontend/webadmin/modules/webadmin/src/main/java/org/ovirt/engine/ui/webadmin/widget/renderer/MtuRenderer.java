@@ -11,7 +11,7 @@ public class MtuRenderer extends AbstractRenderer<Integer> {
     private static int defaultMtu =
             (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMTU);
 
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Override
     public String render(Integer mtu) {

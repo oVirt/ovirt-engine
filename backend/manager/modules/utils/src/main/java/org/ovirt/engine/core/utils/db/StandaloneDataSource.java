@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class StandaloneDataSource implements DataSource {
     // The log:
-    private final static Logger log = LoggerFactory.getLogger(StandaloneDataSource.class);
+    private static final Logger log = LoggerFactory.getLogger(StandaloneDataSource.class);
 
     // Names of the properties expected in the engine configuration file:
     private static final String ENGINE_DB_DRIVER = "ENGINE_DB_DRIVER";

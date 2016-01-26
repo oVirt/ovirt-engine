@@ -25,9 +25,9 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
 
     private Element expanderContent;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private String titleExpanded = constants.advancedParameters();
     private String titleCollapsed = constants.advancedParameters();

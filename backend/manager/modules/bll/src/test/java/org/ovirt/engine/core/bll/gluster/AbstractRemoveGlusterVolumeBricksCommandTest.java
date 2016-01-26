@@ -134,5 +134,5 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
         return bricks;
     }
 
-    abstract protected GlusterVolumeEntity getVolumeWithRemoveBricksTask(Guid volumeId);
+    protected abstract GlusterVolumeEntity getVolumeWithRemoveBricksTask(Guid volumeId);
 }

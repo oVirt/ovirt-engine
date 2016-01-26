@@ -23,7 +23,7 @@ public class SubTabVnicProfileVmPresenter
     extends AbstractSubTabVnicProfilePresenter<VnicProfileVmListModel, SubTabVnicProfileVmPresenter.ViewDef,
         SubTabVnicProfileVmPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.vnicProfileVmSubTabPlace)

@@ -7,7 +7,7 @@ import com.google.gwt.text.client.NumberFormatRenderer;
 
 public class NullableNumberRenderer extends NumberFormatRenderer {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private String nullString = constants.unAvailablePropertyLabel();
 

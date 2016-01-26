@@ -24,7 +24,7 @@ public class SubTabVirtualMachineEventPresenter
     extends AbstractSubTabVirtualMachinePresenter<VmEventListModel, SubTabVirtualMachineEventPresenter.ViewDef,
         SubTabVirtualMachineEventPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineEventSubTabPlace)

@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VmTemplate, DiskImage> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public TemplatesTree() {
         super();

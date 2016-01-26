@@ -7,7 +7,7 @@ import java.util.Set;
 public class WindowsJavaTimezoneMapping {
 
     // first is windows, second is java
-    private final static String[][] zones = new String[][] { { "AUS Central Standard Time", "Australia/Darwin" },
+    private static final String[][] zones = new String[][] { { "AUS Central Standard Time", "Australia/Darwin" },
             { "AUS Eastern Standard Time", "Australia/Sydney" }, { "Afghanistan Standard Time", "Asia/Kabul" },
             { "Alaskan Standard Time", "America/Anchorage" }, { "Arab Standard Time", "Asia/Riyadh" },
             { "Arabian Standard Time", "Asia/Dubai" }, { "Arabic Standard Time", "Asia/Baghdad" },
@@ -57,8 +57,8 @@ public class WindowsJavaTimezoneMapping {
             { "W. Europe Standard Time", "Europe/Berlin" }, { "West Asia Standard Time", "Asia/Tashkent" },
             { "West Pacific Standard Time", "Pacific/Port_Moresby" }, { "Yakutsk Standard Time", "Asia/Yakutsk" }, };
 
-    private final static Map<String, String> windowsToJava = new HashMap<>();
-    private final static Map<String, String> javaToWindows = new HashMap<>();
+    private static final Map<String, String> windowsToJava = new HashMap<>();
+    private static final Map<String, String> javaToWindows = new HashMap<>();
 
     static {
         for (String[] zone : zones) {

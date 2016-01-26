@@ -92,8 +92,8 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @WithElementId
     VerticalPanel stopTimePanel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     protected FullDateTimeRenderer renderer = new FullDateTimeRenderer(true);
 

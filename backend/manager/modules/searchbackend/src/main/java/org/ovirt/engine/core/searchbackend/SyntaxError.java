@@ -30,7 +30,7 @@ public enum SyntaxError {
     private int intValue;
     private static HashMap<Integer, SyntaxError> mappings;
 
-    private synchronized static HashMap<Integer, SyntaxError> getMappings() {
+    private static synchronized HashMap<Integer, SyntaxError> getMappings() {
         if (mappings == null) {
             mappings = new HashMap<>();
         }

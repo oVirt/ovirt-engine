@@ -23,11 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OvfUtils {
-    private final static String TEMPLATE_ENTITY_TYPE = "<TemplateType>";
-    private final static String ENTITY_NAME = "<Name>";
-    private final static String END_ENTITY_NAME = "</Name>";
-    private final static String OVF_FILE_EXT = ".ovf";
-    protected final static Logger log = LoggerFactory.getLogger(TarInMemoryExport.class);
+    private static final String TEMPLATE_ENTITY_TYPE = "<TemplateType>";
+    private static final String ENTITY_NAME = "<Name>";
+    private static final String END_ENTITY_NAME = "</Name>";
+    private static final String OVF_FILE_EXT = ".ovf";
+    protected static final Logger log = LoggerFactory.getLogger(TarInMemoryExport.class);
     private static String getEntityName(String ovfData) {
         int beginIndexOfEntityName = ovfData.indexOf(ENTITY_NAME) + ENTITY_NAME.length();
         int endIndexOfEntityName = ovfData.indexOf(END_ENTITY_NAME, beginIndexOfEntityName);

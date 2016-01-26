@@ -20,8 +20,8 @@ import com.google.gwt.event.shared.EventBus;
 
 public class PoolInterfaceListModelTable<T extends SearchableListModel> extends AbstractModelBoundTableWidget<VmNetworkInterface, T> {
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PoolInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, T> modelProvider,

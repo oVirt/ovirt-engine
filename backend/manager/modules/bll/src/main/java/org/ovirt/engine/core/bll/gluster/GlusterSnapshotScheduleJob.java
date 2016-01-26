@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class GlusterSnapshotScheduleJob implements Serializable {
     private static final long serialVersionUID = 2355384696827317365L;
 
-    private final static Logger log = LoggerFactory.getLogger(GlusterSnapshotScheduleJob.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterSnapshotScheduleJob.class);
     private GlusterAuditLogUtil logUtil = getLogUtil();
 
     public GlusterSnapshotScheduleJob() {

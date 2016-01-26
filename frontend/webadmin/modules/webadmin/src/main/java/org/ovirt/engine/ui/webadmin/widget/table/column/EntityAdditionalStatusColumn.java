@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public abstract class EntityAdditionalStatusColumn<S> extends AbstractSafeHtmlColumn<S> {
 
-    protected final static ApplicationResources resources = AssetProvider.getResources();
+    protected static final ApplicationResources resources = AssetProvider.getResources();
 
     protected ImageResource getStatusImage(ExternalStatus externalStatus) {
         switch (externalStatus) {

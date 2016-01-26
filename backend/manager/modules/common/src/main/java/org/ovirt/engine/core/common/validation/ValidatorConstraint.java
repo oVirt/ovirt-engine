@@ -32,10 +32,10 @@ public class ValidatorConstraint {
     }
 
     public static class ValidatorConstraintArgsFormatValue {
-        final private boolean validFormat;
-        final private boolean validValue;
-        final private String badFormatErrorMessage;
-        final private String badValueErrorMessage;
+        private final boolean validFormat;
+        private final boolean validValue;
+        private final String badFormatErrorMessage;
+        private final String badValueErrorMessage;
 
         public ValidatorConstraintArgsFormatValue(boolean validFormat,
                 boolean validValue,

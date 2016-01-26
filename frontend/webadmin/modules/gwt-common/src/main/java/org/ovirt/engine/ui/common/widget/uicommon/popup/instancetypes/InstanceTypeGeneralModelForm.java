@@ -20,7 +20,7 @@ public class InstanceTypeGeneralModelForm extends AbstractModelBoundFormWidget<I
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public InstanceTypeGeneralModelForm(ModelProvider<InstanceTypeGeneralModel> modelProvider) {
         super(modelProvider, 1, 2);

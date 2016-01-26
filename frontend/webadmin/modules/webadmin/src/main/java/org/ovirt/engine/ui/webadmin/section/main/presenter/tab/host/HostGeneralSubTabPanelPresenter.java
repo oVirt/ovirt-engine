@@ -35,7 +35,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 public class HostGeneralSubTabPanelPresenter extends AbstractSubTabPanelPresenter<
     HostGeneralSubTabPanelPresenter.ViewDef, HostGeneralSubTabPanelPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostGeneralSubTabPlace)

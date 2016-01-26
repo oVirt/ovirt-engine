@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.webadmin.widget.storage.VMsTree;
 public class SubTabQuotaVmView extends AbstractSubTabTreeView<VMsTree<QuotaVmListModel>, Quota, VM, QuotaListModel, QuotaVmListModel>
         implements SubTabQuotaVmPresenter.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabQuotaVmView(SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel> modelProvider) {

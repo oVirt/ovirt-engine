@@ -27,8 +27,8 @@ public class ContextSensitiveHelpManager {
 
     private static final Logger logger = Logger.getLogger(ContextSensitiveHelpManager.class.getName());
 
-    private final static String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName().replaceAll("_", "-"); //$NON-NLS-1$ //$NON-NLS-2$
-    private final static String ENGLISH = "en-US"; //$NON-NLS-1$
+    private static final String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName().replaceAll("_", "-"); //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String ENGLISH = "en-US"; //$NON-NLS-1$
 
     private static Map<String, String> cshMappings = null;
 

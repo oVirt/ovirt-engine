@@ -7,7 +7,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 public class ExternalNetworkPanel extends NetworkPanel {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public ExternalNetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style) {
         super(item, style, false);

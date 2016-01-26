@@ -45,7 +45,7 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public ChangeQuotaView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

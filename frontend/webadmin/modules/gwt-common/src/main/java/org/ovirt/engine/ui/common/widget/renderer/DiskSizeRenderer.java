@@ -16,7 +16,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     private final SizeConverter.SizeUnit unit;
     public final Format format;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public DiskSizeRenderer(SizeConverter.SizeUnit unit) {
         this(unit, Format.GIGABYTE);

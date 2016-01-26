@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 
 public class SetupNetworksManagementPopupView extends SetupNetworksInterfacePopupView implements SetupNetworksManagementPopupPresenterWidget.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SetupNetworksManagementPopupView(EventBus eventBus) {

@@ -164,7 +164,7 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public GlusterHookResolveConflictsPopupView(EventBus eventBus) {

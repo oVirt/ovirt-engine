@@ -25,7 +25,7 @@ public class SubTabProviderNetworkPresenter
     extends AbstractSubTabProviderPresenter<ProviderNetworkListModel, SubTabProviderNetworkPresenter.ViewDef,
         SubTabProviderNetworkPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private SystemTreeModelProvider systemTreeModelProvider;
 

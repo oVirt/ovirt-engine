@@ -30,7 +30,7 @@ public class NetworkViewDaoImpl extends BaseDao implements NetworkViewDao {
     }
 
     private static class NetworkViewRowMapper extends NetworkRowMapperBase<NetworkView> {
-        public final static NetworkViewRowMapper instance = new NetworkViewRowMapper();
+        public static final NetworkViewRowMapper instance = new NetworkViewRowMapper();
 
         @Override
         public NetworkView mapRow(ResultSet rs, int rowNum) throws SQLException {

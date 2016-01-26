@@ -28,7 +28,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
 
     private AbstractLinkColumn<NetworkView> nameColumn;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabProviderNetworkView(SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {

@@ -82,9 +82,9 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         return getContentWidget();
     }
 
-    public static abstract class NullSafeSuggestBoxRenderer<T> implements SuggestBoxRenderer<T> {
+    public abstract static class NullSafeSuggestBoxRenderer<T> implements SuggestBoxRenderer<T> {
 
-        private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+        private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
         @Override
         public String getReplacementString(T data) {

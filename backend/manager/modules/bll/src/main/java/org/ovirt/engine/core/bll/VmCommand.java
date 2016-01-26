@@ -114,15 +114,15 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     // 3 IDE slots: 4 total minus 1 for CD
-    public final static int MAX_IDE_SLOTS = 3;
+    public static final int MAX_IDE_SLOTS = 3;
 
     // The maximum number of VirtIO SCSI disks that libvirt
     // allows without creating another controller
-    public final static int MAX_VIRTIO_SCSI_DISKS = 16383;
+    public static final int MAX_VIRTIO_SCSI_DISKS = 16383;
 
     // The maximum number of sPAPR VSCSI disks that
     // can be detected by the Linux kernel of PPC64 guests
-    public final static int MAX_SPAPR_SCSI_DISKS = 7;
+    public static final int MAX_SPAPR_SCSI_DISKS = 7;
 
     private List<VmNic> interfaces;
 

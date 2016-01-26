@@ -30,7 +30,7 @@ public class HostProxySourceEditor extends AddRemoveRowWidget<ListModel<FencePro
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     @Ignore

@@ -17,7 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 public class ErrataDetailModelForm extends AbstractModelBoundFormWidget<EntityModel<Erratum>> {
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     interface Driver extends SimpleBeanEditorDriver<EntityModel<Erratum>, ErrataDetailModelForm> {
     }

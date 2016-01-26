@@ -31,7 +31,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
 
     private static final UIConstants messageConstants = GWT.create(UIConstants.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider) {

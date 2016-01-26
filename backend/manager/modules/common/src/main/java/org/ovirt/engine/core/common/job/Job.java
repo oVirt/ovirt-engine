@@ -97,7 +97,7 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * Define if the Job should be ended when the {@code CommandBase.executeAction()} ends
      */
-    transient private boolean isAsyncJob;
+    private transient boolean isAsyncJob;
 
     public Job() {
         status = JobExecutionStatus.STARTED;

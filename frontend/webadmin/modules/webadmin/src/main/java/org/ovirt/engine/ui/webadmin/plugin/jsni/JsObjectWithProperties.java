@@ -17,7 +17,7 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
      * <p>
      * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
      */
-    protected native final String getValueAsString(String key, String defaultValue) /*-{
+    protected final native String getValueAsString(String key, String defaultValue) /*-{
         return (this[key] != null && typeof this[key] === 'string') ? this[key] : defaultValue;
     }-*/;
 
@@ -26,7 +26,7 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
      * <p>
      * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
      */
-    protected native final Double getValueAsDouble(String key, Double defaultValue) /*-{
+    protected final native Double getValueAsDouble(String key, Double defaultValue) /*-{
         return (this[key] != null && typeof this[key] === 'number') ? @java.lang.Double::valueOf(D)(this[key]) : defaultValue;
     }-*/;
 
@@ -35,7 +35,7 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
      * <p>
      * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
      */
-    protected native final Boolean getValueAsBoolean(String key, Boolean defaultValue) /*-{
+    protected final native Boolean getValueAsBoolean(String key, Boolean defaultValue) /*-{
         return (this[key] != null && typeof this[key] === 'boolean') ? @java.lang.Boolean::valueOf(Z)(this[key]) : defaultValue;
     }-*/;
 
@@ -44,7 +44,7 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
      * <p>
      * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
      */
-    protected native final <T extends JavaScriptObject> JsArray<T> getValueAsArray(String key, JsArray<T> defaultValue) /*-{
+    protected final native <T extends JavaScriptObject> JsArray<T> getValueAsArray(String key, JsArray<T> defaultValue) /*-{
         return (this[key] != null && Object.prototype.toString.call(this[key]) === '[object Array]') ? this[key] : defaultValue;
     }-*/;
 
@@ -59,7 +59,7 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
      * <p>
      * Returns single-element array if the underlying value is String.
      */
-    protected native final JsArrayString getValueAsStringArray(String key) /*-{
+    protected final native JsArrayString getValueAsStringArray(String key) /*-{
         var result = [];
 
         if (this[key] != null && Object.prototype.toString.call(this[key]) === '[object Array]') {
@@ -81,7 +81,7 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
      * <p>
      * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
      */
-    protected native final <T extends Enum<T>> T getValueAsEnum(String key, Class<T> enumType, T defaultValue) /*-{
+    protected final native <T extends Enum<T>> T getValueAsEnum(String key, Class<T> enumType, T defaultValue) /*-{
         if (this[key] != null && typeof this[key] === 'string') {
             try {
                 return @java.lang.Enum::valueOf(Ljava/lang/Class;Ljava/lang/String;)(enumType,this[key]);

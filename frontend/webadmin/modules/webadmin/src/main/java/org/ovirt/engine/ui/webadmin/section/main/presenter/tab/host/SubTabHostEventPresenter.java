@@ -24,7 +24,7 @@ public class SubTabHostEventPresenter
     extends AbstractSubTabHostPresenter<HostEventListModel, SubTabHostEventPresenter.ViewDef,
         SubTabHostEventPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostEventSubTabPlace)

@@ -55,7 +55,7 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
     @WithElementId
     EntityModelCellTable<ListModel<EntityModel<GlusterVolumeSnapshotConfig>>> configsTable;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

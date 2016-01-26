@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
  */
 public abstract class AbstractQuotaPercentColumn<T> extends AbstractProgressBarColumn<T> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     protected String getProgressText(T object) {

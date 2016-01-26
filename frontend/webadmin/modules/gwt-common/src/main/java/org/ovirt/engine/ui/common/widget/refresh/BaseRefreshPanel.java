@@ -47,7 +47,7 @@ import com.google.gwt.user.client.ui.ToggleButton;
  */
 public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHandlers, HasElementId {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public interface BaseResources extends ClientBundle {
 

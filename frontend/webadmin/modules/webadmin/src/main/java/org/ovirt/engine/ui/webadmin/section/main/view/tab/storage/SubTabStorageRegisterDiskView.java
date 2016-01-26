@@ -23,7 +23,7 @@ public class SubTabStorageRegisterDiskView extends AbstractSubTabTableView<Stora
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabStorageRegisterDiskView(SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskListModel> modelProvider) {

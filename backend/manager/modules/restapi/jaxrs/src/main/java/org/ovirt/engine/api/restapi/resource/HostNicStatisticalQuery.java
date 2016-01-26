@@ -12,12 +12,12 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNic, VdsNetworkInterface> {
 
-    private final static Statistic DATA_RX = create("data.current.rx", "Receive data rate",  GAUGE, BYTES_PER_SECOND, DECIMAL);
-    private final static Statistic DATA_TX = create("data.current.tx", "Transmit data rate", GAUGE, BYTES_PER_SECOND, DECIMAL);
-    private final static Statistic TOTAL_RX = create("data.total.rx", "Total received data", COUNTER, BYTES, INTEGER);
-    private final static Statistic TOTAL_TX = create("data.total.tx", "Total transmitted data", COUNTER, BYTES, INTEGER);
-    private final static Statistic ERRS_RX = create("errors.total.rx", "Total receive errors", COUNTER, NONE, INTEGER);
-    private final static Statistic ERRS_TX = create("errors.total.tx", "Total transmit errors", COUNTER, NONE, INTEGER);
+    private static final Statistic DATA_RX = create("data.current.rx", "Receive data rate",  GAUGE, BYTES_PER_SECOND, DECIMAL);
+    private static final Statistic DATA_TX = create("data.current.tx", "Transmit data rate", GAUGE, BYTES_PER_SECOND, DECIMAL);
+    private static final Statistic TOTAL_RX = create("data.total.rx", "Total received data", COUNTER, BYTES, INTEGER);
+    private static final Statistic TOTAL_TX = create("data.total.tx", "Total transmitted data", COUNTER, BYTES, INTEGER);
+    private static final Statistic ERRS_RX = create("errors.total.rx", "Total receive errors", COUNTER, NONE, INTEGER);
+    private static final Statistic ERRS_TX = create("errors.total.tx", "Total transmit errors", COUNTER, NONE, INTEGER);
 
     protected HostNicStatisticalQuery(HostNic parent) {
         this(null, parent);

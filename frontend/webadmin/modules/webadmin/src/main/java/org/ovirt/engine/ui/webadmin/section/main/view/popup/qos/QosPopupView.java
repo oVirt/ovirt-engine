@@ -51,7 +51,7 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
 
     private final SimpleBeanEditorDriver<QosModel<T, P>, QosPopupView<T, P>> driver;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public QosPopupView(EventBus eventBus) {
         super(eventBus);
@@ -90,8 +90,8 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
         return driver.flush();
     }
 
-    abstract protected void createQosWidget();
+    protected abstract void createQosWidget();
 
-    abstract protected SimpleBeanEditorDriver<QosModel<T, P>, QosPopupView<T, P>> createDriver();
+    protected abstract SimpleBeanEditorDriver<QosModel<T, P>, QosPopupView<T, P>> createDriver();
 
 }

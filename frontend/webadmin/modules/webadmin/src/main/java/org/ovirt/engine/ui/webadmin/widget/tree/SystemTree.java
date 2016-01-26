@@ -53,7 +53,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public SystemTree(SystemTreeModelProvider modelProvider) {
         super(modelProvider);

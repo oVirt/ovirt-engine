@@ -45,7 +45,7 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
     @UiField
     Label message;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
 
     public ImportFcpStorageView() {

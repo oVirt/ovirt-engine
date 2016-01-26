@@ -176,7 +176,7 @@ public class MemoryStorageHandlerTest {
         }
     }
 
-    private static abstract class StorageDomainAbstractComparator implements Comparator<StorageDomain> {
+    private abstract static class StorageDomainAbstractComparator implements Comparator<StorageDomain> {
 
         private StorageDomain storageDomain;
 

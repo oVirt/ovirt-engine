@@ -16,7 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 
 public abstract class BasePoolPopupPresenterWidget<V extends AbstractVmBasedPopupPresenterWidget.ViewDef> extends AbstractVmBasedPopupPresenterWidget<V> {
 
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     public BasePoolPopupPresenterWidget(EventBus eventBus, V view, ClientStorage clientStorage) {
         super(eventBus, view, clientStorage);

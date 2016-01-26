@@ -37,8 +37,8 @@ import com.google.gwt.view.client.NoSelectionModel;
 
 public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     protected EntityModelCellTable<ListModel> disksTable;
     protected EntityModelCellTable<ListModel> nicsTable;

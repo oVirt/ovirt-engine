@@ -8,7 +8,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 public class SafeHtmlWithStyleCell extends AbstractCell<SafeHtml> implements HasStyleClass {
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private String styleClass = ""; //$NON-NLS-1$
 
     public void setStyleClass(String styleClass) {

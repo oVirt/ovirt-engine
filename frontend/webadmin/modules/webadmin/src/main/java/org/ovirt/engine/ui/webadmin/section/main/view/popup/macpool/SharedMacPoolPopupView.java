@@ -36,7 +36,7 @@ public class SharedMacPoolPopupView extends AbstractModelBoundPopupView<SharedMa
     @Ignore
     MacPoolWidget macPoolWidget;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SharedMacPoolPopupView(EventBus eventBus) {

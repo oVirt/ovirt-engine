@@ -48,7 +48,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabUserGeneralView(DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {

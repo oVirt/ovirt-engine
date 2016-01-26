@@ -15,7 +15,7 @@ public class HorizontalSplitTable<M extends ListModel<T>, T> extends SplitTable<
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public HorizontalSplitTable(EntityModelCellTable<M> topTable,
             EntityModelCellTable<M> bottomTable,

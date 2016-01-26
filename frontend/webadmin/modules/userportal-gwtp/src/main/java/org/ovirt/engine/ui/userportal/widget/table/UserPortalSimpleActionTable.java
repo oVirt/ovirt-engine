@@ -15,7 +15,7 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
 
     private static final SideTabWithDetailsViewStyle style;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     static {
         // it has to be static - the parent constructor invokes

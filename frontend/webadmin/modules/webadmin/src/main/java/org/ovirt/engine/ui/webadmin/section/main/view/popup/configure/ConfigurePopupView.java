@@ -62,7 +62,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     @UiField
     SimplePanel macPoolsTabPanel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ConfigurePopupView(

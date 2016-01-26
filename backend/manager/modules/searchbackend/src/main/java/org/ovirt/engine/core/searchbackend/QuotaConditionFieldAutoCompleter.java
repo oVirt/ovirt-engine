@@ -60,7 +60,7 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
         return StringConditionRelationAutoCompleter.INSTANCE;
     }
 
-    private final static EnumValueAutoCompleter enforcementTypeCompleter =
+    private static final EnumValueAutoCompleter enforcementTypeCompleter =
             new EnumValueAutoCompleter(QuotaEnforcementTypeEnum.class);
 
     @Override

@@ -44,7 +44,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     @UiField
     SimplePanel tablePanel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private static final String BASIC_VIEW_MSG_COLUMN_WIDTH = "600px"; //$NON-NLS-1$
     private static final String ADV_VIEW_MSG_COLUMN_WIDTH = "150px"; //$NON-NLS-1$

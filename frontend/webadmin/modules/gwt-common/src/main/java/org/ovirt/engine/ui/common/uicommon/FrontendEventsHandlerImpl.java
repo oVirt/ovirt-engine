@@ -23,7 +23,7 @@ import com.google.inject.Inject;
 public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     private final ErrorPopupManager errorPopupManager;
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public FrontendEventsHandlerImpl(ErrorPopupManager errorPopupManager) {

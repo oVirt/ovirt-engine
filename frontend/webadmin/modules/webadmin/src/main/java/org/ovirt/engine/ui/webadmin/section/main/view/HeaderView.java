@@ -42,7 +42,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     @UiField
     SimplePanel mainTabContainer;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public HeaderView(ApplicationDynamicMessages dynamicMessages) {

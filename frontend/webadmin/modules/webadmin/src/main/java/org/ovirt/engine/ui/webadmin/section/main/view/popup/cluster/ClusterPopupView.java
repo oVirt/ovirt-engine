@@ -444,9 +444,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     public ListModelRadioGroupEditor<ClusterModel.KsmPolicyForNuma> ksmPolicyForNumaEditor;
 
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public ClusterPopupView(EventBus eventBus) {

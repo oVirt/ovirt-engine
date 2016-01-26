@@ -28,7 +28,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private static AbstractTextColumn<Disk> aliasColumn;
     private static AbstractDiskSizeColumn<Disk> sizeColumn;

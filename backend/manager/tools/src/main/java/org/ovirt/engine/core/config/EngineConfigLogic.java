@@ -37,11 +37,11 @@ public class EngineConfigLogic {
     // The console:
     private static final ToolConsole console = ToolConsole.getInstance();
 
-    private final static String ALTERNATE_KEY = "alternateKey";
-    private final static String MERGABLE_TOKEN = "mergable";
-    private final static String DELIMITER_TOKEN = "delimiter";
-    private final static String MERGE_NOT_SUPPORTED_MSG = "%s does not support merge of values.";
-    private final static String MERGE_SAME_VALUE_MSG = "Merge operation cancelled as value is unchanged.";
+    private static final String ALTERNATE_KEY = "alternateKey";
+    private static final String MERGABLE_TOKEN = "mergable";
+    private static final String DELIMITER_TOKEN = "delimiter";
+    private static final String MERGE_NOT_SUPPORTED_MSG = "%s does not support merge of values.";
+    private static final String MERGE_SAME_VALUE_MSG = "Merge operation cancelled as value is unchanged.";
     private static final String MERGE_PERSIST_ERR_MSG = "setValue: error merging %s value. No such entry%s.";
     private static final String KEY_NOT_FOUND_ERR_MSG = "Cannot display help for key %1$s. The key does not exist at the configuration file of engine-config.";
 

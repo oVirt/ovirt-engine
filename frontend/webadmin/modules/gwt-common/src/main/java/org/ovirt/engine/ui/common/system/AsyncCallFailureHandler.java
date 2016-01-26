@@ -22,7 +22,7 @@ public class AsyncCallFailureHandler implements AsyncCallFailHandler {
     private static final Logger logger = Logger.getLogger(AsyncCallFailureHandler.class.getName());
 
     private final ErrorPopupManager errorPopupManager;
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public AsyncCallFailureHandler(EventBus eventBus, ErrorPopupManager errorPopupManager) {

@@ -15,8 +15,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class KeyValueModel extends BaseKeyModel {
 
-    public final static String PROPERTIES_DELIMETER = ";"; //$NON-NLS-1$
-    public final static String KEY_VALUE_DELIMETER = "="; //$NON-NLS-1$
+    public static final String PROPERTIES_DELIMETER = ";"; //$NON-NLS-1$
+    public static final String KEY_VALUE_DELIMETER = "="; //$NON-NLS-1$
     private String saveEntity;
 
     public KeyValueModel() {

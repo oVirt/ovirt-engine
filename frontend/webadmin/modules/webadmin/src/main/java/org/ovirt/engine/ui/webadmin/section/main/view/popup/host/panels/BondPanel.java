@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class BondPanel extends NicPanel {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public BondPanel(BondNetworkInterfaceModel item, NetworkPanelsStyle style) {
         super(item, style, true);

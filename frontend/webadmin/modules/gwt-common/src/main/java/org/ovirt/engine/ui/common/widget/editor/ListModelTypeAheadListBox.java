@@ -54,7 +54,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     private static final String LMTALB_SUGGESTBOX_PFLY_FIX = "lmtalb_suggestbox_pfly_fix"; //$NON-NLS-1$
     private static final String PATTERNFLY_IMAGE_HEIGHT = "23px"; //$NON-NLS-1$
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField(provided = true)
     SuggestBox suggestBox;
@@ -418,7 +418,7 @@ class RenderableSuggestion<T> extends MultiWordSuggestion {
 class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
 
     private SuggestBoxRenderer<T> renderer;
-    final private SuggestionMatcher matcher;
+    private final SuggestionMatcher matcher;
 
     // inited to avoid null checks
     private Collection<T> data = new ArrayList<>();

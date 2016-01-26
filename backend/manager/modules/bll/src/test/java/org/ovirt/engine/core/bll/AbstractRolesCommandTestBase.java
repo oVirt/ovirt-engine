@@ -40,7 +40,7 @@ public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
         return new RolesParameterBase(Guid.newGuid());
     }
 
-    abstract protected RolesCommandBase<? extends RolesParameterBase> generateCommand();
+    protected abstract RolesCommandBase<? extends RolesParameterBase> generateCommand();
 
     protected RolesParameterBase getParams() {
         return params;

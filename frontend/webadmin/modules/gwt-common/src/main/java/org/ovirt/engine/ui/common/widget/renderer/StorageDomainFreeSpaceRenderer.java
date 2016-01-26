@@ -8,7 +8,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 public class StorageDomainFreeSpaceRenderer<T extends StorageDomain> extends AbstractRenderer<T> {
 
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Override
     public String render(T storageDomain) {

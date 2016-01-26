@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
  * {@link http://www.ovirt.org/wiki/Features/Autorecovery}
  */
 public class AutoRecoveryManager {
-    private final static AutoRecoveryManager instance = new AutoRecoveryManager();
-    private final static Logger log = LoggerFactory.getLogger(AutoRecoveryManager.class);
+    private static final AutoRecoveryManager instance = new AutoRecoveryManager();
+    private static final Logger log = LoggerFactory.getLogger(AutoRecoveryManager.class);
 
     static AutoRecoveryManager getInstance() {
         return instance;

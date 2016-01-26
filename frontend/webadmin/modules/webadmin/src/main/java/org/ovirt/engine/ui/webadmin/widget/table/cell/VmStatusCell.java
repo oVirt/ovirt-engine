@@ -21,8 +21,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VmStatusCell extends AbstractCell<VM> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Override
     public void render(Context context, VM vm, SafeHtmlBuilder sb, String id) {

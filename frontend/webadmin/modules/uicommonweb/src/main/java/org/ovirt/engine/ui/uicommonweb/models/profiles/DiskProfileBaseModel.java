@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class DiskProfileBaseModel extends ProfileBaseModel<DiskProfile, StorageQos, StorageDomain> {
 
-    private final static StorageQos EMPTY_QOS;
+    private static final StorageQos EMPTY_QOS;
 
     static {
         EMPTY_QOS = new StorageQos();

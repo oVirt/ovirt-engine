@@ -21,7 +21,7 @@ public class BackendStorageDomainImageResource
         extends AbstractBackendActionableResource<Image, RepoImage>
         implements ImageResource {
 
-    final private BackendStorageDomainImagesResource parent;
+    private final BackendStorageDomainImagesResource parent;
 
     protected BackendStorageDomainImageResource(String id, BackendStorageDomainImagesResource parent) {
         super(id, Image.class, RepoImage.class);

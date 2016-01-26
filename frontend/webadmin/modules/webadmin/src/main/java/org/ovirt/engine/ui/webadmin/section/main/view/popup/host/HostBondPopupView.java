@@ -118,7 +118,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public HostBondPopupView(EventBus eventBus) {

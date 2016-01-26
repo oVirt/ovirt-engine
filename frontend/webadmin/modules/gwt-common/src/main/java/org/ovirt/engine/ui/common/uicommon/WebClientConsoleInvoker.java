@@ -75,7 +75,7 @@ public class WebClientConsoleInvoker {
     /**
      * Helper method for creating json object out of host, port and sslTarget
      */
-    private native static String createConnectionJsonString(String host, String port, boolean sslTarget)/*-{
+    private static native String createConnectionJsonString(String host, String port, boolean sslTarget)/*-{
         return JSON.stringify({
             "host": host,
             "port": port,

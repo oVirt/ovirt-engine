@@ -47,7 +47,7 @@ public class InstanceTypesView extends Composite {
 
     private final ClientStorage clientStorage;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public InstanceTypesView(InstanceTypeModelProvider instanceTypeModelProvider,

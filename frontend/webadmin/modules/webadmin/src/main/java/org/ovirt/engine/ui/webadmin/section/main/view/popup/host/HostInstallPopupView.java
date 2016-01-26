@@ -123,7 +123,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public HostInstallPopupView(EventBus eventBus) {

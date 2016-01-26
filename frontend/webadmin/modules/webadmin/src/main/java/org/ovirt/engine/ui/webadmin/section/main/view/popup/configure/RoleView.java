@@ -60,7 +60,7 @@ public class RoleView extends Composite {
     private final EventBus eventBus;
     private final ClientStorage clientStorage;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public RoleView(RoleModelProvider roleModelProvider,

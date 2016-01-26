@@ -53,7 +53,7 @@ public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoun
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ForceRemoveConfirmationPopupView(EventBus eventBus) {

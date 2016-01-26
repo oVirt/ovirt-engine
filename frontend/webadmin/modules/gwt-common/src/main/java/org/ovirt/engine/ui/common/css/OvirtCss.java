@@ -9,12 +9,12 @@ public class OvirtCss {
 
     // labels
 
-    public final static String LABEL_ENABLED = "labelEnabled"; //$NON-NLS-1$
-    public final static String LABEL_DISABLED = "labelDisabled"; //$NON-NLS-1$
+    public static final String LABEL_ENABLED = "labelEnabled"; //$NON-NLS-1$
+    public static final String LABEL_DISABLED = "labelDisabled"; //$NON-NLS-1$
 
 
     // tooltips
 
-    public final static String HAS_TOOLTIP = "hasTooltip"; //$NON-NLS-1$
+    public static final String HAS_TOOLTIP = "hasTooltip"; //$NON-NLS-1$
 
 }

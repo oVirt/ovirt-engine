@@ -23,7 +23,7 @@ public class SubTabDataCenterIscsiBondPresenter
     extends AbstractSubTabDataCenterPresenter<DataCenterIscsiBondListModel, SubTabDataCenterIscsiBondPresenter.ViewDef,
         SubTabDataCenterIscsiBondPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterIscsiBondSubTabPlace)

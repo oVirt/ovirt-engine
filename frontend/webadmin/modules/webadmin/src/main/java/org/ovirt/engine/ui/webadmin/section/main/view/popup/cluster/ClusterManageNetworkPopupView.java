@@ -44,9 +44,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     @UiField(provided = true)
     EntityModelCellTable<ClusterNetworkManageModel> networks;
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
@@ -432,7 +432,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.asEditor().flush().setDisplayNetwork(clusterNetworkModel, value);
     }
 
-    private final static class DisplayNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
+    private static final class DisplayNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
         private DisplayNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 DisplayNetworkIndicatorFieldUpdater displayNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, displayNetworkIndicatorFieldUpdater);

@@ -41,8 +41,8 @@ public class SubTabHostGeneralInfoPresenter
     extends AbstractSubTabHostPresenter<HostGeneralModel, SubTabHostGeneralInfoPresenter.ViewDef,
         SubTabHostGeneralInfoPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostGeneralInfoSubTabPlace)

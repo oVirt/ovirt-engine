@@ -26,7 +26,7 @@ import com.google.gwt.event.shared.EventBus;
  */
 public abstract class AbstractSubTabEventView<I, M extends ListWithDetailsModel, D extends EventListModel> extends AbstractSubTabTableWidgetView<I, AuditLog, M, D> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public AbstractSubTabEventView(SearchableDetailModelProvider<AuditLog, M, D> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {

@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition<T> {
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private final SafeHtml enabledImage;
     private final SafeHtml disabledImage;

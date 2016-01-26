@@ -37,7 +37,7 @@ public class SubTabHostGeneralHostErrataPresenter
     extends AbstractSubTabHostPresenter<HostErrataCountModel,
         SubTabHostGeneralHostErrataPresenter.ViewDef, SubTabHostGeneralHostErrataPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostGeneralErrataSubTabPlace)

@@ -28,7 +28,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetailsPresenter<VmTemplate, UserPortalTemplateListModel, SideTabExtendedTemplatePresenter.ViewDef, SideTabExtendedTemplatePresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class ExtendedTemplateSelectionChange {

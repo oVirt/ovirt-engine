@@ -19,8 +19,8 @@ public class EngineBackupLogDaoTest extends BaseDaoTestCase {
     private EngineBackupLogDao dao;
     private EngineBackupLog existingEngineBackupLog;
     private EngineBackupLog newEntity;
-    private final static String SCOPE = "db";
-    private final static String NON_EXISTING_SCOPE = "invalid";
+    private static final String SCOPE = "db";
+    private static final String NON_EXISTING_SCOPE = "invalid";
 
     @Override
     @Before

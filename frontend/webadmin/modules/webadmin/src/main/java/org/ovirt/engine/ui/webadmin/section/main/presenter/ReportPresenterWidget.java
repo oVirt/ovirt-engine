@@ -36,7 +36,7 @@ public class ReportPresenterWidget extends PresenterWidget<ReportPresenterWidget
     private ReportModel model = null;
     private final ErrorPopupManager errorPopupManager;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ReportPresenterWidget(EventBus eventBus,

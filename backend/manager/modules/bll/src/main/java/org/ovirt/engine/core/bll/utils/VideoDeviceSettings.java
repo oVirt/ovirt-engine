@@ -31,9 +31,9 @@ public class VideoDeviceSettings {
 
         // Displays up to 4 Mpix fit into this; higher resolutions are currently
         // not supported by the drivers.
-        private final static int BASE_RAM_SIZE = 16384; // KB
-        private final static int DEFAULT_VRAM_SIZE = 8192; // KB
-        private final static int RAM_MULTIPLIER = 4;
+        private static final int BASE_RAM_SIZE = 16384; // KB
+        private static final int DEFAULT_VRAM_SIZE = 8192; // KB
+        private static final int RAM_MULTIPLIER = 4;
 
         @Override
         public Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
@@ -90,8 +90,8 @@ public class VideoDeviceSettings {
      */
     private static class LegacyVideoRAMSettings implements VideoRAMSettings {
 
-        private final static int BASE_RAM_SIZE = 65536; // KB
-        private final static int VRAM_SIZE = 32768; // KB
+        private static final int BASE_RAM_SIZE = 65536; // KB
+        private static final int VRAM_SIZE = 32768; // KB
 
         @Override
         public Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {

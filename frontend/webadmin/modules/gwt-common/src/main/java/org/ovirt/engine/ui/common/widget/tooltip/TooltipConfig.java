@@ -26,13 +26,13 @@ public class TooltipConfig {
         }
     }
 
-    public final static String TEMPLATE = "<div class=\"tooltip\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\"></div></div>"; //$NON-NLS-1$
-    public final static boolean IS_ANIMATED = true;
-    public final static boolean IS_HTML = true;
-    public final static Placement PLACEMENT = Placement.TOP;
-    public final static Trigger TRIGGER = Trigger.HOVER;
-    public final static String CONTAINER = "body"; //$NON-NLS-1$
-    public final static int HIDE_DELAY_MS = 0;
-    public final static int SHOW_DELAY_MS = 500;
+    public static final String TEMPLATE = "<div class=\"tooltip\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\"></div></div>"; //$NON-NLS-1$
+    public static final boolean IS_ANIMATED = true;
+    public static final boolean IS_HTML = true;
+    public static final Placement PLACEMENT = Placement.TOP;
+    public static final Trigger TRIGGER = Trigger.HOVER;
+    public static final String CONTAINER = "body"; //$NON-NLS-1$
+    public static final int HIDE_DELAY_MS = 0;
+    public static final int SHOW_DELAY_MS = 500;
 
 }

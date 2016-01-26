@@ -13,7 +13,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVolumeSnapshotEntity, GlusterVolumeSnapshotEntity> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public GlusterVolumeSnapshotStatusColumn() {
         super(new GlusterVolumeSnapshotStatusCell());

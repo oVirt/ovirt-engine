@@ -125,7 +125,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     private AbstractEntityModelTextColumn<DbUser> displayNameColumn;
     private PopupNativeKeyPressHandler nativeKeyPressHandler;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public AbstractPermissionsPopupView(EventBus eventBus) {
         super(eventBus);

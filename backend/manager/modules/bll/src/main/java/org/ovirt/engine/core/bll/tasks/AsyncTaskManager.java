@@ -492,7 +492,7 @@ public final class AsyncTaskManager {
      * get list of pools that have only cleared and old tasks (which don't exist
      * anymore in the manager):
      */
-    synchronized private void removeClearedAndOldTasks() {
+    private synchronized void removeClearedAndOldTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<>();
         Set<Guid> poolsOfClearedAndOldTasks = new HashSet<>();
         ConcurrentMap<Guid, SPMTask> activeTaskMap = new ConcurrentHashMap<>();

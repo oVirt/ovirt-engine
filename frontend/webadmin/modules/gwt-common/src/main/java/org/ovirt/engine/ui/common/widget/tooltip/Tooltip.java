@@ -99,7 +99,7 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
     private String tooltipArrowClassNames = "tooltip-arrow"; //$NON-NLS-1$
     private String tooltipInnerClassNames = "tooltip-inner"; //$NON-NLS-1$
 
-    private final static String DEFAULT_TEMPLATE = "<div class=\"{0}\"><div class=\"{1}\"></div><div class=\"{2}\"></div></div>"; //$NON-NLS-1$
+    private static final String DEFAULT_TEMPLATE = "<div class=\"{0}\"><div class=\"{1}\"></div><div class=\"{2}\"></div></div>"; //$NON-NLS-1$
     private String alternateTemplate = null;
 
     private Widget widget;

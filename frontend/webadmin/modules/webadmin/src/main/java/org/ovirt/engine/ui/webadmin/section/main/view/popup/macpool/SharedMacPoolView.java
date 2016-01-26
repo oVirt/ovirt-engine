@@ -40,8 +40,8 @@ public class SharedMacPoolView extends Composite {
     private final MainTableResources tableResources;
     private final SplitLayoutPanel rootPanel;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SharedMacPoolView(final SharedMacPoolModelProvider sharedMacPoolModelProvider,

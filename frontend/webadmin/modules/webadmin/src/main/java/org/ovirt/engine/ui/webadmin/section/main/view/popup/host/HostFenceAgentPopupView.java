@@ -38,7 +38,7 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
     private final Driver driver = GWT.create(Driver.class);
 
     @UiField

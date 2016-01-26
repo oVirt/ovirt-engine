@@ -17,7 +17,7 @@ public class DateMapper {
     private static final Logger log = LoggerFactory.getLogger(DateMapper.class);
     protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed.";
 
-    private volatile static DatatypeFactory datatypeFactory;
+    private static volatile DatatypeFactory datatypeFactory;
 
     /**
      * Class-level synchronization to avoid potential thread-safety issues

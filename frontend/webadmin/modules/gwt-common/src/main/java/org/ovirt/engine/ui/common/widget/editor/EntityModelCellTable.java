@@ -74,7 +74,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      */
     public static final int SELECTION_COLUMN_INDEX = 0;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final CellTableValidation style;
     private final HasDataListModelEditorAdapter<M, EntityModel> editorAdapter;

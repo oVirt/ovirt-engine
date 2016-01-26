@@ -33,7 +33,7 @@ import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 @Logged(executionLevel = LogLevel.TRACE, errorLevel = LogLevel.WARN)
 public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> extends VdcCommandBase {
 
-    private final static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private static final String QuerySuffix = "Query";
 
     // get correct return value type

@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 public class RolePermissionsRemoveConfirmationPopupView extends RemoveConfirmationPopupView implements
     RolePermissionsRemoveConfirmationPopupPresenterWidget.ViewDef {
 
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     /**
      * Constructor.

@@ -133,8 +133,8 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @UiField
     Style style;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Inject

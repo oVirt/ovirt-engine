@@ -61,8 +61,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel<Void>> modelProvider, EventBus eventBus) {

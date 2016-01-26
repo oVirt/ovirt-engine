@@ -23,7 +23,7 @@ public class SubTabHostVmPresenter
     extends AbstractSubTabHostPresenter<HostVmListModel, SubTabHostVmPresenter.ViewDef,
         SubTabHostVmPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostVmSubTabPlace)

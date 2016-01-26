@@ -38,7 +38,7 @@ public class VmNetworkStatisticsDaoImpl extends NetworkStatisticsDaoImpl<VmNetwo
 
     public static class VmNetworkStatisticsRowMapper extends NetworkStatisticsRowMapper<VmNetworkStatistics> {
 
-        protected final static VmNetworkStatisticsRowMapper INSTANCE = new VmNetworkStatisticsRowMapper();
+        protected static final VmNetworkStatisticsRowMapper INSTANCE = new VmNetworkStatisticsRowMapper();
 
         @Override
         protected VmNetworkStatistics createEntity() {

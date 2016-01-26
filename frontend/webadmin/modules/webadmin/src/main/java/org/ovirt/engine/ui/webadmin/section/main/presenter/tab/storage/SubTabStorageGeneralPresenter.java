@@ -22,7 +22,7 @@ public class SubTabStorageGeneralPresenter
     extends AbstractSubTabStoragePresenter<StorageGeneralModel, SubTabStorageGeneralPresenter.ViewDef,
         SubTabStorageGeneralPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageGeneralSubTabPlace)

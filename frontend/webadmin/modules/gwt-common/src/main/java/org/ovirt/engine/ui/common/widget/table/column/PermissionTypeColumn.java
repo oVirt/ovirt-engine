@@ -16,8 +16,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class PermissionTypeColumn extends AbstractImageResourceColumn<Permission> {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PermissionTypeColumn() {
         makeSortable(new Comparator<Permission>() {

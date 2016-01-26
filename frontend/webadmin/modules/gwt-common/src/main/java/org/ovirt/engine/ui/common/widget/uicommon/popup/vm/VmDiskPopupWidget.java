@@ -206,9 +206,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @Ignore
     AbstractStorageView storageView;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    @UiField(provided=true)
-    final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    @UiField(provided = true)
+    static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

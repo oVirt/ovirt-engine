@@ -9,7 +9,7 @@ import com.google.inject.Inject;
 
 public class VmDiskRemovePopupView extends AbstractDiskRemoveConfirmationPopupView implements VmDiskRemovePopupPresenterWidget.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public VmDiskRemovePopupView(EventBus eventBus) {

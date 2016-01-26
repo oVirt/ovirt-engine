@@ -40,7 +40,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     @Ignore
     StringValueLabel isStateless = new StringValueLabel();
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

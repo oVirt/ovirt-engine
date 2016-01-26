@@ -54,7 +54,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private String elementId = DOM.createUniqueId();
 

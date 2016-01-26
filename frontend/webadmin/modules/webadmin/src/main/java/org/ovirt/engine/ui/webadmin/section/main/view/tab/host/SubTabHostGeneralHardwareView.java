@@ -40,7 +40,7 @@ public class SubTabHostGeneralHardwareView
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     StringValueLabel hardwareManufacturer = new StringValueLabel();
     StringValueLabel hardwareProductName = new StringValueLabel();

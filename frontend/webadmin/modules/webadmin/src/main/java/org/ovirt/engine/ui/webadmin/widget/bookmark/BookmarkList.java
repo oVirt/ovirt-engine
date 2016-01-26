@@ -40,7 +40,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     @UiField
     ScrollPanel scrollPanel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public BookmarkList(BookmarkModelProvider modelProvider) {
         super(modelProvider);

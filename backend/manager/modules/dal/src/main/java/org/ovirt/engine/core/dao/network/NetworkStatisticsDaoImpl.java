@@ -48,7 +48,7 @@ public abstract class NetworkStatisticsDaoImpl<T extends NetworkStatistics> exte
         }
     }
 
-    protected static abstract class NetworkStatisticsRowMapper<T extends NetworkStatistics> implements RowMapper<T> {
+    protected abstract static class NetworkStatisticsRowMapper<T extends NetworkStatistics> implements RowMapper<T> {
 
         protected abstract T createEntity();
 

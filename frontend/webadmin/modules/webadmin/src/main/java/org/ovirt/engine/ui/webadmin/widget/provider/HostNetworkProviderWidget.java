@@ -43,8 +43,8 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField(provided = true)
     @WithElementId("networkProvider")

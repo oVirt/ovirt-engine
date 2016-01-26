@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleDialogPanel extends AbstractDialogPanel {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     interface WidgetUiBinder extends UiBinder<Widget, SimpleDialogPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

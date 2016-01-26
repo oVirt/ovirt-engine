@@ -27,8 +27,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VM, Disk> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public VMsTree() {
         super();

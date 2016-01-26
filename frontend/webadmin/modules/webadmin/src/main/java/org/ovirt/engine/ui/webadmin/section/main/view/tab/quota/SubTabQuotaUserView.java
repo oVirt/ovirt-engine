@@ -26,7 +26,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabQuotaUserView(SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> modelProvider) {

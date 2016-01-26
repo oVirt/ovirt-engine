@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Image;
 
 public class InterfaceStatusImage extends Image {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public InterfaceStatusImage(InterfaceStatus status) {
         super();

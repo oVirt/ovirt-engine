@@ -26,9 +26,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendSnapshotResourceTest
     extends AbstractBackendSubResourceTest<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot, BackendSnapshotResource> {
 
-    private final static Guid VM_ID = GUIDS[0];
-    private final static Guid SNAPSHOT_ID = GUIDS[1];
-    private final static Guid JOB_ID = GUIDS[2];
+    private static final Guid VM_ID = GUIDS[0];
+    private static final Guid SNAPSHOT_ID = GUIDS[1];
+    private static final Guid JOB_ID = GUIDS[2];
     protected static final String BASE_HREF = "vms/" + VM_ID + "/snapshots/" + SNAPSHOT_ID;
 
     public BackendSnapshotResourceTest() {

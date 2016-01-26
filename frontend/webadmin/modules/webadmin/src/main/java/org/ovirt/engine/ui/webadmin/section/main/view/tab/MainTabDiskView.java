@@ -68,7 +68,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     @Inject
     Provider<CommonModel> commonModelProvider;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider) {

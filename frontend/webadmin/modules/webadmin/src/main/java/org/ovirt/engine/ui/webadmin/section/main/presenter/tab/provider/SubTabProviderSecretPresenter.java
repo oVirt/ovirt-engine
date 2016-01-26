@@ -24,7 +24,7 @@ public class SubTabProviderSecretPresenter
     extends AbstractSubTabProviderPresenter<ProviderSecretListModel, SubTabProviderSecretPresenter.ViewDef,
         SubTabProviderSecretPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.providerSecretSubTabPlace)

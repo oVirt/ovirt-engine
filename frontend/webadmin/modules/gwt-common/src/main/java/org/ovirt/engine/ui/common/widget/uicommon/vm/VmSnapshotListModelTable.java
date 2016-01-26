@@ -50,8 +50,8 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     @UiField
     SimplePanel snapshotInfoContainer;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final IEventListener<EventArgs> entityChangedEvent = new IEventListener<EventArgs>() {
         @Override

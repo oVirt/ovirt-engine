@@ -187,10 +187,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 @Singleton
 public class DbFacade {
 
-    private final static Logger log = LoggerFactory.getLogger(DbFacade.class);
+    private static final Logger log = LoggerFactory.getLogger(DbFacade.class);
 
     @SuppressWarnings("serial")
-    private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>() {
+    private static final Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>() {
         {
             put(StoragePool.class, StoragePoolDao.class);
             put(StoragePoolIsoMap.class, StoragePoolIsoMapDao.class);

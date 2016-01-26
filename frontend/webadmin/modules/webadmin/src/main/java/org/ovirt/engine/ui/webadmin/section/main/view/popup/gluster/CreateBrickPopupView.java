@@ -121,10 +121,10 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     @Ignore
     Label messageLabel;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static UIMessages messages = ConstantsManager.getInstance().getMessages();
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationMessages applicationMessages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationMessages applicationMessages = AssetProvider.getMessages();
 
     private final Driver driver = GWT.create(Driver.class);
 

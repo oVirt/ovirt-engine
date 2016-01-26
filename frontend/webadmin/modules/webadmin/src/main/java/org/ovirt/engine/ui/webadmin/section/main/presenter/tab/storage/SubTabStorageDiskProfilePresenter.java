@@ -23,7 +23,7 @@ public class SubTabStorageDiskProfilePresenter
     extends AbstractSubTabStoragePresenter<DiskProfileListModel, SubTabStorageDiskProfilePresenter.ViewDef,
         SubTabStorageDiskProfilePresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageDiskProfileSubTabPlace)

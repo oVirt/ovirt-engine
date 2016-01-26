@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
-final public class InterfaceByNetworkNamePredicate implements Predicate<VdsNetworkInterface> {
+public final class InterfaceByNetworkNamePredicate implements Predicate<VdsNetworkInterface> {
     final String hostManagementNetworkName;
 
     public InterfaceByNetworkNamePredicate(String hostManagementNetworkName) {

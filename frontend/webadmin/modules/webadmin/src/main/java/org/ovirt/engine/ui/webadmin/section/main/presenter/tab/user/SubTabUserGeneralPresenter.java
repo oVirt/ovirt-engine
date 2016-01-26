@@ -22,7 +22,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabUserGeneralPresenter
     extends AbstractSubTabUserPresenter<UserGeneralModel, SubTabUserGeneralView, SubTabUserGeneralPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.userGeneralSubTabPlace)

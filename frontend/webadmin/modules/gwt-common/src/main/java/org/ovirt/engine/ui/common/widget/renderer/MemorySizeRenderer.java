@@ -6,7 +6,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 public class MemorySizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public String render(T sizeInMB) {

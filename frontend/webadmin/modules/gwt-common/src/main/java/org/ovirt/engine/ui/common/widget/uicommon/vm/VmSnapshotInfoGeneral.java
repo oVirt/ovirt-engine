@@ -11,8 +11,8 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 
 public class VmSnapshotInfoGeneral extends GeneralFormPanel {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final FormBuilder formBuilder;
 

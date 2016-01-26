@@ -23,7 +23,7 @@ public class SubTabVirtualMachinePermissionPresenter
     extends AbstractSubTabVirtualMachinePresenter<PermissionListModel<VM>,
         SubTabVirtualMachinePermissionPresenter.ViewDef, SubTabVirtualMachinePermissionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachinePermissionSubTabPlace)

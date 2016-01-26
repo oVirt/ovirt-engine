@@ -52,8 +52,8 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
 
     private ManagePolicyUnitModel model;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ManagePolicyUnitPopupView(EventBus eventBus) {

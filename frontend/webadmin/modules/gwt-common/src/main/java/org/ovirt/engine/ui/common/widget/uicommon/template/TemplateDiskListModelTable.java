@@ -21,7 +21,7 @@ import com.google.gwt.event.shared.EventBus;
 
 public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends AbstractModelBoundTableWidget<DiskImage, T> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public TemplateDiskListModelTable(
             SearchableTableModelProvider<DiskImage, T> modelProvider,

@@ -390,7 +390,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * The following method unify saving of image, it will be also saved with its storage
      * mapping.
      */
-    static public ImageStorageDomainMap saveImage(DiskImage diskImage) {
+    public static ImageStorageDomainMap saveImage(DiskImage diskImage) {
         DbFacade.getInstance().getImageDao().save(diskImage.getImage());
         ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(diskImage.getImageId(),
                 diskImage.getStorageIds()

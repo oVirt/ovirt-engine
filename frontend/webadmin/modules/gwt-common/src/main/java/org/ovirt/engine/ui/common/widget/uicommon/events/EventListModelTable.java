@@ -23,7 +23,7 @@ import com.google.gwt.event.shared.EventBus;
  */
 public class EventListModelTable<T extends EventListModel> extends AbstractModelBoundTableWidget<AuditLog, T> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public EventListModelTable(
             SearchableTableModelProvider<AuditLog, T> modelProvider,

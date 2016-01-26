@@ -31,7 +31,7 @@ public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     @UiField
     PushButton closeButton;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ErrorPopupView(EventBus eventBus) {

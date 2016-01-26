@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 
 public class ReplacementUtilsTest {
 
-    static private final String PROPERTY_NAME = "MY_SINGLE_ITEM_LIST";
-    static private final String PROPERTY_VALUE = "MY_SINGLE_ITEM_VALUE";
-    static private final String PROPERTY_COUNTER_NAME = "MY_SINGLE_ITEM_LIST_COUNTER";
+    private static final String PROPERTY_NAME = "MY_SINGLE_ITEM_LIST";
+    private static final String PROPERTY_VALUE = "MY_SINGLE_ITEM_VALUE";
+    private static final String PROPERTY_COUNTER_NAME = "MY_SINGLE_ITEM_LIST_COUNTER";
 
     @Test
     public void replaceWithSingleItem() {

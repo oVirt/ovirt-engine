@@ -16,8 +16,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainDiskResource extends BackendDiskResource {
 
-    final private String storageDomainId;
-    final private BackendStorageDomainDisksResource parent;
+    private final String storageDomainId;
+    private final BackendStorageDomainDisksResource parent;
 
     public static final String UNREGISTERED_CONSTRAINT_PARAMETER = "unregistered";
 

@@ -23,7 +23,7 @@ public class SubTabNetworkExternalSubnetPresenter
     extends AbstractSubTabNetworkPresenter<NetworkExternalSubnetListModel, SubTabNetworkExternalSubnetPresenter.ViewDef,
         SubTabNetworkExternalSubnetPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkExternalSubnetSubTabPlace)

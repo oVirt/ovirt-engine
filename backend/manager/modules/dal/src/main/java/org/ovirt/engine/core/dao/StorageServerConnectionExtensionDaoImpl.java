@@ -56,7 +56,7 @@ public class StorageServerConnectionExtensionDaoImpl extends DefaultGenericDao<S
     }
 
     private static class StorageServerConnectionExtensionRowMapper implements RowMapper<StorageServerConnectionExtension> {
-        public final static StorageServerConnectionExtensionRowMapper INSTANCE = new StorageServerConnectionExtensionRowMapper();
+        public static final StorageServerConnectionExtensionRowMapper INSTANCE = new StorageServerConnectionExtensionRowMapper();
 
         private StorageServerConnectionExtensionRowMapper() {
         }

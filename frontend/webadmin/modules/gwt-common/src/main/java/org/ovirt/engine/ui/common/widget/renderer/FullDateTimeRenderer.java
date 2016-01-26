@@ -13,7 +13,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
  */
 public class FullDateTimeRenderer extends AbstractRenderer<Date> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private DateTimeFormat formatPattern = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
 

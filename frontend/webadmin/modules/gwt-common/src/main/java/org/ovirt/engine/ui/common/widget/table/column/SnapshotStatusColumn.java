@@ -11,7 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SnapshotStatusColumn extends AbstractImageResourceColumn<Snapshot> {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(Snapshot snapshot) {

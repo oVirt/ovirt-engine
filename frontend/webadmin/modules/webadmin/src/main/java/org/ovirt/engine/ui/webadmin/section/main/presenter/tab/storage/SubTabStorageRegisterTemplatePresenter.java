@@ -23,7 +23,7 @@ public class SubTabStorageRegisterTemplatePresenter
     extends AbstractSubTabStoragePresenter<StorageRegisterTemplateListModel,
         SubTabStorageRegisterTemplatePresenter.ViewDef, SubTabStorageRegisterTemplatePresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageTemplateRegisterSubTabPlace)

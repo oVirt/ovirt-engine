@@ -187,8 +187,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Ignore
     public Label profilesLabel;
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public AbstractNetworkPopupView(EventBus eventBus) {

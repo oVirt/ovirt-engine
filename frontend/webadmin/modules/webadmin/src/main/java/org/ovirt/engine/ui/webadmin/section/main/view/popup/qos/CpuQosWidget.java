@@ -31,7 +31,7 @@ public class CpuQosWidget extends QosWidget<CpuQos, CpuQosParametersModel> {
     @WithElementId
     IntegerEntityModelTextBoxEditor cpuLimitEditor;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public CpuQosWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

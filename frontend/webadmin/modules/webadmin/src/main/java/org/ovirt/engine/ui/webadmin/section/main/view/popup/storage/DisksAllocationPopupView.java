@@ -60,8 +60,8 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
 
     DisksAllocationModel disksAllocationModel;
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Inject
     public DisksAllocationPopupView(EventBus eventBus) {

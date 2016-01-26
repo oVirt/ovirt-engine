@@ -20,8 +20,8 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SyntaxCheckerTest {
 
-    private final static String TAG_NAME = "'tag1'";
-    private final static String TAG_NAME_WITH_CHILDREN = "'tag1','all'";
+    private static final String TAG_NAME = "'tag1'";
+    private static final String TAG_NAME_WITH_CHILDREN = "'tag1','all'";
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(

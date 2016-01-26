@@ -15,9 +15,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends AbstractCell<T> {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb, String id) {

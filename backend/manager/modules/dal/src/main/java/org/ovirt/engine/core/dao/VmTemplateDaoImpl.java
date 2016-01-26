@@ -275,7 +275,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
                         .addValue("disk_profile_id", diskProfileId));
     }
 
-    private final static class VMTemplateRowMapper extends AbstractVmRowMapper<VmTemplate> {
+    private static final class VMTemplateRowMapper extends AbstractVmRowMapper<VmTemplate> {
         public static final VMTemplateRowMapper instance = new VMTemplateRowMapper();
 
         @Override

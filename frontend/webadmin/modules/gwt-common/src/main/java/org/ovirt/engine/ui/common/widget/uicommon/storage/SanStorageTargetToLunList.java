@@ -41,8 +41,8 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     protected int treeScrollPosition;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public SanStorageTargetToLunList(SanStorageModelBase model) {
         super(model);

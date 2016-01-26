@@ -39,7 +39,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider) {
         super(modelProvider, 3, 6);

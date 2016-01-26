@@ -32,7 +32,7 @@ public abstract class ProfileBaseDaoImpl<T extends ProfileBase> extends DefaultG
                 .addValue("id", guid);
     }
 
-    protected static abstract class ProfileBaseDaoFacadaeImplMapper<M extends ProfileBase> implements RowMapper<M> {
+    protected abstract static class ProfileBaseDaoFacadaeImplMapper<M extends ProfileBase> implements RowMapper<M> {
         @Override
         public M mapRow(ResultSet rs, int rowNum) throws SQLException {
             M entity = createProfileEntity(rs);

@@ -11,7 +11,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 public class VolumeCapacityRenderer<T extends Number> extends AbstractRenderer<T> {
 
-    private final static UIMessages messages = ConstantsManager.getInstance().getMessages();
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
     private final CommonApplicationConstants constants;
 
     public VolumeCapacityRenderer(CommonApplicationConstants constants) {

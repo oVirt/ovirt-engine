@@ -36,7 +36,7 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
 
     private boolean multiSelection;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public LunSelectionCell() {
     }

@@ -25,7 +25,7 @@ public class SubTabNetworkHostPresenter
     extends AbstractSubTabNetworkPresenter<NetworkHostListModel, SubTabNetworkHostPresenter.ViewDef,
         SubTabNetworkHostPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkHostSubTabPlace)

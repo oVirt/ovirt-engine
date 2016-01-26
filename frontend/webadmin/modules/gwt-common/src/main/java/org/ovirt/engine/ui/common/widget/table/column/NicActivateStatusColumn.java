@@ -15,9 +15,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class NicActivateStatusColumn<T> extends AbstractSafeHtmlColumn<T> {
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private ImageResource getImage(T object) {
         VmNetworkInterface vnic = null;

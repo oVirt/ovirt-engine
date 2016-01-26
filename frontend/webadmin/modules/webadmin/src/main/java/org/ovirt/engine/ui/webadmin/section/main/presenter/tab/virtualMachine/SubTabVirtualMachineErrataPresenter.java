@@ -38,7 +38,7 @@ public class SubTabVirtualMachineErrataPresenter
     extends AbstractSubTabVirtualMachinePresenter<VmErrataCountModel, SubTabVirtualMachineErrataPresenter.ViewDef,
         SubTabVirtualMachineErrataPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineErrataSubTabPlace)

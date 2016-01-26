@@ -23,7 +23,7 @@ public class SubTabStoragePermissionPresenter
     extends AbstractSubTabStoragePresenter<PermissionListModel<StorageDomain>, SubTabStoragePermissionPresenter.ViewDef,
         SubTabStoragePermissionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storagePermissionSubTabPlace)

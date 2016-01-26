@@ -10,7 +10,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Before;
 
-abstract public class NumberRangeValidationTestUtils<T extends NumberRangeValidation> {
+public abstract class NumberRangeValidationTestUtils<T extends NumberRangeValidation> {
 
     static final String ABOVE_MAX = "ABOVE_MAX"; //$NON-NLS-1$
     static final String BELLOW_MIN = "BELLOW_MIN"; //$NON-NLS-1$

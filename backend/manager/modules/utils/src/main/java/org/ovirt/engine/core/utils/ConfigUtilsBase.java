@@ -83,7 +83,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
     @Override
     public abstract <T> T getValue(ConfigValues configValue, String version);
 
-    public final static class EnumValue {
+    public static final class EnumValue {
         final Class<?> fieldType;
         final String defaultValue;
         final OptionBehaviourAttribute optionBehaviour;

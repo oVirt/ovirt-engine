@@ -92,7 +92,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     }
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     @WithElementId

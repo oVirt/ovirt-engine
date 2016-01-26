@@ -44,7 +44,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class HostValidatorTest {
 
-    private final static int HOST_NAME_SIZE = 20;
+    private static final int HOST_NAME_SIZE = 20;
     @Mock
     private DbFacade dbFacade;
 

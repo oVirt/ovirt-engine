@@ -10,7 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DiskImageStatusColumn extends AbstractImageResourceColumn<DiskImage> {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(DiskImage diskImage) {

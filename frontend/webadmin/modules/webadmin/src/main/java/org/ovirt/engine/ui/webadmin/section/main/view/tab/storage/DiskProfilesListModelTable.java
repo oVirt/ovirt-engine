@@ -50,7 +50,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
 
     private final DiskProfilePermissionModelProvider diskProfilePermissionModelProvider;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public DiskProfilesListModelTable(SearchableTableModelProvider<DiskProfile, DiskProfileListModel> modelProvider,
             DiskProfilePermissionModelProvider diskProfilePermissionModelProvider,

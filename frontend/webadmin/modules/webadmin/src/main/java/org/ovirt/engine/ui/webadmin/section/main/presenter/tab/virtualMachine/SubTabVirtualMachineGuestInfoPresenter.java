@@ -22,7 +22,7 @@ public class SubTabVirtualMachineGuestInfoPresenter
     extends AbstractSubTabVirtualMachinePresenter<VmGuestInfoModel, SubTabVirtualMachineGuestInfoPresenter.ViewDef,
         SubTabVirtualMachineGuestInfoPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VM> {
     }

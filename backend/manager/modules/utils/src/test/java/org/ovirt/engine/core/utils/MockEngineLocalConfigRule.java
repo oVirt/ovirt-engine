@@ -8,7 +8,7 @@ import org.junit.runner.Description;
 
 public class MockEngineLocalConfigRule extends TestWatcher {
 
-    static public class KeyValue {
+    public static class KeyValue {
         String key;
         String value;
 

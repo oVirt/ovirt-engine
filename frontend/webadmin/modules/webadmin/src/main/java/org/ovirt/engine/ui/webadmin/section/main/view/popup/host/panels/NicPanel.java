@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class NicPanel<T extends NetworkInterfaceModel> extends NetworkItemPanel<T> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     public NicPanel(T item, NetworkPanelsStyle style) {
         this(item, style, true);

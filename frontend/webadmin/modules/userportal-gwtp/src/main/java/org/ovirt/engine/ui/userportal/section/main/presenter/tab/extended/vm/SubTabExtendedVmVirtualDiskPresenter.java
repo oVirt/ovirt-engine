@@ -21,7 +21,7 @@ public class SubTabExtendedVmVirtualDiskPresenter
         extends AbstractSubTabExtendedVmPresenter<VmDiskListModel, SubTabExtendedVmVirtualDiskPresenter.ViewDef,
             SubTabExtendedVmVirtualDiskPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineVirtualDiskSubTabPlace)

@@ -62,8 +62,8 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     @UiField
     Tree vmTree;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final VmSingleSelectionModel vmSelectionModel = new VmSingleSelectionModel();
 

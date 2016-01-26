@@ -15,7 +15,7 @@ public class VmBalloonInfo implements Serializable {
      * works properly see: VdsUpdateRuntimeInfo.proceedBalloonCheck()
      * rhbz#1120197
      */
-    transient private Long balloonLastMemory;
+    private transient Long balloonLastMemory;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

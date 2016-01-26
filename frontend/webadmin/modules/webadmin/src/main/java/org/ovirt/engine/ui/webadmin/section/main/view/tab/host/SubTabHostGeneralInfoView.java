@@ -51,7 +51,7 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Path("IScsiInitiatorName")
     StringValueLabel iScsiInitiatorName = new StringValueLabel();

@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class FirstMatchSimpleFilter {
 
     private static final Pattern PATTERN_BLANK = Pattern.compile("\\s*");
-    static final private Pattern PATTERN_PARSE = Pattern.compile(
+    private static final Pattern PATTERN_PARSE = Pattern.compile(
             "\\s*" +
             "((?<include>include)|(?<exclude>exclude))" +
             ":" +

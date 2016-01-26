@@ -40,7 +40,7 @@ public class MainTabBasicView extends AbstractView implements MainTabBasicPresen
 
     private SimpleRefreshManager refreshManager;
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @Inject
     public MainTabBasicView(

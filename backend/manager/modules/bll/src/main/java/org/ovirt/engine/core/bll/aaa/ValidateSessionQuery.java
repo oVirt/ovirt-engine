@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * This query validates the session, returning the user which is logged in this session.
  */
 public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
-    private final static Logger log = LoggerFactory.getLogger(ValidateSessionQuery.class);
+    private static final Logger log = LoggerFactory.getLogger(ValidateSessionQuery.class);
 
     public ValidateSessionQuery(P parameters) {
         super(parameters);

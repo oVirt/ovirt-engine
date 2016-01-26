@@ -18,10 +18,10 @@ import com.google.gwt.user.client.ui.HTML;
 
 public class InterfaceLabel extends Composite {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
-    private final static SafeHtml labelImage =
+    private static final SafeHtml labelImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.tagImage()).getHTML());
 
     private final HTML label;

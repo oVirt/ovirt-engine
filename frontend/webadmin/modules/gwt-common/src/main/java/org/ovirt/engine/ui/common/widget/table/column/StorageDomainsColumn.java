@@ -11,7 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements ColumnWithElementId {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public String getValue(Disk object) {

@@ -33,13 +33,13 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private final FlexTable contents = new FlexTable();
     private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<>();
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
-    private final static String BACKGROUND_COLOR = "#333333";//$NON-NLS-1$
-    private final static String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
-    private final static String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
+    private static final String BACKGROUND_COLOR = "#333333";//$NON-NLS-1$
+    private static final String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
+    private static final String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
 
     SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
             .getHTML());

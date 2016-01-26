@@ -54,7 +54,7 @@ public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfil
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public DiskProfilePopupView(EventBus eventBus) {

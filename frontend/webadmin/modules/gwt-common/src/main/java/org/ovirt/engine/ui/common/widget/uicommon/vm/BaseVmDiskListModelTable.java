@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 
 public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends AbstractModelBoundTableWidget<Disk, T> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private DisksViewRadioGroup disksViewRadioGroup;
 
     private static AbstractTextColumn<Disk> aliasColumn;

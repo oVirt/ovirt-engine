@@ -18,7 +18,7 @@ public class InfoIcon extends FocusPanel {
     private final WidgetTooltip tooltip;
     private boolean useItalic = true;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     @UiConstructor
     public InfoIcon(SafeHtml text) {

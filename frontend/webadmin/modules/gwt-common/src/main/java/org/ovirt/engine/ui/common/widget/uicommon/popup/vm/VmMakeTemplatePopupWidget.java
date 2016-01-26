@@ -126,8 +126,8 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmMakeTemplatePopupWidget() {
         initListBoxEditors();

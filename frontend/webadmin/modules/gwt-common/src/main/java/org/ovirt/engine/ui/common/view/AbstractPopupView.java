@@ -18,7 +18,7 @@ import com.gwtplatform.mvp.client.PopupViewImpl;
  */
 public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewImpl implements AbstractPopupPresenterWidget.ViewDef {
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public AbstractPopupView(EventBus eventBus) {
         super(eventBus);

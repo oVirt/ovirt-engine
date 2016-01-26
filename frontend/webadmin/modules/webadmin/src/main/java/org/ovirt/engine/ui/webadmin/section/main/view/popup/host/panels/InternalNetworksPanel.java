@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InternalNetworksPanel extends UnassignedNetworksPanel<NetworkPanel> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final VerticalPanel requiredPanel = new VerticalPanel();
     private final VerticalPanel nonRequiredPanel = new VerticalPanel();

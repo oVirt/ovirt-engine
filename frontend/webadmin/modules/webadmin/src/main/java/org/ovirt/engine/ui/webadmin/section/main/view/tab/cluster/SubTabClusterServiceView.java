@@ -72,7 +72,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabClusterServiceView(final DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider) {

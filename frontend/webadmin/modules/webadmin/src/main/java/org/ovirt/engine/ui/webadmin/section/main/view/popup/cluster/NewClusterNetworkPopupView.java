@@ -9,7 +9,7 @@ import com.google.inject.Inject;
 
 public class NewClusterNetworkPopupView extends NewNetworkPopupView implements NewClusterNetworkPopupPresenterWidget.ViewDef {
 
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public NewClusterNetworkPopupView(EventBus eventBus) {

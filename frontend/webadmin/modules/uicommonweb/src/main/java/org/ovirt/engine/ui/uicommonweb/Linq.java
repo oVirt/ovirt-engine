@@ -99,7 +99,7 @@ public final class Linq {
         }
     }
 
-    public final static class IdentifiableComparator<T extends Identifiable> implements Comparator<T>, Serializable {
+    public static final class IdentifiableComparator<T extends Identifiable> implements Comparator<T>, Serializable {
 
         private static final long serialVersionUID = 1698501567658288106L;
 
@@ -1154,7 +1154,7 @@ public final class Linq {
         }
     }
 
-    public final static class RoleNameComparer implements Comparator<Role>, Serializable {
+    public static final class RoleNameComparer implements Comparator<Role>, Serializable {
         private static final long serialVersionUID = -8611835505533367419L;
 
         @Override
@@ -1165,7 +1165,7 @@ public final class Linq {
 
 
 
-    public final static class VmInterfaceComparer implements Comparator<VmNetworkInterface>, Serializable {
+    public static final class VmInterfaceComparer implements Comparator<VmNetworkInterface>, Serializable {
         LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1174,7 +1174,7 @@ public final class Linq {
         }
     }
 
-    public final static class InterfaceComparator implements Comparator<VdsNetworkInterface>, Serializable {
+    public static final class InterfaceComparator implements Comparator<VdsNetworkInterface>, Serializable {
 
         private static final long serialVersionUID = -6806871048546270786L;
         LexoNumericComparator lexoNumeric = new LexoNumericComparator();
@@ -1186,7 +1186,7 @@ public final class Linq {
 
     }
 
-    public final static class StorageDomainComparator implements Comparator<StorageDomain>, Serializable {
+    public static final class StorageDomainComparator implements Comparator<StorageDomain>, Serializable {
         private static final long serialVersionUID = 990203400356561587L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
@@ -1196,7 +1196,7 @@ public final class Linq {
         }
     }
 
-    public final static class StorageDomainByPoolNameComparator implements Comparator<StorageDomain>, Serializable {
+    public static final class StorageDomainByPoolNameComparator implements Comparator<StorageDomain>, Serializable {
         private static final long serialVersionUID = 990203400356561666L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
@@ -1206,7 +1206,7 @@ public final class Linq {
         }
     }
 
-    public final static class ClusterComparator implements Comparator<Cluster>, Serializable {
+    public static final class ClusterComparator implements Comparator<Cluster>, Serializable {
         private static final long serialVersionUID = 990203400356561587L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
@@ -1216,7 +1216,7 @@ public final class Linq {
         }
     }
 
-    public final static class NetworkInClusterComparator implements Comparator<Network>, Serializable {
+    public static final class NetworkInClusterComparator implements Comparator<Network>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
@@ -1235,7 +1235,7 @@ public final class Linq {
         }
     }
 
-    public final static class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
+    public static final class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
@@ -1254,7 +1254,7 @@ public final class Linq {
         }
     }
 
-    public final static class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel>, Serializable {
+    public static final class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel>, Serializable {
 
         private static final long serialVersionUID = -8571840939180248617L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
@@ -1272,7 +1272,7 @@ public final class Linq {
         }
     }
 
-    public final static class ExternalNetworkComparator implements Comparator<ExternalNetwork>, Serializable {
+    public static final class ExternalNetworkComparator implements Comparator<ExternalNetwork>, Serializable {
         private static final long serialVersionUID = 4987035011384708563L;
         private final NameableComparator comparator = new NameableComparator();
 
@@ -1282,7 +1282,7 @@ public final class Linq {
         };
     }
 
-    public final static class ProviderComparator implements Comparator<Provider>, Serializable {
+    public static final class ProviderComparator implements Comparator<Provider>, Serializable {
         private static final long serialVersionUID = 627759940118704128L;
 
         @Override
@@ -1291,7 +1291,7 @@ public final class Linq {
         }
     }
 
-    public final static class VmComparator implements Comparator<VM>, Serializable {
+    public static final class VmComparator implements Comparator<VM>, Serializable {
 
         @Override
         public int compare(VM v1, VM v2) {
@@ -1299,7 +1299,7 @@ public final class Linq {
         }
     }
 
-    public final static class VmTemplateComparator implements Comparator<VmTemplate>, Serializable {
+    public static final class VmTemplateComparator implements Comparator<VmTemplate>, Serializable {
 
         @Override
         public int compare(VmTemplate t1, VmTemplate t2) {
@@ -1307,7 +1307,7 @@ public final class Linq {
         }
     }
 
-    public final static <T extends Disk> Collection<T> filterNonSnapableDisks(
+    public static final <T extends Disk> Collection<T> filterNonSnapableDisks(
             Collection<Disk> source) {
         return (Collection<T>) where(source, new IPredicate<Disk>() {
             @Override
@@ -1317,7 +1317,7 @@ public final class Linq {
         });
     }
 
-    public final static <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
+    public static final <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
             Collection<AuditLog> source, final AuditLogSeverity severity) {
         return (Collection<T>) where(source, new IPredicate<AuditLog>() {
             @Override
@@ -1327,7 +1327,7 @@ public final class Linq {
         });
     }
 
-    public final static <T extends Disk> Collection<T> filterDisksByStorageType(
+    public static final <T extends Disk> Collection<T> filterDisksByStorageType(
             Collection<Disk> source, final DiskStorageType diskStorageType) {
         return (Collection<T>) where(source, new IPredicate<Disk>() {
             @Override
@@ -1337,7 +1337,7 @@ public final class Linq {
         });
     }
 
-    public final static Collection<Provider> filterProvidersByProvidedType(Collection<Provider> source,
+    public static final Collection<Provider> filterProvidersByProvidedType(Collection<Provider> source,
             final VdcObjectType type) {
         return where(source, new IPredicate<Provider>() {
 
@@ -1348,7 +1348,7 @@ public final class Linq {
         });
     }
 
-    public final static class ProviderTypeComparator implements Comparator<ProviderType>, Serializable {
+    public static final class ProviderTypeComparator implements Comparator<ProviderType>, Serializable {
         private static final long serialVersionUID = -7917198421355959306L;
 
         @Override
@@ -1361,7 +1361,7 @@ public final class Linq {
     /**
      * pre-defined cluster policies should be ordered first, then order lexicographically
      */
-    public final static class ClusterPolicyComparator implements Comparator<ClusterPolicy>, Serializable {
+    public static final class ClusterPolicyComparator implements Comparator<ClusterPolicy>, Serializable {
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1380,7 +1380,7 @@ public final class Linq {
      * third policyUnitType
      * forth name (lexicography)
      */
-    public final static class PolicyUnitComparator implements Comparator<PolicyUnit>, Serializable {
+    public static final class PolicyUnitComparator implements Comparator<PolicyUnit>, Serializable {
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1405,7 +1405,7 @@ public final class Linq {
         }
     }
 
-    public final static class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
+    public static final class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
 
         private static final long serialVersionUID = 3603082617231645079L;
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
@@ -1422,7 +1422,7 @@ public final class Linq {
         }
     }
 
-    public final static class ImportEntityComparator<T> implements Comparator<ImportEntityData<T>>, Serializable {
+    public static final class ImportEntityComparator<T> implements Comparator<ImportEntityData<T>>, Serializable {
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1431,14 +1431,14 @@ public final class Linq {
         }
     }
 
-    public final static class SecretComparator implements Comparator<LibvirtSecret>, Serializable {
+    public static final class SecretComparator implements Comparator<LibvirtSecret>, Serializable {
         @Override
         public int compare(LibvirtSecret s1, LibvirtSecret s2) {
             return LexoNumericComparator.comp(s1.getId().toString(), s2.getId().toString());
         }
     }
 
-    public final static Collection<StorageDomain> filterStorageDomainsByStorageType(
+    public static final Collection<StorageDomain> filterStorageDomainsByStorageType(
             Collection<StorageDomain> source, final StorageType storageType) {
         return where(source, new IPredicate<StorageDomain>() {
             @Override
@@ -1448,7 +1448,7 @@ public final class Linq {
         });
     }
 
-    public final static Collection<StorageDomain> filterStorageDomainsByStorageDomainType(
+    public static final Collection<StorageDomain> filterStorageDomainsByStorageDomainType(
             Collection<StorageDomain> source, final StorageDomainType storageDomainType) {
         return where(source, new IPredicate<StorageDomain>() {
             @Override
@@ -1458,7 +1458,7 @@ public final class Linq {
         });
     }
 
-    public final static Collection<StorageDomain> filterStorageDomainsByStorageStatus(
+    public static final Collection<StorageDomain> filterStorageDomainsByStorageStatus(
             Collection<StorageDomain> source, final StorageDomainStatus storageDomainStatus) {
         return where(source, new IPredicate<StorageDomain>() {
             @Override
@@ -1468,7 +1468,7 @@ public final class Linq {
         });
     }
 
-    public final static Collection<StorageDomain> filterStorageDomainById(
+    public static final Collection<StorageDomain> filterStorageDomainById(
             Collection<StorageDomain> source, final Guid id) {
         return where(source, new IPredicate<StorageDomain>() {
             @Override

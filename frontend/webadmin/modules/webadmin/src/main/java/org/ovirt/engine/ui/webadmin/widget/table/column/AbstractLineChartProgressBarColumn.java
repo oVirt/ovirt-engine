@@ -29,7 +29,7 @@ import com.google.gwt.safehtml.shared.UriUtils;
  */
 public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafeHtmlColumn<T> {
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     private static final int stepMax = 15;
 

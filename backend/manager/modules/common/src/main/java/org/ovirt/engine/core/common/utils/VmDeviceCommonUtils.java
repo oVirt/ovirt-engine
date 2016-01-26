@@ -24,9 +24,9 @@ import org.ovirt.engine.core.compat.Version;
 
 public class VmDeviceCommonUtils {
 
-    final static String NETWORK_CHAR = "N";
-    final static String CDROM_CHAR = "D";
-    final static String DRIVE_CHAR = "C";
+    static final String NETWORK_CHAR = "N";
+    static final String CDROM_CHAR = "D";
+    static final String DRIVE_CHAR = "C";
 
     public static boolean isNetwork(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE;

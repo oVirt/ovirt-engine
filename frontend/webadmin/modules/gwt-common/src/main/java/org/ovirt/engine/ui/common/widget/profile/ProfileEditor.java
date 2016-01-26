@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 
 public class ProfileEditor extends ListModelTypeAheadListBoxEditor<VnicProfileView> {
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public ProfileEditor() {
         super(

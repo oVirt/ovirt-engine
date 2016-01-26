@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.webadmin.widget.storage.TemplatesTree;
 public class SubTabQuotaTemplateView extends AbstractSubTabTreeView<TemplatesTree<QuotaTemplateListModel>, Quota, VmTemplate, QuotaListModel, QuotaTemplateListModel>
         implements SubTabQuotaTemplatePresenter.ViewDef {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabQuotaTemplateView(SearchableDetailModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel> modelProvider) {

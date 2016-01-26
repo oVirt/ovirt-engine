@@ -58,8 +58,8 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public ManualFenceConfirmationPopupView(EventBus eventBus) {

@@ -23,7 +23,7 @@ public class SubTabClusterPermissionPresenter
     extends AbstractSubTabClusterPresenter<PermissionListModel<Cluster>, SubTabClusterPermissionPresenter.ViewDef,
         SubTabClusterPermissionPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterPermissionSubTabPlace)

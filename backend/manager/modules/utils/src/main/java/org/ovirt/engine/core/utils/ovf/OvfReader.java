@@ -56,7 +56,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public abstract class OvfReader implements IOvfBuilder {
-    private final static Logger log = LoggerFactory.getLogger(OvfReader.class);
+    private static final Logger log = LoggerFactory.getLogger(OvfReader.class);
 
     protected OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     protected ArrayList<DiskImage> _images;

@@ -48,7 +48,7 @@ public class AssignedVNumaNodesPanel extends Composite {
 
     private final DragTargetScrollPanel scrollPanel;
 
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     @Inject
     public AssignedVNumaNodesPanel(CollapsiblePanelView collapsiblePanel,

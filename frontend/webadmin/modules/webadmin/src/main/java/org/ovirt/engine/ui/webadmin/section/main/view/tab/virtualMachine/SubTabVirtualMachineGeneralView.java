@@ -32,7 +32,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @UiField(provided = true)
     @WithElementId

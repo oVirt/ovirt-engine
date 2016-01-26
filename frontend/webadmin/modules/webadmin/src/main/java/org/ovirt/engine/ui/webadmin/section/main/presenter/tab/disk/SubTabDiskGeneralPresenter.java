@@ -22,7 +22,7 @@ public class SubTabDiskGeneralPresenter
     extends AbstractSubTabDiskPresenter<DiskGeneralModel, SubTabDiskGeneralPresenter.ViewDef,
         SubTabDiskGeneralPresenter.ProxyDef> {
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.diskGeneralSubTabPlace)

@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.ValueLabel;
 
 public class ResiliencePolicyLabel extends ValueLabel<MigrateOnErrorOptions> {
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public ResiliencePolicyLabel() {
         super(new AbstractRenderer<MigrateOnErrorOptions>() {

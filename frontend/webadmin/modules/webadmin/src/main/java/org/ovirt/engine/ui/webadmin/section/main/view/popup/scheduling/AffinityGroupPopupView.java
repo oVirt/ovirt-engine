@@ -66,8 +66,8 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     @Ignore
     protected KeyValueWidget<VmsSelectionModel> addRemoveVmWidget;
 
-    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public AffinityGroupPopupView(EventBus eventBus) {

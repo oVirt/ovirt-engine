@@ -39,7 +39,7 @@ public class MacPoolWidget extends AbstractModelBoundPopupWidget<MacPoolModel> {
     @WithElementId
     public MacRangeWidget macRanges;
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public MacPoolWidget() {
         allowDuplicates = new EntityModelCheckBoxEditor(Align.RIGHT);

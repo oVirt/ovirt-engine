@@ -30,7 +30,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
     private static final String PROPERTY_NAME = "PropertyName"; //$NON-NLS-1$
     private static final String PROPERTY_VALUE = "PropertyValue"; //$NON-NLS-1$
 
-    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabHostHookView(SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> modelProvider) {
