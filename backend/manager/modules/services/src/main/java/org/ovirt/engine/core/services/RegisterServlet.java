@@ -53,8 +53,8 @@ public class RegisterServlet extends HttpServlet {
         );
 
         try (PrintWriter out = response.getWriter()) {
-            response.setContentType(PKIResources.Resource.CACertificate.getContentType(PKIResources.Format.X509_PEM_CA));
-            out.print(PKIResources.Resource.CACertificate.toString(PKIResources.Format.X509_PEM_CA));
+            response.setContentType(PKIResources.getCaCertificate().getContentType(PKIResources.Format.X509_PEM_CA));
+            out.print(PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM_CA));
         }
     }
 
@@ -67,8 +67,8 @@ public class RegisterServlet extends HttpServlet {
         );
 
         try (PrintWriter out = response.getWriter()) {
-            response.setContentType(PKIResources.Resource.EngineCertificate.getContentType(PKIResources.Format.OPENSSH_PUBKEY));
-            out.print(PKIResources.Resource.EngineCertificate.toString(PKIResources.Format.OPENSSH_PUBKEY));
+            response.setContentType(PKIResources.getEngineCertificate().getContentType(PKIResources.Format.OPENSSH_PUBKEY));
+            out.print(PKIResources.getEngineCertificate().toString(PKIResources.Format.OPENSSH_PUBKEY));
         }
     }
 
