@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -32,7 +33,7 @@ public class CpuProfileHelper {
             return assignFirstCpuProfile(vmBase);
         }
 
-        Optional<CpuProfile> authorizedCpuProfile = getCpuProfileDao().getAllForCluster(vmBase.getClusterId(), userId, true).stream()
+        Optional<CpuProfile> authorizedCpuProfile = getCpuProfileDao().getAllForCluster(vmBase.getClusterId(), userId, true, ActionGroup.ASSIGN_CPU_PROFILE).stream()
                     .filter(
                             cp ->
                                     cp.getId().equals(vmBase.getCpuProfileId())

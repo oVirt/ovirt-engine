@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
@@ -138,13 +139,13 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetFilteredByPermissions() {
-        checkResults(dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI, PRIVILEGED_USER_ID, true));
+        checkResults(dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI, PRIVILEGED_USER_ID, true, ActionGroup.ASSIGN_CPU_PROFILE));
     }
 
     @Test
     public void testGetFilteredByPermissionsForUnprivilegedUser() {
         List<CpuProfile> result =
-                dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI, UNPRIVILEGED_USER_ID, true);
+                dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI, UNPRIVILEGED_USER_ID, true, ActionGroup.ASSIGN_CPU_PROFILE);
         assertTrue(result.isEmpty());
     }
 }

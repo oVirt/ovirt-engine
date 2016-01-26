@@ -89,7 +89,8 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GetCpuProfilesByClusterId (
     v_cluster_id UUID,
     v_user_id UUID,
-    v_is_filtered boolean
+    v_is_filtered boolean,
+    v_action_group_id INTEGER
     )
 RETURNS SETOF cpu_profiles STABLE AS $PROCEDURE$
 BEGIN
@@ -100,13 +101,17 @@ BEGIN
     WHERE cluster_id = v_cluster_id
         AND (
             NOT v_is_filtered
-            OR EXISTS (
+            OR (
+                EXISTS (
                 SELECT 1
                 FROM user_cpu_profile_permissions_view
-                WHERE user_id = v_user_id
+                NATURAL JOIN roles_groups
+                WHERE user_id IN (v_user_id, getGlobalIds('everyone'))
                     AND entity_id = cpu_profiles.id
+                    AND action_group_id = v_action_group_id
                 )
             )
+        )
     ORDER BY _create_date;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
