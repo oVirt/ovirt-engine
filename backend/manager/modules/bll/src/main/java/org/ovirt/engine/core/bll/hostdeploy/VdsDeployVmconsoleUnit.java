@@ -55,7 +55,7 @@ public class VdsDeployVmconsoleUnit implements VdsDeployUnit {
         public Boolean call() throws Exception {
             _deploy.getParser().cliEnvironmentSet(
                 VMConsoleEnv.CAKEY,
-                PKIResources.Resource.CACertificate.toString(
+                PKIResources.getCaCertificate().toString(
                     PKIResources.Format.OPENSSH_PUBKEY
                 ).replace("\n", "")
             );

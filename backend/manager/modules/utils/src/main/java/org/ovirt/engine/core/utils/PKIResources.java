@@ -13,6 +13,42 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
 public class PKIResources {
+    private static Resource caCertificate;
+
+    private static Resource engineCertificate;
+
+
+    public static Resource getCaCertificate() {
+        if (caCertificate == null) {
+            initCaCertificate();
+        }
+        return caCertificate;
+    }
+
+    private static synchronized void initCaCertificate() {
+        if (caCertificate == null) {
+            caCertificate = new Resource(
+                    EngineLocalConfig.getInstance().getPKICACert(),
+                    Format.X509_PEM_CA,
+                    null);
+        }
+    }
+
+    public static Resource getEngineCertificate() {
+        if (engineCertificate == null) {
+            initEngineCertificate();
+        }
+        return engineCertificate;
+    }
+
+    private static synchronized void initEngineCertificate() {
+        if (engineCertificate == null) {
+            engineCertificate = new Resource(
+                    EngineLocalConfig.getInstance().getPKIEngineCert(),
+                    Format.X509_PEM,
+                    Config.<String> getValue(ConfigValues.SSHKeyAlias));
+        }
+    }
 
     private interface IFormatter {
         String toString(Certificate cert, String alias);
@@ -78,10 +114,7 @@ public class PKIResources {
         }
     }
 
-    public enum Resource {
-        CACertificate(EngineLocalConfig.getInstance().getPKICACert(), Format.X509_PEM_CA, null),
-        EngineCertificate(EngineLocalConfig.getInstance().getPKIEngineCert(), Format.X509_PEM, Config.<String> getValue(ConfigValues.SSHKeyAlias));
-
+    public static class Resource {
         private final Certificate cert;
         private final Format defaultFormat;
         private final String defaultAlias;
