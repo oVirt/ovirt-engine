@@ -13,7 +13,7 @@ public class GetCACertificateQuery<P extends VdcQueryParametersBase> extends Que
         try {
             getQueryReturnValue().setSucceeded(false);
             getQueryReturnValue().setReturnValue(
-                PKIResources.Resource.CACertificate.toString(PKIResources.Format.X509_PEM)
+                PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM)
             );
             getQueryReturnValue().setSucceeded(true);
         } catch (Exception e) {

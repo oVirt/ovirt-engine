@@ -906,7 +906,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
 
                     if (org.ovirt.ovirt_host_deploy.constants.Queries.CERTIFICATE_CHAIN.equals(event.name)) {
                         event.value = (
-                            PKIResources.Resource.CACertificate.toString(PKIResources.Format.X509_PEM) +
+                            PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM) +
                             _certificate
                         ).split("\n");
                         _parser.sendResponse(event);
