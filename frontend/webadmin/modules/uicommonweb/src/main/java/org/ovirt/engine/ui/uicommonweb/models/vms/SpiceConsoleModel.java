@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
+import org.ovirt.engine.ui.uicommonweb.ShowErrorAsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -315,7 +316,7 @@ public class SpiceConsoleModel extends ConsoleModel {
         Frontend.getInstance().runQuery(
                 VdcQueryType.ConfigureConsoleOptions,
                 parameters,
-                new AsyncQuery(new INewAsyncCallback() {
+                new ShowErrorAsyncQuery(new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         final ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -323,8 +324,8 @@ public class SpiceConsoleModel extends ConsoleModel {
                         configuredOptions.setRemapCtrlAltDelete(options.isRemapCtrlAltDelete());
                         configuredOptions.setTitle(getClientTitle());
                         configuredOptions.setAdminConsole(getConfigurator().getSpiceAdminConsole()
-                                                ? true
-                                                : !getEntity().getHasSpiceDriver());
+                                                          ? true
+                                                          : !getEntity().getHasSpiceDriver());
                         if (!configuredOptions.isSpiceProxyEnabled()) {
                             configuredOptions.setSpiceProxy(null); // override spice proxy from backend
                         }

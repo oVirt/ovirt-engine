@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
+import org.ovirt.engine.ui.uicommonweb.ShowErrorAsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -99,7 +100,7 @@ public class VncConsoleModel extends ConsoleModel {
             throw new IllegalStateException("Trying to invoke VNC console but VM GraphicsInfo is null."); //$NON-NLS-1$
         }
 
-        final AsyncQuery configureCallback = new AsyncQuery(new INewAsyncCallback() {
+        final AsyncQuery configureCallback = new ShowErrorAsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
