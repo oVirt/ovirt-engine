@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -91,8 +92,15 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
     @Override
     protected void executeQueryCommand() {
-        ConsoleOptions options = getParameters().getOptions();
+        try {
+            executeCommandQueryUnchecked();
+        } catch (TicketGenerationException ex) {
+            handleTicketGenerationError(ex.getCommandResult());
+        }
+    }
 
+    private void executeCommandQueryUnchecked() {
+        ConsoleOptions options = getParameters().getOptions();
         fillCommonPart(options);
 
         // fill additional SPICE data
@@ -275,13 +283,23 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         parameters.setSessionId(getEngineContext().getSessionId());
         parameters.setParametersCurrentUser(getUser());
 
-        VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.SetVmTicket, parameters);
+        VdcReturnValueBase result = getBackend().runAction(VdcActionType.SetVmTicket, parameters);
 
-        if (result.getSucceeded()) {
-            return result.getActionReturnValue();
+        if (!result.getSucceeded()) {
+            throw new TicketGenerationException(result);
         }
+        return result.getActionReturnValue();
+    }
 
-        return null;
+    private void handleTicketGenerationError(VdcReturnValueBase commandResult) {
+        getQueryReturnValue().setSucceeded(false);
+        if (commandResult.getCanDoActionMessages().contains(
+                EngineMessage.SETTING_VM_TICKET_FAILED_CONSOLE_OF_VM_CURRENTLY_USED_BY_ADMIN_USER.name())) {
+            getQueryReturnValue().setExceptionString(
+                    EngineMessage.SETTING_VM_TICKET_FAILED_CONSOLE_OF_VM_CURRENTLY_USED_BY_ADMIN_USER.name());
+            return;
+        }
+        getQueryReturnValue().setExceptionString(EngineMessage.GENERAL_FAILURE.name());
     }
 
     private String getVdsCertificateSubject() {
@@ -342,5 +360,18 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
    <T> T getConfigValue(ConfigValues value) {
         return Config.getValue(value);
+    }
+
+    private static class TicketGenerationException extends RuntimeException {
+
+        private final VdcReturnValueBase commandResult;
+
+        public TicketGenerationException(VdcReturnValueBase commandResult) {
+            this.commandResult = commandResult;
+        }
+
+        public VdcReturnValueBase getCommandResult() {
+            return commandResult;
+        }
     }
 }

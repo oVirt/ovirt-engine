@@ -2571,6 +2571,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("General command validation failure.")
     String CAN_DO_ACTION_GENERAL_FAILURE();
 
+    @DefaultStringValue("General command failure.")
+    String GENERAL_FAILURE();
+
     @DefaultStringValue("Cannot remove an active Data Center.")
     String ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL();
 
@@ -3900,6 +3903,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Insufficient ip configuration of Network attachment for Network ${networkName}, Interface ${interfaceName}. Must define ip address and netmask when boot protocol is static.")
     String NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS();
+
+    @DefaultStringValue("Setting VM ticket failed. Console of VM is currently being used by admin user.")
+    String SETTING_VM_TICKET_FAILED_CONSOLE_OF_VM_CURRENTLY_USED_BY_ADMIN_USER();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM has PCI host devices attached.")
     String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES();
