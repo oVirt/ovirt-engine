@@ -215,6 +215,10 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     }
 
     private void initMessages() {
+        if (vm.isRunning() && !vm.getHasAgent()) {
+            setMessage(ConstantsManager.getInstance().getConstants().liveSnapshotWithNoGuestAgentMsg());
+        }
+
         if (isValidateByVmSnapshots()) {
             initVmSnapshots();
         }
