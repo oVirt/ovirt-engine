@@ -26,6 +26,9 @@
     <module name="EmptyForInitializerPad" />
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
+    <module name="IllegalImport">
+        <property name="illegalPkgs" value="com.sun"/>
+    </module>
     <module name="ImportOrder">
       <property name="groups" value="java,javax,org,com"/>
       <property name="ordered" value="true"/>
