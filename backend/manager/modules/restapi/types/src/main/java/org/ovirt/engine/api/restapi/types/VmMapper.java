@@ -515,6 +515,10 @@ public class VmMapper extends VmBaseMapper {
         if (model.getPlacementPolicy() == null) {
             model.setPlacementPolicy(new VmPlacementPolicy());
         }
+        VmAffinity vmAffinity = map(entity.getMigrationSupport(), null);
+        if (vmAffinity != null) {
+            model.getPlacementPolicy().setAffinity(vmAffinity.value());
+        }
         if (entity.getDedicatedVmForVdsList().size() == 1) {
             model.getPlacementPolicy().setHost(new Host());
             model.getPlacementPolicy().getHost().setId(entity.getDedicatedVmForVdsList().get(0).toString());
