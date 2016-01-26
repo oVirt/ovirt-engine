@@ -98,12 +98,12 @@ public class ConfigureConsoleOptionsQueryTest {
         VdcReturnValueBase result = new VdcReturnValueBase();
         result.setSucceeded(true);
         result.setActionReturnValue("nbusr123");
-        doReturn(result).when(backend).runInternalAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
+        doReturn(result).when(backend).runAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
         doReturn(backend).when(query).getBackend();
 
         query.getQueryReturnValue().setSucceeded(true);
         query.executeQueryCommand();
-        verify(backend, times(1)).runInternalAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
+        verify(backend, times(1)).runAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
     }
 
     @Test
