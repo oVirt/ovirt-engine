@@ -364,7 +364,6 @@ public class VmAnalyzerTest {
         when(vdsManager.getClusterId()).thenReturn(VmTestPairs.CLUSTER_ID);
         when(vdsManager.getCopyVds()).thenReturn(vdsManagerVds);
         when(vmManager.isColdReboot()).thenReturn(false);
-        when(vmsMonitoring.getVdsManager()).thenReturn(vdsManager);
         when(vmsMonitoring.getVmManager(any())).thenReturn(vmManager);
         when(vmsMonitoring.getResourceManager()).thenReturn(resourceManager);
         when(resourceManager.getVdsManager(any(Guid.class))).thenReturn(vdsManager);
@@ -380,6 +379,7 @@ public class VmAnalyzerTest {
         // -- end of behaviors --
         vmAnalyzer = spy(new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), vmsMonitoring));
         doReturn(auditLogDirector).when(vmAnalyzer).getAuditLogDirector();
+        doReturn(vdsManager).when(vmAnalyzer).getVdsManager();
         if (run) {
             vmAnalyzer.analyze();
         }

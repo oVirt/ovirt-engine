@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class VmsMonitoring {
 
     private final boolean timeToUpdateVmStatistics;
-    private VdsManager vdsManager;
 
     private final AuditLogDirector auditLogDirector;
     /**
@@ -53,16 +52,13 @@ public class VmsMonitoring {
      *                     Analysis and reactions would be taken on those VMs only.
      */
     public VmsMonitoring(
-            VdsManager vdsManager,
             AuditLogDirector auditLogDirector) {
-        this(vdsManager, auditLogDirector, false);
+        this(auditLogDirector, false);
     }
 
     public VmsMonitoring(
-            VdsManager vdsManager,
             AuditLogDirector auditLogDirector,
             boolean timeToUpdateVmStatistics) {
-        this.vdsManager = vdsManager;
         this.auditLogDirector = auditLogDirector;
         this.timeToUpdateVmStatistics = timeToUpdateVmStatistics;
     }
@@ -76,13 +72,15 @@ public class VmsMonitoring {
 -    * VM object represent the persisted object(namely the one in db) and the VmInternalData
 -    * is the running one as reported from VDSM
      * @param fetchTime When the VMs were fetched
+     * @param vdsManager The manager of the monitored host
      */
     public void perform(
             List<Pair<VM, VmInternalData>> monitoredVms,
-            long fetchTime) {
+            long fetchTime,
+            VdsManager vdsManager) {
         try {
-            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms, fetchTime);
-            afterVMsRefreshTreatment(vmAnalyzers);
+            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager);
+            afterVMsRefreshTreatment(vmAnalyzers, vdsManager);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
             log.error("Failed during vms monitoring on host {} error is: {}", vdsManager.getVdsName(), ex);
@@ -101,14 +99,15 @@ public class VmsMonitoring {
      * lock Vms which has db entity i.e they are managed by a VmManager
      * @return true if lock acquired
      */
-    private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair, long fetchTime) {
+    private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair, long fetchTime,
+            Guid vdsId) {
         Guid vmId = getVmId(pair);
 
         if (vmId != null) {
             VmManager vmManager = getResourceManager().getVmManager(vmId);
 
             if (vmManager.trylock()) {
-                if (!vmManager.isLatestData(pair.getSecond(), vdsManager.getVdsId())) {
+                if (!vmManager.isLatestData(pair.getSecond(), vdsId)) {
                     log.warn("skipping VM '{}' from this monitoring cycle" +
                             " - newer VM data was already processed", vmId);
                     vmManager.unlock();
@@ -145,29 +144,31 @@ public class VmsMonitoring {
      */
     private List<VmAnalyzer> refreshVmStats(
             List<Pair<VM, VmInternalData>> monitoredVms,
-            long fetchTime) {
+            long fetchTime,
+            VdsManager vdsManager) {
         List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
         for (Pair<VM, VmInternalData> monitoredVm : monitoredVms) {
             // TODO filter out migratingTo VMs if no action is taken on them
-            if (tryLockVmForUpdate(monitoredVm, fetchTime)) {
-                VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm);
+            if (tryLockVmForUpdate(monitoredVm, fetchTime, vdsManager.getVdsId())) {
+                VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm, vdsManager);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
             }
         }
 
-        addUnmanagedVms(vmAnalyzers);
+        addUnmanagedVms(vmAnalyzers, vdsManager.getVdsId());
         flush(vmAnalyzers);
         return vmAnalyzers;
     }
 
-    protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> pair) {
+    protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> pair, VdsManager vdsManager) {
         VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), this);
         vmAnalyzer.setAuditLogDirector(auditLogDirector);
+        vmAnalyzer.setVdsManager(vdsManager);
         return vmAnalyzer;
     }
 
-    private void afterVMsRefreshTreatment(List<VmAnalyzer> vmAnalyzers) {
+    private void afterVMsRefreshTreatment(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager) {
         Collection<Guid> movedToDownVms = new ArrayList<>();
         List<Guid> succeededToRunVms = new ArrayList<>();
         List<Guid> autoVmsToRun = new ArrayList<>();
@@ -221,7 +222,8 @@ public class VmsMonitoring {
                 importHostedEngineVM(getVmInfo(Collections.singletonList(vmAnalyzer.getVdsmVm()
                         .getVmDynamic()
                         .getId()
-                        .toString()))[0]);
+                        .toString()),
+                        vdsManager.getVdsId())[0], vdsManager);
             }
         }
 
@@ -239,7 +241,7 @@ public class VmsMonitoring {
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
     }
 
-    private void importHostedEngineVM(Map<String, Object> vmStruct) {
+    private void importHostedEngineVM(Map<String, Object> vmStruct, VdsManager vdsManager) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
         if (vm != null) {
             vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
@@ -247,8 +249,8 @@ public class VmsMonitoring {
             for (DiskImage diskImage : vm.getImages()) {
                 vm.getDiskMap().put(Guid.newGuid(), diskImage);
             }
-            vm.setClusterId(getVdsManager().getClusterId());
-            vm.setRunOnVds(getVdsManager().getVdsId());
+            vm.setClusterId(vdsManager.getClusterId());
+            vm.setRunOnVds(vdsManager.getVdsId());
             getVdsEventListener().importHostedEngineVm(vm);
         }
     }
@@ -298,12 +300,12 @@ public class VmsMonitoring {
                 .collect(Collectors.toList()));
     }
 
-    protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers) {
+    protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
         List<Guid> unmanagedVmIds = vmAnalyzers.stream()
                 .filter(VmAnalyzer::isExternalVm)
                 .map(analyzer -> analyzer.getVdsmVm().getVmDynamic().getId())
                 .collect(Collectors.toList());
-        getVdsEventListener().addUnmanagedVms(vdsManager.getVdsId(), unmanagedVmIds);
+        getVdsEventListener().addUnmanagedVms(vdsId, unmanagedVmIds);
     }
 
     // ***** DB interaction *****
@@ -358,10 +360,10 @@ public class VmsMonitoring {
     /**
      * gets VM full information for the given list of VMs
      */
-    protected Map<String, Object>[] getVmInfo(List<String> vmsToUpdate) {
+    protected Map<String, Object>[] getVmInfo(List<String> vmsToUpdate, Guid vdsId) {
         // TODO refactor commands to use vdsId only - the whole vds object here is useless
         VDS vds = new VDS();
-        vds.setId(vdsManager.getVdsId());
+        vds.setId(vdsId);
         Map<String, Object>[] result = new Map[0];
         VDSReturnValue vdsReturnValue = getResourceManager().runVdsCommand(VDSCommandType.FullList,
                 new FullListVDSCommandParameters(vds, vmsToUpdate));
@@ -387,10 +389,6 @@ public class VmsMonitoring {
 
     protected IVdsEventListener getVdsEventListener() {
         return ResourceManager.getInstance().getEventListener();
-    }
-
-    public VdsManager getVdsManager() {
-        return vdsManager;
     }
 
     public VmManager getVmManager(Guid vmId) {

@@ -106,6 +106,7 @@ public class VmAnalyzer {
     }
 
     private AuditLogDirector auditLogDirector;
+    private VdsManager vdsManager;
 
     public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring) {
         this.dbVm = dbVm;
@@ -1085,8 +1086,13 @@ public class VmAnalyzer {
         return externalVm;
     }
 
+
     public VdsManager getVdsManager() {
-        return vmsMonitoring.getVdsManager();
+        return vdsManager;
+    }
+
+    public void setVdsManager(VdsManager vdsManager) {
+        this.vdsManager = vdsManager;
     }
 
     private VmManager getVmManager() {
