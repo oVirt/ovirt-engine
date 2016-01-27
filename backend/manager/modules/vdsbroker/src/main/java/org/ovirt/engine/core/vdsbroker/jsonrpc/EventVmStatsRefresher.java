@@ -60,7 +60,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                     convertEvent(changedVms, map);
 
                     if (!changedVms.isEmpty()) {
-                        getVmsMonitoring().perform(changedVms, System.nanoTime(), vdsManager);
+                        getVmsMonitoring().perform(changedVms, System.nanoTime(), vdsManager, false);
                         processDevices(changedVms.stream().map(pair -> pair.getSecond().getVmDynamic()),
                                 System.nanoTime());
                     }

@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public class VmsMonitoring {
 
-    private final boolean timeToUpdateVmStatistics;
-
     private final AuditLogDirector auditLogDirector;
     /**
      * The managers of the monitored VMs in this cycle.
@@ -51,16 +49,8 @@ public class VmsMonitoring {
      *                     a pair of the persisted (db currently) VM and the running VM which was reported from vdsm.
      *                     Analysis and reactions would be taken on those VMs only.
      */
-    public VmsMonitoring(
-            AuditLogDirector auditLogDirector) {
-        this(auditLogDirector, false);
-    }
-
-    public VmsMonitoring(
-            AuditLogDirector auditLogDirector,
-            boolean timeToUpdateVmStatistics) {
+    public VmsMonitoring(AuditLogDirector auditLogDirector) {
         this.auditLogDirector = auditLogDirector;
-        this.timeToUpdateVmStatistics = timeToUpdateVmStatistics;
     }
 
     /**
@@ -73,13 +63,15 @@ public class VmsMonitoring {
 -    * is the running one as reported from VDSM
      * @param fetchTime When the VMs were fetched
      * @param vdsManager The manager of the monitored host
+     * @param timeToUpdateStatistics Whether or not this monitoring should include VM statistics
      */
     public void perform(
             List<Pair<VM, VmInternalData>> monitoredVms,
             long fetchTime,
-            VdsManager vdsManager) {
+            VdsManager vdsManager,
+            boolean timeToUpdateStatistics) {
         try {
-            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager);
+            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager, timeToUpdateStatistics);
             afterVMsRefreshTreatment(vmAnalyzers, vdsManager);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
@@ -89,10 +81,6 @@ public class VmsMonitoring {
             unlockVmsManager();
         }
 
-    }
-
-    protected boolean isTimeToUpdateVmStatistics() {
-        return timeToUpdateVmStatistics;
     }
 
     /**
@@ -145,12 +133,13 @@ public class VmsMonitoring {
     private List<VmAnalyzer> refreshVmStats(
             List<Pair<VM, VmInternalData>> monitoredVms,
             long fetchTime,
-            VdsManager vdsManager) {
+            VdsManager vdsManager,
+            boolean timeToUpdateStatistics) {
         List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
         for (Pair<VM, VmInternalData> monitoredVm : monitoredVms) {
             // TODO filter out migratingTo VMs if no action is taken on them
             if (tryLockVmForUpdate(monitoredVm, fetchTime, vdsManager.getVdsId())) {
-                VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm, vdsManager);
+                VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm, vdsManager, timeToUpdateStatistics);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
             }
@@ -161,8 +150,11 @@ public class VmsMonitoring {
         return vmAnalyzers;
     }
 
-    protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> pair, VdsManager vdsManager) {
-        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), this);
+    protected VmAnalyzer getVmAnalyzer(
+            Pair<VM, VmInternalData> pair,
+            VdsManager vdsManager,
+            boolean timeToUpdateStatistics) {
+        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), this, timeToUpdateStatistics);
         vmAnalyzer.setAuditLogDirector(auditLogDirector);
         vmAnalyzer.setVdsManager(vdsManager);
         return vmAnalyzer;

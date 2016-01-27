@@ -377,7 +377,7 @@ public class VmAnalyzerTest {
         // dst VM is in DB under the same Guid
         mockVmInDbForDstVms(vmData);
         // -- end of behaviors --
-        vmAnalyzer = spy(new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), vmsMonitoring));
+        vmAnalyzer = spy(new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), vmsMonitoring, false));
         doReturn(auditLogDirector).when(vmAnalyzer).getAuditLogDirector();
         doReturn(vdsManager).when(vmAnalyzer).getVdsManager();
         if (run) {

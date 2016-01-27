@@ -108,10 +108,13 @@ public class VmAnalyzer {
     private AuditLogDirector auditLogDirector;
     private VdsManager vdsManager;
 
-    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring) {
+    private final boolean updateStatistics;
+
+    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring, boolean updateStatistics) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
         this.vmsMonitoring = vmsMonitoring;
+        this.updateStatistics = updateStatistics;
     }
 
     /**
@@ -766,7 +769,7 @@ public class VmAnalyzer {
 
     private void updateVmStatistics() {
         // check if time for vm statistics refresh - update cache and DB
-        if (vmsMonitoring.isTimeToUpdateVmStatistics()) {
+        if (updateStatistics) {
             dbVm.updateRunTimeStatisticsData(vdsmVm.getVmStatistics(), dbVm);
             saveStatistics();
             saveVmInterfaces();
