@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class VmsMonitoring {
 
     private final boolean timeToUpdateVmStatistics;
-    private final long fetchTime;
     private VdsManager vdsManager;
 
     private final AuditLogDirector auditLogDirector;
@@ -55,19 +54,16 @@ public class VmsMonitoring {
      */
     public VmsMonitoring(
             VdsManager vdsManager,
-            AuditLogDirector auditLogDirector,
-            long fetchTime) {
-        this(vdsManager, auditLogDirector, fetchTime, false);
+            AuditLogDirector auditLogDirector) {
+        this(vdsManager, auditLogDirector, false);
     }
 
     public VmsMonitoring(
             VdsManager vdsManager,
             AuditLogDirector auditLogDirector,
-            long fetchTime,
             boolean timeToUpdateVmStatistics) {
         this.vdsManager = vdsManager;
         this.auditLogDirector = auditLogDirector;
-        this.fetchTime = fetchTime;
         this.timeToUpdateVmStatistics = timeToUpdateVmStatistics;
     }
 
@@ -79,10 +75,13 @@ public class VmsMonitoring {
      * @param monitoredVms The Vms we want to monitor and analyze for changes.
 -    * VM object represent the persisted object(namely the one in db) and the VmInternalData
 -    * is the running one as reported from VDSM
+     * @param fetchTime When the VMs were fetched
      */
-    public void perform(List<Pair<VM, VmInternalData>> monitoredVms) {
+    public void perform(
+            List<Pair<VM, VmInternalData>> monitoredVms,
+            long fetchTime) {
         try {
-            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms);
+            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms, fetchTime);
             afterVMsRefreshTreatment(vmAnalyzers);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
@@ -102,7 +101,7 @@ public class VmsMonitoring {
      * lock Vms which has db entity i.e they are managed by a VmManager
      * @return true if lock acquired
      */
-    private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair) {
+    private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair, long fetchTime) {
         Guid vmId = getVmId(pair);
 
         if (vmId != null) {
@@ -144,11 +143,13 @@ public class VmsMonitoring {
      *   this filtering.
      * @return The analyzers which hold all the data per VM
      */
-    private List<VmAnalyzer> refreshVmStats(List<Pair<VM, VmInternalData>> monitoredVms) {
+    private List<VmAnalyzer> refreshVmStats(
+            List<Pair<VM, VmInternalData>> monitoredVms,
+            long fetchTime) {
         List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
         for (Pair<VM, VmInternalData> monitoredVm : monitoredVms) {
             // TODO filter out migratingTo VMs if no action is taken on them
-            if (tryLockVmForUpdate(monitoredVm)) {
+            if (tryLockVmForUpdate(monitoredVm, fetchTime)) {
                 VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
