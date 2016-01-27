@@ -42,10 +42,6 @@ public abstract class PollVmStatsRefresher extends VmStatsRefresher {
             }
         }
     }
-    private VmsMonitoring getVmsMonitoring() {
-        return new VmsMonitoring(
-                auditLogDirector);
-    }
 
     protected abstract VmsListFetcher getVmsFetcher();
     protected abstract boolean isTimeToRefreshStatistics();

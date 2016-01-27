@@ -45,4 +45,10 @@ public abstract class VmStatsRefresher {
         deviceChange.flush();
     }
 
+    protected VmsMonitoring getVmsMonitoring() {
+        // VmsMonitoring may be injected if this class is converted to a managed bean. Currently the injection
+        // here is not performed by container and creates circular dependency during ResourceManager initialization.
+        return VmsMonitoring.getInstance();
+    }
+
 }

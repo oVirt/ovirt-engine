@@ -14,7 +14,6 @@ import org.ovirt.engine.core.vdsbroker.PollAllVmStatsOnlyRefresher;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmStatsRefresher;
-import org.ovirt.engine.core.vdsbroker.VmsMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
@@ -77,10 +76,6 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 XmlRpcObjectDescriptor.toStringBuilder(map, sb);
 
                 log.debug("processing event for host {} data:\n{}", vdsManager.getVdsName(), sb);
-            }
-
-            private VmsMonitoring getVmsMonitoring() {
-                return new VmsMonitoring(auditLogDirector);
             }
 
             @SuppressWarnings("unchecked")

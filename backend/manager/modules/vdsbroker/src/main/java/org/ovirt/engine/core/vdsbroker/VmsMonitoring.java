@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -32,20 +37,30 @@ import org.slf4j.LoggerFactory;
  * and take actions - fire VDSM commands (destroy,run/rerun,migrate), report complete actions,
  * hand-over migration and save-to-db
  */
-public class VmsMonitoring {
+@Singleton
+public class VmsMonitoring implements BackendService {
 
-    private final AuditLogDirector auditLogDirector;
+    @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
+    private DbFacade dbFacade;
+    @Inject
+    private ResourceManager resourceManager;
 
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
-    /**
-     * @param vdsManager the host manager related to this cycle.
-     * @param monitoredVms the vms we want to monitor/analyze/react on. this structure is
-     *                     a pair of the persisted (db currently) VM and the running VM which was reported from vdsm.
-     *                     Analysis and reactions would be taken on those VMs only.
-     */
-    public VmsMonitoring(AuditLogDirector auditLogDirector) {
-        this.auditLogDirector = auditLogDirector;
+    private static VmsMonitoring instance;
+
+    public VmsMonitoring() {
+    }
+
+    @PostConstruct
+    private void init() {
+        instance = this;
+    }
+
+    public static VmsMonitoring getInstance() {
+        return instance;
     }
 
     /**
@@ -369,15 +384,15 @@ public class VmsMonitoring {
     }
 
     protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
+        return dbFacade;
     }
 
     protected ResourceManager getResourceManager() {
-        return ResourceManager.getInstance();
+        return resourceManager;
     }
 
     protected IVdsEventListener getVdsEventListener() {
-        return ResourceManager.getInstance().getEventListener();
+        return getResourceManager().getEventListener();
     }
 
 }
