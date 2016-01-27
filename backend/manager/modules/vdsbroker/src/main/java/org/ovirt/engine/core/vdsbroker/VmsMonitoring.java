@@ -73,16 +73,20 @@ public class VmsMonitoring implements BackendService {
 -    * is the running one as reported from VDSM
      * @param fetchTime When the VMs were fetched
      * @param vdsManager The manager of the monitored host
-     * @param timeToUpdateStatistics Whether or not this monitoring should include VM statistics
+     * @param updateStatistics Whether or not this monitoring should include VM statistics
      */
     public void perform(
             List<Pair<VM, VmInternalData>> monitoredVms,
             long fetchTime,
             VdsManager vdsManager,
-            boolean timeToUpdateStatistics) {
+            boolean updateStatistics) {
+        if (monitoredVms.isEmpty()) {
+            return;
+        }
+
         List<VmAnalyzer> vmAnalyzers = Collections.emptyList();
         try {
-            vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager, timeToUpdateStatistics);
+            vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager, updateStatistics);
             afterVMsRefreshTreatment(vmAnalyzers, vdsManager);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
@@ -98,36 +102,36 @@ public class VmsMonitoring implements BackendService {
      * lock Vms which has db entity i.e they are managed by a VmManager
      * @return true if lock acquired
      */
-    private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair, long fetchTime,
-            Guid vdsId) {
+    private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair, long fetchTime, Guid vdsId) {
         Guid vmId = getVmId(pair.getFirst(), pair.getSecond());
+        VmManager vmManager = resourceManager.getVmManager(vmId);
 
-        if (vmId != null) {
-            VmManager vmManager = getResourceManager().getVmManager(vmId);
-
-            if (vmManager.trylock()) {
-                if (!vmManager.isLatestData(pair.getSecond(), vdsId)) {
-                    log.warn("skipping VM '{}' from this monitoring cycle" +
-                            " - newer VM data was already processed", vmId);
-                    vmManager.unlock();
-                } else if (vmManager.getVmDataChangedTime() != null && fetchTime - vmManager.getVmDataChangedTime() <= 0) {
-                    log.warn("skipping VM '{}' from this monitoring cycle" +
-                            " - the VM data has changed since fetching the data", vmId);
-                    vmManager.unlock();
-                } else {
-                    return true;
-                }
-            } else {
-                log.debug("skipping VM '{}' from this monitoring cycle" +
-                        " - the VM is locked by its VmManager ", vmId);
-            }
+        if (!vmManager.trylock()) {
+            log.debug("skipping VM '{}' from this monitoring cycle" +
+                    " - the VM is locked by its VmManager ", vmId);
+            return false;
         }
-        return false;
+
+        if (!vmManager.isLatestData(pair.getSecond(), vdsId)) {
+            log.warn("skipping VM '{}' from this monitoring cycle" +
+                    " - newer VM data was already processed", vmId);
+            vmManager.unlock();
+            return false;
+        }
+
+        if (vmManager.getVmDataChangedTime() != null && fetchTime - vmManager.getVmDataChangedTime() <= 0) {
+            log.warn("skipping VM '{}' from this monitoring cycle" +
+                    " - the VM data has changed since fetching the data", vmId);
+            vmManager.unlock();
+            return false;
+        }
+
+        return true;
     }
 
     private void unlockVms(List<VmAnalyzer> vmAnalyzers) {
         vmAnalyzers.stream().map(VmsMonitoring::getVmId).forEach(vmId -> {
-            VmManager vmManager = getResourceManager().getVmManager(vmId);
+            VmManager vmManager = resourceManager.getVmManager(vmId);
             vmManager.updateVmDataChangedTime();
             vmManager.unlock();
         });
@@ -144,17 +148,16 @@ public class VmsMonitoring implements BackendService {
             List<Pair<VM, VmInternalData>> monitoredVms,
             long fetchTime,
             VdsManager vdsManager,
-            boolean timeToUpdateStatistics) {
-        List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
-        for (Pair<VM, VmInternalData> monitoredVm : monitoredVms) {
+            boolean updateStatistics) {
+        List<VmAnalyzer> vmAnalyzers = new ArrayList<>(monitoredVms.size());
+        monitoredVms.forEach(vm -> {
             // TODO filter out migratingTo VMs if no action is taken on them
-            if (tryLockVmForUpdate(monitoredVm, fetchTime, vdsManager.getVdsId())) {
-                VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm, vdsManager, timeToUpdateStatistics);
+            if (tryLockVmForUpdate(vm, fetchTime, vdsManager.getVdsId())) {
+                VmAnalyzer vmAnalyzer = getVmAnalyzer(vm, vdsManager, updateStatistics);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
             }
-        }
-
+        });
         addUnmanagedVms(vmAnalyzers, vdsManager.getVdsId());
         flush(vmAnalyzers);
         return vmAnalyzers;
@@ -163,10 +166,10 @@ public class VmsMonitoring implements BackendService {
     protected VmAnalyzer getVmAnalyzer(
             Pair<VM, VmInternalData> pair,
             VdsManager vdsManager,
-            boolean timeToUpdateStatistics) {
-        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), timeToUpdateStatistics);
-        vmAnalyzer.setDbFacade(getDbFacade());
-        vmAnalyzer.setResourceManager(getResourceManager());
+            boolean updateStatistics) {
+        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), updateStatistics);
+        vmAnalyzer.setDbFacade(dbFacade);
+        vmAnalyzer.setResourceManager(resourceManager);
         vmAnalyzer.setAuditLogDirector(auditLogDirector);
         vmAnalyzer.setVdsManager(vdsManager);
         return vmAnalyzer;
@@ -184,7 +187,7 @@ public class VmsMonitoring implements BackendService {
             // rerun all vms from rerun list
             if (vmAnalyzer.isRerun()) {
                 log.error("Rerun VM '{}'. Called from VDS '{}'", vmAnalyzer.getDbVm().getId(), vdsManager.getVdsName());
-                getResourceManager().rerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
+                resourceManager.rerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
             }
 
             if (vmAnalyzer.isSuccededToRun()) {
@@ -218,7 +221,7 @@ public class VmsMonitoring implements BackendService {
             }
 
             if (vmAnalyzer.isRemoveFromAsync()) {
-                getResourceManager().removeAsyncRunningVm(vmAnalyzer.getDbVm().getId());
+                resourceManager.removeAsyncRunningVm(vmAnalyzer.getDbVm().getId());
             }
 
             if (vmAnalyzer.isHostedEngineUnmanaged()) {
@@ -270,35 +273,35 @@ public class VmsMonitoring implements BackendService {
     }
 
     private void saveVmLunDiskStatistics(List<VmAnalyzer> vmAnalyzers) {
-        getDbFacade().getLunDao().updateAllInBatch(vmAnalyzers.stream()
+        dbFacade.getLunDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmLunDisksToSave)
                 .flatMap(List::stream)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmDiskImageStatistics(List<VmAnalyzer> vmAnalyzers) {
-        getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmAnalyzers.stream()
+        dbFacade.getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmDiskImageDynamicToSave)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmDynamic(List<VmAnalyzer> vmAnalyzers) {
-        getDbFacade().getVmDynamicDao().updateAllInBatch(vmAnalyzers.stream()
+        dbFacade.getVmDynamicDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmDynamicToSave)
                 .filter(vmDynamic -> vmDynamic != null)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmInterfaceStatistics(List<VmAnalyzer> vmAnalyzers) {
-        getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
+        dbFacade.getVmNetworkStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmNetworkStatistics)
                 .flatMap(List::stream)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmStatistics(List<VmAnalyzer> vmAnalyzers) {
-        getDbFacade().getVmStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
+        dbFacade.getVmStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmStatisticsToSave)
                 .filter(statistics -> statistics != null)
                 .collect(Collectors.toList()));
@@ -307,7 +310,7 @@ public class VmsMonitoring implements BackendService {
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
         List<Guid> unmanagedVmIds = vmAnalyzers.stream()
                 .filter(VmAnalyzer::isExternalVm)
-                .map(analyzer -> analyzer.getVdsmVm().getVmDynamic().getId())
+                .map(VmsMonitoring::getVmId)
                 .collect(Collectors.toList());
         getVdsEventListener().addUnmanagedVms(vdsId, unmanagedVmIds);
     }
@@ -320,27 +323,25 @@ public class VmsMonitoring implements BackendService {
                 .map(analyzer -> new Pair<>(analyzer.getDbVm().getId(), analyzer.getVmGuestAgentNics()))
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         if (!vmGuestAgentNics.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    () -> {
-                        for (Guid vmId : vmGuestAgentNics.keySet()) {
-                            getDbFacade().getVmGuestAgentInterfaceDao().removeAllForVm(vmId);
-                        }
+            TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+                for (Guid vmId : vmGuestAgentNics.keySet()) {
+                    dbFacade.getVmGuestAgentInterfaceDao().removeAllForVm(vmId);
+                }
 
-                        for (List<VmGuestAgentInterface> nics : vmGuestAgentNics.values()) {
-                            if (nics != null) {
-                                for (VmGuestAgentInterface nic : nics) {
-                                    getDbFacade().getVmGuestAgentInterfaceDao().save(nic);
-                                }
-                            }
+                for (List<VmGuestAgentInterface> nics : vmGuestAgentNics.values()) {
+                    if (nics != null) {
+                        for (VmGuestAgentInterface nic : nics) {
+                            dbFacade.getVmGuestAgentInterfaceDao().save(nic);
                         }
-                        return null;
                     }
-            );
+                }
+                return null;
+            });
         }
     }
 
     private void saveVmJobsToDb(List<VmAnalyzer> vmAnalyzers) {
-        getDbFacade().getVmJobDao().updateAllInBatch(vmAnalyzers.stream()
+        dbFacade.getVmJobDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmJobsToUpdate)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()));
@@ -350,11 +351,10 @@ public class VmsMonitoring implements BackendService {
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (!vmJobIdsToRemove.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    () -> {
-                        getDbFacade().getVmJobDao().removeAll(vmJobIdsToRemove);
-                        return null;
-                    });
+            TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+                dbFacade.getVmJobDao().removeAll(vmJobIdsToRemove);
+                return null;
+            });
         }
     }
 
@@ -369,7 +369,7 @@ public class VmsMonitoring implements BackendService {
         VDS vds = new VDS();
         vds.setId(vdsId);
         Map<String, Object>[] result = new Map[0];
-        VDSReturnValue vdsReturnValue = getResourceManager().runVdsCommand(VDSCommandType.FullList,
+        VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.FullList,
                 new FullListVDSCommandParameters(vds, vmsToUpdate));
         if (vdsReturnValue.getSucceeded()) {
             result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
@@ -385,16 +385,8 @@ public class VmsMonitoring implements BackendService {
         return dbVm != null ? dbVm.getId() : vdsmVm.getVmDynamic().getId();
     }
 
-    protected DbFacade getDbFacade() {
-        return dbFacade;
-    }
-
-    protected ResourceManager getResourceManager() {
-        return resourceManager;
-    }
-
     protected IVdsEventListener getVdsEventListener() {
-        return getResourceManager().getEventListener();
+        return resourceManager.getEventListener();
     }
 
 }
