@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -315,8 +314,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         Future<VdcReturnValueBase> future =
                 CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveAllVmCinderDisks,
                         withRootCommandInfo(removeParam),
-                        cloneContextAndDetachFromParent(),
-                        CINDERStorageHelper.getStorageEntities(cinderDisks));
+                        cloneContextAndDetachFromParent());
         try {
             future.get().getActionReturnValue();
         } catch (InterruptedException | ExecutionException e) {

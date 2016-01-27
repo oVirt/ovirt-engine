@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +11,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -155,4 +158,8 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         return new RemoveCinderDiskCommandCallback();
     }
 
+    @Override
+    protected Collection<SubjectEntity> getSubjectEntities() {
+        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getDisk().getStorageIds().get(0)));
+    }
 }

@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -109,5 +114,10 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
         ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
         ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         setSucceeded(true);
+    }
+
+    @Override
+    protected Collection<SubjectEntity> getSubjectEntities() {
+        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getStorageDomainId()));
     }
 }

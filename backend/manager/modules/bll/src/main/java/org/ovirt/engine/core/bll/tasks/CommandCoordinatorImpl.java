@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -126,9 +125,8 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     @Override
     public Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
                                                           VdcActionParametersBase parameters,
-                                                          CommandContext cmdContext,
-                                                          SubjectEntity... subjectEntities) {
-        return cmdExecutor.executeAsyncCommand(actionType, parameters, cmdContext, subjectEntities);
+                                                          CommandContext cmdContext) {
+        return cmdExecutor.executeAsyncCommand(actionType, parameters, cmdContext);
     }
 
     @Override

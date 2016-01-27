@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -60,8 +58,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveCinderDisk,
                     removeDiskParam,
-                    cloneContextAndDetachFromParent(),
-                    new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0)));
+                    cloneContextAndDetachFromParent());
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
@@ -80,8 +77,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveCinderDiskVolume,
                     removeDiskVolumeParam,
-                    cloneContextAndDetachFromParent(),
-                    new SubjectEntity(VdcObjectType.Storage, cinderVolume.getStorageIds().get(0)));
+                    cloneContextAndDetachFromParent());
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
@@ -116,8 +112,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.RestoreFromCinderSnapshot,
                 params,
-                cloneContextAndDetachFromParent(),
-                new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0)));
+                cloneContextAndDetachFromParent());
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {

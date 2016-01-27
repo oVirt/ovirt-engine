@@ -15,14 +15,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -83,17 +81,15 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
             ImagesContainterParametersBase commandParameters =
                     (ImagesContainterParametersBase) childParams;
             Guid destinationImageId = commandParameters.getDestinationImageId();
-            Guid storageDomainId = commandParameters.getStorageDomainId();
-            removeCinderDisk(destinationImageId, storageDomainId);
+            removeCinderDisk(destinationImageId);
         }
     }
 
-    private void removeCinderDisk(Guid cinderDiskId, Guid storageDomainId) {
+    private void removeCinderDisk(Guid cinderDiskId) {
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.RemoveCinderDisk,
                 buildRevertParameters(cinderDiskId),
-                null,
-                new SubjectEntity(VdcObjectType.Storage, storageDomainId));
+                null);
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {

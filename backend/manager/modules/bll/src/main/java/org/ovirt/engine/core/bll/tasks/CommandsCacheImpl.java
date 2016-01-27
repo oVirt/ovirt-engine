@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.transaction.Transaction;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -121,6 +122,10 @@ public class CommandsCacheImpl implements CommandsCache {
 
     @Override
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
+        if (CollectionUtils.isEmpty(cmdAssociatedEntities)) {
+            return;
+        }
+
         Transaction transaction = TransactionSupport.suspend();
         try {
             DbFacade.getInstance().getCommandEntityDao().insertCommandAssociatedEntities(cmdAssociatedEntities);

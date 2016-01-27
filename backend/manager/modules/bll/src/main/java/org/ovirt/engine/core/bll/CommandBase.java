@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -397,6 +398,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         try {
             if (getCallback() != null || parentHasCallback()) {
                 persistCommand(getParameters().getParentCommand(), getCallback() != null);
+                CommandCoordinatorUtil.persistCommandAssociatedEntities(getCommandId(), getSubjectEntities());
             }
 
             actionAllowed = getReturnValue().isValid() || internalValidate();
@@ -2174,6 +2176,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @return Map of GUIDs to Object types
      */
     public abstract List<PermissionSubject> getPermissionCheckSubjects();
+
+    /**
+     * returns a collection of the command subject entities
+     */
+    protected Collection<SubjectEntity> getSubjectEntities() {
+        return Collections.emptyList();
+    }
 
     /**
      * Returns the properties which used to populate the job message. The default properties resolving will use

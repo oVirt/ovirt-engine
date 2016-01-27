@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -7,7 +8,9 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.UpdateVmDiskCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -68,5 +71,11 @@ public class ExtendCinderDiskCommand<T extends UpdateVmDiskParameters> extends U
     @Override
     protected void endWithFailure() {
         setSucceeded(true);
+    }
+
+    @Override
+    protected Collection<SubjectEntity> getSubjectEntities() {
+        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage,
+                getStorageDomainId()));
     }
 }

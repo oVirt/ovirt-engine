@@ -6,13 +6,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 
 public interface CommandScheduler {
 
     Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
             VdcActionParametersBase parameters,
-            CommandContext cmdContext,
-            SubjectEntity... subjectEntities);
+            CommandContext cmdContext);
 
 }

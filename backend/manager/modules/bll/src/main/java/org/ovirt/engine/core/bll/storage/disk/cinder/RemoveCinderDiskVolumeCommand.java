@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.RemoveImageCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -60,5 +65,11 @@ public class RemoveCinderDiskVolumeCommand<T extends RemoveCinderDiskVolumeParam
     @Override
     public CommandCallback getCallback() {
         return new RemoveCinderDiskVolumeCommandCallback();
+    }
+
+    @Override
+    protected Collection<SubjectEntity> getSubjectEntities() {
+        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage,
+                getParameters().getRemovedVolume().getStorageIds().get(0)));
     }
 }

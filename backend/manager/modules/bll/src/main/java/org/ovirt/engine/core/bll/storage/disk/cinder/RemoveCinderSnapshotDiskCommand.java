@@ -1,12 +1,16 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -77,4 +81,8 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
         }
     }
 
+    @Override
+    protected Collection<SubjectEntity> getSubjectEntities() {
+        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getStorageDomainId()));
+    }
 }

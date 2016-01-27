@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -235,8 +234,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveCinderSnapshotDisk,
                     buildRemoveCinderSnapshotDiskParameters(cinderDisk),
-                    cloneContextAndDetachFromParent(),
-                    new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0)));
+                    cloneContextAndDetachFromParent());
             try {
                 VdcReturnValueBase vdcReturnValueBase = future.get();
                 if (!vdcReturnValueBase.getSucceeded()) {

@@ -11,13 +11,11 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -137,8 +135,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.RemoveCinderDiskVolume,
                 removeDiskVolumeParam,
-                null,
-                new SubjectEntity(VdcObjectType.Storage, diskVolumeVolume.getStorageIds().get(0)));
+                null);
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {

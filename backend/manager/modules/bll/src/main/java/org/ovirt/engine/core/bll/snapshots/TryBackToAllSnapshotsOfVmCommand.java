@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -238,8 +237,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.TryBackToAllCinderSnapshots,
                 buildCinderChildCommandParameters(cinderDisks, newSnapshotId),
-                cloneContextAndDetachFromParent(),
-                CINDERStorageHelper.getStorageEntities(cinderDisks));
+                cloneContextAndDetachFromParent());
         try {
             VdcReturnValueBase vdcReturnValueBase = future.get();
             if (!vdcReturnValueBase.getSucceeded()) {

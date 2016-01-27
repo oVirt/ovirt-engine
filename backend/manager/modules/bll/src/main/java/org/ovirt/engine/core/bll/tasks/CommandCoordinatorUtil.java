@@ -3,9 +3,12 @@ package org.ovirt.engine.core.bll.tasks;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -246,6 +249,26 @@ public class CommandCoordinatorUtil {
     }
 
     /**
+     * Persist the command related entities in the database
+     */
+    public static void persistCommandAssociatedEntities(Guid cmdId, Collection<SubjectEntity> subjectEntities) {
+        coco.persistCommandAssociatedEntities(buildCommandAssociatedEntities(cmdId, subjectEntities));
+    }
+
+    private static Collection<CommandAssociatedEntity> buildCommandAssociatedEntities(Guid cmdId,
+                                                                               Collection<SubjectEntity> subjectEntities) {
+        if (subjectEntities.size() == 0) {
+            return Collections.emptyList();
+        }
+        Set<SubjectEntity> entities = new HashSet<>(subjectEntities);
+        List<CommandAssociatedEntity> results = new ArrayList<>(entities.size());
+        for (SubjectEntity subjectEntity : entities) {
+            results.add(new CommandAssociatedEntity(cmdId, subjectEntity.getEntityType(), subjectEntity.getEntityId()));
+        }
+        return results;
+    }
+
+    /**
      * Return the child command ids for the parent command identified by commandId
      * @param commandId The id of the parent command
      * @return The list of child command ids
@@ -367,14 +390,12 @@ public class CommandCoordinatorUtil {
      * @param actionType The action type of the command
      * @param parameters The parameters for the command
      * @param cmdContext The command context for the command
-     * @param subjectEntities The entities associated with the command
      * @return The future object for the command submitted to the thread pool
      */
     public static Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
                                                                  VdcActionParametersBase parameters,
-                                                                 CommandContext cmdContext,
-                                                                 SubjectEntity... subjectEntities) {
-        return coco.executeAsyncCommand(actionType, parameters, cmdContext, subjectEntities);
+                                                                 CommandContext cmdContext) {
+        return coco.executeAsyncCommand(actionType, parameters, cmdContext);
     }
 
     /**

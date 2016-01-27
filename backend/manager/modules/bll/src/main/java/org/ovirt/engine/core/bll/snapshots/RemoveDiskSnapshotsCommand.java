@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -366,8 +365,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.RemoveAllCinderSnapshotDisks,
                 buildRemoveCinderSnapshotDiskParameters(cinderDisks),
-                cloneContextAndDetachFromParent(),
-                CINDERStorageHelper.getStorageEntities(cinderDisks));
+                cloneContextAndDetachFromParent());
         try {
             VdcReturnValueBase vdcReturnValueBase = future.get();
             if (!vdcReturnValueBase.getSucceeded()) {

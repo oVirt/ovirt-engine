@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -13,7 +12,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -24,9 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -303,15 +299,6 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     public void deactivateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
         updateCinderDomainStatus(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
-    }
-
-    public static SubjectEntity[] getStorageEntities(List<CinderDisk> cinderDisks) {
-        Set<SubjectEntity> storageSubjects = new HashSet<>();
-        for (CinderDisk cinderDisk : cinderDisks) {
-            SubjectEntity se = new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0));
-            storageSubjects.add(se);
-        }
-        return storageSubjects.toArray(new SubjectEntity[storageSubjects.size()]);
     }
 
     private StoragePoolIsoMapDao getStoragePoolIsoMapDao() {

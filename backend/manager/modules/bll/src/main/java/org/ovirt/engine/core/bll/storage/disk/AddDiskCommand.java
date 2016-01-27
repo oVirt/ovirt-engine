@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -528,8 +527,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.AddCinderDisk,
                 buildAddCinderDiskParameters(),
-                cloneContextAndDetachFromParent(),
-                new SubjectEntity(VdcObjectType.Storage, getParameters().getStorageDomainId()));
+                cloneContextAndDetachFromParent());
         try {
             setReturnValue(future.get());
             setSucceeded(getReturnValue().getSucceeded());

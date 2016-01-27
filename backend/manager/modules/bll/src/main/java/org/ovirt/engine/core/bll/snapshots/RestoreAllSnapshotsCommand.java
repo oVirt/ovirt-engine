@@ -162,8 +162,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                                 cinderDisksToRemove,
                                 cinderVolumesToRemove,
                                 removedSnapshotId),
-                cloneContextAndDetachFromParent(),
-                CINDERStorageHelper.getStorageEntities(cinderDisksToRestore));
+                cloneContextAndDetachFromParent());
         try {
             VdcReturnValueBase vdcReturnValueBase = future.get();
             if (!vdcReturnValueBase.getSucceeded()) {
