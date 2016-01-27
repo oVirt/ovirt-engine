@@ -162,7 +162,6 @@ public class VmAnalyzer {
                 // when going to suspend, delete vm from cache later
                 if (prevStatus == VMStatus.SavingState) {
                     getResourceManager().internalSetVmStatus(dbVm, VMStatus.Suspended);
-
                 }
 
                 clearVm(vdsmVm.getVmDynamic().getExitStatus(),
@@ -175,16 +174,7 @@ public class VmAnalyzer {
                 }
             }
             if (prevStatus != VMStatus.Unassigned) {
-                runVdsCommand(
-                        VDSCommandType.Destroy,
-                        new DestroyVmVDSCommandParameters(
-                                getVdsManager().getVdsId(),
-                                vdsmVm.getVmDynamic().getId(),
-                                null,
-                                false,
-                                false,
-                                0,
-                                true));
+                destroyVm();
 
                 if (dbVm != null && prevStatus == VMStatus.SavingState) {
                     afterSuspendTreatment(vdsmVm.getVmDynamic());
@@ -193,6 +183,13 @@ public class VmAnalyzer {
                 }
             }
         }
+    }
+
+    private void destroyVm() {
+        runVdsCommand(
+                VDSCommandType.Destroy,
+                new DestroyVmVDSCommandParameters(getVdsManager().getVdsId(),
+                        vdsmVm.getVmDynamic().getId(), null, false, false, 0, true));
     }
 
     private void handleVmOnDown(VM cacheVm, VmDynamic vmDynamic) {
@@ -216,7 +213,7 @@ public class VmAnalyzer {
             }
             // if failed in destination right after migration
             else { // => cacheVm == null
-                ResourceManager.getInstance().removeAsyncRunningVm(vmDynamic.getId());
+                getResourceManager().removeAsyncRunningVm(vmDynamic.getId());
                 saveDynamic(vdsmVm.getVmDynamic());
             }
         } else {
@@ -232,9 +229,6 @@ public class VmAnalyzer {
         vmDynamicToSave = vmDynamic;
     }
 
-    /**
-     * Generate an error or information event according to the exit status of a VM in status 'down'
-     */
     private void auditVmOnDownEvent(VmExitStatus exitStatus, String exitMessage, Guid vmStatisticsId) {
         AuditLogType type = exitStatus == VmExitStatus.Normal ? AuditLogType.VM_DOWN : AuditLogType.VM_DOWN_ERROR;
         AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), vmStatisticsId);
@@ -250,7 +244,7 @@ public class VmAnalyzer {
 
         AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), vm.getId());
         auditLog(logable, type);
-        ResourceManager.getInstance().removeAsyncRunningVm(vm.getId());
+        getResourceManager().removeAsyncRunningVm(vm.getId());
     }
 
     private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason) {
@@ -295,30 +289,15 @@ public class VmAnalyzer {
     // TODO Method with Side-Effect - move to VmsMonitoring
     // switch command execution with state change and let a final execution point at #VmsMonitoring crate tasks out of the new state. this can be delegated to some task Q instead of running in-thread
     private void proceedVmBeforeDeletion() {
-        AuditLogType type = AuditLogType.UNASSIGNED;
-        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
         if (dbVm.getStatus() == VMStatus.MigratingFrom) {
             // if a VM that was a source host in migration process is now down with normal
             // exit status that's OK, otherwise..
             if (vdsmVm != null && vdsmVm.getVmDynamic() != null && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
                 if (dbVm.getMigratingToVds() != null) {
-                    VDSReturnValue destoryReturnValue = runVdsCommand(
-                            VDSCommandType.DestroyVm,
-                            new DestroyVmVDSCommandParameters(new Guid(dbVm.getMigratingToVds().toString()),
-                                    dbVm.getId(),
-                                    true,
-                                    false,
-                                    0));
-                    if (destoryReturnValue.getSucceeded()) {
-                        log.info("Stopped migrating VM: '{}' on VDS: '{}'", dbVm.getName(),
-                                dbVm.getMigratingToVds());
-                    } else {
-                        log.info("Could not stop migrating VM: '{}' on VDS: '{}', Error: '{}'", dbVm.getName(),
-                                dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
-                    }
+                    destroyVmOnDestinationHost();
                 }
                 // set vm status to down if source vm crushed
-                ResourceManager.getInstance().internalSetVmStatus(dbVm,
+                getResourceManager().internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         vdsmVm.getVmDynamic().getExitStatus(),
                         vdsmVm.getVmDynamic().getExitMessage(),
@@ -326,15 +305,28 @@ public class VmAnalyzer {
                 saveDynamic(dbVm.getDynamicData());
                 saveStatistics();
                 saveVmInterfaces();
-                type = AuditLogType.VM_MIGRATION_ABORT;
-                logable.addCustomValue("MigrationError", vdsmVm.getVmDynamic().getExitMessage());
+                auditVmMigrationAbort();
 
                 getResourceManager().removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
             }
         }
+    }
 
-        if (type != AuditLogType.UNASSIGNED) {
-            auditLog(logable, type);
+    private void auditVmMigrationAbort() {
+        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+        logable.addCustomValue("MigrationError", vdsmVm.getVmDynamic().getExitMessage());
+        auditLog(logable, AuditLogType.VM_MIGRATION_ABORT);
+    }
+
+    private void destroyVmOnDestinationHost() {
+        VDSReturnValue destoryReturnValue = runVdsCommand(
+                VDSCommandType.DestroyVm,
+                new DestroyVmVDSCommandParameters(dbVm.getMigratingToVds(), dbVm.getId(), true, false, 0));
+        if (destoryReturnValue.getSucceeded()) {
+            log.info("Stopped migrating VM: '{}' on VDS: '{}'", dbVm.getName(), dbVm.getMigratingToVds());
+        } else {
+            log.info("Could not stop migrating VM: '{}' on VDS: '{}', Error: '{}'", dbVm.getName(),
+                    dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
         }
     }
 
@@ -489,15 +481,13 @@ public class VmAnalyzer {
                 // Generate an event for those machines that transition from "PoweringDown" to
                 // "Up" as this means that the power down operation failed:
                 if (dbVm.getStatus() == VMStatus.PoweringDown && vdsmVmDynamic.getStatus() == VMStatus.Up) {
-                    AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                    auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
+                    auditVmPowerDownFailed();
                 }
 
                 // log vm recovered from error
                 if (dbVm.getStatus() == VMStatus.Paused && dbVm.getVmPauseStatus().isError()
                         && vdsmVmDynamic.getStatus() == VMStatus.Up) {
-                    AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                    auditLog(logable, AuditLogType.VM_RECOVERED_FROM_PAUSE_ERROR);
+                    auditVmRecoveredFromError();
                 }
 
                 if (isRunSucceeded(vdsmVmDynamic) || isMigrationSucceeded(vdsmVmDynamic)) {
@@ -510,21 +500,17 @@ public class VmAnalyzer {
 
                 if (dbVm.getStatus() != VMStatus.NotResponding
                         && vdsmVmDynamic.getStatus() == VMStatus.NotResponding) {
-                    AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                    auditLog(logable, AuditLogType.VM_NOT_RESPONDING);
+                    auditVmNotResponding();
                 }
                 // check if vm is suspended and remove it from async list
                 else if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
                     removeFromAsync = true;
                     if (dbVm.getStatus() != VMStatus.Paused) {
-                        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                        auditLog(logable, AuditLogType.VM_PAUSED);
+                        auditVmPaused();
 
                         // check exit message to determine why the VM is paused
                         if (vdsmVmDynamic.getPauseStatus().isError()) {
-                            AuditLogType logType = vmPauseStatusToAuditLogType(vdsmVmDynamic.getPauseStatus());
-                            logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                            auditLog(logable, logType);
+                            auditVmPausedError(vdsmVmDynamic);
                         }
                     }
 
@@ -560,6 +546,32 @@ public class VmAnalyzer {
         }
     }
 
+    private void auditVmPausedError(VmDynamic vdsmVmDynamic) {
+        AuditLogType logType = vmPauseStatusToAuditLogType(vdsmVmDynamic.getPauseStatus());
+        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+        auditLog(logable, logType);
+    }
+
+    private void auditVmPaused() {
+        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+        auditLog(logable, AuditLogType.VM_PAUSED);
+    }
+
+    private void auditVmRecoveredFromError() {
+        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+        auditLog(logable, AuditLogType.VM_RECOVERED_FROM_PAUSE_ERROR);
+    }
+
+    private void auditVmNotResponding() {
+        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+        auditLog(logable, AuditLogType.VM_NOT_RESPONDING);
+    }
+
+    private void auditVmPowerDownFailed() {
+        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+        auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
+    }
+
     private boolean isRunSucceeded(VmDynamic vdsmVmDynamic) {
         return !EnumSet.of(VMStatus.Up, VMStatus.MigratingFrom).contains(dbVm.getStatus())
                 && vdsmVmDynamic.getStatus() == VMStatus.Up;
@@ -570,8 +582,6 @@ public class VmAnalyzer {
     }
 
     private boolean updateVmRunTimeInfo() {
-        boolean returnValue = false;
-
         if (dbVm == null) {
             dbVm = getDbFacade().getVmDao().get(vdsmVm.getVmDynamic().getId());
             // if vm exists in db update info
@@ -588,27 +598,33 @@ public class VmAnalyzer {
                 }
             }
         }
-        if (dbVm != null) {
-            // check if dynamic data changed - update cache and DB
-            List<String> props = ObjectIdentityChecker.getChangedFields(
-                    dbVm.getDynamicData(), vdsmVm.getVmDynamic());
-            // remove all fields that should not be checked:
-            props.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
 
-            if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
-                props.remove(VmDynamic.APPLICATIONS_LIST_FIELD_NAME);
-                vdsmVm.getVmDynamic().setAppList(dbVm.getAppList());
-            }
-            // if anything else changed
-            if (!props.isEmpty()) {
-                dbVm.updateRunTimeDynamicData(vdsmVm.getVmDynamic(),
-                        getVdsManager().getVdsId(),
-                        getVdsManager().getVdsName());
-                returnValue = true;
-            }
+        if (dbVm == null) {
+            return false;
         }
 
-        return returnValue;
+        // check if dynamic data changed - update cache and DB
+        List<String> changedFields = ObjectIdentityChecker.getChangedFields(
+                dbVm.getDynamicData(), vdsmVm.getVmDynamic());
+        // remove all fields that should not be checked:
+        changedFields.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
+
+        if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
+            changedFields.remove(VmDynamic.APPLICATIONS_LIST_FIELD_NAME);
+            vdsmVm.getVmDynamic().setAppList(dbVm.getAppList());
+        }
+
+        // if nothing else changed
+        if (changedFields.isEmpty()) {
+            return false;
+        }
+
+        dbVm.updateRunTimeDynamicData(
+                vdsmVm.getVmDynamic(),
+                getVdsManager().getVdsId(),
+                getVdsManager().getVdsName());
+
+        return true;
     }
 
     private boolean isVmMigratingToThisVds() {
@@ -965,19 +981,14 @@ public class VmAnalyzer {
         }
 
         //Build numa nodes map of the host which the dbVm is running on with node index as the key
-        Map<Integer, VdsNumaNode> runOnVdsAllNumaNodesMap = new HashMap<>();
-        List<VdsNumaNode> runOnVdsAllNumaNodes =
-                getDbFacade().getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(dbVm.getRunOnVds());
-        for (VdsNumaNode vdsNumaNode : runOnVdsAllNumaNodes) {
-            runOnVdsAllNumaNodesMap.put(vdsNumaNode.getIndex(), vdsNumaNode);
-        }
+        Map<Integer, VdsNumaNode> runOnVdsAllNumaNodesMap = getDbFacade().getVdsNumaNodeDao()
+                .getAllVdsNumaNodeByVdsId(dbVm.getRunOnVds()).stream()
+                .collect(Collectors.toMap(VdsNumaNode::getIndex, Function.identity()));
 
         //Build numa nodes map of the dbVm with node index as the key
-        Map<Integer, VmNumaNode> vmAllNumaNodesMap = new HashMap<>();
-        List<VmNumaNode> vmAllNumaNodes = getDbFacade().getVmNumaNodeDao().getAllVmNumaNodeByVmId(dbVm.getId());
-        for (VmNumaNode vmNumaNode : vmAllNumaNodes) {
-            vmAllNumaNodesMap.put(vmNumaNode.getIndex(), vmNumaNode);
-        }
+        Map<Integer, VmNumaNode> vmAllNumaNodesMap = getDbFacade().getVmNumaNodeDao()
+                .getAllVmNumaNodeByVmId(dbVm.getId()).stream()
+                .collect(Collectors.toMap(VmNumaNode::getIndex, Function.identity()));
 
         //Initialize the unpinned dbVm numa nodes list with the runtime pinning information
         List<VmNumaNode> vmNumaNodesNeedUpdate = new ArrayList<>();
