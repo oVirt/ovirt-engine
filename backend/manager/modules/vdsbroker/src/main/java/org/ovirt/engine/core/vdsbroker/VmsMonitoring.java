@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,10 +35,6 @@ import org.slf4j.LoggerFactory;
 public class VmsMonitoring {
 
     private final AuditLogDirector auditLogDirector;
-    /**
-     * The managers of the monitored VMs in this cycle.
-     */
-    private Map<Guid, VmManager> vmManagers = new HashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
@@ -70,15 +65,16 @@ public class VmsMonitoring {
             long fetchTime,
             VdsManager vdsManager,
             boolean timeToUpdateStatistics) {
+        List<VmAnalyzer> vmAnalyzers = Collections.emptyList();
         try {
-            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager, timeToUpdateStatistics);
+            vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager, timeToUpdateStatistics);
             afterVMsRefreshTreatment(vmAnalyzers, vdsManager);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
             log.error("Failed during vms monitoring on host {} error is: {}", vdsManager.getVdsName(), ex);
             log.error("Exception:", ex);
         } finally {
-            unlockVmsManager();
+            unlockVms(vmAnalyzers);
         }
 
     }
@@ -89,7 +85,7 @@ public class VmsMonitoring {
      */
     private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair, long fetchTime,
             Guid vdsId) {
-        Guid vmId = getVmId(pair);
+        Guid vmId = getVmId(pair.getFirst(), pair.getSecond());
 
         if (vmId != null) {
             VmManager vmManager = getResourceManager().getVmManager(vmId);
@@ -104,23 +100,22 @@ public class VmsMonitoring {
                             " - the VM data has changed since fetching the data", vmId);
                     vmManager.unlock();
                 } else {
-                    // store the locked managers to finally release them at the end of the cycle
-                    vmManagers.put(vmId, vmManager);
                     return true;
                 }
             } else {
                 log.debug("skipping VM '{}' from this monitoring cycle" +
-                        " - the VM is locked by its VmManager ", getVmId(pair));
+                        " - the VM is locked by its VmManager ", vmId);
             }
         }
         return false;
     }
 
-    private void unlockVmsManager() {
-        for (VmManager vmManager : vmManagers.values()) {
+    private void unlockVms(List<VmAnalyzer> vmAnalyzers) {
+        vmAnalyzers.stream().map(VmsMonitoring::getVmId).forEach(vmId -> {
+            VmManager vmManager = getResourceManager().getVmManager(vmId);
             vmManager.updateVmDataChangedTime();
             vmManager.unlock();
-        }
+        });
     }
 
     /**
@@ -365,10 +360,12 @@ public class VmsMonitoring {
         return result;
     }
 
-    private Guid getVmId(Pair<VM, VmInternalData> pair) {
-        return (pair.getFirst() != null) ?
-                pair.getFirst().getId() :
-                pair.getSecond() != null ? pair.getSecond().getVmDynamic().getId() : null;
+    private static Guid getVmId(VmAnalyzer vmAnalyzer) {
+        return getVmId(vmAnalyzer.getDbVm(), vmAnalyzer.getVdsmVm());
+    }
+
+    private static Guid getVmId(VM dbVm, VmInternalData vdsmVm) {
+        return dbVm != null ? dbVm.getId() : vdsmVm.getVmDynamic().getId();
     }
 
     protected DbFacade getDbFacade() {
@@ -381,10 +378,6 @@ public class VmsMonitoring {
 
     protected IVdsEventListener getVdsEventListener() {
         return ResourceManager.getInstance().getEventListener();
-    }
-
-    public VmManager getVmManager(Guid vmId) {
-        return vmManagers.get(vmId);
     }
 
 }

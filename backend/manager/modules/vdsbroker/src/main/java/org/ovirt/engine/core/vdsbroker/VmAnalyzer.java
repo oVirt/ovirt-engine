@@ -1098,11 +1098,11 @@ public class VmAnalyzer {
         this.vdsManager = vdsManager;
     }
 
-    private VmManager getVmManager() {
+    protected VmManager getVmManager() {
         if (getDbVm() == null) {
             return null;
         }
-        return vmsMonitoring.getVmManager(getDbVm().getId());
+        return vmsMonitoring.getResourceManager().getVmManager(getDbVm().getId());
     }
 
     public boolean isHostedEngineUnmanaged() {
