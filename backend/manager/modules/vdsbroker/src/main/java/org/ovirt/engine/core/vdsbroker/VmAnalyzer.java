@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -87,9 +88,6 @@ public class VmAnalyzer {
     private List<LUNs> vmLunDisksToSave;
     private List<VmGuestAgentInterface> vmGuestAgentNics;
 
-    //dependencies
-    private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
-
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
     private static final List<String> UNCHANGEABLE_FIELDS_BY_VDSM;
@@ -107,13 +105,14 @@ public class VmAnalyzer {
 
     private AuditLogDirector auditLogDirector;
     private VdsManager vdsManager;
+    private ResourceManager resourceManager;
+    private DbFacade dbFacade;
 
     private final boolean updateStatistics;
 
-    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring, boolean updateStatistics) {
+    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, boolean updateStatistics) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
-        this.vmsMonitoring = vmsMonitoring;
         this.updateStatistics = updateStatistics;
     }
 
@@ -162,7 +161,7 @@ public class VmAnalyzer {
 
                 // when going to suspend, delete vm from cache later
                 if (prevStatus == VMStatus.SavingState) {
-                    vmsMonitoring.getResourceManager().internalSetVmStatus(dbVm, VMStatus.Suspended);
+                    getResourceManager().internalSetVmStatus(dbVm, VMStatus.Suspended);
 
                 }
 
@@ -176,7 +175,7 @@ public class VmAnalyzer {
                 }
             }
             if (prevStatus != VMStatus.Unassigned) {
-                vmsMonitoring.getResourceManager().runVdsCommand(
+                runVdsCommand(
                         VDSCommandType.Destroy,
                         new DestroyVmVDSCommandParameters(
                                 getVdsManager().getVdsId(),
@@ -208,7 +207,7 @@ public class VmAnalyzer {
         if (exitStatus != VmExitStatus.Normal) {
             // Vm failed to run - try to rerun it on other Vds
             if (cacheVm != null) {
-                if (vmsMonitoring.getResourceManager().isVmInAsyncRunningList(vmDynamic.getId())) {
+                if (getResourceManager().isVmInAsyncRunningList(vmDynamic.getId())) {
                     log.info("Running on vds during rerun failed vm: '{}'", vmDynamic.getRunOnVds());
                     rerun = true;
                 } else if (cacheVm.isAutoStartup()) {
@@ -222,7 +221,7 @@ public class VmAnalyzer {
             }
         } else {
             // Vm moved safely to down status. May be migration - just remove it from Async Running command.
-            vmsMonitoring.getResourceManager().removeAsyncRunningVm(vmDynamic.getId());
+            getResourceManager().removeAsyncRunningVm(vmDynamic.getId());
             if (getVmManager() != null && getVmManager().isColdReboot()) {
                 setColdRebootFlag();
             }
@@ -260,7 +259,7 @@ public class VmAnalyzer {
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
-                vmsMonitoring.getResourceManager().internalSetVmStatus(dbVm,
+                getResourceManager().internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         exitStatus,
                         exitMessage,
@@ -269,7 +268,7 @@ public class VmAnalyzer {
             saveDynamic(dbVm.getDynamicData());
             saveStatistics();
             saveVmInterfaces();
-            if (!vmsMonitoring.getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
+            if (!getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
             }
         }
@@ -303,7 +302,7 @@ public class VmAnalyzer {
             // exit status that's OK, otherwise..
             if (vdsmVm != null && vdsmVm.getVmDynamic() != null && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
                 if (dbVm.getMigratingToVds() != null) {
-                    VDSReturnValue destoryReturnValue = vmsMonitoring.getResourceManager().runVdsCommand(
+                    VDSReturnValue destoryReturnValue = runVdsCommand(
                             VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(new Guid(dbVm.getMigratingToVds().toString()),
                                     dbVm.getId(),
@@ -330,7 +329,7 @@ public class VmAnalyzer {
                 type = AuditLogType.VM_MIGRATION_ABORT;
                 logable.addCustomValue("MigrationError", vdsmVm.getVmDynamic().getExitMessage());
 
-                vmsMonitoring.getResourceManager().removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+                getResourceManager().removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
             }
         }
 
@@ -540,7 +539,7 @@ public class VmAnalyzer {
                 updateVmStatistics();
                 stable = true;
                 if (!getVdsManager().isInitialized()) {
-                    vmsMonitoring.getResourceManager().removeVmFromDownVms(
+                    getResourceManager().removeVmFromDownVms(
                             getVdsManager().getVdsId(),
                             vdsmVmDynamic.getId());
                 }
@@ -671,7 +670,7 @@ public class VmAnalyzer {
                 dbVm.getId(), dbVm.getName(), getVdsManager().getVdsName());
 
         if (!migrating && !rerun
-                && vmsMonitoring.getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
+                && getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
             rerun = true;
             log.info("add VM '{}' to rerun treatment", dbVm.getName());
         }
@@ -709,7 +708,7 @@ public class VmAnalyzer {
                 newVmStatus);
 
         // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
-        vmsMonitoring.getResourceManager().internalSetVmStatus(vmToRemove, newVmStatus);
+        getResourceManager().internalSetVmStatus(vmToRemove, newVmStatus);
 
         // save the VM state
         saveDynamic(vmToRemove.getDynamicData());
@@ -1035,8 +1034,12 @@ public class VmAnalyzer {
                 > Math.abs(balloonInfo.getCurrentMemory() - balloonInfo.getBalloonTargetMemory());
     }
 
-    public DbFacade getDbFacade() {
-        return vmsMonitoring.getDbFacade();
+    protected DbFacade getDbFacade() {
+        return dbFacade;
+    }
+
+    protected void setDbFacade(DbFacade dbFacade) {
+        this.dbFacade = dbFacade;
     }
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
@@ -1102,7 +1105,7 @@ public class VmAnalyzer {
         if (getDbVm() == null) {
             return null;
         }
-        return vmsMonitoring.getResourceManager().getVmManager(getDbVm().getId());
+        return getResourceManager().getVmManager(getDbVm().getId());
     }
 
     public boolean isHostedEngineUnmanaged() {
@@ -1139,6 +1142,18 @@ public class VmAnalyzer {
 
     protected void setAuditLogDirector(AuditLogDirector auditLogDirector) {
         this.auditLogDirector = auditLogDirector;
+    }
+
+    protected ResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
+    protected void setResourceManager(ResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
+    }
+
+    protected <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
+        return getResourceManager().runVdsCommand(commandType, parameters);
     }
 
 }

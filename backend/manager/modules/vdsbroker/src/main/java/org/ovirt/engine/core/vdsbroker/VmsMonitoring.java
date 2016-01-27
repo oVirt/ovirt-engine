@@ -164,7 +164,9 @@ public class VmsMonitoring implements BackendService {
             Pair<VM, VmInternalData> pair,
             VdsManager vdsManager,
             boolean timeToUpdateStatistics) {
-        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), this, timeToUpdateStatistics);
+        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), timeToUpdateStatistics);
+        vmAnalyzer.setDbFacade(getDbFacade());
+        vmAnalyzer.setResourceManager(getResourceManager());
         vmAnalyzer.setAuditLogDirector(auditLogDirector);
         vmAnalyzer.setVdsManager(vdsManager);
         return vmAnalyzer;
