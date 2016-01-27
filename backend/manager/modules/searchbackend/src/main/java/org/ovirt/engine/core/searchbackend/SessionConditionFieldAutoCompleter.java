@@ -6,11 +6,13 @@ public class SessionConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     public static final String USER_ID = "USER_ID";
     public static final String USER_NAME = "USER_NAME";
+    public static final String AUTHZ_NAME = "AUTHZ_NAME";
 
     public SessionConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
         verbs.add(USER_ID);
         verbs.add(USER_NAME);
+        verbs.add(AUTHZ_NAME);
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -18,10 +20,12 @@ public class SessionConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         // Building the types dict.
         getTypeDictionary().put(USER_ID, UUID.class);
         getTypeDictionary().put(USER_NAME, String.class);
+        getTypeDictionary().put(AUTHZ_NAME, String.class);
 
         // building the ColumnName dict.
         columnNameDict.put(USER_ID, USER_ID);
         columnNameDict.put(USER_NAME, USER_NAME);
+        columnNameDict.put(AUTHZ_NAME, AUTHZ_NAME);
 
         // Building the validation dict.
         buildBasicValidationTable();

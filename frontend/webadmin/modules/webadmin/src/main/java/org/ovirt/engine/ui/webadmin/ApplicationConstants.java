@@ -2155,6 +2155,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("User Id")
     String userId();
 
+    @DefaultStringValue("Authorization provider")
+    String authorizationProvider();
+
     @DefaultStringValue("Session DB Id")
     String sessionDbId();
 

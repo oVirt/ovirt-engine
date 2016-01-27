@@ -50,6 +50,16 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
         userNameColumn.makeSortable(SessionConditionFieldAutoCompleter.USER_NAME);
         getTable().addColumn(userNameColumn, constants.userNameUser(), "200px"); //$NON-NLS-1$
 
+        AbstractTextColumn<UserSession> authzNameColumn =
+                new AbstractTextColumn<UserSession>() {
+                    @Override
+                    public String getValue(UserSession session) {
+                        return session.getAuthzName();
+                    }
+                };
+        authzNameColumn.makeSortable(SessionConditionFieldAutoCompleter.AUTHZ_NAME);
+        getTable().addColumn(authzNameColumn, constants.authorizationProvider(), "300px"); //$NON-NLS-1$
+
         AbstractTextColumn<UserSession> userIdColumn = new AbstractTextColumn<UserSession>() {
             @Override
             public String getValue(UserSession session) {

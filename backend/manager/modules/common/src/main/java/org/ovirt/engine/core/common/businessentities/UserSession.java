@@ -10,6 +10,7 @@ public class UserSession implements IVdcQueryable {
     private String userName;
     private Guid userId;
     private String sourceIp;
+    private String authzName;
 
     public UserSession(EngineSession engineSession) {
         Objects.requireNonNull(engineSession, "engineSession cannot be null");
@@ -18,6 +19,7 @@ public class UserSession implements IVdcQueryable {
         userName = engineSession.getUserName();
         userId = engineSession.getUserId();
         sourceIp = engineSession.getSourceIp();
+        authzName = engineSession.getAuthzName();
     }
 
     private UserSession() {
@@ -42,6 +44,10 @@ public class UserSession implements IVdcQueryable {
 
     public String getSourceIp() {
         return sourceIp;
+    }
+
+    public String getAuthzName() {
+        return authzName;
     }
 
     @Override
