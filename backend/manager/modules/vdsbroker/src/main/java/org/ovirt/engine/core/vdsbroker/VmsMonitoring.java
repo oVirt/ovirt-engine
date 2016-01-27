@@ -45,11 +45,6 @@ public class VmsMonitoring {
      */
     private Map<Guid, VmManager> vmManagers = new HashMap<>();
 
-    /**
-     * The analyzers which hold all the data per a VM
-     */
-    private List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
-
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
     /**
@@ -84,12 +79,11 @@ public class VmsMonitoring {
      * @param monitoredVms The Vms we want to monitor and analyze for changes.
 -    * VM object represent the persisted object(namely the one in db) and the VmInternalData
 -    * is the running one as reported from VDSM
-     *
      */
     public void perform(List<Pair<VM, VmInternalData>> monitoredVms) {
         try {
-            refreshVmStats(monitoredVms);
-            afterVMsRefreshTreatment();
+            List<VmAnalyzer> vmAnalyzers = refreshVmStats(monitoredVms);
+            afterVMsRefreshTreatment(vmAnalyzers);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
             log.error("Failed during vms monitoring on host {} error is: {}", vdsManager.getVdsName(), ex);
@@ -148,8 +142,10 @@ public class VmsMonitoring {
      * Skip analysis on VMs which cannot be locked
      * note: metrics calculation like memCommited and vmsCoresCount should be calculated *before*
      *   this filtering.
+     * @return The analyzers which hold all the data per VM
      */
-    private void refreshVmStats(List<Pair<VM, VmInternalData>> monitoredVms) {
+    private List<VmAnalyzer> refreshVmStats(List<Pair<VM, VmInternalData>> monitoredVms) {
+        List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
         for (Pair<VM, VmInternalData> monitoredVm : monitoredVms) {
             // TODO filter out migratingTo VMs if no action is taken on them
             if (tryLockVmForUpdate(monitoredVm)) {
@@ -159,8 +155,9 @@ public class VmsMonitoring {
             }
         }
 
-        addUnmanagedVms();
-        flush();
+        addUnmanagedVms(vmAnalyzers);
+        flush(vmAnalyzers);
+        return vmAnalyzers;
     }
 
     protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> pair) {
@@ -169,7 +166,7 @@ public class VmsMonitoring {
         return vmAnalyzer;
     }
 
-    private void afterVMsRefreshTreatment() {
+    private void afterVMsRefreshTreatment(List<VmAnalyzer> vmAnalyzers) {
         Collection<Guid> movedToDownVms = new ArrayList<>();
         List<Guid> succeededToRunVms = new ArrayList<>();
         List<Guid> autoVmsToRun = new ArrayList<>();
@@ -255,52 +252,52 @@ public class VmsMonitoring {
         }
     }
 
-    private void flush() {
-        saveVmDynamic();
-        saveVmStatistics();
-        saveVmInterfaceStatistics();
-        saveVmDiskImageStatistics();
-        saveVmLunDiskStatistics();
-        saveVmGuestAgentNetworkDevices();
-        saveVmJobsToDb();
+    private void flush(List<VmAnalyzer> vmAnalyzers) {
+        saveVmDynamic(vmAnalyzers);
+        saveVmStatistics(vmAnalyzers);
+        saveVmInterfaceStatistics(vmAnalyzers);
+        saveVmDiskImageStatistics(vmAnalyzers);
+        saveVmLunDiskStatistics(vmAnalyzers);
+        saveVmGuestAgentNetworkDevices(vmAnalyzers);
+        saveVmJobsToDb(vmAnalyzers);
     }
 
-    private void saveVmLunDiskStatistics() {
+    private void saveVmLunDiskStatistics(List<VmAnalyzer> vmAnalyzers) {
         getDbFacade().getLunDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmLunDisksToSave)
                 .flatMap(List::stream)
                 .collect(Collectors.toList()));
     }
 
-    private void saveVmDiskImageStatistics() {
+    private void saveVmDiskImageStatistics(List<VmAnalyzer> vmAnalyzers) {
         getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmDiskImageDynamicToSave)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()));
     }
 
-    private void saveVmDynamic() {
+    private void saveVmDynamic(List<VmAnalyzer> vmAnalyzers) {
         getDbFacade().getVmDynamicDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmDynamicToSave)
                 .filter(vmDynamic -> vmDynamic != null)
                 .collect(Collectors.toList()));
     }
 
-    private void saveVmInterfaceStatistics() {
+    private void saveVmInterfaceStatistics(List<VmAnalyzer> vmAnalyzers) {
         getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmNetworkStatistics)
                 .flatMap(List::stream)
                 .collect(Collectors.toList()));
     }
 
-    private void saveVmStatistics() {
+    private void saveVmStatistics(List<VmAnalyzer> vmAnalyzers) {
         getDbFacade().getVmStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmStatisticsToSave)
                 .filter(statistics -> statistics != null)
                 .collect(Collectors.toList()));
     }
 
-    protected void addUnmanagedVms() {
+    protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers) {
         List<Guid> unmanagedVmIds = vmAnalyzers.stream()
                 .filter(VmAnalyzer::isExternalVm)
                 .map(analyzer -> analyzer.getVdsmVm().getVmDynamic().getId())
@@ -310,7 +307,7 @@ public class VmsMonitoring {
 
     // ***** DB interaction *****
 
-    private void saveVmGuestAgentNetworkDevices() {
+    private void saveVmGuestAgentNetworkDevices(List<VmAnalyzer> vmAnalyzers) {
         Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = vmAnalyzers.stream()
                 .filter(analyzer -> !analyzer.getVmGuestAgentNics().isEmpty())
                 .map(analyzer -> new Pair<>(analyzer.getDbVm().getId(), analyzer.getVmGuestAgentNics()))
@@ -335,7 +332,7 @@ public class VmsMonitoring {
         }
     }
 
-    private void saveVmJobsToDb() {
+    private void saveVmJobsToDb(List<VmAnalyzer> vmAnalyzers) {
         getDbFacade().getVmJobDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmJobsToUpdate)
                 .flatMap(Collection::stream)
