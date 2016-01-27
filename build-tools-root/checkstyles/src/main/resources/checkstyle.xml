@@ -27,7 +27,7 @@
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
     <module name="IllegalImport">
-        <property name="illegalPkgs" value="com.sun"/>
+      <property name="illegalPkgs" value="com.sun, org.powermock"/>
     </module>
     <module name="ImportOrder">
       <property name="groups" value="java,javax,org,com"/>
