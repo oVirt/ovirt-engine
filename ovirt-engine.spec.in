@@ -61,6 +61,13 @@
 %global ovirt_product_group Virtualization/Management
 %global ovirt_user_description oVirt Manager
 
+# semanage moved in fedora 23 to policycoreutils-python-utils
+%if 0%{?fedora} >= 23
+%global policycoreutils_python_utils policycoreutils-python-utils
+%else
+%global policycoreutils_python_utils policycoreutils-python
+%endif
+
 %global engine_cache %{_localstatedir}/cache/%{engine_name}
 %global engine_data %{_datadir}/%{engine_name}
 %global engine_doc %{_docdir}/%{engine_name}
@@ -379,7 +386,7 @@ Requires:	cracklib-python
 Requires:	libselinux-python
 Requires:	m2crypto
 Requires:	nfs-utils
-Requires:	policycoreutils-python
+Requires:	%{policycoreutils_python_utils}
 Requires:	python-psycopg2
 Requires:	yum
 Requires(pre):	shadow-utils
