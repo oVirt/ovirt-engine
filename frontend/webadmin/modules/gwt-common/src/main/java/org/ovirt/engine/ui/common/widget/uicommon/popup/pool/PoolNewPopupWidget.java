@@ -70,6 +70,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 putOne(logicalNetworksEditorPanel, hiddenField()).
                 putOne(editPoolEditMaxAssignedVmsPerUserPanel, hiddenField()).
                 putOne(baseTemplateEditor, hiddenField()).
+                update(templateVersionNameEditor, hiddenField()).
                 putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly());
 
         updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
