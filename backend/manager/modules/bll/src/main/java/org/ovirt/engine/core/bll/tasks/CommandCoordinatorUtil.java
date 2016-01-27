@@ -436,4 +436,15 @@ public class CommandCoordinatorUtil {
         return AsyncTaskManager.getInstance(coco);
     }
 
+    /**
+     * Subscribes the given command for an event by its given event key
+     *
+     * @param eventKey
+     *            the event key to subscribe
+     * @param commandEntity
+     *            the subscribed command, which its callback will be invoked upon event
+     */
+    public static void subscribe(String eventKey, CommandEntity commandEntity) {
+        coco.subscribe(eventKey, commandEntity);
+    }
 }

@@ -30,6 +30,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private boolean callbackEnabled;
     private boolean callbackNotified;
     private boolean executed;
+    private boolean waitingForEvent;
     private Map<String, Serializable> data;
 
     public CommandEntity() {
@@ -225,5 +226,13 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setEngineSessionSeqId(long engineSessionSeqId) {
         this.engineSessionSeqId = engineSessionSeqId;
+    }
+
+    public boolean isWaitingForEvent() {
+        return waitingForEvent;
+    }
+
+    public void setWaitingForEvent(boolean waitingForEvent) {
+        this.waitingForEvent = waitingForEvent;
     }
 }

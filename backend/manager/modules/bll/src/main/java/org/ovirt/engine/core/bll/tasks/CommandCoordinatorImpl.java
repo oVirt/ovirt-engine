@@ -38,12 +38,13 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommandCoordinatorImpl extends CommandCoordinator {
+public class CommandCoordinatorImpl implements CommandCoordinator {
 
-    private static final Logger log = LoggerFactory.getLogger(CommandCoordinator.class);
+    private static final Logger log = LoggerFactory.getLogger(CommandCoordinatorImpl.class);
     private final CoCoAsyncTaskHelper coCoAsyncTaskHelper;
     private final CommandExecutor cmdExecutor;
     private final CommandsRepository commandsRepository;
@@ -93,10 +94,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                                                           CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
         CommandCallback callBack = command.getCallback();
-        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
+        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null, false);
         if (callBack != null) {
             commandsRepository.addToCallbackMap(command.getCommandId(),
-                    new CommandsRepository.CommandContainer(callBack,
+                    new CallbackTiming(callBack,
                             Config.<Integer> getValue(ConfigValues.AsyncCommandPollingLoopInSeconds)));
         }
 
@@ -343,4 +344,17 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     protected BackendInternal getBackend() {
         return Backend.getInstance();
     }
+
+    @Override
+    public void subscribe(String eventKey, CommandEntity commandEntity) {
+        commandsRepository.persistCommand(commandEntity);
+        CoCoEventSubscriber subscriber = new CoCoEventSubscriber(eventKey, commandEntity, commandsRepository);
+        getResourceManager().subscribe(subscriber);
+        commandsRepository.addEventSubscription(commandEntity, subscriber);
+    }
+
+    private ResourceManager getResourceManager() {
+        return Injector.get(ResourceManager.class);
+    }
+
 }

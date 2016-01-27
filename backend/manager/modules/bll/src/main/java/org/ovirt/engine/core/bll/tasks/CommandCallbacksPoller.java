@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.tasks;
 
-import static org.ovirt.engine.core.bll.tasks.CommandsRepository.CommandContainer;
-
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 public class CommandCallbacksPoller implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(CommandCallbacksPoller.class);
-    private boolean cmdExecutorInitialized;
     private int pollingRate;
 
     @Inject
@@ -40,6 +38,7 @@ public class CommandCallbacksPoller implements BackendService {
     private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
         pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
+        initCommandExecutor();
         schedulerUtil.scheduleAFixedDelayJob(this,
                 "invokeCallbackMethods",
                 new Class[]{},
@@ -52,32 +51,37 @@ public class CommandCallbacksPoller implements BackendService {
 
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public void invokeCallbackMethods() {
-        initCommandExecutor();
-        Iterator<Entry<Guid, CommandContainer>> iterator = commandsRepository.getCommandContainers().iterator();
+        Iterator<Entry<Guid, CallbackTiming>> iterator = commandsRepository.getCallbacksTiming().entrySet().iterator();
         while (iterator.hasNext()) {
-            Entry<Guid, CommandContainer> entry = iterator.next();
-
-            // Decrement counter; execute if it reaches 0
-            CommandContainer commandContainer = entry.getValue();
-            commandContainer.setRemainingDelay(commandContainer.getRemainingDelay() - pollingRate);
-            if (commandContainer.getRemainingDelay() > 0) {
-                continue;
-            }
+            Entry<Guid, CallbackTiming> entry = iterator.next();
 
             Guid cmdId = entry.getKey();
-            CommandCallback callback = commandContainer.getCallback();
+            CallbackTiming callbackTiming = entry.getValue();
+
+            CommandEntity commandEntity = commandsRepository.getCommandEntity(cmdId);
+            if (commandEntity != null && updateCommandWaitingForEvent(commandEntity, callbackTiming)) {
+                continue;
+            } else {
+                // Decrement counter; execute if it reaches 0
+                callbackTiming.setRemainingDelay(callbackTiming.getRemainingDelay() - pollingRate);
+                if (callbackTiming.getRemainingDelay() > 0) {
+                    continue;
+                }
+            }
+
+            CommandCallback callback = callbackTiming.getCallback();
             CommandStatus status = commandsRepository.getCommandStatus(cmdId);
             boolean errorInCallback = false;
             try {
                 switch (status) {
                     case FAILED:
-                        callback.onFailed(cmdId, commandsRepository.getChildCommandIds(cmdId));
+                        callback.onFailed(cmdId,  commandsRepository.getChildCommandIds(cmdId));
                         break;
                     case SUCCEEDED:
                         callback.onSucceeded(cmdId, commandsRepository.getChildCommandIds(cmdId));
                         break;
                     case ACTIVE:
-                        if (commandsRepository.getCommandEntity(cmdId).isExecuted()) {
+                        if (commandEntity != null && commandEntity.isExecuted()) {
                             callback.doPolling(cmdId, commandsRepository.getChildCommandIds(cmdId));
                         }
                         break;
@@ -94,20 +98,20 @@ public class CommandCallbacksPoller implements BackendService {
                     CommandEntity cmdEntity = commandsRepository.getCommandEntity(entry.getKey());
                     if (cmdEntity != null) {
                         // When a child finishes, its parent's callback should execute shortly thereafter
-                        CommandContainer rootCmdContainer =
-                                commandsRepository.getCommandCallbackContainer(cmdEntity.getRootCommandId());
+                        CallbackTiming rootCmdContainer =
+                                commandsRepository.getCallbackTiming(cmdEntity.getRootCommandId());
                         if (rootCmdContainer != null) {
                             rootCmdContainer.setInitialDelay(pollingRate);
                             rootCmdContainer.setRemainingDelay(pollingRate);
                         }
                     }
                 } else if (status != commandsRepository.getCommandStatus(cmdId)) {
-                    commandContainer.setInitialDelay(pollingRate);
-                    commandContainer.setRemainingDelay(pollingRate);
+                    callbackTiming.setInitialDelay(pollingRate);
+                    callbackTiming.setRemainingDelay(pollingRate);
                 } else {
                     int maxDelay = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds);
-                    commandContainer.setInitialDelay(Math.min(maxDelay, commandContainer.getInitialDelay() * 2));
-                    commandContainer.setRemainingDelay(commandContainer.getInitialDelay());
+                    callbackTiming.setInitialDelay(Math.min(maxDelay, callbackTiming.getInitialDelay() * 2));
+                    callbackTiming.setRemainingDelay(callbackTiming.getInitialDelay());
                 }
             }
         }
@@ -141,18 +145,41 @@ public class CommandCallbacksPoller implements BackendService {
     }
 
     private void initCommandExecutor() {
-        if (!cmdExecutorInitialized) {
-            for (CommandEntity cmdEntity : commandsRepository.getCommands(true)) {
-                if (!cmdEntity.isExecuted() &&
-                        cmdEntity.getCommandStatus() != CommandStatus.FAILED &&
-                        cmdEntity.getCommandStatus() != CommandStatus.EXECUTION_FAILED) {
-                    commandsRepository.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.EXECUTION_FAILED);
-                }
-                if (!cmdEntity.isCallbackNotified()) {
-                    commandsRepository.addToCallbackMap(cmdEntity);
-                }
+        for (CommandEntity cmdEntity : commandsRepository.getCommands(true)) {
+            if (!cmdEntity.isExecuted() &&
+                    cmdEntity.getCommandStatus() != CommandStatus.FAILED &&
+                    cmdEntity.getCommandStatus() != CommandStatus.EXECUTION_FAILED) {
+                CommandBase<?> failedCommand = commandsRepository.retrieveCommand(cmdEntity.getId());
+                failedCommand.setCommandStatus(CommandStatus.EXECUTION_FAILED);
             }
-            cmdExecutorInitialized = true;
+
+            if (!cmdEntity.isCallbackNotified()) {
+                commandsRepository.addToCallbackMap(cmdEntity);
+            }
         }
+    }
+
+    /**
+     * Checks and updates the command if the time to wait for an event to arrive has expired, the command will be move
+     * to polling mode
+     *
+     * @param cmdEntity
+     *            the entity which represents the command
+     * @param callbackTiming
+     *            the container of the callback and its timing
+     * @return {@code true} if command's callback is waiting for an event, else {@code false}
+     */
+    private boolean updateCommandWaitingForEvent(CommandEntity cmdEntity, CallbackTiming callbackTiming) {
+        if (cmdEntity.isWaitingForEvent()) {
+            if (callbackTiming.getWaitOnEventEndTime() < System.currentTimeMillis()) {
+                log.info("The command '{}' reached its event's waiting timeout and will be moved to polling mode",
+                        cmdEntity.getId());
+                commandsRepository.removeEventSubscription(cmdEntity.getId());
+                cmdEntity.setWaitingForEvent(false);
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -16,4 +16,11 @@ public abstract class CommandCallback {
 
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
     }
+
+    public void onEvent(Guid cmdId, List<Guid> childCmdIds, Object eventData) {
+    }
+
+    public boolean isTriggeredByEvent() {
+        return false;
+    }
 }

@@ -129,6 +129,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("3000")
     CoCoLifeInMinutes,
     @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    CoCoWaitForEventInMinutes,
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     CommandCoordinatorThreadPoolSize,
     @TypeConverterAttribute(Date.class)

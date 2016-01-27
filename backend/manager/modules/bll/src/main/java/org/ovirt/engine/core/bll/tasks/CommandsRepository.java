@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -21,7 +23,6 @@ import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandContextsCache;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
@@ -39,10 +40,11 @@ import org.slf4j.LoggerFactory;
 public class CommandsRepository {
 
     private static final Logger log = LoggerFactory.getLogger(CommandsRepository.class);
-    private final Map<Guid, CommandContainer> commandContainers;
+    private final ConcurrentMap<Guid, CallbackTiming> callbacksTiming;
     private final CommandsCache commandsCache;
     private final CommandContextsCache contextsCache;
     private final ConcurrentHashMap<Guid, List<Guid>> childHierarchy;
+    private final ConcurrentMap<Guid, CoCoEventSubscriber> subscriptions;
     private Integer pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
     private final Object LOCK;
     private volatile boolean childHierarchyInitialized;
@@ -50,18 +52,25 @@ public class CommandsRepository {
     private AsyncTaskDao asyncTaskDao;
 
     public CommandsRepository() {
-        commandContainers = new ConcurrentHashMap<>();
+        callbacksTiming = new ConcurrentHashMap<>();
         commandsCache = new CommandsCacheImpl();
         contextsCache = new CommandContextsCacheImpl(commandsCache);
         childHierarchy = new ConcurrentHashMap<>();
+        subscriptions = new ConcurrentHashMap<>();
         LOCK = new Object();
     }
 
     public void addToCallbackMap(CommandEntity cmdEntity) {
-        if (!commandContainers.containsKey(cmdEntity.getId())) {
+        if (!callbacksTiming.containsKey(cmdEntity.getId())) {
             CommandBase<?> cmd = retrieveCommand(cmdEntity.getId());
             if (cmd != null && cmd.getCallback() != null) {
-                addToCallbackMap(cmdEntity.getId(), new CommandContainer(cmd.getCallback(), pollingRate));
+                CallbackTiming callbackTiming = new CallbackTiming(cmd.getCallback(), pollingRate);
+                if (cmdEntity.isWaitingForEvent()) {
+                    long waitOnEventEndTime = System.currentTimeMillis()
+                            + TimeUnit.MINUTES.toMillis(Config.<Integer>getValue(ConfigValues.CoCoWaitForEventInMinutes));
+                    callbackTiming.setWaitOnEventEndTime(waitOnEventEndTime);
+                }
+                addToCallbackMap(cmdEntity.getId(), callbackTiming);
             }
         }
     }
@@ -87,8 +96,8 @@ public class CommandsRepository {
                 .forEach(x -> commandsCache.updateCommandStatus(x.getId(), CommandStatus.ENDED_WITH_FAILURE));
     }
 
-    public void addToCallbackMap(Guid commandId, CommandContainer commandContainer) {
-        commandContainers.put(commandId, commandContainer);
+    public void addToCallbackMap(Guid commandId, CallbackTiming callbackTiming) {
+        callbacksTiming.put(commandId, callbackTiming);
     }
 
     public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
@@ -241,8 +250,8 @@ public class CommandsRepository {
         return Collections.emptyList();
     }
 
-    public Set<Map.Entry<Guid, CommandContainer>> getCommandContainers() {
-        return commandContainers.entrySet();
+    public ConcurrentMap<Guid, CallbackTiming> getCallbacksTiming() {
+        return callbacksTiming;
     }
 
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
@@ -296,16 +305,16 @@ public class CommandsRepository {
         return false;
     }
 
-    public CommandContainer getCommandCallbackContainer(Guid commandId) {
+    public CallbackTiming getCallbackTiming(Guid commandId) {
         if (Guid.isNullOrEmpty(commandId)) {
             return null;
         }
 
-        return commandContainers.get(commandId);
+        return callbacksTiming.get(commandId);
     }
 
     public void markExpiredCommandsAsFailure() {
-        for (Guid commandId : commandContainers.keySet()) {
+        for (Guid commandId : callbacksTiming.keySet()) {
             List<Guid> childCmdIds = getChildCommandIds(commandId);
             if (childCmdIds.isEmpty()) {
                 markExpiredCommandAsFailure(commandId);
@@ -333,42 +342,14 @@ public class CommandsRepository {
         }
     }
 
-    static class CommandContainer {
-        // Total delay between callback executions
-        private int initialDelay;
+    public void addEventSubscription(CommandEntity command, CoCoEventSubscriber subscription) {
+        subscriptions.putIfAbsent(command.getId(), subscription);
+    }
 
-        // Remaining delay to next callback execution
-        private int remainingDelay;
-        private CommandCallback callback;
-
-        public CommandContainer(CommandCallback callback, int executionDelay) {
-            this.callback = callback;
-            this.initialDelay = executionDelay;
-            this.remainingDelay = executionDelay;
-        }
-
-        public int getInitialDelay() {
-            return initialDelay;
-        }
-
-        public void setInitialDelay(int initialDelay) {
-            this.initialDelay = initialDelay;
-        }
-
-        public int getRemainingDelay() {
-            return remainingDelay;
-        }
-
-        public void setRemainingDelay(int remainingDelay) {
-            this.remainingDelay = remainingDelay;
-        }
-
-        public CommandCallback getCallback() {
-            return callback;
-        }
-
-        public void setCallback(CommandCallback callback) {
-            this.callback = callback;
+    public void removeEventSubscription(Guid commandId) {
+        CoCoEventSubscriber subscriber = subscriptions.remove(commandId);
+        if (subscriber != null) {
+            subscriber.cancel();
         }
     }
 }

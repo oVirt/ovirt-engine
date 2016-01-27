@@ -381,7 +381,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
         try {
             if (getCallback() != null || parentHasCallback()) {
-                persistCommand(getParameters().getParentCommand(), getCallback() != null);
+                persistCommand(getParameters().getParentCommand());
                 CommandCoordinatorUtil.persistCommandAssociatedEntities(getCommandId(), getSubjectEntities());
             }
 
@@ -2295,24 +2295,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     public void persistCommand(VdcActionType parentCommand) {
-        persistCommand(parentCommand, getContext(), false);
+        persistCommand(parentCommand, getContext(), getCallback() != null, callbackTriggeredByEvent());
     }
 
     public void persistCommand(VdcActionType parentCommand, boolean enableCallback) {
-        persistCommand(parentCommand, getContext(), enableCallback);
+        persistCommand(parentCommand, getContext(), enableCallback, callbackTriggeredByEvent());
     }
 
     private void persistCommandIfNeeded() {
         if (getCallback() != null || parentHasCallback()) {
-            persistCommand(getParameters().getParentCommand(), getContext(), getCallback() != null);
+            persistCommand(getParameters().getParentCommand());
         }
     }
 
-    public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallback) {
+    public void persistCommand(VdcActionType parentCommand,
+            CommandContext cmdContext,
+            boolean enableCallback,
+            boolean callbackWaitingForEvent) {
         Transaction transaction = TransactionSupport.suspend();
         try {
             CommandEntity commandEntity =
                     buildCommandEntity(getParentParameters(parentCommand).getCommandId(), enableCallback);
+            commandEntity.setWaitingForEvent(callbackWaitingForEvent);
             CommandCoordinatorUtil.persistCommand(commandEntity, cmdContext);
         } finally {
             if (transaction != null) {
@@ -2382,9 +2386,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         try {
             CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(getCommandId());
             if (cmdEntity != null) {
-                CommandCoordinatorUtil.persistCommand(buildCommandEntity(cmdEntity.getRootCommandId(),
-                        cmdEntity.isCallbackEnabled()),
-                        getContext());
+                CommandEntity executedCmdEntity = buildCommandEntity(cmdEntity.getRootCommandId(),
+                        cmdEntity.isCallbackEnabled());
+                executedCmdEntity
+                        .setWaitingForEvent(cmdEntity.isCallbackEnabled() ? callbackTriggeredByEvent() : false);
+                CommandCoordinatorUtil.persistCommand(executedCmdEntity, getContext());
                 CommandCoordinatorUtil.updateCommandExecuted(getCommandId());
             }
         } finally {
@@ -2392,6 +2398,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 TransactionSupport.resume(transaction);
             }
         }
+    }
+
+    private boolean callbackTriggeredByEvent() {
+        CommandCallback callback = getCallback();
+        return callback == null ? false : callback.isTriggeredByEvent();
     }
 
     public CommandStatus getCommandStatus() {
@@ -2512,6 +2523,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     protected CommandActionState getActionState() {
         return actionState;
+    }
+
+    protected void subscribe(String eventKey) {
+        CommandEntity commandEntity = buildCommandEntity(getCommandId(), true);
+        commandEntity.setWaitingForEvent(true);
+        CommandCoordinatorUtil.subscribe(eventKey, commandEntity);
     }
 
     private class DefaultCommandTransactionCompletionListener extends NoOpTransactionCompletionListener {
