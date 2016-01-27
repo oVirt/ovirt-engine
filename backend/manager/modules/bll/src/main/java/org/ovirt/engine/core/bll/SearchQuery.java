@@ -307,6 +307,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     StringUtils.join(AD_SEARCH_TYPES, "|")));
 
     private QueryData initQueryData(boolean useCache) {
+        final String ASTR = "*";
         QueryData data = null;
         boolean isExistsValue = false;
         boolean IsFromYesterday = false;
@@ -314,6 +315,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         String searchKey = "";
         try {
             String searchText = getParameters().getSearchPattern();
+            // do not cache expressions with '*' since it is translated to specific IDs that might be changed
+            useCache = useCache && !searchText.contains(ASTR);
             if (useCache) {
                 // first lets check the cache of queries.
                 searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(), getParameters().getCaseSensitive());
