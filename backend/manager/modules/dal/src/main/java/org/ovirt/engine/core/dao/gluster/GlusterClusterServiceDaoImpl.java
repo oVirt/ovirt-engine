@@ -13,13 +13,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDao;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 @Named
 @Singleton
 public class GlusterClusterServiceDaoImpl extends BaseDao implements GlusterClusterServiceDao {
-    private static final ParameterizedRowMapper<GlusterClusterService> serviceRowMapper =
+    private static final RowMapper<GlusterClusterService> serviceRowMapper =
             new GlusterClusterServiceRowMapper();
 
     @Override
@@ -47,7 +47,7 @@ public class GlusterClusterServiceDaoImpl extends BaseDao implements GlusterClus
         getCallsHandler().executeModification("UpdateGlusterClusterService", createFullParametersMapper(service));
     }
 
-    public static class GlusterClusterServiceRowMapper implements ParameterizedRowMapper<GlusterClusterService> {
+    public static class GlusterClusterServiceRowMapper implements RowMapper<GlusterClusterService> {
         @Override
         public GlusterClusterService mapRow(ResultSet rs, int rownum) throws SQLException {
             GlusterClusterService entity = new GlusterClusterService();

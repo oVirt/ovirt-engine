@@ -231,13 +231,6 @@ Requires:	quartz
 # On Fedora slf4j package is split and we need also jdk14 part
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	snmp4j
-Requires:	springframework-aop
-Requires:	springframework-beans
-Requires:	springframework-context
-Requires:	springframework-expression
-Requires:	springframework-instrument
-Requires:	springframework-jdbc
-Requires:	springframework-tx
 %endif
 
 # We can't require exactly the same version and release of the
@@ -736,15 +729,6 @@ common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/r
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar
-common/org/springframework/main/spring-aop.jar springframework/spring-aop.jar
-common/org/springframework/main/spring-asm.jar objectweb-asm/asm.jar
-common/org/springframework/main/spring-beans.jar springframework/spring-beans.jar
-common/org/springframework/main/spring-context.jar springframework/spring-context.jar
-common/org/springframework/main/spring-core.jar springframework/spring-core.jar
-common/org/springframework/main/spring-expression.jar springframework/spring-expression.jar
-common/org/springframework/main/spring-instrument.jar springframework/spring-instrument.jar
-common/org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
-common/org/springframework/main/spring-tx.jar springframework/spring-tx.jar
 %endif
 __EOF__
 

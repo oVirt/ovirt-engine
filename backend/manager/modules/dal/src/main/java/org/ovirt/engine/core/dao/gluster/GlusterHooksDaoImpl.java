@@ -18,7 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * Implementation of the DB Facade for Gluster Hooks.
@@ -33,7 +32,7 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
     private static final RowMapper<GlusterServerHook> glusterServerHookRowMapper =
             new GlusterServerHookRowMapper();
 
-    private static final ParameterizedRowMapper<String>  GlusterHookContentRowMapper = new GlusterHookContentRowMapper();
+    private static final RowMapper<String>  GlusterHookContentRowMapper = new GlusterHookContentRowMapper();
 
     public GlusterHooksDaoImpl() {
         super("GlusterHook");
@@ -271,7 +270,7 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
         }
     }
 
-    private static final class GlusterHookContentRowMapper implements ParameterizedRowMapper<String> {
+    private static final class GlusterHookContentRowMapper implements RowMapper<String> {
         @Override
         public String mapRow(ResultSet rs, int rowNum)
                 throws SQLException {

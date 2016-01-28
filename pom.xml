@@ -59,10 +59,7 @@
     <xmlrpc-client.version>3.1.3</xmlrpc-client.version>
     <httpclient.version>3.1</httpclient.version>
     <httpcomponents.version>4.2.1</httpcomponents.version>
-    <spring.version>3.1.1.RELEASE</spring.version>
-    <spring.core.version>3.1.1.RELEASE</spring.core.version>
-    <spring.jdbc.version>3.1.1.RELEASE</spring.jdbc.version>
-    <spring.test.version>3.1.1.RELEASE</spring.test.version>
+    <spring.version>4.2.4.RELEASE</spring.version>
     <jboss.ejb3.ext.api.version>2.0.0-beta-1</jboss.ejb3.ext.api.version>
     <jboss.ejb3.core.version>1.1.18</jboss.ejb3.core.version>
     <javax.ejb.api.version>1.0.2.Final</javax.ejb.api.version>
@@ -159,7 +156,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
-        <version>${spring.test.version}</version>
+        <version>${spring.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -193,12 +190,17 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
-        <version>${spring.core.version}</version>
+        <version>${spring.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-jdbc</artifactId>
-        <version>${spring.jdbc.version}</version>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
       </dependency>
       <dependency>
         <groupId>postgresql</groupId>

@@ -14,13 +14,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultReadDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 @Named
 @Singleton
 public class GlusterServiceDaoImpl extends DefaultReadDao<GlusterService, Guid> implements GlusterServiceDao {
 
-    private static final ParameterizedRowMapper<GlusterService> serviceRowMapper = new GlusterServiceRowMapper();
+    private static final RowMapper<GlusterService> serviceRowMapper = new GlusterServiceRowMapper();
 
     public GlusterServiceDaoImpl() {
         super("GlusterService");
@@ -51,7 +50,7 @@ public class GlusterServiceDaoImpl extends DefaultReadDao<GlusterService, Guid> 
                         .addValue("service_name", name));
     }
 
-    public static class GlusterServiceRowMapper implements ParameterizedRowMapper<GlusterService> {
+    public static class GlusterServiceRowMapper implements RowMapper<GlusterService> {
 
         @Override
         public GlusterService mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -21,8 +21,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.ovirt.engine.core.utils.SerializationFactory;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 @Named
 @Singleton
@@ -95,7 +95,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
     }
 
     @Override
-    protected ParameterizedRowMapper<Provider<?>> createEntityRowMapper() {
+    protected RowMapper<Provider<?>> createEntityRowMapper() {
         return ProviderRowMapper.INSTANCE;
     }
 
@@ -106,7 +106,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 getCustomMapSqlParameterSource().addValue("name", name));
     }
 
-    private static class ProviderRowMapper implements ParameterizedRowMapper<Provider<?>> {
+    private static class ProviderRowMapper implements RowMapper<Provider<?>> {
 
         public static final ProviderRowMapper INSTANCE = new ProviderRowMapper();
 

@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDao;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 /**
  * Implementation of the DB Facade for Services.
@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 @SuppressWarnings("deprecation")
 public class GlusterServerServiceDaoImpl extends MassOperationsGenericDao<GlusterServerService, Guid> implements GlusterServerServiceDao {
 
-    private static final ParameterizedRowMapper<GlusterServerService> serviceRowMapper =
+    private static final RowMapper<GlusterServerService> serviceRowMapper =
             new GlusterServerServiceRowMapper();
 
     public GlusterServerServiceDaoImpl() {
@@ -34,7 +34,7 @@ public class GlusterServerServiceDaoImpl extends MassOperationsGenericDao<Gluste
 
     @Override
     public List<GlusterServerService> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(getJdbcTemplate()).query(query, serviceRowMapper);
+        return new NamedParameterJdbcTemplate(getJdbcTemplate()).query(query, serviceRowMapper);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class GlusterServerServiceDaoImpl extends MassOperationsGenericDao<Gluste
     }
 
     @Override
-    protected ParameterizedRowMapper<GlusterServerService> createEntityRowMapper() {
+    protected RowMapper<GlusterServerService> createEntityRowMapper() {
         return serviceRowMapper;
     }
 
@@ -101,7 +101,7 @@ public class GlusterServerServiceDaoImpl extends MassOperationsGenericDao<Gluste
                 serviceRowMapper, paramSource);
     }
 
-    private static final class GlusterServerServiceRowMapper implements ParameterizedRowMapper<GlusterServerService> {
+    private static final class GlusterServerServiceRowMapper implements RowMapper<GlusterServerService> {
         @Override
         public GlusterServerService mapRow(ResultSet rs, int rowNum)
                 throws SQLException {

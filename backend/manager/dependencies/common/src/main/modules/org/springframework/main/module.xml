@@ -4,7 +4,6 @@
 
   <resources>
     <resource-root path="spring-aop.jar"/>
-    <resource-root path="spring-asm.jar"/>
     <resource-root path="spring-beans.jar"/>
     <resource-root path="spring-context.jar"/>
     <resource-root path="spring-core.jar"/>
