@@ -319,10 +319,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public void provisioning_SelectedItemChanged() {
     }
 
-    @Override
-    public void updateMinAllocatedMemory() {
-    }
-
     private void initTemplate() {
         // Update model state according to VM properties.
         buildModel(this.vm.getStaticData(), new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {

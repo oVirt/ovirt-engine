@@ -32,5 +32,4 @@ public class NewInstanceTypeModelBehavior extends NonClusterModelBehaviorBase {
         getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(new ArrayList<>(Arrays.asList(VnicProfileView.EMPTY)));
         getModel().getNicsWithLogicalNetworks().setItems(new ArrayList<VnicInstanceType>());
     }
-
 }

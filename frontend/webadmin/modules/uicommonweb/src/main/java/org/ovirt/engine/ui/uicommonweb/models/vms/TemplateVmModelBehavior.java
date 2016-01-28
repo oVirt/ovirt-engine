@@ -179,10 +179,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void updateMinAllocatedMemory() {
-    }
-
-    @Override
     protected void changeDefaultHost() {
         super.changeDefaultHost();
         doChangeDefaultHost(template.getDedicatedVmForVdsList());

@@ -334,25 +334,18 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void updateMinAllocatedMemory() {
-        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
-        if (dataCenterWithCluster == null) {
+        if (getModel().getMemSize().getEntity() == null) {
             return;
         }
 
-        Cluster cluster = dataCenterWithCluster.getCluster();
-
+        Cluster cluster = getModel().getSelectedCluster();
         if (cluster == null) {
             return;
         }
 
-        if (getModel().getMemSize().getEntity() < vm.getVmMemSizeMb()) {
-            double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
-            getModel().getMinAllocatedMemory()
-                    .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
-        }
-        else {
-            getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
-        }
+        double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
+        getModel().getMinAllocatedMemory()
+                .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
     protected void initTemplate() {
