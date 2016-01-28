@@ -1687,17 +1687,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
-        updateAlerts();
-    }
-
-    private void updateAlerts() {
-        final VDS host = getSelectedItem();
-        if (host == null) {
-            return;
-        }
-
-        generalModel.setHasUpgradeAlert(host.isUpdateAvailable() && host.getStatus() != VDSStatus.Installing);
-        generalModel.setHasAnyAlert();
     }
 
     private void updateAvailableOvirtNodeUpgrades() {

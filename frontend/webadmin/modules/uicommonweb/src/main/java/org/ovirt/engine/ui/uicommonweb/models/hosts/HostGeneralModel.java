@@ -908,6 +908,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
                 : (NonOperationalReason) getEntity().getNonOperationalReason()));
 
         updateActionAvailability();
+        setHasUpgradeAlert(getEntity().isUpdateAvailable() && getEntity().getStatus() != VDSStatus.Installing);
         setHasAnyAlert();
     }
 
