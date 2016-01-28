@@ -42,7 +42,6 @@
         .labelStyle {
             color: red;
             vertical-align: bottom;
-            height: 45px;
             line-height: 20px;
             margin-left: 5px;
         }
@@ -93,6 +92,7 @@
                     </g:VerticalPanel>
                 </g:HorizontalPanel>
                 <g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
+                <g:Label ui:field="winWithoutVirtioMessage" addStyleNames="{style.labelStyle}" />
                 <g:SplitLayoutPanel ui:field="splitLayoutPanel" height="360px" addStyleNames="{style.splitLayoutPanelStyle}" />
             </g:VerticalPanel>
         </d:content>

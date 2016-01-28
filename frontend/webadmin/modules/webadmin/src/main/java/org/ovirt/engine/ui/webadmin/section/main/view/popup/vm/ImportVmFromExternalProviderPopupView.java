@@ -128,6 +128,10 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     @Ignore
     Label message;
 
+    @UiField
+    @Ignore
+    Label winWithoutVirtioMessage;
+
     @Ignore
     protected ListModelObjectCellTable<ImportVmData, ImportVmFromExternalProviderModel> table;
 
@@ -324,6 +328,8 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
                     table.asEditor().edit(table.asEditor().flush());
                 } else if (args.propertyName.equals("Message")) { ////$NON-NLS-1$
                     message.setText(importModel.getMessage());
+                } else if (args.propertyName.equals("WinWithoutVirtioMessage")) { ////$NON-NLS-1$
+                    winWithoutVirtioMessage.setText(importModel.getWinWithoutVirtioMessage());
                 }
             }
         });
