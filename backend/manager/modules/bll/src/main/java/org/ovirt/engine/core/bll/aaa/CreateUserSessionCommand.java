@@ -61,10 +61,10 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         user.setEmail(params.getEmail());
         user.setLoginName(params.getPrincipalName());
         List<Guid> groupIds = new ArrayList<>();
-        List<ExtMap> groupExtMapIds = new ArrayList<>();
-        flatGroups((Collection<ExtMap>) params.getGroupIds(), groupExtMapIds);
-        for (ExtMap group : groupExtMapIds) {
-            DbGroup dbGroup = dbGroupDao.getByExternalId(authzName, group.<String>get(Authz.GroupRecord.ID));
+        List<String> groupRecordIds = new ArrayList<>();
+        flatGroups((Collection<ExtMap>) params.getGroupIds(), groupRecordIds);
+        for (String groupId : groupRecordIds) {
+            DbGroup dbGroup = dbGroupDao.getByExternalId(authzName, groupId);
             if (dbGroup != null) {
                 groupIds.add(dbGroup.getId());
             }
@@ -108,20 +108,22 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         }
     }
 
-    private static List<ExtMap> flatGroups(Collection<ExtMap> groupIds, List<ExtMap> accumulator) {
+    private static void flatGroups(Collection<ExtMap> groupIds, List<String> accumulator) {
         for (ExtMap group : groupIds) {
-            accumulator.add(group);
-            flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
+            if (!accumulator.contains(group.<String>get(Authz.GroupRecord.ID))) {
+                accumulator.add(group.<String>get(Authz.GroupRecord.ID));
+                flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
+            }
         }
-        return accumulator;
     }
 
-    private static List<ExtMap> flatGroups(ExtMap entity, ExtKey key, List<ExtMap> accumulator) {
+    private static void flatGroups(ExtMap entity, ExtKey key, List<String> accumulator) {
         for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap>emptyList())) {
-            accumulator.add(group);
-            flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
+            if (!accumulator.contains(group.<String>get(Authz.GroupRecord.ID))) {
+                accumulator.add(group.<String>get(Authz.GroupRecord.ID));
+                flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
+            }
         }
-        return accumulator;
     }
 
     @Override

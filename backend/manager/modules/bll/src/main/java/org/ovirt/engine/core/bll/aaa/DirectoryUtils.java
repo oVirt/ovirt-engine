@@ -3,8 +3,10 @@ package org.ovirt.engine.core.bll.aaa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.api.extensions.ExtKey;
@@ -74,6 +76,14 @@ public class DirectoryUtils {
     }
 
     public static DirectoryGroup mapGroupRecordToDirectoryGroup(final String authzName, final ExtMap group) {
+        return mapGroupRecordToDirectoryGroup(authzName, group, new HashSet<>());
+    }
+
+    private static DirectoryGroup mapGroupRecordToDirectoryGroup(
+            final String authzName,
+            final ExtMap group,
+            final Set<String> loopPrevention
+    ) {
         DirectoryGroup directoryGroup = null;
         if (group != null) {
             directoryGroup = new DirectoryGroup(
@@ -83,10 +93,13 @@ public class DirectoryUtils {
                     group.<String> get(Authz.GroupRecord.NAME),
                     group.<String> get(Authz.GroupRecord.DISPLAY_NAME)
                     );
+            loopPrevention.add(directoryGroup.getId());
             for (ExtMap memberOf : group.<Collection<ExtMap>> get(
                     Authz.GroupRecord.GROUPS,
                     Collections.<ExtMap>emptyList())) {
-                directoryGroup.getGroups().add(mapGroupRecordToDirectoryGroup(authzName, memberOf));
+                if(!loopPrevention.contains(memberOf.<String>get(GroupRecord.ID))) {
+                    directoryGroup.getGroups().add(mapGroupRecordToDirectoryGroup(authzName, memberOf, loopPrevention));
+                }
             }
         }
         return directoryGroup;
@@ -97,15 +110,18 @@ public class DirectoryUtils {
     }
 
     public static void flatGroups(ExtMap principal) {
-        principal.put(PrincipalRecord.GROUPS, flatGroups(principal, PrincipalRecord.GROUPS, new ArrayList<>()));
+        Map<String, ExtMap> accumulator = new HashMap<>();
+        flatGroups(principal, PrincipalRecord.GROUPS, accumulator);
+        principal.put(PrincipalRecord.GROUPS, new ArrayList<>(accumulator.values()));
     }
 
-    private static List<ExtMap> flatGroups(ExtMap entity, ExtKey key, List<ExtMap> accumulator) {
+    private static void flatGroups(ExtMap entity, ExtKey key, Map<String, ExtMap> accumulator) {
         for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap> emptyList())) {
-            accumulator.add(group);
-            flatGroups(group, GroupRecord.GROUPS, accumulator);
+            if(!accumulator.containsKey(group.<String>get(GroupRecord.ID))) {
+                accumulator.put(group.<String>get(GroupRecord.ID), group);
+                flatGroups(group, GroupRecord.GROUPS, accumulator);
+            }
         }
-        return accumulator;
     }
 
     public static Collection<DirectoryGroup> mapGroupRecordsToDirectoryGroups(final String authzName,
