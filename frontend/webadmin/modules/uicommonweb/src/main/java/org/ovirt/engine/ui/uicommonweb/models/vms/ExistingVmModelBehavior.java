@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -258,7 +259,24 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             updateCpuProfile(getModel().getSelectedCluster().getId(),
                              getClusterCompatibilityVersion(),
                              vm.getCpuProfileId());
+
+            if (isInStateWithMemoryVolume(getVm()) && !isRestoreMemoryVolumeSupported()) {
+                getModel().getEditingEnabled().setMessage(getModel().constants.suspendedVMsWhenClusterChange());
+            }
         }
+    }
+
+    private boolean isInStateWithMemoryVolume(VM vm) {
+        return EnumSet.of(VMStatus.Suspended, VMStatus.SavingState, VMStatus.RestoringState).contains(vm.getStatus());
+    }
+
+    private boolean isRestoreMemoryVolumeSupported() {
+        Version oldClusterVersion = getVm().getVdsGroupCompatibilityVersion(); // before edit
+
+        Version newClusterVersion = getModel().getSelectedCluster() == null ?
+                null : getModel().getSelectedCluster().getCompatibilityVersion();
+
+        return oldClusterVersion.equals(newClusterVersion);
     }
 
     private int calculateHostCpus() {
