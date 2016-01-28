@@ -44,6 +44,10 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         setSnapshotName(parameters.getDescription());
     }
 
+    public CreateSnapshotCommand(T parameters) {
+        this(parameters, null);
+    }
+
     @Override
     protected void executeCommand() {
         VDSReturnValue vdsReturnValue = performImageVdsmOperation();
