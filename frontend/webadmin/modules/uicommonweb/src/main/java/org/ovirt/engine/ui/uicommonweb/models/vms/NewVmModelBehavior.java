@@ -28,10 +28,15 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     private InstanceTypeManager instanceTypeManager;
+
+    private boolean updateStatelessFlag = true;
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
@@ -47,6 +52,43 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getVmInitModel().init(null);
 
         instanceTypeManager = new NewVmInstanceTypeManager(getModel());
+    }
+
+    @Override
+    protected void commonInitialize() {
+        super.commonInitialize();
+
+        getModel().getIsStateless().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (getModel().getTemplateWithVersion() == null ||
+                        getModel().getTemplateWithVersion().getItems() == null ||
+                        getModel().getTemplateWithVersion().getSelectedItem() == null) {
+                    return;
+                }
+
+                List<VmTemplate> baseTemplates = new ArrayList<>();
+                for (TemplateWithVersion templateWithVersion : getModel().getTemplateWithVersion().getItems()) {
+                    if (templateWithVersion.isLatest() || templateWithVersion.getTemplateVersion() == null) {
+                        continue;
+                    }
+                    baseTemplates.add(templateWithVersion.getTemplateVersion());
+                }
+
+                TemplateWithVersion selectedItemTemplateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
+
+                VmTemplate selectedTemplateWithVersion = selectedItemTemplateWithVersion.getTemplateVersion();
+                if (selectedTemplateWithVersion == null) {
+                    return;
+                }
+
+                Guid selectedId = selectedTemplateWithVersion.getId();
+
+                // will be moved back in the callback which can be async
+                updateStatelessFlag = false;
+                initTemplateWithVersion(baseTemplates, selectedId, selectedItemTemplateWithVersion.isLatest(), getModel().getIsStateless().getEntity());
+            }
+        });
     }
 
     protected void loadDataCenters() {
@@ -106,7 +148,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
                 doChangeDefaultHost(template.getDedicatedVmForVdsList());
 
-                getModel().getIsStateless().setEntity(template.isStateless());
+                if (updateStatelessFlag) {
+                    getModel().getIsStateless().setEntity(template.isStateless());
+                }
+
+                updateStatelessFlag = true;
+
                 getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
 
                 boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
@@ -305,7 +352,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     protected void postInitTemplate(List<VmTemplate> templates) {
-        initTemplateWithVersion(templates, null, false);
+        initTemplateWithVersion(templates, null, false, getModel().getIsStateless().getEntity());
         updateIsDisksAvailable();
     }
 

@@ -246,14 +246,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void baseTemplateSelectedItemChanged() {
     }
 
+    protected void initTemplateWithVersion(List<VmTemplate> templates, Guid previousTemplateId, boolean useLatest) {
+        initTemplateWithVersion(templates, previousTemplateId, useLatest, true);
+    }
+
     /**
      *
      * @param templates empty list is allowed
      * @param previousTemplateId template ID to select, if null -> autodetect based on the model (ignored if latest is set)
      * @param useLatest if true, explicitly selects the latest template
+     * @param addLatest if add to all templates also the "latest" or not
      */
-    protected void initTemplateWithVersion(List<VmTemplate> templates, Guid previousTemplateId, boolean useLatest) {
-        List<TemplateWithVersion> templatesWithVersion = createTemplateWithVersionsAddLatest(templates);
+    protected void initTemplateWithVersion(List<VmTemplate> templates, Guid previousTemplateId, boolean useLatest, boolean addLatest) {
+        List<TemplateWithVersion> templatesWithVersion = createTemplateWithVersionsAddLatest(templates, addLatest);
         if (previousTemplateId == null && !useLatest) {
             TemplateWithVersion previouslySelectedTemplate = getModel().getTemplateWithVersion().getSelectedItem();
             if (previouslySelectedTemplate != null && previouslySelectedTemplate.getTemplateVersion() != null) {
@@ -262,33 +267,40 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
         }
         TemplateWithVersion templateToSelect =
-                computeTemplateWithVersionToSelect(templatesWithVersion, previousTemplateId, useLatest);
+                computeTemplateWithVersionToSelect(templatesWithVersion, previousTemplateId, useLatest, addLatest);
         getModel().getTemplateWithVersion().setItems(templatesWithVersion, templateToSelect);
     }
 
     private static TemplateWithVersion computeTemplateWithVersionToSelect(
             List<TemplateWithVersion> newItems,
-            Guid previousTemplateId, boolean useLatest) {
+            Guid previousTemplateId, boolean useLatest, boolean addLatest) {
         if (previousTemplateId == null) {
-            return computeNewTemplateWithVersionToSelect(newItems);
+            return computeNewTemplateWithVersionToSelect(newItems, addLatest);
         }
         TemplateWithVersion oldTemplateToSelect = Linq.firstOrNull(
                 newItems,
                 new Linq.TemplateWithVersionPredicate(previousTemplateId, useLatest));
         return oldTemplateToSelect != null
                 ? oldTemplateToSelect
-                : computeNewTemplateWithVersionToSelect(newItems);
+                : computeNewTemplateWithVersionToSelect(newItems, addLatest);
     }
 
     /**
      * It prefers to select second element (usually [Blank-1]) to the first one (usually [Blank-latest]).
+     * If the latest has not been added, just return the first one
      */
-    private static TemplateWithVersion computeNewTemplateWithVersionToSelect(List<TemplateWithVersion> newItems) {
-        return newItems.isEmpty()
-                ? null
-                : newItems.size() >= 2
-                        ? newItems.get(1)
-                        : newItems.get(0);
+    private static TemplateWithVersion computeNewTemplateWithVersionToSelect(List<TemplateWithVersion> newItems, boolean addLatest) {
+        if (newItems.isEmpty()) {
+            return null;
+        }
+
+        if (addLatest) {
+            return newItems.size() >= 2
+                    ? newItems.get(1)
+                    : newItems.get(0);
+        }
+
+        return newItems.get(0);
     }
 
     /**
@@ -296,7 +308,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * @param templates raw templates from backend, latest not included
      * @return model ready for 'Template' comobox, including latest
      */
-    private static List<TemplateWithVersion> createTemplateWithVersionsAddLatest(List<VmTemplate> templates) {
+    private static List<TemplateWithVersion> createTemplateWithVersionsAddLatest(List<VmTemplate> templates, boolean addLatest) {
         final Map<Guid, VmTemplate> baseIdToBaseTemplateMap = new HashMap<>();
         final Map<Guid, VmTemplate> baseIdToLastVersionMap = new HashMap<>();
         for (VmTemplate template : templates) {
@@ -317,10 +329,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         // add latest
-        for (Map.Entry<Guid, VmTemplate> pair : baseIdToLastVersionMap.entrySet()) {
-            VmTemplate baseTemplate = baseIdToBaseTemplateMap.get(pair.getKey());
-            VmTemplate latestTemplate = new LatestVmTemplate(pair.getValue());
-            result.add(new TemplateWithVersion(baseTemplate, latestTemplate));
+        if (addLatest) {
+            for (Map.Entry<Guid, VmTemplate> pair : baseIdToLastVersionMap.entrySet()) {
+                VmTemplate baseTemplate = baseIdToBaseTemplateMap.get(pair.getKey());
+                VmTemplate latestTemplate = new LatestVmTemplate(pair.getValue());
+                result.add(new TemplateWithVersion(baseTemplate, latestTemplate));
+            }
         }
 
         Collections.sort(result);
