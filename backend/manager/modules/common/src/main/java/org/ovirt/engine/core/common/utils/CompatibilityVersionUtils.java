@@ -7,19 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Version;
 
-public class CompatibilityVersionUtils {
-
-    public static Version getEffective(Version vmCustomCompatibilityVersion,
-            Version clusterCompatibilityVersion,
-            Version defaultVersion) {
-        if (vmCustomCompatibilityVersion != null) {
-            return vmCustomCompatibilityVersion;
-        }
-        if (clusterCompatibilityVersion != null) {
-            return clusterCompatibilityVersion;
-        }
-        return defaultVersion;
-    }
+public class CompatibilityVersionUtils extends  CommonCompatibilityVersionUtils {
 
     public static Version getEffective(Version vmCustomCompatibilityVersion,
             Supplier<Version> clusterCompatibilityVersionSupplier) {

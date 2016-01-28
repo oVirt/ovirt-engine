@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -265,7 +267,28 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             updateCpuProfile(getModel().getSelectedCluster().getId(),
                              getCompatibilityVersion(),
                              vm.getCpuProfileId());
+
+            if (isInStateWithMemoryVolume(getVm()) && !isRestoreMemoryVolumeSupported()) {
+                getModel().getEditingEnabled().setMessage(getModel().constants.suspendedVMsWhenClusterChange());
+            }
         }
+    }
+
+    private boolean isInStateWithMemoryVolume(VM vm) {
+        return EnumSet.of(VMStatus.Suspended, VMStatus.SavingState, VMStatus.RestoringState).contains(vm.getStatus());
+    }
+
+    private boolean isRestoreMemoryVolumeSupported() {
+        Version oldVmEffectiveVersion = getVm().getCompatibilityVersion(); // before edit
+
+        Version newVmCustomCompatibilityVersion = getModel().getCustomCompatibilityVersion() == null ?
+                null : getModel().getCustomCompatibilityVersion().getSelectedItem();
+        Version newClusterVersion = getModel().getSelectedCluster() == null ?
+                null : getModel().getSelectedCluster().getCompatibilityVersion();
+        Version newVmEffectiveVersion = CommonCompatibilityVersionUtils.getEffective(newVmCustomCompatibilityVersion,
+                newClusterVersion, Version.getLast());
+
+        return oldVmEffectiveVersion.equals(newVmEffectiveVersion);
     }
 
     private int calculateHostCpus() {
