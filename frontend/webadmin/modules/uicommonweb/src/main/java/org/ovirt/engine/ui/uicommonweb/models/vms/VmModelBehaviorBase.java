@@ -211,7 +211,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void oSType_SelectedItemChanged() {
     }
 
-    public abstract void updateMinAllocatedMemory();
+    public void updateMinAllocatedMemory() {
+    }
 
     public void deactivateInstanceTypeManager(InstanceTypeManager.ActivatedListener activatedListener) {
         if (getInstanceTypeManager() != null) {

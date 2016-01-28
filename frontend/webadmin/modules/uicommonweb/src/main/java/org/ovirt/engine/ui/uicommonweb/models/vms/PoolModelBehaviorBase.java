@@ -214,6 +214,10 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     @Override
     public void updateMinAllocatedMemory() {
+        if (getModel().getMemSize().getEntity() == null) {
+            return;
+        }
+
         VDSGroup cluster = getModel().getSelectedCluster();
         if (cluster == null) {
             return;

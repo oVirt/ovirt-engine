@@ -279,8 +279,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void updateMinAllocatedMemory() {
-        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
-        VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
+        if (getModel().getMemSize().getEntity() == null) {
+            return;
+        }
+
+        final VDSGroup cluster = getModel().getSelectedCluster();
         if (cluster == null) {
             return;
         }
