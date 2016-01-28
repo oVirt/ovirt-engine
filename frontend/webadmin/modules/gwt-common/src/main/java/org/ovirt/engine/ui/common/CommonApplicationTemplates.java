@@ -79,19 +79,19 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<i>{0}</i>")
     SafeHtml italicText(String text);
 
-    @Template("<table style='min-width: 200px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
+    @Template("<table style='min-width: 445px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
             "<td style='width: 49%;'>{0}</td>" +
             "<td style='width: 2%; border-left: 1px solid #acacac;'></td>" +
             "<td style='white-space: normal; width: 49%; color: #acacac;'>{1}</td>" +
             "</tr></table>")
     SafeHtml typeAheadNameDescription(String name, String description);
 
-    @Template("<table style='min-width: 200px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
+    @Template("<table style='min-width: 445px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
             "<td>{0}</td>" +
             "</tr></table>")
     SafeHtml typeAheadName(String name);
 
-    @Template("<table style='min-width: 200px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
+    @Template("<table style='min-width: 445px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
             "<td>&nbsp</td>" +
             "</tr></table>")
     SafeHtml typeAheadEmptyContent();
