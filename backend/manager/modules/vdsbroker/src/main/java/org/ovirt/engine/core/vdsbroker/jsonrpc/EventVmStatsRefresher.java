@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -26,15 +28,16 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
 
     private static final Logger log = LoggerFactory.getLogger(EventVmStatsRefresher.class);
     private Subscription subscription;
+    @Inject
     private DbFacade dbFacade;
     private ResourceManager resourceManager;
     private PollAllVmStatsOnlyRefresher allVmStatsOnlyRefresher;
 
+    @SuppressWarnings("deprecation")
     public EventVmStatsRefresher(VdsManager manager) {
         super(manager);
         // we still want to fetch GetAllVmStats as we did before
-        this.allVmStatsOnlyRefresher = Injector.injectMembers(new PollAllVmStatsOnlyRefresher(vdsManager));
-        dbFacade = DbFacade.getInstance();
+        allVmStatsOnlyRefresher = Injector.injectMembers(new PollAllVmStatsOnlyRefresher(vdsManager));
         resourceManager = ResourceManager.getInstance();
     }
 
@@ -53,15 +56,13 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
             @Override
             public void onNext(Map<String, Object> map) {
                 try {
+                    long fetchTime = System.nanoTime();
                     printEventInDebug(map);
-
-                    List<Pair<VM, VmInternalData>> changedVms = new ArrayList<>();
-                    convertEvent(changedVms, map);
-
-                    if (!changedVms.isEmpty()) {
-                        getVmsMonitoring().perform(changedVms, System.nanoTime(), vdsManager, false);
-                        processDevices(changedVms.stream().map(pair -> pair.getSecond().getVmDynamic()),
-                                System.nanoTime());
+                    List<Pair<VM, VmInternalData>> vms = convertEvent(map);
+                    if (!vms.isEmpty()) {
+                        getVmsMonitoring().perform(vms, fetchTime, vdsManager, false);
+                        processDevices(vms.stream().map(pair -> pair.getSecond().getVmDynamic()),
+                                fetchTime);
                     }
                 } finally {
                     subscription.request(1);
@@ -78,28 +79,23 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 log.debug("processing event for host {} data:\n{}", vdsManager.getVdsName(), sb);
             }
 
-            @SuppressWarnings("unchecked")
-            private void convertEvent(List<Pair<VM, VmInternalData>> changedVms,
-                    Map<String, Object> map) {
+            private List<Pair<VM, VmInternalData>> convertEvent(Map<String, Object> map) {
                 Double notifyTime = VdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
+                return map.entrySet().stream()
+                        .map(idToMap -> toMonitoredVm(new Guid(idToMap.getKey()), idToMap.getValue(), notifyTime))
+                        .collect(Collectors.toList());
+            }
 
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    Guid vmid = new Guid(entry.getKey());
-                    VM dbVm = dbFacade.getVmDao().get(vmid);
-                    VmInternalData vdsmVm;
-                    if (dbVm == null) {
-                        vdsmVm = createVmInternalData(vmid, (Map<String, Object>) map.get(vmid.toString()), notifyTime);
-                    } else {
-                        vdsmVm = createVmInternalData(dbVm, (Map<String, Object>) map.get(vmid.toString()), notifyTime);
-
-                        // if dbVm runs on different host, monitoring expect it to be null
-                        if (!vdsManager.getVdsId().equals(dbVm.getRunOnVds())) {
-                            dbVm = null;
-                        }
-                    }
-
-                    changedVms.add(new Pair<>(dbVm, vdsmVm));
-                }
+            private Pair<VM, VmInternalData> toMonitoredVm(Guid vmId, Object vmMap, Double notifyTime) {
+                VM dbVm = dbFacade.getVmDao().get(vmId);
+                @SuppressWarnings("unchecked")
+                VmInternalData vdsmVm = dbVm == null ?
+                        createVmInternalData(vmId, (Map<String, Object>) vmMap, notifyTime)
+                        : createVmInternalData(dbVm, (Map<String, Object>) vmMap, notifyTime);
+                return new Pair<>(
+                        // if dbVm runs on a different host, monitoring expects it to be null
+                        dbVm != null && !vdsManager.getVdsId().equals(dbVm.getRunOnVds()) ? null : dbVm,
+                        vdsmVm);
             }
 
             private VmInternalData createVmInternalData(Guid vmId, Map<String, Object> xmlRpcStruct, Double notifyTime) {
