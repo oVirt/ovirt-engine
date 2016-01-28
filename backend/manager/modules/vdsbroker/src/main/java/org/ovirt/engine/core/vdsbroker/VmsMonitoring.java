@@ -13,21 +13,15 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -223,15 +217,6 @@ public class VmsMonitoring implements BackendService {
             if (vmAnalyzer.isRemoveFromAsync()) {
                 resourceManager.removeAsyncRunningVm(vmAnalyzer.getDbVm().getId());
             }
-
-            if (vmAnalyzer.isHostedEngineUnmanaged()) {
-                // @since 3.6 - we take existing HE VM and reimport it
-                importHostedEngineVM(getVmInfo(Collections.singletonList(vmAnalyzer.getVdsmVm()
-                        .getVmDynamic()
-                        .getId()
-                        .toString()),
-                        vdsManager.getVdsId())[0], vdsManager);
-            }
         }
 
         getVdsEventListener().updateSlaPolicies(succeededToRunVms, vdsManager.getVdsId());
@@ -246,20 +231,6 @@ public class VmsMonitoring implements BackendService {
         getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
 
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
-    }
-
-    private void importHostedEngineVM(Map<String, Object> vmStruct, VdsManager vdsManager) {
-        VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
-        if (vm != null) {
-            vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
-            vm.setInterfaces(VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
-            for (DiskImage diskImage : vm.getImages()) {
-                vm.getDiskMap().put(Guid.newGuid(), diskImage);
-            }
-            vm.setClusterId(vdsManager.getClusterId());
-            vm.setRunOnVds(vdsManager.getVdsId());
-            getVdsEventListener().importHostedEngineVm(vm);
-        }
     }
 
     private void flush(List<VmAnalyzer> vmAnalyzers) {
@@ -309,7 +280,7 @@ public class VmsMonitoring implements BackendService {
 
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
         List<Guid> unmanagedVmIds = vmAnalyzers.stream()
-                .filter(VmAnalyzer::isExternalVm)
+                .filter(VmAnalyzer::isUnmanagedVm)
                 .map(VmsMonitoring::getVmId)
                 .collect(Collectors.toList());
         getVdsEventListener().addUnmanagedVms(vdsId, unmanagedVmIds);
@@ -360,22 +331,6 @@ public class VmsMonitoring implements BackendService {
 
 
     // ***** Helpers and sub-methods *****
-
-    /**
-     * gets VM full information for the given list of VMs
-     */
-    protected Map<String, Object>[] getVmInfo(List<String> vmsToUpdate, Guid vdsId) {
-        // TODO refactor commands to use vdsId only - the whole vds object here is useless
-        VDS vds = new VDS();
-        vds.setId(vdsId);
-        Map<String, Object>[] result = new Map[0];
-        VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.FullList,
-                new FullListVDSCommandParameters(vds, vmsToUpdate));
-        if (vdsReturnValue.getSucceeded()) {
-            result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
-        }
-        return result;
-    }
 
     private static Guid getVmId(VmAnalyzer vmAnalyzer) {
         return getVmId(vmAnalyzer.getDbVm(), vmAnalyzer.getVdsmVm());

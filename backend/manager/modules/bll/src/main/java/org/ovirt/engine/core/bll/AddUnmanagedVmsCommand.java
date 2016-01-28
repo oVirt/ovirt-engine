@@ -82,7 +82,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                 Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
                 String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
 
-                if (Objects.equals(vmNameOnHost, Config.<String>getValue(ConfigValues.HostedEngineVmName))) {
+                if (isHostedEngineVm(vmId, vmNameOnHost)) {
                     // its a hosted engine VM -> import it and skip the external VM phase
                     importHostedEngineVm(vmInfo);
                     continue;
@@ -109,11 +109,18 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         setSucceeded(true);
     }
 
+    private boolean isHostedEngineVm(Guid vmId, String vmNameOnHost) {
+        VmStatic dbVm = getVmStaticDao().get(vmId);
+        return dbVm == null ?
+                Objects.equals(vmNameOnHost, Config.<String>getValue(ConfigValues.HostedEngineVmName))
+                : dbVm.getOrigin() == OriginType.HOSTED_ENGINE;
+    }
     /**
      * Gets VM full information for the given list of VMs.
      */
+    @SuppressWarnings("unchecked")
     protected Map<String, Object>[] getVmsInfo() {
-        List<String> vmsToUpdate = getParameters().getVmIds().stream().map(id -> id.toString()).collect(Collectors.toList());
+        List<String> vmsToUpdate = getParameters().getVmIds().stream().map(Guid::toString).collect(Collectors.toList());
         // TODO refactor commands to use vdsId only - the whole vds object here is useless
         VDS vds = new VDS();
         vds.setId(getVdsId());

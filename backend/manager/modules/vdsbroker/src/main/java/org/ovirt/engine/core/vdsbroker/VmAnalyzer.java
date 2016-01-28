@@ -79,8 +79,7 @@ public class VmAnalyzer {
     private boolean removeFromAsync;
     private boolean stable;
     private boolean autoVmToRun;
-    private boolean externalVm;
-    private boolean hostedEngineUnmanaged;
+    private boolean unmanagedVm;
     private boolean coldRebootVmToRun;
     private Map<Guid, VmJob> vmJobsToUpdate;
     private List<Guid> vmJobIdsToRemove;
@@ -128,8 +127,8 @@ public class VmAnalyzer {
             return;
         }
 
-        if (isUnmanagedVm()) {
-            saveDynamic(vdsmVm.getVmDynamic());
+        if (isExternalOrUnmanagedHostedEngineVm()) {
+            processUnmanagedVm();
             return;
         }
 
@@ -143,10 +142,15 @@ public class VmAnalyzer {
         updateVmJobs();
     }
 
-    private boolean isUnmanagedVm() {
-        externalVm = dbVm == null && getDbFacade().getVmStaticDao().get(vdsmVm.getVmDynamic().getId()) == null;
-        hostedEngineUnmanaged = dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE;
+    private boolean isExternalOrUnmanagedHostedEngineVm() {
+        boolean externalVm = dbVm == null && getDbFacade().getVmStaticDao().get(vdsmVm.getVmDynamic().getId()) == null;
+        boolean hostedEngineUnmanaged = dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE;
         return externalVm || hostedEngineUnmanaged;
+    }
+
+    private void processUnmanagedVm() {
+        unmanagedVm = true;
+        saveDynamic(vdsmVm.getVmDynamic());
     }
 
     /**
@@ -1099,11 +1103,6 @@ public class VmAnalyzer {
         return removeFromAsync;
     }
 
-    public boolean isExternalVm() {
-        return externalVm;
-    }
-
-
     public VdsManager getVdsManager() {
         return vdsManager;
     }
@@ -1117,10 +1116,6 @@ public class VmAnalyzer {
             return null;
         }
         return getResourceManager().getVmManager(getDbVm().getId());
-    }
-
-    public boolean isHostedEngineUnmanaged() {
-        return hostedEngineUnmanaged;
     }
 
     public boolean isColdRebootVmToRun() {
@@ -1165,6 +1160,10 @@ public class VmAnalyzer {
 
     protected <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
         return getResourceManager().runVdsCommand(commandType, parameters);
+    }
+
+    public boolean isUnmanagedVm() {
+        return unmanagedVm;
     }
 
 }

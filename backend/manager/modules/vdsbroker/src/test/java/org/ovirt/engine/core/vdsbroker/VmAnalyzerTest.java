@@ -119,7 +119,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm() != null);
         //then
         vmAnalyzer.analyze();
-        assertTrue(vmAnalyzer.isExternalVm());
+        assertTrue(vmAnalyzer.isUnmanagedVm());
     }
 
     @Theory
