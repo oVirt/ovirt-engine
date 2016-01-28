@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -41,6 +42,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
@@ -49,15 +52,18 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     private ListModel<StorageDomain> storage;
     private ListModel<VolumeType> allocation;
     private final Map<String, ImportDiskData> diskImportDataMap = new HashMap<String, ImportDiskData>();
+    private final VmImportGeneralModel vmImportGeneralModel;
     private VmImportDiskListModel importDiskListModel;
     private VmImportInterfaceListModel importInterfaceListModel;
     private List<VnicProfileView> networkProfiles;
     private ListModel<String> iso;
     private EntityModel<Boolean> attachDrivers;
+    private String winWithoutVirtioMessage;
 
     protected ImportVmFromExternalProviderModel(VmImportGeneralModel vmImportGeneralModel, VmImportDiskListModel importDiskListModel,
             VmImportInterfaceListModel vmImportInterfaceListModel, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota) {
         super(cluster, clusterQuota);
+        this.vmImportGeneralModel = vmImportGeneralModel;
         this.importDiskListModel = importDiskListModel;
         this.importInterfaceListModel = vmImportInterfaceListModel;
         setStorage(new ListModel<StorageDomain>());
@@ -70,10 +76,43 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getIso().setIsChangeable(getAttachDrivers().getEntity());
+                updateWindowsWarningMessage();
             }
         });
+
+        getIso().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateWindowsWarningMessage();
+            }
+        });
+
+        vmImportGeneralModel.getOperatingSystems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateWindowsWarningMessage();
+            }
+        });
+
         getClusterQuota().setIsAvailable(false);
         setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel);
+    }
+
+    private void updateWindowsWarningMessage() {
+        setWinWithoutVirtioMessage(""); //$NON-NLS-1$
+        Integer selectedOS = vmImportGeneralModel.getOperatingSystems().getSelectedItem();
+        if (selectedOS == null) {
+            return;
+        }
+
+        boolean attachDrivers = getAttachDrivers().getEntity();
+        boolean someDriverSelected = !StringUtils.isEmpty(getIso().getSelectedItem());
+        boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(selectedOS);
+
+        if (isWindows && (!attachDrivers || !someDriverSelected)) {
+            setWinWithoutVirtioMessage(ConstantsManager.getInstance()
+                    .getConstants().missingVirtioDriversForWindows());
+        }
     }
 
     private final Map<String, ImportNetworkData> networkImportDataMap = new HashMap<String, ImportNetworkData>();
@@ -360,6 +399,17 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                 iface.setNetworkName(profile.getNetworkName());
                 iface.setVnicProfileName(profile.getName());
             }
+        }
+    }
+
+    public String getWinWithoutVirtioMessage() {
+        return winWithoutVirtioMessage;
+    }
+
+    public void setWinWithoutVirtioMessage(String value) {
+        if (!Objects.equals(winWithoutVirtioMessage, value)) {
+            winWithoutVirtioMessage = value;
+            onPropertyChanged(new PropertyChangedEventArgs("WinWithoutVirtioMessage")); //$NON-NLS-1$
         }
     }
 }

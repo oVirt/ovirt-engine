@@ -2174,6 +2174,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Missing Quota for the selected Storage Domain(s), Please define proper Quota")
     String missingQuotaStorageEnforceMode();
 
+    @DefaultStringValue("You have selected windows OS and have not selected VirtIO drivers. This may cause the system not to boot up.")
+    String missingVirtioDriversForWindows();
+
     @DefaultStringValue("Missing Quota for the selected Cluster, Please define proper Quota")
     String missingQuotaClusterEnforceMode();
 
