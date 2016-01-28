@@ -6,15 +6,6 @@ public class ImagesContainterParametersBase extends ImagesActionsParametersBase 
     private static final long serialVersionUID = -5293411452987894523L;
     private boolean wipeAfterDelete;
     private Guid containerid;
-    private boolean deleteOnFailure = true;
-
-    public boolean isDeleteOnFailure() {
-        return deleteOnFailure;
-    }
-
-    public void setDeleteOnFailure(boolean deleteOnFailure) {
-        this.deleteOnFailure = deleteOnFailure;
-    }
 
     public ImagesContainterParametersBase() {
         containerid = Guid.Empty;

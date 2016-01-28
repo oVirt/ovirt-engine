@@ -125,11 +125,9 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
     }
 
     private void removeCinderDisk() {
-        if (getParameters().isDeleteOnFailure()) {
-            runInternalAction(VdcActionType.RemoveCinderDisk,
-                    buildRevertParameters(getParameters().getDestinationImageId()),
-                    null);
-        }
+        runInternalAction(VdcActionType.RemoveCinderDisk,
+                buildRevertParameters(getParameters().getDestinationImageId()),
+                null);
     }
 
     private RemoveCinderDiskParameters buildRevertParameters(Guid cinderDiskId) {

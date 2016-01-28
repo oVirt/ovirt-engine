@@ -473,7 +473,6 @@ public enum VdcActionType {
     ExtendCinderDisk(3202, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     RemoveAllVmCinderDisks(3203, QuotaDependency.STORAGE),
     CloneSingleCinderDisk(3204, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
-    CloneCinderDisks(3205, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     RegisterCinderDisk(3206, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     CreateCinderSnapshot(3207, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     RemoveCinderSnapshotDisk(3208, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
