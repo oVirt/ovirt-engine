@@ -39,7 +39,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
     private ListModelSuggestionDisplay suggestionDisplay;
 
     public BaseListModelSuggestBox(MultiWordSuggestOracle suggestOracle) {
-        this(suggestOracle, 120);
+        this(suggestOracle, 445);
     }
 
     public BaseListModelSuggestBox(MultiWordSuggestOracle suggestOracle, int maxSuggestionPanelHeightInPx) {
