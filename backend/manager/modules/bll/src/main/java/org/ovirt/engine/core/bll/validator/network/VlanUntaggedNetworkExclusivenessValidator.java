@@ -2,23 +2,22 @@ package org.ovirt.engine.core.bll.validator.network;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @Singleton
 @Named
 final class VlanUntaggedNetworkExclusivenessValidator implements NetworkExclusivenessValidator {
 
-    private final Predicate untaggedNetworkPredicate;
+    private final Predicate<NetworkType> untaggedNetworkPredicate;
 
     @Inject
-    VlanUntaggedNetworkExclusivenessValidator(@Named("untaggedNetworkPredicate") Predicate untaggedNetworkPredicate) {
+    VlanUntaggedNetworkExclusivenessValidator(@Named("untaggedNetworkPredicate") Predicate<NetworkType> untaggedNetworkPredicate) {
         Objects.requireNonNull(untaggedNetworkPredicate, "untaggedNetworkPredicate cannot be null");
 
         this.untaggedNetworkPredicate = untaggedNetworkPredicate;
@@ -31,9 +30,7 @@ final class VlanUntaggedNetworkExclusivenessValidator implements NetworkExclusiv
      */
     @Override
     public boolean isNetworkExclusive(List<NetworkType> networksOnIface) {
-        final int untaggedNetworkCount = CollectionUtils.countMatches(networksOnIface, untaggedNetworkPredicate);
-
-        return untaggedNetworkCount <= 1;
+        return  networksOnIface.stream().filter(untaggedNetworkPredicate).count() <= 1;
     }
 
     @Override

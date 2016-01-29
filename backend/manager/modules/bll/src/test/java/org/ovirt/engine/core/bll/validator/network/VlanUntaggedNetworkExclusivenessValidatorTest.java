@@ -11,8 +11,8 @@ import static org.ovirt.engine.core.common.errors.EngineMessage.NETWORK_INTERFAC
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Predicate;
 
-import org.apache.commons.collections.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,14 +25,14 @@ public class VlanUntaggedNetworkExclusivenessValidatorTest {
     private NetworkExclusivenessValidator underTest;
 
     @Mock
-    private Predicate mockUntaggedNetworkPredicate;
+    private Predicate<NetworkType> mockUntaggedNetworkPredicate;
 
     @Before
     public void setUp() throws Exception {
         underTest = new VlanUntaggedNetworkExclusivenessValidator(mockUntaggedNetworkPredicate);
 
-        when(mockUntaggedNetworkPredicate.evaluate(VLAN)).thenReturn(false);
-        when(mockUntaggedNetworkPredicate.evaluate(VM)).thenReturn(true);
+        when(mockUntaggedNetworkPredicate.test(VLAN)).thenReturn(false);
+        when(mockUntaggedNetworkPredicate.test(VM)).thenReturn(true);
     }
 
     @Test

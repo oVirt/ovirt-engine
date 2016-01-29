@@ -1,15 +1,14 @@
 package org.ovirt.engine.core.bll.validator.network;
 
+import java.util.function.Predicate;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.collections.Predicate;
-
 @Named
 @Singleton
-public final class UntaggedNetworkPredicate implements Predicate {
+public final class UntaggedNetworkPredicate implements Predicate<NetworkType> {
     @Override
-    public boolean evaluate(Object networkType) {
+    public boolean test(NetworkType networkType) {
         return !NetworkType.VLAN.equals(networkType);
     }
 }
