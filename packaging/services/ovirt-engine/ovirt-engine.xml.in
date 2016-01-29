@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-#if $getboolean('ENGINE_AJP_ENABLED')
-#set HTTPS_PORT = $getinteger('ENGINE_PROXY_HTTPS_PORT')
-#else
-#set HTTPS_PORT = $getinteger('ENGINE_HTTPS_PORT')
-#end if
+{% if config.getboolean('ENGINE_AJP_ENABLED') %}
+{% set HTTPS_PORT = config.getinteger('ENGINE_PROXY_HTTPS_PORT') %}
+{% else %}
+{% set HTTPS_PORT = config.getinteger('ENGINE_HTTPS_PORT') %}
+{% endif %}
 
 <server xmlns="urn:jboss:domain:4.0">
 
@@ -65,7 +65,7 @@
                 alias="1"
                 key-password="mypass"
                 keystore-password="mypass"
-                path="$getstring('ENGINE_PKI')/keys/jboss.p12"
+                path="{{ config.get('ENGINE_PKI') }}/keys/jboss.p12"
                 provider="PKCS12"/>
           </ssl>
         </server-identities>
@@ -104,7 +104,7 @@
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
-        <file path="$getstring('ENGINE_LOG')/server.log"/>
+        <file path="{{ config.get('ENGINE_LOG') }}/server.log"/>
         <append value="true"/>
       </file-handler>
 
@@ -114,7 +114,7 @@
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
         </formatter>
-        <file path="$getstring('ENGINE_LOG')/engine.log"/>
+        <file path="{{ config.get('ENGINE_LOG') }}/engine.log"/>
         <append value="true"/>
       </file-handler>
 
@@ -124,7 +124,7 @@
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
         </formatter>
-        <file path="$getstring('ENGINE_LOG')/ui.log"/>
+        <file path="{{ config.get('ENGINE_LOG') }}/ui.log"/>
         <append value="true"/>
       </file-handler>
 
@@ -164,9 +164,9 @@
         <handlers>
           <handler name="ENGINE"/>
           <handler name="ovirt-logger"/>
-          #if $getboolean('ENGINE_LOG_TO_CONSOLE')
+          {% if config.getboolean('ENGINE_LOG_TO_CONSOLE') %}
           <handler name="CONSOLE"/>
-          #end if
+          {% endif %}
         </handlers>
       </logger>
       <!-- Loggers for the UI -->
@@ -179,7 +179,7 @@
        <logger category="org.ovirt.engine.core.bll">
         <level name="INFO"/>
       </logger>
-      <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect\$PostgresJdbcTemplate">
+      <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
         <level name="WARN"/>
       </logger>
 
@@ -209,17 +209,17 @@
     <subsystem xmlns="urn:jboss:domain:datasources:4.0">
       <datasources>
         <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true" use-ccm="false">
-          <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
+          <connection-url><![CDATA[{{ config.get('ENGINE_DB_URL') }}]]></connection-url>
           <driver>postgresql</driver>
           <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
           <pool>
-            <min-pool-size>$getinteger('ENGINE_DB_MIN_CONNECTIONS')</min-pool-size>
-            <max-pool-size>$getinteger('ENGINE_DB_MAX_CONNECTIONS')</max-pool-size>
+            <min-pool-size>{{ config.getinteger('ENGINE_DB_MIN_CONNECTIONS') }}</min-pool-size>
+            <max-pool-size>{{ config.getinteger('ENGINE_DB_MAX_CONNECTIONS') }}</max-pool-size>
             <prefill>true</prefill>
           </pool>
           <security>
-            <user-name><![CDATA[$getstring('ENGINE_DB_USER')]]></user-name>
-            <password><![CDATA[$getstring('ENGINE_DB_PASSWORD')]]></password>
+            <user-name><![CDATA[{{ config.get('ENGINE_DB_USER') }}]]></user-name>
+            <password><![CDATA[{{ config.get('ENGINE_DB_PASSWORD') }}]]></password>
           </security>
           <statement>
             <prepared-statement-cache-size>100</prepared-statement-cache-size>
@@ -237,17 +237,17 @@
             enabled="true"
             use-ccm="false"
             jta="false">
-          <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
+          <connection-url><![CDATA[{{ config.get('ENGINE_DB_URL') }}]]></connection-url>
           <driver>postgresql</driver>
           <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
           <pool>
-            <min-pool-size>$getinteger('ENGINE_NON_JTA_DB_MIN_CONNECTIONS')</min-pool-size>
-            <max-pool-size>$getinteger('ENGINE_NON_JTA_DB_MAX_CONNECTIONS')</max-pool-size>
+            <min-pool-size>{{ config.getinteger('ENGINE_NON_JTA_DB_MIN_CONNECTIONS') }}</min-pool-size>
+            <max-pool-size>{{ config.getinteger('ENGINE_NON_JTA_DB_MAX_CONNECTIONS') }}</max-pool-size>
             <prefill>true</prefill>
           </pool>
           <security>
-            <user-name><![CDATA[$getstring('ENGINE_DB_USER')]]></user-name>
-            <password><![CDATA[$getstring('ENGINE_DB_PASSWORD')]]></password>
+            <user-name><![CDATA[{{ config.get('ENGINE_DB_USER') }}]]></user-name>
+            <password><![CDATA[{{ config.get('ENGINE_DB_PASSWORD') }}]]></password>
           </security>
           <statement>
             <prepared-statement-cache-size>100</prepared-statement-cache-size>
@@ -268,12 +268,12 @@
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:deployment-scanner:2.0">
-      <deployment-scanner path="$jboss_runtime/deployments" deployment-timeout="1200"
-          #if $getboolean('ENGINE_DEPLOYMENT_SCANNER')
+      <deployment-scanner path="{{ jboss_runtime }}/deployments" deployment-timeout="1200"
+          {% if config.getboolean('ENGINE_DEPLOYMENT_SCANNER') %}
           scan-interval="5000"
-          #else
+          {% else %}
           scan-interval="0"
-          #end if
+          {% endif %}
       />
     </subsystem>
 
@@ -312,7 +312,7 @@
       <async thread-pool-name="default"/>
       <timer-service thread-pool-name="default" default-data-store="default-file-store">
         <data-stores>
-          <file-data-store name="default-file-store" path="$getstring('ENGINE_VAR')/timer-service-data"/>
+          <file-data-store name="default-file-store" path="{{ config.get('ENGINE_VAR') }}/timer-service-data"/>
         </data-stores>
       </timer-service>
       <thread-pools>
@@ -457,25 +457,25 @@
 
       <server name="default-server">
         <!-- Listeners defined in the engine configuration: -->
-        #if $getboolean('ENGINE_HTTP_ENABLED')
+        {% if config.getboolean('ENGINE_HTTP_ENABLED') %}
         <http-listener
             name="http"
             redirect-socket="redirect"
             socket-binding="http"/>
-        #end if
-        #if $getboolean('ENGINE_HTTPS_ENABLED')
+        {% endif %}
+        {% if config.getboolean('ENGINE_HTTPS_ENABLED') %}
         <https-listener
             name="https"
             socket-binding="https"
             security-realm="https"
-            enabled-protocols="$getstring('ENGINE_HTTPS_PROTOCOLS')"/>
-        #end if
-        #if $getboolean('ENGINE_AJP_ENABLED')
+            enabled-protocols="{{ config.get('ENGINE_HTTPS_PROTOCOLS') }}"/>
+        {% endif %}
+        {% if config.getboolean('ENGINE_AJP_ENABLED') %}
         <ajp-listener
             name="ajp"
             socket-binding="ajp"
             redirect-socket="redirect"/>
-        #end if
+        {% endif %}
 
         <!-- Configure the compression filter so that it will compress all the
              HTML static content and the output of the RESTAPI: -->
@@ -510,32 +510,32 @@
   </interfaces>
 
   <socket-binding-group name="standard-sockets" default-interface="loopback">
-    #if $getboolean('ENGINE_HTTP_ENABLED')
+    {% if config.getboolean('ENGINE_HTTP_ENABLED') %}
     <socket-binding
         name="http"
-        port="$getinteger('ENGINE_HTTP_PORT')"
+        port="{{ config.getinteger('ENGINE_HTTP_PORT') }}"
         interface="public"/>
-    #end if
-    #if $getboolean('ENGINE_HTTPS_ENABLED')
+    {% endif %}
+    {% if config.getboolean('ENGINE_HTTPS_ENABLED') %}
     <socket-binding
         name="https"
-        port="$getinteger('ENGINE_HTTPS_PORT')"
+        port="{{ config.getinteger('ENGINE_HTTPS_PORT') }}"
         interface="public"/>
-    #end if
-    #if $getboolean('ENGINE_AJP_ENABLED')
+    {% endif %}
+    {% if config.getboolean('ENGINE_AJP_ENABLED') %}
     <socket-binding
         name="ajp"
-        port="$getinteger('ENGINE_AJP_PORT')"/>
-    #end if
+        port="{{ config.getinteger('ENGINE_AJP_PORT') }}"/>
+    {% endif %}
 
     <!-- The application server never listen on this port, but it is needed to
          tell the HTTP and AJP listener where to redirect HTTPS requests: -->
     <socket-binding
         name="redirect"
-        port="$HTTPS_PORT"/>
+        port="{{ HTTPS_PORT }}"/>
 
     <socket-binding name="txn-recovery-environment" port="8704"/>
     <socket-binding name="txn-status-manager" port="8705"/>
-    <socket-binding name="management" port="8706" interface="$getstring('ENGINE_JMX_INTERFACE')"/>
+    <socket-binding name="management" port="8706" interface="{{ config.get('ENGINE_JMX_INTERFACE') }}"/>
   </socket-binding-group>
 </server>

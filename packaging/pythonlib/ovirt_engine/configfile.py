@@ -129,10 +129,6 @@ class ConfigFile(base.Base):
 
         return ret
 
-    def getstring(self, name, default=None):
-        "alias to get as cheetah.template cannot call get"
-        return self.get(name, default)
-
     def get(self, name, default=None):
         return self._values.get(name, default)
 

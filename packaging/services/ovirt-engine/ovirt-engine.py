@@ -23,7 +23,7 @@ import shlex
 import subprocess
 import sys
 
-from Cheetah.Template import Template
+from jinja2 import Template
 from ovirt_engine import configfile, java, service
 
 
@@ -65,22 +65,17 @@ class Daemon(service.Daemon):
             dir,
             re.sub('\.in$', '', os.path.basename(template)),
         )
+        with open(template, 'r') as f:
+            t = Template(f.read())
         with open(out, 'w') as f:
             if mode is not None:
                 os.chmod(out, mode)
             f.write(
-                '%s' % (
-                    Template(
-                        file=template,
-                        searchList=[
-                            self._config,
-                            self._jbossVersion,
-                            {
-                                'jboss_runtime': self._jbossRuntime.directory,
-                            },
-                        ],
-                    )
-                ),
+                t.render(
+                    config=self._config,
+                    jboss_version=self._jbossVersion,
+                    jboss_runtime=self._jbossRuntime.directory,
+                )
             )
         return out
 

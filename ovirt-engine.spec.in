@@ -297,7 +297,7 @@ Requires:	vdsm-jsonrpc-java >= 1.1.7
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.5.0
-Requires:	python-cheetah
+Requires:	python-jinja2
 Requires:	spice-html5
 Requires(pre):	shadow-utils
 Requires(post):		systemd

@@ -62,7 +62,7 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG,
             ),
         )
-        filterStr = config.getstring('FILTER')
+        filterStr = config.get('FILTER')
         self.logger.debug('filterStr: %s', filterStr)
         if filterStr is not None and 'VDS_GROUP' in filterStr:
             ans = dialog.queryBoolean(

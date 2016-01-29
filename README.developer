@@ -16,7 +16,7 @@ Install the following system components:
  - postgresql-server postgresql
  - python-m2crypto / m2crypto
  - python-psycopg2 / psycopg
- - python-cheetah / cheetah
+ - python-jinja2 / Jinja2
  - libxml2-python / libxml2[python]
  - python-daemon
  - otopi >= 1.1.0
