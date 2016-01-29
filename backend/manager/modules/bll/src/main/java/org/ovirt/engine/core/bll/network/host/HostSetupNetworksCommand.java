@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
-import javax.validation.groups.Default;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -33,10 +31,8 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.SeparateNewAndModifiedInstances;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -60,9 +56,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
@@ -182,13 +175,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     protected boolean canDoAction() {
         VDS host = getVds();
 
-        boolean requestValid = validateEntitiesFromRequest(getParameters().getNetworkAttachments()) &&
-                validateEntitiesFromRequest(getParameters().getBonds());
-
-        if (!requestValid) {
-            return requestValid;
-        }
-
         fillInUnsetBondingOptions();
 
         final ValidationResult hostValidatorResult = new HostValidator(host, isInternalExecution()).validate();
@@ -238,26 +224,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         labelsCompleter.completeNetworkAttachments();
 
         fillInUnsetIpConfigs();
-    }
-
-    private boolean validateEntitiesFromRequest(List<? extends BusinessEntity<?>> newOrUpdateBusinessEntities) {
-        SeparateNewAndModifiedInstances instances = new SeparateNewAndModifiedInstances(newOrUpdateBusinessEntities);
-
-        List<String> validationMessages = new ArrayList<>();
-        validationMessages.addAll(callValidationOnAllItems(instances.getNewEntities(), CreateEntity.class, Default.class));
-        validationMessages.addAll(callValidationOnAllItems(instances.getUpdatedEntities(), UpdateEntity.class, Default.class));
-
-        return !getReturnValue().getCanDoActionMessages().addAll(validationMessages);
-    }
-
-    private List<String> callValidationOnAllItems(List<BusinessEntity<?>> items, Class<?>... groups) {
-
-        List<String> validationMessages = new ArrayList<>();
-        for (BusinessEntity<?> businessEntity : items) {
-            validationMessages.addAll(ValidationUtils.validateInputs(Arrays.asList(groups), businessEntity));
-        }
-
-        return validationMessages;
     }
 
     private ValidationResult validateWithHostSetupNetworksValidator(VDS host) {
