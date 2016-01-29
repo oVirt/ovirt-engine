@@ -17,9 +17,8 @@
 package org.ovirt.engine.api.restapi.resource.openstack;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypeResource;
@@ -45,18 +44,17 @@ public class BackendOpenStackVolumeTypeResource
         IdQueryParameters parameters = new IdQueryParameters(storageDomainId);
         List<CinderVolumeType> volumeTypes = getBackendCollection(
                 CinderVolumeType.class, VdcQueryType.GetCinderVolumeTypesByStorageDomainId, parameters);
-        CollectionUtils.filter(volumeTypes, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                return ((CinderVolumeType) o).getId().equals(id);
-            }
-        });
 
-        if (volumeTypes.isEmpty()) {
+
+        Optional<CinderVolumeType> volType = volumeTypes.stream()
+                .filter(v -> v.getId().equals(id))
+                .findFirst();
+
+        if (!volType.isPresent()) {
             return notFound();
         }
 
-        return addLinks(populate(map(volumeTypes.get(0)), volumeTypes.get(0)));
+        return volType.map(v -> addLinks(populate(map(v), v))).get();
     }
 
     @Override
