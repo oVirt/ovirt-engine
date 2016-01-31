@@ -69,8 +69,8 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         DiskImage disk3 = new DiskImage();
         disk3.setActive(true);
 
-        List diskImages = new ArrayList(Arrays.asList(disk1, disk2, disk3));
-        List snapshots = new ArrayList(Arrays.asList(snapshot));
+        List<DiskImage> diskImages = new ArrayList<>(Arrays.asList(disk1, disk2, disk3));
+        List<Snapshot> snapshots = new ArrayList<>(Arrays.asList(snapshot));
 
         when(diskImageDao.getAllSnapshotsForStorageDomain(storageDoaminId)).thenReturn(diskImages);
         when(snapshotDaoMock.getAllByStorageDomain(storageDoaminId)).thenReturn(snapshots);
