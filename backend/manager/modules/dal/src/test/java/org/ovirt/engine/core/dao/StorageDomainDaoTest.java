@@ -73,7 +73,10 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         List<StorageDomain> result = dao.getStorageDomains(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
                 StorageDomainType.ISO, StorageDomainStatus.Inactive);
 
-        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, result.get(0).getId());
+        StorageDomain domain = result.get(0);
+        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, domain.getId());
+        assertEquals("Wrong committed disk size", 0, domain.getCommittedDiskSize());
+        assertEquals("Wrong actual disk size", 0, domain.getActualImagesSize());
     }
 
     @Test
@@ -89,7 +92,10 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         List<StorageDomain> result = dao.getStorageDomains(FixturesTool.STORAGE_POOL_NFS_INACTIVE_ISO,
                 StorageDomainType.ISO, null);
 
-        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, result.get(0).getId());
+        StorageDomain domain = result.get(0);
+        assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, domain.getId());
+        assertEquals("Wrong committed disk size", 0, domain.getCommittedDiskSize());
+        assertEquals("Wrong actual disk size", 0, domain.getActualImagesSize());
     }
 
     @Test
@@ -165,7 +171,10 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     public void testGetAllStorageDomainsByImageId() {
         List<StorageDomain> result = dao.getAllStorageDomainsByImageId(FixturesTool.TEMPLATE_IMAGE_ID);
         assertEquals(1, result.size());
-        assertEquals(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, result.get(0).getId());
+        StorageDomain domain = result.get(0);
+        assertEquals(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, domain.getId());
+        assertEquals("Wrong committed disk size", 8, domain.getCommittedDiskSize());
+        assertEquals("Wrong actual disk size", 4, domain.getActualImagesSize());
     }
 
     /**
@@ -183,6 +192,8 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     private void assertGetResult(StorageDomain result) {
         assertNotNull(result);
         assertEquals(existingDomain, result);
+        assertEquals("Wrong committed disk size", 8, result.getCommittedDiskSize());
+        assertEquals("Wrong actual disk size", 4, result.getActualImagesSize());
     }
 
     /**
@@ -220,7 +231,10 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         List<StorageDomain> result = dao.getAll(PRIVILEGED_USER_ID, true);
         assertFalse(result.isEmpty());
         assertEquals(NUMBER_OF_STORAGE_DOMAINS_FOR_PRIVELEGED_USER, result.size());
-        assertEquals(result.iterator().next(), existingDomain);
+        StorageDomain domain = result.get(0);
+        assertEquals(existingDomain, domain);
+        assertEquals("Wrong committed disk size", 8, domain.getCommittedDiskSize());
+        assertEquals("Wrong actual disk size", 4, domain.getActualImagesSize());
     }
 
     /**
@@ -386,7 +400,10 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
                         ActionGroup.CONFIGURE_VM_STORAGE,
                         FixturesTool.DATA_CENTER);
         assertFalse(result.isEmpty());
-        assertEquals(result.get(0).getId(), existingDomain.getId());
+        StorageDomain domain = result.get(0);
+        assertEquals(existingDomain.getId(), domain.getId());
+        assertEquals("Wrong committed disk size", 8, domain.getCommittedDiskSize());
+        assertEquals("Wrong actual disk size", 4, domain.getActualImagesSize());
     }
 
     @Test

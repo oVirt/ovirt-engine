@@ -572,63 +572,6 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION PUBLIC.fn_get_disk_commited_value_by_storage(v_storage_domain_id IN uuid)
-RETURNS INT STABLE
-AS $FUNCTION$
-DECLARE
-    result INT;
-    mult BIGINT;
-BEGIN
-    mult := (
-            SELECT COALESCE(SUM(CASE
-            WHEN (
-                images_storage_domain_view.active = true
-                AND (
-                    images_storage_domain_view.entity_type IS NULL
-                    OR -- Floating disk
-                        images_storage_domain_view.entity_type <> 'TEMPLATE'
-                    )
-                ) -- or a VM
-            THEN images_storage_domain_view.size
-            ELSE images_storage_domain_view.actual_size
-            END
-                    ), 0)
-            FROM images_storage_domain_view
-            WHERE images_storage_domain_view.storage_id = v_storage_domain_id
-            );
-
-    -- convert to GB from bytes
-    mult := CAST((mult * 0.000000000931322574615478515625) AS BIGINT);
-
-    result := CAST(mult AS INT);
-
-RETURN result;
-END;$FUNCTION$
-LANGUAGE 'plpgsql';
-
-CREATE OR REPLACE FUNCTION PUBLIC.fn_get_actual_images_size_by_storage(v_storage_domain_id IN uuid)
-RETURNS INT STABLE
-AS $FUNCTION$
-DECLARE
-    result INT;
-    mult BIGINT;
-BEGIN
-    mult := (
-            SELECT COALESCE(SUM(images_storage_domain_view.actual_size), 0)
-            FROM images_storage_domain_view
-            WHERE images_storage_domain_view.storage_id = v_storage_domain_id
-            );
-
-    -- convert to GB from bytes
-    mult := CAST((mult * 0.000000000931322574615478515625) AS BIGINT);
-
-    result := CAST(mult AS INT);
-
-    RETURN result;
-END;$FUNCTION$
-LANGUAGE 'plpgsql';
-
-
 
 CREATE OR REPLACE FUNCTION fn_get_storage_domain_shared_status_by_domain_id(
     v_storage_domain_id UUID,
