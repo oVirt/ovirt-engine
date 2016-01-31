@@ -150,7 +150,7 @@ class Plugin(plugin.PluginBase):
                 )
 
         # than remove zombie tasks ans related jobs and compensation entries
-        _args_tasks = _args_base + ('-R', '-z', '-C', '-J',)
+        _args_tasks = _args_base + ('-R', '-z', '-A',)
         rc, tasks, stderr = self.execute(
             args=_args_tasks,
             raiseOnError=False,
