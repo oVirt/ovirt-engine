@@ -39,14 +39,6 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
     /** The queried storage domain ID */
     private Guid storageDoaminId;
 
-    /** A snapshot for the test */
-    private Snapshot snapshot;
-
-    /** The disks to use for testing */
-    private DiskImage disk1;
-    private DiskImage disk2;
-    private DiskImage disk3;
-
     private static final String snapshotDescription = "Test Snapshot";
 
     @Before
@@ -65,16 +57,16 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
 
         Guid snapshotId = Guid.newGuid();
-        snapshot = new Snapshot(snapshotId, SnapshotStatus.OK, Guid.newGuid(), null, SnapshotType.REGULAR,
+        Snapshot snapshot = new Snapshot(snapshotId, SnapshotStatus.OK, Guid.newGuid(), null, SnapshotType.REGULAR,
                 snapshotDescription, new Date(), "");
 
-        disk1 = new DiskImage();
+        DiskImage disk1 = new DiskImage();
         disk1.setVmSnapshotId(snapshotId);
 
-        disk2 = new DiskImage();
+        DiskImage disk2 = new DiskImage();
         disk2.setVmSnapshotId(snapshotId);
 
-        disk3 = new DiskImage();
+        DiskImage disk3 = new DiskImage();
         disk3.setActive(true);
 
         List diskImages = new ArrayList(Arrays.asList(disk1, disk2, disk3));
