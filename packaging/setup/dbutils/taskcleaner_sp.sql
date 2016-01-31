@@ -101,6 +101,7 @@ DECLARE
 BEGIN
     v_command_id:=command_id FROM GetAsyncTasksZombies() WHERE task_id = v_task_id;
     DELETE FROM business_entity_snapshot WHERE command_id = v_command_id;
+    PERFORM DeleteCommandEntitiesByCommandId(v_command_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -111,6 +112,7 @@ DECLARE
 BEGIN
     v_command_id:=command_id FROM async_tasks WHERE task_id = v_task_id;
     DELETE FROM business_entity_snapshot WHERE command_id = v_command_id;
+    PERFORM DeleteCommandEntitiesByCommandId(v_command_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -118,6 +120,7 @@ CREATE OR REPLACE FUNCTION DeleteEntitySnapshotZombies() RETURNS VOID
    AS $procedure$
 BEGIN
     DELETE FROM business_entity_snapshot WHERE command_id IN (SELECT command_id FROM GetAsyncTasksZombies());
+    PERFORM DeleteAllCommandEntitiesByCommandId(v_command_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -164,6 +167,7 @@ CREATE OR REPLACE FUNCTION DeleteAllEntitySnapshot() RETURNS VOID
    AS $procedure$
 BEGIN
     DELETE FROM business_entity_snapshot;
+    PERFORM DeleteAllCommandEntities();
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -171,6 +175,33 @@ CREATE OR REPLACE FUNCTION DeleteEntitySnapshotByCommandId(v_command_id UUID) RE
    AS $procedure$
 BEGIN
     DELETE FROM business_entity_snapshot where command_id = v_command_id;
+    PERFORM DeleteCommandEntitiesByCommandId(v_command_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION DeleteAllCommandEntities() RETURNS VOID
+   AS $procedure$
+BEGIN
+    IF (fn_db_is_table_exists ('command_entities')) THEN
+        DELETE FROM command_entities;
+    END IF;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteCommandEntitiesByCommandId(v_command_id UUID) RETURNS VOID
+   AS $procedure$
+BEGIN
+    IF (fn_db_is_table_exists ('command_entities')) THEN
+        DELETE FROM command_entities where command_id = v_command_id;
+    END IF;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteAllCommandEntitiesByCommandId(v_command_id UUID) RETURNS VOID
+   AS $procedure$
+BEGIN
+    IF (fn_db_is_table_exists ('command_entities')) THEN
+        DELETE FROM command_entities where command_id IN (SELECT command_id FROM GetAsyncTasksZombies());
+    END IF;
+END; $procedure$
+LANGUAGE plpgsql;
