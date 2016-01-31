@@ -426,6 +426,29 @@ FROM
 WHERE ( ( vm_device.snapshot_id IS NULL
         AND all_disks_including_snapshots.active IS NOT FALSE )
     OR vm_device.snapshot_id = all_disks_including_snapshots.vm_snapshot_id );
+CREATE OR REPLACE VIEW storage_domains_image_sizes AS
+SELECT storage_domain_id,
+    CAST(CAST(COALESCE(SUM(
+        CASE WHEN active = TRUE
+            AND(
+                entity_type IS NULL
+                OR entity_type <> 'TEMPLATE'
+                )
+            THEN size
+        ELSE actual_size
+        END), 0) * 0.000000000931322574615478515625 AS BIGINT) AS INT)
+    AS commited_disk_size,
+    CAST(CAST(COALESCE(SUM(actual_size), 0)
+    * 0.000000000931322574615478515625 AS BIGINT) AS INT)
+    AS actual_images_size
+FROM images i
+INNER JOIN image_storage_domain_map isdm
+    ON i.image_guid = isdm.image_id
+LEFT JOIN disk_image_dynamic din
+    ON i.image_guid = din.image_id
+LEFT JOIN vms_for_disk_view vfdv
+    ON i.image_group_id = vfdv.device_id
+GROUP BY storage_domain_id;
 CREATE
 OR REPLACE VIEW storage_domains AS
 SELECT
@@ -437,8 +460,8 @@ SELECT
     storage_pool_iso_map.storage_pool_id AS storage_pool_id,
     storage_domain_dynamic.available_disk_size AS available_disk_size,
     storage_domain_dynamic.used_disk_size AS used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
+    storage_domains_image_sizes.commited_disk_size,
+    storage_domains_image_sizes.actual_images_size,
     storage_pool_iso_map.status AS status,
     storage_pool.name AS storage_pool_name,
     storage_domain_static.storage_type AS storage_type,
@@ -463,8 +486,9 @@ LEFT
 OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
 LEFT
 OUTER JOIN domains_with_unregistered_entities_view ON
-    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
-
+    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
+LEFT JOIN storage_domains_image_sizes
+    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
 CREATE
 OR REPLACE VIEW storage_domains_without_storage_pools AS
 SELECT
@@ -482,8 +506,8 @@ SELECT
     NULL AS storage_pool_name,
     storage_domain_dynamic.available_disk_size AS available_disk_size,
     storage_domain_dynamic.used_disk_size AS used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
+    storage_domains_image_sizes.commited_disk_size,
+    storage_domains_image_sizes.actual_images_size,
     NULL AS status,
     fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
         storage_pool_iso_map.status,
@@ -500,7 +524,9 @@ LEFT
 OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
 LEFT
 OUTER JOIN domains_with_unregistered_entities_view ON
-    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
+LEFT JOIN storage_domains_image_sizes
+    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
 
 CREATE
 OR REPLACE VIEW storage_domains_for_search AS
@@ -524,8 +550,8 @@ SELECT
     status_table.pool_names AS storage_pool_name,
     storage_domain_dynamic.available_disk_size AS available_disk_size,
     storage_domain_dynamic.used_disk_size AS used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
+    storage_domains_image_sizes.commited_disk_size,
+    storage_domains_image_sizes.actual_images_size,
     fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
         status_table.status,
         storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
@@ -559,7 +585,9 @@ OUTER JOIN (
             storage_id ) AS status_table ON storage_domain_static.id = status_table.storage_id
 LEFT
 OUTER JOIN domains_with_unregistered_entities_view ON
-    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id;
+    domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
+LEFT JOIN storage_domains_image_sizes
+    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
 
 CREATE
 OR REPLACE VIEW luns_view AS
@@ -2048,8 +2076,8 @@ SELECT
     storage_domain_static.storage_comment AS storage_comment,
     storage_domain_dynamic.available_disk_size,
     storage_domain_dynamic.used_disk_size,
-    fn_get_disk_commited_value_by_storage ( storage_domain_static.id ) AS commited_disk_size,
-    fn_get_actual_images_size_by_storage ( storage_domain_static.id ) AS actual_images_size,
+    storage_domains_image_sizes.commited_disk_size,
+    storage_domains_image_sizes.actual_images_size,
     storage_pool.name AS storage_pool_name,
     storage_domain_static.storage_type,
     storage_domain_static.storage_domain_type,
@@ -2073,7 +2101,9 @@ OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.i
 LEFT
 OUTER JOIN vds_groups ON storage_pool_iso_map.storage_pool_id = vds_groups.storage_pool_id
 LEFT
-OUTER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id;
+OUTER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id
+LEFT JOIN storage_domains_image_sizes
+    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
 CREATE
 OR REPLACE VIEW vm_images_storage_domains_view AS
 SELECT
