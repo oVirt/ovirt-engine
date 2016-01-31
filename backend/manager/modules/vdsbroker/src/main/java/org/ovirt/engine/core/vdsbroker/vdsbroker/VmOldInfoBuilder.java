@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -142,13 +140,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
      * @return The device, or null if none found.
      */
     private static VmDevice findVmDeviceForDisk(final Guid diskId, List<VmDevice> vmDiskDevices) {
-        return (VmDevice) CollectionUtils.find(vmDiskDevices, new Predicate() {
-
-            @Override
-            public boolean evaluate(Object device) {
-                return diskId.equals(((VmDevice) device).getDeviceId());
-            }
-        });
+        return vmDiskDevices.stream().filter(d -> diskId.equals(d.getDeviceId())).findFirst().orElse(null);
     }
 
     @Override
