@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
@@ -208,12 +206,8 @@ public class VmValidator {
             vmDisks = getDiskDao().getAllForVm(vms.iterator().next().getId(), true);
         }
 
-        boolean isVirtioScsiDiskExist = CollectionUtils.exists(vmDisks, new Predicate() {
-            @Override
-            public boolean evaluate(Object disk) {
-                return ((Disk) disk).getDiskInterface() == DiskInterface.VirtIO_SCSI;
-            }
-        });
+        boolean isVirtioScsiDiskExist =
+                vmDisks.stream().anyMatch(d -> d.getDiskInterface() == DiskInterface.VirtIO_SCSI);
 
         if (isVirtioScsiDiskExist) {
             return new ValidationResult(EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
