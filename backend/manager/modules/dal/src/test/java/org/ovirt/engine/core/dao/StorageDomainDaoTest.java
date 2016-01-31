@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,7 +30,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
 
     private StorageDomainDao dao;
     private StorageDomain existingDomain;
-    private StorageDomainStatic newStaticDomain;
 
     @Override
     public void setUp() throws Exception {
@@ -39,9 +37,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getStorageDomainDao();
         existingDomain = dao.get(EXISTING_DOMAIN_ID);
-
-        newStaticDomain = new StorageDomainStatic();
-        newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
     }
 
     /**
