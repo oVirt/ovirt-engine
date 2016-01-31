@@ -509,10 +509,10 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testAllByConnectionId() {
         List<StorageDomain> domains = dao.getAllByConnectionId(new Guid("0cc146e8-e5ed-482c-8814-270bc48c297f"));
-        assertEquals("Unexpected number of storage domains by connection id", domains.size(), 1);
+        assertEquals("Unexpected number of storage domains by connection id", 1, domains.size());
         assertEquals("Wrong storage domain id for search by connection id",
-                domains.get(0).getId(),
-                FixturesTool.STORAGE_DOAMIN_NFS_MASTER);
+                FixturesTool.STORAGE_DOAMIN_NFS_MASTER,
+                domains.get(0).getId());
     }
 
     @Test
