@@ -87,9 +87,9 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         List<DiskImage> diskImages = query.getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
-        assertEquals("There should be two images returned", diskImages.size(), 2);
-        assertEquals("DiskImage should contain the VmSnapshotDescription", diskImages.get(0).getVmSnapshotDescription(),
-                snapshotDescription);
+        assertEquals("There should be two images returned", 2, diskImages.size());
+        assertEquals("DiskImage should contain the VmSnapshotDescription", snapshotDescription,
+                diskImages.get(0).getVmSnapshotDescription());
     }
 
     @Test
@@ -109,6 +109,6 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         });
 
         // Assert the no active images are returned
-        assertEquals("Active images shouldn't be returned", activeDiskImages.size(), 0);
+        assertEquals("Active images shouldn't be returned", 0, activeDiskImages.size());
     }
 }
