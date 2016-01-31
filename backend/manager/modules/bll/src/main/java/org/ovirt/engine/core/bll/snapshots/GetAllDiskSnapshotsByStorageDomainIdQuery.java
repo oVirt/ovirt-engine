@@ -3,9 +3,8 @@ package org.ovirt.engine.core.bll.snapshots;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -25,12 +24,7 @@ public class GetAllDiskSnapshotsByStorageDomainIdQuery<P extends IdQueryParamete
                 getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(getParameters().getId());
 
         // Filter out active volumes
-        diskImages = (List<DiskImage>) CollectionUtils.select(diskImages, new Predicate() {
-            @Override
-            public boolean evaluate(Object diskImage) {
-                return !((DiskImage) diskImage).getActive();
-            }
-        });
+        diskImages = diskImages.stream().filter(d -> !d.getActive()).collect(Collectors.toList());
 
         // Retrieving snapshots objects for setting description
         Map<Guid, Snapshot> snapshots = Entities.businessEntitiesById(
