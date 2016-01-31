@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -8,8 +9,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -101,14 +100,8 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         query.executeQueryCommand();
 
         List<DiskImage> diskImages = query.getQueryReturnValue().getReturnValue();
-        List<DiskImage> activeDiskImages = (List<DiskImage>) CollectionUtils.select(diskImages, new Predicate() {
-            @Override
-            public boolean evaluate(Object diskImage) {
-                return ((DiskImage) diskImage).getActive();
-            }
-        });
 
         // Assert the no active images are returned
-        assertEquals("Active images shouldn't be returned", 0, activeDiskImages.size());
+        assertTrue("Active images shouldn't be returned", diskImages.stream().noneMatch(DiskImage::getActive));
     }
 }
