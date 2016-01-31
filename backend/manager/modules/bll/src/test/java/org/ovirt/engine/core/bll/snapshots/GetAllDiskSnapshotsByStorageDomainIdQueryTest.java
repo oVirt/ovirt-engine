@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -29,9 +29,11 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         GetAllDiskSnapshotsByStorageDomainIdQuery<IdQueryParameters>> {
 
     /** The {@link org.ovirt.engine.core.dao.DiskImageDao} mocked for the test */
+    @Mock
     private DiskImageDao diskImageDao;
 
     /** The {@link org.ovirt.engine.core.dao.SnapshotDao} mocked for the test */
+    @Mock
     private SnapshotDao snapshotDaoMock;
 
     /** The queried storage domain ID */
@@ -59,10 +61,7 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
 
         // Mock the Daos
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-
-        diskImageDao = mock(DiskImageDao.class);
         when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDao);
-        snapshotDaoMock = mock(SnapshotDao.class);
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
 
         Guid snapshotId = Guid.newGuid();
