@@ -480,7 +480,6 @@ public enum VdcActionType {
     UpdateLibvirtSecret(3210, false, QuotaDependency.NONE),
     RemoveLibvirtSecret(3211, false, QuotaDependency.NONE),
     TryBackToCinderSnapshot(3212, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
-    TryBackToAllCinderSnapshots(3213, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     RestoreFromCinderSnapshot(3214, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     RestoreAllCinderSnapshots(3215, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
     RemoveAllCinderSnapshotDisks(3216, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),

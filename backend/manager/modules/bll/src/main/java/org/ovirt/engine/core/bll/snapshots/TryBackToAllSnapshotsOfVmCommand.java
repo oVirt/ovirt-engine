@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +15,6 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -28,7 +25,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
+import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -234,29 +231,30 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     protected boolean tryBackAllCinderDisks( List<CinderDisk> cinderDisks, Guid newSnapshotId) {
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.TryBackToAllCinderSnapshots,
-                buildCinderChildCommandParameters(cinderDisks, newSnapshotId),
-                cloneContextAndDetachFromParent());
-        try {
-            VdcReturnValueBase vdcReturnValueBase = future.get();
+        for (CinderDisk disk : cinderDisks) {
+            ImagesContainterParametersBase params = buildCinderChildCommandParameters(disk, newSnapshotId);
+            VdcReturnValueBase vdcReturnValueBase = runInternalAction(
+                    VdcActionType.TryBackToCinderSnapshot,
+                    params,
+                    cloneContextAndDetachFromParent());
             if (!vdcReturnValueBase.getSucceeded()) {
+                log.error("Error cloning Cinder disk for preview. '{}': {}", disk.getDiskAlias());
                 getReturnValue().setFault(vdcReturnValueBase.getFault());
-                log.error("Error preview snapshot");
                 return false;
             }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Error cloning Cinder disks for preview snapshot", e);
-            return false;
         }
         return true;
     }
 
-    private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid newSnapshotId) {
-        CloneCinderDisksParameters createParams = new CloneCinderDisksParameters();
-        createParams.setCinderDisks(cinderDisks);
+    private CreateCinderSnapshotParameters buildCinderChildCommandParameters(CinderDisk cinderDisk, Guid newSnapshotId) {
+        CreateCinderSnapshotParameters createParams = new CreateCinderSnapshotParameters(cinderDisk.getImageId());
+        createParams.setContainerId(cinderDisk.getId());
+        createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
+        createParams.setDestinationImageId(cinderDisk.getImageId());
         createParams.setVmSnapshotId(newSnapshotId);
-        return withRootCommandInfo(createParams);
+        createParams.setParentCommand(getActionType());
+        createParams.setParentParameters(getParameters());
+        return createParams;
     }
 
     private List<DiskImage> getImagesToPreview() {
