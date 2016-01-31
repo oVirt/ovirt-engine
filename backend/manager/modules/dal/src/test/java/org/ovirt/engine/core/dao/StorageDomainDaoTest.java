@@ -49,7 +49,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetStorageDomainByTypeForStoragePoolId() {
         List<StorageDomain> result = dao.getStorageDomains(FixturesTool.DATA_CENTER, StorageDomainType.Master);
-
         assertGetResult(result.get(0));
     }
 
@@ -111,7 +110,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetWithInvalidId() {
         StorageDomain result = dao.get(Guid.newGuid());
-
         assertNull(result);
     }
 
@@ -121,7 +119,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGet() {
         StorageDomain result = dao.get(existingDomain.getId());
-
         assertGetResult(result);
     }
 
@@ -131,7 +128,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetWithPermissionsPrivilegedUser() {
         StorageDomain result = dao.get(existingDomain.getId(), PRIVILEGED_USER_ID, true);
-
         assertGetResult(result);
     }
 
@@ -141,7 +137,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetWithPermissionsDisabledUnprivilegedUser() {
         StorageDomain result = dao.get(existingDomain.getId(), UNPRIVILEGED_USER_ID, false);
-
         assertGetResult(result);
     }
 
@@ -151,7 +146,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetWithPermissionsUnprivilegedUser() {
         StorageDomain result = dao.get(existingDomain.getId(), UNPRIVILEGED_USER_ID, true);
-
         assertNull(result);
     }
 
@@ -161,7 +155,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetForStoragePoolWithInvalidId() {
         StorageDomain result = dao.getForStoragePool(Guid.newGuid(), FixturesTool.STORAGE_POOL_NFS);
-
         assertNull(result);
     }
 
@@ -200,9 +193,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetForStoragePoolWithInvalidPool() {
-        StorageDomain result = dao.getForStoragePool(existingDomain.getId(),
-                Guid.newGuid());
-
+        StorageDomain result = dao.getForStoragePool(existingDomain.getId(), Guid.newGuid());
         assertNull(result);
     }
 
@@ -221,7 +212,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAll() {
         List<StorageDomain> result = dao.getAll();
-
         assertCorrectGetAllResult(result);
     }
 
@@ -244,7 +234,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
         List<StorageDomain> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
-
         assertCorrectGetAllResult(result);
     }
 
@@ -254,7 +243,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllWithPermissionsUnprivilegedUser() {
         List<StorageDomain> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
-
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -264,9 +252,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomainWithInvalidDomain() {
-        List<StorageDomain> result = dao.getAllForStorageDomain(Guid
-                .newGuid());
-
+        List<StorageDomain> result = dao.getAllForStorageDomain(Guid.newGuid());
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -276,9 +262,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomain() {
-        List<StorageDomain> result = dao
-                .getAllForStorageDomain(existingDomain.getId());
-
+        List<StorageDomain> result = dao.getAllForStorageDomain(existingDomain.getId());
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }
@@ -289,7 +273,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllForConnectionWithInvalidConnection() {
         List<StorageDomain> result = dao.getAllForConnection(RandomUtils.instance().nextString(10));
-
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -356,7 +339,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllForStoragePoolWithInvalidPool() {
         List<StorageDomain> result = dao.getAllForStoragePool(Guid.newGuid());
-
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
