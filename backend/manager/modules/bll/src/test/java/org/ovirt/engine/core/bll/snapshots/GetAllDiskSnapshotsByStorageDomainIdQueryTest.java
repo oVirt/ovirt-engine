@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.snapshots;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -69,8 +69,8 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         DiskImage disk3 = new DiskImage();
         disk3.setActive(true);
 
-        List<DiskImage> diskImages = new ArrayList<>(Arrays.asList(disk1, disk2, disk3));
-        List<Snapshot> snapshots = new ArrayList<>(Arrays.asList(snapshot));
+        List<DiskImage> diskImages = Arrays.asList(disk1, disk2, disk3);
+        List<Snapshot> snapshots = Collections.singletonList(snapshot);
 
         when(diskImageDao.getAllSnapshotsForStorageDomain(storageDoaminId)).thenReturn(diskImages);
         when(snapshotDaoMock.getAllByStorageDomain(storageDoaminId)).thenReturn(snapshots);
