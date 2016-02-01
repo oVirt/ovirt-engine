@@ -8,6 +8,7 @@ import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
@@ -55,7 +56,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     private static AbstractDiskSizeColumn sizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
     private static AbstractTextColumn<Disk> dateCreatedColumn;
-    private static AbstractTextColumn<Disk> statusColumn;
+    private static AbstractColumn<Disk, Disk> statusColumn;
     private static AbstractTextColumn<Disk> lunIdColumn;
     private static AbstractTextColumn<Disk> lunSerialColumn;
     private static AbstractTextColumn<Disk> lunVendorIdColumn;

@@ -190,6 +190,12 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("(The snapshot contains {0} disk(s): {1})")
     String snapshotDisksLabel(int numOfDisks, String diskAliases);
 
+    @DefaultMessage("Sent {0} MB")
+    String imageUploadProgress(int mbSent);
+
+    @DefaultMessage("Sent {0} of {1} MB")
+    String imageUploadProgressWithTotal(int mbSent, int mbTotal);
+
     //Numa messages
     @DefaultMessage("{0}_NUMA{1}")
     String vNumaName(String name, int index);

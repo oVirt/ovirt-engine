@@ -1493,6 +1493,39 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Format")
     String formatSanImStorage();
 
+    @DefaultStringValue("Unknown")
+    String imageUploadUnknown();
+
+    @DefaultStringValue("Initializing")
+    String imageUploadInitializing();
+
+    @DefaultStringValue("Resuming")
+    String imageUploadResuming();
+
+    @DefaultStringValue("Uploading")
+    String imageUploadTransferring();
+
+    @DefaultStringValue("Paused by System")
+    String imageUploadPausedSystem();
+
+    @DefaultStringValue("Paused by User")
+    String imageUploadPausedUser();
+
+    @DefaultStringValue("Cancelled")
+    String imageUploadCancelled();
+
+    @DefaultStringValue("Finalizing")
+    String imageUploadFinalizingSuccess();
+
+    @DefaultStringValue("Finalizing Failure")
+    String imageUploadFinalizingFailure();
+
+    @DefaultStringValue("Complete")
+    String imageUploadFinishedSuccess();
+
+    @DefaultStringValue("Failed")
+    String imageUploadFinishedFailure();
+
     @DefaultStringValue("N/A")
     String notAvailableLabel();
 

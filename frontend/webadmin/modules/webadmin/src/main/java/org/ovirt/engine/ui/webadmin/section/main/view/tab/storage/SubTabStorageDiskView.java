@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
@@ -35,7 +36,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     private static AbstractDiskSizeColumn<Disk> actualSizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
     private static AbstractTextColumn<Disk> dateCreatedColumn;
-    private static AbstractTextColumn<Disk> statusColumn;
+    private static AbstractColumn<Disk, Disk> statusColumn;
     private static AbstractTextColumn<Disk> typeColumn;
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;

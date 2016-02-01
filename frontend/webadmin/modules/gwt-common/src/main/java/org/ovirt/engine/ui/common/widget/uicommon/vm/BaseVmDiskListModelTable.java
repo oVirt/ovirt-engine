@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
@@ -31,7 +32,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private static AbstractDiskSizeColumn actualSizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
     private static AbstractTextColumn<Disk> dateCreatedColumn;
-    private static AbstractTextColumn<Disk> statusColumn;
+    private static AbstractColumn<Disk, Disk> statusColumn;
     private static AbstractTextColumn<Disk> lunIdColumn;
     private static AbstractTextColumn<Disk> lunSerialColumn;
     private static AbstractTextColumn<Disk> lunVendorIdColumn;

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.disks;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -19,7 +20,10 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.widget.table.cell.Cell;
+import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
@@ -27,11 +31,13 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColum
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskUploadImageProgressColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -314,17 +320,44 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumn<Disk> getStatusColumn(String sortBy) {
-        AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, ImageStatus>() {
+    public static final AbstractColumn<Disk, Disk> getStatusColumn(String sortBy) {
+        AbstractTextColumn<Disk> statusColumn = new AbstractEnumColumn<Disk, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
                         object.getDiskStorageType() == DiskStorageType.CINDER ?
                         ((DiskImage) object).getImageStatus() : null;
             }
+
+            @Override
+            public String getValue(Disk object) {
+                if (object.getImageTransferPhase() != null) {
+                    // will be rendered by progress column
+                    return null;
+                }
+                return super.getValue(object);
+            }
         };
 
-        return makeSortable(column, sortBy);
+        DiskUploadImageProgressColumn uploadImageProgressColumn = new DiskUploadImageProgressColumn();
+
+        List<HasCell<Disk, ?>> list = new ArrayList<>();
+        list.add(statusColumn);
+        list.add(uploadImageProgressColumn);
+
+        Cell<Disk> compositeCell = new StatusCompositeCell<>(list);
+
+        AbstractColumn<Disk, Disk> column = new AbstractColumn<Disk, Disk>(compositeCell) {
+            @Override
+            public Disk getValue(Disk object) {
+                return object;
+            }
+        };
+
+        if (sortBy != null) {
+            column.makeSortable(sortBy);
+        }
+        return column;
     }
 
     public static final AbstractTextColumn<Disk> getDescriptionColumn(String sortBy) {
