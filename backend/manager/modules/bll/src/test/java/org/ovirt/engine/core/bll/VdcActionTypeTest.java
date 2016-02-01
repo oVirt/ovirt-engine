@@ -32,4 +32,9 @@ public class VdcActionTypeTest {
     public void testCommandClassExistence() {
         CommandEnumTestUtils.testCommandsExist(VdcActionType.class, vat -> CommandsFactory.getCommandClass(vat.name()));
     }
+
+    @Test
+    public void testCommandClassHasEnum() {
+        CommandEnumTestUtils.testCommandClassHasEnum(VdcActionType.class, CommandBase.class, "Command");
+    }
 }
