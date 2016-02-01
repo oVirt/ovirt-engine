@@ -222,8 +222,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void executeVmCommand() {
-        getParameters().setSnapshotType(determineSnapshotType());
-
         Guid createdSnapshotId = updateActiveSnapshotId();
         setActionReturnValue(createdSnapshotId);
 
@@ -382,13 +380,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             result.setLeaveLocked(true);
         }
         return result;
-    }
-
-    /**
-     * @return For internal execution, return the type from parameters, otherwise return {@link SnapshotType#REGULAR}.
-     */
-    protected SnapshotType determineSnapshotType() {
-        return isInternalExecution() ? getParameters().getSnapshotType() : SnapshotType.REGULAR;
     }
 
     @Override
