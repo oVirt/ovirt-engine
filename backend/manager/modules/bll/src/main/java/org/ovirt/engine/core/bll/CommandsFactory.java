@@ -68,7 +68,7 @@ public final class CommandsFactory {
             "org.ovirt.engine.core.bll.storage.repoimage"
     };
 
-    protected String[] getCommandPackages() {
+    protected static String[] getCommandPackages() {
         return COMMAND_PACKAGES;
     }
 
