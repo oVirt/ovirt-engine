@@ -7,7 +7,6 @@
 %if 0%{?ovirt_build_quick}
 %global _ovirt_build_ut 0
 %global ovirt_build_gwt 0
-%global __jar_repack 0
 %endif
 %if 0%{?ovirt_build_minimal}
 %global _ovirt_build_ut 0
@@ -34,6 +33,10 @@
 #
 # CUSTOMIZATION-END
 #
+
+# Do not repack .jar files, as it takes a long time and doesn't have a
+# real benefit:
+%global __jar_repack 0
 
 #
 # rpm does not support override
