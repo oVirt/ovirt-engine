@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -93,12 +91,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     public List<Pair<Guid, String>> getAllDevicesHashes() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         return getCallsHandler().executeReadList("GetAllHashesFromVmDynamic",
-                new RowMapper<Pair<Guid, String>>() {
-                    @Override
-                    public Pair<Guid, String> mapRow(ResultSet rs, int i) throws SQLException {
-                        return new Pair<>(new Guid(rs.getString("vm_guid")), rs.getString("hash"));
-                    }
-                },
+                (rs, i) -> new Pair<>(new Guid(rs.getString("vm_guid")), rs.getString("hash")),
                 parameterSource);
     }
 
@@ -106,14 +99,9 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     public void updateDevicesHashes(List<Pair<Guid, String>> vmHashes) {
         getCallsHandler().executeStoredProcAsBatch("SetHashByVmGuid",
                 vmHashes,
-                new MapSqlParameterMapper<Pair<Guid, String>>() {
-                    @Override
-                    public MapSqlParameterSource map(Pair<Guid, String> pair) {
-                        return getCustomMapSqlParameterSource()
-                                .addValue("vm_guid", pair.getFirst())
-                                .addValue("hash", pair.getSecond());
-                    }
-                });
+                pair -> getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", pair.getFirst())
+                        .addValue("hash", pair.getSecond()));
     }
 
     @Override
