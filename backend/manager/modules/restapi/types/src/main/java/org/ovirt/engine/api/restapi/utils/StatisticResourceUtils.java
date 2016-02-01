@@ -26,7 +26,6 @@ public class StatisticResourceUtils {
         statistic.setUnit(unit);
         statistic.setValues(new Values());
         statistic.setType(valueType);
-        statistic.getValues().getValues().add(new Value());
         return statistic;
     }
 
@@ -35,21 +34,35 @@ public class StatisticResourceUtils {
     }
 
     public static Statistic setDatum(Statistic statistic, BigDecimal datum) {
-        statistic.getValues().getValues().get(0).setDatum(datum);
+        if (datum != null) {
+            Value value = new Value();
+            value.setDatum(datum);
+            statistic.getValues().getValues().add(value);
+        }
         return statistic;
     }
 
     public static Statistic setDatum(Statistic statistic, String datum) {
-        statistic.getValues().getValues().get(0).setDetail(datum);
+        if (datum != null) {
+            Value value = new Value();
+            value.setDetail(datum);
+            statistic.getValues().getValues().add(value);
+        }
         return statistic;
     }
 
     public static Statistic setDatum(Statistic statistic, Long datum) {
-        return setDatum(statistic, datum == null ? null : new BigDecimal(datum));
+        if (datum != null) {
+            return setDatum(statistic, new BigDecimal(datum));
+        }
+        return statistic;
     }
 
     public static Statistic setDatum(Statistic statistic, Double datum) {
-        return setDatum(statistic, datum == null ? null : new BigDecimal(datum, new MathContext(2)));
+        if (datum != null) {
+            return setDatum(statistic, new BigDecimal(datum, new MathContext(2)));
+        }
+        return statistic;
     }
 
     public static Statistic setDatum(Statistic statistic, long datum) {
