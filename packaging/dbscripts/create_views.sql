@@ -92,7 +92,10 @@ SELECT images.image_guid AS image_guid,
                 snapshots.memory_metadata_disk_id,
                 snapshots.memory_dump_disk_id
                 )
-        ) AS memory_image
+        ) AS memory_image,
+    image_transfers.phase AS image_transfer_phase,
+    image_transfers.bytes_sent AS image_transfer_bytes_sent,
+    image_transfers.bytes_total AS image_transfer_bytes_total
 FROM images
 LEFT JOIN disk_image_dynamic
     ON images.image_guid = disk_image_dynamic.image_id
@@ -114,6 +117,8 @@ LEFT JOIN storage_pool_iso_map
     ON storage_pool_iso_map.storage_id = storage_domain_static.id
 LEFT JOIN storage_pool
     ON storage_pool.id = storage_pool_iso_map.storage_pool_id
+LEFT JOIN image_transfers
+    ON images.image_group_id = image_transfers.disk_id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
 CREATE OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
@@ -214,6 +219,9 @@ SELECT storage_for_image_view.storage_id AS storage_id,
     images_storage_domain_view.alignment AS alignment,
     images_storage_domain_view.last_alignment_scan AS last_alignment_scan,
     images_storage_domain_view.ovf_store AS ovf_store,
+    images_storage_domain_view.image_transfer_phase AS image_transfer_phase,
+    images_storage_domain_view.image_transfer_bytes_sent AS image_transfer_bytes_sent,
+    images_storage_domain_view.image_transfer_bytes_total AS image_transfer_bytes_total,
     images_storage_domain_view.disk_storage_type AS disk_storage_type,
     images_storage_domain_view.cinder_volume_type AS cinder_volume_type
 FROM images_storage_domain_view
@@ -278,6 +286,9 @@ FROM (
         storage_for_image_view.quota_name AS quota_name,
         quota_enforcement_type,
         ovf_store,
+        image_transfer_phase,
+        image_transfer_bytes_sent,
+        image_transfer_bytes_total,
         storage_for_image_view.disk_profile_id AS disk_profile_id,
         -- disk profile fields
         storage_for_image_view.disk_profile_name AS disk_profile_name,
@@ -328,6 +339,9 @@ FROM (
         storage_for_image_view.quota_name,
         quota_enforcement_type,
         ovf_store,
+        image_transfer_phase,
+        image_transfer_bytes_sent,
+        image_transfer_bytes_total,
         storage_for_image_view.disk_profile_id,
         storage_for_image_view.disk_profile_name
 
@@ -370,6 +384,9 @@ FROM (
         NULL AS quota_name,
         NULL AS quota_enforcement_type,
         FALSE AS ovf_store,
+        NULL AS image_transfer_phase,
+        NULL AS image_transfer_bytes_sent,
+        NULL AS image_transfer_bytes_total,
         NULL AS disk_profile_id,
         -- disk profile fields
         NULL AS disk_profile_name,
@@ -449,6 +466,9 @@ FROM (
         storage_for_image_view.quota_name AS quota_name,
         quota_enforcement_type,
         ovf_store,
+        image_transfer_phase,
+        image_transfer_bytes_sent,
+        image_transfer_bytes_total,
         storage_for_image_view.disk_profile_id AS disk_profile_id,
         -- disk profile fields
         storage_for_image_view.disk_profile_name AS disk_profile_name,
@@ -500,6 +520,9 @@ FROM (
         storage_for_image_view.quota_name,
         quota_enforcement_type,
         ovf_store,
+        image_transfer_phase,
+        image_transfer_bytes_sent,
+        image_transfer_bytes_total,
         storage_for_image_view.disk_profile_id,
         storage_for_image_view.disk_profile_name,
         memory_image
@@ -543,6 +566,9 @@ FROM (
         NULL AS quota_name,
         NULL AS quota_enforcement_type,
         FALSE AS ovf_store,
+        NULL AS image_transfer_phase,
+        NULL AS image_transfer_bytes_sent,
+        NULL AS image_transfer_bytes_total,
         NULL AS disk_profile_id,
         -- disk profile fields
         NULL AS disk_profile_name,
