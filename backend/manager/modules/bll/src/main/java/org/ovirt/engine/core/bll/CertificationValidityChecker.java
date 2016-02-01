@@ -83,25 +83,28 @@ public class CertificationValidityChecker implements BackendService {
                 return;
             }
 
-            for (VDS host : hostDao.getAll()) {
-                if (host.getStatus() == VDSStatus.Up || host.getStatus() == VDSStatus.NonOperational) {
-                    VdsManager hostManager = resourceManager.getVdsManager(host.getId());
-                    List<Certificate> peerCertificates = hostManager.getVdsProxy().getPeerCertificates();
-
-                    if (peerCertificates == null || peerCertificates.isEmpty()) {
-                        log.error("Failed to retrieve peer certifications for host '{}'", host.getName());
-                    } else {
-                        checkCertificate((X509Certificate) peerCertificates.get(0),
-                                AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED,
-                                AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
-                                AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
-                                host);
-                    }
-                }
-            }
+            hostDao.getAll()
+                    .stream()
+                    .filter(host -> host.getStatus() == VDSStatus.Up || host.getStatus() == VDSStatus.NonOperational)
+                    .forEach(this::checkHostCertificateValidity);
         } catch (Exception e) {
             log.error("Failed to check certification validity: {}", e.getMessage());
             log.error("Exception", e);
+        }
+    }
+
+    private void checkHostCertificateValidity(VDS host) {
+        VdsManager hostManager = resourceManager.getVdsManager(host.getId());
+        List<Certificate> peerCertificates = hostManager.getVdsProxy().getPeerCertificates();
+
+        if (peerCertificates == null || peerCertificates.isEmpty()) {
+            log.error("Failed to retrieve peer certifications for host '{}'", host.getName());
+        } else {
+            checkCertificate((X509Certificate) peerCertificates.get(0),
+                    AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED,
+                    AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
+                    AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
+                    host);
         }
     }
 
