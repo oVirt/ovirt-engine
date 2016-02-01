@@ -29,7 +29,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     private boolean needsLocking;
 
     /** Used to indicate the type of snapshot to take */
-    private SnapshotType snapshotType;
+    private SnapshotType snapshotType = SnapshotType.REGULAR;
 
     /** Used to indicate whether the memory should be saved as part of this snapshot or not */
     private boolean saveMemory;
