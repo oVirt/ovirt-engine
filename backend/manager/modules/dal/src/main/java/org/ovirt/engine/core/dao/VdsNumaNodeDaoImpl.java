@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,25 +29,6 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
         List<VdsNumaNode> vdsNumaNodes =
                 getCallsHandler().executeReadList("GetNumaNodeByVdsId",
                         vdsNumaNodeRowMapper, parameterSource);
-
-        List<Pair<Guid, Integer>> numaNodesCpus =
-                getCallsHandler().executeReadList("GetNumaNodeCpuByVdsId",
-                        vdsNumaNodeCpusRowMapper, parameterSource);
-
-        Map<Guid, List<Integer>> numaNodesCpusMap = new HashMap<>();
-
-        for (Pair<Guid, Integer> pair : numaNodesCpus) {
-            if (!numaNodesCpusMap.containsKey(pair.getFirst())) {
-                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<>());
-            }
-            numaNodesCpusMap.get(pair.getFirst()).add(pair.getSecond());
-        }
-
-        for (VdsNumaNode node : vdsNumaNodes) {
-            if (numaNodesCpusMap.containsKey(node.getId())) {
-                node.setCpuIds(numaNodesCpusMap.get(node.getId()));
-            }
-        }
 
         return vdsNumaNodes;
     }
@@ -71,16 +51,8 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
                     stat.setCpuUsagePercent(rs.getInt("usage_cpu_percent"));
                     entity.setNumaNodeStatistics(stat);
                     entity.setNumaNodeDistances(getDistanceMap(rs.getString("distance")));
+                    entity.setCpuIds(Arrays.asList((Integer[]) rs.getArray("cpu_core_ids").getArray()));
                     return entity;
-                }
-            };
-
-    private static final RowMapper<Pair<Guid, Integer>> vdsNumaNodeCpusRowMapper =
-            new RowMapper<Pair<Guid, Integer>>() {
-                @Override
-                public Pair<Guid, Integer> mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    return new Pair<>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
                 }
             };
 

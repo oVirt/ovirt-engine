@@ -3435,13 +3435,15 @@ GROUP BY affinity_groups.id,
 -- Numa node cpus view
 CREATE OR REPLACE VIEW numa_node_cpus_view AS
 
-SELECT numa_node.numa_node_id,
-    numa_node.vds_id,
-    numa_node.vm_id,
-    numa_node_cpu_map.cpu_core_id
+SELECT *
 FROM numa_node
-INNER JOIN numa_node_cpu_map
-    ON numa_node.numa_node_id = numa_node_cpu_map.numa_node_id;
+INNER JOIN
+    (SELECT numa_node_id AS numa_node_id2,
+        ARRAY_AGG(cpu_core_id) AS cpu_core_ids
+    FROM numa_node_cpu_map
+    GROUP BY numa_node_id
+    ) numa_node_to_cpu_core_ids
+    ON numa_node.numa_node_id = numa_node_to_cpu_core_ids.numa_node_id2;
 
 -- Numa node assignment view
 CREATE OR REPLACE VIEW numa_node_assignment_view AS

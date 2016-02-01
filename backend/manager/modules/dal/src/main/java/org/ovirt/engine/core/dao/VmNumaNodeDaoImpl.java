@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,28 +28,11 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
 
         List<VmNumaNode> vmNumaNodes =
                 getCallsHandler().executeReadList("GetNumaNodeByVmId",
-                        vmNumaNodeRowMapper, parameterSource);
-
-        List<Pair<Guid, Integer>> numaNodesCpus =
-                getCallsHandler().executeReadList("GetNumaNodeCpuByVmId",
-                        vmNumaNodeCpusRowMapper, parameterSource);
-
-        Map<Guid, List<Integer>> numaNodesCpusMap = new HashMap<>();
-
-        for (Pair<Guid, Integer> pair : numaNodesCpus) {
-            if (!numaNodesCpusMap.containsKey(pair.getFirst())) {
-                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<>());
-            }
-
-            numaNodesCpusMap.get(pair.getFirst()).add(pair.getSecond());
-        }
+                        vmNumaNodeCpuRowMapper, parameterSource);
 
         Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
 
         for (VmNumaNode node : vmNumaNodes) {
-            if (numaNodesCpusMap.containsKey(node.getId())) {
-                node.setCpuIds(numaNodesCpusMap.get(node.getId()));
-            }
             if (vmNumaNodesPinMap.containsKey(node.getId())) {
                 node.setVdsNumaNodeList(vmNumaNodesPinMap.get(node.getId()));
             }
@@ -127,6 +111,17 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
                     entity.setId(getGuid(rs, "numa_node_id"));
                     entity.setIndex(rs.getInt("numa_node_index"));
                     entity.setMemTotal(rs.getLong("mem_total"));
+                    return entity;
+                }
+            };
+
+    private static final RowMapper<VmNumaNode> vmNumaNodeCpuRowMapper =
+            new RowMapper<VmNumaNode>() {
+                @Override
+                public VmNumaNode mapRow(ResultSet rs, int rowNum)
+                        throws SQLException {
+                    VmNumaNode entity = vmNumaNodeRowMapper.mapRow(rs, rowNum);
+                    entity.setCpuIds(Arrays.asList((Integer[]) rs.getArray("cpu_core_ids").getArray()));
                     return entity;
                 }
             };

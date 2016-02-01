@@ -148,13 +148,13 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNumaNodeByVdsId (v_vds_id UUID)
-RETURNS SETOF numa_node STABLE AS $PROCEDURE$
+RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
 BEGIN
     BEGIN
         RETURN QUERY
 
-        SELECT numa_node.*
-        FROM numa_node
+        SELECT numa_node_cpus_view.*
+        FROM numa_node_cpus_view
         WHERE vds_id = v_vds_id;
     END;
 
@@ -163,13 +163,13 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNumaNodeByVmId (v_vm_id UUID)
-RETURNS SETOF numa_node STABLE AS $PROCEDURE$
+RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
 BEGIN
     BEGIN
         RETURN QUERY
 
-        SELECT numa_node.*
-        FROM numa_node
+        SELECT numa_node_cpus_view.*
+        FROM numa_node_cpus_view
         WHERE vm_id = v_vm_id;
     END;
 
@@ -314,39 +314,6 @@ BEGIN
         FROM vm_vds_numa_node_map
         WHERE vm_numa_node_id = v_vm_numa_node_id
             AND is_pinned = FALSE;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-----------------------------------------------------------------
--- [numa_node_cpus_view] View
---
-CREATE OR REPLACE FUNCTION GetNumaNodeCpuByVdsId (v_vds_id UUID)
-RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node_cpus_view.*
-        FROM numa_node_cpus_view
-        WHERE vds_id = v_vds_id;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetNumaNodeCpuByVmId (v_vm_id UUID)
-RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
-BEGIN
-    BEGIN
-        RETURN QUERY
-
-        SELECT numa_node_cpus_view.*
-        FROM numa_node_cpus_view
-        WHERE vm_id = v_vm_id;
     END;
 
     RETURN;
