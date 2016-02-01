@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # ovirt-engine-backup - oVirt engine backup and restore utility
-# Copyright (C) 2013-2015 Red Hat, Inc.
+# Copyright (C) 2013-2016 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,9 +36,11 @@ my_load_config() {
 	else
 		JASPER_PROPERTIES=
 	fi
+
+	load_branding
 }
 
-get_jasper_db_cred() {
+get_java_props() {
 	python -c "
 
 # Copied from otopi:src/otopi/__init__.py
@@ -56,7 +58,8 @@ import configparser
 import io
 import os
 
-params = sys.argv
+props_file = sys.argv[1]
+params = sys.argv[1:]
 
 config = configparser.ConfigParser()
 
@@ -70,7 +73,7 @@ def escape(s, chars):
 
 config.optionxform = str
 
-with open('${JASPER_PROPERTIES}') as f:
+with open(props_file) as f:
     config.readfp(
         io.StringIO(
           '[default]' + f.read().decode('utf-8')
@@ -80,13 +83,17 @@ with open('${JASPER_PROPERTIES}') as f:
 for i in range(1, len(params)-1, 2):
     s = params[i]
     t = params[i+1]
-    v = config.get('default', t)
-    print ('%s=\"%s\"' % (s, escape(v, '\"\\\\\$')))
+    try:
+        v = config.get('default', t)
+        print ('%s=\"%s\"' % (s, escape(v, '\"\\\\\$')))
+    except configparser.NoOptionError:
+        pass
 " "$@"
 }
 
 load_jasper_reports_db_creds() {
-	eval $(get_jasper_db_cred \
+	eval $(get_java_props \
+		"${JASPER_PROPERTIES}" \
 		REPORTS_DB_HOST dbHost \
 		REPORTS_DB_PORT dbPort \
 		REPORTS_DB_USER dbUsername \
@@ -97,6 +104,17 @@ load_jasper_reports_db_creds() {
 	# Currently set only for provisionDB - the rest of the code effectively ignores this
 	REPORTS_DB_SECURED=False
 	REPORTS_DB_SECURED_VALIDATION=False
+}
+
+load_branding() {
+	for f in /etc/ovirt-engine/branding/*/external_resources.properties; do
+		if [ -e "${f}" ]; then
+			eval $(get_java_props \
+				"${f}" \
+				HELP_URL obrand.common.enginebackup.help_url
+			)
+		fi
+	done
 }
 
 # Globals
@@ -293,9 +311,10 @@ USAGE:
  OVIRT_REPORTS_DATABASE_PASSWORD
      Database password as if provided by --reports-db-password=pass option.
 
- Wiki
+ Documentation
 
- See http://www.ovirt.org/Ovirt-engine-backup for more info.
+ For more information, please see:
+ ${HELP_URL}
 
  To create a new user/database:
 
@@ -324,6 +343,7 @@ __EOF__
 	return 0
 }
 
+HELP_URL="http://www.ovirt.org/Ovirt-engine-backup"
 MODE=
 DEFAULT_SCOPE=all
 SCOPE=
