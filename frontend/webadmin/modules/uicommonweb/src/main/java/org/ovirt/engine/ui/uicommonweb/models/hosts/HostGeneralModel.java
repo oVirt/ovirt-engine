@@ -867,7 +867,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
             setLogicalCores(vds.getCpuThreads());
         }
 
-        setOnlineCores(vds.getOnlineCpus());
+        setOnlineCores(vds.getOnlineCpus().replaceAll(",", ", ")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void updateAlerts() {
