@@ -9,4 +9,9 @@ public class QueryExistenceTest {
     public void testQueryClassExistence() {
         CommandEnumTestUtils.testCommandsExist(VdcQueryType.class, vct -> CommandsFactory.getQueryClass(vct.name()));
     }
+
+    @Test
+    public void testEnumClassExistence() {
+        CommandEnumTestUtils.testCommandClassHasEnum(VdcQueryType.class, QueriesCommandBase.class, "Query");
+    }
 }
