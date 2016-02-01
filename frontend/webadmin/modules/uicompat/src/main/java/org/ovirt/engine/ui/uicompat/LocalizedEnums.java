@@ -314,6 +314,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___IRS_DISK_SPACE_LOW_ERROR();
 
+    String AuditLogType___NUNBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD();
+
     String AuditLogType___VDC_STOP();
 
     String AuditLogType___ENGINE_BACKUP_STARTED();
