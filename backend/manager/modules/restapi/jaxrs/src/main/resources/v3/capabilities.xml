@@ -1654,7 +1654,7 @@
         <qos_types/>
     </version>
     <version major="3" minor="6" href="/capabilities/332e3633-2e36-332e-3633-2e36332e3633" id="332e3633-2e36-332e-3633-2e36332e3633">
-        <current>true</current>
+        <current>false</current>
         <features>
             <feature>
                 <name>Transparent-Huge-Pages Memory Policy</name>

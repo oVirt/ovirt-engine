@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.ovirt.engine.api.restapi.invocation.Current;
@@ -39,6 +40,7 @@ import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.v3.types.V3Capabilities;
 import org.ovirt.engine.api.v3.types.V3VersionCaps;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -56,14 +58,41 @@ public class V3CapabilitiesServer {
         buffer.append(current.getPrefix());
         String prefix = buffer.toString();
 
-        // Load the document into a DOM tree and then modify all the "href" attributes to include the prefix:
+        // Load the document into a DOM tree:
         Document document;
         try {
             DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             try (InputStream in = this.getClass().getResourceAsStream("/v3/capabilities.xml")) {
                 document = parser.parse(in);
             }
-            XPath xpath = XPathFactory.newInstance().newXPath();
+        }
+        catch (Exception exception) {
+            throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        // Create an XPath engine, we will use it for several things later:
+        XPath xpath = XPathFactory.newInstance().newXPath();
+
+        // Find the 3.6 capabilities and duplicate them for 4.0, as from the point of view of the user of version 3 of
+        // the API version 4.0 should be identical to version 3.6:
+        try {
+            Element version = (Element) xpath.evaluate("/capabilities/version[@major='3' and @minor='6']", document,
+                XPathConstants.NODE);
+            version = (Element) version.cloneNode(true);
+            String id = "332e4033-2e40-332e-4033-2e40332e4033";
+            version.setAttribute("id", id);
+            version.setAttribute("href", "/capabilities/" + id);
+            version.setAttribute("current", "true");
+            version.setAttribute("major", "4");
+            version.setAttribute("minor", "0");
+            document.getDocumentElement().appendChild(version);
+        }
+        catch (XPathExpressionException exception) {
+            throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        // Modify all the "href" attributes to include the prefix:
+        try {
             NodeList nodes = (NodeList) xpath.evaluate("//@href", document, XPathConstants.NODESET);
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
@@ -72,7 +101,7 @@ public class V3CapabilitiesServer {
                 node.setNodeValue(href);
             }
         }
-        catch (Exception exception) {
+        catch (XPathExpressionException exception) {
             throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
