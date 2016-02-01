@@ -413,6 +413,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 getReturnValue().setValid(false);
             }
         } finally {
+            persistCommandIfNeeded();
             freeLockExecute();
             clearAsyncTasksWithOutVdsmId();
         }
@@ -658,10 +659,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         try {
             if (isEndSuccessfully()) {
                 internalEndSuccessfully();
-                setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY);
+                setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY, false);
             } else {
                 internalEndWithFailure();
-                setCommandStatus(CommandStatus.ENDED_WITH_FAILURE);
+                setCommandStatus(CommandStatus.ENDED_WITH_FAILURE, false);
             }
         } catch (RuntimeException e) {
             exceptionOccurred = true;
@@ -688,6 +689,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                     logExceptionAndCompensate(e);
                 }
             }
+            persistCommandIfNeeded();
         }
     }
 
@@ -2336,6 +2338,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     public void persistCommand(VdcActionType parentCommand, boolean enableCallback) {
         persistCommand(parentCommand, getContext(), enableCallback);
+    }
+
+    private void persistCommandIfNeeded() {
+        if (getCallback() != null || parentHasCallback()) {
+            persistCommand(getParameters().getParentCommand(), getContext(), getCallback() != null);
+        }
     }
 
     public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallback) {
