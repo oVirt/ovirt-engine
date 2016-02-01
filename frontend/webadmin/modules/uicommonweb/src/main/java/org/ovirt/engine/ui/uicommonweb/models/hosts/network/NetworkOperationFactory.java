@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 /**
@@ -134,9 +132,9 @@ public class NetworkOperationFactory {
             networks.addAll(src.getNetworks());
         }
 
-        final String hostMaxSupportedClusterVersion = getHostMaxSupportedClusterVersion(op1);
+        final String clusterCompatibilityVersion = getClusterCompatibilityVersion(op1);
         final boolean permissiveValidation = AsyncDataProvider.getInstance()
-                .isNetworkExclusivenessPermissiveValidation(hostMaxSupportedClusterVersion);
+                .isNetworkExclusivenessPermissiveValidation(clusterCompatibilityVersion);
 
         // go over the networks and check whether they comply, if not - the reason is important
         boolean vlanFound = false;
@@ -231,13 +229,11 @@ public class NetworkOperationFactory {
         }
 
         return NetworkOperation.NULL_OPERATION;
-
     }
 
-    private static String getHostMaxSupportedClusterVersion(NetworkItemModel networkItemModel) {
+    private static String getClusterCompatibilityVersion(NetworkItemModel networkItemModel) {
         final VDS host = networkItemModel.getSetupModel().getEntity();
-        final Version maxVersion = Collections.max(host.getSupportedClusterVersionsSet());
-        return maxVersion.getValue();
+        return host.getVdsGroupCompatibilityVersion().getValue();
     }
 
     private static boolean noValidOperationForFirstOperand(NetworkItemModel<?> op1) {
