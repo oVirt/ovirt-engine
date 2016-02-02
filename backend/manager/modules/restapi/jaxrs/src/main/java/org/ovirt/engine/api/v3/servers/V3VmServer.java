@@ -34,8 +34,11 @@ import org.ovirt.engine.api.v3.types.V3VM;
 
 @Produces({"application/xml", "application/json"})
 public class V3VmServer extends V3Server<VmResource> {
-    public V3VmServer(VmResource delegate) {
+    private String id;
+
+    public V3VmServer(String id, VmResource delegate) {
         super(delegate);
+        this.id = id;
     }
 
     @POST
@@ -261,7 +264,7 @@ public class V3VmServer extends V3Server<VmResource> {
 
     @Path("nics")
     public V3VmNicsServer getNicsResource() {
-        return new V3VmNicsServer(delegate.getNicsResource());
+        return new V3VmNicsServer(id, delegate.getNicsResource());
     }
 
     @Path("numanodes")

@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+import static org.ovirt.engine.api.v3.helpers.V3NICHelper.setNetworkAndPortMirroring;
 
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -88,7 +89,12 @@ public class V3NicOutAdapter implements V3Adapter<Nic, V3NIC> {
         }
         if (from.isSetVnicProfile()) {
             to.setVnicProfile(adaptOut(from.getVnicProfile()));
+
+            // In V4 the "network" and "port_mirroring" properties of the NIC have been removed, but in V3 they must
+            // be populated:
+            setNetworkAndPortMirroring(from, to);
         }
+
         return to;
     }
 }

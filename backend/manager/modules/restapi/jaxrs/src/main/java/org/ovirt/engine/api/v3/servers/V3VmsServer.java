@@ -48,6 +48,6 @@ public class V3VmsServer extends V3Server<VmsResource> {
 
     @Path("{id}")
     public V3VmServer getVmResource(@PathParam("id") String id) {
-        return new V3VmServer(delegate.getVmResource(id));
+        return new V3VmServer(id, delegate.getVmResource(id));
     }
 }
