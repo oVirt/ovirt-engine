@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -187,12 +185,9 @@ public class CinderDisksValidator {
             final CinderDisk disk = cinderDisks.iterator().next();
             OpenStackVolumeProviderProxy proxy = diskProxyMap.get(disk.getId());
             List<CinderVolumeType> volumeTypes = proxy.getVolumeTypes();
-            boolean volumeTypeExists = CollectionUtils.exists(volumeTypes, new Predicate() {
-                @Override
-                public boolean evaluate(Object o) {
-                    return ((CinderVolumeType) o).getName().equals(disk.getCinderVolumeType());
-                }
-            });
+
+            boolean volumeTypeExists =
+                    volumeTypes.stream().anyMatch(v -> v.getName().equals(disk.getCinderVolumeType()));
 
             if (!volumeTypeExists) {
                 return new ValidationResult(EngineMessage.CINDER_VOLUME_TYPE_NOT_EXISTS,
