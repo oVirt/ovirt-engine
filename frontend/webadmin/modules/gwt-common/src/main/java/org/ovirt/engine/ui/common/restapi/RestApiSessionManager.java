@@ -70,6 +70,16 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
 
     private static final Logger logger = Logger.getLogger(RestApiSessionManager.class.getName());
 
+    /**
+     * The name of the header used to explicitly request a specific version of the API.
+     */
+    private static final String VERSION_HEADER = "Version"; //$NON-NLS-1$
+
+    /**
+     * The value of the header used to explicitly request a specific version of the API.
+     */
+    private static final String VERSION_VALUE = "4"; //$NON-NLS-1$
+
     private static final String PREFER_HEADER = "Prefer"; //$NON-NLS-1$
     private static final String FILTER_HEADER = "Filter"; //$NON-NLS-1$
     private static final String SESSION_ID_HEADER = "JSESSIONID"; //$NON-NLS-1$
@@ -156,6 +166,9 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
      */
     RequestBuilder createRequest() {
         RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, restApiBaseUrl);
+
+        // Indicate explicitly the requested version of the API:
+        builder.setHeader(VERSION_HEADER, VERSION_VALUE);
 
         // Control REST API session timeout
         builder.setHeader("Session-TTL", String.valueOf(restApiSessionTimeout)); //$NON-NLS-1$
