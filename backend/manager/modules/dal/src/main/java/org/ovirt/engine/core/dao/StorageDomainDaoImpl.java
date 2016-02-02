@@ -249,11 +249,6 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
      * @return the storage domain id of the given type for the given storage pool id.
      */
     private Guid getStorageDomainId(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
-        Guid returnValue = Guid.Empty;
-        List<StorageDomain> domains = getStorageDomains(poolId, type, status);
-        if (!domains.isEmpty()) {
-            returnValue = domains.get(0).getId();
-        }
-        return returnValue;
+        return getStorageDomains(poolId, type, status).stream().findFirst().map(StorageDomain::getId).orElse(Guid.Empty);
     }
 }
