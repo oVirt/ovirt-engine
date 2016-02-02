@@ -89,6 +89,12 @@ public class V3NICInAdapter implements V3Adapter<V3NIC, Nic> {
         if (from.isSetVnicProfile()) {
             to.setVnicProfile(adaptIn(from.getVnicProfile()));
         }
+
+        // In V3 the "active" property used to be a synonym of "plugged":
+        if (from.isSetActive() && to.isSetPlugged()) {
+            to.setPlugged(from.isActive());
+        }
+
         return to;
     }
 }

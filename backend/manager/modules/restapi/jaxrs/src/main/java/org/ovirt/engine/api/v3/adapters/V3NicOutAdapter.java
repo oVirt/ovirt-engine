@@ -68,6 +68,9 @@ public class V3NicOutAdapter implements V3Adapter<Nic, V3NIC> {
         }
         if (from.isSetPlugged()) {
             to.setPlugged(from.isPlugged());
+
+            // In V3 the "active" property used to be a synonym of "plugged":
+            to.setActive(from.isPlugged());
         }
         if (from.isSetReportedDevices()) {
             to.setReportedDevices(new V3ReportedDevices());
