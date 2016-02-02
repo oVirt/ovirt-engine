@@ -5,8 +5,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -133,14 +131,8 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     protected boolean isActiveStorageDomainAvailable(final StorageType storageType, Guid poolId) {
         List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(poolId);
-        return CollectionUtils.exists(storageDomains, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                StorageDomain storageDomain = (StorageDomain) o;
-                return storageDomain.getStorageType() == storageType &&
-                        storageDomain.getStatus() == StorageDomainStatus.Active;
-            }
-        });
+        return storageDomains.stream()
+                .anyMatch(s -> s.getStorageType() == storageType && s.getStatus() == StorageDomainStatus.Active);
     }
 
     protected void setNonOperational(CommandContext cmdContext, Guid vdsId, NonOperationalReason reason) {
