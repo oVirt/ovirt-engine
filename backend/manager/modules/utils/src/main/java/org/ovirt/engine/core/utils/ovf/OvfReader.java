@@ -579,6 +579,8 @@ public abstract class OvfReader implements IOvfBuilder {
 
         // after reading the hardware section, if graphics device is still absent, add a default one
         addDefaultGraphicsDevice();
+        // if boot order is not set, figure out some default based on the set of bootable disks
+        setDefaultBootDevice();
 
         // due to dependency on vmBase.getOsId() must be read AFTER readOsSection
         node = content.SelectSingleNode(OvfProperties.TIMEZONE);
@@ -1021,6 +1023,25 @@ public abstract class OvfReader implements IOvfBuilder {
                     vmBase.getDefaultDisplayType().name(),
                     osRepository.getOsName(vmBase.getOsId()),
                     getVersion());
+        }
+    }
+
+    private void setDefaultBootDevice() {
+        for (VmDevice device : vmBase.getManagedDeviceMap().values()) {
+            if (device.getBootOrder() > 0) {
+                return;
+            }
+        }
+
+        int order = 1;
+        for (DiskImage image : _images) {
+            if (!image.isBoot()) {
+                continue;
+            }
+            VmDevice device = vmBase.getManagedDeviceMap().get(image.getId());
+            if (device != null) {
+                device.setBootOrder(order++);
+            }
         }
     }
 
