@@ -265,6 +265,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         vmStatic.setInterfaces(new ArrayList<>());
         ImportUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
         VmDeviceUtils.addImportedDevices(vmStatic, false);
+        getVmDeviceDao().updateBootOrderInBatch(new ArrayList<>(vm.getManagedVmDeviceMap().values()));
     }
 
     private void removeVm() {

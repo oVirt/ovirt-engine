@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -558,6 +560,8 @@ public abstract class OvfReader implements IOvfBuilder {
 
         // after reading the hardware section, if graphics device is still absent, add a default one
         addDefaultGraphicsDevice();
+        // if boot order is not set, figure out some default based on the set of bootable disks
+        setDefaultBootDevice();
 
         // due to dependency on vmBase.getOsId() must be read AFTER readOsSection
         node = selectSingleNode(content, OvfProperties.TIMEZONE);
@@ -1001,6 +1005,22 @@ public abstract class OvfReader implements IOvfBuilder {
                     osRepository.getOsName(vmBase.getOsId()),
                     getVersion());
         }
+    }
+
+    private void setDefaultBootDevice() {
+        boolean hasBootDevice =
+                vmBase.getManagedDeviceMap().values().stream()
+                        .anyMatch(device -> device.getBootOrder() > 0);
+        if (hasBootDevice) {
+            return;
+        }
+
+        AtomicInteger order = new AtomicInteger(1);  // regular non-final variable cannot be used in lambda expression
+        _images.stream()
+                .filter(DiskImage::isBoot)
+                .map(image -> vmBase.getManagedDeviceMap().get(image.getId()))
+                .filter(Objects::nonNull)
+                .forEachOrdered(device -> device.setBootOrder(order.getAndIncrement()));
     }
 
     private static Map<String, Object> getMapNode(XmlNode node) {
