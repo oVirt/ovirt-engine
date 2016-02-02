@@ -433,8 +433,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     protected boolean validateSnapshotType() {
         Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
-        return validate(createSnapshotValidator().snapshotTypeSupported(snapshot,
-                Collections.singletonList(Snapshot.SnapshotType.REGULAR)));
+        return validate(createSnapshotValidator().isRegularSnapshot(snapshot));
     }
 
     protected boolean validateImages() {

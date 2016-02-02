@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import java.util.Collection;
-
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -83,15 +81,13 @@ public class SnapshotsValidator {
     }
 
     /**
-     * Checks if the given snapshot's type is within the given types.
+     * Checks if the given snapshot's type is regular.
      */
-    public ValidationResult snapshotTypeSupported(Snapshot snapshot, Collection<Snapshot.SnapshotType> supportedtypes) {
-        if (!supportedtypes.contains(snapshot.getType())) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED,
-                    String.format("$supportedSnapshotTypes %s", StringUtils.join(supportedtypes, ", ")),
-                    String.format("$snapshotType %s", snapshot.getType()));
-
+    public ValidationResult isRegularSnapshot(Snapshot snapshot) {
+        if (SnapshotType.REGULAR != snapshot.getType()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_REGULAR);
         }
+
         return ValidationResult.VALID;
     }
 

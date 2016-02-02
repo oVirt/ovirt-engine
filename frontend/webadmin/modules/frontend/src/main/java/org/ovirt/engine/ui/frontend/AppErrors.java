@@ -49,8 +49,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM's Snapshot does not exist.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The Snapshot type is ${snapshotType} while the operation is supported for Snapshots of the following type(s): ${supportedSnapshotTypes}.")
-    String ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED();
+    @DefaultStringValue("Cannot ${action} ${type}. The operation is only allowed for regular snapshots.")
+    String ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_REGULAR();
 
     @DefaultStringValue("Cannot ${action} ${type}. The snapshot configuration is corrupted (snapshot ID is empty). Please contact the system administrator.")
     String ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID();

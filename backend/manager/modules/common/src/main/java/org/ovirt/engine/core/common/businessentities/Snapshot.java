@@ -2,13 +2,9 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -296,35 +292,10 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
     }
 
     public static enum SnapshotType {
-        REGULAR("Regular"),
-        ACTIVE("Active"),
-        STATELESS("Stateless"),
-        PREVIEW("In Preview"),
-        NEXT_RUN("Next Run");
-
-        private String typeName;
-
-        private SnapshotType(String typeName) {
-            this.typeName = typeName;
-        }
-
-        private static final Map<String, SnapshotType> mappings = new HashMap<>();
-
-        static {
-            for (SnapshotType type : values()) {
-                mappings.put(type.toString(), type);
-            }
-        }
-
-        @JsonCreator
-        public static SnapshotType forValue(String value) {
-            return mappings.get(value);
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return typeName;
-        }
+        REGULAR,
+        ACTIVE,
+        STATELESS,
+        PREVIEW,
+        NEXT_RUN
     }
 }

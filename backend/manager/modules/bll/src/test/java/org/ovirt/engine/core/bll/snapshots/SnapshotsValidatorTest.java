@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -83,14 +82,15 @@ public class SnapshotsValidatorTest {
 
     @Test
     public void snapshotTypeSupported() throws Exception {
-        validateValidResult(validator.snapshotTypeSupported(snapshot, Collections.singletonList(snapshot.getType())));
+        snapshot.setType(SnapshotType.REGULAR);
+        validateValidResult(validator.isRegularSnapshot(snapshot));
     }
 
     @Test
     public void snapshotTypeNotSupported() throws Exception {
-        validateInvalidResult(validator.snapshotTypeSupported(snapshot,
-                Collections.singletonList(Snapshot.SnapshotType.ACTIVE)),
-                EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED);
+        snapshot.setType(SnapshotType.ACTIVE);
+        validateInvalidResult(validator.isRegularSnapshot(snapshot),
+                EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_REGULAR);
     }
 
     @Test

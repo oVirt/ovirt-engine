@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +74,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (isOperationPerformedOnDiskSnapshot()
-                && (!validate(getSnapshotsValidator().snapshotExists(getSnapshot())) || !validate(getSnapshotsValidator().snapshotTypeSupported(getSnapshot(),
-                Collections.singletonList(SnapshotType.REGULAR))))) {
+                && (!validate(getSnapshotsValidator().snapshotExists(getSnapshot())) || !validate(getSnapshotsValidator().isRegularSnapshot(getSnapshot())))) {
             return false;
         }
 
