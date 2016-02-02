@@ -85,6 +85,9 @@ public class V3DiskOutAdapter implements V3Adapter<Disk, V3Disk> {
         }
         if (from.isSetProvisionedSize()) {
             to.setProvisionedSize(from.getProvisionedSize());
+
+            // In V3 "size" used to be a synonym of "provisioned_size":
+            to.setSize(from.getProvisionedSize());
         }
         if (from.isSetQuota()) {
             to.setQuota(adaptOut(from.getQuota()));

@@ -137,6 +137,12 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
         if (from.isSetWipeAfterDelete()) {
             to.setWipeAfterDelete(from.isWipeAfterDelete());
         }
+
+        // In V3 "size" used to be a synonym of "provisioned_size":
+        if (from.isSetSize() && !to.isSetProvisionedSize()) {
+            to.setProvisionedSize(from.getSize());
+        }
+
         return to;
     }
 }
