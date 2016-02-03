@@ -127,7 +127,9 @@ public class HostMonitoring {
                 saveVdsDynamic = true;
             }
             beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
-            refreshCommitedMemory();
+            if (vdsManager.isTimeToRefreshStatistics()) {
+                saveVdsDynamic |= refreshCommitedMemory(vds, vdsManager.getLastVmsList());
+            }
         } catch (VDSRecoveringException e) {
             // if PreparingForMaintenance and vds is in install failed keep to
             // move vds to maintenance
@@ -727,32 +729,33 @@ public class HostMonitoring {
      * only vms we know their memory definition are calculated, thus
      * external VMs are added to db on the 1st cycle they appear, and then being added to this calculation
      */
-    void refreshCommitedMemory() {
-        if (!vdsManager.isTimeToRefreshStatistics()) {
-            return;
-        }
-        int memCommited = vds.getGuestOverhead();
+    public static boolean refreshCommitedMemory(VDS host, List<VM> vms) {
+        boolean memoryUpdated = false;
+
+        int memCommited = host.getGuestOverhead();
         int vmsCoresCount = 0;
 
-        for (VM vm : vdsManager.getLastVmsList()) {
+        for (VM vm : vms) {
             // VMs' pending resources are cleared in powering up, so in launch state
             // we shouldn't include them as committed.
             if (vm != null && vm.getStatus() != VMStatus.WaitForLaunch &&
                     vm.getStatus() != VMStatus.Down) {
                 memCommited += vm.getVmMemSizeMb();
-                memCommited += vds.getGuestOverhead();
+                memCommited += host.getGuestOverhead();
                 vmsCoresCount += vm.getNumOfCpus();
             }
         }
 
-        if (memCommited != vds.getMemCommited()) {
-            vds.setMemCommited(memCommited);
-            saveVdsDynamic = true;
+        if (memCommited != host.getMemCommited()) {
+            host.setMemCommited(memCommited);
+            memoryUpdated = true;
         }
-        if (vmsCoresCount != vds.getVmsCoresCount()) {
-            vds.setVmsCoresCount(vmsCoresCount);
-            saveVdsDynamic = true;
+        if (vmsCoresCount != host.getVmsCoresCount()) {
+            host.setVmsCoresCount(vmsCoresCount);
+            memoryUpdated = true;
         }
+
+        return memoryUpdated;
     }
 
     private void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
