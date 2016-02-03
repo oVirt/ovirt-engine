@@ -254,7 +254,6 @@ public class CommandExecutor {
     }
 
     private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
-        CommandCallback callback = command.getCallback();
         VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, cmdContext != null ?
                 cmdContext.getExecutionContext() : null);
         updateCommand(command, result);
