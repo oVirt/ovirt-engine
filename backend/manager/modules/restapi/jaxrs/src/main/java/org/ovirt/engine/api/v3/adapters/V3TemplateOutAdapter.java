@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3CustomProperties;
 import org.ovirt.engine.api.v3.types.V3Template;
@@ -157,6 +158,16 @@ public class V3TemplateOutAdapter implements V3Adapter<Template, V3Template> {
         if (from.isSetVm()) {
             to.setVm(adaptOut(from.getVm()));
         }
+
+        // V3 of the API supports a "timezone" element containing a single string, but V4 has replaced that with a
+        // new structured "time_zone" element containing the name of the time zone and the UTC offset:
+        if (from.isSetTimeZone() && !to.isSetTimezone()) {
+            TimeZone timeZone = from.getTimeZone();
+            if (timeZone.isSetName()) {
+                to.setTimezone(timeZone.getName());
+            }
+        }
+
         return to;
     }
 }

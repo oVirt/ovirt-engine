@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3VM;
@@ -238,6 +239,15 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
         if (from.isSetWatchdogs()) {
             to.setWatchdogs(adaptIn(from.getWatchdogs()));
         }
+
+        // V3 of the API supports a "timezone" element containing a single string, but V4 has replaced that with a
+        // new structured "time_zone" element containing the name of the time zone and the UTC offset:
+        if (from.isSetTimezone() && !to.isSetTimeZone()) {
+            TimeZone timeZone = new TimeZone();
+            timeZone.setName(from.getTimezone());
+            to.setTimeZone(timeZone);
+        }
+
         return to;
     }
 }
