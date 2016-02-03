@@ -602,7 +602,7 @@ public class VolumeBrickModel extends Model {
             IntegerValidation stripeCountValidation = new IntegerValidation();
             stripeCountValidation.setMinimum(4);
             stripeCountValidation.setMaximum(16);
-            getReplicaCount().validateEntity(new IValidation[] { new NotEmptyValidation(), stripeCountValidation });
+            getStripeCount().validateEntity(new IValidation[] { new NotEmptyValidation(), stripeCountValidation });
         }
 
         return getReplicaCount().getIsValid() && getStripeCount().getIsValid();
