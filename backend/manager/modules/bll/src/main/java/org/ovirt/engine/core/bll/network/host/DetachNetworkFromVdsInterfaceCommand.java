@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommand
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
@@ -135,6 +136,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             }
         }
 
+        setStoragePoolId(DbFacade.getInstance().getStoragePoolDao().getForVds(getVdsId()).getId());
         List<String> vmNames =
                 new VmInterfaceManager(getMacPool()).findActiveVmsUsingNetworks(vds.getId(),
                         Collections.singletonList(getParameters().getNetwork().getName()));
