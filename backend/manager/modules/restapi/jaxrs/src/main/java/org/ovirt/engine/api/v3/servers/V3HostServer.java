@@ -24,8 +24,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.v3.V3Server;
@@ -95,7 +100,17 @@ public class V3HostServer extends V3Server<HostResource> {
     }
 
     @GET
-    public V3Host get() {
+    public V3Host get(@Context UriInfo ui) {
+        // V3 supported a "force" matrix parameter, that is equivalent to calling the "refresh" action:
+        boolean force = QueryHelper.getBooleanMatrixParameter(ui, "force", true, false);
+        if (force) {
+            try {
+                delegate.refresh(new Action());
+            }
+            catch (WebApplicationException exception) {
+                throw adaptException(exception);
+            }
+        }
         return adaptGet(delegate::get);
     }
 
