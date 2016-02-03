@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.Comparator;
 import java.util.stream.Stream;
@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 /**
  * <code>VMStatsRefresher</code> provides abstraction for core responsible for

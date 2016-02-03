@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase

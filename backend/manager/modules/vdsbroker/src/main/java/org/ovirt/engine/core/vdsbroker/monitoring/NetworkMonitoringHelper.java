@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.HashMap;
 import java.util.HashSet;

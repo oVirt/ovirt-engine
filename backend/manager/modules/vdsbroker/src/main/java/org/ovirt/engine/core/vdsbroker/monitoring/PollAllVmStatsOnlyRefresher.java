@@ -1,4 +1,6 @@
-package org.ovirt.engine.core.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.monitoring;
+
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 public class PollAllVmStatsOnlyRefresher extends PollVmStatsRefresher {
 

@@ -125,7 +125,7 @@ public class VmManager {
      * @param vdsId - the host that sent the data
      * @return false if newer data was already processed, true otherwise
      */
-    boolean isLatestData(VmInternalData vmInternalData, Guid vdsId) {
+    public boolean isLatestData(VmInternalData vmInternalData, Guid vdsId) {
         if (vmInternalData == null) {
             // VM disappeared from VDSM, we need to have monitoring cycle
             return true;

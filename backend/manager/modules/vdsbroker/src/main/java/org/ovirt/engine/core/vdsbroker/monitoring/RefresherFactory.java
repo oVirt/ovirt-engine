@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import javax.inject.Singleton;
 
@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.vdsbroker.jsonrpc.EventVmStatsRefresher;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 
 @Singleton

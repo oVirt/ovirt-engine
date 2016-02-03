@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.jsonrpc;
+package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.List;
 import java.util.Map;
@@ -12,10 +12,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.vdsbroker.PollAllVmStatsOnlyRefresher;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.VmStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;

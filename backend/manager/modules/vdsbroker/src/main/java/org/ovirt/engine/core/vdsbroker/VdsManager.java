@@ -58,6 +58,11 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoring;
+import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategy;
+import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
+import org.ovirt.engine.core.vdsbroker.monitoring.RefresherFactory;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
@@ -1014,7 +1019,7 @@ public class VdsManager {
         }
     }
 
-    boolean isTimeToRefreshStatistics() {
+    public boolean isTimeToRefreshStatistics() {
         return refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     }
 
@@ -1067,7 +1072,7 @@ public class VdsManager {
      * Update the status for V2V jobs according to the latest reports from VDSM
      * @param v2vJobInfos - jobs we got from VDSM
      */
-    void updateV2VJobInfos(List<V2VJobInfo> v2vJobInfos) {
+    public void updateV2VJobInfos(List<V2VJobInfo> v2vJobInfos) {
         // Set the status of jobs that we expect to get from VDSM but
         // didn't arrive in the latest report to non-exist
         for (V2VJobInfo existingJobInfo : vmIdToV2VJob.values()) {

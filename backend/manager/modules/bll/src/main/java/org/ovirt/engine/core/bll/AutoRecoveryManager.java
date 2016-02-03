@@ -25,7 +25,7 @@ import org.ovirt.engine.core.dao.AutoRecoverDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.vdsbroker.NetworkMonitoringHelper;
+import org.ovirt.engine.core.vdsbroker.monitoring.NetworkMonitoringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
