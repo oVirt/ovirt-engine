@@ -83,6 +83,8 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
     private boolean ciscoUcsPrimaryPmTypeSelected;
     private EntityModel<Integer> order;
     private boolean initialized;
+    private String originalPmType;
+    private String originalManagementIp;
 
     //UI commands
     private UICommand privateTestCommand;
@@ -380,6 +382,9 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
             return;
         }
         FenceAgentModel newModel = new FenceAgentModel(this);
+        //If editing a 'new' fence agent model, both type and management ip will be null.
+        newModel.setOriginalPmType(getPmType().getSelectedItem());
+        newModel.setOriginalManagementIp(getManagementIp().getEntity());
         setWindow(newModel);
         newModel.setTitle(constants.editFenceAgent());
         newModel.getCommands().add(UICommand.createDefaultOkUiCommand(OK, this));
@@ -466,7 +471,9 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
 
     private boolean checkIfModelIsDuplicate(FenceAgentModel model, FenceAgentModel concurrentExistingModel) {
         if (model.getManagementIp().getEntity().equals(concurrentExistingModel.getManagementIp().getEntity()) &&
-                model.getPmType().getSelectedItem().equals(concurrentExistingModel.getPmType().getSelectedItem())) {
+                model.getPmType().getSelectedItem().equals(concurrentExistingModel.getPmType().getSelectedItem()) &&
+                !(model.getPmType().getSelectedItem().equals(model.getOriginalPmType()) &&
+                model.getManagementIp().getEntity().equals(model.getOriginalManagementIp()))) {
             //Force a change event by setting to true, which will change to false below.
             model.getManagementIp().setIsValid(true);
             model.getPmType().setIsValid(true);
@@ -719,5 +726,21 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
 
     public List<FenceAgentModel> getConcurrentList() {
         return concurrentList;
+    }
+
+    public String getOriginalPmType() {
+        return originalPmType;
+    }
+
+    public void setOriginalPmType(String originalPmType) {
+        this.originalPmType = originalPmType;
+    }
+
+    public String getOriginalManagementIp() {
+        return originalManagementIp;
+    }
+
+    public void setOriginalManagementIp(String originalManagementIp) {
+        this.originalManagementIp = originalManagementIp;
     }
 }
