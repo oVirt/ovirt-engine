@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Disks;
+import org.ovirt.engine.api.v3.types.V3Permissions;
 import org.ovirt.engine.api.v3.types.V3VM;
 import org.ovirt.engine.api.v3.types.V3VMs;
 
@@ -44,17 +45,28 @@ public class V3VmsServer extends V3Server<VmsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(@Context UriInfo ui, V3VM vm) {
-        // V3 version of the API used the "clone" element of the disks as a parameter, but in V4 this has been replaced
-        // with equivalent matrix parameter:
         List<PathSegment> segments = ui.getPathSegments();
         PathSegment segment = segments.get(segments.size() - 1);
         MultivaluedMap<String, String> matrix = segment.getMatrixParameters();
+
+        // V3 version of the API used the "clone" element of the disks as a parameter, but in V4 this has been replaced
+        // with equivalent matrix parameter:
         if (vm.isSetDisks()) {
             V3Disks disks = vm.getDisks();
             if (disks.isSetClone() && disks.isClone()) {
-                matrix.add("clone", String.valueOf(true));
+                matrix.putSingle("clone", String.valueOf(true));
             }
         }
+
+        // V3 version of the API used the "vm.permissions.clone" element to indicate if the permissions should be
+        // cloned, but in V4 this element has been removed and replaced by a "clone_permissions" matrix parameter:
+        if (vm.isSetPermissions()) {
+            V3Permissions permissions = vm.getPermissions();
+            if (permissions.isSetClone() && permissions.isClone()) {
+                matrix.putSingle("clone_permissions", String.valueOf(true));
+            }
+        }
+
         return adaptAdd(delegate::add, vm);
     }
 
