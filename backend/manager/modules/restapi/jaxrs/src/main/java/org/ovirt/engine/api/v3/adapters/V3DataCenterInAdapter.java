@@ -64,6 +64,14 @@ public class V3DataCenterInAdapter implements V3Adapter<V3DataCenter, DataCenter
         if (from.isSetVersion()) {
             to.setVersion(adaptIn(from.getVersion()));
         }
+
+        // V3 of the API supports the "storage_type" element, but in V4 it has been replaced by the boolean
+        // attribute "local":
+        if (from.isSetStorageType() && !to.isSetLocal()) {
+            boolean local = "localfs".equalsIgnoreCase(from.getStorageType());
+            to.setLocal(local);
+        }
+
         return to;
     }
 }
