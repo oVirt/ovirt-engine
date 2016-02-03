@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtKey;
@@ -468,14 +469,7 @@ public class AAAServiceImpl implements ModuleService {
             new DumpFormat() {
                 @Override
                 public void dump(AAAServiceImpl module, ExtMap map, String indent) {
-                    if (map != null) {
-                        log.info("{}--- Begin GroupRecord ---", indent);
-                        dumpRecord(module, map, Arrays.asList(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
-                        for (ExtMap group : map.<Collection<ExtMap>>get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-                            dump(module, group, indent + "  ");
-                        }
-                        log.info("{}--- End   GroupRecord ---", indent);
-                    }
+                    dumpGroups(module, map, indent, new HashSet<>());
                 }
             }
         ),
@@ -499,6 +493,19 @@ public class AAAServiceImpl implements ModuleService {
 
         private Dump(DumpFormat dumpFormat) {
             this.dumpFormat = dumpFormat;
+        }
+
+        private static void dumpGroups(AAAServiceImpl module, ExtMap map, String indent, Set<String> loopPrevention) {
+            if (map != null ) {
+                loopPrevention.add(map.<String>get(Authz.GroupRecord.ID));
+                log.info("{}--- Begin GroupRecord ---", indent);
+                dumpRecord(module, map, Arrays.asList(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
+                map.<Collection<ExtMap>>get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())
+                    .stream()
+                    .filter(group -> !loopPrevention.contains(group.<String>get(Authz.GroupRecord.ID)))
+                    .forEach(group -> dumpGroups(module, group, indent + "  ", loopPrevention));
+                log.info("{}--- End   GroupRecord ---", indent);
+            }
         }
 
         private static void dumpRecord(AAAServiceImpl module, ExtMap extMap, List<ExtKey> ignore, String title, String indent) {
