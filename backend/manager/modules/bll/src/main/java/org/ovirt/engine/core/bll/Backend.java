@@ -706,7 +706,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     public VdcReturnValueBase runAction(CommandBase<?> action, ExecutionContext executionContext) {
         ExecutionHandler.setExecutionContextForTasks(action.getContext(),
-                executionContext, null);
+                executionContext, action.getContext().getLock());
         return runAction(action, true);
     }
 
