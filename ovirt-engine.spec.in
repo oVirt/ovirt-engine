@@ -124,6 +124,10 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global wildfly_overlay_modules ""
 %endif
 
+%if 0%{?fedora} && 0%{?fedora} >= 23
+%global with_python3 1
+%endif
+
 %global make_common_opts \\\
 	-j1 \\\
 	BUILD_GWT=%{ovirt_build_gwt} \\\
@@ -144,8 +148,10 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	DATAROOT_DIR=%{_datadir} \\\
 	MAN_DIR=%{_mandir} \\\
 	DOC_DIR=%{_docdir} \\\
-	PYTHON=%{__python} \\\
-	PYTHON_DIR=%{python_sitelib} \\\
+	PYTHON=%{__python2} \\\
+	PYTHON_DIR=%{python2_sitelib} \\\
+	%{?with_python3: PYTHON3=%{__python3}} \\\
+	%{?with_python3: PYTHON3_DIR=%{python3_sitelib}} \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
 	PKG_SYSCONF_DIR=%{engine_etc} \\\
@@ -179,6 +185,10 @@ BuildRequires:	jpackage-utils
 BuildRequires:	make
 BuildRequires:	maven
 BuildRequires:	python
+BuildRequires:	python2-devel
+%if 0%{?with_python3}
+BuildRequires:	python3-devel
+%endif
 BuildRequires:	unzip
 
 Requires(pre):	shadow-utils
@@ -550,9 +560,19 @@ make %{make_common_opts}
 rm -fr "%{buildroot}"
 make %{make_common_opts} install DESTDIR="%{buildroot}"
 
+# Remove files that relies on unavailable dependencies on python3
+# FIXME: port these files to python3! they rely on python2-only modules right now.
+%if 0%{?with_python3}
+rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
+%endif
+
 # Compile python files
-%{__python} -m compileall -f -q -d / "%{buildroot}"
-%{__python} -O -m compileall -f -q -d / "%{buildroot}"
+%{__python2} -m compileall -f -q -d "%{python2_sitelib}" "%{buildroot}%{python2_sitelib}"
+%{__python2} -O -m compileall -f -q -d "%{python2_sitelib}" "%{buildroot}%{python2_sitelib}"
+%if 0%{?with_python3}
+%{__python3} -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
+%{__python3} -O -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
+%endif
 
 #
 # /var creation
@@ -863,7 +883,10 @@ fi
 
 %files lib
 %{engine_data}/bin/java-home
-%{python_sitelib}/ovirt_engine/
+%{python2_sitelib}/ovirt_engine/
+%if 0%{?with_python3}
+%{python3_sitelib}/ovirt_engine/
+%endif
 
 %files backend -f .mfiles-backend
 

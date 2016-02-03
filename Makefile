@@ -1,5 +1,5 @@
 # ====================================================================
-# Copyright 2008 Red Hat, Inc. and/or its affiliates.
+# Copyright 2008-2016 Red Hat, Inc. and/or its affiliates.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
 MVN=mvn
 PYTHON=python
+PYTHON3=$(shell which python3 2> /dev/null)
 PYFLAKES=pyflakes
 PEP8=pep8
 PREFIX=/usr/local
@@ -69,7 +70,9 @@ PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 JBOSS_HOME=/usr/share/ovirt-engine-wildfly
 JBOSS_RUNTIME=$(PKG_STATE_DIR)/jboss_runtime
 PYTHON_DIR=$(PYTHON_SYS_DIR)
+PYTHON3_DIR=$(PYTHON3_SYS_DIR)
 DEV_PYTHON_DIR=
+DEV_PYTHON3_DIR=
 PKG_USER=ovirt
 PKG_GROUP=ovirt
 WILDFLY_OVERLAY_MODULES=/usr/share/ovirt-engine-wildfly-overlay/modules
@@ -128,6 +131,9 @@ endif
 BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
 PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
+ifneq ($(PYTHON3),)
+PYTHON3_SYS_DIR:=$(shell $(PYTHON3) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
+endif
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
 ARCH=noarch
 BUILD_FILE=tmp.built
@@ -167,6 +173,7 @@ BUILD_TARGET=install
 	-e "s|@SETUP_USR@|$(DATA_DIR)|g" \
 	-e "s|@SETUP_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@DEV_PYTHON_DIR@|$(DEV_PYTHON_DIR)|g" \
+	-e "s|@DEV_PYTHON3_DIR@|$(DEV_PYTHON3_DIR)|g" \
 	-e "s|@RPM_VERSION@|$(RPM_VERSION)|g" \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
@@ -411,6 +418,10 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/libexec TARGETDIR="$(DESTDIR)$(LIBEXEC_DIR)" EXCLUDE_GEN="$(GENERATED)"
 
+ifneq ($(PYTHON3),)
+	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON3_DIR)" EXCLUDE_GEN="$(GENERATED)"
+endif
+
 	# we should avoid make these directories dirty
 	$(MAKE) copy-recursive SOURCEDIR=packaging/dbscripts TARGETDIR="$(DESTDIR)$(DATA_DIR)/dbscripts" \
 		EXCLUDE_GEN="$(GENERATED)" \
@@ -481,6 +492,7 @@ all-dev:
 		all \
 		BUILD_DEV=1 \
 		DEV_PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
+		DEV_PYTHON3_DIR="$(PREFIX)$(PYTHON3_SYS_DIR)" \
 		VMCONSOLE_SYSCONF_DIR="$(PREFIX)/etc/ovirt-vmconsole" \
 		VMCONSOLE_PKI_DIR="$(PREFIX)/etc/pki/ovirt-vmconsole" \
 		$(NULL)
@@ -505,6 +517,7 @@ install-dev:	\
 		BUILD_DEV=1 \
 		BUILD_VALIDATION=0 \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
+		PYTHON3_DIR="$(PREFIX)$(PYTHON3_SYS_DIR)" \
 		DEV_FLIST=tmp.dev.flist \
 		$(NULL)
 	cp tmp.dev.flist "$(DESTDIR)$(PREFIX)/dev.$(PACKAGE_NAME).flist"
