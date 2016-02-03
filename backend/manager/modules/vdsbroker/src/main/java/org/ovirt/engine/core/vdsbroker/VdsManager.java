@@ -435,7 +435,11 @@ public class VdsManager {
     }
 
     /**
-     * Publish the current pending resource summary
+     * Publish the current pending resource summary. This method also refreshes the committed
+     * memory for the host to make the operation atomic.
+     *
+     * This method assumes that the current state of all VMs is properly saved to database before
+     * the recomputation is attempted.
      *
      * @param pendingMemory - scheduled memory in MiB
      * @param pendingCpuCount - scheduled number of CPUs
@@ -444,6 +448,7 @@ public class VdsManager {
         synchronized (getLockObj()) {
             cachedVds.setPendingVcpusCount(pendingCpuCount);
             cachedVds.setPendingVmemSize(pendingMemory);
+            HostMonitoring.refreshCommitedMemory(cachedVds, dbFacade.getVmDao().getAllRunningForVds(getVdsId()));
             updateDynamicData(cachedVds.getDynamicData());
         }
     }
