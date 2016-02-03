@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
@@ -85,9 +86,9 @@ public class IsoDomainListSyncronizer {
                     TOOL_CLUSTER_LEVEL,
                     TOOL_VERSION);
     public static final String ISO_VDSM_FILE_PATTERN = "*.iso";
-    public static final String ISO_FILE_PATTERN_REGEX = "^.*\\.iso$";
+    public static final Pattern ISO_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.iso$", Pattern.CASE_INSENSITIVE);
     public static final String FLOPPY_VDSM_FILE_PATTERN = "*.vfd";
-    public static final String FLOPPY_FILE_PATTERN_REGEX = "^.*\\.vfd$";
+    public static final Pattern FLOPPY_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.vfd$", Pattern.CASE_INSENSITIVE);
     public static final String ALL_FILES_PATTERN = "*";
 
     // Not kept as static member to enable reloading the config value
@@ -692,13 +693,13 @@ public class IsoDomainListSyncronizer {
     }
 
     private Map<String, Map<String, Object>> removeFileStatsForComplyingFileNames(Map<String, Map<String, Object>> fileStats,
-            String isoFilePatternRegex) {
+            Pattern filePatternRegex) {
 
         Map<String, Map<String, Object>> result = new HashMap<>();
         for (Iterator<Map.Entry<String, Map<String, Object>>> it = fileStats.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<String, Map<String, Object>> entry = it.next();
             String fileName = entry.getKey();
-            if (fileName.matches(isoFilePatternRegex)) {
+            if (filePatternRegex.matcher(fileName).matches()) {
                 result.put(fileName, entry.getValue());
                 it.remove();
             }
