@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -545,12 +546,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
-        // this runs before validate so the getVm() can be null - instead of failing on NPE here we pass the parent permissions and let the validate to return proper error
-        if (getVm() == null) {
-            return permissionList;
-        }
-
-        if (getParameters().getTargetClusterId() != null && !getParameters().getTargetClusterId().equals(getVm().getClusterId())) {
+        if (getVm() != null && !Objects.equals(getParameters().getTargetClusterId(), getVm().getClusterId())) {
             // additional permissions needed since changing the cluster
             permissionList.addAll(VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getTargetClusterId()));
         }
