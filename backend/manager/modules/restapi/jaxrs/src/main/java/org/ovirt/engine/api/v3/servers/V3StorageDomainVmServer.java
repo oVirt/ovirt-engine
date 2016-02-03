@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,12 +24,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.StorageDomainVmResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Action;
+import org.ovirt.engine.api.v3.types.V3Snapshots;
 import org.ovirt.engine.api.v3.types.V3VM;
 
 @Produces({"application/xml", "application/json"})
@@ -46,7 +52,19 @@ public class V3StorageDomainVmServer extends V3Server<StorageDomainVmResource> {
     @Consumes({"application/xml", "application/json"})
     @Actionable
     @Path("import")
-    public Response doImport(V3Action action) {
+    public Response doImport(@Context UriInfo ui, V3Action action) {
+        // V3 supports using the "action.vm.snapshots.collapse_snapshots" element to indicate if the snapshots have
+        // to be collapsed during import, but in V4 this has been replaced by a "collapse_snapshots" boolean matrix
+        // parameter:
+        List<PathSegment> segments = ui.getPathSegments();
+        PathSegment segment = segments.get(segments.size() - 1);
+        MultivaluedMap<String, String> matrix = segment.getMatrixParameters();
+        if (action.isSetVm() && action.getVm().isSetSnapshots()) {
+            V3Snapshots snapshots = action.getVm().getSnapshots();
+            if (snapshots.isSetCollapseSnapshots() && snapshots.isCollapseSnapshots()) {
+                matrix.putSingle("collapse_snapshots", String.valueOf(true));
+            }
+        }
         return adaptAction(delegate::doImport, action);
     }
 
