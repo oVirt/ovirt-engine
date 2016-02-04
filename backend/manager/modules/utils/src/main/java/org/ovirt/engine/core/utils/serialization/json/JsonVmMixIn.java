@@ -28,7 +28,7 @@ public abstract class JsonVmMixIn extends VM {
 
     @JsonIgnore
     @Override
-    public abstract List<VmDevice> getVmUnamagedDeviceList();
+    public abstract List<VmDevice> getUnmanagedDeviceList();
 
     @JsonIgnore
     @Override

@@ -421,7 +421,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     @Override
     protected void copyVmDevices() {
-        List<VmDevice> devices = new ArrayList<>(getVmFromConfiguration().getVmUnamagedDeviceList());
+        List<VmDevice> devices = new ArrayList<>(getVmFromConfiguration().getUnmanagedDeviceList());
         devices.addAll(getVmFromConfiguration().getManagedVmDeviceMap().values());
         VmDeviceUtils.copyVmDevices(getSourceVmId(),
                 getVmId(),

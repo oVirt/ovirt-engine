@@ -306,7 +306,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
         // clear these fields as these are non updatable
         getVm().getManagedVmDeviceMap().clear();
-        getVm().getVmUnamagedDeviceList().clear();
+        getVm().getUnmanagedDeviceList().clear();
 
         return updateVmParams;
     }

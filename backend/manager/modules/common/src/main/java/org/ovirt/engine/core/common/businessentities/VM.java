@@ -1672,7 +1672,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmStatic.setManagedDeviceMap(map);
     }
 
-    public List<VmDevice> getVmUnamagedDeviceList() {
+    public List<VmDevice> getUnmanagedDeviceList() {
         return vmStatic.getUnmanagedDeviceList();
     }
 
