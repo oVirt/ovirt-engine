@@ -479,9 +479,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     public CommandCallback getCallback() {
-        if (getVm().isQualifiedForLiveSnapshotMerge()) {
-            return new RemoveSnapshotCommandCallback();
-        } else if (getParameters().isUseCinderCommandCallback()) {
+        if (getVm().isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback()) {
             return new ConcurrentChildCommandsExecutionCallback();
         }
         return null;
