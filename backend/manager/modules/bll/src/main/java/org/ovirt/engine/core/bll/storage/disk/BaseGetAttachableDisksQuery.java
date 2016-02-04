@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
@@ -36,15 +36,9 @@ public abstract class BaseGetAttachableDisksQuery<P extends GetAllAttachableDisk
     protected abstract List<Disk> filterDisks(List<Disk> diskList);
 
     protected List<Disk> doFilter(List<Disk> diskList, int osId, Version clusterVersion) {
-        List<Disk> filteredDiskList = new ArrayList<>();
-        for (Disk disk : diskList) {
-            if (VmValidationUtils.isDiskInterfaceSupportedByOs(osId,
-                    clusterVersion,
-                    disk.getDiskInterface())) {
-                filteredDiskList.add(disk);
-            }
-        }
-        return filteredDiskList;
+        return diskList.stream()
+                .filter(d -> VmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, d.getDiskInterface()))
+                .collect(Collectors.toList());
     }
 
 }
