@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.TransformerUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -70,17 +68,6 @@ public class TagsDirectorTest {
         tag.setType(TagsType.GeneralTag);
         tag.setParentId(tagsDirector.getRootTag().getTagId());
         return tag;
-    }
-
-    @Test
-    public void testCloneTag() {
-        Tags tag = createTag("a", "b");
-        Tags tag2 = createTag("c", "d");
-        tag.getChildren().add(tag2);
-        tag2.setParentId(tag.getTagId());
-        Transformer cloner = TransformerUtils.cloneTransformer();
-        Tags newTag = (Tags) cloner.transform(tag);
-        assertEquals(1, newTag.getChildren().size());
     }
 
     @Test
