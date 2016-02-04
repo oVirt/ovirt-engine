@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static java.util.stream.Collectors.toList;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.isIsoDomain;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.api.model.File;
@@ -73,10 +73,6 @@ public class BackendFilesResource
 
         List<RepoImage> files = getBackendCollection(RepoImage.class, VdcQueryType.GetImagesList,
                                     queryParams);
-        List<String> fileNames = new LinkedList<>();
-        for (RepoImage file : files) {
-            fileNames.add(file.getRepoImageId());
-        }
-        return fileNames;
+        return files.stream().map(RepoImage::getRepoImageId).collect(toList());
     }
 }
