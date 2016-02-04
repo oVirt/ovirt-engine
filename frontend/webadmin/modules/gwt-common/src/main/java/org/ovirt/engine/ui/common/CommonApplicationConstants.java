@@ -799,7 +799,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Linux Boot Options:")
     String linuxBootOptionsVmPopup();
 
-    @DefaultStringValue("Specific")
+    @DefaultStringValue("Specific host(s)")
     String specificVmPopup();
 
     @DefaultStringValue("Clone Name")
@@ -1709,7 +1709,8 @@ public interface CommonApplicationConstants extends Constants {
             "installed Remote Viewer (found under \"Console Client Resources\" page.).")
     String spiceInvokeAuto();
 
-    @DefaultStringValue("Downloads a console configuration file to be opened by Remote Viewer application installed on " +
+    @DefaultStringValue("Downloads a console configuration file to be opened by Remote Viewer application installed on "
+            +
             "your system (found under \"Console Client Resources\" page.).")
     String consoleInvokeNative();
 
@@ -2010,10 +2011,10 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Enable boot menu")
     String bootMenuEnabled();
 
-
     @DefaultStringValue("This option sets the time zone offset of the guest hardware clock. " +
-                        "For Windows OS this should correspond to the time zone set in the guest (during installation or afterwards). " +
-                        "Most default Linux installations expect hardware clock to be GMT+00:00.")
+            "For Windows OS this should correspond to the time zone set in the guest (during installation or afterwards). "
+            +
+            "Most default Linux installations expect hardware clock to be GMT+00:00.")
     String timeZoneInfo();
 
     // Instance Types
@@ -2098,7 +2099,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("SPICE-HTML5 does not support SPICE Proxy.")
     String spiceHtml5DoesntSupportSpiceProxy();
 
-    //Numa
+    // Numa
     @DefaultStringValue("Drag a vNUMA onto a NUMA node to pin the vNUMA to that node.")
     String numaUnassignedInstructions();
 
