@@ -35,6 +35,8 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
             case FAILED_RESTARTED:
             case UNKNOWN:
                 anyFailed = true;
+                finishedChildren++;
+                break;
             default:
                 finishedChildren++;
                 log.error("Invalid command status: '{}", commandStatus);
