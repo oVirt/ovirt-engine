@@ -127,8 +127,11 @@ public class BackendApiResource
     public static BackendApiResource getInstance() {
         if (instance == null) {
             synchronized (BackendApiResource.class) {
-                instance = new BackendApiResource();
-                instance.init();
+                if (instance == null) {
+                    BackendApiResource tmp = new BackendApiResource();
+                    tmp.init();
+                    instance = tmp;
+                }
             }
         }
         return instance;
