@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -235,8 +234,8 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         if (overUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
             Cluster cluster = getClusterDao().get(overUtilizedHosts.get(0).getClusterId());
-            Collections.sort(overUtilizedHosts, new ReverseComparator(new VdsCpuUsageComparator(
-                    cluster != null && cluster.getCountThreadsAsCores())));
+            Collections.sort(overUtilizedHosts, new VdsCpuUsageComparator(
+                    cluster != null && cluster.getCountThreadsAsCores()).reversed());
         }
 
         return overUtilizedHosts;
