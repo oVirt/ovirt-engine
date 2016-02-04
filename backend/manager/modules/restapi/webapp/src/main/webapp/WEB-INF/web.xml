@@ -120,6 +120,18 @@ limitations under the License.
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- This servlet will never be called because the version filter will always forward to "/v3" or "/v4", but
+         without it the servlet container uses the 302 HTTP code to redirect "/ovirt-engine/api" to
+         "/ovirt-engine/api/", and some clients (the SDKs) don't understand that. -->
+    <servlet>
+        <servlet-name>NullServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.api.restapi.NullServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NullServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
     <!-- The servlet that provides access to the model description: -->
     <servlet>
         <servlet-name>ModelServlet</servlet-name>
