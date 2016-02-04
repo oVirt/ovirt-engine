@@ -11,9 +11,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
@@ -119,17 +119,11 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         assertGetAllResult(result);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetVmTemplatesByIds() {
         List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(EXISTING_TEMPLATE_ID, DELETABLE_TEMPLATE_ID));
         assertEquals("loaded templates list isn't in the expected size", 2, result.size());
-        Collection<Guid> recieved = CollectionUtils.collect(result, new Transformer() {
-            @Override
-            public Object transform(Object input) {
-                return ((VmTemplate) input).getId();
-            }
-        });
+        Collection<Guid> recieved = result.stream().map(VmTemplate::getId).collect(Collectors.toList());
         assertTrue("the received list didn't contain an expected Template", recieved.contains(EXISTING_TEMPLATE_ID));
         assertTrue("the received list didn't contain an expected Template", recieved.contains(DELETABLE_TEMPLATE_ID));
     }
