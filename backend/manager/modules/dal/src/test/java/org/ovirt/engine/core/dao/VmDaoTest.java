@@ -10,9 +10,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -188,17 +187,11 @@ public class VmDaoTest extends BaseDaoTestCase {
         assertTrue(result.isEmpty());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetVmsByIds() {
         List<VM> result = dao.getVmsByIds(Arrays.asList(FixturesTool.VM_RHEL5_POOL_60, FixturesTool.VM_RHEL5_POOL_59));
         assertEquals("loaded templates list isn't in the expected size", 2, result.size());
-        Collection<Guid> recieved = CollectionUtils.collect(result, new Transformer() {
-            @Override
-            public Object transform(Object input) {
-                return ((VM)input).getId();
-            }
-        });
+        Collection<Guid> recieved = result.stream().map(VM::getId).collect(Collectors.toList());
         assertTrue("the received list didn't contain an expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_60));
         assertTrue("the received list didn't contain an expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_59));
     }
