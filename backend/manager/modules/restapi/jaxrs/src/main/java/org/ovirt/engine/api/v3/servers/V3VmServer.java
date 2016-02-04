@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,12 +25,17 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Action;
+import org.ovirt.engine.api.v3.types.V3Disks;
 import org.ovirt.engine.api.v3.types.V3VM;
 
 @Produces({"application/xml", "application/json"})
@@ -150,6 +156,25 @@ public class V3VmServer extends V3Server<VmResource> {
 
     @DELETE
     public Response remove() {
+        return adaptRemove(delegate::remove);
+    }
+
+    @DELETE
+    public Response remove(@Context UriInfo ui, V3Action action) {
+        // V3 version of the API used the action "force" element and the disks "detach_disks" elements as parameters,
+        // but in V4 this has been replaced with equivalent matrix parameters:
+        List<PathSegment> segments = ui.getPathSegments();
+        PathSegment segment = segments.get(segments.size() - 1);
+        MultivaluedMap<String, String> matrix = segment.getMatrixParameters();
+        if (action.isSetForce() && action.isForce()) {
+            matrix.putSingle("force", String.valueOf(true));
+        }
+        if (action.isSetVm() && action.getVm().isSetDisks()) {
+            V3Disks disks = action.getVm().getDisks();
+            if (disks.isSetDetachOnly() && disks.isDetachOnly()) {
+                matrix.putSingle("detach_only", String.valueOf(true));
+            }
+        }
         return adaptRemove(delegate::remove);
     }
 
