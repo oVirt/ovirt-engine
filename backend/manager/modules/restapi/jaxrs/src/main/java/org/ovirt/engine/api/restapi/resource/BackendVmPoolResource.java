@@ -162,7 +162,7 @@ public class BackendVmPoolResource
     @Override
     public Response allocateVm(Action action) {
         return doAction(VdcActionType.AttachUserToVmFromPoolAndRun,
-                        new VmPoolUserParameters(guid,  getCurrent().getUser(), false),
+                        new VmPoolUserParameters(guid,  getCurrent().getUser().getId(), false),
                         action,
                         new VmQueryIdResolver(VdcQueryType.GetVmByVmId,
                                               IdQueryParameters.class));

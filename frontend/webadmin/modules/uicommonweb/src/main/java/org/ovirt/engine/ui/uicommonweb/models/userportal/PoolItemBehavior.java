@@ -64,7 +64,7 @@ public class PoolItemBehavior extends ItemBehavior {
         VmPool entity = (VmPool) getItem().getEntity();
 
         VmPoolUserParameters params = new VmPoolUserParameters(entity.getVmPoolId(),
-                Frontend.getInstance().getLoggedInUser(),
+                Frontend.getInstance().getLoggedInUser().getId(),
                 false);
 
         Frontend.getInstance().runAction(VdcActionType.AttachUserToVmFromPoolAndRun, params,
