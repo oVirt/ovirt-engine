@@ -14,16 +14,18 @@ public class LockedObjectFactory {
     /**
      * @param instance class to be decorated.
      * @param interfaceClass class type of interface implemented by the decorated class.
+     * @param lock lock used for locking.
      * @param <T> <b>type of !INTERFACE!</b>
      */
-    public <T> T createLockingInstance(T instance, Class<T> interfaceClass) {
+    public <T> T createLockingInstance(T instance,
+            Class<T> interfaceClass,
+            ReentrantReadWriteLock lock) {
         Objects.requireNonNull(instance);
-
 
         //noinspection unchecked
         return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(),
                 new Class<?>[] { interfaceClass },
-                new LockingInvocationHandler(instance, new ReentrantReadWriteLock()));
+                new LockingInvocationHandler(instance, lock));
     }
 
     static class LockingInvocationHandler<T> implements InvocationHandler {

@@ -113,7 +113,8 @@ public class MacPoolPerDc {
         }
 
         MacPool poolForScope = new MacPoolUsingRanges(macPoolToRanges(macPool), macPool.isAllowDuplicateMacAddresses());
-        macPools.put(macPool.getId(), lockedObjectFactory.createLockingInstance(poolForScope, MacPool.class));
+        macPools.put(macPool.getId(), lockedObjectFactory.createLockingInstance(poolForScope, MacPool.class,
+                new ReentrantReadWriteLock()));
         return poolForScope;
     }
 
