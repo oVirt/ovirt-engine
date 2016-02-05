@@ -28,11 +28,16 @@ public final class AutoLoginData extends JavaScriptObject {
         return this.domain;
     }-*/;
 
+    private native boolean isAdmin() /*-{
+        return this.isAdmin;
+    }-*/;
+
     public DbUser getDbUser() {
         DbUser user = new DbUser();
         user.setId(Guid.createGuidFromStringDefaultEmpty(getId()));
         user.setDomain(getDomain());
         user.setLoginName(getUserName());
+        user.setAdmin(isAdmin());
         return user;
     }
 
