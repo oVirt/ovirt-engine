@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 
 /**
  * In this test, we need to test, that MacPoolLockingProxy actually works. Assuming write lock, we must setup scenario,
@@ -42,7 +43,7 @@ public class MacPoolLockingProxyTest {
      */
     private static final int DELAY_BETWEEN_THREADS_MILLIS = 10;
 
-    private MacPoolLockingProxy lockedPool = new MacPoolLockingProxy(verifyingPoolProxy());
+    private MacPool lockedPool = new LockedObjectFactory().createLockingInstance(verifyingPoolProxy(), MacPool.class);
 
     /**
      * this is a global counter, used by individual threads, to mark they progress through execution of tested method.
@@ -66,7 +67,6 @@ public class MacPoolLockingProxyTest {
     private Runnable sampleMethodWithReadableLock = ()-> lockedPool.getAvailableMacsCount();
 
 
-    //<editor-fold desc="methods requiring read lock">
     @Test
     public void testGetAvailableMacsCountWhenBlockedByWriteMethod() throws Exception {
         methodWithReadLockIsBlockedByAcquiredWriteLock(()-> lockedPool.getAvailableMacsCount());
@@ -86,10 +86,6 @@ public class MacPoolLockingProxyTest {
     public void testIsMacInUseWhenAccessedTwice() throws Exception {
         testSelfLockoutWithReadableLock(()-> lockedPool.isMacInUse(null));
     }
-
-    //</editor-fold>
-
-    //<editor-fold desc="methods requiring write lock">
 
     @Test
     public void testAllocateNewMac() {
@@ -138,9 +134,6 @@ public class MacPoolLockingProxyTest {
         });
     }
 
-//    //</editor-fold>
-
-    //<editor-fold desc="Util methods">
     private void methodWithReadLockIsBlockedByAcquiredWriteLock(Runnable action) {
         performOperation(action, sampleMethodWithWritableLock, false);
     }
@@ -256,5 +249,4 @@ public class MacPoolLockingProxyTest {
             throw new RuntimeException(e);
         }
     }
-    //</editor-fold>
 }

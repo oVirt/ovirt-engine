@@ -20,6 +20,7 @@ import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.DisjointRanges;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
+import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,9 @@ public class MacPoolPerDc {
 
     @Inject
     private MacPoolDao macPoolDao;
+
+    @Inject
+    private LockedObjectFactory lockedObjectFactory;
 
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
     static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
@@ -40,8 +44,9 @@ public class MacPoolPerDc {
 
     public MacPoolPerDc() {}
 
-    MacPoolPerDc(MacPoolDao macPoolDao) {
+    MacPoolPerDc(MacPoolDao macPoolDao, LockedObjectFactory lockedObjectFactory) {
         this.macPoolDao = macPoolDao;
+        this.lockedObjectFactory = lockedObjectFactory;
     }
 
     @PostConstruct
@@ -108,7 +113,7 @@ public class MacPoolPerDc {
         }
 
         MacPool poolForScope = new MacPoolUsingRanges(macPoolToRanges(macPool), macPool.isAllowDuplicateMacAddresses());
-        macPools.put(macPool.getId(), new MacPoolLockingProxy(poolForScope));
+        macPools.put(macPool.getId(), lockedObjectFactory.createLockingInstance(poolForScope, MacPool.class));
         return poolForScope;
     }
 

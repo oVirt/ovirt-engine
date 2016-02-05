@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolPerDcTest extends DbDependentTestBase {
@@ -64,7 +65,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         macPool = createMacPool(MAC_FROM, MAC_TO);
         dataCenter = createStoragePool(macPool);
         vmNic = createVmNic();
-        pool = new MacPoolPerDc(macPoolDao);
+        pool = new MacPoolPerDc(macPoolDao, new LockedObjectFactory());
     }
 
     @Test()
