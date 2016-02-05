@@ -54,7 +54,7 @@
 		.contentWidget {
 			float: right;
 			line-height: 30px;
-			padding: 0 95px 0 0;
+			padding: 0 5px 0 0;
 			width: 245px;
 		}
 	</ui:style>
