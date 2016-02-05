@@ -262,13 +262,11 @@ public class PmHealthCheckManager implements BackendService {
 
     private void executeNotRespondingTreatment(List<VDS> hosts) {
         for (VDS host : hosts) {
-            ThreadPoolUtil.execute(() -> {
-                Backend.getInstance().runInternalAction(
-                        VdcActionType.VdsNotRespondingTreatment,
-                        new FenceVdsActionParameters(host.getId()),
-                        ExecutionHandler.createInternalJobContext()
-                );
-            });
+            ThreadPoolUtil.execute(() -> Backend.getInstance().runInternalAction(
+                    VdcActionType.VdsNotRespondingTreatment,
+                    new FenceVdsActionParameters(host.getId()),
+                    ExecutionHandler.createInternalJobContext()
+            ));
         }
     }
 
