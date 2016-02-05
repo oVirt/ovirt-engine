@@ -270,6 +270,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         obj.put("id", loggedInUser.getId().toString()); //$NON-NLS-1$
         obj.put("userName", loggedInUser.getLoginName()); //$NON-NLS-1$
         obj.put("domain", loggedInUser.getDomain()); //$NON-NLS-1$
+        obj.put("isAdmin", loggedInUser.isAdmin()); //$NON-NLS-1$
         return obj;
     }
 
