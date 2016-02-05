@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.util.ArrayList;
 import java.util.Random;
+
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -9,7 +10,6 @@ import javax.servlet.http.HttpSession;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -133,27 +133,6 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
 
     private String getEngineSessionId() {
         return (String) getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
-    }
-
-    @Override
-    public DbUser getLoggedInUser() {
-        VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
-        queryParams.setSessionId(getEngineSessionId());
-
-        VdcQueryReturnValue vqrv = runQuery(VdcQueryType.GetUserBySessionId,
-                queryParams);
-
-        if (!vqrv.getSucceeded()) {
-            return null;
-        } else if (vqrv.getSucceeded()) {
-            if (vqrv.getReturnValue() == null) {
-                return null;
-            }
-            return (DbUser) vqrv.getReturnValue();
-        } else {
-            // For unknown reason the result was failed be returned.
-            return null;
-        }
     }
 
     private HttpSession getSession() {
