@@ -784,7 +784,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Linux Boot Options:")
     String linuxBootOptionsVmPopup();
 
-    @DefaultStringValue("Specific host(s)")
+    @DefaultStringValue("Specific Host(s)")
     String specificVmPopup();
 
     @DefaultStringValue("Clone Name")
