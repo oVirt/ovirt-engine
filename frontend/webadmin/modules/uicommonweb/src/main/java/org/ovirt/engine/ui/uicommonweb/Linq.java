@@ -80,7 +80,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
-import org.ovirt.engine.ui.uicompat.DateTimeUtils;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
@@ -194,18 +193,6 @@ public final class Linq {
             }
 
             return 0;
-        }
-
-    }
-
-    public static class DiskImageByLastModifiedTimeOfDayComparer implements Comparator<DiskImage>, Serializable {
-
-        private static final long serialVersionUID = 7206189809641328921L;
-
-        @Override
-        public int compare(DiskImage x, DiskImage y) {
-            return DateTimeUtils.getTimeOfDay(x.getLastModified())
-                    .compareTo(DateTimeUtils.getTimeOfDay(y.getLastModified()));
         }
 
     }
