@@ -120,9 +120,7 @@ public final class Linq {
 
         @Override
         public int compare(VDS vds1, VDS vds2) {
-            return (vds1.getVdsSpmPriority() < vds2.getVdsSpmPriority()) ? 1
-                    : vds1.getVdsSpmPriority() == vds2.getVdsSpmPriority() ? 0 : -1;
-
+            return Integer.compare(vds2.getVdsSpmPriority(), vds1.getVdsSpmPriority());
         }
     }
 
