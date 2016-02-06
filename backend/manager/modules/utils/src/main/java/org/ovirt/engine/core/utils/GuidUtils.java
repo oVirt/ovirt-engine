@@ -33,7 +33,7 @@ public class GuidUtils {
      *            - Array of Strings which contains <code>Guid</code> values.
      * @return - Array of <code>Guid</code> type.
      */
-    public static ArrayList<Guid> getGuidListFromStringArray(List<String> strings) {
+    private static ArrayList<Guid> getGuidListFromStringArray(List<String> strings) {
         ArrayList<Guid> guidList = new ArrayList<>();
         if (strings != null && !strings.isEmpty()) {
             for (String guidString : strings) {
