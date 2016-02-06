@@ -35,10 +35,8 @@ public class GuidUtils {
      */
     private static ArrayList<Guid> getGuidListFromStringArray(List<String> strings) {
         ArrayList<Guid> guidList = new ArrayList<>();
-        if (strings != null && !strings.isEmpty()) {
-            for (String guidString : strings) {
-                guidList.add(Guid.createGuidFromStringDefaultEmpty(guidString));
-            }
+        for (String guidString : strings) {
+            guidList.add(Guid.createGuidFromStringDefaultEmpty(guidString));
         }
         return guidList;
     }
