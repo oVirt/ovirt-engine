@@ -11,16 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * General utility class for common entities functions
  */
 public class Entities {
-
-    private static final Logger log = LoggerFactory.getLogger(Entities.class);
-
     /**
      * Map entity's name to entity object. A lot of logic code does filtering of data from 2 collections by quad
      * iterating over them. Common scenario: entity Parent.name is represent in Child.parentName. Given
