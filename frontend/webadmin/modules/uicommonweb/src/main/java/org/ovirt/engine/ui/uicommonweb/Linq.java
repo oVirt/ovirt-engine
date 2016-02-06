@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -54,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -178,25 +176,6 @@ public final class Linq {
         }
     }
 
-    public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable {
-
-        private static final long serialVersionUID = -6085272225112945238L;
-
-        @Override
-        public int compare(DiskImage x, DiskImage y) {
-            if (x.getLastModified().before(y.getLastModified())) {
-                return -1;
-            }
-
-            if (x.getLastModified().after(y.getLastModified())) {
-                return 1;
-            }
-
-            return 0;
-        }
-
-    }
-
     public static class DiskImageByActualSizeComparer implements Comparator<DiskImage>, Serializable {
         private static final long serialVersionUID = -7287055507900698918L;
 
@@ -262,34 +241,6 @@ public final class Linq {
         }
     }
 
-    public static class SanTargetModelComparer implements Comparator<SanTargetModel>, Serializable {
-        private static final long serialVersionUID = -5674954613952206979L;
-
-        @Override
-        public int compare(SanTargetModel x, SanTargetModel y) {
-            return x.getName().compareTo(y.getName());
-        }
-    }
-
-    public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>, Serializable {
-
-        private static final long serialVersionUID = -5909501177227219287L;
-
-        @Override
-        public int compare(DiskImage x, DiskImage y) {
-            if (x.getCreationDate().before(y.getCreationDate())) {
-                return -1;
-            }
-
-            if (x.getCreationDate().after(y.getCreationDate())) {
-                return 1;
-            }
-
-            return 0;
-        }
-
-    }
-
     public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable {
 
         private static final long serialVersionUID = -4063737182979806402L;
@@ -299,16 +250,6 @@ public final class Linq {
             return x.getCreationDate().compareTo(y.getCreationDate());
         }
 
-    }
-
-    public static boolean isHostBelongsToAnyOfClusters(ArrayList<Cluster> clusters, VDS host) {
-        for (Cluster cluster : clusters) {
-            if (cluster.getId().equals(host.getClusterId())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -337,27 +278,6 @@ public final class Linq {
                 storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isActive;
-    }
-
-    /**
-     * Finds min Version by clusters list.
-     *
-     * @param source
-     *            IList to look in
-     * @return Version MinVersion
-     */
-    public static Version getMinVersionByClusters(List<Cluster> source) {
-        Version minVersion = source != null && source.size() > 0 ? source.get(0).getCompatibilityVersion() : null;
-
-        if (minVersion != null) {
-            for (Cluster cluster : source) {
-                minVersion =
-                        cluster.getCompatibilityVersion().compareTo(minVersion) < 0 ? cluster.getCompatibilityVersion()
-                                : minVersion;
-            }
-        }
-
-        return minVersion;
     }
 
     /**
@@ -496,15 +416,6 @@ public final class Linq {
         return ret;
     }
 
-    public static SanTargetModel findSanTargetByNotIsConnected(ArrayList<SanTargetModel> items) {
-        for (SanTargetModel i : items) {
-            if (!i.getIsLoggedIn()) {
-                return i;
-            }
-        }
-        return null;
-    }
-
     public static ArrayList<StorageDomain> findAllStorageDomainsBySharedStatus(ArrayList<StorageDomain> items,
             StorageDomainSharedStatus status) {
         ArrayList<StorageDomain> ret = new ArrayList<>();
@@ -514,16 +425,6 @@ public final class Linq {
             }
         }
         return ret;
-    }
-
-    public static VdcReturnValueBase findVdcReturnValueByDescription(ArrayList<VdcReturnValueBase> items,
-            String description) {
-        for (VdcReturnValueBase i : items) {
-            if (Objects.equals(i.getDescription(), description)) {
-                return i;
-            }
-        }
-        return null;
     }
 
     /**
@@ -675,29 +576,6 @@ public final class Linq {
     @SafeVarargs
     public static <T> List<T> concat(List<T>... lists) {
         return concatUnsafe(lists);
-    }
-
-    public static <T> ArrayList<T> union(ArrayList<ArrayList<T>> lists) {
-        HashSet<T> set = new HashSet<>();
-
-        for (ArrayList<T> list : lists) {
-            set.addAll(list);
-        }
-
-        return new ArrayList<>(set);
-    }
-
-    public static <T> ArrayList<T> intersection(ArrayList<ArrayList<T>> lists) {
-        ArrayList<T> result = new ArrayList<>();
-
-        if (lists != null && !lists.isEmpty()) {
-            result.addAll(lists.get(0));
-            for (ArrayList<T> list : lists) {
-                result.retainAll(list);
-            }
-        }
-
-        return result;
     }
 
     public static <U, V> List<Pair<U, V>> zip(List<U> objects, List<V> vms) {
@@ -1085,34 +963,6 @@ public final class Linq {
         }
     }
 
-    public static class DbGroupPredicate implements IPredicate<DbGroup> {
-        private final DbGroup target;
-
-        public DbGroupPredicate(DbGroup target) {
-            this.target = target;
-        }
-
-        @Override
-        public boolean match(DbGroup source) {
-            String groupName = source.getName().toLowerCase();
-            String targetName = target.getName();
-            if (!StringHelper.isNullOrEmpty(targetName)) {
-                targetName = targetName.toLowerCase();
-            } else if (targetName == null) {
-                targetName = "";
-            }
-            int lastIndex = groupName.lastIndexOf("/"); //$NON-NLS-1$
-            if (lastIndex != -1) {
-                groupName = groupName.substring(lastIndex+1);
-            }
-            return Objects.equals(source.getDomain(), target.getDomain())
-                    && (StringHelper.isNullOrEmpty(target.getName())
-                    || "*".equals(target.getName()) //$NON-NLS-1$
-                    || groupName.startsWith(targetName))
-                    || source.getName().toLowerCase().startsWith(targetName);
-        }
-    }
-
     public static class NetworkSameProviderPredicate implements IPredicate<Provider> {
 
         private final Network network;
@@ -1267,15 +1117,6 @@ public final class Linq {
         };
     }
 
-    public static final class ProviderComparator implements Comparator<Provider>, Serializable {
-        private static final long serialVersionUID = 627759940118704128L;
-
-        @Override
-        public int compare(Provider p1, Provider p2) {
-            return LexoNumericComparator.comp(p1.getName(), p2.getName());
-        }
-    }
-
     public static final class VmComparator implements Comparator<VM>, Serializable {
 
         @Override
@@ -1413,13 +1254,6 @@ public final class Linq {
         @Override
         public int compare(ImportEntityData<T> entity1, ImportEntityData<T> entity2) {
             return lexoNumeric.compare(entity1.getName(), entity2.getName());
-        }
-    }
-
-    public static final class SecretComparator implements Comparator<LibvirtSecret>, Serializable {
-        @Override
-        public int compare(LibvirtSecret s1, LibvirtSecret s2) {
-            return LexoNumericComparator.comp(s1.getId().toString(), s2.getId().toString());
         }
     }
 
