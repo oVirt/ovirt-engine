@@ -14,6 +14,7 @@ import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -310,7 +311,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
             }
         }
 
-        Collections.sort(rolesToPopulate, new Linq.RoleNameComparer());
+        Collections.sort(rolesToPopulate, new NameableComparator());
 
         getRole().setItems(rolesToPopulate);
         if (selectedRole != null) {

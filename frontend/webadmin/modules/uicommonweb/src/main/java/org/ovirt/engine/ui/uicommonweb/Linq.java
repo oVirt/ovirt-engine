@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -988,17 +987,6 @@ public final class Linq {
             return true;
         }
     }
-
-    public static final class RoleNameComparer implements Comparator<Role>, Serializable {
-        private static final long serialVersionUID = -8611835505533367419L;
-
-        @Override
-        public int compare(Role left, Role right) {
-            return left.getName().compareTo(right.getName());
-        }
-    }
-
-
 
     public static final class VmInterfaceComparer implements Comparator<VmNetworkInterface>, Serializable {
         LexoNumericComparator lexoNumeric = new LexoNumericComparator();

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -186,7 +187,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                         filteredList.add(item);
                     }
                 }
-                Collections.sort(filteredList, new Linq.RoleNameComparer());
+                Collections.sort(filteredList, new NameableComparator());
                 roleListModel.setItems(filteredList);
             }
         };
