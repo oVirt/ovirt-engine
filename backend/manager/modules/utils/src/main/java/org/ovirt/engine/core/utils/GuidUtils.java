@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,10 +20,7 @@ public class GuidUtils {
      * @return - Array of <code>Guid</code> type.
      */
     public static ArrayList<Guid> getGuidListFromString(String str) {
-        if (StringUtils.isEmpty(str)) {
-            return new ArrayList<>();
-        }
-        return getGuidListFromStringArray(Arrays.asList(str.split(SEPARATOR)));
+        return getGuidListFromStringArray(Arrays.asList(StringUtils.split(Objects.toString(str, StringUtils.EMPTY), SEPARATOR)));
     }
 
     /**
