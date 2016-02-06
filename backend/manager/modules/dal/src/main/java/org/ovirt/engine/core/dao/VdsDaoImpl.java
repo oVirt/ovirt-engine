@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
-import org.ovirt.engine.core.common.utils.IdentifiableUtils;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -213,8 +212,15 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePool)
-                        .addValue("statuses", statuses != null ? StringUtils.join(IdentifiableUtils.getValues(statuses), ",") : null));
+                        .addValue("statuses",
+                                statuses == null?
+                                        null :
+                                        statuses.stream()
+                                                .map(VDSStatus::getValue)
+                                                .map(Object::toString)
+                                                .collect(Collectors.joining(","))));
         return uniteAgents(vdsList);
+
     }
 
     @Override
