@@ -244,9 +244,6 @@ public class ResourcesModel extends SearchableListModel {
                 Collections.sort(list, COMPARATOR);
                 resourcesModel.setItems(list);
 
-                // async Query for quota
-                AsyncQuery _asyncQueryForQuota = new AsyncQuery();
-                _asyncQueryForQuota.setModel(this);
                 VdcQueryParametersBase parameters =
                         new VdcQueryParametersBase();
                 parameters.setRefresh(getIsQueryFirstTime());
