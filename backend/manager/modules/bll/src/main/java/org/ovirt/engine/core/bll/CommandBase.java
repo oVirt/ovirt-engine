@@ -1316,9 +1316,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             }
             // If we failed to execute due to exception or some other reason, we compensate for the failure.
             if (exceptionOccurred || !getSucceeded()) {
-                setCommandStatus(CommandStatus.FAILED);
                 setSucceeded(false);
                 compensate();
+                setCommandStatus(CommandStatus.FAILED);
             } else {
                 // if the command is not an async task and has no custom callback
                 // set the status to ENDED_SUCCESSFULLY if the status is ACTIVE
