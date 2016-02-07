@@ -123,7 +123,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 CommandStatus.FAILED.equals(entity.getCommandStatus()) ||
                 CommandStatus.ENDED_WITH_FAILURE.equals(entity.getCommandStatus()) ||
                 CommandStatus.ENDED_SUCCESSFULLY.equals(entity.getCommandStatus()) ||
-                CommandStatus.FAILED_RESTARTED.equals(entity.getCommandStatus());
+                CommandStatus.EXECUTION_FAILED.equals(entity.getCommandStatus());
     }
 
     private void endCommandAction() {

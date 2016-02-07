@@ -41,7 +41,7 @@ public class RemoveCinderDiskCommandCallback<T extends RemoveCinderVolumeParentC
                 break;
             case ENDED_WITH_FAILURE:
             case FAILED:
-            case FAILED_RESTARTED:
+            case EXECUTION_FAILED:
             case UNKNOWN:
                 anyFailed = true;
                 if (!getCommand().getParameters().getFinishedChildCmdIds().contains(childCmdId)) {

@@ -24,7 +24,7 @@ public class MergeExtendCommandCallback extends CommandCallback {
                 return;
             case ENDED_WITH_FAILURE:
             case FAILED:
-            case FAILED_RESTARTED:
+            case EXECUTION_FAILED:
             case UNKNOWN:
                 failed = true;
                 break;

@@ -104,7 +104,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             case FAILED:
             case ENDED_WITH_FAILURE:
-            case FAILED_RESTARTED:
+            case EXECUTION_FAILED:
                 if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
                     // It's possible that the image was destroyed already if this is retry of Live
                     // Merge for the given volume.  Proceed to check if the image is present.

@@ -38,7 +38,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
                 logWaitingForChildCommand(child, command);
                 return;
             case FAILED:
-            case FAILED_RESTARTED:
+            case EXECUTION_FAILED:
                 if (shouldWaitForEndMethodsCompletion(child, command)) {
                     return;
                 }

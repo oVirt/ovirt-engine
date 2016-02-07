@@ -26,7 +26,7 @@ public class RemoveDiskSnapshotsCommandCallback extends CommandCallback {
                 return;
             case FAILED:
             case ENDED_WITH_FAILURE:
-            case FAILED_RESTARTED:
+            case EXECUTION_FAILED:
             case UNKNOWN:
                 anyFailed = true;
                 break;

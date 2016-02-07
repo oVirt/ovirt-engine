@@ -174,7 +174,7 @@ public class CommandExecutor {
     private String getCallbackMethod(CommandStatus status) {
         switch (status) {
             case FAILED:
-            case FAILED_RESTARTED:
+            case EXECUTION_FAILED:
                 return "onFailed";
             case SUCCEEDED:
                 return "onSucceeded";
@@ -190,8 +190,8 @@ public class CommandExecutor {
             for (CommandEntity cmdEntity : coco.getCommandsWithCallbackEnabled()) {
                 if (!cmdEntity.isExecuted() &&
                         cmdEntity.getCommandStatus() != CommandStatus.FAILED &&
-                        cmdEntity.getCommandStatus() != CommandStatus.FAILED_RESTARTED) {
-                    coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.FAILED_RESTARTED);
+                        cmdEntity.getCommandStatus() != CommandStatus.EXECUTION_FAILED) {
+                    coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.EXECUTION_FAILED);
                 }
                 if (!cmdEntity.isCallbackNotified()) {
                     addToCallbackMap(cmdEntity);

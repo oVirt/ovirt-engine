@@ -114,7 +114,7 @@ public class HostUpgradeCallback extends CommandCallback {
         case NOT_STARTED:
             return false;
         case FAILED:
-        case FAILED_RESTARTED:
+        case EXECUTION_FAILED:
         case ENDED_WITH_FAILURE:
         case UNKNOWN:
             rootCommand.setCommandStatus(CommandStatus.FAILED);

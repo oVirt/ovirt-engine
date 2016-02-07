@@ -32,7 +32,7 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
                 break;
             case ENDED_WITH_FAILURE:
             case FAILED:
-            case FAILED_RESTARTED:
+            case EXECUTION_FAILED:
             case UNKNOWN:
                 anyFailed = true;
                 finishedChildren++;
