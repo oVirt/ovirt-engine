@@ -205,14 +205,6 @@ public final class Linq {
             String xAlias = x.getDiskAlias();
             String yAlias = y.getDiskAlias();
 
-            if (xAlias == null) {
-                return 1;
-            }
-
-            if (yAlias == null) {
-                return -1;
-            }
-
             return xAlias.compareTo(yAlias);
         }
 
