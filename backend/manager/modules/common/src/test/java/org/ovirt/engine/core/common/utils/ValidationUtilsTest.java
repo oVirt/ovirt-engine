@@ -17,7 +17,8 @@ public class ValidationUtilsTest {
     @Test
     public void testIsInvalidHostname() {
         String[] straValidHosts =
-                new String[] { "www.redhat.com", "127.0.0.1", "www.rhn.redhat.com" };
+                new String[] { "blahblah", "www.redhat.com", "www.rhn.redhat.com", "127.0.0.1",
+                        "1::2", "1:0002:34:4:5:6:7:8" };
         String[] straInvalidHosts =
                 new String[] { "www.redhat#com", "123/456", "www@redhat.com", "www.řhň.řěďháť.čőm", "你好世界",
                         "שלוםעולם" };

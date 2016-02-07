@@ -47,16 +47,25 @@ public class ValidationUtils {
     /***
      * This function validates a hostname according to URI RFC's.
      */
-    public static boolean validHostname(String s) {
-        if (s == null || s.trim().isEmpty()) {
+    public static boolean validHostname(String address) {
+        if (address == null || address.trim().isEmpty()) {
             return false;
         }
+        return isValidIpAddressOrHostname(address) || isValidIpv6Address(address);
+    }
+
+    private static boolean isValidIpAddressOrHostname(String address) {
         try {
-            URI host = new URI("http://" + s);
-            return s.equals(host.getHost());
+            URI uri = new URI("http://" + address);
+            return address.equals(uri.getHost());
         } catch (URISyntaxException use) {
             return false;
         }
+    }
+
+    private static boolean isValidIpv6Address(String address) {
+        final String quotedIpv6 = "[" + address + "]";
+        return isValidIpAddressOrHostname(quotedIpv6);
     }
 
     public static boolean validUri(String addr) {
