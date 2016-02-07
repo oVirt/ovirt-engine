@@ -77,7 +77,7 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> ex
         }
     }
 
-    protected void syncSearch(VdcQueryType vdcQueryType, final Comparator<T> comparator) {
+    protected void syncSearch(VdcQueryType vdcQueryType, final Comparator<? super T> comparator) {
         if (getEntity() == null) {
             return;
         }
