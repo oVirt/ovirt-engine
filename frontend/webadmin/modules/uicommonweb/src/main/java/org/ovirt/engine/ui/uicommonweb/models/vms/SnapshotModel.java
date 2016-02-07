@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -275,7 +276,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
     private void updateSnapshotDisks(ArrayList<Disk> disks) {
         ArrayList<DiskImage> diskImages = Linq.toList(Linq.<DiskImage>filterNonSnapableDisks(disks));
-        Collections.sort(diskImages, new Linq.DiskByAliasComparer());
+        Collections.sort(diskImages, new DiskByDiskAliasComparator());
         getSnapshotDisks().setItems(diskImages);
     }
 
@@ -299,7 +300,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
                     snapshotModel.setApps(Arrays.asList(snapshot.getAppList() != null ?
                             snapshot.getAppList().split(",") : new String[]{})); //$NON-NLS-1$
 
-                    Collections.sort(snapshotModel.getDisks(), new Linq.DiskByAliasComparer());
+                    Collections.sort(snapshotModel.getDisks(), new DiskByDiskAliasComparator());
                     Collections.sort(snapshotModel.getNics(), new Linq.VmInterfaceComparer());
                 }
 

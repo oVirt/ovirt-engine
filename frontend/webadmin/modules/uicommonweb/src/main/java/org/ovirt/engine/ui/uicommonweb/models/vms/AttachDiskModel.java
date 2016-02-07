@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -99,7 +100,7 @@ public class AttachDiskModel extends NewDiskModel {
         @Override
         public void onSuccess(Object model, Object returnValue) {
             List<Disk> disks = adjustReturnValue(returnValue);
-            Collections.sort(disks, new Linq.DiskByAliasComparer());
+            Collections.sort(disks, new DiskByDiskAliasComparator());
             ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
 
             List<EntityModel<DiskModel>> entities = Linq.toEntityModelList(

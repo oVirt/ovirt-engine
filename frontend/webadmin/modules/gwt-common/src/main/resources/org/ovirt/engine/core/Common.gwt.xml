@@ -182,6 +182,7 @@
         <include name="common/businessentities/MigrateOnErrorOptions.java" />
         <include name="common/businessentities/TagsVmMapId.java" />
         <include name="common/businessentities/comparators/BusinessEntityComparator.java" />
+        <include name="common/businessentities/comparators/DiskByDiskAliasComparator.java" />
         <include name="common/businessentities/comparators/LexoNumericComparator.java" />
         <include name="common/businessentities/comparators/NameableComparator.java" />
         <include name="common/businessentities/Identifiable.java" />

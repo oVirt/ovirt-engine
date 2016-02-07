@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public class VmImportDiskListModel extends SearchableListModel {
@@ -20,7 +20,7 @@ public class VmImportDiskListModel extends SearchableListModel {
             VM vm = (VM) getEntity();
             if (vm != null && vm.getDiskMap() != null) {
                 List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
-                Collections.sort(disks, new DiskByAliasComparer());
+                Collections.sort(disks, new DiskByDiskAliasComparator());
                 setItems(disks);
             }
         }

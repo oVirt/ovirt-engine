@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -24,7 +25,6 @@ import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotInfoPanel;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.PreviewSnapshotModel;
@@ -208,7 +208,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 "100px"); //$NON-NLS-1$
 
         List<DiskImage> disks = previewSnapshotModel.getAllDisks();
-        Collections.sort(disks, new Linq.DiskByAliasComparer());
+        Collections.sort(disks, new DiskByDiskAliasComparator());
 
         for (final DiskImage disk : disks) {
             previewTable.addColumn(new AbstractCheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
@@ -353,7 +353,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
     private void updateInfoPanel() {
         ArrayList<DiskImage> selectedImages = (ArrayList<DiskImage>) previewSnapshotModel.getSelectedDisks();
-        Collections.sort(selectedImages, new Linq.DiskByAliasComparer());
+        Collections.sort(selectedImages, new DiskByDiskAliasComparator());
         SnapshotModel snapshotModel = previewSnapshotModel.getSnapshotModel();
         snapshotModel.setDisks(selectedImages);
         vmSnapshotInfoPanel.updateTabsData(snapshotModel);

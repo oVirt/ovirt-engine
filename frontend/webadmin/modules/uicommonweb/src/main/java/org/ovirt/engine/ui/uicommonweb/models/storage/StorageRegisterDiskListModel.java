@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -91,7 +92,7 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
                         List<Disk> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                        Collections.sort(newItems, new Linq.DiskByAliasComparer());
+                        Collections.sort(newItems, new DiskByDiskAliasComparator());
                         setItems(newItems);
                     }
                 }));

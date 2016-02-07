@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 @SuppressWarnings("unused")
@@ -43,7 +43,7 @@ public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
                 @Override
                 public void onSuccess(Object model, Object ReturnValue) {
                     List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                    Collections.sort(disks, new Linq.DiskByAliasComparer());
+                    Collections.sort(disks, new DiskByDiskAliasComparator());
 
                     setItems(disks);
                 }
@@ -73,7 +73,7 @@ public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
                             @Override
                             public void onSuccess(Object model1, Object ReturnValue) {
                                 List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                Collections.sort(disks, new Linq.DiskByAliasComparer());
+                                Collections.sort(disks, new DiskByDiskAliasComparator());
 
                                 setItems(disks);
                             }

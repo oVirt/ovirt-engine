@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -263,7 +264,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     private void initDisks(ArrayList<Disk> disks) {
-        Collections.sort(disks, new Linq.DiskByAliasComparer());
+        Collections.sort(disks, new DiskByDiskAliasComparator());
         ArrayList<DiskModel> list = new ArrayList<>();
 
         for (Disk disk : disks) {

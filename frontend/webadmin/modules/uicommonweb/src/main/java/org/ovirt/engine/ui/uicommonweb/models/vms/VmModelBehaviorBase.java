@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -641,7 +642,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void initTemplateDisks(List<DiskImage> disks) {
-        Collections.sort(disks, new Linq.DiskByAliasComparer());
+        Collections.sort(disks, new DiskByDiskAliasComparator());
         ArrayList<DiskModel> list = new ArrayList<>();
 
         for (DiskImage disk : disks) {
