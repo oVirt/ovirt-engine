@@ -145,7 +145,7 @@ public class VmsMonitoring implements BackendService {
     }
 
     private void unlockVms(List<VmAnalyzer> vmAnalyzers) {
-        vmAnalyzers.stream().map(VmsMonitoring::getVmId).forEach(vmId -> {
+        vmAnalyzers.stream().map(VmAnalyzer::getVmId).forEach(vmId -> {
             VmManager vmManager = resourceManager.getVmManager(vmId);
             vmManager.updateVmDataChangedTime();
             vmManager.unlock();
@@ -194,22 +194,22 @@ public class VmsMonitoring implements BackendService {
 
             // rerun all vms from rerun list
             if (vmAnalyzer.isRerun()) {
-                log.error("Rerun VM '{}'. Called from VDS '{}'", vmAnalyzer.getDbVm().getId(), vdsManager.getVdsName());
-                resourceManager.rerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
+                log.error("Rerun VM '{}'. Called from VDS '{}'", vmAnalyzer.getVmId(), vdsManager.getVdsName());
+                resourceManager.rerunFailedCommand(vmAnalyzer.getVmId(), vdsManager.getVdsId());
             }
 
             if (vmAnalyzer.isSuccededToRun()) {
-                vdsManager.succeededToRunVm(vmAnalyzer.getDbVm().getId());
-                succeededToRunVms.add(vmAnalyzer.getDbVm().getId());
+                vdsManager.succeededToRunVm(vmAnalyzer.getVmId());
+                succeededToRunVms.add(vmAnalyzer.getVmId());
             }
 
             // Refrain from auto-start HA VM during its re-run attempts.
             if (vmAnalyzer.isAutoVmToRun() && !vmAnalyzer.isRerun()) {
-                autoVmsToRun.add(vmAnalyzer.getDbVm().getId());
+                autoVmsToRun.add(vmAnalyzer.getVmId());
             }
 
             if (vmAnalyzer.isColdRebootVmToRun()) {
-                coldRebootVmsToRun.add(vmAnalyzer.getDbVm().getId());
+                coldRebootVmsToRun.add(vmAnalyzer.getVmId());
             }
 
             // process all vms that their ip changed.
@@ -221,15 +221,15 @@ public class VmsMonitoring implements BackendService {
 
             // process all vms that powering up.
             if (vmAnalyzer.isPoweringUp()) {
-                getVdsEventListener().processOnVmPoweringUp(vmAnalyzer.getVdsmVm().getVmDynamic().getId());
+                getVdsEventListener().processOnVmPoweringUp(vmAnalyzer.getVmId());
             }
 
             if (vmAnalyzer.isMovedToDown()) {
-                movedToDownVms.add(vmAnalyzer.getDbVm().getId());
+                movedToDownVms.add(vmAnalyzer.getVmId());
             }
 
             if (vmAnalyzer.isRemoveFromAsync()) {
-                resourceManager.removeAsyncRunningVm(vmAnalyzer.getDbVm().getId());
+                resourceManager.removeAsyncRunningVm(vmAnalyzer.getVmId());
             }
         }
 
@@ -295,7 +295,7 @@ public class VmsMonitoring implements BackendService {
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
         List<Guid> unmanagedVmIds = vmAnalyzers.stream()
                 .filter(VmAnalyzer::isUnmanagedVm)
-                .map(VmsMonitoring::getVmId)
+                .map(VmAnalyzer::getVmId)
                 .collect(Collectors.toList());
         getVdsEventListener().addUnmanagedVms(vdsId, unmanagedVmIds);
     }
@@ -305,7 +305,7 @@ public class VmsMonitoring implements BackendService {
     private void saveVmGuestAgentNetworkDevices(List<VmAnalyzer> vmAnalyzers) {
         Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = vmAnalyzers.stream()
                 .filter(analyzer -> !analyzer.getVmGuestAgentNics().isEmpty())
-                .map(analyzer -> new Pair<>(analyzer.getDbVm().getId(), analyzer.getVmGuestAgentNics()))
+                .map(analyzer -> new Pair<>(analyzer.getVmId(), analyzer.getVmGuestAgentNics()))
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         if (!vmGuestAgentNics.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
@@ -346,11 +346,7 @@ public class VmsMonitoring implements BackendService {
 
     // ***** Helpers and sub-methods *****
 
-    private static Guid getVmId(VmAnalyzer vmAnalyzer) {
-        return getVmId(vmAnalyzer.getDbVm(), vmAnalyzer.getVdsmVm());
-    }
-
-    private static Guid getVmId(VM dbVm, VmInternalData vdsmVm) {
+    static Guid getVmId(VM dbVm, VmInternalData vdsmVm) {
         return dbVm != null ? dbVm.getId() : vdsmVm.getVmDynamic().getId();
     }
 
