@@ -1,17 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class HostAddressValidation extends BaseI18NValidation {
 
     private final boolean acceptEmptyInput;
+    private final boolean supportIpv6;
 
-    public HostAddressValidation(boolean acceptEmptyInput) {
+    public HostAddressValidation(boolean acceptEmptyInput, boolean supportIpv6) {
         this.acceptEmptyInput = acceptEmptyInput;
+        this.supportIpv6 = supportIpv6;
+
+        // BaseI18NValidation c'tor calls composeRegex() prior the members of this class are initiailized.
+        // Thus it has to be called here again.
+        setExpression(composeRegex());
     }
 
     public HostAddressValidation() {
-        this(false);
+        this(false, true);
     }
 
     @Override
@@ -28,11 +35,23 @@ public class HostAddressValidation extends BaseI18NValidation {
     }
 
     protected String hostnameOrIp() {
-        return "(" + ip() + "|" + fqdn() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return "(?:" + ip() + "|" + fqdn() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
-    protected String ip() {
+    private String ip() {
+        if (supportIpv6) {
+            return ipv4() + "|" + ipv6(); //$NON-NLS-1$
+        } else {
+            return ipv4();
+        }
+    }
+
+    private String ipv4() {
         return "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"; //$NON-NLS-1$
+    }
+
+    private String ipv6() {
+        return ValidationUtils.IPV6_PATTERN;
     }
 
     protected String fqdn() {

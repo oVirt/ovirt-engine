@@ -133,7 +133,7 @@ public class NeutronAgentModel extends EntityModel {
             getPluginType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
             getBrokerType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
             getInterfaceMappings().validateEntity(new IValidation[] { new InterfaceMappingsValidation() });
-            getMessagingServer().validateEntity(new IValidation[] { new HostAddressValidation(true) });
+            getMessagingServer().validateEntity(new IValidation[] { new HostAddressValidation(true, true) });
             getMessagingServerPort().validateEntity(new IValidation[] { new IntegerValidation(BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
                     BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT) });
 
