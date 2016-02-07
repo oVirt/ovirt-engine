@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public class GetVmsRelatedToQuotaIdQuery<P extends IdQueryParameters>
@@ -20,7 +20,7 @@ public class GetVmsRelatedToQuotaIdQuery<P extends IdQueryParameters>
         for (VM vm : vms) {
             VmHandler.updateDisksFromDb(vm);
             VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
-            Collections.sort(vm.getDiskList(), new DiskImageByDiskAliasComparator());
+            Collections.sort(vm.getDiskList(), new DiskByDiskAliasComparator());
             ImagesHandler.fillImagesBySnapshots(vm);
         }
         getQueryReturnValue().setReturnValue(vms);
