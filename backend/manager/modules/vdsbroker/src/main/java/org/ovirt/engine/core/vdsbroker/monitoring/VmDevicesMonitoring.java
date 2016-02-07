@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,12 +72,12 @@ public class VmDevicesMonitoring implements BackendService {
 
         private Guid vdsId;
 
-        private List<Guid> vmsToUpdate = new ArrayList<>();
-        private List<VmDevice> devicesToUpdate = new ArrayList<>();
+        private List<Guid> vmsToProcess;
+        private List<VmDevice> devicesToProcess;
 
-        private List<VmDevice> addedDevices = new ArrayList<>();
-        private List<VmDevice> updatedDevices = new ArrayList<>();
-        private List<VmDeviceId> removedDeviceIds = new ArrayList<>();
+        private List<VmDevice> devicesToAdd;
+        private List<VmDevice> devicesToUpdate;
+        private List<VmDeviceId> deviceIdsToRemove;
 
         private Deque<Guid> touchedVms = new LinkedList<>();
 
@@ -105,6 +106,46 @@ public class VmDevicesMonitoring implements BackendService {
             touchedVms.forEach(VmDevicesMonitoring.this::unlock);
         }
 
+        private List<Guid> getVmsToProcess() {
+            return getOptionalList(vmsToProcess);
+        }
+
+        private void addVmToProcess(Guid vmId) {
+            vmsToProcess = addToOptionalList(vmsToProcess, vmId);
+        }
+
+        private List<VmDevice> getDevicesToProcess() {
+            return getOptionalList(devicesToProcess);
+        }
+
+        private void addDeviceToProcess(VmDevice device) {
+            devicesToProcess = addToOptionalList(devicesToProcess, device);
+        }
+
+        private List<VmDevice> getDevicesToAdd() {
+            return getOptionalList(devicesToAdd);
+        }
+
+        private void addDeviceToAdd(VmDevice device) {
+            devicesToAdd = addToOptionalList(devicesToAdd, device);
+        }
+
+        private List<VmDevice> getDevicesToUpdate() {
+            return getOptionalList(devicesToUpdate);
+        }
+
+        private void addDeviceToUpdate(VmDevice device) {
+            devicesToUpdate = addToOptionalList(devicesToUpdate, device);
+        }
+
+        private List<VmDeviceId> getDeviceIdsToRemove() {
+            return getOptionalList(deviceIdsToRemove);
+        }
+
+        private void addDeviceIdToRemove(VmDeviceId deviceId) {
+            deviceIdsToRemove = addToOptionalList(deviceIdsToRemove, deviceId);
+        }
+
         /**
          * Add the VM to the list of VMs to be checked for device updates, if device information hash passed in
          * <code>vdsmHash</code> parameter is more recent (in terms of <code>fetchTime</code>) and differs from
@@ -114,7 +155,7 @@ public class VmDevicesMonitoring implements BackendService {
             if (!VmDeviceCommonUtils.isOldClusterVersion(getGroupCompatibilityVersion(vdsId))
                     && isVmDevicesChanged(vmId, vdsmHash, fetchTime)) {
                 lockTouchedVm(vmId);
-                vmsToUpdate.add(vmId);
+                addVmToProcess(vmId);
             }
         }
 
@@ -150,14 +191,14 @@ public class VmDevicesMonitoring implements BackendService {
         public void updateDevice(VmDevice device) {
             if (isVmDeviceChanged(device.getId(), fetchTime)) {
                 lockTouchedVm(device.getVmId());
-                devicesToUpdate.add(device);
+                addDeviceToProcess(device);
             }
         }
 
         public void removeDevice(VmDeviceId deviceId) {
             if (isVmDeviceChanged(deviceId, fetchTime)) {
                 lockTouchedVm(deviceId.getVmId());
-                removedDeviceIds.add(deviceId);
+                addDeviceIdToRemove(deviceId);
             }
         }
 
@@ -165,14 +206,14 @@ public class VmDevicesMonitoring implements BackendService {
          * Process the changes and store the result in the DB.
          */
         public void flush() {
-            Map<String, Object>[] vmInfos = getVmInfo(vdsId, vmsToUpdate);
+            Map<String, Object>[] vmInfos = getVmInfo(vdsId, getVmsToProcess());
             if (vmInfos != null) {
                 for (Map<String, Object> vmInfo : vmInfos) {
                     processFullList(vmInfo);
                 }
             }
-            for (VmDevice deviceToUpdate : devicesToUpdate) {
-                processDeviceUpdate(this, deviceToUpdate);
+            for (VmDevice deviceToProcess : getDevicesToProcess()) {
+                processDevice(this, deviceToProcess);
             }
             saveDevicesToDb(this);
             unlockTouchedVms();
@@ -265,6 +306,18 @@ public class VmDevicesMonitoring implements BackendService {
 
     public VmDynamicDao getVmDynamicDao() {
         return vmDynamicDao;
+    }
+
+    private static <T> List<T> addToOptionalList(List<T> list, T object) {
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        list.add(object);
+        return list;
+    }
+
+    private static <T> List<T> getOptionalList(List<T> list) {
+        return list != null ? list : Collections.EMPTY_LIST;
     }
 
     public Change createChange(long fetchTime) {
@@ -411,7 +464,7 @@ public class VmDevicesMonitoring implements BackendService {
 
             if (deviceId == null || dbDevice == null) {
                 VmDevice newDevice = buildNewVmDevice(vmId, vdsmDevice, logicalName);
-                change.addedDevices.add(newDevice);
+                change.addDeviceToAdd(newDevice);
                 deviceId = newDevice.getDeviceId();
             } else {
                 dbDevice.setIsPlugged(Boolean.TRUE);
@@ -419,7 +472,7 @@ public class VmDevicesMonitoring implements BackendService {
                 dbDevice.setAlias(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.Alias)));
                 dbDevice.setLogicalName(logicalName);
                 dbDevice.setHostDevice(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.HostDev)));
-                change.updatedDevices.add(dbDevice);
+                change.addDeviceToUpdate(dbDevice);
             }
 
             processedDeviceIds.add(deviceId);
@@ -428,12 +481,12 @@ public class VmDevicesMonitoring implements BackendService {
         handleRemovedDevices(change, vmId, processedDeviceIds, dbDevices);
     }
 
-    private void processDeviceUpdate(Change change, VmDevice device) {
+    private void processDevice(Change change, VmDevice device) {
         List<VmDevice> dbDevices = getVmDeviceDao().getVmDevicesByDeviceId(device.getDeviceId(), device.getVmId());
         if (dbDevices.isEmpty()) {
-            change.addedDevices.add(device);
+            change.addDeviceToAdd(device);
         } else {
-            change.updatedDevices.add(device);
+            change.addDeviceToUpdate(device);
         }
     }
 
@@ -503,14 +556,14 @@ public class VmDevicesMonitoring implements BackendService {
                 if (device.getIsPlugged()) {
                     device.setIsPlugged(Boolean.FALSE);
                     device.setAddress("");
-                    change.updatedDevices.add(device);
+                    change.addDeviceToUpdate(device);
                     log.debug("VM '{}' managed pluggable device was unplugged : '{}'", vmId, device);
                 } else if (!devicePluggable(device)) {
                     log.error("VM '{}' managed non pluggable device was removed unexpectedly from libvirt: '{}'",
                             vmId, device);
                 }
             } else {
-                change.removedDeviceIds.add(device.getId());
+                change.addDeviceIdToRemove(device.getId());
                 log.debug("VM '{}' unmanaged device was marked for remove : {1}", vmId, device);
             }
         }
@@ -562,18 +615,18 @@ public class VmDevicesMonitoring implements BackendService {
     }
 
     private void saveDevicesToDb(Change change) {
-        getVmDeviceDao().updateAllInBatch(change.updatedDevices);
+        getVmDeviceDao().updateAllInBatch(change.getDevicesToUpdate());
 
-        if (!change.removedDeviceIds.isEmpty()) {
+        if (!change.getDeviceIdsToRemove().isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                getVmDeviceDao().removeAll(change.removedDeviceIds);
+                getVmDeviceDao().removeAll(change.getDeviceIdsToRemove());
                 return null;
             });
         }
 
-        if (!change.addedDevices.isEmpty()) {
+        if (!change.getDevicesToAdd().isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                getVmDeviceDao().saveAll(change.addedDevices);
+                getVmDeviceDao().saveAll(change.getDevicesToAdd());
                 return null;
             });
         }
