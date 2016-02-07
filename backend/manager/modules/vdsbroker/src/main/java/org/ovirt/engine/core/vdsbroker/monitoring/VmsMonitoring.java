@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -20,7 +21,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -37,8 +38,6 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class VmsMonitoring implements BackendService {
 
-    @Inject
-    private AuditLogDirector auditLogDirector;
     @Inject
     private DbFacade dbFacade;
     @Inject
@@ -146,11 +145,12 @@ public class VmsMonitoring implements BackendService {
             long fetchTime,
             VdsManager vdsManager,
             boolean updateStatistics) {
+        VmAnalyzerFactory vmAnalyzerFactory = getVmAnalyzerFactory(vdsManager, updateStatistics);
         List<VmAnalyzer> vmAnalyzers = new ArrayList<>(monitoredVms.size());
         monitoredVms.forEach(vm -> {
             // TODO filter out migratingTo VMs if no action is taken on them
             if (tryLockVmForUpdate(vm, fetchTime, vdsManager.getVdsId())) {
-                VmAnalyzer vmAnalyzer = getVmAnalyzer(vm, vdsManager, updateStatistics);
+                VmAnalyzer vmAnalyzer = vmAnalyzerFactory.getVmAnalyzer(vm);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
             }
@@ -160,16 +160,8 @@ public class VmsMonitoring implements BackendService {
         return vmAnalyzers;
     }
 
-    protected VmAnalyzer getVmAnalyzer(
-            Pair<VM, VmInternalData> pair,
-            VdsManager vdsManager,
-            boolean updateStatistics) {
-        VmAnalyzer vmAnalyzer = new VmAnalyzer(pair.getFirst(), pair.getSecond(), updateStatistics);
-        vmAnalyzer.setDbFacade(dbFacade);
-        vmAnalyzer.setResourceManager(resourceManager);
-        vmAnalyzer.setAuditLogDirector(auditLogDirector);
-        vmAnalyzer.setVdsManager(vdsManager);
-        return vmAnalyzer;
+    protected VmAnalyzerFactory getVmAnalyzerFactory(VdsManager vdsManager, boolean statistics) {
+        return Injector.injectMembers(new VmAnalyzerFactory(vdsManager, statistics));
     }
 
     private void afterVMsRefreshTreatment(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager) {
@@ -263,7 +255,7 @@ public class VmsMonitoring implements BackendService {
     private void saveVmDynamic(List<VmAnalyzer> vmAnalyzers) {
         dbFacade.getVmDynamicDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmDynamicToSave)
-                .filter(vmDynamic -> vmDynamic != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
     }
 
@@ -277,7 +269,7 @@ public class VmsMonitoring implements BackendService {
     private void saveVmStatistics(List<VmAnalyzer> vmAnalyzers) {
         dbFacade.getVmStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmStatisticsToSave)
-                .filter(statistics -> statistics != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
     }
 
