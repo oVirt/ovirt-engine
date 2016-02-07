@@ -95,8 +95,9 @@ public class VmDevicesMonitoring implements BackendService {
         }
 
         private void lockTouchedVm(Guid vmId) {
-            lockOnce(vmId);
-            touchedVms.push(vmId);
+            if (lockOnce(vmId)) {
+                touchedVms.push(vmId);
+            }
         }
 
         private void unlockTouchedVms() {
@@ -275,14 +276,19 @@ public class VmDevicesMonitoring implements BackendService {
 
     /**
      * This method acquires lock on the VM given, doing this only once per thread. If the lock is already held by
-     * the current thread, this method just returns. If not, the method tries to acquire the lock. If the lock is
-     * already held by another thread, this method blocks the current thread until the lock becomes available.
+     * the current thread, this method just returns false. If not, the method tries to acquire the lock. If the lock
+     * is already held by another thread, this method blocks the current thread until the lock becomes available.
+     *
+     * @return true, if the lock was actually taken for the first time, false otherwise
      */
-    private void lockOnce(Guid vmId) {
+    private boolean lockOnce(Guid vmId) {
         vmDevicesLocks.computeIfAbsent(vmId, guid -> new ReentrantLock());
         ReentrantLock lock = vmDevicesLocks.get(vmId);
         if (!lock.isHeldByCurrentThread()) {
             lock.lock();
+            return true;
+        } else {
+            return false;
         }
     }
 
