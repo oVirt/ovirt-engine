@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -10,7 +11,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -24,7 +24,7 @@ public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfil
         setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
 
-        setComparator(new Linq.VmTemplateComparator());
+        setComparator(new LexoNumericNameableComparator<>());
 
         updateActionAvailability();
     }

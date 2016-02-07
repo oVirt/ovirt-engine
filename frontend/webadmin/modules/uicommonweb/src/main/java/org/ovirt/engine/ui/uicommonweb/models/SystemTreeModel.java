@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -479,7 +479,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
 
             if (storageDomains != null && storageDomains.size() > 0) {
                 // sort by name first
-                Collections.sort(storageDomains, new Linq.StorageDomainComparator());
+                Collections.sort(storageDomains, new LexoNumericNameableComparator<>());
                 for (StorageDomain storage : storageDomains) {
                     SystemTreeItemModel storageItem = new SystemTreeItemModel();
                     storageItem.setType(SystemTreeItemType.Storage);
@@ -528,7 +528,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
 
             if (getClusterMap().containsKey(dataCenter.getId())) {
                 List<Cluster> clusters = getClusterMap().get(dataCenter.getId());
-                Collections.sort(clusters, new Linq.ClusterComparator());
+                Collections.sort(clusters, new LexoNumericNameableComparator<>());
                 for (Cluster cluster : clusters) {
                     SystemTreeItemModel clusterItem = new SystemTreeItemModel();
                     clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster

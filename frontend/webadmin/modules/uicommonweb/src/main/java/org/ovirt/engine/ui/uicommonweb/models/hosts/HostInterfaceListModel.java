@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -416,7 +417,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
     }
 
     private void sortNics() {
-        Collections.sort(getOriginalItems(), new Linq.InterfaceComparator());
+        Collections.sort(getOriginalItems(), new LexoNumericNameableComparator<>());
     }
 
     private void classifyNics(List<Bond> nonEmptyBonds,

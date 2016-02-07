@@ -32,8 +32,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -47,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -966,37 +963,6 @@ public final class Linq {
         }
     }
 
-    public static final class VmInterfaceComparer implements Comparator<VmNetworkInterface>, Serializable {
-        LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(VmNetworkInterface nic1, VmNetworkInterface nic2) {
-            return lexoNumeric.compare(nic1.getName(), nic2.getName());
-        }
-    }
-
-    public static final class InterfaceComparator implements Comparator<VdsNetworkInterface>, Serializable {
-
-        private static final long serialVersionUID = -6806871048546270786L;
-        LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(VdsNetworkInterface bond1, VdsNetworkInterface bond2) {
-            return lexoNumeric.compare(bond1.getName(), bond2.getName());
-        }
-
-    }
-
-    public static final class StorageDomainComparator implements Comparator<StorageDomain>, Serializable {
-        private static final long serialVersionUID = 990203400356561587L;
-        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(StorageDomain domain1, StorageDomain domain2) {
-            return lexoNumeric.compare(domain1.getName(), domain2.getName());
-        }
-    }
-
     public static final class StorageDomainByPoolNameComparator implements Comparator<StorageDomain>, Serializable {
         private static final long serialVersionUID = 990203400356561666L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
@@ -1004,16 +970,6 @@ public final class Linq {
         @Override
         public int compare(StorageDomain domain1, StorageDomain domain2) {
             return lexoNumeric.compare(domain1.getStoragePoolName(), domain2.getStoragePoolName());
-        }
-    }
-
-    public static final class ClusterComparator implements Comparator<Cluster>, Serializable {
-        private static final long serialVersionUID = 990203400356561587L;
-        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(Cluster cluster1, Cluster cluster2) {
-            return lexoNumeric.compare(cluster1.getName(), cluster2.getName());
         }
     }
 
@@ -1081,22 +1037,6 @@ public final class Linq {
         public int compare(ExternalNetwork net1, ExternalNetwork net2) {
             return comparator.compare(net1.getNetwork(), net2.getNetwork());
         };
-    }
-
-    public static final class VmComparator implements Comparator<VM>, Serializable {
-
-        @Override
-        public int compare(VM v1, VM v2) {
-            return LexoNumericComparator.comp(v1.getName(), v2.getName());
-        }
-    }
-
-    public static final class VmTemplateComparator implements Comparator<VmTemplate>, Serializable {
-
-        @Override
-        public int compare(VmTemplate t1, VmTemplate t2) {
-            return LexoNumericComparator.comp(t1.getName(), t2.getName());
-        }
     }
 
     public static final <T extends Disk> Collection<T> filterNonSnapableDisks(

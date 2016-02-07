@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -283,7 +283,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                             public void onSuccess(Object model1,
                                     Object ReturnValue1) {
                                 ArrayList<VM> vms = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                                Collections.sort(vms, new Linq.VmComparator());
+                                Collections.sort(vms, new LexoNumericNameableComparator<>());
                                 setItems((ArrayList) vms);
                             }
                         };

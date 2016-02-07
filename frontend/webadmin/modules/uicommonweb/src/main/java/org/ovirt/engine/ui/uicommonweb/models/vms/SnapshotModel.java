@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -301,7 +302,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
                             snapshot.getAppList().split(",") : new String[]{})); //$NON-NLS-1$
 
                     Collections.sort(snapshotModel.getDisks(), new DiskByDiskAliasComparator());
-                    Collections.sort(snapshotModel.getNics(), new Linq.VmInterfaceComparer());
+                    Collections.sort(snapshotModel.getNics(), new LexoNumericNameableComparator<>());
                 }
 
                 onUpdateAsyncCallback.onSuccess(snapshotModel, null);

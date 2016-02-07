@@ -5,13 +5,13 @@ import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -63,7 +63,7 @@ public class StorageVmListModel extends SearchableListModel<StorageDomain, VM> {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<VM> vms = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Collections.sort(vms, new Linq.VmComparator());
+                Collections.sort(vms, new LexoNumericNameableComparator<>());
                 setItems(vms);
                 setIsEmpty(vms.size() == 0);
             }
