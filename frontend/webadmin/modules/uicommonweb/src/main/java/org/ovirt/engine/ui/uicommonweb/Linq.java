@@ -194,24 +194,11 @@ public final class Linq {
     }
 
     public static class DiskModelByAliasComparer implements Comparator<DiskModel>, Serializable {
-        private static final long serialVersionUID = -3838651062327707058L;
+        private static final long serialVersionUID = 4293731121213688683L;
 
         @Override
         public int compare(DiskModel x, DiskModel y) {
-            String xAlias = x.getDisk() != null ?
-                    x.getDisk().getDiskAlias() : "";
-            String yAlias = y.getDisk() != null ?
-                    y.getDisk().getDiskAlias() : "";
-
-            if (xAlias == null) {
-                return 1;
-            }
-
-            if (yAlias == null) {
-                return -1;
-            }
-
-            return xAlias.compareTo(yAlias);
+            return x.getDisk().getDiskAlias().compareTo(y.getDisk().getDiskAlias());
         }
     }
 
