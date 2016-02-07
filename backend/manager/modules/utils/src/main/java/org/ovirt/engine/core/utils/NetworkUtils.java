@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils;
 
+import static java.util.stream.Collectors.toList;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -19,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -27,6 +29,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.network.function.NicToIpv4AddressFunction;
+import org.ovirt.engine.core.utils.network.function.NicToIpv6AddressFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,9 +196,9 @@ public final class NetworkUtils {
      *
      * @param host
      *            the host which it's address is about to be resolved
-     * @return if succeeded, string representing the host ip in IPv4 format, null otherwise
+     * @return if succeeded, string representing the host ip, null otherwise
      */
-    public static String getHostByIp(VDS host) {
+    public static String getHostIp(VDS host) {
         try {
             final InetAddress address = InetAddress.getByName(host.getHostName());
             return address.getHostAddress().trim();
@@ -220,40 +224,14 @@ public final class NetworkUtils {
             return NetworkCommonUtils.createDefaultIpConfiguration();
         }
 
+        final List<IPv4Address> iPv4Addresses = Stream.of(nic).map(new NicToIpv4AddressFunction()).collect(toList());
+        final List<IpV6Address> ipV6Addresses = Stream.of(nic).map(new NicToIpv6AddressFunction()).collect(toList());
+
         IpConfiguration ipConfiguration = new IpConfiguration();
-
-        IPv4Address ipv4Address = createIpv4FromNic(nic);
-        IpV6Address ipv6Address = createIpv6FromNic(nic);
-
-        ipConfiguration.setIPv4Addresses(Collections.singletonList(ipv4Address));
-        ipConfiguration.setIpV6Addresses(Collections.singletonList(ipv6Address));
+        ipConfiguration.setIPv4Addresses(iPv4Addresses);
+        ipConfiguration.setIpV6Addresses(ipV6Addresses);
 
         return ipConfiguration;
-    }
-
-    private static IPv4Address createIpv4FromNic(VdsNetworkInterface nic) {
-        IPv4Address iPv4Address = new IPv4Address();
-        if (nic.getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP) {
-            iPv4Address.setAddress(nic.getIpv4Address());
-            iPv4Address.setNetmask(nic.getIpv4Subnet());
-            iPv4Address.setGateway(nic.getIpv4Gateway());
-        }
-        iPv4Address.setBootProtocol(nic.getIpv4BootProtocol());
-        return iPv4Address;
-    }
-
-    private static IpV6Address createIpv6FromNic(VdsNetworkInterface nic) {
-        final IpV6Address ipv6Address = new IpV6Address();
-        final NetworkBootProtocol ipv6BootProtocol = nic.getIpv6BootProtocol();
-
-        ipv6Address.setBootProtocol(ipv6BootProtocol);
-        if (ipv6BootProtocol == NetworkBootProtocol.STATIC_IP) {
-            ipv6Address.setAddress(nic.getIpv6Address());
-            ipv6Address.setPrefix(nic.getIpv6Prefix());
-            ipv6Address.setGateway(nic.getIpv6Gateway());
-        }
-
-        return ipv6Address;
     }
 
     public static <E extends VmNetworkInterface> Map<Guid, List<E>> vmInterfacesByVmId(List<E> vnics) {

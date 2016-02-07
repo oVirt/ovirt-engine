@@ -8,23 +8,22 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 
 public abstract class AbstractVdsNetworkInterfacePredicateTest {
 
-    private static final String VALID = "VALID";
+    protected static final String VALID = "VALID";
     private static final String INVALID = "INVALID";
+
     private Predicate<VdsNetworkInterface> underTest;
-
-    protected String getVALID() {
-        return VALID;
-    }
-
-    protected String getINVALID() {
-        return INVALID;
-    }
 
     protected void setUnderTest(Predicate<VdsNetworkInterface> underTest) {
         this.underTest = underTest;
     }
 
-    public abstract VdsNetworkInterface generateVdsNetworkInterface(String value);
+    private VdsNetworkInterface generateVdsNetworkInterface(String value) {
+        VdsNetworkInterface iface = new VdsNetworkInterface();
+        setIfaceProperty(iface, value);
+        return iface;
+    }
+
+    protected abstract void setIfaceProperty(VdsNetworkInterface iface, String value);
 
     @Test
     public void checkNullAddress() {
@@ -33,12 +32,11 @@ public abstract class AbstractVdsNetworkInterfacePredicateTest {
 
     @Test
     public void checkInvalidAddress() {
-        Assert.assertFalse(underTest.test(generateVdsNetworkInterface(getINVALID())));
+        Assert.assertFalse(underTest.test(generateVdsNetworkInterface(INVALID)));
     }
 
     @Test
     public void checkValidAddress() {
-        Assert.assertTrue(underTest.test(generateVdsNetworkInterface(getVALID())));
+        Assert.assertTrue(underTest.test(generateVdsNetworkInterface(VALID)));
     }
-
 }

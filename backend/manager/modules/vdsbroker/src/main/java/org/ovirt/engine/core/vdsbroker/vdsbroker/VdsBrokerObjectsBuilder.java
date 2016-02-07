@@ -1767,7 +1767,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static String findActiveNicName(VDS vds, Map<String, Map<String, Object>> bridges) {
-        final String hostIp = NetworkUtils.getHostByIp(vds);
+        final String hostIp = NetworkUtils.getHostIp(vds);
         final String activeBridge = findActiveBridge(hostIp, bridges);
         if (activeBridge != null) {
             return activeBridge;
@@ -1789,9 +1789,11 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> bridgeProperties = entry.getValue();
                 String bridgeName = entry.getKey();
                 if (bridgeProperties != null) {
-                    String bridgeAddress = (String) bridgeProperties.get("addr");
+                    String bridgeIpv4Address = (String) bridgeProperties.get("addr");
+                    String bridgeIpv6Address = extractIpv6Address(getIpv6Address(bridgeProperties));
                     // in case host is communicating with engine over a bridge
-                    if (bridgeAddress != null && bridgeAddress.equals(ipAddress)) {
+                    if ((bridgeIpv4Address != null && bridgeIpv4Address.equals(ipAddress)) ||
+                            (bridgeIpv6Address != null && bridgeIpv6Address.equals(ipAddress))) {
                         activeBridge = bridgeName;
                     }
                 }

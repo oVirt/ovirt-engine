@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -17,11 +19,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -33,6 +33,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.network.function.NicToIpv4AddressFunction;
+import org.ovirt.engine.core.utils.network.function.NicToIpv6AddressFunction;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByNetworkNamePredicate;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -61,10 +63,13 @@ public class NetworkConfigurator {
             return;
         }
 
+        final String hostIp = NetworkUtils.getHostIp(host);
         final String managementNetworkName = managementNetwork.getName();
-        final String hostManagementNetworkAddress = resolveHostManagementNetworkAddress(managementNetworkName);
-        final String hostIp = NetworkUtils.getHostByIp(host);
-        if (hostManagementNetworkAddress != null && hostManagementNetworkAddress.equals(hostIp)) {
+
+        final String hostManagementNetworkIpv4Address = getIpv4AddressOfNetwork(managementNetworkName);
+        final String hostManagementNetworkIpv6Address = getIpv6AddressOfNetwork(managementNetworkName);
+        if ((hostManagementNetworkIpv4Address != null && hostManagementNetworkIpv4Address.equals(hostIp)) ||
+                (hostManagementNetworkIpv6Address != null && hostManagementNetworkIpv6Address.equals(hostIp))) {
             log.info("The management network '{}' is already configured on host '{}'",
                     managementNetworkName,
                     host.getName());
@@ -89,14 +94,23 @@ public class NetworkConfigurator {
         }
     }
 
-    private String resolveHostManagementNetworkAddress(String managementNetworkName) {
+    private String getIpv4AddressOfNetwork(String networkName) {
+        return resolveHostManagementNetworkAddress(networkName, VdsNetworkInterface::getIpv4Address);
+    }
+
+    private String getIpv6AddressOfNetwork(String networkName) {
+        return resolveHostManagementNetworkAddress(networkName, VdsNetworkInterface::getIpv6Address);
+    }
+
+    private String resolveHostManagementNetworkAddress(String managementNetworkName,
+            Function<VdsNetworkInterface, String> ipFunction) {
         if (managementNetworkName == null) {
             return null;
         }
         return host.getInterfaces()
                 .stream()
                 .filter(new InterfaceByNetworkNamePredicate(managementNetworkName))
-                .map(VdsNetworkInterface::getIpv4Address)
+                .map(ipFunction)
                 .findFirst()
                 .orElse(null);
     }
@@ -139,23 +153,11 @@ public class NetworkConfigurator {
         Guid baseNicId = nicNameToNic.get(NetworkCommonUtils.stripVlan(nic)).getId();
         managementAttachment.setNicId(baseNicId);
         IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.getIPv4Addresses().add(createIPv4Address(nic));
+        ipConfiguration.setIPv4Addresses(Collections.singletonList(new NicToIpv4AddressFunction().apply(nic)));
+        ipConfiguration.setIpV6Addresses(Collections.singletonList(new NicToIpv6AddressFunction().apply(nic)));
         managementAttachment.setIpConfiguration(ipConfiguration);
         parameters.getNetworkAttachments().add(managementAttachment);
         return parameters;
-    }
-
-    public IPv4Address createIPv4Address(VdsNetworkInterface nic) {
-        IPv4Address result = new IPv4Address();
-
-        if (nic.getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP) {
-            result.setAddress(nic.getIpv4Address());
-            result.setNetmask(nic.getIpv4Subnet());
-            result.setGateway(nic.getIpv4Gateway());
-        }
-
-        result.setBootProtocol(nic.getIpv4BootProtocol());
-        return result;
     }
 
     private VdsNetworkInterface findNicToSetupManagementNetwork() {
