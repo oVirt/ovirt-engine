@@ -52,13 +52,13 @@ public class VmsMonitoring implements BackendService {
     @Inject
     private VmJobDao vmJobDao;
     @Inject
-    private VmStatisticsDao vmStatisticsDao;
-    @Inject
-    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
-    @Inject
     private DiskImageDynamicDao diskImageDynamicDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
     @Inject
     private VmGuestAgentInterfaceDao vmGuestAgentInterfaceDao;
 

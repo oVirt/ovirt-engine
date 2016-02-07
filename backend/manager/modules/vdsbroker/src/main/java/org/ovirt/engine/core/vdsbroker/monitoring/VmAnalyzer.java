@@ -47,9 +47,17 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmJobDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
@@ -109,14 +117,50 @@ public class VmAnalyzer {
     private AuditLogDirector auditLogDirector;
     private VdsManager vdsManager;
     private ResourceManager resourceManager;
-    private DbFacade dbFacade;
 
     private final boolean updateStatistics;
 
-    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, boolean updateStatistics) {
+    private VmStaticDao vmStaticDao;
+    private VmDynamicDao vmDynamicDao;
+    private VmDao vmDao;
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    private VdsDao vdsDao;
+    private DiskDao diskDao;
+    private VmJobDao vmJobDao;
+    private VdsNumaNodeDao vdsNumaNodeDao;
+    private VmNumaNodeDao vmNumaNodeDao;
+
+    public VmAnalyzer(
+            VM dbVm,
+            VmInternalData vdsmVm,
+            boolean updateStatistics,
+            VdsManager vdsManager,
+            AuditLogDirector auditLogDirector,
+            ResourceManager resourceManager,
+            VmStaticDao vmStaticDao,
+            VmDynamicDao vmDynamicDao,
+            VmDao vmDao,
+            VmNetworkInterfaceDao vmNetworkInterfaceDao,
+            VdsDao vdsDao,
+            DiskDao diskDao,
+            VmJobDao vmJobDao,
+            VdsNumaNodeDao vdsNumaNodeDao,
+            VmNumaNodeDao vmNumaNodeDao) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
         this.updateStatistics = updateStatistics;
+        this.vdsManager = vdsManager;
+        this.auditLogDirector = auditLogDirector;
+        this.resourceManager = resourceManager;
+        this.vmStaticDao = vmStaticDao;
+        this.vmDynamicDao = vmDynamicDao;
+        this.vmDao = vmDao;
+        this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
+        this.vdsDao = vdsDao;
+        this.diskDao = diskDao;
+        this.vmJobDao = vmJobDao;
+        this.vdsNumaNodeDao = vdsNumaNodeDao;
+        this.vmNumaNodeDao = vmNumaNodeDao;
     }
 
     /**
@@ -147,7 +191,7 @@ public class VmAnalyzer {
     }
 
     private boolean isExternalOrUnmanagedHostedEngineVm() {
-        boolean externalVm = dbVm == null && getDbFacade().getVmStaticDao().get(vdsmVm.getVmDynamic().getId()) == null;
+        boolean externalVm = dbVm == null && vmStaticDao.get(vdsmVm.getVmDynamic().getId()) == null;
         boolean hostedEngineUnmanaged = dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE;
         return externalVm || hostedEngineUnmanaged;
     }
@@ -169,14 +213,14 @@ public class VmAnalyzer {
 
                 // when going to suspend, delete vm from cache later
                 if (prevStatus == VMStatus.SavingState) {
-                    getResourceManager().internalSetVmStatus(dbVm, VMStatus.Suspended);
+                    resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
                 }
 
                 clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                         vdsmVm.getVmDynamic().getExitMessage(),
                         vdsmVm.getVmDynamic().getExitReason());
             } else {
-                VmDynamic dynamicFromDb = getDbFacade().getVmDynamicDao().get(vdsmVm.getVmDynamic().getId());
+                VmDynamic dynamicFromDb = vmDynamicDao.get(vdsmVm.getVmDynamic().getId());
                 if (dynamicFromDb != null) {
                     prevStatus = dynamicFromDb.getStatus();
                 }
@@ -212,7 +256,7 @@ public class VmAnalyzer {
         if (exitStatus != VmExitStatus.Normal) {
             // Vm failed to run - try to rerun it on other Vds
             if (cacheVm != null) {
-                if (getResourceManager().isVmInAsyncRunningList(vmDynamic.getId())) {
+                if (resourceManager.isVmInAsyncRunningList(vmDynamic.getId())) {
                     log.info("Running on vds during rerun failed vm: '{}'", vmDynamic.getRunOnVds());
                     rerun = true;
                 } else if (cacheVm.isAutoStartup()) {
@@ -221,12 +265,12 @@ public class VmAnalyzer {
             }
             // if failed in destination right after migration
             else { // => cacheVm == null
-                getResourceManager().removeAsyncRunningVm(vmDynamic.getId());
+                resourceManager.removeAsyncRunningVm(vmDynamic.getId());
                 saveDynamic(vdsmVm.getVmDynamic());
             }
         } else {
             // Vm moved safely to down status. May be migration - just remove it from Async Running command.
-            getResourceManager().removeAsyncRunningVm(vmDynamic.getId());
+            resourceManager.removeAsyncRunningVm(vmDynamic.getId());
             if (getVmManager() != null && getVmManager().isColdReboot()) {
                 setColdRebootFlag();
             }
@@ -252,7 +296,7 @@ public class VmAnalyzer {
 
         AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), vm.getId());
         auditLog(logable, type);
-        getResourceManager().removeAsyncRunningVm(vm.getId());
+        resourceManager.removeAsyncRunningVm(vm.getId());
     }
 
     private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason) {
@@ -261,7 +305,7 @@ public class VmAnalyzer {
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
-                getResourceManager().internalSetVmStatus(dbVm,
+                resourceManager.internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         exitStatus,
                         exitMessage,
@@ -270,7 +314,7 @@ public class VmAnalyzer {
             saveDynamic(dbVm.getDynamicData());
             saveStatistics();
             saveVmInterfaces();
-            if (!getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
+            if (!resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
                 movedToDown = true;
             }
         }
@@ -305,7 +349,7 @@ public class VmAnalyzer {
                     destroyVmOnDestinationHost();
                 }
                 // set vm status to down if source vm crushed
-                getResourceManager().internalSetVmStatus(dbVm,
+                resourceManager.internalSetVmStatus(dbVm,
                         VMStatus.Down,
                         vdsmVm.getVmDynamic().getExitStatus(),
                         vdsmVm.getVmDynamic().getExitMessage(),
@@ -315,7 +359,7 @@ public class VmAnalyzer {
                 saveVmInterfaces();
                 auditVmMigrationAbort();
 
-                getResourceManager().removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+                resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
             }
         }
     }
@@ -533,7 +577,7 @@ public class VmAnalyzer {
                 updateVmStatistics();
                 stable = true;
                 if (!getVdsManager().isInitialized()) {
-                    getResourceManager().removeVmFromDownVms(
+                    resourceManager.removeVmFromDownVms(
                             getVdsManager().getVdsId(),
                             vdsmVmDynamic.getId());
                 }
@@ -543,7 +587,7 @@ public class VmAnalyzer {
                 stable = true;
             }
 
-            VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(vdsmVmDynamic.getId());
+            VmDynamic vmDynamic = vmDynamicDao.get(vdsmVmDynamic.getId());
             if (vmDynamic == null || vmDynamic.getStatus() != VMStatus.Unknown) {
                 saveDynamic(null);
             }
@@ -591,14 +635,12 @@ public class VmAnalyzer {
 
     private boolean updateVmRunTimeInfo() {
         if (dbVm == null) {
-            dbVm = getDbFacade().getVmDao().get(vdsmVm.getVmDynamic().getId());
+            dbVm = vmDao.get(vdsmVm.getVmDynamic().getId());
             // if vm exists in db update info
             if (dbVm != null) {
                 // TODO: This is done to keep consistency with VmDao.getById(Guid).
                 // It should probably be removed, but some research is required.
-                dbVm.setInterfaces(getDbFacade()
-                        .getVmNetworkInterfaceDao()
-                        .getAllForVm(dbVm.getId()));
+                dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
 
                 if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
                         || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
@@ -693,8 +735,7 @@ public class VmAnalyzer {
         log.info("VM '{}({}) is running in db and not running in VDS '{}'",
                 dbVm.getId(), dbVm.getName(), getVdsManager().getVdsName());
 
-        if (!migrating && !rerun
-                && getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
+        if (!migrating && !rerun && resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
             rerun = true;
             log.info("add VM '{}' to rerun treatment", dbVm.getName());
         }
@@ -718,7 +759,7 @@ public class VmAnalyzer {
 
         // when the destination VDS is NonResponsive put the VM to Uknown like the rest of its VMs, else MigratingTo
         VMStatus newVmStatus =
-                (VDSStatus.NonResponsive == getDbFacade().getVdsDao().get(destinationHostId).getStatus())
+                (VDSStatus.NonResponsive == vdsDao.get(destinationHostId).getStatus())
                         ? VMStatus.Unknown
                         : VMStatus.MigratingTo;
 
@@ -732,7 +773,7 @@ public class VmAnalyzer {
                 newVmStatus);
 
         // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
-        getResourceManager().internalSetVmStatus(vmToRemove, newVmStatus);
+        resourceManager.internalSetVmStatus(vmToRemove, newVmStatus);
 
         // save the VM state
         saveDynamic(vmToRemove.getDynamicData());
@@ -752,7 +793,7 @@ public class VmAnalyzer {
 
         if (vmToUpdate == null && runningVm.getStatus() != VMStatus.MigratingFrom) {
             // check if the vm exists on another vds
-            VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
+            VmDynamic vmDynamic = vmDynamicDao.get(runningVm.getId());
             if (vmDynamic != null && vmDynamic.getRunOnVds() != null
                     && !vmDynamic.getRunOnVds().equals(getVdsManager().getVdsId()) && runningVm.getStatus() != VMStatus.Up) {
                 log.info(
@@ -814,7 +855,7 @@ public class VmAnalyzer {
         }
 
         if (dbVm.getInterfaces() == null || dbVm.getInterfaces().isEmpty()) {
-            dbVm.setInterfaces(getDbFacade().getVmNetworkInterfaceDao().getAllForVm(dbVm.getId()));
+            dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
         }
         List<String> macs = new ArrayList<>();
 
@@ -917,7 +958,7 @@ public class VmAnalyzer {
             }
 
             vmLunDisksToSave = new ArrayList<>();
-            List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vdsmVm.getVmDynamic().getId(), true);
+            List<Disk> vmDisks = diskDao.getAllForVm(vdsmVm.getVmDynamic().getId(), true);
             for (Disk disk : vmDisks) {
                 if (disk.getDiskStorageType() != DiskStorageType.LUN) {
                     continue;
@@ -949,11 +990,11 @@ public class VmAnalyzer {
 
         vmJobsToUpdate = new HashMap<>();
         vmJobIdsToRemove = new ArrayList<>();
-        List<Guid> existingVmJobIds = getDbFacade().getVmJobDao().getAllIds();
+        List<Guid> existingVmJobIds = vmJobDao.getAllIds();
 
         // Only jobs that were in the DB before our update may be updated/removed;
         // others are completely ignored for the time being
-        Map<Guid, VmJob> jobsFromDb = getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId()).stream()
+        Map<Guid, VmJob> jobsFromDb = vmJobDao.getAllForVm(vdsmVm.getVmDynamic().getId()).stream()
                 .filter(job -> existingVmJobIds.contains(job.getId()))
                 .collect(Collectors.toMap(VmJob::getId, Function.identity()));
 
@@ -989,12 +1030,12 @@ public class VmAnalyzer {
         }
 
         //Build numa nodes map of the host which the dbVm is running on with node index as the key
-        Map<Integer, VdsNumaNode> runOnVdsAllNumaNodesMap = getDbFacade().getVdsNumaNodeDao()
+        Map<Integer, VdsNumaNode> runOnVdsAllNumaNodesMap = vdsNumaNodeDao
                 .getAllVdsNumaNodeByVdsId(dbVm.getRunOnVds()).stream()
                 .collect(Collectors.toMap(VdsNumaNode::getIndex, Function.identity()));
 
         //Build numa nodes map of the dbVm with node index as the key
-        Map<Integer, VmNumaNode> vmAllNumaNodesMap = getDbFacade().getVmNumaNodeDao()
+        Map<Integer, VmNumaNode> vmAllNumaNodesMap = vmNumaNodeDao
                 .getAllVmNumaNodeByVmId(dbVm.getId()).stream()
                 .collect(Collectors.toMap(VmNumaNode::getIndex, Function.identity()));
 
@@ -1053,16 +1094,8 @@ public class VmAnalyzer {
                 > Math.abs(balloonInfo.getCurrentMemory() - balloonInfo.getBalloonTargetMemory());
     }
 
-    protected DbFacade getDbFacade() {
-        return dbFacade;
-    }
-
-    protected void setDbFacade(DbFacade dbFacade) {
-        this.dbFacade = dbFacade;
-    }
-
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
-        getAuditLogDirector().log(auditLogable, logType);
+        auditLogDirector.log(auditLogable, logType);
     }
 
     private void setColdRebootFlag() {
@@ -1111,15 +1144,11 @@ public class VmAnalyzer {
         return vdsManager;
     }
 
-    public void setVdsManager(VdsManager vdsManager) {
-        this.vdsManager = vdsManager;
-    }
-
     protected VmManager getVmManager() {
         if (getDbVm() == null) {
             return null;
         }
-        return getResourceManager().getVmManager(getDbVm().getId());
+        return resourceManager.getVmManager(getDbVm().getId());
     }
 
     public boolean isColdRebootVmToRun() {
@@ -1146,24 +1175,8 @@ public class VmAnalyzer {
         return vmGuestAgentNics != null ? vmGuestAgentNics : Collections.emptyList();
     }
 
-    protected AuditLogDirector getAuditLogDirector() {
-        return auditLogDirector;
-    }
-
-    protected void setAuditLogDirector(AuditLogDirector auditLogDirector) {
-        this.auditLogDirector = auditLogDirector;
-    }
-
-    protected ResourceManager getResourceManager() {
-        return resourceManager;
-    }
-
-    protected void setResourceManager(ResourceManager resourceManager) {
-        this.resourceManager = resourceManager;
-    }
-
     protected <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
-        return getResourceManager().runVdsCommand(commandType, parameters);
+        return resourceManager.runVdsCommand(commandType, parameters);
     }
 
     public boolean isUnmanagedVm() {

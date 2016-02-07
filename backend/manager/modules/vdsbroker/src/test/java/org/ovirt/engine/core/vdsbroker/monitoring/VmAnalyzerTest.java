@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -95,8 +94,6 @@ public class VmAnalyzerTest {
     @Mock
     private VDS dstHost;
     @Mock
-    private DbFacade dbFacade;
-    @Mock
     private VdsManager vdsManager;
     @Mock
     private VmManager vmManager;
@@ -140,11 +137,6 @@ public class VmAnalyzerTest {
     public void proceedDownVmsNormalExistReason_MIGRATION_HANDOVER(VmTestPairs data) {
         //given
         initMocks(data, false);
-        if (data.dbVm() != null) {
-            when(vmAnalyzer.getDbFacade()
-                    .getVmStatisticsDao()
-                    .get(data.dbVm().getId())).thenReturn(data.dbVm().getStatisticsData());
-        }
 
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
@@ -154,7 +146,7 @@ public class VmAnalyzerTest {
         //then
         vmAnalyzer.analyze();
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
-        verify(vmAnalyzer.getResourceManager(), never()).removeAsyncRunningVm(data.dbVm().getId());
+        verify(resourceManager, never()).removeAsyncRunningVm(data.dbVm().getId());
         verify(vmAnalyzer).runVdsCommand(vdsCommandTypeCaptor.capture(), vdsParamsCaptor.capture());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertEquals(VDSCommandType.Destroy, vdsCommandTypeCaptor.getValue());
@@ -165,11 +157,6 @@ public class VmAnalyzerTest {
     public void proceedDownVmsNormalExistReason(VmTestPairs data) {
         //given
         initMocks(data, false);
-        if (data.dbVm() != null) {
-            when(vmAnalyzer.getDbFacade()
-                    .getVmStatisticsDao()
-                    .get(data.dbVm().getId())).thenReturn(data.dbVm().getStatisticsData());
-        }
 
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
@@ -179,7 +166,7 @@ public class VmAnalyzerTest {
         //then
         vmAnalyzer.analyze();
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
-        verify(vmAnalyzer.getResourceManager()).removeAsyncRunningVm(data.dbVm().getId());
+        verify(resourceManager).removeAsyncRunningVm(data.dbVm().getId());
         verify(vmAnalyzer).runVdsCommand(vdsCommandTypeCaptor.capture(), vdsParamsCaptor.capture());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.VM_DOWN));
@@ -198,7 +185,7 @@ public class VmAnalyzerTest {
         //then
         vmAnalyzer.analyze();
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
-        verify(vmAnalyzer.getResourceManager(), atLeast(3)).isVmInAsyncRunningList(data.dbVm().getId());
+        verify(resourceManager, atLeast(3)).isVmInAsyncRunningList(data.dbVm().getId());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
     }
 
@@ -251,8 +238,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingFrom);
         //then
         assertTrue(vmAnalyzer.isClientIpChanged());
-        verify(vmAnalyzer.getResourceManager(), never()).internalSetVmStatus(data.dbVm(),
-                VMStatus.MigratingTo);
+        verify(resourceManager, never()).internalSetVmStatus(data.dbVm(), VMStatus.MigratingTo);
     }
 
     @Theory
@@ -265,8 +251,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.dbVm().getStatus() == VMStatus.MigratingFrom);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
-        verify(vmAnalyzer.getResourceManager(), times(1)).internalSetVmStatus(data.dbVm(),
-                VMStatus.MigratingTo);
+        verify(resourceManager, times(1)).internalSetVmStatus(data.dbVm(), VMStatus.MigratingTo);
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertNotNull(vmAnalyzer.getVmStatisticsToSave());
         assertEquals(VmTestPairs.DST_HOST_ID, data.dbVm().getRunOnVds());
@@ -283,7 +268,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Up);
         //then
         vmAnalyzer.analyze();
-        verify(vmAnalyzer.getResourceManager(), times(1)).removeVmFromDownVms(VmTestPairs.SRC_HOST_ID,
+        verify(resourceManager, times(1)).removeVmFromDownVms(VmTestPairs.SRC_HOST_ID,
                 data.vdsmVm().getVmDynamic().getId());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertEquals(VmTestPairs.SRC_HOST_ID, data.dbVm().getRunOnVds());
@@ -370,12 +355,23 @@ public class VmAnalyzerTest {
         // dst VM is in DB under the same Guid
         mockVmInDbForDstVms(vmData);
         // -- end of behaviors --
-        vmAnalyzer = spy(new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), false));
-        doReturn(auditLogDirector).when(vmAnalyzer).getAuditLogDirector();
-        doReturn(vdsManager).when(vmAnalyzer).getVdsManager();
+        vmAnalyzer = spy(new VmAnalyzer(
+                vmData.dbVm(),
+                vmData.vdsmVm(),
+                false,
+                vdsManager,
+                auditLogDirector,
+                resourceManager,
+                vmStaticDao,
+                vmDynamicDao,
+                vmDao,
+                vmNetworkInterfaceDao,
+                vdsDao,
+                null,
+                vmJobsDao,
+                null,
+                null));
         doReturn(vmManager).when(vmAnalyzer).getVmManager();
-        doReturn(dbFacade).when(vmAnalyzer).getDbFacade();
-        doReturn(resourceManager).when(vmAnalyzer).getResourceManager();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(true);
         doReturn(vdsReturnValue).when(vmAnalyzer).runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
@@ -392,14 +388,6 @@ public class VmAnalyzerTest {
         mockVmJob();
         mockCluster();
         mockVdsDao();
-        doReturn(vmStatisticsDao).when(dbFacade).getVmStatisticsDao();
-        doReturn(vmDynamicDao).when(dbFacade).getVmDynamicDao();
-        doReturn(vmStaticDao).when(dbFacade).getVmStaticDao();
-        doReturn(vmNetworkInterfaceDao).when(dbFacade).getVmNetworkInterfaceDao();
-        doReturn(vmJobsDao).when(dbFacade).getVmJobDao();
-        doReturn(clusterDao).when(dbFacade).getClusterDao();
-        doReturn(vdsDao).when(dbFacade).getVdsDao();
-        doReturn(vmDao).when(dbFacade).getVmDao();
     }
 
     private void mockStatistics() {
