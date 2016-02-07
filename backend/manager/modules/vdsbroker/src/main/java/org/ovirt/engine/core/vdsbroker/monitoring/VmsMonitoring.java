@@ -20,7 +20,13 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
+import org.ovirt.engine.core.dao.VmJobDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -39,9 +45,22 @@ import org.slf4j.LoggerFactory;
 public class VmsMonitoring implements BackendService {
 
     @Inject
-    private DbFacade dbFacade;
-    @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    private LunDao lunDao;
+    @Inject
+    private VmJobDao vmJobDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmGuestAgentInterfaceDao vmGuestAgentInterfaceDao;
 
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
@@ -239,35 +258,35 @@ public class VmsMonitoring implements BackendService {
     }
 
     private void saveVmLunDiskStatistics(List<VmAnalyzer> vmAnalyzers) {
-        dbFacade.getLunDao().updateAllInBatch(vmAnalyzers.stream()
+        lunDao.updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmLunDisksToSave)
                 .flatMap(List::stream)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmDiskImageStatistics(List<VmAnalyzer> vmAnalyzers) {
-        dbFacade.getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmAnalyzers.stream()
+        diskImageDynamicDao.updateAllDiskImageDynamicWithDiskIdByVmId(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmDiskImageDynamicToSave)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmDynamic(List<VmAnalyzer> vmAnalyzers) {
-        dbFacade.getVmDynamicDao().updateAllInBatch(vmAnalyzers.stream()
+        vmDynamicDao.updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmDynamicToSave)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmInterfaceStatistics(List<VmAnalyzer> vmAnalyzers) {
-        dbFacade.getVmNetworkStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
+        vmNetworkStatisticsDao.updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmNetworkStatistics)
                 .flatMap(List::stream)
                 .collect(Collectors.toList()));
     }
 
     private void saveVmStatistics(List<VmAnalyzer> vmAnalyzers) {
-        dbFacade.getVmStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
+        vmStatisticsDao.updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmStatisticsToSave)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
@@ -291,13 +310,13 @@ public class VmsMonitoring implements BackendService {
         if (!vmGuestAgentNics.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
                 for (Guid vmId : vmGuestAgentNics.keySet()) {
-                    dbFacade.getVmGuestAgentInterfaceDao().removeAllForVm(vmId);
+                    vmGuestAgentInterfaceDao.removeAllForVm(vmId);
                 }
 
                 for (List<VmGuestAgentInterface> nics : vmGuestAgentNics.values()) {
                     if (nics != null) {
                         for (VmGuestAgentInterface nic : nics) {
-                            dbFacade.getVmGuestAgentInterfaceDao().save(nic);
+                            vmGuestAgentInterfaceDao.save(nic);
                         }
                     }
                 }
@@ -307,7 +326,7 @@ public class VmsMonitoring implements BackendService {
     }
 
     private void saveVmJobsToDb(List<VmAnalyzer> vmAnalyzers) {
-        dbFacade.getVmJobDao().updateAllInBatch(vmAnalyzers.stream()
+        vmJobDao.updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmJobsToUpdate)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()));
@@ -318,7 +337,7 @@ public class VmsMonitoring implements BackendService {
                 .collect(Collectors.toList());
         if (!vmJobIdsToRemove.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                dbFacade.getVmJobDao().removeAll(vmJobIdsToRemove);
+                vmJobDao.removeAll(vmJobIdsToRemove);
                 return null;
             });
         }
