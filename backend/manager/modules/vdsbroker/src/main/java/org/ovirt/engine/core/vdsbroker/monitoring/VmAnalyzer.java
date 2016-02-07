@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,7 +52,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmJobDao;
@@ -119,6 +119,7 @@ public class VmAnalyzer {
     private ResourceManager resourceManager;
 
     private final boolean updateStatistics;
+    private Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider;
 
     private VmStaticDao vmStaticDao;
     private VmDynamicDao vmDynamicDao;
@@ -127,7 +128,6 @@ public class VmAnalyzer {
     private VdsDao vdsDao;
     private DiskDao diskDao;
     private VmJobDao vmJobDao;
-    private VdsNumaNodeDao vdsNumaNodeDao;
     private VmNumaNodeDao vmNumaNodeDao;
 
     public VmAnalyzer(
@@ -144,7 +144,7 @@ public class VmAnalyzer {
             VdsDao vdsDao,
             DiskDao diskDao,
             VmJobDao vmJobDao,
-            VdsNumaNodeDao vdsNumaNodeDao,
+            Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
             VmNumaNodeDao vmNumaNodeDao) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
@@ -159,7 +159,7 @@ public class VmAnalyzer {
         this.vdsDao = vdsDao;
         this.diskDao = diskDao;
         this.vmJobDao = vmJobDao;
-        this.vdsNumaNodeDao = vdsNumaNodeDao;
+        this.vdsNumaNodesProvider = vdsNumaNodesProvider;
         this.vmNumaNodeDao = vmNumaNodeDao;
     }
 
@@ -1030,9 +1030,7 @@ public class VmAnalyzer {
         }
 
         //Build numa nodes map of the host which the dbVm is running on with node index as the key
-        Map<Integer, VdsNumaNode> runOnVdsAllNumaNodesMap = vdsNumaNodeDao
-                .getAllVdsNumaNodeByVdsId(dbVm.getRunOnVds()).stream()
-                .collect(Collectors.toMap(VdsNumaNode::getIndex, Function.identity()));
+        Map<Integer, VdsNumaNode> vdsNumaNodes = vdsNumaNodesProvider.get();
 
         //Build numa nodes map of the dbVm with node index as the key
         Map<Integer, VmNumaNode> vmAllNumaNodesMap = vmNumaNodeDao
@@ -1049,8 +1047,8 @@ public class VmAnalyzer {
                 List<Pair<Guid, Pair<Boolean, Integer>>> runTimePinList = new ArrayList<>();
                 for (Pair<Guid, Pair<Boolean, Integer>> pair : vNode.getVdsNumaNodeList()) {
                     if (!pinnedNodes.contains(pair.getSecond().getSecond()) &&
-                            runOnVdsAllNumaNodesMap.containsKey(pair.getSecond().getSecond())) {
-                        pair.setFirst(runOnVdsAllNumaNodesMap.get(pair.getSecond().getSecond()).getId());
+                            vdsNumaNodes.containsKey(pair.getSecond().getSecond())) {
+                        pair.setFirst(vdsNumaNodes.get(pair.getSecond().getSecond()).getId());
                         pair.getSecond().setFirst(false);
                         runTimePinList.add(pair);
                     }
