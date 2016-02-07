@@ -158,9 +158,12 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     runVdsCommand(VDSCommandType.AttachStorageDomain,
                             new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                                     getParameters().getStorageDomainId()));
-                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
-                            getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
-                                    getStoragePoolIdFromVds());
+                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk = new ArrayList<>();
+                    if (getStorageDomain().getStorageDomainType().isDataDomain()) {
+                        unregisteredEntitiesFromOvfDisk.addAll(
+                                getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
+                                        getStoragePoolIdFromVds()));
+                    }
                     executeInNewTransaction(() -> {
                         final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
                         map.setStatus(StorageDomainStatus.Maintenance);

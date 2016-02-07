@@ -245,23 +245,23 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     private void registerOvfStoreDisks() {
         for (final Guid storageDomainId : getParameters().getStorages()) {
-            resetOvfStoreDisks();
-            final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
-                    getEntitiesFromStorageOvfDisk(storageDomainId, getStoragePool().getId());
-            TransactionSupport.executeInNewTransaction(() -> {
-                List<DiskImage> ovfStoreDiskImages = getAllOVFDisks(storageDomainId, getStoragePool().getId());
-                registerAllOvfDisks(ovfStoreDiskImages, storageDomainId);
+            if (getStorageDomainStaticDao().get(storageDomainId).getStorageDomainType().isDataDomain()) {
+                resetOvfStoreDisks();
+                TransactionSupport.executeInNewTransaction(() -> {
+                    List<DiskImage> ovfStoreDiskImages = getAllOVFDisks(storageDomainId, getStoragePool().getId());
+                    registerAllOvfDisks(ovfStoreDiskImages, storageDomainId);
 
-                // Update unregistered entities
-                for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
-                    getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(), storageDomainId);
-                    getUnregisteredOVFDataDao().saveOVFData(ovf);
-                    log.info("Adding OVF data of entity id '{}' and entity name '{}'",
-                            ovf.getEntityId(),
-                            ovf.getEntityName());
-                }
-                return null;
-            });
+                    // Update unregistered entities
+                    for (OvfEntityData ovf : getEntitiesFromStorageOvfDisk(storageDomainId, getStoragePool().getId())) {
+                        getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(), storageDomainId);
+                        getUnregisteredOVFDataDao().saveOVFData(ovf);
+                        log.info("Adding OVF data of entity id '{}' and entity name '{}'",
+                                ovf.getEntityId(),
+                                ovf.getEntityName());
+                    }
+                    return null;
+                });
+            }
         }
     }
 
