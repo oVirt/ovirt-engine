@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -176,9 +175,10 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override
     public List<VM> getVmsByIds(List<Guid> vmsIds) {
+        Object[] uuids = vmsIds.stream().map(Guid::getUuid).toArray();
         return getCallsHandler().executeReadList("GetVmsByIds",
                 VMRowMapper.instance,
-                getCustomMapSqlParameterSource().addValue("vms_ids", StringUtils.join(vmsIds, ',')));
+                getCustomMapSqlParameterSource().addValue("vms_ids", createArrayOf("uuid", uuids)));
     }
 
     @Override

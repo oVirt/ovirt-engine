@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,6 +42,14 @@ public abstract class BaseDao {
 
     protected CustomMapSqlParameterSource getCustomMapSqlParameterSource() {
         return new CustomMapSqlParameterSource(getDialect());
+    }
+
+    protected Array createArrayOf(String typeName, Object[] array) {
+        try {
+            return getJdbcTemplate().getDataSource().getConnection().createArrayOf(typeName, array);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

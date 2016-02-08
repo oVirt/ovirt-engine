@@ -1362,12 +1362,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByIds(v_vms_ids VARCHAR(5000)) RETURNS SETOF vms STABLE
+Create or replace FUNCTION GetVmsByIds(v_vms_ids UUID[]) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm.*
              FROM vms vm
-             WHERE vm.vm_guid IN (SELECT * from fnSplitterUuid(v_vms_ids));
+             WHERE vm.vm_guid = ANY(v_vms_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 
