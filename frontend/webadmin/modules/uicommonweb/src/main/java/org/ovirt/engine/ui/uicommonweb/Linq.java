@@ -244,7 +244,7 @@ public final class Linq {
     /**
      * Check if storage_domains item with specified Guid exist in List
      */
-    public static boolean isSDItemExistInList(ArrayList<StorageDomain> items, Guid id) {
+    public static boolean isSDItemExistInList(List<StorageDomain> items, Guid id) {
         for (StorageDomain b : items) {
             if (b.getId().equals(id)) {
                 return true;
@@ -265,7 +265,7 @@ public final class Linq {
         return false;
     }
 
-    public static NetworkInterface findInterfaceByName(ArrayList<VdsNetworkInterface> items, String name) {
+    public static NetworkInterface findInterfaceByName(List<VdsNetworkInterface> items, String name) {
         for (NetworkInterface i : items) {
             if (Objects.equals(i.getName(), name)) {
                 return i;
@@ -274,7 +274,7 @@ public final class Linq {
         return null;
     }
 
-    public static VdsNetworkInterface findInterfaceByNetworkName(ArrayList<VdsNetworkInterface> items, String name) {
+    public static VdsNetworkInterface findInterfaceByNetworkName(List<VdsNetworkInterface> items, String name) {
         for (VdsNetworkInterface i : items) {
             if (Objects.equals(i.getNetworkName(), name)) {
                 return i;
@@ -283,7 +283,7 @@ public final class Linq {
         return null;
     }
 
-    public static VdsNetworkInterface findInterfaceByIsBond(ArrayList<VdsNetworkInterface> items) {
+    public static VdsNetworkInterface findInterfaceByIsBond(List<VdsNetworkInterface> items) {
         for (VdsNetworkInterface i : items) {
             if (i.getBonded() != null && i.getBonded()) {
                 return i;
@@ -292,7 +292,7 @@ public final class Linq {
         return null;
     }
 
-    public static VdsNetworkInterface findInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items) {
+    public static VdsNetworkInterface findInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
         for (VdsNetworkInterface i : items) {
             if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
                 return i;
@@ -301,8 +301,8 @@ public final class Linq {
         return null;
     }
 
-    public static ArrayList<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items) {
-        ArrayList<VdsNetworkInterface> ret = new ArrayList<>();
+    public static List<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
+        List<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
                 ret.add(i);
@@ -311,8 +311,8 @@ public final class Linq {
         return ret;
     }
 
-    public static ArrayList<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(ArrayList<VdsNetworkInterface> items) {
-        ArrayList<VdsNetworkInterface> ret = new ArrayList<>();
+    public static List<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(List<VdsNetworkInterface> items) {
+        List<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (StringHelper.isNullOrEmpty(i.getBondName())) {
                 ret.add(i);
@@ -321,8 +321,8 @@ public final class Linq {
         return ret;
     }
 
-    public static ArrayList<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(ArrayList<VdsNetworkInterface> items) {
-        ArrayList<VdsNetworkInterface> ret = new ArrayList<>();
+    public static List<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(List<VdsNetworkInterface> items) {
+        List<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (i.getVlanId() == null) {
                 ret.add(i);
@@ -340,7 +340,7 @@ public final class Linq {
         return null;
     }
 
-    public static Network findNetworkByName(ArrayList<Network> items, String name) {
+    public static Network findNetworkByName(List<Network> items, String name) {
         for (Network n : items) {
             if (Objects.equals(n.getName(), name)) {
                 return n;
@@ -367,8 +367,8 @@ public final class Linq {
         return NetworkModel.EMPTY_HOST_NETWORK_QOS;
     }
 
-    public static ArrayList<VDS> findAllVDSByPmEnabled(ArrayList<VDS> items) {
-        ArrayList<VDS> ret = new ArrayList<>();
+    public static List<VDS> findAllVDSByPmEnabled(List<VDS> items) {
+        List<VDS> ret = new ArrayList<>();
         for (VDS i : items) {
             if (i.isPmEnabled()) {
                 ret.add(i);
@@ -377,9 +377,9 @@ public final class Linq {
         return ret;
     }
 
-    public static ArrayList<StorageDomain> findAllStorageDomainsBySharedStatus(ArrayList<StorageDomain> items,
+    public static List<StorageDomain> findAllStorageDomainsBySharedStatus(List<StorageDomain> items,
             StorageDomainSharedStatus status) {
-        ArrayList<StorageDomain> ret = new ArrayList<>();
+        List<StorageDomain> ret = new ArrayList<>();
         for (StorageDomain i : items) {
             if (i.getStorageDomainSharedStatus() == status) {
                 ret.add(i);
@@ -392,9 +392,9 @@ public final class Linq {
      * Produces the set difference of two sequences by using the default equality
      *
      * @param first
-     *            An {@link ArrayList} whose elements that are not also in second will be returned.
+     *            A {@link List} whose elements that are not also in second will be returned.
      * @param second
-     *            An {@link ArrayList} whose elements that also occur in the first sequence will
+     *            A {@link List} whose elements that also occur in the first sequence will
      *            cause those elements to be removed from the returned sequence.
      * @return A sequence that contains the set difference of the elements of two sequences.
      */
@@ -456,7 +456,7 @@ public final class Linq {
 
     public static <TSource> Collection<TSource> where(Collection<TSource> source,
             IPredicate<? super TSource> predicate) {
-        ArrayList<TSource> list = new ArrayList<>();
+        List<TSource> list = new ArrayList<>();
 
         for (TSource item : source) {
             if (predicate.match(item)) {
@@ -467,7 +467,7 @@ public final class Linq {
         return list;
     }
 
-    public static Version selectHighestVersion(ArrayList<Version> versions) {
+    public static Version selectHighestVersion(List<Version> versions) {
         Version retVersion = firstOrNull(versions);
         for (Version version : versions) {
             if (version.compareTo(retVersion) > 0) {
@@ -554,7 +554,7 @@ public final class Linq {
         return result;
     }
 
-    public static StorageDomain getStorageById(Guid storageId, ArrayList<StorageDomain> storageDomains) {
+    public static StorageDomain getStorageById(Guid storageId, List<StorageDomain> storageDomains) {
         for (StorageDomain storage : storageDomains) {
             if (storage.getId().equals(storageId)) {
                 return storage;
@@ -563,8 +563,8 @@ public final class Linq {
         return null;
     }
 
-    public static ArrayList<StorageDomain> getStorageDomainsByIds(ArrayList<Guid> storageIds,
-            ArrayList<StorageDomain> storageDomains) {
+    public static ArrayList<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
+            List<StorageDomain> storageDomains) {
         ArrayList<StorageDomain> list = new ArrayList<>();
         for (Guid storageId : storageIds) {
             StorageDomain storageDomain = getStorageById(storageId, storageDomains);
@@ -575,7 +575,7 @@ public final class Linq {
         return list;
     }
 
-    public static <T> ArrayList<EntityModel<T>> toEntityModelList(ArrayList<T> list) {
+    public static <T> ArrayList<EntityModel<T>> toEntityModelList(List<T> list) {
         ArrayList<EntityModel<T>> entityModelList = new ArrayList<>();
 
         if (list != null) {
@@ -589,7 +589,7 @@ public final class Linq {
         return entityModelList;
     }
 
-    public static ArrayList<DiskModel> filterDisksByType(ArrayList<DiskModel> diskModels, DiskStorageType type) {
+    public static ArrayList<DiskModel> filterDisksByType(List<DiskModel> diskModels, DiskStorageType type) {
         ArrayList<DiskModel> filteredList = new ArrayList<>();
 
         if (diskModels != null) {
