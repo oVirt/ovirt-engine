@@ -1025,6 +1025,7 @@ public final class Linq {
      * pre-defined cluster policies should be ordered first, then order lexicographically
      */
     public static final class ClusterPolicyComparator implements Comparator<ClusterPolicy>, Serializable {
+        private static final long serialVersionUID = -409780241393930906L;
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1044,6 +1045,7 @@ public final class Linq {
      * forth name (lexicography)
      */
     public static final class PolicyUnitComparator implements Comparator<PolicyUnit>, Serializable {
+        private static final long serialVersionUID = -6155037911174811346L;
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1086,6 +1088,7 @@ public final class Linq {
     }
 
     public static final class ImportEntityComparator<T> implements Comparator<ImportEntityData<T>>, Serializable {
+        private static final long serialVersionUID = 6596945138956015466L;
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
