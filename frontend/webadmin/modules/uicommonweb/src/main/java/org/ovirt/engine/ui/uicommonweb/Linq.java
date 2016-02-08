@@ -372,7 +372,7 @@ public final class Linq {
 
     public static int count(Iterable<?> source) {
         int result = 0;
-        for (Object item : source) {
+        for (Object ignored : source) {
             result++;
         }
 
