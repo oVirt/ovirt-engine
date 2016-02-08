@@ -301,7 +301,7 @@ public final class Linq {
         return null;
     }
 
-    public static List<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
+    public static Collection<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
         List<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
@@ -311,7 +311,7 @@ public final class Linq {
         return ret;
     }
 
-    public static List<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(List<VdsNetworkInterface> items) {
+    public static Collection<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(List<VdsNetworkInterface> items) {
         List<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (StringHelper.isNullOrEmpty(i.getBondName())) {
@@ -321,7 +321,7 @@ public final class Linq {
         return ret;
     }
 
-    public static List<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(List<VdsNetworkInterface> items) {
+    public static Collection<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(List<VdsNetworkInterface> items) {
         List<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (i.getVlanId() == null) {
@@ -367,7 +367,7 @@ public final class Linq {
         return NetworkModel.EMPTY_HOST_NETWORK_QOS;
     }
 
-    public static List<VDS> findAllVDSByPmEnabled(List<VDS> items) {
+    public static Collection<VDS> findAllVDSByPmEnabled(List<VDS> items) {
         List<VDS> ret = new ArrayList<>();
         for (VDS i : items) {
             if (i.isPmEnabled()) {
@@ -377,7 +377,7 @@ public final class Linq {
         return ret;
     }
 
-    public static List<StorageDomain> findAllStorageDomainsBySharedStatus(List<StorageDomain> items,
+    public static Collection<StorageDomain> findAllStorageDomainsBySharedStatus(List<StorageDomain> items,
             StorageDomainSharedStatus status) {
         List<StorageDomain> ret = new ArrayList<>();
         for (StorageDomain i : items) {
