@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -248,7 +247,7 @@ public final class Linq {
         return firstOrNull(items, new IdPredicate<>(id)) != null;
     }
 
-    public static NetworkInterface findInterfaceByName(List<VdsNetworkInterface> items, String name) {
+    public static VdsNetworkInterface findInterfaceByName(List<VdsNetworkInterface> items, String name) {
         return firstOrNull(items, new NamePredicate(name));
     }
 

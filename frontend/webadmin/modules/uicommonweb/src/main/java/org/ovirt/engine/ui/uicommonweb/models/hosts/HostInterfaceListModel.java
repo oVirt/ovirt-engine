@@ -1554,8 +1554,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         }
 
         String nicName = (String) model.getEntity();
-        final VdsNetworkInterface nic =
-                (VdsNetworkInterface) Linq.findInterfaceByName(getAllItems(), nicName);
+        final VdsNetworkInterface nic = Linq.findInterfaceByName(getAllItems(), nicName);
 
         if (nic == null) {
             cancel();
@@ -1785,8 +1784,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         }
 
         String nicName = (String) model.getEntity();
-        final VdsNetworkInterface nic =
-                (VdsNetworkInterface) Linq.findInterfaceByName(getInterfaceItems(), nicName);
+        final VdsNetworkInterface nic = Linq.findInterfaceByName(getInterfaceItems(), nicName);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
