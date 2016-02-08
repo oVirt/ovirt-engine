@@ -701,12 +701,11 @@ public final class Linq {
 
         @Override
         public boolean match(DataCenterWithCluster source) {
-            if (source.getDataCenter() == null || source.getCluster() == null) {
-                return false;
-            }
-
-            return source.getDataCenter().getId().equals(dataCenterId) &&
+            return source.getDataCenter() != null &&
+                    source.getCluster() != null &&
+                    source.getDataCenter().getId().equals(dataCenterId) &&
                     source.getCluster().getId().equals(clusterId);
+
         }
 
     }
@@ -877,7 +876,7 @@ public final class Linq {
 
         @Override
         public boolean match(Provider provider) {
-            return network.isExternal() ? provider.getId().equals(network.getProvidedBy().getProviderId()) : false;
+            return network.isExternal() && provider.getId().equals(network.getProvidedBy().getProviderId());
         }
 
     }
