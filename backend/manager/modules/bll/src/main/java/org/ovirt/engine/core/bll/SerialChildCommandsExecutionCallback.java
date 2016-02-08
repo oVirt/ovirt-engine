@@ -43,7 +43,7 @@ public class SerialChildCommandsExecutionCallback extends ChildCommandsCallbackB
             serialChildExecutingCommand.handleFailure();
         }
 
-        command.getParameters().setTaskGroupSuccess(!anyFailed);
+        command.getParameters().setTaskGroupSuccess(!anyFailed && status == CommandExecutionStatus.EXECUTED);
         CommandStatus newStatus = command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
                 : CommandStatus.FAILED;
         log.info("Command '{}' id: '{}' child commands '{}' executions were completed, status '{}'",
