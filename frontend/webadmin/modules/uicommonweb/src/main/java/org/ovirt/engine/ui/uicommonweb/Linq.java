@@ -970,7 +970,7 @@ public final class Linq {
         };
     }
 
-    public static final <T extends Disk> Collection<T> filterNonSnapableDisks(
+    public static <T extends Disk> Collection<T> filterNonSnapableDisks(
             Collection<Disk> source) {
         return (Collection<T>) where(source, new IPredicate<Disk>() {
             @Override
@@ -980,7 +980,7 @@ public final class Linq {
         });
     }
 
-    public static final <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
+    public static <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
             Collection<AuditLog> source, final AuditLogSeverity severity) {
         return (Collection<T>) where(source, new IPredicate<AuditLog>() {
             @Override
@@ -990,7 +990,7 @@ public final class Linq {
         });
     }
 
-    public static final <T extends Disk> Collection<T> filterDisksByStorageType(
+    public static <T extends Disk> Collection<T> filterDisksByStorageType(
             Collection<Disk> source, final DiskStorageType diskStorageType) {
         return (Collection<T>) where(source, new IPredicate<Disk>() {
             @Override
@@ -1000,7 +1000,7 @@ public final class Linq {
         });
     }
 
-    public static final Collection<Provider> filterProvidersByProvidedType(Collection<Provider> source,
+    public static Collection<Provider> filterProvidersByProvidedType(Collection<Provider> source,
             final VdcObjectType type) {
         return where(source, new IPredicate<Provider>() {
 
@@ -1097,7 +1097,7 @@ public final class Linq {
         }
     }
 
-    public static final Collection<StorageDomain> filterStorageDomainsByStorageType(
+    public static Collection<StorageDomain> filterStorageDomainsByStorageType(
             Collection<StorageDomain> source, final StorageType storageType) {
         return where(source, new IPredicate<StorageDomain>() {
             @Override
@@ -1107,7 +1107,7 @@ public final class Linq {
         });
     }
 
-    public static final Collection<StorageDomain> filterStorageDomainsByStorageDomainType(
+    public static Collection<StorageDomain> filterStorageDomainsByStorageDomainType(
             Collection<StorageDomain> source, final StorageDomainType storageDomainType) {
         return where(source, new IPredicate<StorageDomain>() {
             @Override
@@ -1117,7 +1117,7 @@ public final class Linq {
         });
     }
 
-    public static final Collection<StorageDomain> filterStorageDomainsByStorageStatus(
+    public static Collection<StorageDomain> filterStorageDomainsByStorageStatus(
             Collection<StorageDomain> source, final StorageDomainStatus storageDomainStatus) {
         return where(source, new IPredicate<StorageDomain>() {
             @Override
@@ -1127,7 +1127,7 @@ public final class Linq {
         });
     }
 
-    public static final Collection<StorageDomain> filterStorageDomainById(
+    public static Collection<StorageDomain> filterStorageDomainById(
             Collection<StorageDomain> source, final Guid id) {
         return where(source, new IdPredicate<>(id));
     }
