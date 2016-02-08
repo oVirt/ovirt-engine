@@ -229,13 +229,9 @@ public final class Linq {
     public static boolean isDataActiveStorageDomain(StorageDomain storageDomain) {
         boolean isData = storageDomain.getStorageDomainType().isDataDomain();
 
-        boolean isActive = isActiveStorageDomain(storageDomain);
+        boolean isActive = storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isData && isActive;
-    }
-
-    public static boolean isActiveStorageDomain(StorageDomain storageDomain) {
-        return storageDomain.getStatus() == StorageDomainStatus.Active;
     }
 
     /**
