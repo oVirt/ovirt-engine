@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.ProxyTicket;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
@@ -21,10 +22,14 @@ import org.ovirt.engine.core.common.queries.GetSignedWebsocketProxyTicketParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BackendVmGraphicsConsoleResource
     extends BackendGraphicsConsoleResource
     implements VmGraphicsConsoleResource {
+
+    private static final Logger log = LoggerFactory.getLogger(BackendVmGraphicsConsoleResource.class);
 
     public BackendVmGraphicsConsoleResource(BackendVmGraphicsConsolesResource parent, Guid vmGuid, String consoleId) {
         super(parent, vmGuid, consoleId);
@@ -43,14 +48,20 @@ public class BackendVmGraphicsConsoleResource
 
         ConsoleOptions consoleOptions = new ConsoleOptions(graphicsType);
         consoleOptions.setVmId(getGuid());
-        ConsoleOptions configuredOptions = runQuery(VdcQueryType.ConfigureConsoleOptions,
-                new ConfigureConsoleOptionsParams(consoleOptions, true)).getReturnValue();
+        VdcQueryReturnValue configuredOptionsReturnValue = runQuery(VdcQueryType.ConfigureConsoleOptions,
+                new ConfigureConsoleOptionsParams(consoleOptions, true));
+        if (!configuredOptionsReturnValue.getSucceeded()) {
+            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, configuredOptionsReturnValue.getExceptionString()));
+            return Response.serverError().build();
+        }
 
-        VdcQueryReturnValue returnValue = runQuery(VdcQueryType.GetConsoleDescriptorFile, new ConsoleOptionsParams(configuredOptions));
+        VdcQueryReturnValue consoleDescriptorReturnValue = runQuery(VdcQueryType.GetConsoleDescriptorFile,
+                new ConsoleOptionsParams(configuredOptionsReturnValue.getReturnValue()));
 
         Response.ResponseBuilder builder;
-        if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-            builder = Response.ok(((String) returnValue.getReturnValue()).getBytes(StandardCharsets.UTF_8), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
+        if (consoleDescriptorReturnValue.getSucceeded() && consoleDescriptorReturnValue.getReturnValue() != null) {
+            builder = Response.ok(((String) consoleDescriptorReturnValue.getReturnValue())
+                    .getBytes(StandardCharsets.UTF_8), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
         } else {
             builder = Response.noContent();
         }
