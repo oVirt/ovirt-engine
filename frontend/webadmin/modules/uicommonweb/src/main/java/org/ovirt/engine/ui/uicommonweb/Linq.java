@@ -245,147 +245,113 @@ public final class Linq {
      * Check if storage_domains item with specified Guid exist in List
      */
     public static boolean isSDItemExistInList(List<StorageDomain> items, Guid id) {
-        for (StorageDomain b : items) {
-            if (b.getId().equals(id)) {
-                return true;
-            }
-        }
-        return false;
+        return firstOrNull(items, new IdPredicate<>(id)) != null;
     }
 
     /**
      * Check if Cluster item with specified id exist in List
      */
     public static boolean isClusterItemExistInList(List<Cluster> items, Guid id) {
-        for (Cluster a : items) {
-            if (id.equals(a.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return firstOrNull(items, new IdPredicate<>(id)) != null;
     }
 
     public static NetworkInterface findInterfaceByName(List<VdsNetworkInterface> items, String name) {
-        for (NetworkInterface i : items) {
-            if (Objects.equals(i.getName(), name)) {
-                return i;
-            }
-        }
-        return null;
+        return firstOrNull(items, new NamePredicate(name));
     }
 
-    public static VdsNetworkInterface findInterfaceByNetworkName(List<VdsNetworkInterface> items, String name) {
-        for (VdsNetworkInterface i : items) {
-            if (Objects.equals(i.getNetworkName(), name)) {
-                return i;
+    public static VdsNetworkInterface findInterfaceByNetworkName(List<VdsNetworkInterface> items, final String name) {
+        return firstOrNull(items, new IPredicate<VdsNetworkInterface>() {
+            @Override
+            public boolean match(VdsNetworkInterface i) {
+                return Objects.equals(i.getNetworkName(), name);
             }
-        }
-        return null;
+        });
     }
 
     public static VdsNetworkInterface findInterfaceByIsBond(List<VdsNetworkInterface> items) {
-        for (VdsNetworkInterface i : items) {
-            if (i.getBonded() != null && i.getBonded()) {
-                return i;
+        return firstOrNull(items, new IPredicate<VdsNetworkInterface>() {
+            @Override
+            public boolean match(VdsNetworkInterface i) {
+                return i.getBonded() != null && i.getBonded();
             }
-        }
-        return null;
+        });
     }
 
     public static VdsNetworkInterface findInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
-        for (VdsNetworkInterface i : items) {
-            if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
-                return i;
+        return firstOrNull(items, new IPredicate<VdsNetworkInterface>() {
+            @Override
+            public boolean match(VdsNetworkInterface i) {
+                return !StringHelper.isNullOrEmpty(i.getNetworkName());
             }
-        }
-        return null;
+        });
     }
 
     public static Collection<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(List<VdsNetworkInterface> items) {
-        List<VdsNetworkInterface> ret = new ArrayList<>();
-        for (VdsNetworkInterface i : items) {
-            if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
-                ret.add(i);
+        return where(items, new IPredicate<VdsNetworkInterface>() {
+            @Override
+            public boolean match(VdsNetworkInterface i) {
+                return !StringHelper.isNullOrEmpty(i.getNetworkName());
             }
-        }
-        return ret;
+        });
     }
 
     public static Collection<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(List<VdsNetworkInterface> items) {
-        List<VdsNetworkInterface> ret = new ArrayList<>();
-        for (VdsNetworkInterface i : items) {
-            if (StringHelper.isNullOrEmpty(i.getBondName())) {
-                ret.add(i);
+        return where(items, new IPredicate<VdsNetworkInterface>() {
+            @Override
+            public boolean match(VdsNetworkInterface i) {
+                return StringHelper.isNullOrEmpty(i.getBondName());
             }
-        }
-        return ret;
+        });
     }
 
     public static Collection<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(List<VdsNetworkInterface> items) {
-        List<VdsNetworkInterface> ret = new ArrayList<>();
-        for (VdsNetworkInterface i : items) {
-            if (i.getVlanId() == null) {
-                ret.add(i);
+        return where(items, new IPredicate<VdsNetworkInterface>() {
+            @Override
+            public boolean match(VdsNetworkInterface i) {
+                return i.getVlanId() == null;
             }
-        }
-        return ret;
+        });
     }
 
     public static Network findManagementNetwork(List<Network> networks) {
-        for (Network network : networks) {
-            if (network.getCluster().isManagement()) {
-                return network;
+        return firstOrNull(networks, new IPredicate<Network>() {
+            @Override
+            public boolean match(Network network) {
+                return network.getCluster().isManagement();
             }
-        }
-        return null;
+        });
     }
 
     public static Network findNetworkByName(List<Network> items, String name) {
-        for (Network n : items) {
-            if (Objects.equals(n.getName(), name)) {
-                return n;
-            }
-        }
-        return null;
+        return firstOrNull(items, new NamePredicate(name));
+
     }
 
     public static NetworkQoS findNetworkQosById(Iterable<NetworkQoS> items, Guid qosId) {
-        for (NetworkQoS qos : items) {
-            if (qos.getId().equals(qosId)) {
-                return qos;
-            }
-        }
-        return NetworkQoSModel.EMPTY_QOS;
+        return firstOrDefault(items, new IdPredicate<>(qosId), NetworkQoSModel.EMPTY_QOS);
     }
 
     public static HostNetworkQos findHostNetworkQosById(Iterable<HostNetworkQos> items, Guid qosId) {
-        for (HostNetworkQos qos : items) {
-            if (qos.getId().equals(qosId)) {
-                return qos;
-            }
-        }
-        return NetworkModel.EMPTY_HOST_NETWORK_QOS;
+        return firstOrDefault(items, new IdPredicate<>(qosId), NetworkModel.EMPTY_HOST_NETWORK_QOS);
     }
 
     public static Collection<VDS> findAllVDSByPmEnabled(List<VDS> items) {
-        List<VDS> ret = new ArrayList<>();
-        for (VDS i : items) {
-            if (i.isPmEnabled()) {
-                ret.add(i);
+        return where(items, new IPredicate<VDS>() {
+            @Override
+            public boolean match(VDS i) {
+                return i.isPmEnabled();
             }
-        }
-        return ret;
+        });
     }
 
     public static Collection<StorageDomain> findAllStorageDomainsBySharedStatus(List<StorageDomain> items,
-            StorageDomainSharedStatus status) {
-        List<StorageDomain> ret = new ArrayList<>();
-        for (StorageDomain i : items) {
-            if (i.getStorageDomainSharedStatus() == status) {
-                ret.add(i);
+            final StorageDomainSharedStatus status) {
+        return where(items, new IPredicate<StorageDomain>() {
+            @Override
+            public boolean match(StorageDomain i) {
+                return i.getStorageDomainSharedStatus() == status;
             }
-        }
-        return ret;
+        });
     }
 
     /**
@@ -555,12 +521,7 @@ public final class Linq {
     }
 
     public static StorageDomain getStorageById(Guid storageId, List<StorageDomain> storageDomains) {
-        for (StorageDomain storage : storageDomains) {
-            if (storage.getId().equals(storageId)) {
-                return storage;
-            }
-        }
-        return null;
+        return firstOrNull(storageDomains, new IdPredicate<>(storageId));
     }
 
     public static ArrayList<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
@@ -679,12 +640,7 @@ public final class Linq {
     }
 
     private static DiskImage getDiskImageById(Guid id, Iterable<DiskImage> diskImages) {
-        for (DiskImage diskImage : diskImages) {
-            if (diskImage.getId().equals(id)) {
-                return diskImage;
-            }
-        }
-        return null;
+        return firstOrNull(diskImages, new IdPredicate<>(id));
     }
 
     public static class TimeZonePredicate implements IPredicate<TimeZoneModel> {
@@ -1178,20 +1134,10 @@ public final class Linq {
 
     public static final Collection<StorageDomain> filterStorageDomainById(
             Collection<StorageDomain> source, final Guid id) {
-        return where(source, new IPredicate<StorageDomain>() {
-            @Override
-            public boolean match(StorageDomain source) {
-                return source.getId().equals(id);
-            }
-        });
+        return where(source, new IdPredicate<>(id));
     }
 
     public static VDS findHostByIdFromIdList(Collection<VDS> items, List<Guid> hostIdList) {
-        for (VDS host : items) {
-            if (hostIdList.contains(host.getId())){
-                return host;
-            }
-        }
-        return null;
+        return firstOrNull(items, new IdsPredicate<>(hostIdList));
     }
 }
