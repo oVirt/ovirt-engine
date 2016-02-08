@@ -390,10 +390,6 @@ public final class Linq {
 
     /**
      * Produces the set difference of two sequences by using the default equality
-     */
-    // comparer to compare values.
-    /**
-     * <typeparam name="TSource"></typeparam>
      *
      * @param first
      *            An {@link ArrayList} whose elements that are not also in second will be returned.
