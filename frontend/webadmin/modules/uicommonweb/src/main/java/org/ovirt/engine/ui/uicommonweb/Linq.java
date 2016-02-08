@@ -868,7 +868,7 @@ public final class Linq {
 
         @Override
         public boolean match(Nameable entity) {
-            return name.equals(entity.getName());
+            return Objects.equals(name, entity.getName());
         }
     }
 
