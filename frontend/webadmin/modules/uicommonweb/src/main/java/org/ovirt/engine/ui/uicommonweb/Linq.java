@@ -370,7 +370,7 @@ public final class Linq {
         return second == null ? first : newIEnumerable;
     }
 
-    public static int count(Iterable source) {
+    public static int count(Iterable<?> source) {
         int result = 0;
         for (Object item : source) {
             result++;
@@ -466,7 +466,7 @@ public final class Linq {
         return list;
     }
 
-    public static <TResult> ArrayList<TResult> cast(Iterable source) {
+    public static <TResult> ArrayList<TResult> cast(Iterable<?> source) {
         ArrayList<TResult> list = new ArrayList<>();
         for (Object a : source) {
             TResult item = (TResult) a;
@@ -587,7 +587,7 @@ public final class Linq {
             EntityModel<Integer> sizeEntity = new EntityModel<>();
             sizeEntity.setEntity((int) diskImage.getSizeInGigabytes());
             diskModel.setSize(sizeEntity);
-            ListModel volumeList = new ListModel();
+            ListModel<VolumeType> volumeList = new ListModel<>();
             volumeList.setItems(diskImage.getVolumeType() == VolumeType.Preallocated ?
                     new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
                     : AsyncDataProvider.getInstance().getVolumeTypeList());
