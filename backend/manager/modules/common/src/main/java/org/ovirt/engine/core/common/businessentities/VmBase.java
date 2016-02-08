@@ -262,19 +262,11 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     // not persisted to db
     private Date exportDate;
 
-    private Version clusterCompatibilityVersionOrigin;
-
     /**
      * The cluster version in which the VM configuration was created.
      * Used by snapshots. Not persisted to DB, stored in OVF.
      */
-    public Version getClusterCompatibilityVersionOrigin() {
-        return this.clusterCompatibilityVersionOrigin;
-    }
-
-    public void setClusterCompatibilityVersionOrigin(Version value) {
-        this.clusterCompatibilityVersionOrigin = value;
-    }
+    private Version clusterCompatibilityVersionOrigin;
 
     /**
      * Maximum allowed downtime for live migration in milliseconds.
@@ -969,6 +961,14 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public void setVncKeyboardLayout(String vncKeyboardLayout) {
         this.vncKeyboardLayout = vncKeyboardLayout;
+    }
+
+    public Version getClusterCompatibilityVersionOrigin() {
+        return this.clusterCompatibilityVersionOrigin;
+    }
+
+    public void setClusterCompatibilityVersionOrigin(Version value) {
+        this.clusterCompatibilityVersionOrigin = value;
     }
 
     @Override
