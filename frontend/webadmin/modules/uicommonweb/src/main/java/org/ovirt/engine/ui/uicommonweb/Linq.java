@@ -76,7 +76,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
-@SuppressWarnings("unused")
 public final class Linq {
 
     public static class AuditLogComparer implements Comparator<AuditLog>, Serializable {
