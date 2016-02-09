@@ -77,6 +77,7 @@ public enum VDSCommandType {
     ReconcileVolumeChain("org.ovirt.engine.core.vdsbroker.irsbroker"),
     RefreshVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetVolumeInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    SPMGetVolumeInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),
     IsoPrefix("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     IsoDirectory("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ResetIrs("org.ovirt.engine.core.vdsbroker.irsbroker"),

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SPMGetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -42,14 +42,13 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
 
     private boolean volumeExists(Guid volumeId) {
         log.debug("Checking for the existence of volume '{0}' using GetVolumeInfo", volumeId);
-        GetVolumeInfoVDSCommandParameters params = new GetVolumeInfoVDSCommandParameters(
-                getParameters().getVdsId(),
+        SPMGetVolumeInfoVDSCommandParameters params = new SPMGetVolumeInfoVDSCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getStorageDomainId(),
                 getParameters().getImageGroupId(),
                 volumeId);
         try {
-            runVdsCommand(VDSCommandType.GetVolumeInfo, params);
+            runVdsCommand(VDSCommandType.SPMGetVolumeInfo, params);
         } catch (EngineException e) {
             if (e.getVdsError().getCode() == EngineError.VolumeDoesNotExist) {
                 return false;

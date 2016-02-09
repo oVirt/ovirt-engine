@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SPMGetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -65,19 +65,18 @@ public class DestroyImageCheckCommandTest {
         DestroyImageCheckCommand<DestroyImageParameters> cmd = spy(new DestroyImageCheckCommand<>(params, null));
 
         for (Guid volumeId : ALL_VOLUMES) {
-            GetVolumeInfoVDSCommandParameters vdsParams =
-                    new GetVolumeInfoVDSCommandParameters(
-                            params.getVdsId(),
+            SPMGetVolumeInfoVDSCommandParameters vdsParams =
+                    new SPMGetVolumeInfoVDSCommandParameters(
                             params.getStoragePoolId(),
                             params.getStorageDomainId(),
                             params.getImageGroupId(),
                             volumeId);
 
             if (failedVolumes.contains(volumeId)) {
-                doReturn(null).when(cmd).runVdsCommand(eq(VDSCommandType.GetVolumeInfo), refEq(vdsParams));
+                doReturn(null).when(cmd).runVdsCommand(eq(VDSCommandType.SPMGetVolumeInfo), refEq(vdsParams));
             } else {
                 doThrow(new EngineException(EngineError.VolumeDoesNotExist)).when(cmd)
-                        .runVdsCommand(eq(VDSCommandType.GetVolumeInfo), refEq(vdsParams));
+                        .runVdsCommand(eq(VDSCommandType.SPMGetVolumeInfo), refEq(vdsParams));
             }
         }
 
