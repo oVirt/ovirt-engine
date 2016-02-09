@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SPMGetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -27,15 +27,7 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
 
     @Override
     protected void executeCommand() {
-        List<Guid> failedGuids = new ArrayList<>();
-
-        if (getParameters().getImageList() != null) {
-            for (Guid guid : getParameters().getImageList()) {
-                if (volumeExists(guid)) {
-                    failedGuids.add(guid);
-                }
-            }
-        }
+        List<Guid> failedGuids = getFailedVolumeIds();
 
         if (failedGuids.isEmpty()) {
             log.info("Requested images were successfully removed");
@@ -46,16 +38,28 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
         }
     }
 
+    protected List<Guid> getFailedVolumeIds() {
+        List<Guid> failedGuids = new ArrayList<>();
+        if (getParameters().getImageList() != null) {
+            for (Guid guid : getParameters().getImageList()) {
+                if (volumeExists(guid)) {
+                    failedGuids.add(guid);
+                }
+            }
+        }
+
+        return failedGuids;
+    }
+
     private boolean volumeExists(Guid volumeId) {
         log.debug("Checking for the existence of volume '{0}' using GetVolumeInfo", volumeId);
-        GetVolumeInfoVDSCommandParameters params = new GetVolumeInfoVDSCommandParameters(
-                getParameters().getVdsId(),
+        SPMGetVolumeInfoVDSCommandParameters params = new SPMGetVolumeInfoVDSCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getStorageDomainId(),
                 getParameters().getImageGroupId(),
                 volumeId);
         try {
-            runVdsCommand(VDSCommandType.GetVolumeInfo, params);
+            runVdsCommand(VDSCommandType.SPMGetVolumeInfo, params);
         } catch (EngineException e) {
             if (e.getVdsError().getCode() == EngineError.VolumeDoesNotExist) {
                 return false;
