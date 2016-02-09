@@ -308,6 +308,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
     public void postAttachInit(ArrayList<EntityModel> datacenters) {
         ListModel model = new ListModel();
+        model.setHelpTag(HelpTag.attach_storage);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().attachToDataCenterTitle());
         if (getEntity() != null) {
