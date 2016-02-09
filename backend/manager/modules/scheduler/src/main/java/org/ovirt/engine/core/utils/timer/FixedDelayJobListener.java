@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.timer;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,8 +14,12 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The FixedDelayJobListener is a JobListener implementation to turn a job into
@@ -23,6 +28,7 @@ import org.quartz.TriggerKey;
  *
  */
 public class FixedDelayJobListener implements JobListener {
+    Logger logger = LoggerFactory.getLogger(FixedDelayJobListener.class);
 
     // const
     public static final String FIXED_JOB_LISTENER_NAME = "fixedJobListenerName";
@@ -63,6 +69,25 @@ public class FixedDelayJobListener implements JobListener {
         // job and if not just exit:
         if (!data.containsKey(SchedulerUtilBaseImpl.FIXED_DELAY_VALUE)) {
             return;
+        }
+
+        // This Job might already have an unused trigger in place, use it
+        List<? extends Trigger> triggersOfJob = null;
+
+        try {
+            triggersOfJob = context.getScheduler().getTriggersOfJob(context.getJobDetail().getKey());
+        } catch (SchedulerException e) {
+            // ignore
+        }
+
+        if (triggersOfJob != null
+                && triggersOfJob.stream()
+                        .filter(t -> t instanceof SimpleTrigger)
+                        .anyMatch(t -> ((SimpleTrigger) t).getTimesTriggered() == 0)) {
+            logger.debug("Not scheduling {} again as there is still an unfired trigger.", context.getJobDetail().getKey());
+            return;
+        } else {
+            logger.debug("Rescheduling {} as there is no unfired trigger.", context.getJobDetail().getKey());
         }
 
         // generate the new trigger time

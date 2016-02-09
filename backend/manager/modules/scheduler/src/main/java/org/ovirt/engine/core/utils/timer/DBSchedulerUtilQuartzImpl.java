@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.ClassUtils;
 import org.ovirt.engine.core.utils.ResourceUtils;
+import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -171,9 +172,13 @@ public class DBSchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl implements 
             Class<?>[] inputTypes,
             Object[] inputParams) {
         String jobName = generateUniqueNameForInstance(instance, methodName);
+
+        boolean allowsConcurrent = JobWrapper.methodAllowsConcurrent(instance, methodName);
+        Class<? extends Job> jobType = allowsConcurrent ? PersistentJobWrapper.class : PersistentSequentialJobWrapper.class;
+
         JobDetail job = newJob()
                 .withIdentity(jobName, Scheduler.DEFAULT_GROUP)
-                .ofType(PersistentJobWrapper.class)
+                .ofType(jobType)
                 .build();
         setBasicMapValues(job.getJobDataMap(), instance, methodName, inputTypes, inputParams);
         return job;

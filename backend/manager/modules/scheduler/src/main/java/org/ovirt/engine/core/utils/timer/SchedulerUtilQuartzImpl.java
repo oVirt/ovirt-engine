@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 
+import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -60,10 +61,14 @@ public class SchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl {
             String methodName,
             Class<?>[] inputTypes,
             Object[] inputParams) {
+
+        boolean allowsConcurrent = JobWrapper.methodAllowsConcurrent(instance, methodName);
+        Class<? extends Job> jobType = allowsConcurrent ? JobWrapper.class : SequentialJobWrapper.class;
+
         String jobName = generateUniqueNameForInstance(instance, methodName);
         JobDetail job = newJob()
                 .withIdentity(jobName, Scheduler.DEFAULT_GROUP)
-                .ofType(JobWrapper.class)
+                .ofType(jobType)
                 .build();
         setBasicMapValues(job.getJobDataMap(), instance, methodName, inputTypes, inputParams);
         return job;

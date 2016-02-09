@@ -93,7 +93,7 @@ public class JobWrapper implements Job {
      *            annotation
      * @return the Method to run
      */
-    private Method getMethodToRun(Object instance, String methodId) {
+    protected static Method getMethodToRun(Object instance, String methodId) {
         Method methodToRun = null;
         Method[] methods = instance.getClass().getMethods();
         for (Method method : methods) {
@@ -104,6 +104,23 @@ public class JobWrapper implements Job {
             }
         }
         return methodToRun;
+    }
+
+    /**
+     * Check whether the specified timed method (id must match the OnTimerMethodAnnotation)
+     * allows concurrent execution.
+     *
+     * @param instance
+     *            the instance of the class to look the methods on
+     * @param methodId
+     *            the id of the method as stated in the OnTimerMethodAnnotation
+     *            annotation
+     * @return true when concurrent executions are allowed or false when they are not
+     */
+    protected static boolean methodAllowsConcurrent(Object instance, String methodId) {
+        Method method = getMethodToRun(instance, methodId);
+        OnTimerMethodAnnotation methodToRunAnnotation = method.getAnnotation(OnTimerMethodAnnotation.class);
+        return methodToRunAnnotation == null || methodToRunAnnotation.allowsConcurrent();
     }
 
     /*

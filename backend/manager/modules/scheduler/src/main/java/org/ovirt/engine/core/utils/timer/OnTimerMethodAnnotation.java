@@ -12,4 +12,6 @@ public @interface OnTimerMethodAnnotation {
     String value();
 
     boolean transactional() default false;
+
+    boolean allowsConcurrent() default true;
 }
