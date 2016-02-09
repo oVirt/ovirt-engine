@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.sql.Array;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,10 +46,10 @@ public abstract class BaseDao {
     }
 
     protected Array createArrayOf(String typeName, Object[] array) {
-        try {
-            return getJdbcTemplate().getDataSource().getConnection().createArrayOf(typeName, array);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        try (Connection connection = getJdbcTemplate().getDataSource().getConnection()) {
+            return connection.createArrayOf(typeName, array);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
