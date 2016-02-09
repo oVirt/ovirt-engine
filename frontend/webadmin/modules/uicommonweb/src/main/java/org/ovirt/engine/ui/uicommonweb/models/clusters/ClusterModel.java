@@ -647,24 +647,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    private boolean privateisResiliencePolicyTabAvailable;
+    private boolean migrationTabAvailable;
 
-    public boolean getisResiliencePolicyTabAvailable() {
-        return privateisResiliencePolicyTabAvailable;
+    public boolean isMigrationTabAvailable() {
+        return migrationTabAvailable;
     }
 
-    public void setisResiliencePolicyTabAvailable(boolean value) {
-        privateisResiliencePolicyTabAvailable = value;
-    }
-
-    public boolean getIsResiliencePolicyTabAvailable() {
-        return getisResiliencePolicyTabAvailable();
-    }
-
-    public void setIsResiliencePolicyTabAvailable(boolean value) {
-        if (getisResiliencePolicyTabAvailable() != value) {
-            setisResiliencePolicyTabAvailable(value);
-            onPropertyChanged(new PropertyChangedEventArgs("IsResiliencePolicyTabAvailable")); //$NON-NLS-1$
+    public void setMigrationTabAvailable(boolean value) {
+        if (isMigrationTabAvailable() != value) {
+            migrationTabAvailable = value;
+            onPropertyChanged(new PropertyChangedEventArgs("isMigrationTabAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -1201,7 +1193,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getRngHwrngSourceRequired().setEntity(false);
 
         setValidTab(TabName.GENERAL_TAB, true);
-        setIsResiliencePolicyTabAvailable(true);
+        setMigrationTabAvailable(true);
 
         setClusterPolicy(new ListModel<ClusterPolicy>());
         setCustomPropertySheet(new KeyValueModel());
@@ -1886,10 +1878,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             return;
         }
         if (selectedDataCenter.isLocal()) {
-            setIsResiliencePolicyTabAvailable(false);
+            setMigrationTabAvailable(false);
         }
         else {
-            setIsResiliencePolicyTabAvailable(true);
+            setMigrationTabAvailable(true);
         }
 
         AsyncQuery _asyncQuery = new AsyncQuery();

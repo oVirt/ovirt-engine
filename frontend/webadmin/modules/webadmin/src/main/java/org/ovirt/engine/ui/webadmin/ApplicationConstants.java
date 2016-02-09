@@ -921,8 +921,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Count Threads As Cores")
     String clusterPopupCountThreadsAsCoresLabel();
 
+    @DefaultStringValue("Migration")
+    String clusterPopupMigrationTabLabel();
+
     @DefaultStringValue("Resilience Policy")
-    String clusterPopupResiliencePolicyTabLabel();
+    String clusterPopupResiliencePolicyLabel();
 
     @DefaultStringValue("Scheduling Policy")
     String clusterPopupClusterPolicyTabLabel();

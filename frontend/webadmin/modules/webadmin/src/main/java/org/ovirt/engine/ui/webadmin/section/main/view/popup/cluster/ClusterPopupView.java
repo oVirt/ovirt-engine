@@ -283,7 +283,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     @UiField
     @WithElementId
-    DialogTab resiliencePolicyTab;
+    DialogTab migrationTab;
 
     @UiField(provided = true)
     @Path(value = "migrateOnErrorOption_YES.entity")
@@ -479,7 +479,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
         getTabNameMapping().put(TabName.CLUSTER_POLICY_TAB, this.clusterPolicyTab);
         getTabNameMapping().put(TabName.OPTIMIZATION_TAB, this.optimizationTab);
-        getTabNameMapping().put(TabName.RESILIENCE_POLICY_TAB, this.resiliencePolicyTab);
+        getTabNameMapping().put(TabName.MIGRATION_TAB, this.migrationTab);
     }
 
     private void addStyles() {
@@ -643,7 +643,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     private void applyModeCustomizations() {
         if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly) {
             optimizationTab.setVisible(false);
-            resiliencePolicyTab.setVisible(false);
+            migrationTab.setVisible(false);
             clusterPolicyTab.setVisible(false);
             consoleTab.setVisible(false);
             fencingPolicyTab.setVisible(false);
@@ -697,7 +697,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         object.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                resiliencePolicyTab.setVisible(object.getisResiliencePolicyTabAvailable());
+                migrationTab.setVisible(object.isMigrationTabAvailable());
                 applyModeCustomizations();
             }
         });

@@ -6,7 +6,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 public enum TabName {
     GENERAL_TAB,
     CONSOLE_TAB,
-    RESILIENCE_POLICY_TAB,
+    MIGRATION_TAB,
     OPTIMIZATION_TAB,
     CLUSTER_POLICY_TAB,
     CLUSTERS_TAB,

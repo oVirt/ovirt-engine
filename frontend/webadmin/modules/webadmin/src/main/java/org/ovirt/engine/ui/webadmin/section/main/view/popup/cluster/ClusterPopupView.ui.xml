@@ -209,6 +209,19 @@
             width: 32px;
         }
 
+        .containerMargins {
+            margin: 0px 2px;
+        }
+
+        .groupHeaderRow {
+            margin-top: 12px;
+            margin-bottom: 5px;
+        }
+
+        .regularRow {
+            padding-left: 2px;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -289,13 +302,30 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="resiliencePolicyTab" label="{constants.clusterPopupResiliencePolicyTabLabel}">
+                    <t:DialogTab ui:field="migrationTab" label="{constants.clusterPopupMigrationTabLabel}">
                         <t:content>
-                            <g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
-                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_YESEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_YesLabel}" />
-                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_HA_ONLYEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_HaLabel}" />
-                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_NoLabel}" />
-                            </g:FlowPanel>
+                            <b:Container addStyleNames="{style.container} {style.containerMargins}">
+                                <b:Row addStyleNames="{style.groupHeaderRow}">
+                                    <b:Column size="LG12">
+                                        <g:Label text="{constants.clusterPopupResiliencePolicyLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.regularRow}">
+                                    <b:Column size="LG12">
+                                        <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_YESEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_YesLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.regularRow}">
+                                    <b:Column size="LG12">
+                                        <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_HA_ONLYEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_HaLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.regularRow}">
+                                    <b:Column size="LG12">
+                                        <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_NoLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
