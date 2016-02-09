@@ -1,40 +1,53 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.action.CreateOvfStoresForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomainPoolParametersBase> extends
         DeactivateStorageDomainCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public DeactivateStorageDomainWithOvfUpdateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setCommandShouldBeLogged(false);
     }
 
+    private boolean shouldUseCallback() {
+        CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(getCommandId());
+        return (commandEntity != null && commandEntity.isCallbackEnabled())
+                || (shouldPerformOvfUpdate() && ovfOnAnyDomainSupported());
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        if (shouldUseCallback()) {
+            return new ConcurrentChildCommandsExecutionCallback();
+        }
+
+        return null;
+    }
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -42,7 +55,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
 
     public DeactivateStorageDomainWithOvfUpdateCommand(Guid commandId) {
         super(commandId);
-
     }
 
     @Override
@@ -56,19 +68,16 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
             runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters, null);
 
             if (ovfOnAnyDomainSupported()) {
-                VdcReturnValueBase tmpRetValue = runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
+                runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
                         createProcessOvfUpdateForDomainParams(), null);
-
-                getReturnValue().getVdsmTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
             }
         }
 
-        if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
-            setSucceeded(executeDeactivateCommand(true));
-        } else {
-            setCommandShouldBeLogged(false);
-            setSucceeded(true);
+        if (noAsyncOperations()) {
+            executeDeactivateCommand();
         }
+
+        setSucceeded(true);
     }
 
     protected boolean shouldPerformOvfUpdate() {
@@ -85,6 +94,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
         params.setSkipDomainChecks(true);
+        params.setShouldBeEndedByParent(false);
         return params;
     }
 
@@ -94,72 +104,13 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
                                 getParameters().getStoragePoolId()));
     }
 
-    @Override
-    protected void endSuccessfully() {
-        endCommand();
-        setSucceeded(true);
-    }
-
-    @Override
-    protected void endWithFailure() {
-        endCommand();
-        setSucceeded(true);
-    }
-
-    public boolean hasExecutionEnded() {
-        return CommandCoordinatorUtil.getCommandExecutionStatus(getParameters().getCommandId()) == CommandExecutionStatus.EXECUTED;
-    }
-
-    private void endCommand() {
-        if (!hasExecutionEnded()) {
-            return;
-        }
-
-        List<Guid> createdTasks = new LinkedList<>();
-
-        for (VdcActionParametersBase parametersBase : getParameters().getImagesParameters()) {
-            if (parametersBase.getCommandType() == VdcActionType.AddImageFromScratch) {
-                CreateOvfStoresForStorageDomainCommandParameters parameters = new CreateOvfStoresForStorageDomainCommandParameters(getParameters().getStoragePoolId(),
-                        getParameters().getStorageDomainId(), 0);
-                parameters.getImagesParameters().addAll(getParameters().getImagesParameters());
-                parameters.setParentParameters(getParameters());
-                parameters.setParentCommand(getActionType());
-                parameters.setSkipDomainChecks(true);
-                VdcReturnValueBase vdsReturnValue = getBackend().endAction(VdcActionType.CreateOvfStoresForStorageDomain, parameters, cloneContext().withoutLock());
-                createdTasks.addAll(vdsReturnValue.getInternalVdsmTaskIdList());
-                break;
-            }
-            createdTasks.addAll(getBackend().endAction(parametersBase.getCommandType(), parametersBase, null).getInternalVdsmTaskIdList());
-        }
-
-        if (!createdTasks.isEmpty()) {
-            // if there are created tasks, avoid release the memory lock.
-            setLock(null);
-            setSucceeded(true);
-            startPollingAsyncTasks(createdTasks);
-            return;
-        }
-
-        super.startFinalizingStep();
-
-        deactivateStorageDomainAfterTaskExecution();
-    }
-
-    @Override
-    protected void startFinalizingStep() {}
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        return AuditLogType.UNASSIGNED;
-    }
-
-    private boolean executeDeactivateCommand(boolean passContext) {
+    private void executeDeactivateCommand() {
         final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(getStorageDomainId(), getStoragePoolId());
         params.setSkipChecks(true);
         params.setSkipLock(true);
         params.setShouldBeLogged(true);
-        CommandContext context = passContext ? cloneContext() : null;
-        return getBackend().runInternalAction(VdcActionType.DeactivateStorageDomain, params, context).getSucceeded();
+        getBackend().runInternalAction(VdcActionType.DeactivateStorageDomain, params,
+                cloneContext().withoutLock());
     }
 
     @Override
@@ -167,42 +118,26 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         return lockProperties.withScope(LockProperties.Scope.Command);
     }
 
-    protected void deactivateStorageDomainAfterTaskExecution() {
-        boolean isLastMaster = getStorageDomain().getStorageDomainType() == StorageDomainType.Master && electNewMaster() == null;
-        if (isLastMaster) {  // Spawning a new thread waiting for tasks cleanup
-            StoragePoolIsoMap map = loadStoragePoolIsoMap();
-            // The creation of the compensation context is needed in case of an engine restart between the tasks clearance and the
-            // execution of the deactivate command from the new thread. If the compensation context won't be created and the tasks
-            // will be cleared, when the engine start there's nothing to start the thread (as the end method won't be called as there
-            // are no tasks) and the domain will remain locked.
-            final CompensationContext ctx = createDefaultCompensationContext(Guid.newGuid());
-            changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, ctx);
-            ThreadPoolUtil.execute(() -> {
-                try {
-                    waitForTasksToBeCleared();
-                    executeDeactivateCommand(false);
-                    ctx.resetCompensation();
-                } catch (Exception e) {
-                    log.error("Error when attempting to deactivate storage domain {}", getStorageDomainId(), e);
-                    compensate();
-                }
-            });
-        } else {
-            executeDeactivateCommand(false);
-        }
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return AuditLogType.UNASSIGNED;
     }
 
-    protected void waitForTasksToBeCleared() throws InterruptedException {
-        log.info("waiting for all tasks related to domain {} to be cleared (if exist) before attempting to deactivate", getStorageDomainId());
-        while (true) {
-            TimeUnit.SECONDS.sleep(3);
-            List<Guid> tasks = getDbFacade().getAsyncTaskDao().getAsyncTaskIdsByEntity(getStorageDomainId());
-            if (tasks.isEmpty()) {
-                log.info("no tasks for the deactivated domain {}, proceeding with deactivation", getStorageDomainId());
-                return;
-            } else {
-                log.info("tasks {} were found for domain {}, waiting before attempting to deactivate", tasks, getStorageDomainId());
-            }
+    @Override
+    protected void endSuccessfully() {
+        executeDeactivateCommand();
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endWithFailure() {
+        if (CommandCoordinatorUtil.getCommandExecutionStatus(getCommandId()) != CommandExecutionStatus.EXECUTED) {
+            changeStorageDomainStatusInTransaction(loadStoragePoolIsoMap(), StorageDomainStatus.Unknown);
+            auditLogDirector.log(this, AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_OVF_UPDATE_INCOMPLETE);
+        } else {
+            executeDeactivateCommand();
         }
+
+        setSucceeded(true);
     }
 }

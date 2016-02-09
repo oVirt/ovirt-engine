@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -22,11 +27,15 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeForStorageDomainCommandParameters> extends StorageDomainCommandBase<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public CreateOvfVolumeForStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -39,12 +48,16 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
     }
 
     @Override
+    public CommandCallback getCallback() {
+        return new ConcurrentChildCommandsExecutionCallback();
+    }
 
+    @Override
     protected void executeCommand() {
         AddDiskParameters diskParameters = new AddDiskParameters(null, createDisk(getStorageDomainId()));
         diskParameters.setStorageDomainId(getStorageDomainId());
-        diskParameters.setParentCommand(getParameters().getParentCommand());
-        diskParameters.setParentParameters(getParameters().getParentParameters());
+        diskParameters.setParentCommand(getActionType());
+        diskParameters.setParentParameters(getParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setSkipDomainCheck(getParameters().isSkipDomainChecks());
         VdcReturnValueBase vdcReturnValueBase =
@@ -52,21 +65,11 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         Guid createdId = vdcReturnValueBase.getActionReturnValue();
 
         if (createdId != null) {
+            setActionReturnValue(createdId);
             addStorageDomainOvfInfoToDb(createdId);
         }
 
-        if (!vdcReturnValueBase.getSucceeded()) {
-            if (createdId != null) {
-                addCustomValue("DiskId", createdId.toString());
-                auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
-            } else {
-                auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_INITIATE_FAILED);
-            }
-            setSucceeded(false);
-        }
-
-        getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
-        setSucceeded(true);
+        setSucceeded(vdcReturnValueBase.getSucceeded());
     }
 
     private boolean shouldOvfStoreBeShareable() {
@@ -97,5 +100,47 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         StorageDomainOvfInfo storageDomainOvfInfo =
                 new StorageDomainOvfInfo(getStorageDomainId(), null, diskId, StorageDomainOvfInfoStatus.DISABLED, null);
         getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
+    }
+
+    private void logFailure() {
+        Guid createdDiskId = (Guid) getActionReturnValue();
+        if (createdDiskId != null) {
+            addCustomValue("DiskId", createdDiskId.toString());
+            new AuditLogDirector().log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
+        } else {
+            new AuditLogDirector().log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_INITIATE_FAILED);
+        }
+    }
+
+    private void endChildCommand(boolean succeeded) {
+        if (!getParameters().getImagesParameters().isEmpty()) {
+            VdcActionParametersBase childParams = getParameters().getImagesParameters().get(0);
+            childParams.setTaskGroupSuccess(succeeded);
+            getBackend().endAction(childParams.getCommandType(), childParams,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+        }
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        Guid createdDiskId = (Guid) getActionReturnValue();
+        endChildCommand(true);
+        StorageDomainOvfInfo storageDomainOvfInfoDb = getStorageDomainOvfInfoDao().get(createdDiskId);
+
+        if (storageDomainOvfInfoDb == null
+                || storageDomainOvfInfoDb.getStatus() != StorageDomainOvfInfoStatus.DISABLED) {
+            return;
+        }
+
+        storageDomainOvfInfoDb.setStatus(StorageDomainOvfInfoStatus.OUTDATED);
+        getStorageDomainOvfInfoDao().update(storageDomainOvfInfoDb);
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endWithFailure() {
+        endChildCommand(false);
+        logFailure();
+        setSucceeded(true);
     }
 }

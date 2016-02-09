@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ProcessOvfUpdateForStorageDomainCommandParameters extends StorageDomainParametersBase {
     private boolean skipDomainChecks;
+    private OvfUpdateStep ovfUpdateStep;
 
     public ProcessOvfUpdateForStorageDomainCommandParameters() {
         super();
@@ -19,5 +20,18 @@ public class ProcessOvfUpdateForStorageDomainCommandParameters extends StorageDo
 
     public void setSkipDomainChecks(boolean skipDomainChecks) {
         this.skipDomainChecks = skipDomainChecks;
+    }
+
+
+    public OvfUpdateStep getOvfUpdateStep() {
+        return ovfUpdateStep;
+    }
+
+    public void setOvfUpdateStep(OvfUpdateStep ovfUpdateStep) {
+        this.ovfUpdateStep = ovfUpdateStep;
+    }
+
+    public enum OvfUpdateStep {
+        OVF_STORES_CREATION, OVF_UPLOAD;
     }
 }

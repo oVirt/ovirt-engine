@@ -78,7 +78,7 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
 
         if (vdsReturnValue.getSucceeded()) {
             Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-            getReturnValue().getInternalVdsmTaskIdList().add(createTask(taskId,
+            getTaskIdList().add(createTask(taskId,
                     vdsReturnValue.getCreationInfo(),
                     getParameters().getParentCommand(),
                     VdcObjectType.Storage,
