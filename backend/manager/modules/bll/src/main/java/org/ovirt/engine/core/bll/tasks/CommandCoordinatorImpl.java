@@ -175,6 +175,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getCommandParameters(), cmdContext);
             command.setCommandStatus(cmdEntity.getCommandStatus(), false);
             command.setCommandData(cmdEntity.getData());
+            command.setReturnValue(cmdEntity.getReturnValue());
             if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
                     ! cmdEntity.getParentCommandId().equals(cmdEntity.getId()) &&
                     command.getParameters().getParentParameters() == null) {
