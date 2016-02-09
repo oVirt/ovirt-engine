@@ -1,31 +1,73 @@
 #!/usr/bin/python
+
+# Copyright 2014-2016 Red Hat, Inc.
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#    http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 """
-Compare code help tags to help mapping files.
+The oVirt downstream branded documentation is typically installed
+into the engine and is then used to supply context-sensitive help
+throughout the application.
+
+The engine relies on "helptags" (currently in HelpTag.java) to map
+dialog boxes to help URLs. This mapping is very simple and lives in
+a Windows-style ini file. Example:
+    [helptags]
+    new_vm=Admin_Guide/How_to_create_a_new_vm.html
+    destroy_vm=Admin_Guide/How_to_destroy_a_new_vm.html
+
+########################################################################
+########################################################################
+
+This is a utility script that can do two things:
+
+1. It can generate a new empty helptag mapping file
+   (not very useful on its own) -- "template mode"
+
+2. It can take an existing mapping file and compare
+   it to the existing helptags in engine code. It then
+   generates a new updated file. This file is then
+   typically filled in with new help URLs for and new
+   helptags -- "update mode"
+
+Example usage for update mode:
+
+helptag.py --type userportal --command update --load 10-userportal-en-US.ini
+
+Note that the loaded file is not updated in-place. The updated file is
+printed to stdout.
+
 """
 
 
 import argparse
-import json
 import os
 import re
 import sys
 
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
-
-COMMAND_DIFF = 'diff'
+COMMAND_UPDATE = 'update'
 COMMAND_TEMPLATE = 'template'
-FORMAT_JSON = 'json'
-FORMAT_INI = 'ini'
 TYPE_WEBADMIN = 'webadmin'
 TYPE_USERPORTAL = 'userportal'
 TYPE_COMMON = 'common'
 TYPE_UNKNOWN = 'unknown'
-HELPTAG_SECTION = 'helptags'
+HELPTAG_SECTION = '[helptags]'
+DEFAULT_FILE = (
+    'frontend/webadmin/modules/uicommonweb/src/main/java/org/ovirt/'
+    'engine/ui/uicommonweb/help/HelpTag.java'
+)
 
 __RE_HELPTAG = re.compile(
     flags=re.VERBOSE,
@@ -54,25 +96,47 @@ __RE_HELPTAG = re.compile(
 )
 
 
-def loadTags(file, format):
-    if format == FORMAT_JSON:
-        with open(file, 'r') as f:
-            ret = set(json.load(f).keys())
-    elif format == FORMAT_INI:
-        config = configparser.ConfigParser()
-        config.optionxform = str
-        config.read((file,))
-        ret = set(config.options(HELPTAG_SECTION))
-    else:
-        raise RuntimeError("Invalid format '%s'" % format)
+def loadTagsFromMappingFile(file):
+
+    ret = {}  # { tagname => (comment, url) }
+    state = "HEADER"
+    comment = ''
+
+    with open(file, 'r') as f:
+        for line in f.readlines():
+
+            if state == "HEADER":
+                if line.startswith(HELPTAG_SECTION):
+                    state = "COMMENT"
+                else:
+                    raise RuntimeError(
+                        "Invalid ini file. Expected section begin. Found '%s'"
+                        % line
+                    )
+
+            elif state == "COMMENT":
+                if not line.strip():
+                    pass
+                elif line.startswith(";"):
+                    comment = line[2:]
+                    state = "TAG"
+
+            elif state == "TAG":
+                (tag, url) = line.split("=")
+                ret[tag] = (comment, url.strip())
+                state = "COMMENT"
+
+            else:
+                raise RuntimeError("invalid state: " + state)
 
     return ret
 
 
-def codeTags(filename, type):
+def loadTagsFromCodebase(filename, type):
     """
     look for help tags in the source code.
     """
+    # { tagname => (comment, url) }
     tags = {}
 
     if filename.endswith('.java') and os.path.isfile(filename):
@@ -88,42 +152,33 @@ def codeTags(filename, type):
                         name = m.group("name")
                         if m.group("comment"):
                             comment = m.group("comment")
-                        tags[name] = comment
+                        tags[name] = (comment, '')  # placeholder for URL
     return tags
 
 
-def produceTemplate(tags, out, format=FORMAT_JSON):
-    if format == FORMAT_JSON:
-        # python 2.4 does not support auto map
-        for key in tags:
-            tags[key] = ''
-        json.dump(
-            tags,
-            out,
-            sort_keys=True,
-            indent=4,
-        )
-    elif format == FORMAT_INI:
-        out.write("[%s]\n\n" % HELPTAG_SECTION)
-        for k in sorted(tags):
-            out.write("; %s\n%s=\n\n" % (tags[k], k))
-    else:
-        raise RuntimeError('Invalid template format')
+def produceTemplate(codebaseTags, mappingFileTags):
+    newTags = {}
 
+    for tag in codebaseTags:
 
-def produceDiff(left, right, out):
-    ret = False
+        # if we found that tag in the mapping file, save the URL
+        # this is basically the most important part :)
 
-    if left == right:
-        ret = True
-    else:
-        out.write('The following tags are changed:\n')
-        for t in sorted(right - left):
-            out.write('+%s\n' % t)
-        for t in sorted(left - right):
-            out.write('-%s\n' % t)
+        (newComment, junk) = codebaseTags[tag]
 
-    return ret
+        if tag in mappingFileTags:
+            (oldComment, oldUrl) = mappingFileTags[tag]
+            newTags[tag] = (newComment, oldUrl)
+        else:
+            # this is a new tag! just set the URL to ''
+            newTags[tag] = (newComment, '')
+
+    print(HELPTAG_SECTION + "\n")
+
+    for tag in sorted(set(newTags)):
+        (comment, url) = newTags[tag]
+        spacer = ('' if comment == '' else ' ')
+        print(";%s%s\n%s=%s\n" % (spacer, comment, tag, url))
 
 
 def main():
@@ -147,61 +202,35 @@ def main():
         '--sourcefile',
         metavar='FILE',
         dest='sourcefile',
-        default=(
-            'frontend/webadmin/modules/uicommonweb/src/main/java/org/ovirt/'
-            'engine/ui/uicommonweb/help/HelpTag.java'
-        ),
+        default=DEFAULT_FILE,
         help='the source code file to scan',
     )
     parser.add_argument(
         '--command',
         metavar='COMMAND',
         dest='command',
-        default=COMMAND_DIFF,
-        choices=[COMMAND_DIFF, COMMAND_TEMPLATE],
+        default=COMMAND_UPDATE,
+        choices=[COMMAND_UPDATE, COMMAND_TEMPLATE],
         help='Command (%(choices)s)',
-    )
-    parser.add_argument(
-        '--format',
-        metavar='FORMAT',
-        dest='format',
-        default=FORMAT_JSON,
-        choices=[FORMAT_JSON, FORMAT_INI],
-        help='Format of files (%(choices)s)',
     )
     parser.add_argument(
         '--load',
         metavar='FILE',
         dest='load',
-        default=[],
-        action='append',
-        help=(
-            'Load existing files, may be used several times to '
-            'load multiple files'
-        ),
+        default='',
+        help='the existing ini file to load',
     )
     args = parser.parse_args()
 
-    neededTags = codeTags(args.sourcefile, args.type)
+    codebaseTags = loadTagsFromCodebase(args.sourcefile, args.type)
 
     if args.command == COMMAND_TEMPLATE:
-        produceTemplate(
-            tags=neededTags,
-            out=sys.stdout,
-            format=args.format,
-        )
-        ret = 0
-    elif args.command == COMMAND_DIFF:
-        loadedTags = set()
-        for f in args.load:
-            loadedTags |= loadTags(f, format=args.format)
-        ret = (
-            0 if produceDiff(
-                left=loadedTags,
-                right=set(neededTags.keys()),
-                out=sys.stdout,
-            ) else 1
-        )
+        mappingFileTags = {}
+        produceTemplate(codebaseTags, mappingFileTags)
+    elif args.command == COMMAND_UPDATE:
+        mappingFileTags = loadTagsFromMappingFile(args.load)
+        produceTemplate(codebaseTags, mappingFileTags)
+
     else:
         raise RuntimeError("Invalid command '%s'" % args.command)
 
