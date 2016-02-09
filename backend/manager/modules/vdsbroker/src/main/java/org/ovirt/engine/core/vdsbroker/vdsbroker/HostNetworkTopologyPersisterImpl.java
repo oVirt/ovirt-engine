@@ -267,15 +267,28 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
 
         networkInterfacesPersister.persistTopology();
 
-        final HostNetworkAttachmentsPersister networkAttachmentPersister =
-                new HostNetworkAttachmentsPersister(networkAttachmentDao,
-                        host.getId(),
-                        host.getInterfaces(),
-                        userConfiguredData.getCustomProperties(),
-                        userConfiguredData.getNetworkAttachments(),
-                        clusterNetworks);
+        createHostNetworkAttachmentsPersister(host, clusterNetworks, userConfiguredData).persistNetworkAttachments();
+    }
 
-        networkAttachmentPersister.persistNetworkAttachments();
+    private HostNetworkAttachmentsPersister createHostNetworkAttachmentsPersister(VDS host,
+            List<Network> clusterNetworks,
+            UserConfiguredNetworkData userConfiguredData) {
+
+        if (userConfiguredData.isLegacyMode()) {
+            return new HostNetworkAttachmentsPersister(networkAttachmentDao,
+                    host.getId(),
+                    host.getInterfaces(),
+                    userConfiguredData.getCustomPropertiesForVdsNetworkInterface(),
+                    userConfiguredData.getNetworkAttachments(),
+                    clusterNetworks);
+        } else {
+            return new HostNetworkAttachmentsPersister(networkAttachmentDao,
+                    host.getId(),
+                    host.getInterfaces(),
+                    userConfiguredData.getNetworkAttachments(),
+                    clusterNetworks);
+        }
+
     }
 
     private String getVmNetworksImplementedAsBridgeless(VDS host, List<Network> clusterNetworks) {
