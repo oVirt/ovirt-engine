@@ -21,6 +21,7 @@ import org.ovirt.engine.api.model.HostNicVirtualFunctionsConfiguration;
 import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -37,10 +38,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicsResource
@@ -69,20 +72,59 @@ public class BackendHostNicsResource
     public HostNics list() {
         HostNics ret = new HostNics();
         List<VdsNetworkInterface> ifaces = getCollection();
-        List<org.ovirt.engine.core.common.businessentities.network.Network> clusterNetworks = getClusterNetworks();
-        Map<String, String> networkIds = new HashMap<>();
-        for(org.ovirt.engine.core.common.businessentities.network.Network nwk : clusterNetworks) {
-            networkIds.put(nwk.getName(), nwk.getId().toString());
-        }
+        Map<String, Guid> networkNameToNetworkIdMap = mapNetworkNamesToNetworkIds();
+        Map<Guid, NetworkAttachment> attachmentsByNetworkId = getAttachmentsByNetworkId();
+
         for (VdsNetworkInterface iface : ifaces) {
             HostNic hostNic = populate(map(iface, ifaces), iface);
-            if (networkIds.containsKey(iface.getNetworkName())) {
-                hostNic.getNetwork().setId(networkIds.get(iface.getNetworkName()));
+            setCustomProperties(attachmentsByNetworkId, networkNameToNetworkIdMap, hostNic);
+
+            String networkName = iface.getNetworkName();
+            if (networkNameToNetworkIdMap.containsKey(networkName)) {
+                Guid networkId = networkNameToNetworkIdMap.get(networkName);
+                hostNic.getNetwork().setId(networkId.toString());
                 hostNic.getNetwork().setName(null);
             }
             ret.getHostNics().add(addLinks(hostNic));
         }
         return addActions(ret);
+    }
+
+    private Map<String, Guid> mapNetworkNamesToNetworkIds() {
+        List<org.ovirt.engine.core.common.businessentities.network.Network> clusterNetworks = getClusterNetworks();
+        Map<String, Guid> networkIdByName = new HashMap<>();
+        for(org.ovirt.engine.core.common.businessentities.network.Network nwk : clusterNetworks) {
+            networkIdByName.put(nwk.getName(), nwk.getId());
+        }
+        return networkIdByName;
+    }
+
+    private void setCustomProperties(Map<Guid, NetworkAttachment> attachmentsByNetworkId,
+            Map<String, Guid> networkNameToNetworkIdMap,
+            HostNic hostNic) {
+        Network network = hostNic.getNetwork();
+        if (network == null) {
+            return;
+        }
+
+        String networkName = network.getName();
+        NetworkAttachment networkAttachment = attachmentsByNetworkId.get(networkNameToNetworkIdMap.get(networkName));
+        if (networkAttachment == null) {
+            return;
+        }
+
+        Map<String, String> properties = networkAttachment.getProperties();
+        if (properties != null) {
+            hostNic.setProperties(CustomPropertiesParser.fromMap(properties));
+        }
+    }
+
+    private Map<Guid, NetworkAttachment> getAttachmentsByNetworkId() {
+        List<NetworkAttachment> attachments = getBackendCollection(NetworkAttachment.class,
+                VdcQueryType.GetNetworkAttachmentsByHostId,
+                new IdQueryParameters(asGuid(hostId)));
+
+        return new MapNetworkAttachments(attachments).byNetworkId();
     }
 
     @Override
@@ -446,17 +488,16 @@ public class BackendHostNicsResource
     }
 
     private CustomPropertiesForVdsNetworkInterface nicsToCustomProperties(List<HostNic> hostNics,
-        BusinessEntityMap<VdsNetworkInterface> existingNicsMapping) {
+            BusinessEntityMap<VdsNetworkInterface> existingNicsMapping) {
         CustomPropertiesForVdsNetworkInterface result = new CustomPropertiesForVdsNetworkInterface();
         for (HostNic hostNic : hostNics) {
-            if (hostNic.isSetProperties()) {
-                String hostNicName = hostNic.getName();
-                String nicName = StringUtils.isEmpty(hostNicName)
+            String hostNicName = hostNic.getName();
+            String nicName = StringUtils.isEmpty(hostNicName)
                     ? existingNicsMapping.get(hostNic.getId()).getName()
                     : hostNicName;
 
-                result.add(nicName, CustomPropertiesParser.toMap(hostNic.getProperties()));
-            }
+            Properties properties = hostNic.isSetProperties() ? hostNic.getProperties() : new Properties();
+            result.add(nicName, CustomPropertiesParser.toMap(properties));
         }
         return result;
     }

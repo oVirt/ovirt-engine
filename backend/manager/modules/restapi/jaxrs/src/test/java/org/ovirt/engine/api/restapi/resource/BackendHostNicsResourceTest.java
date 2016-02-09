@@ -188,6 +188,7 @@ public class BackendHostNicsResourceTest
 
     private void doTestSetupNetworksSyncsNetwork(boolean overrideConfiguration, List<String> expectedNetworksToSync) {
         HostNic hostNic = new HostNic();
+        hostNic.setName("eris");
         Network network = new Network();
         network.setName(NETWORK_NAME);
         hostNic.setNetwork(network);
