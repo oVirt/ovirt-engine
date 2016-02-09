@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.BeforeClass;
+import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -23,8 +24,8 @@ public class NumaSettingFactoryTest {
     private static List<VdsNumaNode> vdsNumaNodes;
     private static List<VmNumaNode> vmNumaNodes;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         numaTuneMode = NumaTuneMode.INTERLEAVE;
         vdsNumaNodes = createTestVdsNumaNodes();
         vmNumaNodes = createTestVmNumaNodes();
@@ -55,9 +56,22 @@ public class NumaSettingFactoryTest {
     }
 
     @Test
+    public void shouldNotCreateCpuPinningForVirtualNumaNodes() {
+        for (VmNumaNode numaNode : vmNumaNodes) {
+            numaNode.getVdsNumaNodeList().clear();
+        }
+        Map<String, Object> cpuPinning =
+                NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, vdsNumaNodes);
+        Assertions.assertThat(cpuPinning).isEmpty();
+        Map<String, Object> mapping =
+                NumaSettingFactory.buildVmNumatuneSetting(NumaTuneMode.INTERLEAVE, vmNumaNodes);
+        Assertions.assertThat(mapping).doesNotContainKeys(VdsProperties.NUMA_TUNE_MODE, VdsProperties.NUMA_TUNE_NODESET);
+    }
+
+    @Test
     public void testBuildVmNumatuneSetting() throws Exception {
         Map<String, Object> numaTune =
-                NumaSettingFactory.buildVmNumatuneSetting(numaTuneMode, vmNumaNodes, vdsNumaNodes);
+                NumaSettingFactory.buildVmNumatuneSetting(numaTuneMode, vmNumaNodes);
         assertEquals(2, numaTune.size());
         assertTrue(numaTune.containsKey(VdsProperties.NUMA_TUNE_MODE));
         assertEquals(NumaTuneMode.INTERLEAVE.getValue(), numaTune.get(VdsProperties.NUMA_TUNE_MODE));

@@ -1348,7 +1348,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
             if (numaTune != null) {
                 Map<String, Object> numaTuneSetting =
-                        NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes, totalVdsNumaNodes);
+                        NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes);
                 if (!numaTuneSetting.isEmpty()) {
                     createInfo.put(VdsProperties.NUMA_TUNE, numaTuneSetting);
                 }

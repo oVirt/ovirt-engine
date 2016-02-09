@@ -51,8 +51,7 @@ public class NumaSettingFactory {
     }
 
     public static Map<String, Object> buildVmNumatuneSetting(
-            NumaTuneMode numaTuneMode, List<VmNumaNode> vmNumaNodes, List<VdsNumaNode> totalVdsNumaNodes) {
-        List<Integer> totalVdsNumaNodesIndexes = NumaUtils.getNodeIndexList(totalVdsNumaNodes);
+            NumaTuneMode numaTuneMode, List<VmNumaNode> vmNumaNodes) {
         Map<String, Object> createNumaTune = new HashMap<>(2);
         Set<Integer> vmNumaNodePinInfo = new HashSet<>();
         for (VmNumaNode node : vmNumaNodes) {
@@ -60,18 +59,9 @@ public class NumaSettingFactory {
                 vmNumaNodePinInfo.addAll(NumaUtils.getPinnedNodeIndexList(node.getVdsNumaNodeList()));
             }
         }
-        if (vmNumaNodePinInfo.isEmpty()) {
-            if (!totalVdsNumaNodesIndexes.isEmpty()) {
-                createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
-                        NumaUtils.buildStringFromListForNuma(totalVdsNumaNodesIndexes));
-            }
-        }
-        else {
+        if (!vmNumaNodePinInfo.isEmpty()) {
             createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
                     NumaUtils.buildStringFromListForNuma(vmNumaNodePinInfo));
-        }
-        //The two items nodeset and mode should both exist or not
-        if (createNumaTune.containsKey(VdsProperties.NUMA_TUNE_NODESET)) {
             createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTuneMode.getValue());
         }
         return createNumaTune;
