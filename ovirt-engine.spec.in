@@ -1127,6 +1127,9 @@ fi
 %endif
 
 %changelog
+* Tue Feb  9 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.5.8-1
+- Bump version to 3.5.8
+
 * Mon Feb  8 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.5.7.1-1
 - Bump version to 3.5.7.1
 
