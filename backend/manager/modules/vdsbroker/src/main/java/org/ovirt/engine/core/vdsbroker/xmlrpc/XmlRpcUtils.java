@@ -54,8 +54,8 @@ import org.xml.sax.SAXException;
 
 public class XmlRpcUtils {
 
-    private static final String HTTP = "http://";
-    private static final String HTTPS = "https://";
+    private static final String HTTP = "http";
+    private static final String HTTPS = "https";
     private static final Logger log = LoggerFactory.getLogger(XmlRpcUtils.class);
     private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<>(Arrays.asList("create", "hotplugDisk"));
     static {
@@ -111,16 +111,10 @@ public class XmlRpcUtils {
     }
 
     public static Pair<String, URL> getConnectionUrl(String hostName, int port, String path, boolean isSecure) {
-        String prefix;
-        String url;
-        if (isSecure) {
-            prefix = HTTPS;
-        } else {
-            prefix = HTTP;
-        }
+        final String protocol = isSecure ? HTTPS : HTTP;
         try {
-            url =  prefix + hostName + ":" + port + (path != null ? "/" + path : "");
-            return new Pair<>(url, new URL(url));
+            URL url = new URL(protocol, hostName, port, path != null ? "/" + path : "");
+            return new Pair<>(url.toString(), url);
         } catch (MalformedURLException mfue) {
             log.error("failed to form the xml-rpc url", mfue);
             throw new IllegalStateException(mfue);
