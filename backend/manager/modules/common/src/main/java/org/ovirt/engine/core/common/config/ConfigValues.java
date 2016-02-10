@@ -2288,6 +2288,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     AutoImportHostedEngine,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AllowEditingHostedEngine,
+
     Invalid
 
 }

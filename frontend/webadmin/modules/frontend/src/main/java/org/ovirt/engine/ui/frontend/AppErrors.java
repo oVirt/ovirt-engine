@@ -3909,4 +3909,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. VM has PCI host devices attached.")
     String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The VM is a hosted engine and editing is not allowed. See configuration value AllowEditingHostedEngine.")
+    String ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED();
 }

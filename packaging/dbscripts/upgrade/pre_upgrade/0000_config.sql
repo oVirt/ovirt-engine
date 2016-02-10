@@ -765,6 +765,7 @@ select fn_db_add_config_value_for_versions_up_to('RefreshLunSupported','false','
 select fn_db_add_config_value('HostedEngineVmName','HostedEngine','general');
 select fn_db_add_config_value('AutoImportHostedEngine','true','general');
 select fn_db_add_config_value('HostedEngineStorageDomainName','hosted_storage','general');
+select fn_db_add_config_value('AllowEditingHostedEngine','true','general');
 
 select fn_db_add_config_value_for_versions_up_to('ChangeNetworkUnderBridgeInUseSupported','false','3.5');
 
