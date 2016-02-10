@@ -292,8 +292,8 @@ public class VmDevicesMonitoring implements BackendService {
 
     private static VmDevicesMonitoring instance;
 
-    private static String EMPTY_HASH = "";
-    private static String UPDATE_HASH = "UPDATE_HASH";
+    public static final String EMPTY_HASH = "";
+    public static final String UPDATE_HASH = "UPDATE_HASH";
 
     @Inject
     private ResourceManager resourceManager;
@@ -315,7 +315,10 @@ public class VmDevicesMonitoring implements BackendService {
     private void init() {
         instance = this;
 
-        long fetchTime = System.nanoTime();
+        initDevicesStatuses(System.nanoTime());
+    }
+
+    void initDevicesStatuses(long fetchTime) {
         getVmDynamicDao().getAllDevicesHashes().forEach(pair -> vmDevicesStatuses.put(pair.getFirst(),
                 new DevicesStatus(pair.getSecond(), fetchTime)));
     }
@@ -324,15 +327,15 @@ public class VmDevicesMonitoring implements BackendService {
         return instance;
     }
 
-    private ResourceManager getResourceManager() {
+    ResourceManager getResourceManager() {
         return resourceManager;
     }
 
-    public VmDeviceDao getVmDeviceDao() {
+    VmDeviceDao getVmDeviceDao() {
         return vmDeviceDao;
     }
 
-    public VmDynamicDao getVmDynamicDao() {
+    VmDynamicDao getVmDynamicDao() {
         return vmDynamicDao;
     }
 
@@ -668,7 +671,9 @@ public class VmDevicesMonitoring implements BackendService {
     }
 
     private void saveDevicesToDb(Change change) {
-        getVmDeviceDao().updateAllInBatch(change.getDevicesToUpdate());
+        if (!change.getDevicesToUpdate().isEmpty()) {
+            getVmDeviceDao().updateAllInBatch(change.getDevicesToUpdate());
+        }
 
         if (!change.getDeviceIdsToRemove().isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
@@ -695,7 +700,7 @@ public class VmDevicesMonitoring implements BackendService {
 
     }
 
-    private Version getGroupCompatibilityVersion(Guid vdsId) {
+    Version getGroupCompatibilityVersion(Guid vdsId) {
         return getResourceManager().getVdsManager(vdsId).getGroupCompatibilityVersion();
     }
 
