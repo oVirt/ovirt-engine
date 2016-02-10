@@ -642,7 +642,7 @@ public class ClusterGuideModel extends GuideModel {
         host.setVdsName(model.getName().getEntity());
         host.setHostName(model.getHost().getEntity());
         host.setPort(model.getPort().getEntity());
-        host.setProtocol(VdsProtocol.fromValue(model.getProtocol().getEntity() ? VdsProtocol.STOMP.toString() : VdsProtocol.XML.toString()));
+        host.setProtocol(model.getProtocol().getEntity() ? VdsProtocol.STOMP : VdsProtocol.XML);
         host.setSshPort(model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());

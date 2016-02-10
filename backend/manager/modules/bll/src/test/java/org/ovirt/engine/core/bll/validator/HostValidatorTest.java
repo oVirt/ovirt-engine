@@ -348,6 +348,14 @@ public class HostValidatorTest {
     }
 
     @Test
+    public void testValidateXmlProtocolSupportedForCluster() {
+        Cluster cluster = mock(Cluster.class);
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_5);
+        validator = mockHostForProtocol(VdsProtocol.XML);
+        assertThat(validator.protocolIsNotXmlrpc(cluster), isValid());
+    }
+
+    @Test
     public void testValidateJsonProtocolForCluster() {
         Cluster cluster = mock(Cluster.class);
         when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);

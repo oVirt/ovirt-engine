@@ -81,6 +81,20 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     @Override
+    public void init() {
+        // Parameters completion should be performed prior to validation step, to assure completed values are valid
+        VdsStatic vdsStatic = getParameters().getVdsStaticData();
+        if (vdsStatic.getProtocol() == null) {
+            Cluster cluster = getCluster();
+            if (cluster != null && FeatureSupported.jsonProtocol(cluster.getCompatibilityVersion())) {
+                vdsStatic.setProtocol(VdsProtocol.STOMP);
+            } else {
+                vdsStatic.setProtocol(VdsProtocol.XML);
+            }
+        }
+    }
+
+    @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__ADD);
         addValidationMessage(EngineMessage.VAR__TYPE__HOST);
@@ -245,15 +259,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private void addVdsStaticToDb() {
         getParameters().getVdsStaticData().setServerSslEnabled(
                 Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
-        VdsStatic vdsStatic = getParameters().getVdsStaticData();
-        if (vdsStatic.getProtocol() == null) {
-            Cluster cluster = getCluster();
-            if (cluster != null && FeatureSupported.jsonProtocol(cluster.getCompatibilityVersion())) {
-                vdsStatic.setProtocol(VdsProtocol.STOMP);
-            } else {
-                vdsStatic.setProtocol(VdsProtocol.XML);
-            }
-        }
         DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
         setVdsIdRef(getParameters().getVdsStaticData().getId());

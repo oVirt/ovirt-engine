@@ -114,8 +114,8 @@ public class HostValidator {
 
     public ValidationResult protocolIsNotXmlrpc(Cluster cluster) {
         return ValidationResult.failWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION)
-                .when(VdsProtocol.XML.equals(host.getProtocol())
-                        && Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0);
+                .when(VdsProtocol.XML == host.getProtocol()
+                        && cluster.getCompatibilityVersion().greaterOrEquals(Version.v3_6));
     }
 
     protected boolean haveSecurityKey() {
