@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -8,6 +10,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -125,7 +129,7 @@ public class UpdateVmCommandTest {
             mockConfig(ConfigValues.IsMigrationSupported, Version.v3_0.toString(), migrationMap),
             mockConfig(ConfigValues.IsMigrationSupported, Version.v3_3.toString(), migrationMap),
             mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
-            );
+    );
 
     @Before
     public void setUp() {
@@ -384,6 +388,40 @@ public class UpdateVmCommandTest {
         mockVmValidator();
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void testBlockingHostedEngineEditing() {
+        // given
+        mcr.mockConfigValue(ConfigValues.AllowEditingHostedEngine, false);
+        vmStatic.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        // when
+        boolean validInput = command.validateInputs();
+        // then
+        assertThat(validInput, is(false));
+        assertTrue(command.getReturnValue().getCanDoActionMessages()
+                .contains(ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED.name()));
+    }
+
+    @Test
+    public void testAllowedHostedEngineEditing() {
+        // given
+        mcr.mockConfigValue(ConfigValues.AllowEditingHostedEngine, true);
+        vmStatic.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        // when
+        boolean validInput = command.validateInputs();
+        // then
+        assertThat(validInput, is(true));
+    }
+
+    @Test
+    public void testHostedEngineConstraintsIneffectiveOnRegularVm() {
+        // given
+        vmStatic.setOrigin(OriginType.OVIRT);
+        // when
+        boolean validInput = command.validateInputs();
+        // then
+        assertThat(validInput, is(true));
     }
 
     private void mockVmValidator() {
