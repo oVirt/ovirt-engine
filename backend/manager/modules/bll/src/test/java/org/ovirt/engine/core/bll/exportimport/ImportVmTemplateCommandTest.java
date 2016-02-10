@@ -30,7 +30,6 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -147,9 +146,8 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
             StorageType storageType) {
         ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(createParameters());
 
-        command.poolPerCluster = Mockito.mock(MacPoolPerCluster.class);
         command.vmNicMacsUtils = Mockito.mock(VmNicMacsUtils.class);
-        Mockito.when(command.vmNicMacsUtils.validateMacAddress(any(), any())).thenReturn(ValidationResult.VALID);
+        Mockito.when(command.vmNicMacsUtils.validateMacAddress(any())).thenReturn(ValidationResult.VALID);
 
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();

@@ -59,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -427,8 +428,15 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
-        if (!validate(vmNicMacsUtils.validateMacAddress(getVm().getInterfaces(), getMacPool()))) {
-            return false;
+        if (!getParameters().isImportAsNewEntity()) {
+            List<VmNetworkInterface> vmNetworkInterfaces = getVm().getInterfaces();
+            if (!validate(vmNicMacsUtils.validateThereIsEnoughOfFreeMacs(vmNetworkInterfaces, getMacPool()))) {
+                return false;
+            }
+
+            if (!validate(vmNicMacsUtils.validateMacAddress(vmNetworkInterfaces))) {
+                return false;
+            }
         }
 
         if (!setAndValidateDiskProfiles()) {

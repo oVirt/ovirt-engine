@@ -14,8 +14,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -84,9 +82,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Inject
     VmNicMacsUtils vmNicMacsUtils;
-
-    @Inject
-    MacPoolPerCluster poolPerCluster;
 
     @Inject
     private VmTemplateDao vmTemplateDao;
@@ -221,7 +216,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         }
 
-        if (!validate(vmNicMacsUtils.validateMacAddress(getVmTemplate().getInterfaces(), getMacPool()))) {
+        if (!validate(vmNicMacsUtils.validateMacAddress(getVmTemplate().getInterfaces()))) {
             return false;
         }
 
@@ -312,10 +307,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         return true;
-    }
-
-    private MacPool getMacPool() {
-        return poolPerCluster.getMacPoolForCluster(getClusterId(), getContext());
     }
 
     protected List<DiskImage> getImages() {

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
 
@@ -18,8 +19,11 @@ public class VmNicMacsUtils {
     private static final Pattern VALIDATE_MAC_ADDRESS =
             Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
-    public ValidationResult validateMacAddress(List<? extends VmNic> vmNics, MacPool macPool) {
-        int freeMacs = 0;
+    private Stream<? extends VmNic> streamOfFilteredNics(List<? extends VmNic> vmNics, boolean havingMacAddress) {
+        return vmNics.stream().filter(vmNic->StringUtils.isEmpty(vmNic.getMacAddress()) != havingMacAddress);
+    }
+
+    public ValidationResult validateMacAddress(List<? extends VmNic> vmNics) {
         for (VmNic iface : vmNics) {
             if (!StringUtils.isEmpty(iface.getMacAddress())) {
                 if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
@@ -28,14 +32,15 @@ public class VmNicMacsUtils {
                             String.format("$MacAddress %1$s", iface.getMacAddress()));
                 }
             }
-            else {
-                freeMacs++;
-            }
-        }
-        if (freeMacs > 0 && !(macPool.getAvailableMacsCount() >= freeMacs)) {
-            return new ValidationResult(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
 
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateThereIsEnoughOfFreeMacs(List<? extends VmNic> vmNics, MacPool macPool) {
+        long requiredMacs = streamOfFilteredNics(vmNics, true).count();
+        boolean notEnoughOfMacs = requiredMacs > 0 && macPool.getAvailableMacsCount() < requiredMacs;
+
+        return ValidationResult.failWith(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES) .when(notEnoughOfMacs);
     }
 }
