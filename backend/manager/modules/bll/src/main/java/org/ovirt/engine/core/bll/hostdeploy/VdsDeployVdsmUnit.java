@@ -26,19 +26,23 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
 
     private static final Logger log = LoggerFactory.getLogger(VdsDeployVdsmUnit.class);
 
-    private final List<Callable<Boolean>> CUSTOMIZATION_DIALOG = Arrays.asList(
-        new Callable<Boolean>() { public Boolean call() throws Exception {
-            if (
-                (Boolean)_deploy.getParser().cliEnvironmentGet(
-                    VdsmEnv.OVIRT_VINTAGE_NODE
-                )
-            ) {
-                _deploy.userVisibleLog(
+    private void handleNodeType(String nodeType, VDSType hostType) throws Exception {
+        if ((Boolean) _deploy.getParser().cliEnvironmentGet(nodeType)) {
+            _deploy.userVisibleLog(
                     Level.INFO,
                     "Host is hypervisor"
-                );
-                setNode();
-            }
+            );
+            setNode(hostType);
+        }
+    }
+
+    private final List<Callable<Boolean>> CUSTOMIZATION_DIALOG = Arrays.asList(
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            handleNodeType(VdsmEnv.OVIRT_VINTAGE_NODE, VDSType.oVirtVintageNode);
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            handleNodeType(VdsmEnv.OVIRT_NODE, VDSType.oVirtNode);
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
@@ -175,10 +179,10 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
     /**
      * Set host to be node.
      */
-    private void setNode() {
+    private void setNode(VDSType hostType) {
         _isNode = true;
 
-        _deploy.getVds().setVdsType(VDSType.oVirtVintageNode);
+        _deploy.getVds().setVdsType(hostType);
 
         TransactionSupport.executeInNewTransaction(() -> {
             DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());
