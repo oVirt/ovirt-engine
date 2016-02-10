@@ -1548,6 +1548,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     super.setSelectedItem(value.get(0));
                 }
             }
+
+            @Override
+            public VDS getSelectedItem() {
+                if (selectedItems == null || selectedItems.isEmpty() || selectedItems.size() > 1) {
+                   return null;
+                } else {
+                    return selectedItems.get(0);
+                }
+            }
         });
         getDefaultHost().getSelectedItemsChangedEvent().addListener(this);
 
