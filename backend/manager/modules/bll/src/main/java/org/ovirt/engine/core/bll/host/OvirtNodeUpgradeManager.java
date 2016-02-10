@@ -43,6 +43,6 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
 
     @Override
     public VDSType getHostType() {
-        return VDSType.oVirtNode;
+        return VDSType.oVirtVintageNode;
     }
 }

@@ -125,7 +125,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     case VDS:
                         deploy.addUnit(new VdsDeployIptablesUnit());
                     break;
-                    case oVirtNode:
+                    case oVirtVintageNode:
                         log.warn(
                             "Installation of Host {} will ignore Firewall Override option, since it is not supported for Host type {}",
                             getVds().getName(),

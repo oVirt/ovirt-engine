@@ -200,7 +200,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
     }
 
     private boolean isOvirtReInstallOrUpgrade() {
-        return getParameters().getIsReinstallOrUpgrade() && getVds().isOvirtNode();
+        return getParameters().getIsReinstallOrUpgrade() && getVds().isOvirtVintageNode();
     }
 
     @Override

@@ -1301,7 +1301,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         final VDS host = getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
 
-        if (!model.validate(host.isOvirtNode())) {
+        if (!model.validate(host.isOvirtVintageNode())) {
             model.setValidationFailed(new EntityModel<>(true));
             return;
         }
@@ -1495,7 +1495,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setHelpTag(HelpTag.configure_local_storage);
         model.setHashName("configure_local_storage"); //$NON-NLS-1$
 
-        if (host.isOvirtNode()) {
+        if (host.isOvirtVintageNode()) {
             configureLocalStorage2(model);
         } else {
             configureLocalStorage3(model);
@@ -1643,7 +1643,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        if (!host.isOvirtNode()) {
+        if (!host.isOvirtVintageNode()) {
             return;
         }
 
@@ -1716,7 +1716,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         boolean approveAvailability =
                 items.size() == 1
                         && (VdcActionUtils.canExecute(items, VDS.class, VdcActionType.ApproveVds) || (items.get(0)
-                                .getStatus() == VDSStatus.InstallFailed && items.get(0).isOvirtNode()));
+                                .getStatus() == VDSStatus.InstallFailed && items.get(0).isOvirtVintageNode()));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
 
         boolean installAvailability = false;

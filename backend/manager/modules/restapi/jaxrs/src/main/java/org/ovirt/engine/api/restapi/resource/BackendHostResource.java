@@ -137,7 +137,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         params.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
         params = (UpdateVdsActionParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, params);
-        if (vds.isOvirtNode()) {
+        if (vds.isOvirtVintageNode()) {
             params.setReinstallOrUpgrade(true);
             if (action.isSetImage()) {
                 params.setoVirtIsoFile(action.getImage());

@@ -480,7 +480,7 @@ public class HostMapper {
         switch (type) {
         case VDS:
             return HostType.RHEL;
-        case oVirtNode:
+        case oVirtVintageNode:
             return HostType.RHEV_H;
         default:
             return null;

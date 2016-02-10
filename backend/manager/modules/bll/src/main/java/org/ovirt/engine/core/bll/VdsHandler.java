@@ -59,7 +59,7 @@ public class VdsHandler extends BaseHandler {
     }
 
     public static boolean isPendingOvirt(VDS vds) {
-        return vds.isOvirtNode() && vds.getStatus() == VDSStatus.PendingApproval;
+        return vds.isOvirtVintageNode() && vds.getStatus() == VDSStatus.PendingApproval;
     }
 
     /**

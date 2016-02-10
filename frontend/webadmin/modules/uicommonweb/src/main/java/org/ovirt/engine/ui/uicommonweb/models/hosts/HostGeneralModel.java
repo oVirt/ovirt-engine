@@ -974,7 +974,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
     public static Model createUpgradeModel(final VDS host) {
         Model model;
-        if (host.isOvirtNode()) {
+        if (host.isOvirtVintageNode()) {
             model = new UpgradeModel(host);
         } else {
             model = new UpgradeConfirmationModel(host);

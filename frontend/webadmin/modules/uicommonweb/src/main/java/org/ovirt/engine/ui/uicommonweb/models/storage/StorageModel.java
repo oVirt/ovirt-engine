@@ -356,7 +356,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             if (host != null) {
                 getCurrentStorageItem().getUpdateCommand().execute();
 
-                String prefix = host.isOvirtNode() ? localFSPath : ""; //$NON-NLS-1$
+                String prefix = host.isOvirtVintageNode() ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix)) {
                     for (Object item : getStorageModels()) {
                         if (item instanceof LocalStorageModel) {

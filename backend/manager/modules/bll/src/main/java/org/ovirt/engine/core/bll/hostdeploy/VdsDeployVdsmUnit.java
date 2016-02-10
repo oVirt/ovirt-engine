@@ -30,7 +30,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
         new Callable<Boolean>() { public Boolean call() throws Exception {
             if (
                 (Boolean)_deploy.getParser().cliEnvironmentGet(
-                    VdsmEnv.OVIRT_NODE
+                    VdsmEnv.OVIRT_VINTAGE_NODE
                 )
             ) {
                 _deploy.userVisibleLog(
@@ -178,7 +178,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
     private void setNode() {
         _isNode = true;
 
-        _deploy.getVds().setVdsType(VDSType.oVirtNode);
+        _deploy.getVds().setVdsType(VDSType.oVirtVintageNode);
 
         TransactionSupport.executeInNewTransaction(() -> {
             DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());

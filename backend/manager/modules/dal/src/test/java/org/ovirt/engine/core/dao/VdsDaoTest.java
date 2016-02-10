@@ -174,7 +174,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllOfTypeWithUnrepresentedType() {
-        List<VDS> result = dao.getAllOfType(VDSType.oVirtNode);
+        List<VDS> result = dao.getAllOfType(VDSType.oVirtVintageNode);
 
         assertIncorrectGetResult(result);
     }
@@ -199,7 +199,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllOfTypesWithUnrepresentedTypes() {
         List<VDS> result = dao
-                .getAllOfTypes(new VDSType[] { VDSType.oVirtNode });
+                .getAllOfTypes(new VDSType[] { VDSType.oVirtVintageNode });
 
         assertIncorrectGetResult(result);
     }

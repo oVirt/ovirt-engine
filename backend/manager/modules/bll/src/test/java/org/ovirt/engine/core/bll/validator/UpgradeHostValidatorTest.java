@@ -87,7 +87,7 @@ public class UpgradeHostValidatorTest {
     }
 
     private void mockOvirtNode() {
-        when(host.isOvirtNode()).thenReturn(true);
+        when(host.isOvirtVintageNode()).thenReturn(true);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void imageProvidedForOvirtNode() {
-        when(host.getVdsType()).thenReturn(VDSType.oVirtNode);
+        when(host.getVdsType()).thenReturn(VDSType.oVirtVintageNode);
         String imageName = RandomUtils.instance().nextString(20);
 
         assertThat(validator.imageProvidedForOvirtNode(imageName), isValid());

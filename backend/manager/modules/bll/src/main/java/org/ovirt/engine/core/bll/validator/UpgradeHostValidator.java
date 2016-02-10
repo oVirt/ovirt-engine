@@ -34,12 +34,12 @@ public class UpgradeHostValidator {
 
     public ValidationResult updatesAvailable() {
         return ValidationResult.failWith(EngineMessage.NO_AVAILABLE_UPDATES_FOR_HOST)
-                .unless(host.isOvirtNode() || host.isUpdateAvailable());
+                .unless(host.isOvirtVintageNode() || host.isUpdateAvailable());
     }
 
     public ValidationResult imageProvidedForOvirtNode(String image) {
         return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE)
-                .when(host.isOvirtNode() && StringUtils.isBlank(image));
+                .when(host.isOvirtVintageNode() && StringUtils.isBlank(image));
     }
 
     public ValidationResult hostWasInstalled() {
