@@ -208,6 +208,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     private boolean completedMerge() {
         return getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE
+                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE_CHECK
                 || getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.COMPLETE;
     }
 
@@ -289,7 +290,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         // The vdsm merge verb may decide to perform a forward or backward merge.
         if (topImage == null) {
-            log.debug("No merge destination image, not updating image/snapshot association");
+            log.info("No merge destination image, not updating image/snapshot association");
         } else if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
             // For forward merge, the volume format and type may change.
             topImage.setvolumeFormat(baseImage.getVolumeFormat());
