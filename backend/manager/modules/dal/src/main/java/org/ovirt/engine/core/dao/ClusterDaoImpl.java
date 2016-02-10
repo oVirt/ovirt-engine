@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.Array;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -112,15 +110,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     @Override
     public List<Cluster> getAllWithQuery(String query) {
         List<Cluster> groups = getJdbcTemplate().query(query, ClusterRowMapper.instance);
-
-        try {
-            // The UI requires the host and vm count
-            return getHostsAndVmsForClusters(groups);
-        } catch (Exception e) {
-            log.error("Can't load host and vm count for cluster. Query is '{}'. Error: {}", query, e.getMessage());
-            log.debug("Excpetion", e);
-        }
-        return groups;
+        return getHostsAndVmsForClusters(groups);
     }
 
     @Override
@@ -353,19 +343,16 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                         .addValue("cluster_policy_id", clusterPolicyId));
     }
 
-    protected List<Cluster> getHostsAndVmsForClusters(List<Cluster> clusters) throws Exception {
+    protected List<Cluster> getHostsAndVmsForClusters(List<Cluster> clusters) {
         Map<Guid, Cluster> groupsById = new HashMap<>();
         for (Cluster cluster : clusters) {
             groupsById.put(cluster.getId(), cluster);
         }
-        Connection c = getJdbcTemplate().getDataSource().getConnection();
-        Array groups = c.createArrayOf("uuid", groupsById.keySet().toArray());
         List<ClusterHostsAndVMs> dataList = getCallsHandler().executeReadList("GetHostsAndVmsForClusters",
                 ClusterHostsAndVMsRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("cluster_ids", groups));
+                        .addValue("cluster_ids", createArrayOf("uuid", groupsById.keySet().toArray())));
 
-        c.close();
         for (ClusterHostsAndVMs groupDetail : dataList) {
             groupsById.get(groupDetail.getClusterId()).setGroupHostsAndVms(groupDetail);
         }

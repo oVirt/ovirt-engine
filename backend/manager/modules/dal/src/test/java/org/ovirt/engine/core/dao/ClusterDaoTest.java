@@ -481,7 +481,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetVmHostCount() throws Exception {
+    public void testGetVmHostCount() {
         Guid guid = FixturesTool.CLUSTER_RHEL6_ISCSI;
         List<Cluster> clusters = new ArrayList<>();
         clusters.add(dao.get(guid));
