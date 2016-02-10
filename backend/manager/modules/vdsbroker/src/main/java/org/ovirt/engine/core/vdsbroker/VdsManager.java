@@ -101,6 +101,7 @@ public class VdsManager {
 
     protected final int HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
+    private HostConnectionRefresher hostRefresher;
 
     public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager, DbFacade dbFacade) {
         HOST_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
@@ -173,6 +174,9 @@ public class VdsManager {
 
         vmsRefresher = getRefresherFactory().create(this);
         vmsRefresher.startMonitoring();
+
+        hostRefresher = new HostConnectionRefresher(this, resourceManager);
+        hostRefresher.start();
     }
 
     private RefresherFactory getRefresherFactory() {
@@ -513,6 +517,10 @@ public class VdsManager {
                 resourceManager.getEventListener().handleVdsVersion(vds.getId());
             }
         }
+    }
+
+    public void refreshHost() {
+        refreshHost(cachedVds);
     }
 
     public void setStatus(VDSStatus status, VDS vds) {
@@ -857,6 +865,7 @@ public class VdsManager {
         }
 
         vmsRefresher.stopMonitoring();
+        hostRefresher.stop();
         vdsProxy.close();
     }
 
