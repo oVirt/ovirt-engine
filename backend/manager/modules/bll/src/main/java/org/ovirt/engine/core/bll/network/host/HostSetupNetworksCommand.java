@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.FindActiveVmsUsingNetwork;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
@@ -115,6 +116,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
+
+    @Inject
+    private FindActiveVmsUsingNetwork findActiveVmsUsingNetwork;
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
@@ -277,6 +281,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 networkClusterDao,
                 networkDao,
                 vdsDao,
+                findActiveVmsUsingNetwork,
                 hostSetupNetworksValidatorHelper,
                 vmDao,
                 networkExclusivenessValidatorResolver,

@@ -4,9 +4,9 @@ import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
-public final class VmNetworkCanBeUpdatedPredicate implements Predicate<VmNetworkInterface> {
+public final class NicIsPluggedPredicate implements Predicate<VmNetworkInterface> {
 
-    private static final Predicate<VmNetworkInterface> instance = new VmNetworkCanBeUpdatedPredicate();
+    private static final Predicate<VmNetworkInterface> instance = new NicIsPluggedPredicate();
 
     public static Predicate<VmNetworkInterface> getInstance() {
         return instance;

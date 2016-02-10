@@ -14,7 +14,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.FindActiveVmsUsingNetwork;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
@@ -83,6 +83,7 @@ public class HostSetupNetworksValidator {
     private final NetworkDao networkDao;
     private final VdsDao vdsDao;
     private final BusinessEntityMap<CreateOrUpdateBond> createOrUpdateBondBusinessEntityMap;
+    private final FindActiveVmsUsingNetwork findActiveVmsUsingNetwork;
     private final VmDao vmDao;
     private Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
@@ -99,6 +100,7 @@ public class HostSetupNetworksValidator {
             NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
             VdsDao vdsDao,
+            FindActiveVmsUsingNetwork findActiveVmsUsingNetwork,
             HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
             VmDao vmDao,
             NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver,
@@ -111,6 +113,7 @@ public class HostSetupNetworksValidator {
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
+        this.findActiveVmsUsingNetwork = findActiveVmsUsingNetwork;
         this.vmDao = vmDao;
         this.existingInterfacesMap = new BusinessEntityMap<>(existingInterfaces);
         this.networkBusinessEntityMap = networkBusinessEntityMap;
@@ -298,8 +301,9 @@ public class HostSetupNetworksValidator {
     @SuppressWarnings("unchecked")
     ValidationResult validateNotRemovingUsedNetworkByVms(String removedNetworkName) {
         final List<String> removedNetworkNames = Collections.singletonList(removedNetworkName);
-        final List<String> vmsNames = getVmInterfaceManager().findActiveVmsUsingNetworks(host.getId(),
-                removedNetworkNames);
+        final List<String> vmsNames =
+                findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(host.getId(), removedNetworkNames);
+
         DetachNetworkUsedByVmValidator detachNetworkUsedByVmValidator =
                 new DetachNetworkUsedByVmValidator(vmsNames, removedNetworkNames);
         return detachNetworkUsedByVmValidator.validate();
@@ -933,10 +937,6 @@ public class HostSetupNetworksValidator {
 
     private Network existingNetworkRelatedToAttachment(NetworkAttachment attachment) {
         return networkBusinessEntityMap.get(attachment.getNetworkId());
-    }
-
-    VmInterfaceManager getVmInterfaceManager() {
-        return new VmInterfaceManager();
     }
 
     private boolean skipValidation(ValidationResult validationResult) {

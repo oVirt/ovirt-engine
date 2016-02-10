@@ -9,7 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VmNetworkCanBeUpdatedPredicateTest {
+public class NicIsPluggedPredicateTest {
 
     @Mock
     private VmNetworkInterface mockVmNetworkInterface;
@@ -19,7 +19,7 @@ public class VmNetworkCanBeUpdatedPredicateTest {
 
         Mockito.when(mockVmNetworkInterface.isPlugged()).thenReturn(true);
 
-        Assert.assertTrue(VmNetworkCanBeUpdatedPredicate.getInstance().test(mockVmNetworkInterface));
+        Assert.assertTrue(NicIsPluggedPredicate.getInstance().test(mockVmNetworkInterface));
 
         Mockito.verify(mockVmNetworkInterface).isPlugged();
         Mockito.verify(mockVmNetworkInterface, Mockito.never()).isLinked();
@@ -30,7 +30,7 @@ public class VmNetworkCanBeUpdatedPredicateTest {
 
         Mockito.when(mockVmNetworkInterface.isPlugged()).thenReturn(false);
 
-        Assert.assertFalse(VmNetworkCanBeUpdatedPredicate.getInstance().test(mockVmNetworkInterface));
+        Assert.assertFalse(NicIsPluggedPredicate.getInstance().test(mockVmNetworkInterface));
 
         Mockito.verify(mockVmNetworkInterface).isPlugged();
         Mockito.verify(mockVmNetworkInterface, Mockito.never()).isLinked();

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.network;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -10,13 +8,10 @@ import java.util.Map;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -142,36 +137,6 @@ public class VmInterfaceManager {
         }
 
         TransactionSupport.resume(transaction);
-    }
-
-    /**
-     * Finds active VMs which actively uses a network from a given networks list
-     *
-     * @param vdsId
-     *            The host id on which VMs are running
-     * @param networks
-     *            the networks to check if used
-     * @return A list of VM names which uses the networks
-     */
-    public List<String> findActiveVmsUsingNetworks(Guid vdsId, Collection<String> networks) {
-        if (networks.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<VM> runningVms = getVmDao().getAllRunningForVds(vdsId);
-        List<String> vmNames = new ArrayList<>();
-        for (VM vm : runningVms) {
-            List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-            for (VmNetworkInterface vmNic : vmInterfaces) {
-                if (VmNetworkCanBeUpdatedPredicate.getInstance().test(vmNic) &&
-                    vmNic.getNetworkName() != null &&
-                    networks.contains(vmNic.getNetworkName())) {
-                    vmNames.add(vm.getName());
-                    break;
-                }
-            }
-        }
-        return vmNames;
     }
 
     /***

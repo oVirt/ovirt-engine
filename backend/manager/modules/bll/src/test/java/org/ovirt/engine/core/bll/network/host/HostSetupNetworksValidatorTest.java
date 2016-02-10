@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.FindActiveVmsUsingNetwork;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
@@ -81,6 +81,9 @@ public class HostSetupNetworksValidatorTest {
 
     @Mock
     private NetworkAttachmentDao networkAttachmentDaoMock;
+
+    @Mock
+    private FindActiveVmsUsingNetwork findActiveVmsUsingNetwork;
 
     @Mock
     private BusinessEntityMap<Network> mockBusinessEntityMap;
@@ -656,11 +659,9 @@ public class HostSetupNetworksValidatorTest {
         HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
             .build());
 
-        VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
-        doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
 
-        when(vmInterfaceManagerMock.findActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
-            .thenReturn(Collections.<String>emptyList());
+        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
+                .thenReturn(Collections.<String>emptyList());
 
         assertThat(validator.validateNotRemovingUsedNetworkByVms("removedNet"), isValid());
     }
@@ -1685,6 +1686,7 @@ public class HostSetupNetworksValidatorTest {
                 networkClusterDaoMock,
                 networkDaoMock,
                 vdsDaoMock,
+                findActiveVmsUsingNetwork,
                 new HostSetupNetworksValidatorHelper(),
                 vmDao,
                 mockNetworkExclusivenessValidatorResolver,

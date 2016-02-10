@@ -20,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
@@ -65,9 +64,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @Mock
     private NetworkValidator networkValidatorMock;
-
-    @Mock
-    private ManagementNetworkUtil managementNetworkUtilMock;
 
     @Mock
     private VmDao vmDao;
