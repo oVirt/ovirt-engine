@@ -894,7 +894,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         host.setComment(model.getComment().getEntity());
         host.setHostName(model.getHost().getEntity().trim());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setProtocol(VdsProtocol.fromValue(model.getProtocol().getEntity() ? VdsProtocol.STOMP.toString() : VdsProtocol.XML.toString()));
+        host.setProtocol(model.getProtocol().getEntity() ? VdsProtocol.STOMP : VdsProtocol.XML);
         host.setSshPort(Integer.parseInt(model.getAuthSshPort().getEntity().toString()));
         boolean sshUsernameSet = model.getUserName().getEntity() != null;
         host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity() : null);

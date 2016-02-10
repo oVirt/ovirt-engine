@@ -20,7 +20,7 @@ public enum VdsProtocol {
 
     private Integer value;
 
-    private VdsProtocol(Integer value) {
+    VdsProtocol(Integer value) {
         this.value = value;
     }
 
@@ -34,13 +34,5 @@ public enum VdsProtocol {
 
     public static VdsProtocol fromValue(Integer value) {
         return MAPPING.get(value);
-    }
-
-    public static VdsProtocol fromValue(String value) {
-        try {
-            return valueOf(value.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
     }
 }

@@ -113,6 +113,7 @@ public class ProtocolDetector implements AutoCloseable {
      * Updates DB with fall back protocol (xmlrpc).
      */
     public void setFallbackProtocol() {
+        log.info("Fallback for XML-RPC protocol for host '{}' ({})", vds.getName(), vds.getId());
         setFallbackProtocol(VdsProtocol.XML);
         fallbackTriggered = true;
     }
