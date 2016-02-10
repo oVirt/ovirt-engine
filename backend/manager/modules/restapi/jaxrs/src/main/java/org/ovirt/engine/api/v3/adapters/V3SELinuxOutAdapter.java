@@ -20,7 +20,7 @@ import org.ovirt.engine.api.model.SELinux;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3SELinux;
 
-public class V3SeLinuxOutAdapter implements V3Adapter<SELinux, V3SELinux> {
+public class V3SELinuxOutAdapter implements V3Adapter<SELinux, V3SELinux> {
     @Override
     public V3SELinux adapt(SELinux from) {
         V3SELinux to = new V3SELinux();
