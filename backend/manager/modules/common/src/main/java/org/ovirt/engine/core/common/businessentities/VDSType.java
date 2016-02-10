@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public enum VDSType {
     VDS(0),
+    oVirtNode(1),
     oVirtVintageNode(2);
 
     private int intValue;
