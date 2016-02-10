@@ -2235,6 +2235,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SriovHotPlugSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AllowEditingHostedEngine,
+
     Invalid
 
 }

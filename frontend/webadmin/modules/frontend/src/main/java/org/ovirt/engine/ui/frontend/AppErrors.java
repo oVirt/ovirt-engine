@@ -3932,5 +3932,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot remove unmanaged network ${network} from host, as it does not exist on the host.")
     String REMOVED_UNMANAGED_NETWORK_DOES_NOT_EXISIT_ON_HOST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The VM is a hosted engine and editing is not allowed. See configuration value AllowEditingHostedEngine.")
+    String ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED();
 }
 

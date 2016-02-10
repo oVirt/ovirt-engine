@@ -17,8 +17,11 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.validation.annotation.HostedEngineUpdate;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
+@HostedEngineUpdate(groups = { UpdateEntity.class })
 public class VmManagementParametersBase extends VmOperationParameterBase implements HasGraphicsDevices, HasVmIcon {
 
     private static final long serialVersionUID = -7695630335738521510L;
