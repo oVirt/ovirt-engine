@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -35,6 +37,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VmUtils;
+import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -94,6 +97,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         implements QuotaStorageDependent {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
+
+    @Inject
+    private VmNicMacsUtils vmNicMacsUtils;
 
     private List<DiskImage> imageList;
 
@@ -421,7 +427,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
-        if (!validate(getImportValidator().validateMacAddress(getVm().getInterfaces()))) {
+        if (!validate(vmNicMacsUtils.validateMacAddress(getVm().getInterfaces(), getMacPool()))) {
             return false;
         }
 

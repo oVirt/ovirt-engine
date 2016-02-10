@@ -14,6 +14,8 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -23,7 +25,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.ImportValidator;
+import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -79,6 +81,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
      * domain.
      */
     private final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
+
+    @Inject
+    VmNicMacsUtils vmNicMacsUtils;
+
+    @Inject
+    MacPoolPerCluster poolPerCluster;
 
     @Inject
     private VmTemplateDao vmTemplateDao;
@@ -213,7 +221,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         }
 
-        if (!validate(new ImportValidator(getParameters()).validateMacAddress(getVmTemplate().getInterfaces()))) {
+        if (!validate(vmNicMacsUtils.validateMacAddress(getVmTemplate().getInterfaces(), getMacPool()))) {
             return false;
         }
 
@@ -304,6 +312,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         return true;
+    }
+
+    private MacPool getMacPool() {
+        return poolPerCluster.getMacPoolForCluster(getClusterId(), getContext());
     }
 
     protected List<DiskImage> getImages() {
