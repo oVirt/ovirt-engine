@@ -82,7 +82,8 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 drive.put(VdsProperties.ImageId, diskImage.getId().toString());
                 drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
 
-                VmInfoBuilder.handleIoTune(vmDevice, diskImage, new HashMap<>(), new HashMap<>());
+                VmInfoBuilder.handleIoTune(vmDevice, VmInfoBuilder.loadStorageQos(diskImage));
+
                 if (vmDevice.getSpecParams() != null) {
                     drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 }

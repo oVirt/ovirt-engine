@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -320,9 +321,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
         int sPaprVscsiIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
-        // map to avoid fetching qos object for same disk profile id
-        Map<Guid, Guid> diskProfileStorageQosMap = new HashMap<>();
-        Map<Guid, Map<String, Long>> storageQosIoTuneMap = new HashMap<>();
+
+        Map<Guid, StorageQos> qosCache = new HashMap<>();
 
         int pinnedDriveIndex = 0;
 
@@ -404,7 +404,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                                 .toLowerCase());
 
-                        handleIoTune(vmDevice, diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
+                        if (!qosCache.containsKey(diskImage.getDiskProfileId())) {
+                            qosCache.put(diskImage.getDiskProfileId(), loadStorageQos(diskImage));
+                        }
+                        handleIoTune(vmDevice, qosCache.get(diskImage.getDiskProfileId()));
                         break;
                     case LUN:
                         LunDisk lunDisk = (LunDisk) disk;
@@ -489,74 +492,22 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * Prepare the ioTune limits map and add it to the specParams if supported by the cluster
      *
      * @param vmDevice The disk device with QoS limits
-     * @param diskImage The image that backs up the vmDevice
-     * @param diskProfileStorageQosMap Cache object to reuse existing disk profiles entitites when iterating
-     * @param storageQosIoTuneMap Cache object to reuse existing ioTune QoS entitites when iterating
+     * @param storageQos StorageQos
      */
-    static void handleIoTune(VmDevice vmDevice, DiskImage diskImage, Map<Guid, Guid> diskProfileStorageQosMap, Map<Guid, Map<String, Long>> storageQosIoTuneMap) {
-        Map<String, Long> ioTune = buildIoTune(diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
-
-        if (ioTune != null) {
+    public static void handleIoTune(VmDevice vmDevice, StorageQos storageQos) {
+        if (storageQos != null) {
             if (vmDevice.getSpecParams() == null) {
                 vmDevice.setSpecParams(new HashMap<>());
             }
-            vmDevice.getSpecParams().put(VdsProperties.Iotune, ioTune);
+            vmDevice.getSpecParams().put(VdsProperties.Iotune, IoTuneUtils.ioTuneMapFrom(storageQos));
         }
     }
 
-    private static Map<String, Long> buildIoTune(DiskImage diskImage,
-            Map<Guid, Guid> diskProfileStorageQosMap,
-            Map<Guid, Map<String, Long>> storageQosIoTuneMap) {
-        Guid diskProfileId = diskImage.getDiskProfileId();
-        if (diskProfileId == null) {
-            return null;
-        }
-        Guid storageQosId = diskProfileStorageQosMap.get(diskProfileId);
-        if (storageQosId == null) {
-            StorageQos storageQos = DbFacade.getInstance().getStorageQosDao().getQosByDiskProfileId(diskProfileId);
-            if (storageQos == null) {
-                return null;
-            }
-            storageQosId = storageQos.getId();
-            diskProfileStorageQosMap.put(diskProfileId, storageQosId);
-            storageQosIoTuneMap.put(storageQosId, buildIoTuneMap(storageQos));
-        }
-
-        Map<String, Long> ioTuneMap = storageQosIoTuneMap.get(storageQosId);
-        // return map with values
-        if (!ioTuneMap.isEmpty()) {
-            return ioTuneMap;
-        }
-        return null;
-    }
-
-    private static Map<String, Long> buildIoTuneMap(StorageQos storageQos) {
-        // build map
-        Map<String, Long> ioTuneMap = new HashMap<>();
-        if (storageQos.getMaxThroughput() != null) {
-            // Convert MiB/s to B/s vdsm is expecting
-            ioTuneMap.put(VdsProperties.TotalBytesSec, storageQos.getMaxThroughput() * 1024 * 1024L);
-        }
-        if (storageQos.getMaxReadThroughput() != null) {
-            // Convert MiB/s to B/s vdsm is expecting
-
-            ioTuneMap.put(VdsProperties.ReadBytesSec, storageQos.getMaxReadThroughput() * 1024 * 1024L);
-        }
-        if (storageQos.getMaxWriteThroughput() != null) {
-            // Convert MiB/s to B/s vdsm is expecting
-            ioTuneMap.put(VdsProperties.WriteBytesSec, storageQos.getMaxWriteThroughput() * 1024 * 1024L);
-        }
-        if (storageQos.getMaxIops() != null) {
-            ioTuneMap.put(VdsProperties.TotalIopsSec, storageQos.getMaxIops().longValue());
-        }
-        if (storageQos.getMaxReadIops() != null) {
-            ioTuneMap.put(VdsProperties.ReadIopsSec, storageQos.getMaxReadIops().longValue());
-        }
-        if (storageQos.getMaxWriteIops() != null) {
-            ioTuneMap.put(VdsProperties.WriteIopsSec, storageQos.getMaxWriteIops().longValue());
-        }
-
-        return ioTuneMap;
+    public static StorageQos loadStorageQos(DiskImage diskImage) {
+       if (diskImage.getDiskProfileId() == null) {
+           return null;
+       }
+       return DbFacade.getInstance().getStorageQosDao().getQosByDiskProfileId(diskImage.getDiskProfileId());
     }
 
     @Override
