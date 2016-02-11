@@ -163,4 +163,14 @@ public enum VMStatus implements Identifiable {
     public boolean isSuspended() {
         return this == Suspended;
     }
+
+    /**
+     * This method reflects whether live Qos update is allowed on the VM
+     *
+     * @return true if live QoS update is allowed, false otherwise
+     */
+    public boolean isQualifiedForQosChange() {
+        // TODO - Add other status, if live QoS change is possible when the VM has the status
+        return this == Up;
+    }
 }

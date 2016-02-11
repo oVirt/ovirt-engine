@@ -1,12 +1,23 @@
 package org.ovirt.engine.core.bll.qos;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.VmSlaPolicyUtils;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageQosValidator;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
 public class RemoveStorageQosCommand extends RemoveQosCommandBase<StorageQos, QosValidator<StorageQos>> {
+
+    @Inject
+    VmSlaPolicyUtils vmSlaPolicyUtils;
 
     public RemoveStorageQosCommand(QosParametersBase<StorageQos> parameters) {
         super(parameters);
@@ -22,4 +33,14 @@ public class RemoveStorageQosCommand extends RemoveQosCommandBase<StorageQos, Qo
         return new StorageQosValidator(qos);
     }
 
+    @Override
+    protected void executeCommand() {
+        Map<Guid, List<DiskImage>> vmDisksMap = vmSlaPolicyUtils.getRunningVmDiskImageMapWithQos(getQosId());
+
+        super.executeCommand();
+
+        // After successful command, refresh qos
+        StorageQos unlimitedQos = new StorageQos();
+        vmSlaPolicyUtils.refreshVmsStorageQos(vmDisksMap, unlimitedQos);
+    }
 }

@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.event.Observes;
@@ -41,6 +44,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -56,6 +60,10 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
+import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -68,7 +76,6 @@ import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -76,9 +83,12 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.qos.CpuQosDao;
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -106,6 +116,12 @@ public class VdsEventListener implements IVdsEventListener {
     private VdsDao vdsDao;
     @Inject
     private StoragePoolDao storagePoolDao;
+    @Inject
+    private CpuQosDao cpuQosDao;
+    @Inject
+    private StorageQosDao storageQosDao;
+    @Inject
+    private DiskDao diskDao;
     @Inject
     private BackendInternal backend;
     @Inject
@@ -512,17 +528,53 @@ public class VdsEventListener implements IVdsEventListener {
         if (vmIds.isEmpty()) {
             return;
         }
+
         ThreadPoolUtil.execute(new Runnable() {
             @Override public void run() {
+
+                // Get Disks and CpuQos of VMs from the DB
+                Map<Guid, List<Disk>> diskMap = diskDao.getAllForVms(vmIds);
+                Map<Guid, CpuQos> cpuQosMap = cpuQosDao.getCpuQosByVmIds(vmIds);
+
+                Map<Guid, List<DiskImage>> diskImageMap = new HashMap<>();
+                Set<Guid> diskProfileIds = new HashSet<>();
+
                 for (Guid vmId : vmIds) {
+                    // Filter - only plugged disk images with disk profile remain
+                    List<DiskImage> diskImages = new ArrayList<DiskImage>();
+                    for (Disk disk : diskMap.get(vmId)) {
+                        if (disk.getPlugged() && disk.getDiskStorageType() == DiskStorageType.IMAGE
+                                && ((DiskImage) disk).getDiskProfileId() != null) {
+                            diskImages.add((DiskImage) disk);
+                        }
+                    }
 
-                    // This will be changed in next commit
-                    CpuQos qos = DbFacade.getInstance().getCpuQosDao()
-                            .getCpuQosByVmIds(Collections.singleton(vmId)).get(vmId);
+                    diskImageMap.put(vmId, diskImages);
 
-                    if (qos != null && qos.getCpuLimit() != null) {
-                        resourceManagerProvider.get().runVdsCommand(VDSCommandType.UpdateVmPolicy,
-                                new UpdateVmPolicyVDSParams(vdsId, vmId, qos.getCpuLimit().intValue()));
+                    for (DiskImage img : diskImages) {
+                        diskProfileIds.add(img.getDiskProfileId());
+                    }
+                }
+
+                // Get StorageQos of used disk profiles
+                Map<Guid, StorageQos> storageQosMap = storageQosDao.getQosByDiskProfileIds(diskProfileIds);
+
+                // Call VmSlaPolicyCommand for each VM
+                for (Guid vmId : vmIds) {
+                    CpuQos cpuQos = cpuQosMap.get(vmId);
+
+                    VmSlaPolicyParameters params = new VmSlaPolicyParameters(vmId, cpuQos);
+                    for (DiskImage diskImage : diskImageMap.get(vmId)) {
+                        Guid diskProfileId = diskImage.getDiskProfileId();
+                        StorageQos storageQos = storageQosMap.get(diskProfileId);
+
+                        if (storageQos != null) {
+                            params.getStorageQos().put(diskImage, storageQos);
+                        }
+                    }
+
+                    if (!params.isEmpty()) {
+                        backend.runInternalAction(VdcActionType.VmSlaPolicy, params);
                     }
                 }
             }
