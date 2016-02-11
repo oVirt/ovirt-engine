@@ -70,8 +70,9 @@ public class GetSignedWebsocketProxyTicketQuery<P extends GetSignedWebsocketProx
     private Map<String, Object> createTicket(GraphicsInfo graphicsInfo) {
         Map<String, Object> jsonModel = new HashMap<>();
         jsonModel.put("host", graphicsInfo.getIp());
-        boolean useSsl = graphicsInfo.getTlsPort() != -1;
-        int port = useSsl ? graphicsInfo.getTlsPort() : graphicsInfo.getPort();
+        Integer tlsPort = graphicsInfo.getTlsPort();
+        boolean useSsl = tlsPort != null ? tlsPort != -1 : false;
+        int port = useSsl ? tlsPort : graphicsInfo.getPort();
         jsonModel.put("port", String.valueOf(port));
         jsonModel.put("ssl_target", useSsl);
         return jsonModel;
