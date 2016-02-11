@@ -66,4 +66,6 @@ public interface NetworkPanelsStyle extends CssResource {
     String vlanLabel();
 
     String titleLabel();
+
+    String fullWidth();
 }
