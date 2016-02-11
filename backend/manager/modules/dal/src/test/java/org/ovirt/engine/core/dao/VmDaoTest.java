@@ -15,10 +15,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -576,6 +579,43 @@ public class VmDaoTest extends BaseDaoTestCase {
 
         assertNotNull(result);
         assertEquals(2, result.size());
+    }
+
+    private void createHostedEngineVm(Guid id) {
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setId(id);
+        vmStatic.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+        vmStatic.setName("HostedEngine");
+        vmStatic.setOrigin(OriginType.HOSTED_ENGINE);
+        getDbFacade().getVmStaticDao().save(vmStatic);
+
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setId(id);
+        getDbFacade().getVmDynamicDao().save(vmDynamic);
+
+        VmStatistics vmStatistics = new VmStatistics();
+        vmStatistics.setId(id);
+        getDbFacade().getVmStatisticsDao().save(vmStatistics);
+    }
+
+    @Test
+    public void testGetVmsByOrigins() {
+        Guid heVmId = Guid.newGuid();
+        List<OriginType> list1 = Arrays.asList(OriginType.HOSTED_ENGINE, OriginType.MANAGED_HOSTED_ENGINE);
+        List<OriginType> list2 = Arrays.asList(OriginType.HOSTED_ENGINE);
+        List<OriginType> list3 = Arrays.asList(OriginType.MANAGED_HOSTED_ENGINE);
+
+        int count1 = dao.getVmsByOrigins(list1).size();
+        int count2 = dao.getVmsByOrigins(list2).size();
+        int count3 = dao.getVmsByOrigins(list3).size();
+
+        createHostedEngineVm(heVmId);
+
+        assertEquals(count1 + 1, dao.getVmsByOrigins(list1).size());
+        assertEquals(count2 + 1, dao.getVmsByOrigins(list2).size());
+        assertEquals(count3, dao.getVmsByOrigins(list3).size());
+
+        dao.remove(heVmId);
     }
 
 }
