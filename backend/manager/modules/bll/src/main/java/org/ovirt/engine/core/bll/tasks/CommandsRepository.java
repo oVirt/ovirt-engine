@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -19,6 +22,7 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandContextsCache;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
@@ -26,6 +30,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +45,8 @@ public class CommandsRepository {
     private Integer pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
     private final Object LOCK;
     private volatile boolean childHierarchyInitialized;
+    @Inject
+    private AsyncTaskDao asyncTaskDao;
 
     public CommandsRepository() {
         commandContainers = new ConcurrentHashMap<>();
@@ -56,6 +63,27 @@ public class CommandsRepository {
                 addToCallbackMap(cmdEntity.getId(), new CommandContainer(cmd.getCallback(), pollingRate));
             }
         }
+    }
+
+    /**
+     * This method is responsible to update the statuses of all the commands that ACTIVE and persisted
+     * but aren't managed to status that'll reflect that their execution was ended with failure.
+     */
+    @PostConstruct
+    private void handleUnmanagedCommands() {
+        List<AsyncTask> asyncTasks = asyncTaskDao.getAll();
+        Set<Guid> asyncTaskManagerManagedCommands = asyncTasks.stream().filter(x -> x.getVdsmTaskId() != null)
+                .map(x -> x.getRootCommandId()).collect(Collectors.toSet());
+        asyncTaskManagerManagedCommands.addAll(asyncTasks.stream().filter(x -> x.getVdsmTaskId() != null)
+                .map(x -> x.getCommandId()).collect(Collectors.toSet()));
+
+        // this will update all the commands that aren't managed by callback/async task manager and are active
+        // and will set their status to ENDED_WITH_FAILURE.
+        getCommands(false).stream()
+                .filter(x -> !x.isCallbackEnabled())
+                .filter(x -> x.getCommandStatus() == CommandStatus.ACTIVE)
+                .filter(x -> !asyncTaskManagerManagedCommands.contains(x.getId()))
+                .forEach(x -> commandsCache.updateCommandStatus(x.getId(), CommandStatus.ENDED_WITH_FAILURE));
     }
 
     public void addToCallbackMap(Guid commandId, CommandContainer commandContainer) {

@@ -106,6 +106,8 @@ public final class AsyncTaskManager {
         _cacheTimeInMinutes = Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
     }
 
+    // NOTE - any change to the logic here and in the async tasks managed command requires inspection of
+    // CommandExecutor.handleUnmanagedCommands()
     public void initAsyncTaskManager() {
         tasksInDbAfterRestart = new ConcurrentHashMap<>();
         Map<Guid, List<AsyncTask>> rootCommandIdToTasksMap = groupTasksByRootCommandId(coco.getAllAsyncTasksFromDb());
