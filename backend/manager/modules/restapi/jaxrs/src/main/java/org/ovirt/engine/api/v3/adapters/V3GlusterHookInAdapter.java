@@ -27,6 +27,12 @@ public class V3GlusterHookInAdapter implements V3Adapter<V3GlusterHook, GlusterH
     @Override
     public GlusterHook adapt(V3GlusterHook from) {
         GlusterHook to = new GlusterHook();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetChecksum()) {
             to.setChecksum(from.getChecksum());
         }

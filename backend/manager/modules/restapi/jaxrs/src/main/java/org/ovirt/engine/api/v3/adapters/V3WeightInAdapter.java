@@ -26,6 +26,12 @@ public class V3WeightInAdapter implements V3Adapter<V3Weight, Weight> {
     @Override
     public Weight adapt(V3Weight from) {
         Weight to = new Weight();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

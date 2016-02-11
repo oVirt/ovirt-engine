@@ -31,6 +31,12 @@ public class V3StatisticInAdapter implements V3Adapter<V3Statistic, Statistic> {
     @Override
     public Statistic adapt(V3Statistic from) {
         Statistic to = new Statistic();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBrick()) {
             to.setBrick(adaptIn(from.getBrick()));
         }

@@ -40,6 +40,12 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
     @Override
     public V3VM adapt(Vm from) {
         V3VM to = new V3VM();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetBios()) {
             to.setBios(adaptOut(from.getBios()));
         }

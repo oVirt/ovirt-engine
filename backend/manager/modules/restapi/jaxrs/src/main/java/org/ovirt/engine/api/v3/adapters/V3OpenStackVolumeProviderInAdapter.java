@@ -27,6 +27,12 @@ public class V3OpenStackVolumeProviderInAdapter implements V3Adapter<V3OpenStack
     @Override
     public OpenStackVolumeProvider adapt(V3OpenStackVolumeProvider from) {
         OpenStackVolumeProvider to = new OpenStackVolumeProvider();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAuthenticationUrl()) {
             to.setAuthenticationUrl(from.getAuthenticationUrl());
         }

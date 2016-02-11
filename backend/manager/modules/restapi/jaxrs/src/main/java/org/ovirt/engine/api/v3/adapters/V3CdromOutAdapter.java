@@ -27,6 +27,12 @@ public class V3CdromOutAdapter implements V3Adapter<Cdrom, V3CdRom> {
     @Override
     public V3CdRom adapt(Cdrom from) {
         V3CdRom to = new V3CdRom();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

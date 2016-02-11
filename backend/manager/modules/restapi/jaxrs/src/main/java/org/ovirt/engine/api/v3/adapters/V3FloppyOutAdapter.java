@@ -27,6 +27,12 @@ public class V3FloppyOutAdapter implements V3Adapter<Floppy, V3Floppy> {
     @Override
     public V3Floppy adapt(Floppy from) {
         V3Floppy to = new V3Floppy();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

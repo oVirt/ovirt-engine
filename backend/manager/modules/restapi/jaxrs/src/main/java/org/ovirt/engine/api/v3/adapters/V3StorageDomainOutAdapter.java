@@ -27,6 +27,12 @@ public class V3StorageDomainOutAdapter implements V3Adapter<StorageDomain, V3Sto
     @Override
     public V3StorageDomain adapt(StorageDomain from) {
         V3StorageDomain to = new V3StorageDomain();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAvailable()) {
             to.setAvailable(from.getAvailable());
         }

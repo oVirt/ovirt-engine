@@ -28,6 +28,12 @@ public class V3GlusterBrickInAdapter implements V3Adapter<V3GlusterBrick, Gluste
     @Override
     public GlusterBrick adapt(V3GlusterBrick from) {
         GlusterBrick to = new GlusterBrick();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBrickDir()) {
             to.setBrickDir(from.getBrickDir());
         }

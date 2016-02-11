@@ -26,6 +26,12 @@ public class V3StepInAdapter implements V3Adapter<V3Step, Step> {
     @Override
     public Step adapt(V3Step from) {
         Step to = new Step();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

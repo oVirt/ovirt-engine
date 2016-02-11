@@ -26,6 +26,12 @@ public class V3JobInAdapter implements V3Adapter<V3Job, Job> {
     @Override
     public Job adapt(V3Job from) {
         Job to = new Job();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAutoCleared()) {
             to.setAutoCleared(from.isAutoCleared());
         }

@@ -26,6 +26,12 @@ public class V3GroupOutAdapter implements V3Adapter<Group, V3Group> {
     @Override
     public V3Group adapt(Group from) {
         V3Group to = new V3Group();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

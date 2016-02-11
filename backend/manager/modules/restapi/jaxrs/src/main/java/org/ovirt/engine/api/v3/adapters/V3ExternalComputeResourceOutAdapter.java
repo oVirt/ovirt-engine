@@ -26,6 +26,12 @@ public class V3ExternalComputeResourceOutAdapter implements V3Adapter<ExternalCo
     @Override
     public V3ExternalComputeResource adapt(ExternalComputeResource from) {
         V3ExternalComputeResource to = new V3ExternalComputeResource();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

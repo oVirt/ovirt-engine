@@ -27,6 +27,12 @@ public class V3SchedulingPolicyUnitOutAdapter implements V3Adapter<SchedulingPol
     @Override
     public V3SchedulingPolicyUnit adapt(SchedulingPolicyUnit from) {
         V3SchedulingPolicyUnit to = new V3SchedulingPolicyUnit();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

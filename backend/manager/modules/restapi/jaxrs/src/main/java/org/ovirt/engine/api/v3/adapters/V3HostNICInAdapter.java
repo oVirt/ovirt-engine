@@ -29,6 +29,12 @@ public class V3HostNICInAdapter implements V3Adapter<V3HostNIC, HostNic> {
     @Override
     public HostNic adapt(V3HostNIC from) {
         HostNic to = new HostNic();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBaseInterface()) {
             to.setBaseInterface(from.getBaseInterface());
         }

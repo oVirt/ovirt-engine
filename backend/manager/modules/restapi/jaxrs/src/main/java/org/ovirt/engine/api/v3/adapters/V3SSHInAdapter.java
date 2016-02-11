@@ -26,6 +26,12 @@ public class V3SSHInAdapter implements V3Adapter<V3SSH, Ssh> {
     @Override
     public Ssh adapt(V3SSH from) {
         Ssh to = new Ssh();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAuthenticationMethod()) {
             to.setAuthenticationMethod(from.getAuthenticationMethod());
         }

@@ -26,6 +26,12 @@ public class V3QosOutAdapter implements V3Adapter<Qos, V3QoS> {
     @Override
     public V3QoS adapt(Qos from) {
         V3QoS to = new V3QoS();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

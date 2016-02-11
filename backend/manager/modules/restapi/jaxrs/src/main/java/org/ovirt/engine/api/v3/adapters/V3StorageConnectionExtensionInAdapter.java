@@ -26,6 +26,12 @@ public class V3StorageConnectionExtensionInAdapter implements V3Adapter<V3Storag
     @Override
     public StorageConnectionExtension adapt(V3StorageConnectionExtension from) {
         StorageConnectionExtension to = new StorageConnectionExtension();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

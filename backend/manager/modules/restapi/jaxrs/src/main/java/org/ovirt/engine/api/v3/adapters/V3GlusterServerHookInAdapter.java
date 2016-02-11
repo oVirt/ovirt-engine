@@ -26,6 +26,12 @@ public class V3GlusterServerHookInAdapter implements V3Adapter<V3GlusterServerHo
     @Override
     public GlusterServerHook adapt(V3GlusterServerHook from) {
         GlusterServerHook to = new GlusterServerHook();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetChecksum()) {
             to.setChecksum(from.getChecksum());
         }

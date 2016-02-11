@@ -28,6 +28,12 @@ public class V3GlusterBrickOutAdapter implements V3Adapter<GlusterBrick, V3Glust
     @Override
     public V3GlusterBrick adapt(GlusterBrick from) {
         V3GlusterBrick to = new V3GlusterBrick();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetBrickDir()) {
             to.setBrickDir(from.getBrickDir());
         }

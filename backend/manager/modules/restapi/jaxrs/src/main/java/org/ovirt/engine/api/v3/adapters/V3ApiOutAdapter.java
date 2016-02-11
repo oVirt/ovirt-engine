@@ -26,6 +26,9 @@ public class V3ApiOutAdapter implements V3Adapter<Api, V3API> {
     @Override
     public V3API adapt(Api from) {
         V3API to = new V3API();
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetLinks()) {
             to.getLinks().addAll(adaptOut(from.getLinks()));
         }

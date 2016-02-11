@@ -16,6 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
+import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Certificate;
@@ -24,6 +26,12 @@ public class V3CertificateOutAdapter implements V3Adapter<Certificate, V3Certifi
     @Override
     public V3Certificate adapt(Certificate from) {
         V3Certificate to = new V3Certificate();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

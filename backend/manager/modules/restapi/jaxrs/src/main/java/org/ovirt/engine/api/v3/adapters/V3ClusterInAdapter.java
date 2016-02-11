@@ -27,6 +27,12 @@ public class V3ClusterInAdapter implements V3Adapter<V3Cluster, Cluster> {
     @Override
     public Cluster adapt(V3Cluster from) {
         Cluster to = new Cluster();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBallooningEnabled()) {
             to.setBallooningEnabled(from.isBallooningEnabled());
         }

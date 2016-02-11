@@ -26,6 +26,12 @@ public class V3ApplicationOutAdapter implements V3Adapter<Application, V3Applica
     @Override
     public V3Application adapt(Application from) {
         V3Application to = new V3Application();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

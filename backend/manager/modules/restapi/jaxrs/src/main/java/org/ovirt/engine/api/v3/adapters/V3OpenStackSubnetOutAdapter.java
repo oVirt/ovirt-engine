@@ -27,6 +27,12 @@ public class V3OpenStackSubnetOutAdapter implements V3Adapter<OpenStackSubnet, V
     @Override
     public V3OpenStackSubnet adapt(OpenStackSubnet from) {
         V3OpenStackSubnet to = new V3OpenStackSubnet();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCidr()) {
             to.setCidr(from.getCidr());
         }

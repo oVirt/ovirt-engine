@@ -27,6 +27,12 @@ public class V3AgentInAdapter implements V3Adapter<V3Agent, Agent> {
     @Override
     public Agent adapt(V3Agent from) {
         Agent to = new Agent();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAddress()) {
             to.setAddress(from.getAddress());
         }

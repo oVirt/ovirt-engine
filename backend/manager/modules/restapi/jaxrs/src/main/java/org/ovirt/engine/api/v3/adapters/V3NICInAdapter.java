@@ -29,6 +29,12 @@ public class V3NICInAdapter implements V3Adapter<V3NIC, Nic> {
     @Override
     public Nic adapt(V3NIC from) {
         Nic to = new Nic();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBootProtocol()) {
             to.setBootProtocol(from.getBootProtocol());
         }

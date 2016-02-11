@@ -28,6 +28,12 @@ public class V3GlusterVolumeProfileDetailsInAdapter implements V3Adapter<V3Glust
     @Override
     public GlusterVolumeProfileDetails adapt(V3GlusterVolumeProfileDetails from) {
         GlusterVolumeProfileDetails to = new GlusterVolumeProfileDetails();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBrickProfileDetails()) {
             to.setBrickProfileDetails(new BrickProfileDetails());
             to.getBrickProfileDetails().getBrickProfileDetails().addAll(adaptIn(from.getBrickProfileDetails().getBrickProfileDetail()));

@@ -29,6 +29,12 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
     @Override
     public Disk adapt(V3Disk from) {
         Disk to = new Disk();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetActive()) {
             to.setActive(from.isActive());
         }

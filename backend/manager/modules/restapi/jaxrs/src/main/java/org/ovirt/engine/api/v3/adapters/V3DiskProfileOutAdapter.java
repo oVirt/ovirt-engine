@@ -26,6 +26,12 @@ public class V3DiskProfileOutAdapter implements V3Adapter<DiskProfile, V3DiskPro
     @Override
     public V3DiskProfile adapt(DiskProfile from) {
         V3DiskProfile to = new V3DiskProfile();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

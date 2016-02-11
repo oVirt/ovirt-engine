@@ -27,6 +27,12 @@ public class V3WatchdogOutAdapter implements V3Adapter<Watchdog, V3WatchDog> {
     @Override
     public V3WatchDog adapt(Watchdog from) {
         V3WatchDog to = new V3WatchDog();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAction()) {
             to.setAction(from.getAction());
         }

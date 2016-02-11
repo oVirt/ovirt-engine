@@ -27,6 +27,12 @@ public class V3DataCenterOutAdapter implements V3Adapter<DataCenter, V3DataCente
     @Override
     public V3DataCenter adapt(DataCenter from) {
         V3DataCenter to = new V3DataCenter();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

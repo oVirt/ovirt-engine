@@ -27,6 +27,12 @@ public class V3KatelloErratumOutAdapter implements V3Adapter<KatelloErratum, V3K
     @Override
     public V3KatelloErratum adapt(KatelloErratum from) {
         V3KatelloErratum to = new V3KatelloErratum();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

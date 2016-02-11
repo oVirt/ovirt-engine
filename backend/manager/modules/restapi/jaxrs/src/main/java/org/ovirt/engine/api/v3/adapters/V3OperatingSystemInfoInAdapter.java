@@ -26,6 +26,12 @@ public class V3OperatingSystemInfoInAdapter implements V3Adapter<V3OperatingSyst
     @Override
     public OperatingSystemInfo adapt(V3OperatingSystemInfo from) {
         OperatingSystemInfo to = new OperatingSystemInfo();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

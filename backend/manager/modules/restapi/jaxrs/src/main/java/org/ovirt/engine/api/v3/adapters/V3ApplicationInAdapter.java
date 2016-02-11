@@ -26,6 +26,12 @@ public class V3ApplicationInAdapter implements V3Adapter<V3Application, Applicat
     @Override
     public Application adapt(V3Application from) {
         Application to = new Application();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

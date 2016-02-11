@@ -27,6 +27,12 @@ public class V3NumaNodeOutAdapter implements V3Adapter<NumaNode, V3NumaNode> {
     @Override
     public V3NumaNode adapt(NumaNode from) {
         V3NumaNode to = new V3NumaNode();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

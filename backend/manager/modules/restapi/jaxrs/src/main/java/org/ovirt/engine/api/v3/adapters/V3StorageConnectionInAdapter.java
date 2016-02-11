@@ -26,6 +26,12 @@ public class V3StorageConnectionInAdapter implements V3Adapter<V3StorageConnecti
     @Override
     public StorageConnection adapt(V3StorageConnection from) {
         StorageConnection to = new StorageConnection();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAddress()) {
             to.setAddress(from.getAddress());
         }

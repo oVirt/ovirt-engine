@@ -27,6 +27,12 @@ public class V3ReportedDeviceOutAdapter implements V3Adapter<ReportedDevice, V3R
     @Override
     public V3ReportedDevice adapt(ReportedDevice from) {
         V3ReportedDevice to = new V3ReportedDevice();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

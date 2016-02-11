@@ -29,6 +29,12 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
     @Override
     public DiskSnapshot adapt(V3DiskSnapshot from) {
         DiskSnapshot to = new DiskSnapshot();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetActive()) {
             to.setActive(from.isActive());
         }

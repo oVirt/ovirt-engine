@@ -27,6 +27,12 @@ public class V3FloppyInAdapter implements V3Adapter<V3Floppy, Floppy> {
     @Override
     public Floppy adapt(V3Floppy from) {
         Floppy to = new Floppy();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

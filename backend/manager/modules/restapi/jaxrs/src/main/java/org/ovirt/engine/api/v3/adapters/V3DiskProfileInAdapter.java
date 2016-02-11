@@ -26,6 +26,12 @@ public class V3DiskProfileInAdapter implements V3Adapter<V3DiskProfile, DiskProf
     @Override
     public DiskProfile adapt(V3DiskProfile from) {
         DiskProfile to = new DiskProfile();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

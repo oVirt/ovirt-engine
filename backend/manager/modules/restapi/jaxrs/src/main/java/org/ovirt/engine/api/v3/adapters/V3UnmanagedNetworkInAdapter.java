@@ -26,6 +26,12 @@ public class V3UnmanagedNetworkInAdapter implements V3Adapter<V3UnmanagedNetwork
     @Override
     public UnmanagedNetwork adapt(V3UnmanagedNetwork from) {
         UnmanagedNetwork to = new UnmanagedNetwork();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

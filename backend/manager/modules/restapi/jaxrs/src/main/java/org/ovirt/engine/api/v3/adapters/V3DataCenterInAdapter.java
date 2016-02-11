@@ -27,6 +27,12 @@ public class V3DataCenterInAdapter implements V3Adapter<V3DataCenter, DataCenter
     @Override
     public DataCenter adapt(V3DataCenter from) {
         DataCenter to = new DataCenter();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

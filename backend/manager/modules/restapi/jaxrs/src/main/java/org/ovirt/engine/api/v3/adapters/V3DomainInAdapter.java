@@ -26,6 +26,12 @@ public class V3DomainInAdapter implements V3Adapter<V3Domain, Domain> {
     @Override
     public Domain adapt(V3Domain from) {
         Domain to = new Domain();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

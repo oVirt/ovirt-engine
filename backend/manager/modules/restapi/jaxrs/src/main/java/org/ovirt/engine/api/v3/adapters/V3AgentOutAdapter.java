@@ -27,6 +27,12 @@ public class V3AgentOutAdapter implements V3Adapter<Agent, V3Agent> {
     @Override
     public V3Agent adapt(Agent from) {
         V3Agent to = new V3Agent();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAddress()) {
             to.setAddress(from.getAddress());
         }

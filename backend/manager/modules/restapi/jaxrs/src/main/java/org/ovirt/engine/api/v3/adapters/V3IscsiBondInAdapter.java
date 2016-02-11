@@ -28,6 +28,12 @@ public class V3IscsiBondInAdapter implements V3Adapter<V3IscsiBond, IscsiBond> {
     @Override
     public IscsiBond adapt(V3IscsiBond from) {
         IscsiBond to = new IscsiBond();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

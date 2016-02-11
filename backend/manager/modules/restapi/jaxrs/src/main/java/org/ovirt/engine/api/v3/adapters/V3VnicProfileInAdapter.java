@@ -27,6 +27,12 @@ public class V3VnicProfileInAdapter implements V3Adapter<V3VnicProfile, VnicProf
     @Override
     public VnicProfile adapt(V3VnicProfile from) {
         VnicProfile to = new VnicProfile();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

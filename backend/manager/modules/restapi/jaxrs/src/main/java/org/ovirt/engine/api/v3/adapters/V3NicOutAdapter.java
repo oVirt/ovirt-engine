@@ -30,6 +30,12 @@ public class V3NicOutAdapter implements V3Adapter<Nic, V3NIC> {
     @Override
     public V3NIC adapt(Nic from) {
         V3NIC to = new V3NIC();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetBootProtocol()) {
             to.setBootProtocol(from.getBootProtocol());
         }

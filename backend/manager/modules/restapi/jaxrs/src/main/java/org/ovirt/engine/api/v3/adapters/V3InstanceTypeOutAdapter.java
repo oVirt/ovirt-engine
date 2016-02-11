@@ -28,6 +28,12 @@ public class V3InstanceTypeOutAdapter implements V3Adapter<InstanceType, V3Insta
     @Override
     public V3InstanceType adapt(InstanceType from) {
         V3InstanceType to = new V3InstanceType();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetBios()) {
             to.setBios(adaptOut(from.getBios()));
         }

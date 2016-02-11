@@ -27,6 +27,12 @@ public class V3OpenStackImageProviderOutAdapter implements V3Adapter<OpenStackIm
     @Override
     public V3OpenStackImageProvider adapt(OpenStackImageProvider from) {
         V3OpenStackImageProvider to = new V3OpenStackImageProvider();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAuthenticationUrl()) {
             to.setAuthenticationUrl(from.getAuthenticationUrl());
         }

@@ -39,6 +39,12 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
     @Override
     public Snapshot adapt(V3Snapshot from) {
         Snapshot to = new Snapshot();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBios()) {
             to.setBios(adaptIn(from.getBios()));
         }

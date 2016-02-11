@@ -26,6 +26,12 @@ public class V3OpenStackImageInAdapter implements V3Adapter<V3OpenStackImage, Op
     @Override
     public OpenStackImage adapt(V3OpenStackImage from) {
         OpenStackImage to = new OpenStackImage();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

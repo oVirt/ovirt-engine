@@ -29,6 +29,12 @@ public class V3QuotaInAdapter implements V3Adapter<V3Quota, Quota> {
     @Override
     public Quota adapt(V3Quota from) {
         Quota to = new Quota();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetClusterHardLimitPct()) {
             to.setClusterHardLimitPct(from.getClusterHardLimitPct());
         }

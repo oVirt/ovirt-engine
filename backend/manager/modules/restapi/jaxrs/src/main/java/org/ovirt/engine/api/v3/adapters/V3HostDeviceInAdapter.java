@@ -26,6 +26,12 @@ public class V3HostDeviceInAdapter implements V3Adapter<V3HostDevice, HostDevice
     @Override
     public HostDevice adapt(V3HostDevice from) {
         HostDevice to = new HostDevice();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetCapability()) {
             to.setCapability(from.getCapability());
         }

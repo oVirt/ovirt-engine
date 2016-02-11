@@ -26,6 +26,12 @@ public class V3QuotaClusterLimitOutAdapter implements V3Adapter<QuotaClusterLimi
     @Override
     public V3QuotaClusterLimit adapt(QuotaClusterLimit from) {
         V3QuotaClusterLimit to = new V3QuotaClusterLimit();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptOut(from.getCluster()));
         }

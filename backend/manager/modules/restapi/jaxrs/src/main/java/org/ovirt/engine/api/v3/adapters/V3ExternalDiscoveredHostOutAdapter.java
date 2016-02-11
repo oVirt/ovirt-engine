@@ -26,6 +26,12 @@ public class V3ExternalDiscoveredHostOutAdapter implements V3Adapter<ExternalDis
     @Override
     public V3ExternalDiscoveredHost adapt(ExternalDiscoveredHost from) {
         V3ExternalDiscoveredHost to = new V3ExternalDiscoveredHost();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

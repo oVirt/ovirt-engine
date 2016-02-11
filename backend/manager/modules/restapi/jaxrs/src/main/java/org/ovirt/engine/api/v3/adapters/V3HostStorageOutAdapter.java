@@ -26,6 +26,12 @@ public class V3HostStorageOutAdapter implements V3Adapter<HostStorage, V3Storage
     @Override
     public V3Storage adapt(HostStorage from) {
         V3Storage to = new V3Storage();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAddress()) {
             to.setAddress(from.getAddress());
         }

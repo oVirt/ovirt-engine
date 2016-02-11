@@ -26,6 +26,12 @@ public class V3QoSInAdapter implements V3Adapter<V3QoS, Qos> {
     @Override
     public Qos adapt(V3QoS from) {
         Qos to = new Qos();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

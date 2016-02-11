@@ -26,6 +26,12 @@ public class V3AuthorizedKeyOutAdapter implements V3Adapter<AuthorizedKey, V3Aut
     @Override
     public V3AuthorizedKey adapt(AuthorizedKey from) {
         V3AuthorizedKey to = new V3AuthorizedKey();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

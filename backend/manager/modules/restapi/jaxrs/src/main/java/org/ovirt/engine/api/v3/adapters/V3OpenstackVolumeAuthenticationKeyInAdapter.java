@@ -26,6 +26,12 @@ public class V3OpenstackVolumeAuthenticationKeyInAdapter implements V3Adapter<V3
     @Override
     public OpenstackVolumeAuthenticationKey adapt(V3OpenstackVolumeAuthenticationKey from) {
         OpenstackVolumeAuthenticationKey to = new OpenstackVolumeAuthenticationKey();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

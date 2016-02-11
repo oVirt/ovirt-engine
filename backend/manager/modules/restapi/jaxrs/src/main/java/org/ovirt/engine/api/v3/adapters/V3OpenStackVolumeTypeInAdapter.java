@@ -27,6 +27,12 @@ public class V3OpenStackVolumeTypeInAdapter implements V3Adapter<V3OpenStackVolu
     @Override
     public OpenStackVolumeType adapt(V3OpenStackVolumeType from) {
         OpenStackVolumeType to = new OpenStackVolumeType();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

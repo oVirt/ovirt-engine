@@ -26,6 +26,12 @@ public class V3ExternalHostGroupInAdapter implements V3Adapter<V3ExternalHostGro
     @Override
     public ExternalHostGroup adapt(V3ExternalHostGroup from) {
         ExternalHostGroup to = new ExternalHostGroup();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetArchitectureName()) {
             to.setArchitectureName(from.getArchitectureName());
         }

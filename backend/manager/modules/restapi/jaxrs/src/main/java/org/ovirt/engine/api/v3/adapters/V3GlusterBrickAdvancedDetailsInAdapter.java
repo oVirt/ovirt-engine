@@ -28,6 +28,12 @@ public class V3GlusterBrickAdvancedDetailsInAdapter implements V3Adapter<V3Glust
     @Override
     public GlusterBrickAdvancedDetails adapt(V3GlusterBrickAdvancedDetails from) {
         GlusterBrickAdvancedDetails to = new GlusterBrickAdvancedDetails();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

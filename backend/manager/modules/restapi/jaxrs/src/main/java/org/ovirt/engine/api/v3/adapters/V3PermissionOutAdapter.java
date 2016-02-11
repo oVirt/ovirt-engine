@@ -26,6 +26,12 @@ public class V3PermissionOutAdapter implements V3Adapter<Permission, V3Permissio
     @Override
     public V3Permission adapt(Permission from) {
         V3Permission to = new V3Permission();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptOut(from.getCluster()));
         }

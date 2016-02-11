@@ -28,6 +28,12 @@ public class V3UserOutAdapter implements V3Adapter<User, V3User> {
     @Override
     public V3User adapt(User from) {
         V3User to = new V3User();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

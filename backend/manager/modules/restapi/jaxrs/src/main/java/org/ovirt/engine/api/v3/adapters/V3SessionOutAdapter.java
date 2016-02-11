@@ -26,6 +26,12 @@ public class V3SessionOutAdapter implements V3Adapter<Session, V3Session> {
     @Override
     public V3Session adapt(Session from) {
         V3Session to = new V3Session();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

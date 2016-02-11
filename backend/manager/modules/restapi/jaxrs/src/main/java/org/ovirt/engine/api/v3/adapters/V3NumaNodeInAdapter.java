@@ -27,6 +27,12 @@ public class V3NumaNodeInAdapter implements V3Adapter<V3NumaNode, NumaNode> {
     @Override
     public NumaNode adapt(V3NumaNode from) {
         NumaNode to = new NumaNode();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

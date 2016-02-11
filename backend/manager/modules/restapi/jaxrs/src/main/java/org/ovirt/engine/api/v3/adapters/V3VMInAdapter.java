@@ -28,6 +28,12 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
     @Override
     public Vm adapt(V3VM from) {
         Vm to = new Vm();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBios()) {
             to.setBios(adaptIn(from.getBios()));
         }

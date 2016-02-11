@@ -26,6 +26,12 @@ public class V3LabelOutAdapter implements V3Adapter<Label, V3Label> {
     @Override
     public V3Label adapt(Label from) {
         V3Label to = new V3Label();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

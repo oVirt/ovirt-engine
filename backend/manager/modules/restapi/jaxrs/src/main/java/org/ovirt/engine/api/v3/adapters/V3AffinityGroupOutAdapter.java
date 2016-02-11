@@ -26,6 +26,12 @@ public class V3AffinityGroupOutAdapter implements V3Adapter<AffinityGroup, V3Aff
     @Override
     public V3AffinityGroup adapt(AffinityGroup from) {
         V3AffinityGroup to = new V3AffinityGroup();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptOut(from.getCluster()));
         }

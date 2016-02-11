@@ -29,6 +29,12 @@ public class V3NetworkAttachmentInAdapter implements V3Adapter<V3NetworkAttachme
     @Override
     public NetworkAttachment adapt(V3NetworkAttachment from) {
         NetworkAttachment to = new NetworkAttachment();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

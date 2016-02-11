@@ -28,6 +28,12 @@ public class V3NetworkOutAdapter implements V3Adapter<Network, V3Network> {
     @Override
     public V3Network adapt(Network from) {
         V3Network to = new V3Network();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptOut(from.getCluster()));
         }

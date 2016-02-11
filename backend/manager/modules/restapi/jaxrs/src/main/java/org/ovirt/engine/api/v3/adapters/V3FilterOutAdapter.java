@@ -26,6 +26,12 @@ public class V3FilterOutAdapter implements V3Adapter<Filter, V3Filter> {
     @Override
     public V3Filter adapt(Filter from) {
         V3Filter to = new V3Filter();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

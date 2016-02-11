@@ -26,6 +26,12 @@ public class V3GraphicsConsoleOutAdapter implements V3Adapter<GraphicsConsole, V
     @Override
     public V3GraphicsConsole adapt(GraphicsConsole from) {
         V3GraphicsConsole to = new V3GraphicsConsole();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAddress()) {
             to.setAddress(from.getAddress());
         }

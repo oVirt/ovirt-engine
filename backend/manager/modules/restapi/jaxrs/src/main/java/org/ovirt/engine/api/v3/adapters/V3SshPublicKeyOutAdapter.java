@@ -26,6 +26,12 @@ public class V3SshPublicKeyOutAdapter implements V3Adapter<SshPublicKey, V3SSHPu
     @Override
     public V3SSHPublicKey adapt(SshPublicKey from) {
         V3SSHPublicKey to = new V3SSHPublicKey();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

@@ -27,6 +27,12 @@ public class V3MacPoolInAdapter implements V3Adapter<V3MacPool, MacPool> {
     @Override
     public MacPool adapt(V3MacPool from) {
         MacPool to = new MacPool();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAllowDuplicates()) {
             to.setAllowDuplicates(from.isAllowDuplicates());
         }

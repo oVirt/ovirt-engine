@@ -27,6 +27,12 @@ public class V3SchedulingPolicyInAdapter implements V3Adapter<V3SchedulingPolicy
     @Override
     public SchedulingPolicy adapt(V3SchedulingPolicy from) {
         SchedulingPolicy to = new SchedulingPolicy();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

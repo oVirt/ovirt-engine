@@ -16,21 +16,18 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
-import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
-import org.ovirt.engine.api.model.SpecialObjects;
+import org.ovirt.engine.api.model.Actions;
 import org.ovirt.engine.api.v3.V3Adapter;
-import org.ovirt.engine.api.v3.types.V3SpecialObjects;
+import org.ovirt.engine.api.v3.types.V3Actions;
 
-public class V3SpecialObjectsOutAdapter implements V3Adapter<SpecialObjects, V3SpecialObjects> {
+public class V3ActionsInAdapter implements V3Adapter<V3Actions, Actions> {
     @Override
-    public V3SpecialObjects adapt(SpecialObjects from) {
-        V3SpecialObjects to = new V3SpecialObjects();
-        if (from.isSetActions()) {
-            to.setActions(adaptOut(from.getActions()));
-        }
+    public Actions adapt(V3Actions from) {
+        Actions to = new Actions();
         if (from.isSetLinks()) {
-            to.getLinks().addAll(adaptOut(from.getLinks()));
+            to.getLinks().addAll(adaptIn(from.getLinks()));
         }
         return to;
     }

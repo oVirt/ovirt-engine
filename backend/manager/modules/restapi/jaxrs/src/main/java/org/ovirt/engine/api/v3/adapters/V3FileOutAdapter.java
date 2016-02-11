@@ -26,6 +26,12 @@ public class V3FileOutAdapter implements V3Adapter<File, V3File> {
     @Override
     public V3File adapt(File from) {
         V3File to = new V3File();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

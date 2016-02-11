@@ -29,6 +29,12 @@ public class V3QuotaOutAdapter implements V3Adapter<Quota, V3Quota> {
     @Override
     public V3Quota adapt(Quota from) {
         V3Quota to = new V3Quota();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetClusterHardLimitPct()) {
             to.setClusterHardLimitPct(from.getClusterHardLimitPct());
         }

@@ -16,18 +16,22 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
-import static java.util.stream.Collectors.toList;
+import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
 import org.ovirt.engine.api.model.Bookmark;
-import org.ovirt.engine.api.model.Bookmarks;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Bookmark;
-import org.ovirt.engine.api.v3.types.V3Bookmarks;
 
 public class V3BookmarkOutAdapter implements V3Adapter<Bookmark, V3Bookmark> {
     @Override
     public V3Bookmark adapt(Bookmark from) {
         V3Bookmark to = new V3Bookmark();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }
@@ -46,11 +50,6 @@ public class V3BookmarkOutAdapter implements V3Adapter<Bookmark, V3Bookmark> {
         if (from.isSetValue()) {
             to.setValue(from.getValue());
         }
-        return to;
-    }
-    public V3Bookmarks adapt(Bookmarks from) {
-        V3Bookmarks to = new V3Bookmarks();
-        to.getBookmarks().addAll(from.getBookmarks().stream().map(this::adapt).collect(toList()));
         return to;
     }
 }

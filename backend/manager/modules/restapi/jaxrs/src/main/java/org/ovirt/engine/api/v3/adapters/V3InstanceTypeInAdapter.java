@@ -28,6 +28,12 @@ public class V3InstanceTypeInAdapter implements V3Adapter<V3InstanceType, Instan
     @Override
     public InstanceType adapt(V3InstanceType from) {
         InstanceType to = new InstanceType();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBios()) {
             to.setBios(adaptIn(from.getBios()));
         }

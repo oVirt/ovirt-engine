@@ -26,6 +26,12 @@ public class V3VmPoolOutAdapter implements V3Adapter<VmPool, V3VmPool> {
     @Override
     public V3VmPool adapt(VmPool from) {
         V3VmPool to = new V3VmPool();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptOut(from.getCluster()));
         }

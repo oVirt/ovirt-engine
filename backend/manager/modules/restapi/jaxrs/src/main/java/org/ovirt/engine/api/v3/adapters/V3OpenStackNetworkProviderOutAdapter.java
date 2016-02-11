@@ -27,6 +27,12 @@ public class V3OpenStackNetworkProviderOutAdapter implements V3Adapter<OpenStack
     @Override
     public V3OpenStackNetworkProvider adapt(OpenStackNetworkProvider from) {
         V3OpenStackNetworkProvider to = new V3OpenStackNetworkProvider();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAgentConfiguration()) {
             to.setAgentConfiguration(adaptOut(from.getAgentConfiguration()));
         }

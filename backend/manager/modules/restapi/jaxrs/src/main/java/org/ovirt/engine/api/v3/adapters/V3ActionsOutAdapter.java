@@ -18,31 +18,16 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
-import org.ovirt.engine.api.model.ProductInfo;
+import org.ovirt.engine.api.model.Actions;
 import org.ovirt.engine.api.v3.V3Adapter;
-import org.ovirt.engine.api.v3.types.V3ProductInfo;
+import org.ovirt.engine.api.v3.types.V3Actions;
 
-public class V3ProductInfoOutAdapter implements V3Adapter<ProductInfo, V3ProductInfo> {
+public class V3ActionsOutAdapter implements V3Adapter<Actions, V3Actions> {
     @Override
-    public V3ProductInfo adapt(ProductInfo from) {
-        V3ProductInfo to = new V3ProductInfo();
+    public V3Actions adapt(Actions from) {
+        V3Actions to = new V3Actions();
         if (from.isSetLinks()) {
             to.getLinks().addAll(adaptOut(from.getLinks()));
-        }
-        if (from.isSetActions()) {
-            to.setActions(adaptOut(from.getActions()));
-        }
-        if (from.isSetName()) {
-            to.setName(from.getName());
-        }
-        if (from.isSetVendor()) {
-            to.setVendor(from.getVendor());
-        }
-        if (from.isSetVendor()) {
-            to.setVersion(adaptOut(from.getVersion()));
-        }
-        if (from.isSetFullVersion()) {
-            to.setFullVersion(from.getFullVersion());
         }
         return to;
     }

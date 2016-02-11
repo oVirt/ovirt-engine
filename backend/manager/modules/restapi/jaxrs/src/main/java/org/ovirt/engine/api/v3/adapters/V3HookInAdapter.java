@@ -26,6 +26,12 @@ public class V3HookInAdapter implements V3Adapter<V3Hook, Hook> {
     @Override
     public Hook adapt(V3Hook from) {
         Hook to = new Hook();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

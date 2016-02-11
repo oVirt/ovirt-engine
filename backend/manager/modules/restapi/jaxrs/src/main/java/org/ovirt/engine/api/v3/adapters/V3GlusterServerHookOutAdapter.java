@@ -26,6 +26,12 @@ public class V3GlusterServerHookOutAdapter implements V3Adapter<GlusterServerHoo
     @Override
     public V3GlusterServerHook adapt(GlusterServerHook from) {
         V3GlusterServerHook to = new V3GlusterServerHook();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetChecksum()) {
             to.setChecksum(from.getChecksum());
         }

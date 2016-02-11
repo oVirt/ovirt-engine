@@ -27,6 +27,12 @@ public class V3ExternalProviderInAdapter implements V3Adapter<V3ExternalProvider
     @Override
     public ExternalProvider adapt(V3ExternalProvider from) {
         ExternalProvider to = new ExternalProvider();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAuthenticationUrl()) {
             to.setAuthenticationUrl(from.getAuthenticationUrl());
         }

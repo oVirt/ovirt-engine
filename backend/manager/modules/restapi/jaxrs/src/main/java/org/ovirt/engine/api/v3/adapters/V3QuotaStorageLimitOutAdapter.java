@@ -26,6 +26,12 @@ public class V3QuotaStorageLimitOutAdapter implements V3Adapter<QuotaStorageLimi
     @Override
     public V3QuotaStorageLimit adapt(QuotaStorageLimit from) {
         V3QuotaStorageLimit to = new V3QuotaStorageLimit();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

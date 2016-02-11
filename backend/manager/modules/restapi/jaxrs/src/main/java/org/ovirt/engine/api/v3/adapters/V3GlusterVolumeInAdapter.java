@@ -28,6 +28,12 @@ public class V3GlusterVolumeInAdapter implements V3Adapter<V3GlusterVolume, Glus
     @Override
     public GlusterVolume adapt(V3GlusterVolume from) {
         GlusterVolume to = new GlusterVolume();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBricks()) {
             to.setBricks(new GlusterBricks());
             to.getBricks().getGlusterBricks().addAll(adaptIn(from.getBricks().getGlusterBricks()));

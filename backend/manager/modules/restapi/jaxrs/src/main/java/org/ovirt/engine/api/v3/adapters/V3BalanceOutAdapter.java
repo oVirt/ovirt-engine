@@ -26,6 +26,12 @@ public class V3BalanceOutAdapter implements V3Adapter<Balance, V3Balance> {
     @Override
     public V3Balance adapt(Balance from) {
         V3Balance to = new V3Balance();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

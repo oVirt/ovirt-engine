@@ -27,6 +27,12 @@ public class V3TagOutAdapter implements V3Adapter<Tag, V3Tag> {
     @Override
     public V3Tag adapt(Tag from) {
         V3Tag to = new V3Tag();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

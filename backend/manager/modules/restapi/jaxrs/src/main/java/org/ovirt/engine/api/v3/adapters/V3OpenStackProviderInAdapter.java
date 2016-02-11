@@ -27,6 +27,12 @@ public class V3OpenStackProviderInAdapter implements V3Adapter<V3OpenStackProvid
     @Override
     public OpenStackProvider adapt(V3OpenStackProvider from) {
         OpenStackProvider to = new OpenStackProvider();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAuthenticationUrl()) {
             to.setAuthenticationUrl(from.getAuthenticationUrl());
         }

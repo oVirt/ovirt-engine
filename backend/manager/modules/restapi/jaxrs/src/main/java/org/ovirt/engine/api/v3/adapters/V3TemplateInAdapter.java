@@ -28,6 +28,12 @@ public class V3TemplateInAdapter implements V3Adapter<V3Template, Template> {
     @Override
     public Template adapt(V3Template from) {
         Template to = new Template();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetBios()) {
             to.setBios(adaptIn(from.getBios()));
         }

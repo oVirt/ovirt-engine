@@ -27,6 +27,12 @@ public class V3ExternalHostProviderInAdapter implements V3Adapter<V3ExternalHost
     @Override
     public ExternalHostProvider adapt(V3ExternalHostProvider from) {
         ExternalHostProvider to = new ExternalHostProvider();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAuthenticationUrl()) {
             to.setAuthenticationUrl(from.getAuthenticationUrl());
         }

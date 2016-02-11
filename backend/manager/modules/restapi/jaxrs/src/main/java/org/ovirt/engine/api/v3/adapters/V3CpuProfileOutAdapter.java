@@ -26,6 +26,12 @@ public class V3CpuProfileOutAdapter implements V3Adapter<CpuProfile, V3CpuProfil
     @Override
     public V3CpuProfile adapt(CpuProfile from) {
         V3CpuProfile to = new V3CpuProfile();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptOut(from.getCluster()));
         }

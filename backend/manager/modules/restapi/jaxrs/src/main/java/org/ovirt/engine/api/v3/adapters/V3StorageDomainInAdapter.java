@@ -27,6 +27,12 @@ public class V3StorageDomainInAdapter implements V3Adapter<V3StorageDomain, Stor
     @Override
     public StorageDomain adapt(V3StorageDomain from) {
         StorageDomain to = new StorageDomain();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAvailable()) {
             to.setAvailable(from.getAvailable());
         }

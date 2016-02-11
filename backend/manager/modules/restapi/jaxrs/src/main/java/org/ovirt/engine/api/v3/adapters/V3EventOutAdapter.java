@@ -26,6 +26,12 @@ public class V3EventOutAdapter implements V3Adapter<Event, V3Event> {
     @Override
     public V3Event adapt(Event from) {
         V3Event to = new V3Event();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptOut(from.getCluster()));
         }

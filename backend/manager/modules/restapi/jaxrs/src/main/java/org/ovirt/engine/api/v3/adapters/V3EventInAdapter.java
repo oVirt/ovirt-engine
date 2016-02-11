@@ -26,6 +26,12 @@ public class V3EventInAdapter implements V3Adapter<V3Event, Event> {
     @Override
     public Event adapt(V3Event from) {
         Event to = new Event();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptIn(from.getCluster()));
         }

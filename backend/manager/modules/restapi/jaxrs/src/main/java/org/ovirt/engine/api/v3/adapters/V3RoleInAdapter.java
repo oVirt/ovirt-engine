@@ -27,6 +27,12 @@ public class V3RoleInAdapter implements V3Adapter<V3Role, Role> {
     @Override
     public Role adapt(V3Role from) {
         Role to = new Role();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAdministrative()) {
             to.setAdministrative(from.isAdministrative());
         }

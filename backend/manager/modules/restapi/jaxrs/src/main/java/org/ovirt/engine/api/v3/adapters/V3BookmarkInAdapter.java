@@ -16,6 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
+import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
+
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Bookmark;
@@ -24,6 +26,12 @@ public class V3BookmarkInAdapter implements V3Adapter<V3Bookmark, Bookmark> {
     @Override
     public Bookmark adapt(V3Bookmark from) {
         Bookmark to = new Bookmark();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

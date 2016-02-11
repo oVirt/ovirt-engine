@@ -16,6 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
+import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Version;
@@ -24,6 +26,12 @@ public class V3VersionOutAdapter implements V3Adapter<Version, V3Version> {
     @Override
     public V3Version adapt(Version from) {
         V3Version to = new V3Version();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetBuild()) {
             to.setBuild(from.getBuild());
         }

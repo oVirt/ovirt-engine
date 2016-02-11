@@ -27,6 +27,12 @@ public class V3ExternalHostProviderOutAdapter implements V3Adapter<ExternalHostP
     @Override
     public V3ExternalHostProvider adapt(ExternalHostProvider from) {
         V3ExternalHostProvider to = new V3ExternalHostProvider();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetAuthenticationUrl()) {
             to.setAuthenticationUrl(from.getAuthenticationUrl());
         }

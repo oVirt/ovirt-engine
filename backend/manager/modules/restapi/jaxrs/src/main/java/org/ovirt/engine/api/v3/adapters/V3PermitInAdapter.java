@@ -26,6 +26,12 @@ public class V3PermitInAdapter implements V3Adapter<V3Permit, Permit> {
     @Override
     public Permit adapt(V3Permit from) {
         Permit to = new Permit();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAdministrative()) {
             to.setAdministrative(from.isAdministrative());
         }

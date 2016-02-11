@@ -26,6 +26,12 @@ public class V3ImageInAdapter implements V3Adapter<V3Image, Image> {
     @Override
     public Image adapt(V3Image from) {
         Image to = new Image();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }

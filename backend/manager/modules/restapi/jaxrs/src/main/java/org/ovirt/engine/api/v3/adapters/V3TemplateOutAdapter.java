@@ -28,6 +28,12 @@ public class V3TemplateOutAdapter implements V3Adapter<Template, V3Template> {
     @Override
     public V3Template adapt(Template from) {
         V3Template to = new V3Template();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetBios()) {
             to.setBios(adaptOut(from.getBios()));
         }

@@ -29,6 +29,12 @@ public class V3GlusterVolumeOutAdapter implements V3Adapter<GlusterVolume, V3Glu
     @Override
     public V3GlusterVolume adapt(GlusterVolume from) {
         V3GlusterVolume to = new V3GlusterVolume();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptOut(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptOut(from.getActions()));
+        }
         if (from.isSetBricks()) {
             to.setBricks(new V3GlusterBricks());
             to.getBricks().getGlusterBricks().addAll(adaptOut(from.getBricks().getGlusterBricks()));

@@ -30,6 +30,12 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
     @Override
     public Host adapt(V3Host from) {
         Host to = new Host();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetAddress()) {
             to.setAddress(from.getAddress());
         }

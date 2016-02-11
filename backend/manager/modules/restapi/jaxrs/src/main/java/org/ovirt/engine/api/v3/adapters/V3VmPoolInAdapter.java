@@ -26,6 +26,12 @@ public class V3VmPoolInAdapter implements V3Adapter<V3VmPool, VmPool> {
     @Override
     public VmPool adapt(V3VmPool from) {
         VmPool to = new VmPool();
+        if (from.isSetLinks()) {
+            to.getLinks().addAll(adaptIn(from.getLinks()));
+        }
+        if (from.isSetActions()) {
+            to.setActions(adaptIn(from.getActions()));
+        }
         if (from.isSetCluster()) {
             to.setCluster(adaptIn(from.getCluster()));
         }
