@@ -123,6 +123,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             if (parameters.getOverrideFirewall()) {
                 switch (getVds().getVdsType()) {
                     case VDS:
+                    case oVirtNode:
                         deploy.addUnit(new VdsDeployIptablesUnit());
                     break;
                     case oVirtVintageNode:
