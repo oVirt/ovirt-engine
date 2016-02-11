@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ErrorMessageUtils;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -43,6 +43,7 @@ public class VmPoolMonitor implements BackendService {
     private String poolMonitoringJobId;
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
+
     @PostConstruct
     private void init() {
         int vmPoolMonitorIntervalInMinutes = Config.<Integer>getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
@@ -130,7 +131,7 @@ public class VmPoolMonitor implements BackendService {
     private void collectVmPrestartFailureReasons(Map<String, Integer> failureReasons, List<String> messages) {
         if (log.isInfoEnabled()) {
             String reason = messages.stream()
-                    .filter(ErrorMessageUtils::isMessage)
+                    .filter(EngineMessage::contains)
                     .collect(Collectors.joining(", "));
             Integer count = failureReasons.get(reason);
             failureReasons.put(reason, count == null ? 1 : count + 1);

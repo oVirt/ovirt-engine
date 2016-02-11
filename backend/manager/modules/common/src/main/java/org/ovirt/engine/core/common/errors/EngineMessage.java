@@ -1498,4 +1498,14 @@ public enum EngineMessage {
     public static EngineMessage forValue(int value) {
         return values()[value];
     }
+
+    public static boolean contains(String str) {
+        try {
+            valueOf(str);
+        }
+        catch(IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+    }
 }
