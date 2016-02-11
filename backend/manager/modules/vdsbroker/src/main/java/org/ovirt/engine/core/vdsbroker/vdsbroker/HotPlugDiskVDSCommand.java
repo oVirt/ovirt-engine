@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
@@ -85,8 +84,8 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 drive.put(VdsProperties.ImageId, diskImage.getId().toString());
                 drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
 
-                VmInfoBuilder.handleIoTune(getParameters().getVm(), vmDevice, diskImage,
-                        new HashMap<Guid, Guid>(), new HashMap<Guid, Map<String, Long>>());
+                VmInfoBuilder.handleIoTune(vmDevice, VmInfoBuilder.loadStorageQos(diskImage));
+
                 if (vmDevice.getSpecParams() != null) {
                     drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 }

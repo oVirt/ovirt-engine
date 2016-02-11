@@ -14,7 +14,9 @@ public class StorageQos extends QosBase implements Serializable {
 
     private static final long serialVersionUID = 1122123549710787758L;
 
-    /* All Throughput values are in MiBs per second */
+    /* All Throughput values are in MiBs per second
+     * Null and 0 values are interpreted as unlimited.
+     */
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxThroughputUpperBoundQosValue,
             message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
