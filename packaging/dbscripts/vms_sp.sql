@@ -2026,3 +2026,14 @@ BEGIN
           WHERE image_storage_domain_map.disk_profile_id = v_disk_profile_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetVmsByOrigin(v_origins INT[])
+RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT vms.*
+        FROM vms
+        WHERE origin = ANY(v_origins);
+END; $procedure$
+LANGUAGE plpgsql;

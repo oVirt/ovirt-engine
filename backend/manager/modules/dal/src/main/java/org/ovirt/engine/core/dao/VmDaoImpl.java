@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -369,4 +369,11 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         }
     }
 
+    @Override
+    public List<VM> getVmsByOrigins(List<OriginType> origins) {
+        Object[] originValues = origins.stream().map(OriginType::getValue).toArray();
+        return getCallsHandler().executeReadList("GetVmsByOrigin",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("origins", createArrayOf("int", originValues)));
+    }
 }

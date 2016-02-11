@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -335,4 +336,9 @@ public interface VmDao extends Dao {
      * @return the list of VMs
      */
     List<VM> getAllForDiskProfile(Guid diskProfileId);
+
+    /**
+     * Get all vms with given origins
+     */
+    List<VM> getVmsByOrigins(List<OriginType> origins);
 }

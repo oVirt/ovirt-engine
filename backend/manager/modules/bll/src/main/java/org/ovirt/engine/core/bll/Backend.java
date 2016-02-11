@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.interceptors.CorrelationIdTrackerInterceptor;
 import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -205,6 +206,10 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     public void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
+
+        // save host that HE VM was running on prior to engine startup
+        loadService(PreviousHostedEngineHost.class);
+
         // start task schedulers
         for (SchedulerUtil taskScheduler : taskSchedulers) {
             log.info("Started task scheduler {}", taskScheduler);
