@@ -73,6 +73,7 @@ public abstract class AbstractDiskModel extends DiskModel {
     private EntityModel<Boolean> isSgIoUnfiltered;
     private EntityModel<String> sizeExtend;
     private EntityModel<DiskStorageType> diskStorageType;
+    private EntityModel<Boolean> isModelDisabled;
 
     private ListModel<StorageType> storageType;
     private ListModel<VDS> host;
@@ -233,6 +234,14 @@ public abstract class AbstractDiskModel extends DiskModel {
         this.isVirtioScsiEnabled = virtioScsiEnabled;
     }
 
+    public EntityModel<Boolean> getIsModelDisabled() {
+        return isModelDisabled;
+    }
+
+    public void setIsModelDisabled(EntityModel<Boolean> isModelDisabled) {
+        this.isModelDisabled = isModelDisabled;
+    }
+
     @Override
     public UICommand getCancelCommand() {
         return cancelCommand;
@@ -304,6 +313,8 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         setCinderVolumeType(new ListModel<String>());
         getCinderVolumeType().setIsAvailable(false);
+
+        setIsModelDisabled(new EntityModel<Boolean>(false));
     }
 
     public abstract boolean getIsNew();
@@ -360,7 +371,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                DiskModel diskModel = (DiskModel) target;
+                AbstractDiskModel diskModel = (AbstractDiskModel) target;
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
                 ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<>();
                 switch (getDiskStorageType().getEntity()) {
@@ -385,9 +396,11 @@ public abstract class AbstractDiskModel extends DiskModel {
                     switch (getDiskStorageType().getEntity()) {
                         case IMAGE:
                             diskModel.setMessage(constants.noActiveStorageDomainsInDC());
+                            diskModel.getIsModelDisabled().setEntity(true);
                             break;
                         case CINDER:
                             diskModel.setMessage(constants.noCinderStorageDomainsInDC());
+                            diskModel.getIsModelDisabled().setEntity(true);
                             break;
                     }
                 }
@@ -418,6 +431,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         boolean isInVm = getVm() != null;
         getDataCenter().setIsAvailable(!isInVm);
         setMessage(""); //$NON-NLS-1$
+        getIsModelDisabled().setEntity(false);
 
         if (isInVm) {
             AsyncDataProvider.getInstance().getDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
@@ -435,6 +449,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
                     if (dataCenters.isEmpty()) {
                         diskModel.setMessage(constants.relevantDCnotActive());
+                        diskModel.getIsModelDisabled().setEntity(true);
                     }
                 }
             })), getVm().getStoragePoolId());
@@ -458,6 +473,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
                     if (filteredDataCenters.isEmpty()) {
                         diskModel.setMessage(constants.noActiveDataCenters());
+                        diskModel.getIsModelDisabled().setEntity(true);
                     }
                 }
             }));
@@ -513,6 +529,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         getIsDirectLunDiskAvaialable().setEntity(isDirectLUNDiskkEnabled);
         setMessage(!isDirectLUNDiskkEnabled ? constants.directLUNDiskNotSupported() : ""); //$NON-NLS-1$
+        getIsModelDisabled().setEntity(!isDirectLUNDiskkEnabled);
     }
 
     private void updateShareable(VolumeType volumeType, StorageType storageType) {
@@ -845,6 +862,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         }
 
         setMessage(null);
+        getIsModelDisabled().setEntity(false);
         updateShareableDiskEnabled(datacenter);
         updateDirectLunDiskEnabled(datacenter);
         updateInterface(isInVm ? getVm().getVdsGroupCompatibilityVersion() : null);

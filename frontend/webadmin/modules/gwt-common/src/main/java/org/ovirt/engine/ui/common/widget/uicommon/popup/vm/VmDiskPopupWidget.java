@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -332,22 +331,19 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         });
 
-        disk.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+        disk.getIsModelDisabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("Message".equals(propName)) { //$NON-NLS-1$
-                    if (!StringHelper.isNullOrEmpty(disk.getMessage())) {
-                        disableWidget(getWidget());
-                        enableWidget(diskTypePanel);
-                        enableWidget(datacenterEditor);
-                        disk.getDefaultCommand().setIsExecutionAllowed(false);
-                        disk.setIsChangeable(false);
-                    } else {
-                        enableWidget(getWidget());
-                        disk.getDefaultCommand().setIsExecutionAllowed(true);
-                        disk.setIsChangeable(true);
-                    }
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (disk.getIsModelDisabled().getEntity()) {
+                    disableWidget(getWidget());
+                    enableWidget(diskTypePanel);
+                    enableWidget(datacenterEditor);
+                    disk.getDefaultCommand().setIsExecutionAllowed(false);
+                    disk.setIsChangeable(false);
+                } else {
+                    enableWidget(getWidget());
+                    disk.getDefaultCommand().setIsExecutionAllowed(true);
+                    disk.setIsChangeable(true);
                 }
             }
         });
