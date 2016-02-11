@@ -1,0 +1,268 @@
+= Branding
+
+== Outline
+
+The engine supports pluggable branding that may effect the user
+interface themes and selected strings. There may be several branding
+packages installed in specific order, each package overrides the
+previous ones for the resources it defines.
+
+== Package format
+
+The file `branding.properties` is the main properties file that defines
+where the branding resources can be found. Resources are relative to
+`branding.properties`.
+
+user_portal_css::
+Css to inject into user portal (optional).
+
+web_admin_css::
+Css to inject into web admin (optional).
+
+welcome_css::
+Css for the welcome page (optional).
+
+messages::
+Standard java message bundle (optional). Comma-delimited list.
+
+resources::
+The file that defines cascading resources. These are static resources
+(favicon, images, PDFs, etc.) that exist outside of CSS, but we still
+want to cascade them (optional).
+
+version::
+The version of the branding in the package. Only versions that match the
+one defined in the engine will be loaded (required, theme will not load
+without it).
+
+The current branding version as defined by engine is 1.
+
+== CSS injection
+
+CSS are injected in the same order of how the branding packages are declared,
+this way the last css's styles are defined in the correct order.
+
+The oVirt UI is broken up into four distinct modules at this point:
+
+* User Portal
+* Web Admin
+* Common widgets
+* welcome page
+
+Each of those modules contain some widgets that we can style using CSS
+clases. Refer to <<Example>> to see a listing of available classes
+categorized by what widget is being styled.
+
+== Example
+
+If you look in `packaging/branding/ovirt.brand` you will see a functional
+example branding theme which just happens to be the default oVirt theme.
+You will notice the following files:
+
+`branding.properties`::
+This is the main properties file defining the branding properties.
+
+`user_portal.css`::
+The user portal style sheet file.
+
+`web_admin.css`::
+The web admin style sheet file.
+
+`welcome_style.css`::
+The styles associated with the welcome page.
+
+`welcome_page.template`::
+An HTML formatted template that gets inserted into the welcome page.
+
+`messages.properties`::
+A java message bundle in many different locales.  Only strings to be
+localized should go in here.
+
+`external_messages.properties`::
+A second java message bundle, used for non-translatable strings (like
+URLs).
+
+`resources.properties`::
+Contains the locations of cascading resources such as the brand's
+favicon.
+
+Note that most images are background images instead of image tags so we can
+use style sheets to replace them. However, branding does include a servlet
+to serve branded images (and other static resources) outside of CSS in a
+cascading manner.
+
+As you can see the example branding theme references images from the images
+directory. There is no rule that images have to exist in an images directory
+but we highly suggest you organize your images in some way to make it easier
+to maintain them.
+
+== Cascading resources
+
+These are images, PDFs, etc. that exist in multiple brands and are cascaded
+similarly to how CSS cascades. This allows us to use a cascading mechanism
+for branding outside of CSS, for things like `favicon.ico`.
+
+If the same resource key exists in a higher brand, the higher brand "wins" and
+its copy of the resource gets served.
+
+All cascading resources are defined in resources.properties. For each resource,
+specify a file path and optionally a contentType.
+
+Example:
+
+  favicon.file=images/favicon.ico
+  favicon.contentType=image/x-icon
+
+The `BrandingCascadingResourceServlet` that serves these resources is mapped to
+`/ovirt-engine-theme-resource` for the root app, `/theme-resource` for WebAdmin
+and UserPortal. To reference a cascaded resource in the root `ovirt-engine.jsp`,
+use `${pageContext.request.contextPath}/ovirt-engine-theme-resource/<resource>`
+where `<resource>` is the key of the resource in `resources.properties`. To
+reference a cascaded resource in the the WebAdmin or UserPortal GWT host page,
+use `${pageContext.request.contextPath}/theme-resource/<resource>`
+where `<resource>` is the key of the resource in `resources.properties`.
+
+Examples:
+
+In WebAdmin and UserPortal:
+
+  <link rel="shortcut icon" href="${pageContext.request.contextPath}/theme-resource/favicon" type="image/x-icon" />
+
+In root app:
+
+  <link rel="shortcut icon" href="${pageContext.request.contextPath}/ovirt-engine-theme-resource/favicon" type="image/x-icon" />
+
+== Welcome page template
+
+The welcome page template is in HTML format with some minor differences. As
+the template is inserted in the welcome page, there is no need for html, head,
+or body tags.
+
+Adding a `#` at the front of any line will mark it comment and it won't end up
+in the output inserted into the welcome page.
+
+The template can contain place holder elements which will be replaced by
+localized messages based on the place holder strings. Each place holder string
+is prefixed with obrand.welcome
+
+For instance in `welcome_page.template`:
+
+  <a href="/someplace">{section_key}</a>
+
+And in `messages.properties`:
+
+  obrand.welcome.section_key=Message
+
+The output will be:
+
+  <a href="/someplace">Message</a>
+
+There is a special place holder called `{userLocale}` which will be replaced with
+the currently selected locale of the user. For instance if the current locale
+is `fr_FR` and you have the following in your template:
+
+  <a href="/{userLocale}/documentation">Documentation</a>
+
+The output will be:
+
+  <a href="/fr_FR/documenation">Documenation</a>
+
+If you want to completely replace any previous templates you can add a new key to
+the `branding.properties` file called `welcome_replace` with a value of `true`. This
+will cause the template engine to wipe out the template generated by processing
+previous theme, and complete replace it with yours. Default behaviour is to append
+your template to the end of the previous template(s). This flag allows you to
+override that behaviour and just use your template. Any themes processed after
+yours will default back to append unless they specify the flag as well.
+
+== Installation
+
+Branding packages location is `${engine_syconfdir}/branding/*.brand`. Usually
+located at `/etc/ovirt-engine/branding`, within each package resides in its
+own directory.
+
+The branding directory is treated as a standard `conf.d`, in which directories
+are sorted by name, each package is read by order and overrides
+the previous ones.
+
+NOTE: the default ovirt brand requires PatternFly and expects it to be installed
+in `/usr/share/patternfly`.
+
+== Maintenance - CSS
+
+To expose CSS class defined in `ui.xml` template via `<ui:style>` element:
+
+. Rename the given class to use `obrand_` prefix and mark it as
+`@external`, for example:
++
+[source,css]
+----
+@external obrand_myClass; .obrand_myClass { ..cssRules.. }
+----
+
+. Move CSS rules out of ui.xml template into corresponding CSS file
+under `packaging/branding/ovirt.brand directory`.
+
+. When styling `<g:Image>` or other widgets that work with
+`ImageResource`, specify `url="clear.cache.gif"` to avoid broken images
+
+== Maintenance - Adding a branded message
+
+All branded messages feed into the application via the host page and then
+via the ApplicationDynamicMessages classes. To add a new branded message
+to the application:
+
+1. Add a property to `messages.properties` or `external_messages.properties`
+in the form of:
++
+  obrand.webadmin.my_new_message=BrandX Message
+  obrand.userportal.my_new_message=BrandX Message
++
+You'll need to add one for both webadmin and userportal if you want
+the message exposed to both applications. If you want the same message
+in both user portal and webadmin you can use `obrand.common.my_new_message`
+and it will be available in both. If you want to use the same key but
+have different message you can use the above.
++
+NOTE: Use `messages.properties` for any messages that will need to be
+translated into other languages. Use `external_messages.properties` for
+anything else, like URLs.
+
+2. In `DynamicMessages.java`, add a key to the `DynamicMessageKey` enum
+for your property.
+
+3. In `DynamicMessages.java`, add a getter for your property. Use the existing
+getters as examples.
+
+4. If the message will be exposed to webadmin, add a constant to the webadmin
+copy of `ApplicationConstants.java`. This will be used as a fallback if the
+branding files are missing. Example:
++
+[source,java]
+----
+@DefaultStringValue("BrandX Message")
+String myNewMessage();
+----
+
+5. If the message will be exposed to userportal, repeat 4 for
+userportal's copy of `ApplicationConstants.java`.
+
+6. If the message will be exposed to webadmin, add an `addFallback()` call in
+webadmin's copy of `ApplicationDynamicMessages.java`. Use existing calls as
+examples.
+
+7. If the message will be exposed to userportal, repeat 6 for userportal's
+copy of `ApplicationDynamicMessages.java`.
+
+You can now use an injected `ApplicationDynamicMessages` to access the branded
+messages.
+
+Example:
+
+[source,java]
+----
+Anchor x = new Anchor(dynamicMessages.myNewMessage());
+----
+
+See `HeaderView.java` for a real-world example.
+

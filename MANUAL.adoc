@@ -1,0 +1,56 @@
+= Manual
+
+== Overview
+
+ovirt-engine supports a manual package for context sensitive help within the
+application. Manual package is not provided by base package and should be
+added externally.
+
+== Preparations
+
+Provided the manual package name is `DOC_PACKAGE` the following steps should
+be followed.
+
+. Prepare manual which are static html files.
+
+. Create manual configuration file at manual.properties within root of
+  manual and create lookup index files to map between help tag and URI,
+  see format below.
+
+. Package manual pages at `DOC_PACKAGE` to be installed into filesystem, for
+  example:
+
+  /usr/share/doc/DOC_PACKAGE/manual
+
+. Tell engine where manual is, for example,
+  `/etc/ovirt-engine/engine.conf.d/20-DOC_PACKAGE.conf`:
+
+  ENGINE_MANUAL="/usr/share/doc/DOC_PACKAGE/manual"
+
+== Manual configuration file
+
+ovirt-engine will read the `manual.properties` located at the root of
+the manual content.
+
+The format of this file is:
+
+  helptags.APPLICATION = [index1.json[, index2.json[, ....]]]
+
+`APPLICATION` is the name of the application that issues the request
+(e.g. webadmin or userportal), the value is list of json files relative to
+configuration file that map between help tag and URI. Their content is
+merged left to right, last wins.
+
+The format of index mapping file is a JSON object. Key is help tag and value
+is uri relative to the package, for example:
+
+[source,json]
+----
+{
+  "create_new_vm": "newvm.html",
+  "delete_vm": "delvm.html",
+}
+----
+
+The index file can be generated out of source code or compared to source
+code using `build/helptag.py` tool available within engine source repository.
