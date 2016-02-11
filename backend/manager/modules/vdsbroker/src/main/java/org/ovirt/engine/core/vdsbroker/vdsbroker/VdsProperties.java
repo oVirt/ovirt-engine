@@ -368,8 +368,13 @@ public final class VdsProperties {
     public static final String CinderSecretUuid = "secret_uuid";
     public static final String Ovirt = "ovirt";
 
+    // cpu qos
+    public static final String vCpuLimit = "vcpuLimit";
+
     // iotune
     public static final String Iotune = "ioTune";
+    public static final String IoPolicyMaximum = "maximum";
+    public static final String IoPolicyGuarenteed = "guaranteed";
     public static final String TotalBytesSec = "total_bytes_sec";
     public static final String ReadBytesSec = "read_bytes_sec";
     public static final String WriteBytesSec = "write_bytes_sec";
