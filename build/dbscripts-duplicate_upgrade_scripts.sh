@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 OUT="$(find "$(dirname "$0")/../packaging/dbscripts" -exec basename {} \; | grep -P '^\d{2}_\d{2}_\d{2,8}' -o | sort | uniq -d)"
 

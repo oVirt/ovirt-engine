@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 PEP8="@PEP8@"
 PYFLAKES="@PYFLAKES@"

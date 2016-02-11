@@ -334,6 +334,7 @@ validations:	generated-files
 		fi; \
 	fi
 	if [ "$(BUILD_VALIDATION)" != 0 ]; then \
+                echo "Performing build validation." &&\
 		build/shell-check.sh && \
 		build/python-check.sh && \
 		build/image-check.sh && \
