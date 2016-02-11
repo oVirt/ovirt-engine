@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.bll.validator.HostValidator;
@@ -48,6 +51,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     public VdsNotRespondingTreatmentCommand(T parameters) {
         this(parameters, null);
     }
+
+    @Inject
+    private PreviousHostedEngineHost previousHostedEngineHost;
 
     public VdsNotRespondingTreatmentCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -90,7 +96,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
-        if (!new FenceValidator().isStartupTimeoutPassed() || !isQuietTimeFromLastActionPassed()) {
+        if (!previousHostedEngineHost.isPreviousHostId(getVds().getId()) && !new FenceValidator().isStartupTimeoutPassed() ||
+                !isQuietTimeFromLastActionPassed()) {
             log.error("Failed to run Fence script on vds '{}'.", getVdsName());
             alertIfPowerManagementOperationSkipped(RESTART, null);
             // If fencing can't be done and the host is the SPM, set storage-pool to non-operational
