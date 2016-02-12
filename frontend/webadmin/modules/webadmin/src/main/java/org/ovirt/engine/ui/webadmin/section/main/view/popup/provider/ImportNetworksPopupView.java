@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxCo
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.BaseImportNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -40,9 +40,9 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
-public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportNetworksModel> implements ImportNetworksPopupPresenterWidget.ViewDef {
+public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImportNetworksModel> implements ImportNetworksPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportNetworksModel, ImportNetworksPopupView> { }
+    interface Driver extends SimpleBeanEditorDriver<BaseImportNetworksModel, ImportNetworksPopupView> { }
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -210,7 +210,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
     }
 
     @Override
-    public void edit(ImportNetworksModel model) {
+    public void edit(BaseImportNetworksModel model) {
         splitTable.edit(model.getProviderNetworks(),
                 model.getImportedNetworks(),
                 model.getAddImportCommand(),
@@ -219,7 +219,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
     }
 
     @Override
-    public ImportNetworksModel flush() {
+    public BaseImportNetworksModel flush() {
         return driver.flush();
     }
 
