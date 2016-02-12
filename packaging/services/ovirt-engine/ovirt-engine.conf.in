@@ -342,3 +342,16 @@ SSO_PKI_TRUST_STORE_PASSWORD="${ENGINE_PKI_TRUST_STORE_PASSWORD}"
 
 # The URL of the engine
 SSO_ENGINE_URL="http://${ENGINE_FQDN}${ENGINE_URI}"
+
+#
+# Comma separated list of supported versions of the API. When the user
+# selects a version of the API that isn't in this list the server will
+# return an HTTP error response.
+#
+ENGINE_API_SUPPORTED_VERSIONS="3, 4"
+
+#
+# Default version of the API, which will be used when the caller doesn't
+# explicitly select a specific version.
+#
+ENGINE_API_DEFAULT_VERSION="4"

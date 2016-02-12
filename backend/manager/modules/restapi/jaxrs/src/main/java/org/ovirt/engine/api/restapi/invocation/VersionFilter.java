@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.invocation;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.Filter;
@@ -28,7 +29,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ovirt.engine.api.restapi.LocalConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class VersionFilter implements Filter {
+    private static final Logger log = LoggerFactory.getLogger(VersionFilter.class);
+
     // Regular expression used to start the version number from the request path:
     private static final String VERSION_GROUP = "version";
     private static final String PATH_GROUP = "path";
@@ -39,11 +46,15 @@ public class VersionFilter implements Filter {
     // Names of headers:
     private static final String VERSION_HEADER = "Version";
 
-    // Default values of headers (in the future this will be a configuration parameter):
-    private static final String VERSION_DEFAULT = "4";
+    // Supported and default versions:
+    private Set<String> supportedVersions;
+    private String defaultVersion;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
+        LocalConfig localConfig = LocalConfig.getInstance();
+        supportedVersions = localConfig.getSupportedVersions();
+        defaultVersion = localConfig.getDefaultVersion();
     }
 
     @Override
@@ -82,8 +93,18 @@ public class VersionFilter implements Filter {
 
         // Finally, if the version hasn't been determined, then use the default:
         if (version == null || version.isEmpty()) {
-            version = VERSION_DEFAULT;
+            version = defaultVersion;
             source = VersionSource.DEFAULT;
+        }
+
+        // Check that the version is supported, and return an HTTP error response if it isn't:
+        if (!supportedVersions.contains(version)) {
+            log.error(
+                "Client \"{}\" is requesting unsupported version \"{}\", will send a 400 error code.",
+                request.getRemoteAddr(), version
+            );
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
 
         // Copy the version, the source and the path to the object that stores information to the current request:
