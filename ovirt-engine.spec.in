@@ -783,9 +783,9 @@ touch "%{buildroot}%{engine_data}/setup/ovirt-engine-setup-ghost"
 #
 # backward compatibly (pre-3.3.0)
 # force rpm not to remove config files
-# as these used to be %config
+# as these used to be %%config
 # these files are created empty in order to mark
-# them as %ghost
+# them as %%ghost
 #
 touch "%{buildroot}%{engine_etc}/engine.conf"
 touch "%{buildroot}%{engine_etc}/notifier/notifier.conf"
@@ -918,7 +918,7 @@ fi
 
 # backward compatibly (pre-3.3.0)
 # force rpm not to remove pki files
-# as these used to be %config
+# as these used to be %%config
 %ghost %config(noreplace) %{engine_pki}/cacert.template
 %ghost %config(noreplace) %{engine_pki}/cert.template
 %ghost %config(noreplace) %{engine_pki}/database.txt
