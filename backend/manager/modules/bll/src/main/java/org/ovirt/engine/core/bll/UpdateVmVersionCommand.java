@@ -199,9 +199,9 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         }
 
         addVmParams.setDiskInfoDestinationMap(new HashMap<>());
-        addVmParams.setConsoleEnabled(deviceExists(VmDeviceGeneralType.CONSOLE, VmDeviceType.CONSOLE));
-        addVmParams.setBalloonEnabled(deviceExists(VmDeviceGeneralType.BALLOON, VmDeviceType.BALLOON));
-        addVmParams.setSoundDeviceEnabled(deviceExists(VmDeviceGeneralType.SOUND, VmDeviceType.SOUND));
+        addVmParams.setConsoleEnabled(deviceExists(VmDeviceGeneralType.CONSOLE));
+        addVmParams.setBalloonEnabled(deviceExists(VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON));
+        addVmParams.setSoundDeviceEnabled(deviceExists(VmDeviceGeneralType.SOUND));
         addVmParams.setVirtioScsiEnabled(deviceExists(VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
 
         List<VmWatchdog> watchdogs = runInternalQuery(VdcQueryType.GetWatchdog,
@@ -242,6 +242,11 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     private boolean deviceExists(VmDeviceGeneralType generalType, VmDeviceType deviceType) {
         return !getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 getVmTemplateId(), generalType, deviceType.getName()).isEmpty();
+    }
+
+    private boolean deviceExists(VmDeviceGeneralType generalType) {
+        return !getVmDeviceDao().getVmDeviceByVmIdAndType(
+                getVmTemplateId(), generalType).isEmpty();
     }
 
     @Override
