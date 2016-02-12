@@ -16,14 +16,19 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
+import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
+import static org.ovirt.engine.api.v3.helpers.V3ClusterHelper.assignCompatiblePolicy;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Cluster;
@@ -37,8 +42,15 @@ public class V3ClustersServer extends V3Server<ClustersResource> {
 
     @POST
     @Consumes({"application/xml", "application/json"})
-    public Response add(V3Cluster cluster) {
-        return adaptAdd(delegate::add, cluster);
+    public Response add(V3Cluster v3Cluster) {
+        Cluster v4Cluster = adaptIn(v3Cluster);
+        assignCompatiblePolicy(v3Cluster, v4Cluster);
+        try {
+            return adaptResponse(delegate.add(v4Cluster));
+        }
+        catch (WebApplicationException exception) {
+            throw adaptException(exception);
+        }
     }
 
     @GET

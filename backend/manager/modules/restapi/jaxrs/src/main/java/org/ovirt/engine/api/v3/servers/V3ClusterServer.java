@@ -16,6 +16,10 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
+import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
+import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+import static org.ovirt.engine.api.v3.helpers.V3ClusterHelper.assignCompatiblePolicy;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,9 +28,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Actionable;
+import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Action;
@@ -45,8 +51,15 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
 
     @PUT
     @Consumes({"application/xml", "application/json"})
-    public V3Cluster update(V3Cluster cluster) {
-        return adaptUpdate(delegate::update, cluster);
+    public V3Cluster update(V3Cluster v3Cluster) {
+        Cluster v4Cluster = adaptIn(v3Cluster);
+        assignCompatiblePolicy(v3Cluster, v4Cluster);
+        try {
+            return adaptOut(delegate.update(v4Cluster));
+        }
+        catch (WebApplicationException exception) {
+            throw adaptException(exception);
+        }
     }
 
     @DELETE

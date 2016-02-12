@@ -17,11 +17,20 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+import static org.ovirt.engine.api.v3.helpers.V3ClusterHelper.getIntegerProperty;
 
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Properties;
+import org.ovirt.engine.api.model.SchedulingPolicy;
+import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
+import org.ovirt.engine.api.resource.SchedulingPolicyResource;
+import org.ovirt.engine.api.resource.SystemResource;
+import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Cluster;
 import org.ovirt.engine.api.v3.types.V3RngSources;
+import org.ovirt.engine.api.v3.types.V3SchedulingPolicy;
+import org.ovirt.engine.api.v3.types.V3SchedulingPolicyThresholds;
 import org.ovirt.engine.api.v3.types.V3SupportedVersions;
 
 public class V3ClusterOutAdapter implements V3Adapter<Cluster, V3Cluster> {
@@ -95,9 +104,6 @@ public class V3ClusterOutAdapter implements V3Adapter<Cluster, V3Cluster> {
             to.setRequiredRngSources(new V3RngSources());
             to.getRequiredRngSources().getRngSources().addAll(from.getRequiredRngSources().getRequiredRngSources());
         }
-        if (from.isSetSchedulingPolicy()) {
-            to.setSchedulingPolicy(adaptOut(from.getSchedulingPolicy()));
-        }
         if (from.isSetSerialNumber()) {
             to.setSerialNumber(adaptOut(from.getSerialNumber()));
         }
@@ -120,6 +126,61 @@ public class V3ClusterOutAdapter implements V3Adapter<Cluster, V3Cluster> {
         if (from.isSetVirtService()) {
             to.setVirtService(from.isVirtService());
         }
+
+        // In V3 the scheduling policy was part of the cluster, so we need to retrieve the details and populate the
+        // "policy" and "thresholds" elements:
+        SchedulingPolicy fromPolicy = from.getSchedulingPolicy();
+        if (fromPolicy != null && fromPolicy.isSetId()) {
+            SystemResource systemResource = BackendApiResource.getInstance();
+            SchedulingPoliciesResource policiesResource = systemResource.getSchedulingPoliciesResource();
+            SchedulingPolicyResource policyResource = policiesResource.getPolicyResource(fromPolicy.getId());
+            fromPolicy = policyResource.get();
+            V3SchedulingPolicy toPolicy = to.getSchedulingPolicy();
+            if (toPolicy == null) {
+                toPolicy = new V3SchedulingPolicy();
+                to.setSchedulingPolicy(toPolicy);
+            }
+            if (fromPolicy.isSetId()) {
+                toPolicy.setId(fromPolicy.getId());
+            }
+            if (fromPolicy.isSetHref()) {
+                toPolicy.setHref(fromPolicy.getHref());
+            }
+            if (fromPolicy.isSetName() && !toPolicy.isSetPolicy()) {
+                toPolicy.setPolicy(fromPolicy.getName());
+            }
+            Properties fromProperties = fromPolicy.getProperties();
+            if (fromProperties != null) {
+                Integer fromDuration = getIntegerProperty(fromProperties, "CpuOverCommitDurationMinutes");
+                if (fromDuration != null) {
+                    V3SchedulingPolicyThresholds toThresholds = toPolicy.getThresholds();
+                    if (toThresholds == null) {
+                        toThresholds = new V3SchedulingPolicyThresholds();
+                        toPolicy.setThresholds(toThresholds);
+                    }
+                    toThresholds.setDuration(fromDuration);
+                }
+                Integer fromHigh = getIntegerProperty(fromProperties, "HighUtilization");
+                if (fromHigh != null) {
+                    V3SchedulingPolicyThresholds toThresholds = toPolicy.getThresholds();
+                    if (toThresholds == null) {
+                        toThresholds = new V3SchedulingPolicyThresholds();
+                        toPolicy.setThresholds(toThresholds);
+                    }
+                    toThresholds.setHigh(fromHigh);
+                }
+                Integer fromLow = getIntegerProperty(fromProperties, "LowUtilization");
+                if (fromLow != null) {
+                    V3SchedulingPolicyThresholds toThresholds = toPolicy.getThresholds();
+                    if (toThresholds == null) {
+                        toThresholds = new V3SchedulingPolicyThresholds();
+                        toPolicy.setThresholds(toThresholds);
+                    }
+                    toThresholds.setLow(fromLow);
+                }
+            }
+        }
+
         return to;
     }
 }
