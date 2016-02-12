@@ -578,10 +578,10 @@ done
 #
 # Move jars to destribution location
 #
-# Warning: WildFly 8 doesn't support soft links inside WEB-INF/lib [1], so some
-#          files cannot be linked (see ovirt_wildfly_fixup condition)
+# Warning:	WildFly 8 doesn't support soft links inside WEB-INF/lib [1],
+#		so some files cannot be linked (see ovirt_wildfly_fixup condition)
 #
-#          [1] https://issues.jboss.org/browse/WFLY-4382
+#		[1] https://issues.jboss.org/browse/WFLY-4382
 #
 install -dm 755 "%{buildroot}%{engine_java}"
 while read lib_path; do
