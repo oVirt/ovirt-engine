@@ -18,13 +18,29 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.Ips;
+import org.ovirt.engine.api.model.Nic;
+import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.ReportedDevice;
+import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.resource.SystemResource;
+import org.ovirt.engine.api.resource.VmNicsResource;
+import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3CdRoms;
 import org.ovirt.engine.api.v3.types.V3CustomProperties;
 import org.ovirt.engine.api.v3.types.V3Disks;
 import org.ovirt.engine.api.v3.types.V3Floppies;
+import org.ovirt.engine.api.v3.types.V3GuestInfo;
+import org.ovirt.engine.api.v3.types.V3IPs;
 import org.ovirt.engine.api.v3.types.V3KatelloErrata;
 import org.ovirt.engine.api.v3.types.V3Nics;
 import org.ovirt.engine.api.v3.types.V3Payloads;
@@ -277,6 +293,48 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
             if (timeZone.isSetName()) {
                 to.setTimezone(timeZone.getName());
             }
+        }
+
+        // If the V4 virtual machine has a value for the "fqdn" element, then copy it to the V3 "guest_info" element:
+        if (from.isSetFqdn()) {
+            V3GuestInfo guestInfo = to.getGuestInfo();
+            if (guestInfo == null) {
+                guestInfo = new V3GuestInfo();
+                to.setGuestInfo(guestInfo);
+            }
+            guestInfo.setFqdn(from.getFqdn());
+        }
+
+        // If the V4 virtual machine has IP addresses reported, then add them to the V3 "guest_info" element:
+        SystemResource systemResource = BackendApiResource.getInstance();
+        VmsResource vmsResource = systemResource.getVmsResource();
+        VmResource vmResource = vmsResource.getVmResource(from.getId());
+        VmNicsResource nicsResource = vmResource.getNicsResource();
+        Nics fromNics = nicsResource.list();
+        List<Ip> fromIps = new ArrayList<>();
+        for (Nic fromNic : fromNics.getNics()) {
+            ReportedDevices fromDevices = fromNic.getReportedDevices();
+            if (fromDevices != null) {
+                for (ReportedDevice fromDevice : fromDevices.getReportedDevices()) {
+                    Ips deviceIps = fromDevice.getIps();
+                    if (deviceIps != null) {
+                        fromIps.addAll(deviceIps.getIps());
+                    }
+                }
+            }
+        }
+        if (!fromIps.isEmpty()) {
+            V3GuestInfo guestInfo = to.getGuestInfo();
+            if (guestInfo == null) {
+                guestInfo = new V3GuestInfo();
+                to.setGuestInfo(guestInfo);
+            }
+            V3IPs toIps = guestInfo.getIps();
+            if (toIps == null) {
+                toIps = new V3IPs();
+                guestInfo.setIps(toIps);
+            }
+            toIps.getIPs().addAll(adaptOut(fromIps));
         }
 
         return to;
