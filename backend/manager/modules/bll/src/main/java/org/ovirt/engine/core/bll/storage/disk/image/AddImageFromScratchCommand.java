@@ -136,6 +136,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                 super.endWithFailure();
             }
         }
+
+        setSucceeded(true);
     }
 
     @Override
