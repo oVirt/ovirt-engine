@@ -58,6 +58,9 @@
     <suppress checks="MethodName" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]webadmin[\\/]section[\\/]main[\\/]view[\\/].*.java"/>
     <suppress checks="MethodName" files="SideTabWithDetailsViewStyle.java"/>
 
+    <!-- VDSBroker names which must match the VDSM API -->
+    <suppress checks="MethodName" files="VdsServerConnector.java"/>
+    <suppress checks="MethodName" files="IVdsServer.java"/>
 
     <!-- Most of the classes in the authentication package aren't used in the
          GWT client, and those that are used have special versions or custom
