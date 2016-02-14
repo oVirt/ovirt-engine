@@ -264,7 +264,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         model.setVLans(new ArrayList<HostVLan>());
         model.setNetworkName(nic.getNetworkName());
         model.setIsManagement(nic.getIsManagement());
-        model.setAddress(nic.getIpv4Address());
+        model.setIpv4Address(nic.getIpv4Address());
+        model.setIpv6Address(nic.getIpv6Address());
 
         return model;
     }
@@ -274,7 +275,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         model.setInterface(nic);
         model.setIsBonded(true);
         model.setBondName(nic.getName());
-        model.setAddress(nic.getIpv4Address());
+        model.setIpv4Address(nic.getIpv4Address());
+        model.setIpv6Address(nic.getIpv6Address());
 
         return model;
     }
@@ -283,7 +285,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         HostInterface hi = new HostInterface();
         hi.setInterface(nic);
         hi.setName(nic.getName());
-        hi.setAddress(nic.getIpv4Address());
+        hi.setIpv4Address(nic.getIpv4Address());
+        hi.setIpv6Address(nic.getIpv6Address());
         hi.setMAC(nic.getMacAddress());
         hi.setSpeed(nic.getSpeed());
         hi.setRxRate(nic.getStatistics().getReceiveRate());
@@ -303,7 +306,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         hv.setInterface(nic);
         hv.setName(nic.getName());
         hv.setNetworkName(nic.getNetworkName());
-        hv.setAddress(nic.getIpv4Address());
+        hv.setIpv4Address(nic.getIpv4Address());
+        hv.setIpv6Address(nic.getIpv6Address());
         hv.getPropertyChangedEvent().addListener(this);
 
         return hv;

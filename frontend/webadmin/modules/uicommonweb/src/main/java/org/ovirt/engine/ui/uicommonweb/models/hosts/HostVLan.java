@@ -45,17 +45,24 @@ public class HostVLan extends Model {
         }
     }
 
-    private String address;
+    private String ipv4Address;
 
-    public String getAddress() {
-        return address;
+    public String getIpv4Address() {
+        return ipv4Address;
     }
 
-    public void setAddress(String value) {
-        if (!Objects.equals(address, value)) {
-            address = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
-        }
+    public void setIpv4Address(String value) {
+        ipv4Address = value;
+    }
+
+    private String ipv6Address;
+
+    public String getIpv6Address() {
+        return ipv6Address;
+    }
+
+    public void setIpv6Address(String value) {
+        ipv6Address = value;
     }
 
 }

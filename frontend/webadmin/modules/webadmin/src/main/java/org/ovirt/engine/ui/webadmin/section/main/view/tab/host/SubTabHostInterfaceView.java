@@ -74,7 +74,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     }
 
     Resources getTableResources() {
-        return GWT.<Resources> create(SubTableResources.class);
+        return GWT.create(SubTableResources.class);
     }
 
     void initTable() {
@@ -89,7 +89,8 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         table.addColumn(new EmptyColumn(), constants.vlanInterface(), "200px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.hostOutOfSync(), "75px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.networkNameInterface(), "200px"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.addressInterface(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.ipv4AddressInterface(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.ipv6AddressInterface(), "200px"); //$NON-NLS-1$
 
         // Statistics Panel
         table.addColumn(new EmptyColumn(), constants.macInterface(), "120px"); //$NON-NLS-1$

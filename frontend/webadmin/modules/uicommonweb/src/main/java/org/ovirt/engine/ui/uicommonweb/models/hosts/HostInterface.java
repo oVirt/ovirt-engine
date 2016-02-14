@@ -36,14 +36,24 @@ public class HostInterface extends Model {
         name = value;
     }
 
-    private String address;
+    private String ipv4Address;
 
-    public String getAddress() {
-        return address;
+    public String getIpv4Address() {
+        return ipv4Address;
     }
 
-    public void setAddress(String value) {
-        address = value;
+    public void setIpv4Address(String value) {
+        ipv4Address = value;
+    }
+
+    private String ipv6Address;
+
+    public String getIpv6Address() {
+        return ipv6Address;
+    }
+
+    public void setIpv6Address(String value) {
+        ipv6Address = value;
     }
 
     private String mac;

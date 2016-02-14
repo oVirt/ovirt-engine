@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -25,7 +26,8 @@ public class VLanPanel extends VerticalPanel {
 
     public static final String CHECK_BOX_COLUMN_WIDTH = "200px"; //$NON-NLS-1$
     public static final String NETWORK_NAME_COLUMN_WIDTH = "200px"; //$NON-NLS-1$
-    public static final String ADDRESS_COLUMN_WIDTH = "120px"; //$NON-NLS-1$
+    public static final String IPV4_ADDRESS_COLUMN_WIDTH = "120px"; //$NON-NLS-1$
+    public static final String IPV6_ADDRESS_COLUMN_WIDTH = "200px"; //$NON-NLS-1$
     public static final String OUT_OF_SYNC_WIDTH = "75px"; //$NON-NLS-1$
 
     public void addVLans(HostInterfaceLineModel lineModel) {
@@ -34,8 +36,10 @@ public class VLanPanel extends VerticalPanel {
             add(new VLanElementPanel(hostVLan));
         }
 
-        if (!hasVlan || !StringHelper.isNullOrEmpty(lineModel.getNetworkName())
-                || !StringHelper.isNullOrEmpty(lineModel.getAddress())) {
+        if (!hasVlan
+                || !StringHelper.isNullOrEmpty(lineModel.getNetworkName())
+                || !StringHelper.isNullOrEmpty(lineModel.getIpv4Address())
+                || !StringHelper.isNullOrEmpty(lineModel.getIpv6Address())) {
             add(new VLanElementPanel(lineModel));
         }
     }
@@ -67,7 +71,8 @@ class VLanElementPanel extends HorizontalPanel {
                 hostVLan.getInterface().getIsManagement(),
                 hostVLan.getNetworkName(),
                 hostVLan.getInterface().getNetworkImplementationDetails(),
-                hostVLan.getAddress());
+                hostVLan.getIpv4Address(),
+                hostVLan.getIpv6Address());
 
         return row;
     }
@@ -79,19 +84,22 @@ class VLanElementPanel extends HorizontalPanel {
                 lineModel.getIsManagement(),
                 lineModel.getNetworkName(),
                 iface.getNetworkImplementationDetails(),
-                lineModel.getAddress());
+                lineModel.getIpv4Address(),
+                lineModel.getIpv6Address());
     }
 
     private Grid createBaseVlanRow(Widget checkBoxWidget,
             boolean networkManagementFlag,
             String networkName,
             final NetworkImplementationDetails networkImplementationDetails,
-            String address) {
-        Grid row = new Grid(1, 4);
+            String ipv4Address,
+            String ipv6Address) {
+        Grid row = new Grid(1, 5);
         row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
         row.getColumnFormatter().setWidth(1, VLanPanel.OUT_OF_SYNC_WIDTH);
         row.getColumnFormatter().setWidth(2, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
-        row.getColumnFormatter().setWidth(3, VLanPanel.ADDRESS_COLUMN_WIDTH);
+        row.getColumnFormatter().setWidth(3, VLanPanel.IPV4_ADDRESS_COLUMN_WIDTH);
+        row.getColumnFormatter().setWidth(4, VLanPanel.IPV6_ADDRESS_COLUMN_WIDTH);
         row.setWidth("100%"); //$NON-NLS-1$
         row.setHeight("100%"); //$NON-NLS-1$
         row.setWidget(0, 0, checkBoxWidget);
@@ -103,7 +111,8 @@ class VLanElementPanel extends HorizontalPanel {
 
         row.setWidget(0, 1, createSyncPanel(networkImplementationDetails));
         row.setWidget(0, 2, networkNameLabel);
-        row.setWidget(0, 3, new Label(address));
+        addIpAddressWidget(row, ipv4Address, 3, VLanPanel.IPV4_ADDRESS_COLUMN_WIDTH);
+        addIpAddressWidget(row, ipv6Address, 4, VLanPanel.IPV6_ADDRESS_COLUMN_WIDTH);
 
         Style gridStyle = row.getElement().getStyle();
         gridStyle.setBorderColor("white"); //$NON-NLS-1$
@@ -111,6 +120,12 @@ class VLanElementPanel extends HorizontalPanel {
         gridStyle.setBorderStyle(BorderStyle.SOLID);
 
         return row;
+    }
+
+    private void addIpAddressWidget(Grid row, String address, int columnNumber, String width) {
+        final LabelWithTextTruncation ipAddressWidget = new LabelWithTextTruncation(address);
+        ipAddressWidget.setWidth(width);
+        row.setWidget(0, columnNumber, ipAddressWidget);
     }
 
     private HorizontalPanel createSyncPanel(final NetworkImplementationDetails networkImplementationDetails) {

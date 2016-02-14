@@ -2563,8 +2563,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Empty")
     String emptyInterface();
 
-    @DefaultStringValue("Address")
-    String addressInterface();
+    @DefaultStringValue("IPv4 Address")
+    String ipv4AddressInterface();
+
+    @DefaultStringValue("IPv6 Address")
+    String ipv6AddressInterface();
 
     @DefaultStringValue("Bond")
     String bondInterface();
