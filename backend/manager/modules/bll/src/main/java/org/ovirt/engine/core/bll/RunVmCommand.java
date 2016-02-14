@@ -521,7 +521,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         ExecutionContext createSnapshotsCtx = new ExecutionContext();
         createSnapshotsCtx.setMonitored(true);
         createSnapshotsCtx.setStep(createSnapshotsStep);
-        return cloneContext().withExecutionContext(createSnapshotsCtx);
+        return getContext().withExecutionContext(createSnapshotsCtx);
     }
 
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParametersForEndAction() {
