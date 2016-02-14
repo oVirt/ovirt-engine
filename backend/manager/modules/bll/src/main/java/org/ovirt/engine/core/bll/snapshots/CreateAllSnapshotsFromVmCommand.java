@@ -375,8 +375,14 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         result.setDiskProfileId(image.getDiskProfileId());
         result.setVmSnapshotId(newActiveSnapshotId);
         result.setEntityInfo(getParameters().getEntityInfo());
-        result.setParentCommand(parentCommand);
-        result.setParentParameters(getParametersForTask(parentCommand, getParameters()));
+
+        if (getCallback() != null) {
+            result.setParentCommand(getActionType());
+            result.setParentParameters(getParameters());
+        } else {
+            result.setParentCommand(parentCommand);
+            result.setParentParameters(getParametersForTask(parentCommand, getParameters()));
+        }
         if (getParameters().getDiskIdsToIgnoreInChecks().contains(image.getId())) {
             result.setLeaveLocked(true);
         }
