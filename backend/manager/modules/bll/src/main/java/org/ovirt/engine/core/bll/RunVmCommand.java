@@ -527,6 +527,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParametersForEndAction() {
         CreateAllSnapshotsFromVmParameters parameters = buildCreateSnapshotParameters();
         parameters.setImagesParameters(getParameters().getImagesParameters());
+        if (getParameters().isUseCinderCommandCallback()) {
+            parameters.setShouldBeEndedByParent(false);
+            parameters.setCommandId(getParametersForChildCommand().get(0).getCommandId());
+        }
         return parameters;
     }
 
