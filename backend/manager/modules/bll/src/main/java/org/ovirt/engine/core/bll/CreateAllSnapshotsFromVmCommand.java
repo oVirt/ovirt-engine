@@ -34,8 +34,8 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.CreateAllCinderSnapshotsParameters;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -306,30 +305,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void createSnapshotsForDisks() {
-        for (DiskImage disk : getDisksList()) {
-            if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
-                CreateCinderSnapshotParameters params = buildChildCommandParameters(disk);
-                params.setQuotaId(disk.getQuotaId());
-
-                Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                        VdcActionType.CreateCinderSnapshot,
-                        params,
-                        cloneContext().withoutCompensationContext().withoutLock());
-                try {
-                    VdcReturnValueBase vdcReturnValueBase = future.get();
-                    if (!vdcReturnValueBase.getSucceeded()) {
-                        log.error("Error creating snapshot for Cinder disk '{}'", disk.getDiskAlias());
-                        throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    log.error("Error creating snapshot for Cinder disk '{}': {}", disk.getDiskAlias(), e.getMessage());
-                    throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
-                }
-                continue;
-            }
+        List<DiskImage> images = ImagesHandler.filterImageDisks(getDisksList(), true, false, true);
+        for (DiskImage diskImage : images) {
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                     VdcActionType.CreateSnapshot,
-                    buildCreateSnapshotParameters(disk),
+                    buildCreateSnapshotParameters(diskImage),
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
 
             if (vdcReturnValue.getSucceeded()) {
@@ -339,18 +319,25 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                         "Failed to create snapshot!");
             }
         }
-    }
 
-    private CreateCinderSnapshotParameters buildChildCommandParameters(DiskImage cinderDisk) {
-        CreateCinderSnapshotParameters createParams =
-                new CreateCinderSnapshotParameters(((CinderDisk) getDiskDao().get(cinderDisk.getId())).getImageId());
-        createParams.setVmSnapshotId(newActiveSnapshotId);
-        createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
-        createParams.setDescription(getParameters().getDescription());
-        createParams.setSnapshotType(getParameters().getSnapshotType());
-        createParams.setParentCommand(getActionType());
-        createParams.setParentParameters(getParameters());
-        return createParams;
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getDisksList());
+        CreateAllCinderSnapshotsParameters params = new CreateAllCinderSnapshotsParameters(
+                cinderDisks, getParameters().getDescription(), getParameters().getSnapshotType(), newActiveSnapshotId);
+
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.CreateAllCinderSnapshots,
+                params,
+                cloneContext().withoutCompensationContext().withoutLock());
+        try {
+            VdcReturnValueBase vdcReturnValueBase = future.get();
+            if (!vdcReturnValueBase.getSucceeded()) {
+                log.error("Error creating snapshots of Cinder disks on VM '{}'", getVm().getName());
+                throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error creating snapshots of Cinder disks on VM '{}': {}", getVm().getName(), e.getMessage());
+            throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
+        }
     }
 
     private void fastForwardDisksToActiveSnapshot() {
