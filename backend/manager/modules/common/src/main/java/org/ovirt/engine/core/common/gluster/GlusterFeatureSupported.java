@@ -92,4 +92,14 @@ public class GlusterFeatureSupported {
       return supportedInConfig(ConfigValues.GlusterNetworkRoleSupported, version);
   }
 
+    /**
+     *
+     * @param version
+     *            Compatibility version to check
+     * @return <code>true</code> if there is a support for stopping Gluster services <code>false</code> if its not
+     */
+    public static boolean isGlusterStopServicesSupported(Version version) {
+        return supportedInConfig(ConfigValues.GlusterStopServicesSupported, version);
+  }
+
 }

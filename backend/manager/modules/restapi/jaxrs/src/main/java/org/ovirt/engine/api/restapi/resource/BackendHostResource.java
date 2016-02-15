@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Agent;
@@ -85,6 +86,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements
         HostResource {
 
+    public static final String STOP_GLUSTER_SERVICE = "stop_gluster_service";
     private static final String DEFAULT_ISCSI_PORT = "3260";
 
     private BackendHostsResource parent;
@@ -403,7 +405,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Response deactivate(Action action) {
         return doAction(VdcActionType.MaintenanceNumberOfVdss,
                 new MaintenanceNumberOfVdssParameters(asList(guid), false, action.isSetReason() ? action.getReason()
-                        : null),
+                        : null, getBooleanMatrixParam(STOP_GLUSTER_SERVICE)),
                 action);
     }
 
@@ -753,4 +755,14 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public KatelloErrataResource getKatelloErrataResource() {
         return inject(new BackendHostKatelloErrataResource(id));
     }
+
+    private boolean getBooleanMatrixParam(String parameter) {
+        if (getUriInfo() != null && QueryHelper.hasMatrixParam(getUriInfo(), parameter)) {
+            String matrixString = QueryHelper.getMatrixConstraint(getUriInfo(), parameter);
+            return Boolean.valueOf(matrixString);
+        } else {
+            return false;
+        }
+    }
+
 }

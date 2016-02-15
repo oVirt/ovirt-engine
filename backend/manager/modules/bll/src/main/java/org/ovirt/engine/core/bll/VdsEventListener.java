@@ -70,8 +70,6 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -144,7 +142,6 @@ public class VdsEventListener implements IVdsEventListener {
             try {
                 LockManagerFactory.getLockManager().acquireLockWait(lock);
                 clearDomainCache(vds);
-                stopGlusterServices(vds);
                 StoragePool storage_pool = DbFacade.getInstance()
                         .getStoragePoolDao()
                         .get(vds.getStoragePoolId());
@@ -161,31 +158,6 @@ public class VdsEventListener implements IVdsEventListener {
                 }
             } finally {
                 LockManagerFactory.getLockManager().releaseLock(lock);
-            }
-        }
-    }
-
-    private void stopGlusterServices(VDS vds) {
-        if (vds.getVdsGroupSupportsGlusterService()) {
-            // Stop glusterd service first
-            boolean succeeded = resourceManagerProvider.get().runVdsCommand(VDSCommandType.ManageGlusterService,
-                    new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "stop")).getSucceeded();
-            if (succeeded) {
-                // Stop other gluster related processes on the node
-                succeeded = resourceManagerProvider.get().runVdsCommand(VDSCommandType.StopGlusterProcesses,
-                        new VdsIdVDSCommandParametersBase(vds.getId())).getSucceeded();
-                // Mark the bricks as DOWN on this node
-                if (succeeded) {
-                    List<GlusterBrickEntity> bricks =
-                            glusterBrickDao.getGlusterVolumeBricksByServerId(vds.getId());
-                    for (GlusterBrickEntity brick : bricks) {
-                        brick.setStatus(GlusterStatus.DOWN);
-                    }
-                    glusterBrickDao.updateBrickStatuses(bricks);
-                }
-            }
-            if(!succeeded){
-                log.error("Failed to stop gluster services while moving the host '{}' to maintenance", vds.getName());
             }
         }
     }

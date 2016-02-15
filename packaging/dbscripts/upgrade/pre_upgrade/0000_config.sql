@@ -197,6 +197,9 @@ select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/
 select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore','swap','general');
 select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
+-- Gluster Service Maintenance Support --
+select fn_db_add_config_value_for_versions_up_to('GlusterStopServicesSupported', 'false', '3.4');
+
 -- Gluster Network Role --
 select fn_db_add_config_value_for_versions_up_to('GlusterNetworkRoleSupported', 'false', '3.5');
 
