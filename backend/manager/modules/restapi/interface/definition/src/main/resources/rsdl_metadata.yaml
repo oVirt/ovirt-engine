@@ -2392,7 +2392,7 @@ actions:
               ip_address_assignment.assignment_method: xs:string
               ip_address_assignment.ip.address: xs:string
               ip_address_assignment.ip.netmask: xs:string
-              ip_address_assignment.ip.gateawy: xs:string
+              ip_address_assignment.ip.gateway: xs:string
             network_attachment.properties.property--COLLECTION:
               property.name: xs:string
               property.value: xs:string
@@ -2434,7 +2434,7 @@ actions:
             ip_address_assignment.assignment_method: xs:string
             ip_address_assignment.ip.address: xs:string
             ip_address_assignment.ip.netmask: xs:string
-            ip_address_assignment.ip.gateawy: xs:string
+            ip_address_assignment.ip.gateway: xs:string
           network_attachment.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
@@ -2457,7 +2457,7 @@ actions:
             ip_address_assignment.assignment_method: xs:string
             ip_address_assignment.ip.address: xs:string
             ip_address_assignment.ip.netmask: xs:string
-            ip_address_assignment.ip.gateawy: xs:string
+            ip_address_assignment.ip.gateway: xs:string
           network_attachment.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
@@ -2479,7 +2479,7 @@ actions:
             ip_address_assignment.assignment_method: xs:string
             ip_address_assignment.ip.address: xs:string
             ip_address_assignment.ip.netmask: xs:string
-            ip_address_assignment.ip.gateawy: xs:string
+            ip_address_assignment.ip.gateway: xs:string
           network_attachment.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
@@ -2503,7 +2503,7 @@ actions:
             ip_address_assignment.assignment_method: xs:string
             ip_address_assignment.ip.address: xs:string
             ip_address_assignment.ip.netmask: xs:string
-            ip_address_assignment.ip.gateawy: xs:string
+            ip_address_assignment.ip.gateway: xs:string
           network_attachment.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
