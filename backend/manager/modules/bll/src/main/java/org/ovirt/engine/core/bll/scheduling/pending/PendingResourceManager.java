@@ -231,7 +231,7 @@ public class PendingResourceManager {
         VdsManager vdsManager = resourceManager.GetVdsManager(hostId);
 
         int pendingCpus = PendingCpuCores.collectForHost(this, hostId);
-        int pendingMemory = PendingMemory.collectForHost(this, hostId);
+        int pendingMemory = PendingOvercommitMemory.collectForHost(this, hostId);
 
         vdsManager.updatePendingData(pendingMemory, pendingCpus);
     }
