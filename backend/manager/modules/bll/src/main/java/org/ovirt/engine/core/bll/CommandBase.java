@@ -1337,7 +1337,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             if (exceptionOccurred || !getSucceeded()) {
                 setSucceeded(false);
                 compensate();
-                setCommandStatus(CommandStatus.FAILED);
+                if (commandStatus == CommandStatus.ACTIVE) {
+                    setCommandStatus(noAsyncOperations() ? CommandStatus.ENDED_WITH_FAILURE :
+                            CommandStatus.EXECUTION_FAILED);
+                }
             } else {
                 // if the command is not an async task and has no custom callback
                 // set the status to ENDED_SUCCESSFULLY if the status is ACTIVE
