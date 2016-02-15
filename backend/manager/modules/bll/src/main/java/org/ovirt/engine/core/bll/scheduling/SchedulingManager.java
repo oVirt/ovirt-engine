@@ -110,7 +110,6 @@ public class SchedulingManager implements BackendService {
 
     @Inject
     private SchedulingManager() {
-        pendingResourceManager = new PendingResourceManager(resourceManager);
         policyMap = new ConcurrentHashMap<>();
         policyUnits = new ConcurrentHashMap<>();
     }
@@ -118,12 +117,17 @@ public class SchedulingManager implements BackendService {
     @PostConstruct
     public void init() {
         log.info("Initializing Scheduling manager");
+        initializePendingResourceManager();
         loadPolicyUnits();
         loadClusterPolicies();
         loadExternalScheduler();
         enableLoadBalancer();
         enableHaReservationCheck();
         log.info("Initialized Scheduling manager");
+    }
+
+    private void initializePendingResourceManager() {
+        pendingResourceManager = new PendingResourceManager(resourceManager);
     }
 
     protected void loadExternalScheduler() {
