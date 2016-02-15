@@ -2164,6 +2164,12 @@ actions:
         optionalArguments:
           action.reason: xs:string
         description: deactivate the specified host
+    urlparams:
+      stop_gluster_service:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /hosts/{host:id}/fence|rel=fence
   description: perform fencing operation (start/stop/status) on the host.
   request:

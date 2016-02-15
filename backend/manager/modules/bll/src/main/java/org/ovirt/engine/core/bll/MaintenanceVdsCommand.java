@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
@@ -243,4 +244,12 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return false;
     }
 
+    @Override
+    public CommandCallback getCallback() {
+        if (getVds().getClusterSupportsGlusterService() && getParameters().isStopGlusterService()) {
+            return new HostMaintenanceCallback();
+        } else {
+            return super.getCallback();
+        }
+    }
 }

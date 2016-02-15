@@ -3285,6 +3285,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The selected cluster doesn't support Storage provisioning.")
     String ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The selected cluster doesn't support stopping gluster services.")
+    String ACTION_TYPE_FAILED_GLUSTER_SERVICE_MAINTENANCE_NOT_SUPPORTED_FOR_CLUSTER();
+
     @DefaultStringValue("Cannot ${action} ${type}. Storage Device is locked.")
     String ACTION_TYPE_FAILED_STORAGE_DEVICE_LOCKED();
 

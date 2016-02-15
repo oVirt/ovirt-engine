@@ -82,6 +82,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements HostResource {
 
     public static final String FORCE = "force";
+    public static final String STOP_GLUSTER_SERVICE = "stop_gluster_service";
 
     private static final String DEFAULT_ISCSI_PORT = "3260";
 
@@ -377,9 +378,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response deactivate(Action action) {
+        boolean stopGlusterService = QueryHelper.getBooleanMatrixParameter(uriInfo, STOP_GLUSTER_SERVICE, true, false);
         return doAction(VdcActionType.MaintenanceNumberOfVdss,
                 new MaintenanceNumberOfVdssParameters(asList(guid), false, action.isSetReason() ? action.getReason()
-                        : null),
+                        : null, stopGlusterService),
                 action);
     }
 

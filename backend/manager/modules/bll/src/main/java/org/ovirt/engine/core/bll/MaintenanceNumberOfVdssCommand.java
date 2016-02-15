@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -107,7 +108,9 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private void migrateAllVdss() {
         for (Guid vdsId : vdssToMaintenance.keySet()) {
             // ParametersCurrentUser = CurrentUser
-            MaintenanceVdsParameters tempVar = new MaintenanceVdsParameters(vdsId, getParameters().getIsInternal());
+            MaintenanceVdsParameters tempVar = new MaintenanceVdsParameters(vdsId,
+                    getParameters().getIsInternal(),
+                    getParameters().isStopGlusterService());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCorrelationId(getParameters().getCorrelationId());
             VdcReturnValueBase result =
@@ -180,6 +183,12 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 if (vds.getSpmStatus() == VdsSpmStatus.SPM) {
                     addSharedLockEntry(vds);
                 }
+            }
+            if (getParameters().isStopGlusterService() && (!vds.getClusterSupportsGlusterService()
+                    || !GlusterFeatureSupported.isGlusterStopServicesSupported(vds.getClusterCompatibilityVersion()))) {
+                result = false;
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_SERVICE_MAINTENANCE_NOT_SUPPORTED_FOR_CLUSTER);
+                break;
             }
         }
         result = result && acquireLockInternal();
