@@ -22,14 +22,24 @@ public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
 
     private String reason;
 
+    private boolean stopGlusterService;
+
     public MaintenanceNumberOfVdssParameters(List<Guid> vdsIdList, boolean isInternal) {
-        this(vdsIdList, isInternal, "");
+        this(vdsIdList, isInternal, "", false);
     }
 
     public MaintenanceNumberOfVdssParameters(List<Guid> vdsIdList, boolean isInternal, String reason) {
         _vdsIdList = vdsIdList;
         _isInternal = isInternal;
         this.reason = reason;
+    }
+
+    public MaintenanceNumberOfVdssParameters(List<Guid> vdsIdList,
+            boolean isInternal,
+            String reason,
+            boolean stopGlusterService) {
+        this(vdsIdList, isInternal, reason);
+        this.stopGlusterService = stopGlusterService;
     }
 
     public MaintenanceNumberOfVdssParameters(List<Guid> vdsIdList, boolean isInternal, boolean keepPolicyPMEnabled) {
@@ -63,6 +73,10 @@ public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
 
     public void setReason(String value) {
         reason = value;
+    }
+
+    public boolean isStopGlusterService() {
+        return stopGlusterService;
     }
 
     public MaintenanceNumberOfVdssParameters() {

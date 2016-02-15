@@ -2971,4 +2971,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("You must have at least 1 proxy preference")
     String unableToRemove();
+
+    @DefaultStringValue("Stop Gluster service")
+    String stopGlusterServices();
 }

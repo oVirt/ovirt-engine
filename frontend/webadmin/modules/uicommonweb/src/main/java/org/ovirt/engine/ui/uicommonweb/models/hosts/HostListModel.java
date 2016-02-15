@@ -1165,7 +1165,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     public void maintenance() {
         Guid clusterId = getClusterIdOfSelectedHosts();
         if (clusterId == null) {
-            maintenance(false);
+            maintenance(false, false);
         } else {
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -1173,14 +1173,16 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         public void onSuccess(Object target, Object returnValue) {
                             VDSGroup cluster = (VDSGroup) returnValue;
                             if (cluster != null) {
-                                maintenance(cluster.isMaintenanceReasonRequired());
+                                maintenance(cluster.isMaintenanceReasonRequired(),
+                                        cluster.supportsGlusterService() && GlusterFeaturesUtil
+                                                .isStopGlusterProcessesSupported(cluster.getCompatibilityVersion()));
                             }
                         }
                     }), clusterId);
         }
     }
 
-    private void maintenance(boolean isMaintenanceReasonVisible) {
+    private void maintenance(boolean isMaintenanceReasonVisible, boolean isStopGlusterServiceRequired) {
         if (getConfirmWindow() != null) {
             return;
         }
@@ -1194,6 +1196,11 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 .getConstants()
                 .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
         model.setReasonVisible(isMaintenanceReasonVisible);
+        if (isStopGlusterServiceRequired) {
+            model.getForce().setIsAvailable(true);
+            model.setForceLabel(ConstantsManager.getInstance().getConstants().stopGlusterServices());
+            model.getForce().setEntity(false);
+        }
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         ArrayList<String> vdss = new ArrayList<String>();
         for (Object item : getSelectedItems()) {
@@ -1222,7 +1229,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             VDS vds = (VDS) item;
             vdss.add(vds.getId());
         }
-        list.add(new MaintenanceNumberOfVdssParameters(vdss, false, model.getReason().getEntity()));
+        list.add(new MaintenanceNumberOfVdssParameters(vdss,
+                false,
+                model.getReason().getEntity(),
+                model.getForce().getEntity()));
 
         model.startProgress(null);
 
