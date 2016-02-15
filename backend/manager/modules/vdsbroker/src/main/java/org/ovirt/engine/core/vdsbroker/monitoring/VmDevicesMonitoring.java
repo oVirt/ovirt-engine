@@ -49,6 +49,12 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class VmDevicesMonitoring implements BackendService {
 
+    private enum DevicesChange {
+        NOT_CHANGED,
+        CHANGED,
+        HASH_ONLY
+    }
+
     /**
      * This class describes a change in VM devices that needs to be processed by {@link VmDevicesMonitoring}.
      * <p>
@@ -78,6 +84,7 @@ public class VmDevicesMonitoring implements BackendService {
         private List<VmDevice> devicesToAdd;
         private List<VmDevice> devicesToUpdate;
         private List<VmDeviceId> deviceIdsToRemove;
+        private List<Guid> vmsToSaveHash;
 
         private Deque<Guid> touchedVms = new LinkedList<>();
 
@@ -146,16 +153,31 @@ public class VmDevicesMonitoring implements BackendService {
             deviceIdsToRemove = addToOptionalList(deviceIdsToRemove, deviceId);
         }
 
+        private List<Guid> getVmsToSaveHash() {
+            return getOptionalList(vmsToSaveHash);
+        }
+
+        private void addVmToSaveHash(Guid vmId) {
+            vmsToSaveHash = addToOptionalList(vmsToSaveHash, vmId);
+        }
+
         /**
          * Add the VM to the list of VMs to be checked for device updates, if device information hash passed in
          * <code>vdsmHash</code> parameter is more recent (in terms of <code>fetchTime</code>) and differs from
          * the hash remembered by {@link VmDevicesMonitoring}. The new hash is remembered after that.
          */
         public void updateVm(Guid vmId, String vdsmHash) {
-            if (!VmDeviceCommonUtils.isOldClusterVersion(getGroupCompatibilityVersion(vdsId))
-                    && isVmDevicesChanged(vmId, vdsmHash, fetchTime)) {
+            if (VmDeviceCommonUtils.isOldClusterVersion(getGroupCompatibilityVersion(vdsId))) {
+                return;
+            }
+
+            DevicesChange devicesChange = isVmDevicesChanged(vmId, vdsmHash, fetchTime);
+            if (devicesChange == DevicesChange.CHANGED) {
                 lockTouchedVm(vmId);
+                addVmToSaveHash(vmId);
                 addVmToProcess(vmId);
+            } else if (devicesChange == DevicesChange.HASH_ONLY) {
+                addVmToSaveHash(vmId);
             }
         }
 
@@ -166,8 +188,13 @@ public class VmDevicesMonitoring implements BackendService {
          * @param vmInfo FullList VDSM command result
          */
         public void updateVmFromFullList(Map<String, Object> vmInfo) {
-            if (!VmDeviceCommonUtils.isOldClusterVersion(getGroupCompatibilityVersion(vdsId))
-                    && isVmDevicesChanged(getVmId(vmInfo), UPDATE_HASH, fetchTime)) {
+            if (VmDeviceCommonUtils.isOldClusterVersion(getGroupCompatibilityVersion(vdsId))) {
+                return;
+            }
+
+            Guid vmId = getVmId(vmInfo);
+            if (isVmDevicesChanged(vmId, UPDATE_HASH, fetchTime) == DevicesChange.CHANGED) {
+                addVmToSaveHash(vmId);
                 processFullList(vmInfo);
             }
         }
@@ -382,9 +409,9 @@ public class VmDevicesMonitoring implements BackendService {
         return fetchTimeA - fetchTimeB < 0;
     }
 
-    private boolean isVmDevicesChanged(Guid vmId, String vdsmHash, long fetchTime) {
+    private DevicesChange isVmDevicesChanged(Guid vmId, String vdsmHash, long fetchTime) {
         if (vdsmHash == null) {
-            return false;
+            return DevicesChange.NOT_CHANGED;
         }
 
         // This operation is atomic
@@ -393,9 +420,13 @@ public class VmDevicesMonitoring implements BackendService {
             boolean previousHashUpdate = previousStatus != null && UPDATE_HASH.equals(previousStatus.getHash());
             if (previousStatus == null || previousHashUpdate || fetchTimeBefore(previousStatus.getFetchTime(), fetchTime)) {
                 vmDevicesStatuses.put(vmId, new DevicesStatus(vdsmHash, fetchTime));
-                return previousStatus == null || !previousHashUpdate && !Objects.equals(previousStatus.getHash(), vdsmHash);
+                if (previousStatus == null || !Objects.equals(previousStatus.getHash(), vdsmHash)) {
+                    return previousHashUpdate ? DevicesChange.HASH_ONLY : DevicesChange.CHANGED;
+                } else {
+                    return DevicesChange.NOT_CHANGED;
+                }
             } else {
-                return false;
+                return DevicesChange.NOT_CHANGED;
             }
         }
     }
@@ -631,9 +662,9 @@ public class VmDevicesMonitoring implements BackendService {
             });
         }
 
-        if (!change.touchedVms.isEmpty()) {
+        if (!change.getVmsToSaveHash().isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                        getVmDynamicDao().updateDevicesHashes(change.touchedVms.stream()
+                        getVmDynamicDao().updateDevicesHashes(change.getVmsToSaveHash().stream()
                                 .map(vmId -> new Pair<>(vmId, vmDevicesStatuses.get(vmId).getHash()))
                                 .collect(Collectors.toList()));
                 return null;
