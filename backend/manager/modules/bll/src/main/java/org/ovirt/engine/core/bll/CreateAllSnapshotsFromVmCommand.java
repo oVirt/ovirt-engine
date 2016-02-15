@@ -348,7 +348,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         createParams.setDescription(getParameters().getDescription());
         createParams.setSnapshotType(getParameters().getSnapshotType());
-        return withRootCommandInfo(createParams, getActionType());
+        createParams.setParentCommand(getActionType());
+        createParams.setParentParameters(getParameters());
+        return createParams;
     }
 
     private void fastForwardDisksToActiveSnapshot() {
