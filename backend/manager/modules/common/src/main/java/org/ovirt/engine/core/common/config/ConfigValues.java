@@ -1472,6 +1472,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterBrickProvisioningEnabled,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterStopServicesSupported,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/,/home,/boot")
     GlusterStorageDeviceListMountPointsToIgnore,

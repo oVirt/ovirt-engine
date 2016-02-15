@@ -1243,10 +1243,41 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                 }, null);
     }
 
-    public void maintenance()
-    {
-        if (getConfirmWindow() != null)
-        {
+    private Guid getClusterIdOfSelectedHosts() {
+        Guid clusterId = null;
+        for (Object item : getSelectedItems()) {
+            VDS host = (VDS) item;
+            if (clusterId == null) {
+                clusterId = host.getVdsGroupId();
+            } else if (!clusterId.equals(host.getVdsGroupId())) {
+                clusterId = null;
+                break;
+            }
+        }
+        return clusterId;
+    }
+
+    public void maintenance() {
+        Guid clusterId = getClusterIdOfSelectedHosts();
+        if (clusterId == null) {
+            maintenance(false);
+        } else {
+            AsyncDataProvider.getClusterById(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+                            VDSGroup cluster = (VDSGroup) returnValue;
+                            if (cluster != null) {
+                                maintenance(cluster.supportsGlusterService() && GlusterFeaturesUtil
+                                        .isStopGlusterProcessesSupported(cluster.getcompatibility_version()));
+                            }
+                        }
+                    }), clusterId);
+        }
+    }
+
+    private void maintenance(boolean isStopGlusterServiceRequired) {
+        if (getConfirmWindow() != null) {
             return;
         }
 
@@ -1258,6 +1289,12 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         model.setMessage(ConstantsManager.getInstance()
                 .getConstants()
                 .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
+        if (isStopGlusterServiceRequired) {
+            model.getForce().setIsAvailable(true);
+            model.setForceLabel(ConstantsManager.getInstance().getConstants().stopGlusterServices());
+            model.getForce().setEntity(false);
+        }
+
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         ArrayList<String> vdss = new ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -1294,7 +1331,10 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             VDS vds = (VDS) item;
             vdss.add(vds.getId());
         }
-        list.add(new MaintenanceNumberOfVdssParameters(vdss, false));
+        list.add(new MaintenanceNumberOfVdssParameters(vdss,
+                false,
+                false,
+                model.getForce().getEntity()));
 
         model.startProgress(null);
 

@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
@@ -243,4 +245,12 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return false;
     }
 
+    @Override
+    public CommandCallBack getCallBack() {
+        if (getVds().getVdsGroupSupportsGlusterService() && getParameters().isStopGlusterService()) {
+            return new HostMaintenanceCallback();
+        } else {
+            return super.getCallBack();
+        }
+    }
 }

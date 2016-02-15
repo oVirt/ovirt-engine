@@ -2881,7 +2881,12 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deactivate the specified host
-    urlparams: {}
+    urlparams:
+      stop_gluster_service:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
