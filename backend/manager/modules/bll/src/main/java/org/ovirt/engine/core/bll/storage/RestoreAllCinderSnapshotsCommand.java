@@ -128,10 +128,6 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
     @Override
     protected void endSuccessfully() {
         removeRedundantVolumesForOrphanedDisks();
-        if (!getParameters().isParentHasTasks()) {
-            unlockSnapshot(getParameters().getSnapshot().getId());
-            super.endSuccessfully();
-        }
         setSucceeded(true);
     }
 

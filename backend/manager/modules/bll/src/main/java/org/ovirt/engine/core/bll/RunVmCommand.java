@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -101,7 +103,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         /** remove stateless images that remained from last time the VM ran as stateless */
         REMOVE_STATELESS_IMAGES,
         /** wrap things up after the VM reach UP state */
-        RUNNING_SUCCEEDED
+        RUNNING_SUCCEEDED;
+
+        public boolean isStateless() {
+            return this == RunVmFlow.CREATE_STATELESS_IMAGES || this == RunVmFlow.REMOVE_STATELESS_IMAGES;
+        }
     }
 
     /** Cache the current flow the command is in. use {@link #getFlow()} to retrieve the flow */
@@ -150,6 +156,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVm() != null) {
             needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
         }
+        fetchVmDisksFromDb();
+        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+        getParameters().setUseCinderCommandCallback(!cinderDisks.isEmpty());
     }
 
     @Override
@@ -1273,5 +1282,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     public void onPowerringUp() {
         decreasePendingVm(getVmStaticDao().get(getVmId()));
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return (getParameters().isUseCinderCommandCallback() && getFlow().isStateless())
+                ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 }
