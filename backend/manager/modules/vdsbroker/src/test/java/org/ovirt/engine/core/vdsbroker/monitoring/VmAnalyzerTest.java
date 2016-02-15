@@ -368,7 +368,7 @@ public class VmAnalyzerTest {
                 vmNetworkInterfaceDao,
                 vdsDao,
                 null,
-                vmJobsDao,
+                null,
                 null,
                 null));
         doReturn(vmManager).when(vmAnalyzer).getVmManager();

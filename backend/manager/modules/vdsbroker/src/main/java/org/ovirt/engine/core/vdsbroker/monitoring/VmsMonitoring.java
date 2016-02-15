@@ -101,8 +101,11 @@ public class VmsMonitoring implements BackendService {
 
         List<VmAnalyzer> vmAnalyzers = Collections.emptyList();
         try {
-            vmAnalyzers = refreshVmStats(monitoredVms, fetchTime, vdsManager, updateStatistics);
-            afterVMsRefreshTreatment(vmAnalyzers, vdsManager);
+            vmAnalyzers = analyzeVms(monitoredVms, fetchTime, vdsManager, updateStatistics);
+            // It is important to add the unmanaged VMs before flushing the dynamic data into the database
+            addUnmanagedVms(vmAnalyzers, vdsManager.getVdsId());
+            flush(vmAnalyzers);
+            postFlush(vmAnalyzers, vdsManager);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
             log.error("Failed during vms monitoring on host {} error is: {}", vdsManager.getVdsName(), ex);
@@ -159,7 +162,7 @@ public class VmsMonitoring implements BackendService {
      *   this filtering.
      * @return The analyzers which hold all the data per VM
      */
-    private List<VmAnalyzer> refreshVmStats(
+    private List<VmAnalyzer> analyzeVms(
             List<Pair<VM, VmInternalData>> monitoredVms,
             long fetchTime,
             VdsManager vdsManager,
@@ -174,8 +177,6 @@ public class VmsMonitoring implements BackendService {
                 vmAnalyzer.analyze();
             }
         });
-        addUnmanagedVms(vmAnalyzers, vdsManager.getVdsId());
-        flush(vmAnalyzers);
         return vmAnalyzers;
     }
 
@@ -183,7 +184,7 @@ public class VmsMonitoring implements BackendService {
         return Injector.injectMembers(new VmAnalyzerFactory(vdsManager, statistics));
     }
 
-    private void afterVMsRefreshTreatment(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager) {
+    private void postFlush(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager) {
         Collection<Guid> movedToDownVms = new ArrayList<>();
         List<Guid> succeededToRunVms = new ArrayList<>();
         List<Guid> autoVmsToRun = new ArrayList<>();
