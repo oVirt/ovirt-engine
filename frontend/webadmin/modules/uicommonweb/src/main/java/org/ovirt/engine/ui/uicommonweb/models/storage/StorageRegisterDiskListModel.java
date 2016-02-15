@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -38,8 +37,6 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
 
     public StorageRegisterDiskListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().registerDisksTitle());
-        setHelpTag(HelpTag.register_disks);
-        setHashName("register_disks"); //$NON-NLS-1$
         setRegisterCommand(new UICommand("Register", this)); //$NON-NLS-1$
         setIsTimerDisabled(true);
         updateActionAvailability();

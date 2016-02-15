@@ -34,8 +34,6 @@ public class ProviderSecretListModel extends SearchableListModel<Provider, Libvi
     @Inject
     public ProviderSecretListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().providerNetworksTitle());
-        setHelpTag(HelpTag.libvirt_secrets);
-        setHashName("libvirt_secrets"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
