@@ -11,6 +11,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
+import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -202,7 +203,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
             }
         });
         doReturn(vm).when(command).getVm();
-
+        doReturn(VdcActionType.UpdateVm).when(command).getActionType();
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
         doReturn(true).when(command).isBalloonEnabled();
         doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
@@ -292,6 +293,35 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         assertFalse("validate should have failed with invalid number of monitors.", command.validate());
         assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+    }
+
+    @Test
+    public void testBlockSettingHaOnHostedEngine() {
+        // given
+        prepareVmToPassValidate();
+        command.initEffectiveCompatibilityVersion();
+        vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        vmStatic.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        command.getParameters().getVm().setAutoStartup(true);
+        // when
+        boolean validInput = command.validate();
+        // then
+        assertFalse(validInput);
+        assertTrue(command.getReturnValue().getValidationMessages().contains(ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE.name()));
+    }
+
+    @Test
+    public void testAllowSettingHaOnNonHostedEngine() {
+        // given
+        prepareVmToPassValidate();
+        command.initEffectiveCompatibilityVersion();
+        vm.setOrigin(OriginType.RHEV);
+        vmStatic.setOrigin(OriginType.RHEV);
+        command.getParameters().getVm().setAutoStartup(true);
+        // when
+        boolean validInput = command.validate();
+        // then
+        assertTrue(validInput);
     }
 
     private void mockGraphicsDevice() {

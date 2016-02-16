@@ -730,6 +730,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
+        if (vmFromParams.isAutoStartup() && vmFromDB.isHostedEngine()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
+        }
+
         if (isVirtioScsiEnabled())  {
             // Verify cluster compatibility
             if (!FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {

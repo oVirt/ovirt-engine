@@ -475,6 +475,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A highly available VM cannot be pinned to a specific Host")
     String ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}.  A VM running the engine (\"hosted engine\") cannot be set to highly available as it has its own HA mechanism.")
+    String ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM with the same identifier already exists.")
     String ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST();
 

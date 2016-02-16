@@ -2420,6 +2420,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Host cannot be set highly available when 'Do not allow migration' is selected and pinning to a single hosts is requested.")
     String hostNonMigratable();
 
+    @DefaultStringValue("VM cannot be set highly available when hosted engine is used.")
+    String noHaWhenHostedEngineUsed();
+
     @DefaultStringValue("Host must be migratable or pinned to multiple hosts when high availability is requested.")
     String hostIsHa();
 
