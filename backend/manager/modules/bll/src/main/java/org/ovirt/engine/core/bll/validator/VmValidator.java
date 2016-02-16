@@ -15,17 +15,20 @@ import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.di.Injector;
@@ -282,5 +285,21 @@ public class VmValidator {
 
     private HostDeviceManager getHostDeviceManager() {
         return Injector.get(HostDeviceManager.class);
+    }
+
+    public ValidationResult isPinnedVmRunningOnDedicatedHost(VM recentVm, VmStatic paramVm){
+        boolean isPinned = paramVm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST;
+        Guid vdsId = recentVm.getRunOnVds();
+        List<Guid> hostList = paramVm.getDedicatedVmForVdsList();
+
+        // If hostList is empty -> all hosts are allowed
+        if (isPinned && vdsId != null && !hostList.isEmpty() && !hostList.contains(vdsId)){
+            // VM is NOT running on a dedicated host
+            // fail with error message
+            String hostName = String.format("$hostName %1$s", recentVm.getRunOnVdsName());
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PINNED_VM_NOT_RUNNING_ON_DEDICATED_HOST, hostName, hostName);
+        }
+
+        return ValidationResult.VALID;
     }
 }

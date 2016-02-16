@@ -762,6 +762,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         VmValidator vmValidator = createVmValidator(vmFromParams);
+
+        // A pinned VM, must run on one of its hosts
+        if (!validate(vmValidator.isPinnedVmRunningOnDedicatedHost(vmFromDB, vmFromParams.getStaticData()))){
+            return false;
+        }
+
         if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled()) && !validate(vmValidator.canDisableVirtioScsi(null))) {
             return false;
         }
