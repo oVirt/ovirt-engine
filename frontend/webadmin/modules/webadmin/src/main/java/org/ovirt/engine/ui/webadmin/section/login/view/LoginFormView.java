@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.view.AbstractLoginFormView;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginFormPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
@@ -34,6 +35,8 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
     public LoginFormView(EventBus eventBus,
             ApplicationDynamicMessages dynamicMessages,
@@ -47,7 +50,8 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         if (!intConf.isCurrentBrowserSupported()) {
-            informationMessagePanel.addMessage(SafeHtmlUtils.fromSafeConstant(constants.browserNotSupported()));
+            informationMessagePanel.addMessage(SafeHtmlUtils.fromSafeConstant(
+                    messages.browserNotSupported(dynamicMessages.compatibleBrowserDocsUrl())));
             informationMessagePanel.setVisible(true);
         }
     }
