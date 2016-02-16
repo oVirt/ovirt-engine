@@ -675,6 +675,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (vmFromParams.isAutoStartup() && vmFromDB.isHostedEngine()) {
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
+        }
+
         if (!areUpdatedFieldsLegal()) {
             return failCanDoAction(vmFromDB.isHostedEngine() ? EngineMessage.VM_CANNOT_UPDATE_HOSTED_ENGINE_FIELD : EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
         }

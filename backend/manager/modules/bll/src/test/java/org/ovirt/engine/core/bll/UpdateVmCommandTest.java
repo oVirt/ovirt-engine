@@ -13,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
+import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -154,7 +155,7 @@ public class UpdateVmCommandTest {
     @Before
     public void setUp() {
         final int osId = 0;
-        final Version version = Version.v3_0;
+        final Version version = Version.v3_3;
 
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
@@ -199,7 +200,7 @@ public class UpdateVmCommandTest {
             }
         });
         doReturn(vm).when(command).getVm();
-
+        doReturn(VdcActionType.UpdateVm).when(command).getActionType();
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
         doReturn(true).when(command).isBalloonEnabled();
         doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
@@ -287,6 +288,33 @@ public class UpdateVmCommandTest {
 
         assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
         assertCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+    }
+
+    @Test
+    public void testBlockSettingHaOnHostedEngine() {
+        // given
+        prepareVmToPassCanDoAction();
+        vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        vmStatic.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        command.getParameters().getVm().setAutoStartup(true);
+        // when
+        boolean validInput = command.canDoAction();
+        // then
+        assertFalse(validInput);
+        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE.name()));
+    }
+
+    @Test
+    public void testAllowSettingHaOnNonHostedEngine() {
+        // given
+        prepareVmToPassCanDoAction();
+        vm.setOrigin(OriginType.RHEV);
+        vmStatic.setOrigin(OriginType.RHEV);
+        command.getParameters().getVm().setAutoStartup(true);
+        // when
+        boolean validInput = command.canDoAction();
+        // then
+        assertTrue(validInput);
     }
 
     private void mockGraphicsDevice() {

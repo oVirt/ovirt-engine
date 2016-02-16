@@ -449,4 +449,15 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getNumaNodeCount().setEntity(getModel().getVmNumaNodes().size());
         }
     }
+
+    @Override
+    public void updateHaAvailability() {
+        super.updateHaAvailability();
+
+        if (getVm().isHostedEngine()) {
+            getModel().getIsHighlyAvailable().setEntity(false);
+            getModel().getIsHighlyAvailable().setIsChangeable(false);
+            getModel().getIsHighlyAvailable().setChangeProhibitionReason(getModel().constants.noHaWhenHostedEngineUsed());
+        }
+    }
 }
