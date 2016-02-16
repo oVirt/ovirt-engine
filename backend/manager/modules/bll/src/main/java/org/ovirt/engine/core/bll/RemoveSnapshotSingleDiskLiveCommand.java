@@ -283,37 +283,43 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
      * @param removeImages Remove the images from the database, or if false, only
      *                     mark them illegal
      */
-    private void syncDbRecords(boolean removeImages) {
-        // If deletion failed after a backwards merge, the snapshots' images need to be swapped
-        // as they would upon success.  Instead of removing them, mark them illegal.
-        DiskImage baseImage = getDiskImage();
-        DiskImage topImage = getDestinationDiskImage();
+    private void syncDbRecords(final boolean removeImages) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                // If deletion failed after a backwards merge, the snapshots' images need to be swapped
+                // as they would upon success.  Instead of removing them, mark them illegal.
+                DiskImage baseImage = getDiskImage();
+                DiskImage topImage = getDestinationDiskImage();
 
-        // The vdsm merge verb may decide to perform a forward or backward merge.
-        if (topImage == null) {
-            log.info("No merge destination image, not updating image/snapshot association");
-        } else if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
-            handleForwardLiveMerge(topImage, baseImage);
-        } else {
-            handleBackwardLiveMerge(topImage, baseImage);
-        }
+                // The vdsm merge verb may decide to perform a forward or backward merge.
+                if (topImage == null) {
+                    log.info("No merge destination image, not updating image/snapshot association");
+                } else if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
+                    handleForwardLiveMerge(topImage, baseImage);
+                } else {
+                    handleBackwardLiveMerge(topImage, baseImage);
+                }
 
-        Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
-        if (imagesToUpdate == null) {
-            log.error("Failed to update orphaned images in db: image list could not be retrieved");
-            return;
-        }
-        for (Guid imageId : imagesToUpdate) {
-            if (removeImages) {
-                getImageDao().remove(imageId);
-            } else {
-                // The (illegal && no-parent && no-children) status indicates an orphaned image.
-                Image image = getImageDao().get(imageId);
-                image.setStatus(ImageStatus.ILLEGAL);
-                image.setParentId(Guid.Empty);
-                getImageDao().update(image);
+                Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
+                if (imagesToUpdate == null) {
+                    log.error("Failed to update orphaned images in db: image list could not be retrieved");
+                    return null;
+                }
+                for (Guid imageId : imagesToUpdate) {
+                    if (removeImages) {
+                        getImageDao().remove(imageId);
+                    } else {
+                        // The (illegal && no-parent && no-children) status indicates an orphaned image.
+                        Image image = getImageDao().get(imageId);
+                        image.setStatus(ImageStatus.ILLEGAL);
+                        image.setParentId(Guid.Empty);
+                        getImageDao().update(image);
+                    }
+                }
+                return null;
             }
-        }
+        });
     }
 
     private void handleForwardLiveMerge(DiskImage topImage, DiskImage baseImage) {
@@ -438,13 +444,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             );
 
         } else {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    syncDbRecords(false);
-                    return null;
-                }
-            });
+            syncDbRecords(false);
             log.error("Snapshot '{}' images '{}'..'{}' merged, but volume removal failed." +
                             " Some or all of the following volumes may be orphaned: {}." +
                             " Please retry Live Merge on the snapshot to complete the operation.",
