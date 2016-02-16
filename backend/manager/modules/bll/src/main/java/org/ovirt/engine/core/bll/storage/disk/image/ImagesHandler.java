@@ -571,7 +571,7 @@ public final class ImagesHandler {
             removeDiskFromVm(vmId, diskImage.getId());
             removeImage(diskImage);
         } catch (RuntimeException ex) {
-            log.error("Failed adding new disk image and related entities to db: {}", ex.getMessage());
+            log.error("Failed to remove disk image and related entities from db: {}", ex.getMessage());
             log.debug("Exception", ex);
             throw new EngineException(EngineError.DB, ex);
         }
