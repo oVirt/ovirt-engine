@@ -19,13 +19,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
+import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -264,9 +264,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
                 List<VdsNetworkInterface> ifaces = new ArrayList<>(getInterfaces());
                 ifaces.addAll(getRemovedBonds().values());
+                CustomPropertiesForVdsNetworkInterface customProperties = getParameters()
+                        .getCustomProperties();
                 UserConfiguredNetworkData userConfiguredNetworkData =
-                        new UserConfiguredNetworkData(Collections.<NetworkAttachment> emptyList(), ifaces,
-                            getParameters().getCustomProperties());
+                        UserConfiguredNetworkData.createForSetupNetworksCommand(ifaces, customProperties);
 
                 // save the new network topology to DB
                 hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
