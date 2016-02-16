@@ -424,6 +424,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to Host.")
     String ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Running VM is hosted on ${hostName}. Include ${hostName} in dedicated hosts, or migrate VM to dedicated host prior to pinning.")
+    String ACTION_TYPE_FAILED_PINNED_VM_NOT_RUNNING_ON_DEDICATED_HOST();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM uses SCSI reservation.")
     String ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION();
 

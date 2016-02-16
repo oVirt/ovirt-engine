@@ -74,6 +74,13 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private UpdateVmCommand<VmManagementParametersBase> command;
     private Cluster group;
 
+    protected static final Guid[] GUIDS = {
+        new Guid("00000000-0000-0000-0000-000000000000"),
+        new Guid("11111111-1111-1111-1111-111111111111"),
+        new Guid("22222222-2222-2222-2222-222222222222"),
+        new Guid("33333333-3333-3333-3333-333333333333")
+    };
+
     private static String vncKeyboardLayoutValues =
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
     private static String CPU_ID = "0";
@@ -107,6 +114,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         migrationMap.put("x86_64", "true");
         migrationMap.put("ppc64", "false");
     }
+
+    @ClassRule
+    public static InjectorRule injectorMock = new InjectorRule() {};
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -145,6 +155,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
+        injectorRule.bind(DbFacade.class, dbFacade);
 
         when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
 
@@ -436,9 +447,85 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         assertThat(validInput, is(true));
     }
 
+    /**
+    * Migration policy from pinned to migrateable, VM status is down
+    * VM update take effect normally.
+    */
+    @Test
+    public void testMigrationPolicyChangeVmDown() {
+        prepareVmToPassValidate();
+        vm.setStatus(VMStatus.Down);
+        vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        vmStatic.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        command.initEffectiveCompatibilityVersion();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    /**
+     * Migration policy from pinned to migrateable, VM status is down
+     * VM update take effect normally.
+     */
+    @Test
+    public void testMigrationPolicyChangeVmDown2() {
+        prepareVmToPassValidate();
+        vm.setStatus(VMStatus.Down);
+        vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        vmStatic.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+        command.initEffectiveCompatibilityVersion();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    /**
+    * Migration policy from migrateable to pinned,
+    * VM status is up
+    * VM is pinned to host_1
+    * VM is running on host_2
+    * Validate should fail
+    */
+    @Test
+    public void testMigrationPolicyChangeFail() {
+        prepareVmToPassValidate();
+        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
+        vm.setStatus(VMStatus.Up);
+        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        vm.setRunOnVds(GUIDS[1]);
+        vm.setRunOnVdsName("host_1");
+        vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        vmStatic.setDedicatedVmForVdsList(Arrays.asList(GUIDS[2]));
+        command.initEffectiveCompatibilityVersion();
+        assertFalse("validate should fail with can't pin VM.", command.validate());
+        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_PINNED_VM_NOT_RUNNING_ON_DEDICATED_HOST);
+
+    }
+
+    /**
+    * Migration policy from migrateable to pinned,
+    * VM status is up
+    * VM is pinned to host_2
+    * VM is running on host_2
+    * Validate should pass
+    */
+    @Test
+    public void testMigrationPolicyChangeVmUp() {
+        prepareVmToPassValidate();
+        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
+        vm.setStatus(VMStatus.Up);
+        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        vm.setRunOnVds(GUIDS[2]);
+        vm.setRunOnVdsName("host_2");
+        vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        vmStatic.setDedicatedVmForVdsList(Arrays.asList(GUIDS[2]));
+        command.initEffectiveCompatibilityVersion();
+        assertTrue("validate should allow pinning VM.", command.validate());
+    }
+
     private void mockVmValidator() {
-        VmValidator vmValidator = spy(new VmValidator(vm));
-        doReturn(vmValidator).when(command).createVmValidator(vm);
+        mockVmValidator(vm);
+    }
+
+    private void mockVmValidator(VM paramVm) {
+        VmValidator vmValidator = spy(new VmValidator(paramVm));
+        doReturn(vmValidator).when(command).createVmValidator(paramVm);
         doReturn(dbFacade).when(vmValidator).getDbFacade();
         doReturn(diskDao).when(vmValidator).getDiskDao();
     }
