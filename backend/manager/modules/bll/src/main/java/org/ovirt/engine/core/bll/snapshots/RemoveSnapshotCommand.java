@@ -266,6 +266,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         parameters.setParentCommand(getActionType());
         parameters.setCommandType(getSnapshotActionType());
         parameters.setVdsId(getVm().getRunOnVds());
+        parameters.setShouldBeEndedByParent(!getVm().isQualifiedForLiveSnapshotMerge());
         return parameters;
     }
 

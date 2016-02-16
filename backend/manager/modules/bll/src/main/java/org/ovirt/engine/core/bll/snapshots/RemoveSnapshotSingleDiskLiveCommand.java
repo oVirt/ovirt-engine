@@ -403,6 +403,16 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         }
     }
 
+    @Override
+    protected void endSuccessfully() {
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endWithFailure() {
+        setSucceeded(true);
+    }
+
     public void onFailed() {
         if (!completedMerge()) {
             TransactionSupport.executeInNewTransaction(() -> {
