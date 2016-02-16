@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -37,14 +38,20 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
     }
 
     protected DiskImage getImageInfoFromVdsm(final DiskImage targetImage) {
-        VDSReturnValue ret = runVdsCommand(
-                VDSCommandType.GetImageInfo,
-                new GetImageInfoVDSCommandParameters(targetImage.getStoragePoolId(),
-                        targetImage.getStorageIds().get(0),
-                        targetImage.getId(),
-                        targetImage.getImageId()));
 
-        return (DiskImage) ret.getReturnValue();
+        try {
+            VDSReturnValue ret = runVdsCommand(
+                    VDSCommandType.GetImageInfo,
+                    new GetImageInfoVDSCommandParameters(targetImage.getStoragePoolId(),
+                            targetImage.getStorageIds().get(0),
+                            targetImage.getId(),
+                            targetImage.getImageId()));
+
+            return (DiskImage) ret.getReturnValue();
+        } catch (EngineException e) {
+            log.warn("Failed to get info of volume '{0}' using GetImageInfo", targetImage.getImageId(), e);
+            return null;
+        }
     }
 
     protected void updateDiskImageDynamic(final DiskImage imageFromVdsm, final DiskImage targetImage) {
