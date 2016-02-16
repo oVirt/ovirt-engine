@@ -187,7 +187,6 @@ public class VmAnalyzer {
         updateRepository();
         prepareGuestAgentNetworkDevicesForUpdate();
         updateLunDisks();
-        updateVmJobs();
     }
 
     private boolean isExternalOrUnmanagedHostedEngineVm() {
@@ -840,6 +839,7 @@ public class VmAnalyzer {
             updateInterfaceStatistics();
             updateVmNumaNodeRuntimeInfo();
             updateDiskImageDynamics();
+            updateVmJobs();
         }
     }
 
