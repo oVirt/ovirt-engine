@@ -34,7 +34,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         return jobProperties;
     }
 
-    protected void updateDiskImageDynamic(final DiskImage targetImage) {
+    protected DiskImage getImageInfoFromVdsm(final DiskImage targetImage) {
         VDSReturnValue ret = runVdsCommand(
                 VDSCommandType.GetImageInfo,
                 new GetImageInfoVDSCommandParameters(targetImage.getStoragePoolId(),
@@ -42,10 +42,13 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
                         targetImage.getId(),
                         targetImage.getImageId()));
 
+        return (DiskImage) ret.getReturnValue();
+    }
+
+    protected void updateDiskImageDynamic(final DiskImage imageFromVdsm, final DiskImage targetImage) {
         // Update image's actual size in DB
-        DiskImage imageFromIRS = (DiskImage) ret.getReturnValue();
-        if (imageFromIRS != null) {
-            completeImageData(imageFromIRS);
+        if (imageFromVdsm != null) {
+            completeImageData(imageFromVdsm);
         } else {
             log.warn("Could not update DiskImage's size with ID '{}'",
                     targetImage.getImageId());

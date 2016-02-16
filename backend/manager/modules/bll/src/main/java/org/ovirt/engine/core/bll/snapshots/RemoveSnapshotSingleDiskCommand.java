@@ -81,7 +81,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
             getDestinationDiskImage().setParentId(getDiskImage().getParentId());
             getBaseDiskDao().update(curr);
             getImageDao().update(getDestinationDiskImage().getImage());
-            updateDiskImageDynamic(getDestinationDiskImage());
+            updateDiskImageDynamic(getImageInfoFromVdsm(getDestinationDiskImage()), getDestinationDiskImage());
         }
 
         setSucceeded(true);

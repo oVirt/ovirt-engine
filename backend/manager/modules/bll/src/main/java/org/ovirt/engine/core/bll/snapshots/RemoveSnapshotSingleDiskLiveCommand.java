@@ -258,7 +258,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     }
 
     public void onSucceeded() {
-        syncDbRecords(true);
+        syncDbRecords(getTargetImageInfoFromVdsm(), true);
         log.info("Successfully merged snapshot '{}' images '{}'..'{}'",
                 getDiskImage().getImage().getSnapshotId(),
                 getDiskImage().getImageId(),
@@ -273,6 +273,11 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         }
     }
 
+    private DiskImage getTargetImageInfoFromVdsm() {
+        VmBlockJobType blockJobType = getParameters().getMergeStatusReturnValue().getBlockJobType();
+        return getImageInfoFromVdsm(blockJobType == VmBlockJobType.PULL ? getDestinationDiskImage() : getDiskImage());
+    }
+
     /**
      * After merging the snapshots, update the image and snapshot records in the
      * database to reflect the changes.  This handles either forward or backwards
@@ -282,7 +287,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
      * @param removeImages Remove the images from the database, or if false, only
      *                     mark them illegal
      */
-    private void syncDbRecords(boolean removeImages) {
+    private void syncDbRecords(DiskImage imageFromVdsm, boolean removeImages) {
         TransactionSupport.executeInNewTransaction(() -> {
             // If deletion failed after a backwards merge, the snapshots' images need to be swapped
             // as they would upon success.  Instead of removing them, mark them illegal.
@@ -293,9 +298,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             if (topImage == null) {
                 log.info("No merge destination image, not updating image/snapshot association");
             } else if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
-                handleForwardLiveMerge(topImage, baseImage);
+                handleForwardLiveMerge(topImage, baseImage, imageFromVdsm);
             } else {
-                handleBackwardLiveMerge(topImage, baseImage);
+                handleBackwardLiveMerge(topImage, baseImage, imageFromVdsm);
             }
 
             Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
@@ -318,7 +323,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         });
     }
 
-    private void handleForwardLiveMerge(DiskImage topImage, DiskImage baseImage) {
+    private void handleForwardLiveMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {
         // For forward merge, the volume format and type may change.
         topImage.setvolumeFormat(baseImage.getVolumeFormat());
         topImage.setVolumeType(baseImage.getVolumeType());
@@ -327,13 +332,13 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         getBaseDiskDao().update(topImage);
         getImageDao().update(topImage.getImage());
-        updateDiskImageDynamic(topImage);
+        updateDiskImageDynamic(imageFromVdsm, topImage);
 
         updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
                 baseImage.getImageId());
     }
 
-    private void handleBackwardLiveMerge(DiskImage topImage, DiskImage baseImage) {
+    private void handleBackwardLiveMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {
         // For backwards merge, the prior base image now has the data associated with the newer
         // snapshot we want to keep.  Re-associate this older image with the newer snapshot.
         // The base snapshot is deleted if everything went well.  In case it's not deleted, we
@@ -369,7 +374,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         topImage.setImageStatus(ImageStatus.OK);
         getBaseDiskDao().update(topImage);
         getImageDao().update(topImage.getImage());
-        updateDiskImageDynamic(topImage);
+        updateDiskImageDynamic(imageFromVdsm, topImage);
 
         getBaseDiskDao().update(baseImage);
         getImageDao().update(baseImage.getImage());
@@ -439,7 +444,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             );
 
         } else {
-            syncDbRecords(false);
+            syncDbRecords(getTargetImageInfoFromVdsm(), false);
             log.error("Snapshot '{}' images '{}'..'{}' merged, but volume removal failed." +
                             " Some or all of the following volumes may be orphaned: {}." +
                             " Please retry Live Merge on the snapshot to complete the operation.",
