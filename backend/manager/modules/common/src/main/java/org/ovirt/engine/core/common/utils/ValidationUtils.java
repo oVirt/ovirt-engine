@@ -26,6 +26,13 @@ public class ValidationUtils {
     public static final String IP_PATTERN_NON_EMPTY =
             "\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)";
     public static final String IP_PATTERN = "^" + IP_PATTERN_NON_EMPTY + "$|^$";
+    private static final String IPV6_ADDRESS_BLOCK = "[0-9a-fA-F]{1,4}";
+    private static final String IPV6_HEX_COMPRESSED_PATTERN =
+            "((?:" + IPV6_ADDRESS_BLOCK + "(?::" + IPV6_ADDRESS_BLOCK + ")*)?)::((?:" +
+                    IPV6_ADDRESS_BLOCK + "(?::" + IPV6_ADDRESS_BLOCK + ")*)?)";
+    private static final String IPV6_STD_PATTERN = "(?:" + IPV6_ADDRESS_BLOCK + ":){7}" + IPV6_ADDRESS_BLOCK;
+    public static final String IPV6_PATTERN = "(?:" + IPV6_STD_PATTERN + "|" + IPV6_HEX_COMPRESSED_PATTERN + ")";
+
     public static final String SUBNET_PREFIX_PATTERN = "(?:3[0-2]|[12]?[0-9])";
     public static final String CIDR_FORMAT_PATTERN = "^" + IP_PATTERN_NON_EMPTY + "/" + SUBNET_PREFIX_PATTERN + "$";
     public static final String ISO_SUFFIX = ".iso";

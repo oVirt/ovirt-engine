@@ -2175,6 +2175,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Bad format of IP address")
     String NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT();
 
+    @DefaultStringValue("Bad format of an IPv6 address.")
+    String BAD_IPV6_ADDRESS_FORMAT();
+
     @DefaultStringValue("Bad format of gateway address")
     String NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT();
 
