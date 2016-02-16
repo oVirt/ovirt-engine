@@ -10,22 +10,45 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 public class UserConfiguredNetworkData {
     private final List<NetworkAttachment> networkAttachments;
     private final List<VdsNetworkInterface> nics;
-    private final CustomPropertiesForVdsNetworkInterface customProperties;
+    private final CustomPropertiesForVdsNetworkInterface customPropertiesForVdsNetworkInterface;
+
+    /**
+     * This flag, as a workaround, modifies behavior of {@code HostNetworkAttachmentsPersister}. It should be removed
+     * along with {@link #createForSetupNetworksCommand(List, CustomPropertiesForVdsNetworkInterface)} factory
+     * method during {@code SetupNetworksCommand} demise, planned for 4.0
+     */
+    private final boolean legacyMode;
 
     public UserConfiguredNetworkData() {
         this(Collections.<NetworkAttachment>emptyList(), Collections.<VdsNetworkInterface>emptyList());
     }
 
     public UserConfiguredNetworkData(List<NetworkAttachment> networkAttachments, List<VdsNetworkInterface> nics) {
-        this(networkAttachments, nics, null);
+        this(networkAttachments, nics, null, false);
     }
 
-    public UserConfiguredNetworkData(List<NetworkAttachment> networkAttachments,
+    private UserConfiguredNetworkData(List<NetworkAttachment> networkAttachments,
             List<VdsNetworkInterface> nics,
-            CustomPropertiesForVdsNetworkInterface customProperties) {
+            CustomPropertiesForVdsNetworkInterface customPropertiesForVdsNetworkInterface,
+            boolean legacyMode) {
         this.networkAttachments = networkAttachments;
         this.nics = nics;
-        this.customProperties = customProperties;
+        this.customPropertiesForVdsNetworkInterface = customPropertiesForVdsNetworkInterface;
+        this.legacyMode = legacyMode;
+    }
+
+    /**
+     * @param nics nics to update
+     * @param customPropertiesForVdsNetworkInterface custom properties for given nics.
+     * @return UserConfiguredNetworkData instance which instructs {@code HostNetworkAttachmentsPersister} to synchronize
+     * Ip configuration, custom properties, and other actions related to legacy {@code SetupNetworksCommand}.
+     * @deprecated This method is intended only to fix problems with {@code SetupNetworksCommand} calling
+     * {@code HostNetworkTopologyPersister}.
+     */
+    @Deprecated
+    public static UserConfiguredNetworkData createForSetupNetworksCommand(List<VdsNetworkInterface> nics,
+            CustomPropertiesForVdsNetworkInterface customPropertiesForVdsNetworkInterface) {
+        return new UserConfiguredNetworkData(Collections.<NetworkAttachment> emptyList(), nics, customPropertiesForVdsNetworkInterface, true);
     }
 
     public List<NetworkAttachment> getNetworkAttachments() {
@@ -36,7 +59,11 @@ public class UserConfiguredNetworkData {
         return nics;
     }
 
-    public CustomPropertiesForVdsNetworkInterface getCustomProperties() {
-        return customProperties;
+    public CustomPropertiesForVdsNetworkInterface getCustomPropertiesForVdsNetworkInterface() {
+        return customPropertiesForVdsNetworkInterface;
+    }
+
+    public boolean isLegacyMode() {
+        return legacyMode;
     }
 }

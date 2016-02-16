@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -330,7 +329,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
                 getVdsId(),
                 interfaceDao.getAllInterfacesForVds(getVdsId()),
-                new CustomPropertiesForVdsNetworkInterface(),
                 Collections.<NetworkAttachment> emptyList(),
                 getTargetClusterNetworks());
         persister.persistNetworkAttachments();

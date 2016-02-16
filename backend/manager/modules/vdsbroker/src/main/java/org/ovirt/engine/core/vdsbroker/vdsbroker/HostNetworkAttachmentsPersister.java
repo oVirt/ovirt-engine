@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -23,6 +25,7 @@ public class HostNetworkAttachmentsPersister {
     private final NetworkAttachmentDao networkAttachmentDao;
     private final Guid hostId;
     private final CustomPropertiesForVdsNetworkInterface customPropertiesForNics;
+    private final boolean legacyMode;
     private final List<NetworkAttachment> userNetworkAttachments;
     private final Map<String, VdsNetworkInterface> nicsByName;
 
@@ -40,12 +43,35 @@ public class HostNetworkAttachmentsPersister {
     public HostNetworkAttachmentsPersister(NetworkAttachmentDao networkAttachmentDao,
             Guid hostId,
             List<VdsNetworkInterface> nics,
+            List<NetworkAttachment> userNetworkAttachments,
+            List<Network> clusterNetworks) {
+        this(networkAttachmentDao, hostId, nics, false, null, userNetworkAttachments, clusterNetworks);
+    }
+
+    /**
+     * This constructors creates {@link HostNetworkAttachmentsPersister} instance, which behaves in a way required by
+     * {@code SetupNetworksCommand}, which is planned for demise in 4.0, when this should be removed as well.
+     */
+    public HostNetworkAttachmentsPersister(NetworkAttachmentDao networkAttachmentDao,
+            Guid hostId,
+            List<VdsNetworkInterface> nics,
+            CustomPropertiesForVdsNetworkInterface customPropertiesForNics,
+            List<NetworkAttachment> userNetworkAttachments,
+            List<Network> clusterNetworks) {
+        this(networkAttachmentDao, hostId, nics, true, customPropertiesForNics, userNetworkAttachments, clusterNetworks);
+    }
+
+    private HostNetworkAttachmentsPersister(NetworkAttachmentDao networkAttachmentDao,
+            Guid hostId,
+            List<VdsNetworkInterface> nics,
+            boolean legacyMode,
             CustomPropertiesForVdsNetworkInterface customPropertiesForNics,
             List<NetworkAttachment> userNetworkAttachments,
             List<Network> clusterNetworks) {
         this.networkAttachmentDao = networkAttachmentDao;
         this.hostId = hostId;
         this.customPropertiesForNics = customPropertiesForNics;
+        this.legacyMode = legacyMode;
         this.userNetworkAttachments = userNetworkAttachments;
         this.clusterNetworks = new BusinessEntityMap<>(clusterNetworks);
         nicsByName = Entities.entitiesByName(nics);
@@ -92,15 +118,7 @@ public class HostNetworkAttachmentsPersister {
                 boolean networkAttachmentRelatedToNetworkExist = networkAttachmentRelatedToNetwork != null;
 
                 if (networkAttachmentRelatedToNetworkExist) {
-                    VdsNetworkInterface baseInterfaceNicOrThis = getBaseInterfaceNicOrThis(nic);
-                    boolean shouldUpdateExistingAttachment =
-                        !baseInterfaceNicOrThis.getId().equals(networkAttachmentRelatedToNetwork.getNicId());
-
-                    if (shouldUpdateExistingAttachment) {
-                        networkAttachmentRelatedToNetwork.setNicId(baseInterfaceNicOrThis.getId());
-                        networkAttachmentRelatedToNetwork.setNicName(baseInterfaceNicOrThis.getName());
-                        networkAttachmentDao.update(networkAttachmentRelatedToNetwork);
-                    }
+                    syncNetworkAttachmentPropertiesWithNic(nic, networkAttachmentRelatedToNetwork);
 
                 } else {
                     if (!nic.isPartOfBond()) {
@@ -111,6 +129,75 @@ public class HostNetworkAttachmentsPersister {
         }
     }
 
+    /**
+     * @param nic {@link VdsNetworkInterface} representing current state of hosts nic.
+     * @param networkAttachment existing network attachment to be updated according to {@code nic} values.
+     */
+    private void syncNetworkAttachmentPropertiesWithNic(VdsNetworkInterface nic, NetworkAttachment networkAttachment) {
+        boolean networkMovedToDifferentNic = updateReferredNic(nic, networkAttachment);
+        boolean customPropertiesUpdated = updateCustomProperties(nic, networkAttachment);
+        boolean ipConfigurationUpdated = updateIpConfiguration(nic, networkAttachment);
+
+        if (networkMovedToDifferentNic || customPropertiesUpdated || ipConfigurationUpdated) {
+            networkAttachmentDao.update(networkAttachment);
+        }
+    }
+
+    /**
+     *
+     * @param nic nic to get values from.
+     * @param networkAttachment network attachment to update.
+     * @return true if nicId and nicName were updated.
+     */
+    private boolean updateReferredNic(VdsNetworkInterface nic, NetworkAttachment networkAttachment) {
+        VdsNetworkInterface baseNic = getBaseInterfaceNicOrThis(nic);
+        boolean networkMovedToDifferentNic = !baseNic.getId().equals(networkAttachment.getNicId());
+
+        if (networkMovedToDifferentNic) {
+            networkAttachment.setNicId(baseNic.getId());
+            networkAttachment.setNicName(baseNic.getName());
+        }
+        return networkMovedToDifferentNic;
+    }
+
+    /**
+     *
+     * @param nic nic used to get values from.
+     * @param networkAttachment network attachment to update.
+     * @return true if custom properties were updated.
+     */
+    private boolean updateCustomProperties(VdsNetworkInterface nic, NetworkAttachment networkAttachment) {
+        if (!legacyMode || customPropertiesForNics == null || !customPropertiesForNics.hasCustomPropertiesFor(nic)) {
+            return false;
+        }
+
+        Map<String, String> networkAttachmentProperties = networkAttachment.getProperties();
+        Map<String, String> customPropertiesForNic = customPropertiesForNics.getCustomPropertiesFor(nic);
+        boolean doUpdate = !Objects.equals(customPropertiesForNic, networkAttachmentProperties);
+        if (doUpdate) {
+            networkAttachment.setProperties(customPropertiesForNic);
+        }
+        return doUpdate;
+    }
+
+    /**
+     * @param nic nic to get values from.
+     * @param networkAttachment network attachment to update.
+     * @return true if network attachment was updated.
+     */
+    private boolean updateIpConfiguration(VdsNetworkInterface nic, NetworkAttachment networkAttachment) {
+        if (!legacyMode) {
+            return false;
+        }
+
+        IpConfiguration nicIpConfiguration = NetworkUtils.createIpConfigurationFromVdsNetworkInterface(nic);
+        boolean doUpdate = !Objects.equals(nicIpConfiguration, networkAttachment.getIpConfiguration());
+        if (doUpdate) {
+            networkAttachment.setIpConfiguration(nicIpConfiguration);
+        }
+        return doUpdate;
+    }
+
     private void createNetworkAttachmentForReportedNetworksNotHavingOne(VdsNetworkInterface nic, String networkName) {
         NetworkAttachment networkAttachment =
                 new NetworkAttachment(getBaseInterfaceNicOrThis(nic),
@@ -118,7 +205,7 @@ public class HostNetworkAttachmentsPersister {
                         NetworkUtils.createIpConfigurationFromVdsNetworkInterface(nic));
         networkAttachment.setId(Guid.newGuid());
 
-        if (customPropertiesForNics != null) {
+        if (legacyMode && customPropertiesForNics != null) {
             networkAttachment.setProperties(customPropertiesForNics.getCustomPropertiesFor(nic));
         }
 
