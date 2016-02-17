@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -42,6 +43,8 @@ public class CpuPinningPolicyUnitTest extends AbstractPolicyUnitTest {
 
     private PerHostMessages perHostMessages;
 
+    private VDSGroup cluster;
+
     @Before
     public void setUp() {
         hostWithCpus = new VDS();
@@ -56,11 +59,12 @@ public class CpuPinningPolicyUnitTest extends AbstractPolicyUnitTest {
 
         vm = new VM();
         vm.setId(Guid.newGuid());
+        cluster = new VDSGroup();
     }
 
     @Test
     public void shouldHandleEmptyHostList() {
-        final List<VDS> filteredHost = policyUnit.filter(new ArrayList<VDS>(), vm, null, mock(PerHostMessages.class));
+        final List<VDS> filteredHost = policyUnit.filter(cluster, new ArrayList<VDS>(), vm, null, mock(PerHostMessages.class));
         assertThat(filteredHost, is(empty()));
         assertThat(messages(), is(empty()));
     }
@@ -126,7 +130,7 @@ public class CpuPinningPolicyUnitTest extends AbstractPolicyUnitTest {
     }
 
     private List<VDS> filter() {
-        return policyUnit.filter(Arrays.asList(hostWithCpus, hostWithoutCpus), vm, null, perHostMessages);
+        return policyUnit.filter(cluster, Arrays.asList(hostWithCpus, hostWithoutCpus), vm, null, perHostMessages);
     }
 
     private Collection<List<String>> messages() {

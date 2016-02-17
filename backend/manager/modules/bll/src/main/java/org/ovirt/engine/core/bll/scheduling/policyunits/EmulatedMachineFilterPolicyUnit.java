@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -25,8 +26,7 @@ public class EmulatedMachineFilterPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters,
-                            PerHostMessages messages) {
+    public List<VDS> filter(VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         String requiredEmulatedMachine;
         List<VDS> hostsToRunOn = new ArrayList<>();
 

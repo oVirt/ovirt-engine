@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
 
@@ -60,9 +59,8 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(hosts.get(0).getVdsGroupId());
-        boolean countThreadsAsCores = vdsGroup != null ? vdsGroup.getCountThreadsAsCores() : false;
+    public List<Pair<Guid, Integer>> score(VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
+        boolean countThreadsAsCores = cluster.getCountThreadsAsCores();
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
             scores.add(new Pair<>(vds.getId(), calcEvenDistributionScore(vds, vm, countThreadsAsCores)));

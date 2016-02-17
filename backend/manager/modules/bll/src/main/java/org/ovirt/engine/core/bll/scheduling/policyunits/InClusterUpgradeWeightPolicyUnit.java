@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.scheduling.OS;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -41,7 +42,7 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
+    public List<Pair<Guid, Integer>> score(VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         VdsDynamic referenceHost = getLastHost(vm);
         boolean isVmStartup = false;
 

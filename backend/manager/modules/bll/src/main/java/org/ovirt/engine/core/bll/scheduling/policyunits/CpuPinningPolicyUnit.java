@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -34,7 +35,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(final List<VDS> hosts,
+    public List<VDS> filter(VDSGroup cluster, final List<VDS> hosts,
             final VM vm,
             final Map<String, String> parameters,
             final PerHostMessages messages) {

@@ -294,6 +294,7 @@ public class SchedulingManager implements BackendService {
 
             vdsList =
                     runFilters(policy.getFilters(),
+                            cluster,
                             vdsList,
                             vm,
                             parameters,
@@ -422,7 +423,7 @@ public class SchedulingManager implements BackendService {
             List<Pair<Guid, Integer>> functions = policy.getFunctions();
             if (functions != null && !functions.isEmpty()
                     && shouldWeighClusterHosts(cluster, runnableHosts)) {
-                Guid bestHostByFunctions = runFunctions(functions, runnableHosts, vm, parameters);
+                Guid bestHostByFunctions = runFunctions(functions, cluster, runnableHosts, vm, parameters);
                 if (bestHostByFunctions != null) {
                     return bestHostByFunctions;
                 }
@@ -497,6 +498,7 @@ public class SchedulingManager implements BackendService {
 
         vdsList =
                 runFilters(policy.getFilters(),
+                        cluster,
                         vdsList,
                         vm,
                         parameters,
@@ -539,6 +541,7 @@ public class SchedulingManager implements BackendService {
     }
 
     private List<VDS> runFilters(ArrayList<Guid> filters,
+            VDSGroup cluster,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters,
@@ -572,7 +575,7 @@ public class SchedulingManager implements BackendService {
         }
 
         hostList =
-                runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap,
+                runInternalFilters(internalFilters, cluster, hostList, vm, parameters, filterPositionMap,
                         memoryChecker, correlationId, result);
 
         if (shouldRunExternalFilters
@@ -591,6 +594,7 @@ public class SchedulingManager implements BackendService {
     }
 
     private List<VDS> runInternalFilters(ArrayList<PolicyUnitImpl> filters,
+            VDSGroup cluster,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters,
@@ -604,7 +608,7 @@ public class SchedulingManager implements BackendService {
                 }
                 filterPolicyUnit.setMemoryChecker(memoryChecker);
                 List<VDS> currentHostList = new ArrayList<>(hostList);
-                hostList = filterPolicyUnit.filter(hostList, vm, parameters, result.getDetails());
+                hostList = filterPolicyUnit.filter(cluster, hostList, vm, parameters, result.getDetails());
                 logFilterActions(currentHostList,
                         toIdSet(hostList),
                         EngineMessage.VAR__FILTERTYPE__INTERNAL,
@@ -711,7 +715,8 @@ public class SchedulingManager implements BackendService {
         });
     }
 
-    protected Guid runFunctions(List<Pair<Guid, Integer>> functions,
+    private Guid runFunctions(List<Pair<Guid, Integer>> functions,
+            VDSGroup cluster,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
@@ -729,7 +734,8 @@ public class SchedulingManager implements BackendService {
             }
         }
 
-        Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, hostList, vm, parameters);
+        Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, cluster, hostList, vm,
+                parameters);
 
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) && !externalScoreFunctions.isEmpty()) {
             runExternalFunctions(externalScoreFunctions, hostList, vm, parameters, hostCostTable);
@@ -747,12 +753,13 @@ public class SchedulingManager implements BackendService {
     }
 
     private Map<Guid, Integer> runInternalFunctions(List<Pair<PolicyUnitImpl, Integer>> functions,
+            VDSGroup cluster,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
         Map<Guid, Integer> hostCostTable = new HashMap<>();
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
-            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(hostList, vm, parameters);
+            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(cluster, hostList, vm, parameters);
             for (Pair<Guid, Integer> result : scoreResult) {
                 Guid hostId = result.getFirst();
                 if (hostCostTable.get(hostId) == null) {

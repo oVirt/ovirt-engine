@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +25,9 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
+    public List<VDS> filter(VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         List<VDS> list = new ArrayList<>();
         for (VDS vds : hosts) {
-            VDSGroup cluster = getVdsGroupDao().get(vds.getVdsGroupId());
             Integer cores = SlaValidator.getEffectiveCpuCores(vds,
                     cluster != null && cluster.getCountThreadsAsCores());
             if (cores != null && vm.getNumOfCpus(false) > cores) {
@@ -44,9 +41,5 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
             list.add(vds);
         }
         return list;
-    }
-
-    protected VdsGroupDao getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
     }
 }

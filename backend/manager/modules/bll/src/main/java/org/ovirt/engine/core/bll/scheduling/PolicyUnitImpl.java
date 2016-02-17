@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
@@ -150,12 +152,12 @@ public class PolicyUnitImpl {
         this.vdsDynamicDao = Injector.get(VdsDynamicDao.class);
     }
 
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
+    public List<VDS> filter(@NotNull VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         log.error("Policy unit '{}' filter is not implemented", getPolicyUnit().getName());
         return hosts;
     }
 
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
+    public List<Pair<Guid, Integer>> score(@NotNull  VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
         List<Pair<Guid, Integer>> pairs = new ArrayList<>();
         for (VDS vds : hosts) {
@@ -164,7 +166,7 @@ public class PolicyUnitImpl {
         return pairs;
     }
 
-    public Pair<List<Guid>, Guid> balance(VDSGroup cluster,
+    public Pair<List<Guid>, Guid> balance(@NotNull VDSGroup cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
