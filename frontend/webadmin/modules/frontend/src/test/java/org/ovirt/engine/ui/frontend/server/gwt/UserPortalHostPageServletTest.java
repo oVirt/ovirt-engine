@@ -18,7 +18,9 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class UserPortalHostPageServletTest extends AbstractGwtDynamicHostPageServletTest<UserPortalHostPageServlet> {
     @ClassRule
     public static MockConfigRule mcr =
-    new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()));
+            new MockConfigRule(
+                    mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()),
+                    mockConfig(ConfigValues.DisplayUncaughtUIExceptions, Boolean.TRUE));
 
 
     @Override

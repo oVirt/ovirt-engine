@@ -304,6 +304,9 @@ select fn_db_add_config_value_for_versions_up_to('VmStatsEventsSupported','false
 
 select fn_db_add_config_value('MaxIoThreadsPerVm','127','general');
 
+-- Display browser not in tier 1 support to user.
+select fn_db_add_config_value('DisplayUncaughtUIExceptions', 'true', 'general');
+
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 
