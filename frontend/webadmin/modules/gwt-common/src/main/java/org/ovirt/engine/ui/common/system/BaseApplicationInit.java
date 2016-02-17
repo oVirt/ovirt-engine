@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.common.DisplayUncaughtUIExceptions;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
@@ -135,7 +136,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             public void onUncaughtException(Throwable t) {
                 rootLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
                 remoteLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
-                alertManager.showUncaughtExceptionAlert(t);
+                if (DisplayUncaughtUIExceptions.getValue()) {
+                    alertManager.showUncaughtExceptionAlert(t);
+                }
             }
         });
     }
