@@ -293,63 +293,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         if (topImage == null) {
             log.info("No merge destination image, not updating image/snapshot association");
         } else if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
-            // For forward merge, the volume format and type may change.
-            topImage.setvolumeFormat(baseImage.getVolumeFormat());
-            topImage.setVolumeType(baseImage.getVolumeType());
-            topImage.setParentId(baseImage.getParentId());
-            topImage.setImageStatus(ImageStatus.OK);
-
-            getBaseDiskDao().update(topImage);
-            getImageDao().update(topImage.getImage());
-            updateDiskImageDynamic(topImage);
-
-            updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
-                    baseImage.getImageId());
+            handleForwardLiveMerge(topImage, baseImage);
         } else {
-            // For backwards merge, the prior base image now has the data associated with the newer
-            // snapshot we want to keep.  Re-associate this older image with the newer snapshot.
-            // The base snapshot is deleted if everything went well.  In case it's not deleted, we
-            // hijack it to preserve a link to the broken image.  This makes the image discoverable
-            // so that we can retry the deletion later, yet doesn't corrupt the VM image chain.
-            List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
-                    .getAllSnapshotsForParent(topImage.getImageId());
-            if (!children.isEmpty()) {
-                DiskImage childImage = children.get(0);
-                childImage.setParentId(baseImage.getImageId());
-                getImageDao().update(childImage.getImage());
-            }
-
-            Image oldTopImage = topImage.getImage();
-            topImage.setImage(baseImage.getImage());
-            baseImage.setImage(oldTopImage);
-
-            Guid oldTopSnapshotId = topImage.getImage().getSnapshotId();
-            topImage.getImage().setSnapshotId(baseImage.getImage().getSnapshotId());
-            baseImage.getImage().setSnapshotId(oldTopSnapshotId);
-
-            boolean oldTopIsActive = topImage.getImage().isActive();
-            topImage.getImage().setActive(baseImage.getImage().isActive());
-            VolumeClassification baseImageVolumeClassification =
-                    VolumeClassification.getVolumeClassificationByActiveFlag(baseImage.getImage().isActive());
-            topImage.getImage().setVolumeClassification(baseImageVolumeClassification);
-            baseImage.getImage().setActive(oldTopIsActive);
-            VolumeClassification oldTopVolumeClassification =
-                    VolumeClassification.getVolumeClassificationByActiveFlag(oldTopIsActive);
-            topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
-
-            topImage.setSize(baseImage.getSize());
-            topImage.setImageStatus(ImageStatus.OK);
-            getBaseDiskDao().update(topImage);
-            getImageDao().update(topImage.getImage());
-            updateDiskImageDynamic(topImage);
-
-            getBaseDiskDao().update(baseImage);
-            getImageDao().update(baseImage.getImage());
-
-            updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),
-                    baseImage.getImageId(), topImage);
-            updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
-                    topImage.getImageId());
+            handleBackwardLiveMerge(topImage, baseImage);
         }
 
         Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
@@ -368,6 +314,68 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 getImageDao().update(image);
             }
         }
+    }
+
+    private void handleForwardLiveMerge(DiskImage topImage, DiskImage baseImage) {
+        // For forward merge, the volume format and type may change.
+        topImage.setvolumeFormat(baseImage.getVolumeFormat());
+        topImage.setVolumeType(baseImage.getVolumeType());
+        topImage.setParentId(baseImage.getParentId());
+        topImage.setImageStatus(ImageStatus.OK);
+
+        getBaseDiskDao().update(topImage);
+        getImageDao().update(topImage.getImage());
+        updateDiskImageDynamic(topImage);
+
+        updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
+                baseImage.getImageId());
+    }
+
+    private void handleBackwardLiveMerge(DiskImage topImage, DiskImage baseImage) {
+        // For backwards merge, the prior base image now has the data associated with the newer
+        // snapshot we want to keep.  Re-associate this older image with the newer snapshot.
+        // The base snapshot is deleted if everything went well.  In case it's not deleted, we
+        // hijack it to preserve a link to the broken image.  This makes the image discoverable
+        // so that we can retry the deletion later, yet doesn't corrupt the VM image chain.
+        List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
+                .getAllSnapshotsForParent(topImage.getImageId());
+        if (!children.isEmpty()) {
+            DiskImage childImage = children.get(0);
+            childImage.setParentId(baseImage.getImageId());
+            getImageDao().update(childImage.getImage());
+        }
+
+        Image oldTopImage = topImage.getImage();
+        topImage.setImage(baseImage.getImage());
+        baseImage.setImage(oldTopImage);
+
+        Guid oldTopSnapshotId = topImage.getImage().getSnapshotId();
+        topImage.getImage().setSnapshotId(baseImage.getImage().getSnapshotId());
+        baseImage.getImage().setSnapshotId(oldTopSnapshotId);
+
+        boolean oldTopIsActive = topImage.getImage().isActive();
+        topImage.getImage().setActive(baseImage.getImage().isActive());
+        VolumeClassification baseImageVolumeClassification =
+                VolumeClassification.getVolumeClassificationByActiveFlag(baseImage.getImage().isActive());
+        topImage.getImage().setVolumeClassification(baseImageVolumeClassification);
+        baseImage.getImage().setActive(oldTopIsActive);
+        VolumeClassification oldTopVolumeClassification =
+                VolumeClassification.getVolumeClassificationByActiveFlag(oldTopIsActive);
+        topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
+
+        topImage.setSize(baseImage.getSize());
+        topImage.setImageStatus(ImageStatus.OK);
+        getBaseDiskDao().update(topImage);
+        getImageDao().update(topImage.getImage());
+        updateDiskImageDynamic(topImage);
+
+        getBaseDiskDao().update(baseImage);
+        getImageDao().update(baseImage.getImage());
+
+        updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),
+                baseImage.getImageId(), topImage);
+        updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
+                topImage.getImageId());
     }
 
     private void updateVmConfigurationForImageChange(final Guid snapshotId, final Guid oldImageId, final DiskImage newImage) {
