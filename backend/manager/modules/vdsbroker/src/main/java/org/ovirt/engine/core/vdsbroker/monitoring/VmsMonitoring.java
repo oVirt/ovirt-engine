@@ -20,14 +20,21 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 import org.ovirt.engine.core.dao.VmJobDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -45,6 +52,8 @@ import org.slf4j.LoggerFactory;
 public class VmsMonitoring implements BackendService {
 
     @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
     private ResourceManager resourceManager;
 
     @Inject
@@ -61,6 +70,20 @@ public class VmsMonitoring implements BackendService {
     private VmStatisticsDao vmStatisticsDao;
     @Inject
     private VmGuestAgentInterfaceDao vmGuestAgentInterfaceDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
@@ -181,7 +204,20 @@ public class VmsMonitoring implements BackendService {
     }
 
     protected VmAnalyzerFactory getVmAnalyzerFactory(VdsManager vdsManager, boolean statistics) {
-        return Injector.injectMembers(new VmAnalyzerFactory(vdsManager, statistics));
+        return new VmAnalyzerFactory(
+                vdsManager,
+                statistics,
+                auditLogDirector,
+                resourceManager,
+                vmStaticDao,
+                vmDynamicDao,
+                vmDao,
+                vmNetworkInterfaceDao,
+                vdsDao,
+                diskDao,
+                vmJobDao,
+                vdsNumaNodeDao,
+                vmNumaNodeDao);
     }
 
     private void postFlush(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager) {

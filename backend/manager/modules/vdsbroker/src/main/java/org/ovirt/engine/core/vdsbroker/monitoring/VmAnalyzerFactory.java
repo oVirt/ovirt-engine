@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -33,33 +31,46 @@ public class VmAnalyzerFactory {
 
     private Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider;
 
-    @Inject
     private AuditLogDirector auditLogDirector;
-    @Inject
     private ResourceManager resourceManager;
 
-    @Inject
     private VmStaticDao vmStaticDao;
-    @Inject
     private VmDynamicDao vmDynamicDao;
-    @Inject
     private VmDao vmDao;
-    @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
-    @Inject
     private VdsDao vdsDao;
-    @Inject
     private DiskDao diskDao;
-    @Inject
     private VmJobDao vmJobDao;
-    @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
-    @Inject
     private VmNumaNodeDao vmNumaNodeDao;
 
-    public VmAnalyzerFactory(VdsManager vdsManager, boolean updateStatistics) {
+    public VmAnalyzerFactory(
+            VdsManager vdsManager,
+            boolean updateStatistics,
+            AuditLogDirector auditLogDirector,
+            ResourceManager resourceManager,
+            VmStaticDao vmStaticDao,
+            VmDynamicDao vmDynamicDao,
+            VmDao vmDao,
+            VmNetworkInterfaceDao vmNetworkInterfaceDao,
+            VdsDao vdsDao,
+            DiskDao diskDao,
+            VmJobDao vmJobDao,
+            VdsNumaNodeDao vdsNumaNodeDao,
+            VmNumaNodeDao vmNumaNodeDao) {
         this.vdsManager = vdsManager;
         this.updateStatistics = updateStatistics;
+        this.auditLogDirector = auditLogDirector;
+        this.resourceManager = resourceManager;
+        this.vmStaticDao = vmStaticDao;
+        this.vmDynamicDao = vmDynamicDao;
+        this.vmDao = vmDao;
+        this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
+        this.vdsDao = vdsDao;
+        this.diskDao = diskDao;
+        this.vmJobDao = vmJobDao;
+        this.vdsNumaNodeDao = vdsNumaNodeDao;
+        this.vmNumaNodeDao = vmNumaNodeDao;
         initProviders();
     }
 
