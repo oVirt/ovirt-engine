@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.BooleanNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.branding.BrandingFilter;
 import org.ovirt.engine.core.branding.BrandingManager;
@@ -59,7 +60,8 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         ATTR_APPLICATION_TYPE(BrandingFilter.APPLICATION_NAME),
         ATTR_DISPLAY_LOCALES("visibleLocales"), //$NON-NLS-1$
         ATTR_ENGINE_SESSION_TIMEOUT("engineSessionTimeout"), //$NON-NLS-1$
-        ATTR_ENGINE_RPM_VERSION("engineRpmVersion"); //$NON-NLS-1$
+        ATTR_ENGINE_RPM_VERSION("engineRpmVersion"), //$NON-NLS-1$
+        ATTR_DISPLAY_UNCAUGHT_UI_EXCEPTIONS("DISPLAY_UNCAUGHT_UI_EXCEPTIONS"); //$NON-NLS-1$
 
         private final String attributeKey;
 
@@ -120,6 +122,8 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
                 getValueObject(ServletUtils.getBaseContextPath(request)));
         request.setAttribute(MD5Attributes.ATTR_DISPLAY_LOCALES.getKey(), getValueObject(
                 StringUtils.join(UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys()), ","))); //$NON-NLS-1$
+        request.setAttribute(MD5Attributes.ATTR_DISPLAY_UNCAUGHT_UI_EXCEPTIONS.getKey(),
+                getDisplayUncaughtUIExceptions() ? BooleanNode.TRUE : BooleanNode.FALSE);
 
         // Set attributes for userInfo object
         DbUser loggedInUser = getLoggedInUser(getEngineSessionId(request));
@@ -162,6 +166,10 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     protected String getEngineSessionId(final HttpServletRequest request) {
         return (String) request.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+    }
+
+    protected Boolean getDisplayUncaughtUIExceptions() {
+        return Config.<Boolean> getValue(ConfigValues.DisplayUncaughtUIExceptions);
     }
 
     /**

@@ -2239,6 +2239,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     AllowEditingHostedEngine,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    DisplayUncaughtUIExceptions,
+
     Invalid
 
 }

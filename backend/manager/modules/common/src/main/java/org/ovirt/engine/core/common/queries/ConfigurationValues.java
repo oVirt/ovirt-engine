@@ -167,6 +167,7 @@ public enum ConfigurationValues {
     LiveStorageMigrationBetweenDifferentStorageTypes,
     MaxIoThreadsPerVm(ConfigAuthType.User),
     MultipleGraphicsSupported(ConfigAuthType.User),
+    DisplayUncaughtUIExceptions,
     RefreshLunSupported;
 
     public static enum ConfigAuthType {

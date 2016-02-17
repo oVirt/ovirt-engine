@@ -39,6 +39,9 @@
         <c:if test="${requestScope['ENGINE_REPORTS_BASE_URL'] != null}">
             var engineReportsUrls = <c:out value="${requestScope['ENGINE_REPORTS_BASE_URL']}" escapeXml="false"/>;
         </c:if>
+        <c:if test="${requestScope['DISPLAY_UNCAUGHT_UI_EXCEPTIONS'] != null}">
+            var displayUncaughtUIExceptions = <c:out value="${requestScope['DISPLAY_UNCAUGHT_UI_EXCEPTIONS']}" escapeXml="false"/>;
+        </c:if>
     </script>
 </head>
 <body>
