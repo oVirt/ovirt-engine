@@ -74,6 +74,11 @@ public final class SysprepHandler {
         String hostName = (vm.getVmInit() != null && vm.getVmInit().getHostname() != null) ?
                 vm.getVmInit().getHostname() : vm.getName();
 
+        Integer nameLength = Config.<Integer> getValue(ConfigValues.MaxVmNameLengthSysprep);
+        if (hostName != null && hostName.length() > nameLength) {
+            hostName  = hostName.substring(0, nameLength);
+        }
+
         if (sysPrepContent.length() > 0) {
 
             sysPrepContent = populateSysPrepDomainProperties(sysPrepContent, domain, sysPrepParams);
