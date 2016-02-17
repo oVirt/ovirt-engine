@@ -1588,10 +1588,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public int getMaxNameLength() {
-        final Integer selectedOsId = getModel().getOSType().getSelectedItem();
-        return AsyncDataProvider.getInstance().isWindowsOsType(selectedOsId)
-                ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
-                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
+        return AsyncDataProvider.getInstance().getMaxVmNameLength();
     }
 
     public IValidation getNameAllowedCharactersIValidation() {

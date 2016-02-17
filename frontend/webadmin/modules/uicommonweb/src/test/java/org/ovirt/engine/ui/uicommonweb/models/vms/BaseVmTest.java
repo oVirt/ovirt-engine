@@ -90,7 +90,7 @@ public class BaseVmTest {
 
         when(adp.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues)).thenReturn(Collections.emptyList());
         when(adp.osNameExists(OS_TYPE)).thenReturn(true);
-        when(adp.getMaxVmNameLengthWin()).thenReturn(15);
+        when(adp.getMaxVmNameLength()).thenReturn(64);
         when(adp.getOsDefaultIconId(OS_TYPE, false)).thenReturn(LARGE_OS_DEFAULT_ICON_ID);
     }
 

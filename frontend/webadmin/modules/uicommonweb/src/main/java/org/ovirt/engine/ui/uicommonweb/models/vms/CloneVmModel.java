@@ -107,13 +107,10 @@ public class CloneVmModel extends Model {
     }
 
     public boolean validate() {
-        int nameLength = AsyncDataProvider.getInstance().isWindowsOsType(vm.getOs()) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
-                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
-
         getCloneName().validateEntity(
                 new IValidation[]{
                         new NotEmptyValidation(),
-                        new LengthValidation(nameLength),
+                        new LengthValidation(AsyncDataProvider.getInstance().getMaxVmNameLength()),
                         new I18NNameValidation()
                 });
 

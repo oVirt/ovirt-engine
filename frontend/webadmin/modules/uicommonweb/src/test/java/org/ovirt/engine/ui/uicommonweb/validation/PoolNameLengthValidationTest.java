@@ -16,7 +16,7 @@ public class PoolNameLengthValidationTest {
 
     @Test
     public void validate_farNotOk() {
-        assertValidationWorks(14, 500, false);
+        assertValidationWorks(63, 500, false);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class PoolNameLengthValidationTest {
 
     @Test
     public void validate_notOkCorner() {
-        assertValidationWorks(13, 10, false);
+        assertValidationWorks(62, 10, false);
     }
 
     private void assertValidationWorks(int nameLength, int numOfVms, boolean expected) {
@@ -40,8 +40,6 @@ public class PoolNameLengthValidationTest {
         PoolNameLengthValidation object = new PoolNameLengthValidation(nameOfLength(nameLength), numOfVms, 3);
         PoolNameLengthValidation spy =
                 Mockito.spy(object);
-
-        Mockito.doReturn(true).when(spy).isWindows();
 
         assertThat(spy.validate(null).getSuccess(), is(equalTo(expected)));
     }

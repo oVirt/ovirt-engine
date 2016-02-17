@@ -417,22 +417,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return true if the name is valid; false if it's too long
      */
     protected boolean isVmNameValidLength(VM vm) {
+        int maxLength = Config.<Integer> getValue(ConfigValues.MaxVmNameLength);
+        boolean nameLengthValid = vm.getName().length() <= maxLength;
 
-        // get VM name
-        String vmName = vm.getName();
-
-        // get the max VM name (configuration parameter)
-        int maxVmNameLengthWindows = Config.<Integer> getValue(ConfigValues.MaxVmNameLengthWindows);
-        int maxVmNameLengthNonWindows = Config.<Integer> getValue(ConfigValues.MaxVmNameLengthNonWindows);
-
-        // names are allowed different lengths in Windows and non-Windows OSs,
-        // consider this when setting the max length.
-        int maxLength = osRepository.isWindows(vm.getVmOsId()) ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
-
-        // check if name is longer than allowed name
-        boolean nameLengthValid = (vmName.length() <= maxLength);
-
-        // return result
         return nameLengthValid;
     }
 

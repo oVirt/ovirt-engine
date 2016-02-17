@@ -215,7 +215,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     }
 
     private boolean validateName(final ImportVmData data) {
-        final int maxNameLength = getMaxNameLength(data.getVm());
+        final int maxNameLength = getMaxNameLength();
         EntityModel<String> tmp = new EntityModel<>(data.getVm().getName());
         tmp.validateEntity(
                 new IValidation[] {
@@ -262,10 +262,8 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         }
     }
 
-    protected int getMaxNameLength(VM vm) {
-        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getOs()) ?
-                AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
-                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
+    protected int getMaxNameLength() {
+        return AsyncDataProvider.getInstance().getMaxVmNameLength();
     }
 
     @Override

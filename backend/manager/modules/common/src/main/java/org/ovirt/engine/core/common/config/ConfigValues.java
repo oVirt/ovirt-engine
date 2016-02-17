@@ -761,12 +761,12 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("15")
-    MaxVmNameLengthWindows,
+    MaxVmNameLengthSysprep,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("64")
-    MaxVmNameLengthNonWindows,
+    MaxVmNameLength,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)

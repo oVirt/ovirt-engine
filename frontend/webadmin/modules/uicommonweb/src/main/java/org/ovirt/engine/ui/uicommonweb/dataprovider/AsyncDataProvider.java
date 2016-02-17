@@ -3861,20 +3861,12 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public Integer getMaxVmNameLengthWin() {
-        Integer maxVmNameLengthWindows = (Integer) getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthWindows);
-        if (maxVmNameLengthWindows == null) {
-            return 15;
-        }
-        return maxVmNameLengthWindows;
-    }
-
-    public Integer getMaxVmNameLengthNonWin() {
-        Integer maxVmNameLengthNonWindows = (Integer) getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthNonWindows);
-        if (maxVmNameLengthNonWindows == null) {
+    public Integer getMaxVmNameLength() {
+        Integer maxVmNameLength = (Integer) getConfigValuePreConverted(ConfigurationValues.MaxVmNameLength);
+        if (maxVmNameLength == null) {
             return 64;
         }
-        return maxVmNameLengthNonWindows;
+        return maxVmNameLength;
     }
 
     public int getOptimizeSchedulerForSpeedPendingRequests() {
