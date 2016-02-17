@@ -1,14 +1,11 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -63,17 +60,6 @@ public class StorageDomainValidatorTest {
     public void testDomainWithEnoughSpace() {
         validator = new StorageDomainValidator(mockStorageDomain(6, 756, StorageType.NFS));
         assertTrue("Domain should have more space then threshold", validator.isDomainWithinThresholds().isValid());
-    }
-
-    @Test
-    public void testAttachFailLockDomain() {
-        domain.setStorageDomainSharedStatus(StorageDomainSharedStatus.Locked);
-        ValidationResult shareLockedDomainInsertionResult = validator.checkStorageDomainSharedStatusNotLocked();
-        assertFalse("Attaching domain in locked status succeeded while it should have failed",
-                shareLockedDomainInsertionResult.isValid());
-        assertTrue("Attaching domain with in locked status failed with the wrong message",
-                shareLockedDomainInsertionResult.getMessage()
-                        .equals(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL));
     }
 
     private static StorageDomain mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {

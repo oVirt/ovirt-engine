@@ -700,10 +700,6 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
     }
 
-    public boolean isStorageNotLocked() {
-        return getStorage().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Locked;
-    }
-
     public boolean isNewStorage() {
         return getStorage() == null;
     }

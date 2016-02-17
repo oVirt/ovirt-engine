@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -279,8 +278,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
                 StorageDomainToPoolRelationValidator
                         storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(domain.getStorageStaticData(), getStoragePool());
-                StorageDomainValidator domainValidator = new StorageDomainValidator(domain);
-                if (isStorageDomainNotNull(domain) && validate(domainValidator.checkStorageDomainSharedStatusNotLocked()) && validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
+                if (isStorageDomainNotNull(domain) && validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
                     if (domain.getStorageDomainType() == StorageDomainType.Data) {
                         hasData = true;
                         if (storageFormat == null) {

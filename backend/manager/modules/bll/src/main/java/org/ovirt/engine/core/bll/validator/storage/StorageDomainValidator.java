@@ -6,7 +6,6 @@ import java.util.Collections;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -315,14 +314,5 @@ public class StorageDomainValidator {
 
         return validationSucceeded? ValidationResult.VALID : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST,
                     String.format("$storageFormat %1$s", storageDomain.getStorageFormat()));
-    }
-
-    public ValidationResult checkStorageDomainSharedStatusNotLocked() {
-        if (storageDomain != null) {
-            if (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
-            }
-        }
-        return ValidationResult.VALID;
     }
 }

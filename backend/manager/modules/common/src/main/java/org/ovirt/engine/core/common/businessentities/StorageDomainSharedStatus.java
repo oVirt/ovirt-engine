@@ -5,8 +5,7 @@ public enum StorageDomainSharedStatus implements Identifiable {
     Unattached,
     Active,
     Inactive,
-    Mixed,
-    Locked;
+    Mixed;
 
     @Override
     public int getValue() {

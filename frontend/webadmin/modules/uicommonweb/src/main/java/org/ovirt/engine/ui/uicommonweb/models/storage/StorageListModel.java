@@ -307,7 +307,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.getFormat().setIsChangeable(false);
 
         boolean isStorageNameEditable = model.isStorageActive() || model.isNewStorage();
-        boolean isStoragePropertiesEditable = model.isStorageNotLocked() || model.isNewStorage();
+        boolean isStoragePropertiesEditable = model.isNewStorage();
         boolean isStorageInMaintenance = !model.isNewStorage() &&
                 model.getStorage().getStatus() == StorageDomainStatus.Maintenance;
         model.getHost().setIsChangeable(false);
@@ -915,8 +915,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
-        if (storageDomain == null || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked ||
-                storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain == null || storageDomain.getStorageType().isCinderDomain()) {
             return false;
         }
 

@@ -31,8 +31,6 @@ public class StorageDomainSharedStatusColumn extends AbstractImageResourceColumn
                     return resources.downImage();
                 case Mixed:
                     return resources.upalertImage();
-                case Locked:
-                    return resources.lockImage();
                 default:
                     return resources.downImage();
             }

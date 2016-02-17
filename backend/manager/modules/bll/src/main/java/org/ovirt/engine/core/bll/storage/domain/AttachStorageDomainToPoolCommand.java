@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -265,11 +264,11 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         // which is not attached.
         StorageDomainToPoolRelationValidator
                 storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getStoragePool());
-        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
         boolean returnValue =
                 checkStoragePool()
-                        && initializeVds() && checkStorageDomain() && validate(storageDomainValidator.checkStorageDomainSharedStatusNotLocked()) &&
-                            validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool());
+                        && initializeVds()
+                        && checkStorageDomain()
+                        && validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool());
 
         if (returnValue && getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
