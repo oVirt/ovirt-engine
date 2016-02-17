@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -15,12 +13,8 @@ import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 
 public class AddVnicProfileCommand<T extends VnicProfileParameters> extends VnicProfileCommandBase<T> {
-
-    @Inject
-    private VmDao vmDao;
 
     public AddVnicProfileCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -28,7 +22,8 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
 
     @Override
     protected boolean validate() {
-        VnicProfileValidator validator = new VnicProfileValidator(vmDao, getVnicProfile());
+        VnicProfileValidator validator = createVnicProfileValidator();
+
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.networkExists())
                 && validate(validator.networkQosExistsOrNull())
@@ -36,6 +31,7 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.portMirroringNotSetIfExternalNetwork())
                 && validator.validateCustomProperties(getReturnValue().getValidationMessages())
+                && validate(validator.passthroughProfileIsSupported())
                 && validate(validator.passthroughProfileContainsSupportedProperties());
     }
 
