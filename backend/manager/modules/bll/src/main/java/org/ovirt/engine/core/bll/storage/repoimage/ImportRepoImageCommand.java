@@ -172,6 +172,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
             jobProperties.put("repoimagename", getRepoImageName());
+            jobProperties.put("storage", getStorageDomainName());
         }
         return jobProperties;
     }
