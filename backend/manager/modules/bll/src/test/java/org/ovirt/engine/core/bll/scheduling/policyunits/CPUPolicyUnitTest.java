@@ -119,10 +119,10 @@ public class CPUPolicyUnitTest {
     }
 
     private List<VDS> filter() {
-        return cpuPolicyUnit.filter(Arrays.asList(vdsWithInvalidCpuInfo, vdsWithCores),
+        return cpuPolicyUnit.filter(cluster,
+                Arrays.asList(vdsWithInvalidCpuInfo, vdsWithCores),
                 vm,
-                null,
-                mock(PerHostMessages.class));
+                null, mock(PerHostMessages.class));
     }
 
 }

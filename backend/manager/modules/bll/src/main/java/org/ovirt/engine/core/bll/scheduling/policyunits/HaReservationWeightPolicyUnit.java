@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
+    public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
 
         log.debug("Started HA reservation scoring method");
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
@@ -53,8 +52,6 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
         Map<Guid, Integer> hostsHaVmCount = new HashMap<>();
 
         // If the vm is not HA or the cluster is not marked as HA Reservation set default score.
-        Cluster cluster = DbFacade.getInstance().getClusterDao().get(hosts.get(0).getClusterId());
-
         if (!vm.isAutoStartup() || !cluster.supportsHaReservation()) {
             fillDefaultScores(hosts, scores);
         } else {

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @SchedulingUnit(
         guid = "736999d0-1023-46a4-9a75-1316ed50e15b",
@@ -30,17 +29,12 @@ public class PowerSavingWeightPolicyUnit extends EvenDistributionWeightPolicyUni
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        Cluster cluster = null;
+    public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
             int score = MaxSchedulerWeight - 1;
             if (vds.getVmCount() > 0) {
-                if (cluster == null) {
-                    cluster = DbFacade.getInstance().getClusterDao().get(hosts.get(0).getClusterId());
-                }
-                score -=
-                        calcEvenDistributionScore(vds, vm, cluster != null ? cluster.getCountThreadsAsCores() : false);
+                score -= calcEvenDistributionScore(vds, vm, cluster.getCountThreadsAsCores());
             }
             scores.add(new Pair<>(vds.getId(), score));
         }

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -178,7 +179,7 @@ public class InClusterUpgradeWeightPolicyUnitTest extends TestCase {
     }
 
     private List<Pair<Guid, Integer>> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeWeightPolicyUnit.score(Arrays.asList(hosts),
+        return inClusterUpgradeWeightPolicyUnit.score(new Cluster(), Arrays.asList(hosts),
                 vm,
                 null);
     }

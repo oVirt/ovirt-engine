@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -119,7 +120,7 @@ public class InClusterUpgradeFilterPolicyUnitTest extends TestCase {
     }
 
     private List<VDS> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeFilterPolicyUnit.filter(Arrays.asList(hosts),
+        return inClusterUpgradeFilterPolicyUnit.filter(new Cluster(), Arrays.asList(hosts),
                 vm,
                 null,
                 mock(PerHostMessages.class));
