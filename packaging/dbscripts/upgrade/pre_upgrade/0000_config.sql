@@ -959,6 +959,10 @@ select fn_db_update_default_config_value('GlusterStorageDeviceListMountPointsToI
 -- Increase heartbeat interval from 10 to 30 seconds
 select fn_db_update_default_config_value('vdsHeartbeatInSeconds','10','30','general',false);
 
+-- Update VM name length
+select fn_db_rename_config_key('MaxVmNameLengthNonWindows', 'MaxVmNameLength', 'general');
+select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

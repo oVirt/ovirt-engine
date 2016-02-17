@@ -121,8 +121,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxVmNameLengthWindows, 15),
-            mockConfig(ConfigValues.MaxVmNameLengthNonWindows, 64),
+            mockConfig(ConfigValues.MaxVmNameLength, 64),
             mockConfig(ConfigValues.SupportedClusterLevels,
                     new HashSet<>(Arrays.asList(Version.v3_0, Version.v3_1))),
             mockConfig(ConfigValues.VMMinMemorySizeInMB, 256),

@@ -60,9 +60,7 @@ public class PoolNameLengthValidation implements IValidation {
     }
 
     protected int getMaxNameLength() {
-        return isWindows() ?
-                AsyncDataProvider.getInstance().getMaxVmNameLengthWin() :
-                AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
+        return AsyncDataProvider.getInstance().getMaxVmNameLength();
     }
 
     /**
