@@ -72,12 +72,14 @@ FROM storage_pool_iso_map;
 CREATE OR REPLACE VIEW dwh_storage_domain_history_view AS
 
 SELECT storage_domain_dynamic.id AS storage_domain_id,
-    fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, status_table.status, storage_domain_static.storage_domain_type) AS storage_domain_status,
+    COALESCE(storage_domain_shared_status.status, 0) AS storage_domain_status,
     storage_domain_dynamic.available_disk_size AS available_disk_size_gb,
     storage_domain_dynamic.used_disk_size AS used_disk_size_gb
 FROM storage_domain_dynamic
 INNER JOIN storage_domain_static
     ON (storage_domain_dynamic.id = storage_domain_static.id)
+LEFT JOIN storage_domain_shared_status
+    ON storage_domain_shared_status.storage_id = storage_domain_static.id
 LEFT JOIN (
     SELECT storage_id,
         MAX(status) AS status

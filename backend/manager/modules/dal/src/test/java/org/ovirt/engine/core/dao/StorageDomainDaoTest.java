@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -96,6 +97,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertEquals(FixturesTool.STORAGE_DOMAIN_NFS_INACTIVE_ISO, domain.getId());
         assertEquals("Wrong committed disk size", 0, domain.getCommittedDiskSize());
         assertEquals("Wrong actual disk size", 0, domain.getActualImagesSize());
+        assertEquals("Wrong shared status", StorageDomainSharedStatus.Inactive, domain.getStorageDomainSharedStatus());
     }
 
     @Test
@@ -175,6 +177,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertEquals(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, domain.getId());
         assertEquals("Wrong committed disk size", 8, domain.getCommittedDiskSize());
         assertEquals("Wrong actual disk size", 4, domain.getActualImagesSize());
+        assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, domain.getStorageDomainSharedStatus());
     }
 
     /**
@@ -194,6 +197,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertEquals(existingDomain, result);
         assertEquals("Wrong committed disk size", 8, result.getCommittedDiskSize());
         assertEquals("Wrong actual disk size", 4, result.getActualImagesSize());
+        assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, result.getStorageDomainSharedStatus());
     }
 
     /**
@@ -235,6 +239,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertEquals(existingDomain, domain);
         assertEquals("Wrong committed disk size", 8, domain.getCommittedDiskSize());
         assertEquals("Wrong actual disk size", 4, domain.getActualImagesSize());
+        assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, domain.getStorageDomainSharedStatus());
     }
 
     /**
@@ -390,6 +395,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertFalse(result.isEmpty());
         for (StorageDomain domain : result) {
             assertEquals(expectedStoragePoolId, domain.getStoragePoolId());
+            assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, domain.getStorageDomainSharedStatus());
         }
     }
 
@@ -404,6 +410,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertEquals(existingDomain.getId(), domain.getId());
         assertEquals("Wrong committed disk size", 8, domain.getCommittedDiskSize());
         assertEquals("Wrong actual disk size", 4, domain.getActualImagesSize());
+        assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, domain.getStorageDomainSharedStatus());
     }
 
     @Test
