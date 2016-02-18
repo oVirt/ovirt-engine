@@ -35,11 +35,8 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -50,7 +47,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -93,7 +89,6 @@ public class VmAnalyzer {
     private Map<Guid, VmJob> vmJobsToUpdate;
     private List<Guid> vmJobIdsToRemove;
     private Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave;
-    private List<LUNs> vmLunDisksToSave;
     private List<VmGuestAgentInterface> vmGuestAgentNics;
     private boolean vmBalloonDriverRequestedAndUnavailable;
     private boolean vmBalloonDriverNotRequestedOrAvailable;
@@ -127,7 +122,6 @@ public class VmAnalyzer {
     private VmDao vmDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private VdsDao vdsDao;
-    private DiskDao diskDao;
     private VmJobDao vmJobDao;
     private VmNumaNodeDao vmNumaNodeDao;
 
@@ -143,7 +137,6 @@ public class VmAnalyzer {
             VmDao vmDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VdsDao vdsDao,
-            DiskDao diskDao,
             VmJobDao vmJobDao,
             Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
             VmNumaNodeDao vmNumaNodeDao) {
@@ -158,7 +151,6 @@ public class VmAnalyzer {
         this.vmDao = vmDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         this.vdsDao = vdsDao;
-        this.diskDao = diskDao;
         this.vmJobDao = vmJobDao;
         this.vdsNumaNodesProvider = vdsNumaNodesProvider;
         this.vmNumaNodeDao = vmNumaNodeDao;
@@ -187,7 +179,6 @@ public class VmAnalyzer {
         proceedGuaranteedMemoryCheck();
         updateRepository();
         prepareGuestAgentNetworkDevicesForUpdate();
-        updateLunDisks();
     }
 
     private boolean isExternalOrUnmanagedHostedEngineVm() {
@@ -903,40 +894,6 @@ public class VmAnalyzer {
         }
     }
 
-    protected void updateLunDisks() {
-        // Looping only over powering up VMs as LUN device size
-        // is updated by VDSM only once when running a VM.
-        if (poweringUp) {
-            Map<String, LUNs> lunsMap = vdsmVm.getLunsMap();
-            if (lunsMap.isEmpty()) {
-                // LUNs list from getVmStats hasn't been updated yet or VDSM doesn't support LUNs list retrieval.
-                return;
-            }
-
-            vmLunDisksToSave = new ArrayList<>();
-            List<Disk> vmDisks = diskDao.getAllForVm(vdsmVm.getVmDynamic().getId(), true);
-            for (Disk disk : vmDisks) {
-                if (disk.getDiskStorageType() != DiskStorageType.LUN) {
-                    continue;
-                }
-
-                LUNs lunFromDB = ((LunDisk) disk).getLun();
-                LUNs lunFromMap = lunsMap.get(lunFromDB.getId());
-
-                // LUN's device size might be returned as zero in case of an error in VDSM;
-                // Hence, verify before updating.
-                if (lunFromMap.getDeviceSize() != 0 && lunFromMap.getDeviceSize() != lunFromDB.getDeviceSize()) {
-                    // Found a mismatch - set LUN for update
-                    log.info("Updated LUN device size - ID: '{}', previous size: '{}', new size: '{}'.",
-                            lunFromDB.getLUNId(), lunFromDB.getDeviceSize(), lunFromMap.getDeviceSize());
-
-                    lunFromDB.setDeviceSize(lunFromMap.getDeviceSize());
-                    vmLunDisksToSave.add(lunFromDB);
-                }
-            }
-        }
-    }
-
     protected void updateVmJobs() {
         if (vdsmVm.getVmStatistics().getVmJobs() == null) {
             // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
@@ -1110,10 +1067,6 @@ public class VmAnalyzer {
         return vmDiskImageDynamicToSave != null ? vmDiskImageDynamicToSave : Collections.emptyList();
     }
 
-    public List<LUNs> getVmLunDisksToSave() {
-        return vmLunDisksToSave != null ? vmLunDisksToSave : Collections.emptyList();
-    }
-
     public List<VmGuestAgentInterface> getVmGuestAgentNics() {
         return vmGuestAgentNics != null ? vmGuestAgentNics : Collections.emptyList();
     }
@@ -1146,4 +1099,7 @@ public class VmAnalyzer {
         return VmsMonitoring.getVmId(dbVm, vdsmVm);
     }
 
+    public Map<String, LUNs> getVmLunsMap() {
+        return vdsmVm.getLunsMap();
+    }
 }

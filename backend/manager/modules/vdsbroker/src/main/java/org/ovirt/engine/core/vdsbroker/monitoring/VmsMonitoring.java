@@ -21,9 +21,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
-import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -57,9 +55,9 @@ public class VmsMonitoring implements BackendService {
     private ResourceManager resourceManager;
     @Inject
     private BalloonMonitoring balloonMonitoring;
-
     @Inject
-    private LunDao lunDao;
+    private LunDisksMonitoring lunDisksMonitoring;
+
     @Inject
     private VmJobDao vmJobDao;
     @Inject
@@ -80,8 +78,6 @@ public class VmsMonitoring implements BackendService {
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private VdsDao vdsDao;
-    @Inject
-    private DiskDao diskDao;
     @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
     @Inject
@@ -185,7 +181,6 @@ public class VmsMonitoring implements BackendService {
                 vmDao,
                 vmNetworkInterfaceDao,
                 vdsDao,
-                diskDao,
                 vmJobDao,
                 vdsNumaNodeDao,
                 vmNumaNodeDao);
@@ -301,6 +296,12 @@ public class VmsMonitoring implements BackendService {
 
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
 
+        // Looping only over powering up VMs as LUN device size
+        // is updated by VDSM only once when running a VM.
+        lunDisksMonitoring.process(vmAnalyzers.stream()
+                .filter(VmAnalyzer::isPoweringUp)
+                .collect(Collectors.toMap(VmAnalyzer::getVmId, VmAnalyzer::getVmLunsMap)));
+
         balloonMonitoring.process(
                 vmIdsWithBalloonDriverNotRequestedOrAvailable,
                 vmIdsWithBalloonDriverRequestedAndUnavailable,
@@ -313,16 +314,8 @@ public class VmsMonitoring implements BackendService {
         saveVmStatistics(vmAnalyzers);
         saveVmInterfaceStatistics(vmAnalyzers);
         saveVmDiskImageStatistics(vmAnalyzers);
-        saveVmLunDiskStatistics(vmAnalyzers);
         saveVmGuestAgentNetworkDevices(vmAnalyzers);
         saveVmJobsToDb(vmAnalyzers);
-    }
-
-    private void saveVmLunDiskStatistics(List<VmAnalyzer> vmAnalyzers) {
-        lunDao.updateAllInBatch(vmAnalyzers.stream()
-                .map(VmAnalyzer::getVmLunDisksToSave)
-                .flatMap(List::stream)
-                .collect(Collectors.toList()));
     }
 
     private void saveVmDiskImageStatistics(List<VmAnalyzer> vmAnalyzers) {
