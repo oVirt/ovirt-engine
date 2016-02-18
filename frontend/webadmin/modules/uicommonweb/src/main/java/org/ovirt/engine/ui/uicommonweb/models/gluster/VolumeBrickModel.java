@@ -497,10 +497,6 @@ public class VolumeBrickModel extends Model {
 
         switch (selectedVolumeType) {
 
-        case DISTRIBUTE:
-            valid = false;
-            break;
-
         case REPLICATE:
             if (brickCount != replicaCount) {
                 valid = false;
