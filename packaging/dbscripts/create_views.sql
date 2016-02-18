@@ -21,6 +21,17 @@ WHERE
 GROUP BY
     device_id,
     entity_type;
+
+CREATE OR REPLACE VIEW storage_domain_shared_status AS
+
+SELECT storage_id,
+    CASE WHEN COUNT(CASE status WHEN 3 THEN 1 END) > 0
+        THEN CASE WHEN COUNT(DISTINCT status) > 1 THEN 3 ELSE 1 END
+        ELSE 2
+    END AS status
+FROM storage_pool_iso_map
+GROUP BY storage_id;
+
 CREATE
 OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
 SELECT
@@ -469,9 +480,7 @@ SELECT
     storage_domain_static.storage_domain_format_type AS storage_domain_format_type,
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        storage_pool_iso_map.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    COALESCE(storage_domain_shared_status.status, 0) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
@@ -488,7 +497,9 @@ LEFT
 OUTER JOIN domains_with_unregistered_entities_view ON
     domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
 LEFT JOIN storage_domains_image_sizes
-    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
+    ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id
+LEFT JOIN storage_domain_shared_status
+    ON storage_domain_shared_status.storage_id = storage_domain_static.id;
 CREATE
 OR REPLACE VIEW storage_domains_without_storage_pools AS
 SELECT
@@ -509,9 +520,7 @@ SELECT
     storage_domains_image_sizes.commited_disk_size,
     storage_domains_image_sizes.actual_images_size,
     NULL AS status,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        storage_pool_iso_map.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    COALESCE(storage_domain_shared_status.status, 0) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
@@ -525,6 +534,8 @@ OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_m
 LEFT
 OUTER JOIN domains_with_unregistered_entities_view ON
     domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
+LEFT JOIN storage_domain_shared_status
+    ON storage_domain_shared_status.storage_id = storage_domain_static.id
 LEFT JOIN storage_domains_image_sizes
     ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
 
@@ -552,9 +563,7 @@ SELECT
     storage_domain_dynamic.used_disk_size AS used_disk_size,
     storage_domains_image_sizes.commited_disk_size,
     storage_domains_image_sizes.actual_images_size,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        status_table.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    COALESCE(storage_domain_shared_status.status, 0) AS storage_domain_shared_status,
     storage_domain_static.recoverable AS recoverable,
     domains_with_unregistered_entities_view.storage_domain_id IS NOT NULL AS contains_unregistered_entities,
     storage_domain_static.warning_low_space_indicator as warning_low_space_indicator,
@@ -586,6 +595,8 @@ OUTER JOIN (
 LEFT
 OUTER JOIN domains_with_unregistered_entities_view ON
     domains_with_unregistered_entities_view.storage_domain_id = storage_domain_static.id
+LEFT JOIN storage_domain_shared_status
+    ON storage_domain_shared_status.storage_id = storage_domain_static.id
 LEFT JOIN storage_domains_image_sizes
     ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
 
@@ -2084,9 +2095,7 @@ SELECT
     storage_domain_static.storage_domain_format_type,
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
-    fn_get_storage_domain_shared_status_by_domain_id ( storage_domain_static.id,
-        storage_pool_iso_map.status,
-        storage_domain_static.storage_domain_type ) AS storage_domain_shared_status,
+    COALESCE(storage_domain_shared_status.status, 0) AS storage_domain_shared_status,
     vds_groups.vds_group_id,
     vds_static.vds_id,
     storage_pool_iso_map.storage_pool_id,
@@ -2102,6 +2111,8 @@ LEFT
 OUTER JOIN vds_groups ON storage_pool_iso_map.storage_pool_id = vds_groups.storage_pool_id
 LEFT
 OUTER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id
+LEFT JOIN storage_domain_shared_status
+    ON storage_domain_shared_status.storage_id = storage_domain_static.id
 LEFT JOIN storage_domains_image_sizes
     ON storage_domains_image_sizes.storage_domain_id = storage_domain_static.id;
 CREATE
