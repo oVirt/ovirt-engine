@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -44,6 +45,9 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     @Inject
     private HostNicVfsConfigDao hostNicVfsConfigDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
 
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
@@ -116,7 +120,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
                 hostDeviceDao.updateAllInBatch(changedDevices);
                 hostDeviceDao.removeAllInBatch(removedDevices);
 
-                handleHostNicVfsConfigUpdate(newDevices, changedDevices, removedDevices);
+                handleHostNicVfsConfigUpdate();
 
                 getVmDeviceDao().removeAllInBatch(removedVmDevices);
 
@@ -129,44 +133,46 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         setSucceeded(true);
     }
 
-    private void handleHostNicVfsConfigUpdate(final List<HostDevice> newDevices,
-            final List<HostDevice> changedDevices,
-            final List<HostDevice> removedDevices) {
-        final List<HostNicVfsConfig> newHostNicVfsConfigs = new ArrayList<>();
-        final List<HostNicVfsConfig> removedHostNicVfsConfigs = new ArrayList<>();
+    private void handleHostNicVfsConfigUpdate() {
+        removeInvalidHostNicVfsConfigsFromDb();
+        addMissingHostNicVfsConfigsToDb();
+    }
 
-        for (HostDevice device : newDevices) {
+    private void removeInvalidHostNicVfsConfigsFromDb() {
+        final List<HostNicVfsConfig> hostNicVfsConfigsToRemove = new ArrayList<>();
+
+        List<HostNicVfsConfig> hostNicVfsConfigs = hostNicVfsConfigDao.getAllVfsConfigByHostId(getVdsId());
+
+        for (HostNicVfsConfig hostNicVfsConfig : hostNicVfsConfigs) {
+
+            VdsNetworkInterface nic = interfaceDao.get(hostNicVfsConfig.getNicId());
+
+            HostDevice pciDevice = null;
+            if (nic != null) {
+                String pciDeviceName = networkDeviceHelper.getPciDeviceNameByNic(nic);
+                pciDevice = fetchedMap.get(pciDeviceName);
+            }
+
+            if (nic == null || pciDevice == null || !networkDeviceHelper.isSriovDevice(pciDevice)) {
+                addToListIfNotNull(hostNicVfsConfig, hostNicVfsConfigsToRemove);
+            }
+        }
+
+        if (!hostNicVfsConfigsToRemove.isEmpty()) {
+            hostNicVfsConfigDao.removeAllInBatch(hostNicVfsConfigsToRemove);
+        }
+    }
+
+    private void addMissingHostNicVfsConfigsToDb() {
+        final List<HostNicVfsConfig> hostNicVfsConfigsToAdd = new ArrayList<>();
+        for (HostDevice device : fetchedMap.values()) {
             if (networkDeviceHelper.isSriovDevice(device)) {
-                addToListIfNotNull(getHostNicVfsConfigToAdd(device), newHostNicVfsConfigs);
+                addToListIfNotNull(createHostNicVfsConfigToAddIfNotExist(device), hostNicVfsConfigsToAdd);
             }
         }
 
-        for (HostDevice device : changedDevices) {
-            HostDevice oldDevice = oldMap.get(device.getDeviceName());
-
-            if (!networkDeviceHelper.isSriovDevice(oldDevice)
-                    && networkDeviceHelper.isSriovDevice(device)) {
-                addToListIfNotNull(getHostNicVfsConfigToAdd(device), newHostNicVfsConfigs);
-            }
-
-            if (networkDeviceHelper.isSriovDevice(oldDevice)
-                    && !networkDeviceHelper.isSriovDevice(device)) {
-                addToListIfNotNull(getHostNicVfsConfigToRemove(device), removedHostNicVfsConfigs);
-            }
-        }
-
-        for (HostDevice device : removedDevices) {
-            if (networkDeviceHelper.isSriovDevice(device)) {
-                addToListIfNotNull(getHostNicVfsConfigToRemove(device), removedHostNicVfsConfigs);
-            }
-        }
-
-        if (!removedHostNicVfsConfigs.isEmpty()) {
-            hostNicVfsConfigDao.removeAllInBatch(removedHostNicVfsConfigs);
-        }
-
-        if (!newHostNicVfsConfigs.isEmpty()) {
-            hostNicVfsConfigDao.saveAllInBatch(newHostNicVfsConfigs);
+        if (!hostNicVfsConfigsToAdd.isEmpty()) {
+            hostNicVfsConfigDao.saveAllInBatch(hostNicVfsConfigsToAdd);
         }
     }
 
@@ -176,28 +182,20 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         }
     }
 
-    private HostNicVfsConfig getHostNicVfsConfigToAdd(HostDevice device) {
+    private HostNicVfsConfig createHostNicVfsConfigToAddIfNotExist(HostDevice device) {
         VdsNetworkInterface nic = networkDeviceHelper.getNicByPciDevice(device, fetchedMap.values());
 
         if (nic == null) {
             return null;
         }
 
-        HostNicVfsConfig hostNicVfsConfig = new HostNicVfsConfig();
-        hostNicVfsConfig.setId(Guid.newGuid());
-        hostNicVfsConfig.setNicId(nic.getId());
-        hostNicVfsConfig.setAllNetworksAllowed(true);
+        HostNicVfsConfig existingHostNicVfsConfig = hostNicVfsConfigDao.getByNicId(nic.getId());
 
-        return hostNicVfsConfig;
-    }
-
-    private HostNicVfsConfig getHostNicVfsConfigToRemove(HostDevice device) {
-        VdsNetworkInterface nic = networkDeviceHelper.getNicByPciDevice(device, oldMap.values());
-        if (nic == null) {
+        if (existingHostNicVfsConfig != null) {
             return null;
         }
 
-        return hostNicVfsConfigDao.getByNicId(nic.getId());
+        return new HostNicVfsConfig(Guid.newGuid(), nic.getId(), true);
     }
 
     @Override

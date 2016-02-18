@@ -55,6 +55,12 @@ public class HostNicVfsConfig implements IVdcQueryable, BusinessEntity<Guid> {
         setNetworkLabels(labels);
     }
 
+    public HostNicVfsConfig(Guid id, Guid nicId, boolean allNetworksAllowed) {
+        setId(id);
+        setNicId(nicId);
+        setAllNetworksAllowed(allNetworksAllowed);
+    }
+
     public Guid getNicId() {
         return nicId;
     }
