@@ -80,6 +80,21 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
                 childCommand.getActionType());
     }
 
+    protected void setCommandEndStatus(CommandBase<?> command, boolean childCommandFailed,
+                                       CommandExecutionStatus status, List<Guid> childCmdIds) {
+        command.getParameters().setTaskGroupSuccess(!childCommandFailed && status == CommandExecutionStatus.EXECUTED);
+        CommandStatus newStatus = command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
+                : CommandStatus.FAILED;
+        log.info("Command '{}' id: '{}' child commands '{}' executions were completed, status '{}'",
+                command.getActionType(), command.getCommandId(), childCmdIds, newStatus);
+        if (!shouldExecuteEndMethod(command)) {
+            logEndWillBeExecutedByParent(command, newStatus);
+        }
+
+        command.setCommandStatus(newStatus, false);
+        command.persistCommand(command.getParameters().getParentCommand(), command.getCallback() != null);
+    }
+
     protected abstract void childCommandsExecutionEnded(CommandBase<?> command,
             boolean anyFailed,
             List<Guid> childCmdIds,

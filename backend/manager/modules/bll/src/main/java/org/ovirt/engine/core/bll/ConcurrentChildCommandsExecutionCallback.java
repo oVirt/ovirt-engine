@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 
@@ -19,16 +18,6 @@ public class ConcurrentChildCommandsExecutionCallback extends ChildCommandsCallb
             CommandExecutionStatus status,
             int completedChildren) {
 
-        command.getParameters().setTaskGroupSuccess(!anyFailed && status == CommandExecutionStatus.EXECUTED);
-        CommandStatus newStatus = command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
-                : CommandStatus.FAILED;
-        log.info("Command '{}' id: '{}' child commands '{}' executions were completed, status '{}'",
-                command.getActionType(), command.getCommandId(), childCmdIds, newStatus);
-        if (!shouldExecuteEndMethod(command)) {
-            logEndWillBeExecutedByParent(command, newStatus);
-        }
-
-        command.setCommandStatus(newStatus, false);
-        command.persistCommand(command.getParameters().getParentCommand(), command.getCallback() != null);
+        setCommandEndStatus(command, anyFailed, status, childCmdIds);
     }
 }
