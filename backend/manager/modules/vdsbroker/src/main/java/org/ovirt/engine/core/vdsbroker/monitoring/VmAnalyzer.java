@@ -6,12 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -50,7 +47,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmJobDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -86,14 +82,13 @@ public class VmAnalyzer {
     private boolean autoVmToRun;
     private boolean unmanagedVm;
     private boolean coldRebootVmToRun;
-    private Map<Guid, VmJob> vmJobsToUpdate;
-    private List<Guid> vmJobIdsToRemove;
     private Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave;
     private List<VmGuestAgentInterface> vmGuestAgentNics;
     private boolean vmBalloonDriverRequestedAndUnavailable;
     private boolean vmBalloonDriverNotRequestedOrAvailable;
     private boolean guestAgentDownAndBalloonInfalted;
     private boolean guestAgentUpOrBalloonDeflated;
+    private List<VmJob> vmJobs;
 
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
@@ -122,7 +117,6 @@ public class VmAnalyzer {
     private VmDao vmDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private VdsDao vdsDao;
-    private VmJobDao vmJobDao;
     private VmNumaNodeDao vmNumaNodeDao;
 
     public VmAnalyzer(
@@ -137,7 +131,6 @@ public class VmAnalyzer {
             VmDao vmDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VdsDao vdsDao,
-            VmJobDao vmJobDao,
             Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
             VmNumaNodeDao vmNumaNodeDao) {
         this.dbVm = dbVm;
@@ -151,7 +144,6 @@ public class VmAnalyzer {
         this.vmDao = vmDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         this.vdsDao = vdsDao;
-        this.vmJobDao = vmJobDao;
         this.vdsNumaNodesProvider = vdsNumaNodesProvider;
         this.vmNumaNodeDao = vmNumaNodeDao;
     }
@@ -894,45 +886,8 @@ public class VmAnalyzer {
         }
     }
 
-    protected void updateVmJobs() {
-        if (vdsmVm.getVmStatistics().getVmJobs() == null) {
-            // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
-            log.debug("No vmJob data returned from VDSM, preserving existing jobs");
-            return;
-        }
-
-        vmJobsToUpdate = new HashMap<>();
-        vmJobIdsToRemove = new ArrayList<>();
-        List<Guid> existingVmJobIds = vmJobDao.getAllIds();
-
-        // Only jobs that were in the DB before our update may be updated/removed;
-        // others are completely ignored for the time being
-        Map<Guid, VmJob> jobsFromDb = vmJobDao.getAllForVm(vdsmVm.getVmDynamic().getId()).stream()
-                .filter(job -> existingVmJobIds.contains(job.getId()))
-                .collect(Collectors.toMap(VmJob::getId, Function.identity()));
-
-        Set<Guid> vmJobIdsToIgnore = new HashSet<>();
-        vdsmVm.getVmStatistics().getVmJobs().stream()
-        .filter(job -> jobsFromDb.containsKey(job.getId()))
-        .forEach(job -> {
-            if (jobsFromDb.get(job.getId()).equals(job)) {
-                // Same data, no update needed.  It would be nice if a caching
-                // layer would take care of this for us.
-                vmJobIdsToIgnore.add(job.getId());
-                log.info("VM job '{}': In progress (no change)", job.getId());
-            } else {
-                vmJobsToUpdate.put(job.getId(), job);
-                log.info("VM job '{}': In progress, updating", job.getId());
-            }
-        });
-
-        // Any existing jobs not saved need to be removed
-        jobsFromDb.keySet().stream()
-        .filter(jobId -> !vmJobsToUpdate.containsKey(jobId) && !vmJobIdsToIgnore.contains(jobId))
-        .forEach(jobId -> {
-            vmJobIdsToRemove.add(jobId);
-            log.info("VM job '{}': Deleting", jobId);
-        });
+    private void updateVmJobs() {
+        vmJobs = vdsmVm.getVmStatistics().getVmJobs();
     }
 
     private void updateVmNumaNodeRuntimeInfo() {
@@ -1055,14 +1010,6 @@ public class VmAnalyzer {
         return coldRebootVmToRun;
     }
 
-    public Collection<VmJob> getVmJobsToUpdate() {
-        return vmJobsToUpdate != null ? vmJobsToUpdate.values() : Collections.emptyList();
-    }
-
-    public List<Guid> getVmJobIdsToRemove() {
-        return vmJobIdsToRemove != null ? vmJobIdsToRemove : Collections.emptyList();
-    }
-
     public Collection<Pair<Guid, DiskImageDynamic>> getVmDiskImageDynamicToSave() {
         return vmDiskImageDynamicToSave != null ? vmDiskImageDynamicToSave : Collections.emptyList();
     }
@@ -1093,6 +1040,10 @@ public class VmAnalyzer {
 
     public boolean isGuestAgentUpOrBalloonDeflated() {
         return guestAgentUpOrBalloonDeflated;
+    }
+
+    public List<VmJob> getVmJobs() {
+        return vmJobs;
     }
 
     public Guid getVmId() {

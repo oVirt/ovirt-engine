@@ -14,7 +14,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmJobDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -38,7 +37,6 @@ public class VmAnalyzerFactory {
     private VmDao vmDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private VdsDao vdsDao;
-    private VmJobDao vmJobDao;
     private VdsNumaNodeDao vdsNumaNodeDao;
     private VmNumaNodeDao vmNumaNodeDao;
 
@@ -52,7 +50,6 @@ public class VmAnalyzerFactory {
             VmDao vmDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VdsDao vdsDao,
-            VmJobDao vmJobDao,
             VdsNumaNodeDao vdsNumaNodeDao,
             VmNumaNodeDao vmNumaNodeDao) {
         this.vdsManager = vdsManager;
@@ -64,7 +61,6 @@ public class VmAnalyzerFactory {
         this.vmDao = vmDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         this.vdsDao = vdsDao;
-        this.vmJobDao = vmJobDao;
         this.vdsNumaNodeDao = vdsNumaNodeDao;
         this.vmNumaNodeDao = vmNumaNodeDao;
         initProviders();
@@ -93,7 +89,6 @@ public class VmAnalyzerFactory {
                 vmDao,
                 vmNetworkInterfaceDao,
                 vdsDao,
-                vmJobDao,
                 vdsNumaNodesProvider,
                 vmNumaNodeDao);
     }

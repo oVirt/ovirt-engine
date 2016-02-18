@@ -363,7 +363,6 @@ public class VmAnalyzerTest {
                 vmNetworkInterfaceDao,
                 vdsDao,
                 null,
-                null,
                 null));
         doReturn(vmManager).when(vmAnalyzer).getVmManager();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();

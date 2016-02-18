@@ -27,7 +27,6 @@ import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
-import org.ovirt.engine.core.dao.VmJobDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -57,9 +56,9 @@ public class VmsMonitoring implements BackendService {
     private BalloonMonitoring balloonMonitoring;
     @Inject
     private LunDisksMonitoring lunDisksMonitoring;
-
     @Inject
-    private VmJobDao vmJobDao;
+    private VmJobsMonitoring vmJobsMonitoring;
+
     @Inject
     private DiskImageDynamicDao diskImageDynamicDao;
     @Inject
@@ -181,7 +180,6 @@ public class VmsMonitoring implements BackendService {
                 vmDao,
                 vmNetworkInterfaceDao,
                 vdsDao,
-                vmJobDao,
                 vdsNumaNodeDao,
                 vmNumaNodeDao);
     }
@@ -302,6 +300,10 @@ public class VmsMonitoring implements BackendService {
                 .filter(VmAnalyzer::isPoweringUp)
                 .collect(Collectors.toMap(VmAnalyzer::getVmId, VmAnalyzer::getVmLunsMap)));
 
+        vmJobsMonitoring.process(vmAnalyzers.stream()
+                .filter(analyzer -> analyzer.getVmJobs() != null)
+                .collect(Collectors.toMap(VmAnalyzer::getVmId, VmAnalyzer::getVmJobs)));
+
         balloonMonitoring.process(
                 vmIdsWithBalloonDriverNotRequestedOrAvailable,
                 vmIdsWithBalloonDriverRequestedAndUnavailable,
@@ -315,7 +317,6 @@ public class VmsMonitoring implements BackendService {
         saveVmInterfaceStatistics(vmAnalyzers);
         saveVmDiskImageStatistics(vmAnalyzers);
         saveVmGuestAgentNetworkDevices(vmAnalyzers);
-        saveVmJobsToDb(vmAnalyzers);
     }
 
     private void saveVmDiskImageStatistics(List<VmAnalyzer> vmAnalyzers) {
@@ -374,24 +375,6 @@ public class VmsMonitoring implements BackendService {
                         }
                     }
                 }
-                return null;
-            });
-        }
-    }
-
-    private void saveVmJobsToDb(List<VmAnalyzer> vmAnalyzers) {
-        vmJobDao.updateAllInBatch(vmAnalyzers.stream()
-                .map(VmAnalyzer::getVmJobsToUpdate)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList()));
-
-        List<Guid> vmJobIdsToRemove = vmAnalyzers.stream()
-                .map(VmAnalyzer::getVmJobIdsToRemove)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        if (!vmJobIdsToRemove.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                vmJobDao.removeAll(vmJobIdsToRemove);
                 return null;
             });
         }
