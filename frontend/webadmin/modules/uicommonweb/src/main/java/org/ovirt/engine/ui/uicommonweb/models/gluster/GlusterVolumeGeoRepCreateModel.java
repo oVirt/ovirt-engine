@@ -141,7 +141,8 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
         } else {
             setVolumeList((Collection) vdcReturnValue.getReturnValue());
             Set<String> clusterForVolumes = getClusterForVolumes(getVolumeList());
-            getSlaveClusters().setItems(clusterForVolumes, clusterForVolumes.iterator().next());
+            getSlaveClusters().setItems(clusterForVolumes,
+                    clusterForVolumes.isEmpty() ? null : clusterForVolumes.iterator().next());
         }
     }
 

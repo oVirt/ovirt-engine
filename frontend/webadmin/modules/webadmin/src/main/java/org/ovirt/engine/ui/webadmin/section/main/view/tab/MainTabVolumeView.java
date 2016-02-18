@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColu
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeBrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeInfoColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
+
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.Column;
@@ -147,12 +148,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         };
         getTable().addColumn(capacityColumn, constants.volumeCapacity(), "100px");//$NON-NLS-1$
 
-        getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList) {
-            @Override
-            protected boolean isVisible(GlusterTaskSupport value) {
-                return !(value == null || value.getAsyncTask() == null);
-            }
-        }),
+        getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(
+                new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList)),
         constants.activitiesOnVolume(),
         "100px"); //$NON-NLS-1$
 
