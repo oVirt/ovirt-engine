@@ -58,12 +58,16 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
     protected void executeCommand() {
         getCompensationContext().snapshotEntityStatus(getVds().getDynamicData(), getParameters().getInitialStatus());
         getCompensationContext().stateChanged();
+        VDSType vdsType = getVds().getVdsType();
 
-        if (getVds().getVdsType() == VDSType.VDS) {
+        if (vdsType == VDSType.VDS || vdsType == VDSType.oVirtNode) {
             try {
                 setVdsStatus(VDSStatus.Installing);
                 Updateable upgradeManager = new HostUpgradeManager();
                 upgradeManager.update(getVds());
+                if (vdsType == VDSType.oVirtNode) {
+                    //TODO : reboot host here
+                }
             } catch (Exception e) {
                 setVdsStatus(VDSStatus.InstallFailed);
                 return;

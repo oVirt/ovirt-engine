@@ -1386,6 +1386,10 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         return getVdsType() == VDSType.oVirtVintageNode;
     }
 
+    public boolean isOvirNode() {
+        return getVdsType() == VDSType.oVirtNode;
+    }
+
     public List<V2VJobInfo> getV2VJobs() {
         return vdsStatistics.getV2VJobs();
     }

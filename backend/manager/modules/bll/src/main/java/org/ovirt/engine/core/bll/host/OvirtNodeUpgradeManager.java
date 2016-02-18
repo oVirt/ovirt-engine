@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.host;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,7 +43,7 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
     }
 
     @Override
-    public VDSType getHostType() {
-        return VDSType.oVirtVintageNode;
+    public EnumSet<VDSType> getHostTypes() {
+        return EnumSet.of(VDSType.oVirtVintageNode);
     }
 }

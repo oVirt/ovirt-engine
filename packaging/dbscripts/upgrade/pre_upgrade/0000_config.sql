@@ -198,6 +198,9 @@ select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
 -- The internal between checking for new updates availability for the host
 select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 
+-- A list of system required packages to be checked and updated on a ovirt-node
+select fn_db_add_config_value('OvirtNodePackageNamesForCheckUpdate','ovirt-node-ng-image-update','general');
+
 -- Refresh rate (in hours) for available certification check
 select fn_db_add_config_value('CertificationValidityCheckTimeInHours','24','general');
 

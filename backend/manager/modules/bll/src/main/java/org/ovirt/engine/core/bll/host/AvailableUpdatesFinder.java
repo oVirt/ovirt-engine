@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.host;
 
+import java.util.EnumSet;
+
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,7 +28,8 @@ public class AvailableUpdatesFinder {
 
     private UpdateAvailable create(VDSType hostType) {
         for (UpdateAvailable hostUpdater : hostUpdaters) {
-            if (hostType == hostUpdater.getHostType()) {
+            EnumSet<VDSType> hostTypes = hostUpdater.getHostTypes();
+            if (hostTypes.contains(hostType)) {
                 return hostUpdater;
             }
         }

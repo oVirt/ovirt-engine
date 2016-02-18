@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.host;
 
+import java.util.EnumSet;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+
 
 /**
  * {@code UpdateAvailable} represents the ability of its implementing class to examine if updates are available for a
@@ -19,7 +22,7 @@ public interface UpdateAvailable {
     boolean isUpdateAvailable(VDS host);
 
     /**
-     * @return the host type
+     * @return the host types
      */
-    VDSType getHostType();
+    EnumSet<VDSType> getHostTypes();
 }

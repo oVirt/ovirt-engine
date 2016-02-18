@@ -1777,6 +1777,14 @@ public enum ConfigValues {
     UserPackageNamesForCheckUpdate,
 
     /**
+     * A comma delimited list of package names for checking if updates are available for ovirt-node
+     */
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("ovirt-node-ng-image-update")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    OvirtNodePackageNamesForCheckUpdate,
+
+    /**
      * The interval in hours of checking for available updates on the host.
      */
     @TypeConverterAttribute(Double.class)
