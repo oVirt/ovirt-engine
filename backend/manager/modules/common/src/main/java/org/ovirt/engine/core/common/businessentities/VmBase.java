@@ -46,6 +46,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private ArrayList<DiskImage> images;
 
     @EditableField
+    @EditableHostedEngineField
     private List<VmNetworkInterface> interfaces;
 
     @EditableField
@@ -65,31 +66,37 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     @CopyOnNewVersion
     @EditableField
+    @EditableHostedEngineField
     private Guid smallIconId;
 
     @CopyOnNewVersion
     @EditableField
+    @EditableHostedEngineField
     private Guid largeIconId;
 
     private Date creationDate;
 
     @EditableField
+    @EditableHostedEngineField
     @Size(max = BusinessEntitiesDefinitions.VM_DESCRIPTION_SIZE)
     @ValidDescription(message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
     @EditableField
+    @EditableHostedEngineField
     private String comment;
 
     @CopyOnNewVersion
     @EditableOnVmStatusField(isHotsetAllowed = true)
     @EditableOnTemplate
+    @EditableHostedEngineField
     private int memSizeMb;
 
     @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
+    @EditableHostedEngineField
     @SizeFromConfigValue(
             maxConfig = ConfigValues.MaxIoThreadsPerVm,
             min = 0,
@@ -100,11 +107,13 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     @EditableOnVmStatusField(isHotsetAllowed = true)
     @EditableOnTemplate
+    @EditableHostedEngineField
     @CopyOnNewVersion
     private int numOfSockets;
 
     @CopyOnNewVersion
     @EditableOnVmStatusField
+    @EditableHostedEngineField
     @EditableOnTemplate
     private int cpuPerSocket;
 
@@ -115,6 +124,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
      */
     @CopyOnNewVersion
     @EditableOnVmStatusField
+    @EditableHostedEngineField
     @EditableOnTemplate
     private int threadsPerCpu;
 
@@ -200,6 +210,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private SsoMethod ssoMethod;
 
     @EditableField
+    @EditableHostedEngineField
     private long dbGeneration;
 
     @CopyOnNewVersion
@@ -355,6 +366,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     /** Transient field for GUI presentation purposes. */
     @EditableField
+    @EditableHostedEngineField
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     @CopyOnNewVersion
@@ -383,6 +395,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
+    @EditableHostedEngineField
     private int minAllocatedMem;
 
     @CopyOnNewVersion
@@ -1385,5 +1398,13 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public Version getCustomCompatibilityVersion() {
         return customCompatibilityVersion;
+    }
+
+    public boolean isManagedHostedEngine() {
+        return OriginType.MANAGED_HOSTED_ENGINE == getOrigin();
+    }
+
+    public boolean isHostedEngine() {
+        return OriginType.HOSTED_ENGINE == getOrigin() || OriginType.MANAGED_HOSTED_ENGINE == getOrigin();
     }
 }

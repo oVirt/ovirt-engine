@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.EditableField;
+import org.ovirt.engine.core.common.businessentities.EditableHostedEngineField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -147,6 +148,10 @@ public class VmHandler {
             updateVmsStatic.addField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
         }
 
+        for (Pair<EditableHostedEngineField, Field> pair : BaseHandler.extractAnnotatedFields(EditableHostedEngineField.class, inspectedClassNames)) {
+            updateVmsStatic.addHostedEngineFields(pair.getSecond().getName());
+        }
+
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVmToServer);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.InternalMigrateVm);
@@ -168,7 +173,9 @@ public class VmHandler {
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
-        return updateVmsStatic.isUpdateValid(source, destination, status);
+        return source.isManagedHostedEngine() ?
+                updateVmsStatic.isHostedEngineUpdateValid(source, destination)
+                : updateVmsStatic.isUpdateValid(source, destination, status);
     }
 
     public static List<String> getChangedFieldsForStatus(VmStatic source, VmStatic destination, VMStatus status) {
@@ -176,11 +183,15 @@ public class VmHandler {
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status, boolean hotsetEnabled) {
-        return updateVmsStatic.isUpdateValid(source, destination, status, hotsetEnabled);
+        return source.isManagedHostedEngine() ?
+                updateVmsStatic.isHostedEngineUpdateValid(source, destination)
+                : updateVmsStatic.isUpdateValid(source, destination, status, hotsetEnabled);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination) {
-        return updateVmsStatic.isUpdateValid(source, destination);
+        return source.isManagedHostedEngine() ?
+                updateVmsStatic.isHostedEngineUpdateValid(source, destination)
+                : updateVmsStatic.isUpdateValid(source, destination);
     }
 
     public static boolean isUpdateValidForVmDevice(String fieldName, VMStatus status) {

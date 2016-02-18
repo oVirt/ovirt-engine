@@ -1827,7 +1827,11 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     public boolean isHostedEngine() {
-        return OriginType.HOSTED_ENGINE == getOrigin() || OriginType.MANAGED_HOSTED_ENGINE == getOrigin();
+        return vmStatic.isHostedEngine();
+    }
+
+    public boolean isManagedHostedEngine() {
+        return vmStatic.isManagedHostedEngine();
     }
 
     public boolean isExternalVm() {

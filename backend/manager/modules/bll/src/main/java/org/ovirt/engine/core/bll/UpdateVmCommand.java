@@ -626,8 +626,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (vmFromParams.isAutoStartup() && vmFromDB.isHostedEngine()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
+        }
+
         if (!areUpdatedFieldsLegal()) {
-            return failValidation(EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
+            return failValidation(vmFromDB.isHostedEngine() ? EngineMessage.VM_CANNOT_UPDATE_HOSTED_ENGINE_FIELD : EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
         }
 
         if (!vmFromDB.getClusterId().equals(vmFromParams.getClusterId())) {
@@ -728,10 +732,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (!isCpuSharesValid(vmFromParams)) {
             return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
-        }
-
-        if (vmFromParams.isAutoStartup() && vmFromDB.isHostedEngine()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
         }
 
         if (isVirtioScsiEnabled())  {
