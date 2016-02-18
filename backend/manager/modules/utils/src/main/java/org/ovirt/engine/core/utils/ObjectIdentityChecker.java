@@ -28,6 +28,7 @@ public class ObjectIdentityChecker {
     private Set<String> permitted = new HashSet<String>();
     private Set<String> hotsetAllowedFields = new HashSet<String>();
     private Set<String> transientFields = new HashSet<>();
+    private Set<String> permittedForHostedEngine = new HashSet<>();
 
     public ObjectIdentityChecker(Class<?> type) {
         identities.put(type, this);
@@ -81,6 +82,12 @@ public class ObjectIdentityChecker {
         }
     }
 
+    public final void addHostedEngineFields(String... fieldNames) {
+        for (String fieldName : fieldNames) {
+            permittedForHostedEngine.add(fieldName);
+        }
+    }
+
     public final void AddPermittedFields(String... fieldNames) {
         for (String fieldName : fieldNames) {
             permitted.add(fieldName);
@@ -101,6 +108,10 @@ public class ObjectIdentityChecker {
 
     public final boolean IsFieldUpdatable(String name) {
         return permitted.contains(name);
+    }
+
+    public final boolean isHostedEngineFieldUpdatable(String name) {
+        return permittedForHostedEngine.contains(name);
     }
 
     public final boolean isHotSetField(String name) {
@@ -177,6 +188,18 @@ public class ObjectIdentityChecker {
         }
         for (String fieldName : GetChangedFields(source, destination)) {
             if (!IsFieldUpdatable(fieldName)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public final boolean isHostedEngineUpdateValid(Object source, Object destination) {
+        if (source.getClass() != destination.getClass()) {
+            return false;
+        }
+        for (String fieldName : GetChangedFields(source, destination)) {
+            if (!isHostedEngineFieldUpdatable(fieldName)) {
                 return false;
             }
         }
