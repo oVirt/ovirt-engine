@@ -2,65 +2,30 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class RemoveVmPoolCommandCallback extends CommandCallback {
+public class RemoveVmPoolCommandCallback extends ConcurrentChildCommandsExecutionCallback {
 
     @Override
-    public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
-        RemoveVmPoolCommand<? extends VmPoolParametersBase> command = getCommand(cmdId);
-
-        boolean anyFailed = false;
-        for (Guid childCmdId : childCmdIds) {
-            CommandEntity entity = CommandCoordinatorUtil.getCommandEntity(childCmdId);
-            switch (entity.getCommandStatus()) {
-                case ENDED_WITH_FAILURE:
-                case FAILED:
-                case EXECUTION_FAILED:
-                case UNKNOWN:
-                    anyFailed = true;
-                    break;
-
-                default:
-                    break;
-            }
-        }
+    protected void childCommandsExecutionEnded(CommandBase<?> command,
+            boolean anyFailed,
+            List<Guid> childCmdIds,
+            CommandExecutionStatus status,
+            int completedChildren) {
 
         if (anyFailed) {
-            command.setCommandStatus(CommandStatus.FAILED);
+            setCommandEndStatus(command, true, status, childCmdIds);
         } else {
-            VmPool pool = DbFacade.getInstance().getVmPoolDao().get(command.getVmPoolId());
+            RemoveVmPoolCommand<? extends VmPoolParametersBase> removeVmPoolCommand =
+                    (RemoveVmPoolCommand<? extends VmPoolParametersBase>) command;
+            VmPool pool = DbFacade.getInstance().getVmPoolDao().get(removeVmPoolCommand.getVmPoolId());
             if (pool == null || pool.getRunningVmsCount() == 0) {
-                command.setCommandStatus(CommandStatus.SUCCEEDED);
+                setCommandEndStatus(command, false, status, childCmdIds);
             }
         }
     }
-
-    @Override
-    public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        RemoveVmPoolCommand<? extends VmPoolParametersBase> cmd = getCommand(cmdId);
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
-        cmd.getParameters().setTaskGroupSuccess(false);
-        cmd.endAction();
-    }
-
-    @Override
-    public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        RemoveVmPoolCommand<? extends VmPoolParametersBase> cmd = getCommand(cmdId);
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
-        cmd.getParameters().setTaskGroupSuccess(true);
-        cmd.endAction();
-    }
-
-    private RemoveVmPoolCommand<? extends VmPoolParametersBase> getCommand(Guid cmdId) {
-        return CommandCoordinatorUtil.retrieveCommand(cmdId);
-    }
-
 }
