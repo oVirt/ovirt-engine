@@ -63,7 +63,7 @@
 
     <g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
         <g:FlowPanel ui:field="syspreptOptionsContent">
-            <ge:StringEntityModelTextBoxEditor ui:field="windowsHostnameEditor" />
+            <w:EntityModelWidgetWithInfo ui:field="windowsHostnameEditorWithInfo" />
             <ge:ListModelSuggestBoxEditor ui:field="sysprepDomainEditor" />
             <ge:StringEntityModelTextBoxEditor ui:field="sysprepOrgNameEditor" />
             <ge:StringEntityModelTextBoxEditor ui:field="activeDirectoryOUEditor" />

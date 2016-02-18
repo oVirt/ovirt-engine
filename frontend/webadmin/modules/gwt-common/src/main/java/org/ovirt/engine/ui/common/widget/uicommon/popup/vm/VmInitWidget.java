@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -18,6 +19,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -102,10 +105,13 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Ignore
     FlowPanel cloudInitOptionsContent;
 
-    @UiField
     @Path(value = "windowsHostname.entity")
     @WithElementId
-    StringEntityModelTextBoxEditor windowsHostnameEditor;
+    StringEntityModelTextBoxOnlyEditor windowsHostnameEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo windowsHostnameEditorWithInfo;
 
     @UiField
     @Path(value = "sysprepOrgName.entity")
@@ -357,6 +363,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         customScriptInfoIcon = new InfoIcon(templates.italicText(constants.customScriptInfo()));
 
+        initEditorsWithIcon();
         initCheckBoxEditors();
         initListBoxEditors();
         initComboBoxEditors();
@@ -369,6 +376,15 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         driver.initialize(this);
+    }
+
+    private void initEditorsWithIcon() {
+        windowsHostnameEditor = new StringEntityModelTextBoxOnlyEditor();
+
+        EnableableFormLabel label = new EnableableFormLabel();
+        label.setText(constants.cloudInitHostnameLabel());
+        windowsHostnameEditorWithInfo = new EntityModelWidgetWithInfo(label, windowsHostnameEditor);
+        windowsHostnameEditorWithInfo.setExplanation(templates.italicText(constants.windowsHostNameInfo()));
     }
 
     private void initAdvancedParameterExpanders() {
@@ -414,7 +430,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
-        windowsHostnameEditor.setLabel(constants.cloudInitHostnameLabel());
         sysprepOrgNameEditor.setLabel(constants.sysprepOrgNameLabel());
         sysprepDomainEditor.setLabel(constants.domainVmPopup());
         inputLocaleEditor.setLabel(constants.inputLocaleLabel());
