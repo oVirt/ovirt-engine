@@ -77,9 +77,6 @@ public class VmAnalyzer {
     private VM dbVm;
     private final VmInternalData vdsmVm;
 
-    private static final Map<Guid, Integer> vmsWithBalloonDriverProblem = new HashMap<>();
-    private static final Map<Guid, Integer> vmsWithUncontrolledBalloon = new HashMap<>();
-
     private VmDynamic vmDynamicToSave;
     private boolean saveStatistics;
     private boolean saveVmInterfaces;
@@ -98,6 +95,10 @@ public class VmAnalyzer {
     private Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave;
     private List<LUNs> vmLunDisksToSave;
     private List<VmGuestAgentInterface> vmGuestAgentNics;
+    private boolean vmBalloonDriverRequestedAndUnavailable;
+    private boolean vmBalloonDriverNotRequestedOrAvailable;
+    private boolean guestAgentDownAndBalloonInfalted;
+    private boolean guestAgentUpOrBalloonDeflated;
 
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
@@ -409,7 +410,6 @@ public class VmAnalyzer {
             if (balloonInfo == null) {
                 return;
             }
-            Guid vmId = vdsmVm.getVmDynamic().getId();
             /* last memory is null the first time we check it or when
                we're not getting the balloon info from vdsm
             */
@@ -421,9 +421,9 @@ public class VmAnalyzer {
             if (isBalloonDeviceActiveOnVm(vdsmVm)
                     && (Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())
                     || !isBalloonWorking(balloonInfo))) {
-                vmBalloonDriverIsRequestedAndUnavailable(vmId);
+                vmBalloonDriverRequestedAndUnavailable = true;
             } else {
-                vmBalloonDriverIsNotRequestedOrAvailable(vmId);
+                vmBalloonDriverNotRequestedOrAvailable = true;
             }
 
             // save the current value for the next time we check it
@@ -433,9 +433,9 @@ public class VmAnalyzer {
                     && vdsmVm.getVmStatistics().getUsageMemPercent() == 0  // guest agent is down
                     && balloonInfo.isBalloonDeviceEnabled() // check if the device is present
                     && !Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())) {
-                guestAgentIsDownAndBalloonInfalted(vmId);
+                guestAgentDownAndBalloonInfalted = true;
             } else {
-                guestAgentIsUpOrBalloonDeflated(vmId);
+                guestAgentUpOrBalloonDeflated = true;
             }
         }
     }
@@ -445,50 +445,6 @@ public class VmAnalyzer {
         return dbVm.getMinAllocatedMem() < dbVm.getMemSizeMb() // minimum allocated mem of VM == total mem, ballooning is impossible
                 && balloonInfo.isBalloonDeviceEnabled()
                 && balloonInfo.getBalloonTargetMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue(); // ballooning was not requested/enabled on this VM
-    }
-
-    // remove the vm from the list of vms with uncontrolled inflated balloon
-    private void guestAgentIsUpOrBalloonDeflated(Guid vmId) {
-        vmsWithUncontrolledBalloon.remove(vmId);
-    }
-
-    // add the vm to the list of vms with uncontrolled inflated balloon or increment its counter
-    // if it is already in the list
-    private void guestAgentIsDownAndBalloonInfalted(Guid vmId) {
-        Integer currentVal = vmsWithUncontrolledBalloon.get(vmId);
-        if (currentVal == null) {
-            vmsWithUncontrolledBalloon.put(vmId, 1);
-        } else {
-            vmsWithUncontrolledBalloon.put(vmId, currentVal + 1);
-            if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
-                AuditLogableBase auditLogable = new AuditLogableBase();
-                auditLogable.setVmId(vmId);
-                auditLog(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
-                vmsWithUncontrolledBalloon.put(vmId, 0);
-            }
-        }
-    }
-
-    // remove the vm from the list of vms with balloon driver problem
-    private void vmBalloonDriverIsNotRequestedOrAvailable(Guid vmId) {
-        vmsWithBalloonDriverProblem.remove(vmId);
-    }
-
-    // add the vm to the list of vms with balloon driver problem or increment its counter
-    // if it is already in the list
-    private void vmBalloonDriverIsRequestedAndUnavailable(Guid vmId) {
-        Integer currentVal = vmsWithBalloonDriverProblem.get(vmId);
-        if (currentVal == null) {
-            vmsWithBalloonDriverProblem.put(vmId, 1);
-        } else {
-            vmsWithBalloonDriverProblem.put(vmId, currentVal + 1);
-            if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
-                AuditLogableBase auditLogable = new AuditLogableBase();
-                auditLogable.setVmId(vmId);
-                auditLog(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
-                vmsWithBalloonDriverProblem.put(vmId, 0);
-            }
-        }
     }
 
     private void proceedGuaranteedMemoryCheck() {
@@ -1168,6 +1124,22 @@ public class VmAnalyzer {
 
     public boolean isUnmanagedVm() {
         return unmanagedVm;
+    }
+
+    public boolean isVmBalloonDriverRequestedAndUnavailable() {
+        return vmBalloonDriverRequestedAndUnavailable;
+    }
+
+    public boolean isVmBalloonDriverNotRequestedOrAvailable() {
+        return vmBalloonDriverNotRequestedOrAvailable;
+    }
+
+    public boolean isGuestAgentDownAndBalloonInfalted() {
+        return guestAgentDownAndBalloonInfalted;
+    }
+
+    public boolean isGuestAgentUpOrBalloonDeflated() {
+        return guestAgentUpOrBalloonDeflated;
     }
 
     public Guid getVmId() {

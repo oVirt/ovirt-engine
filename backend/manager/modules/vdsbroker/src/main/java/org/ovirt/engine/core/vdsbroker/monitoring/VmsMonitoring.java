@@ -55,6 +55,8 @@ public class VmsMonitoring implements BackendService {
     private AuditLogDirector auditLogDirector;
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private BalloonMonitoring balloonMonitoring;
 
     @Inject
     private LunDao lunDao;
@@ -221,6 +223,10 @@ public class VmsMonitoring implements BackendService {
         List<Guid> succeededToRunVms = new ArrayList<>();
         List<Guid> autoVmsToRun = new ArrayList<>();
         List<Guid> coldRebootVmsToRun = new ArrayList<>();
+        List<Guid> vmIdsWithBalloonDriverNotRequestedOrAvailable = new ArrayList<>();
+        List<Guid> vmIdsWithBalloonDriverRequestedAndUnavailable = new ArrayList<>();
+        List<Guid> vmIdsWithGuestAgentUpOrBalloonDeflated = new ArrayList<>();
+        List<Guid> vmIdsWithGuestAgentDownAndBalloonInfalted = new ArrayList<>();
 
         // now loop over the result and act
         for (VmAnalyzer vmAnalyzer : vmAnalyzers) {
@@ -264,6 +270,22 @@ public class VmsMonitoring implements BackendService {
             if (vmAnalyzer.isRemoveFromAsync()) {
                 resourceManager.removeAsyncRunningVm(vmAnalyzer.getVmId());
             }
+
+            if (vmAnalyzer.isVmBalloonDriverNotRequestedOrAvailable()) {
+                vmIdsWithBalloonDriverNotRequestedOrAvailable.add(vmAnalyzer.getVmId());
+            }
+
+            if (vmAnalyzer.isVmBalloonDriverRequestedAndUnavailable()) {
+                vmIdsWithBalloonDriverRequestedAndUnavailable.add(vmAnalyzer.getVmId());
+            }
+
+            if (vmAnalyzer.isGuestAgentUpOrBalloonDeflated()) {
+                vmIdsWithGuestAgentUpOrBalloonDeflated.add(vmAnalyzer.getVmId());
+            }
+
+            if (vmAnalyzer.isGuestAgentDownAndBalloonInfalted()) {
+                vmIdsWithGuestAgentDownAndBalloonInfalted.add(vmAnalyzer.getVmId());
+            }
         }
 
         getVdsEventListener().updateSlaPolicies(succeededToRunVms, vdsManager.getVdsId());
@@ -278,6 +300,12 @@ public class VmsMonitoring implements BackendService {
         getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
 
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
+
+        balloonMonitoring.process(
+                vmIdsWithBalloonDriverNotRequestedOrAvailable,
+                vmIdsWithBalloonDriverRequestedAndUnavailable,
+                vmIdsWithGuestAgentUpOrBalloonDeflated,
+                vmIdsWithGuestAgentDownAndBalloonInfalted);
     }
 
     private void flush(List<VmAnalyzer> vmAnalyzers) {
@@ -375,7 +403,6 @@ public class VmsMonitoring implements BackendService {
             });
         }
     }
-
 
     // ***** Helpers and sub-methods *****
 
