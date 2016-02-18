@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MatchFieldsValidator;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
@@ -726,9 +727,10 @@ public class VmInitModel extends Model {
 
         if (getHostnameEnabled()) {
             if (this.isWindowsOS) {
-                getWindowsHostname().validateEntity(new IValidation[] { new HostnameValidation() });
+                getWindowsHostname().validateEntity(new IValidation[] { new HostnameValidation(), new  LengthValidation(AsyncDataProvider.getInstance().getMaxVmNameLengthSysprep())});
+
             } else {
-                getHostname().validateEntity(new IValidation[] { new HostnameValidation() });
+                getHostname().validateEntity(new IValidation[] { new HostnameValidation(), new  LengthValidation(AsyncDataProvider.getInstance().getMaxVmNameLength())});
             }
         }
         getSysprepDomain().setIsValid(true);

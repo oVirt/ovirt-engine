@@ -2018,6 +2018,10 @@ public interface CommonApplicationConstants extends Constants {
             "Most default Linux installations expect hardware clock to be GMT+00:00.")
     String timeZoneInfo();
 
+    @DefaultStringValue("Sysprep host name must not contain more than 15 characters" +
+            "If you are not using this field the first 15 characters of the VM name will be used as the host name")
+    String windowsHostNameInfo();
+
     // Instance Types
     @DefaultStringValue("Name")
     String nameInstanceTypeGeneral();
