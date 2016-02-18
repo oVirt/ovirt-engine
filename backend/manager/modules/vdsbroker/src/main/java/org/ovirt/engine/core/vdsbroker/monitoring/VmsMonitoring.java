@@ -139,37 +139,6 @@ public class VmsMonitoring implements BackendService {
 
     }
 
-    /**
-     * lock Vms which has db entity i.e they are managed by a VmManager
-     * @return true if lock acquired
-     */
-    private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair, long fetchTime, Guid vdsId) {
-        Guid vmId = getVmId(pair.getFirst(), pair.getSecond());
-        VmManager vmManager = resourceManager.getVmManager(vmId);
-
-        if (!vmManager.trylock()) {
-            log.debug("skipping VM '{}' from this monitoring cycle" +
-                    " - the VM is locked by its VmManager ", vmId);
-            return false;
-        }
-
-        if (!vmManager.isLatestData(pair.getSecond(), vdsId)) {
-            log.warn("skipping VM '{}' from this monitoring cycle" +
-                    " - newer VM data was already processed", vmId);
-            vmManager.unlock();
-            return false;
-        }
-
-        if (vmManager.getVmDataChangedTime() != null && fetchTime - vmManager.getVmDataChangedTime() <= 0) {
-            log.warn("skipping VM '{}' from this monitoring cycle" +
-                    " - the VM data has changed since fetching the data", vmId);
-            vmManager.unlock();
-            return false;
-        }
-
-        return true;
-    }
-
     private void unlockVms(List<VmAnalyzer> vmAnalyzers) {
         vmAnalyzers.stream().map(VmAnalyzer::getVmId).forEach(vmId -> {
             VmManager vmManager = resourceManager.getVmManager(vmId);
@@ -194,7 +163,7 @@ public class VmsMonitoring implements BackendService {
         List<VmAnalyzer> vmAnalyzers = new ArrayList<>(monitoredVms.size());
         monitoredVms.forEach(vm -> {
             // TODO filter out migratingTo VMs if no action is taken on them
-            if (tryLockVmForUpdate(vm, fetchTime, vdsManager.getVdsId())) {
+            if (shouldAnalyzeVm(vm, fetchTime, vdsManager.getVdsId())) {
                 VmAnalyzer vmAnalyzer = vmAnalyzerFactory.getVmAnalyzer(vm);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
@@ -218,6 +187,33 @@ public class VmsMonitoring implements BackendService {
                 vmJobDao,
                 vdsNumaNodeDao,
                 vmNumaNodeDao);
+    }
+
+    private boolean shouldAnalyzeVm(Pair<VM, VmInternalData> pair, long fetchTime, Guid vdsId) {
+        Guid vmId = getVmId(pair.getFirst(), pair.getSecond());
+        VmManager vmManager = resourceManager.getVmManager(vmId);
+
+        if (!vmManager.trylock()) {
+            log.debug("skipping VM '{}' from this monitoring cycle" +
+                    " - the VM is locked by its VmManager ", vmId);
+            return false;
+        }
+
+        if (!vmManager.isLatestData(pair.getSecond(), vdsId)) {
+            log.warn("skipping VM '{}' from this monitoring cycle" +
+                    " - newer VM data was already processed", vmId);
+            vmManager.unlock();
+            return false;
+        }
+
+        if (vmManager.getVmDataChangedTime() != null && fetchTime - vmManager.getVmDataChangedTime() <= 0) {
+            log.warn("skipping VM '{}' from this monitoring cycle" +
+                    " - the VM data has changed since fetching the data", vmId);
+            vmManager.unlock();
+            return false;
+        }
+
+        return true;
     }
 
     private void postFlush(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager) {
