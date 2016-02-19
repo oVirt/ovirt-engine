@@ -21,8 +21,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VmStatusCell extends AbstractCell<VM> {
 
-    private final static ApplicationResources resources = AssetProvider.getResources();
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Override
     public void render(Context context, VM vm, SafeHtmlBuilder sb, String id) {
@@ -134,26 +134,27 @@ public class VmStatusCell extends AbstractCell<VM> {
     }
 
     private boolean hasDifferentTimezone(VM vm) {
-        String timeZone = vm.getTimeZone();
-        if(timeZone != null && !timeZone.isEmpty()) {
-            int offset = 0;
-            String javaZoneId = null;
-            if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
-                // convert to java & calculate offset
-                javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
-            } else {
-                javaZoneId = timeZone;
-            }
+        if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
+            String timeZone = vm.getTimeZone();
+            if (timeZone != null && !timeZone.isEmpty()) {
+                int offset = 0;
+                String javaZoneId = null;
+                if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
+                    // convert to java & calculate offset
+                    javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
+                } else {
+                    javaZoneId = timeZone;
+                }
 
-            if (javaZoneId != null) {
-                offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
-            }
+                if (javaZoneId != null) {
+                    offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
+                }
 
-            if(vm.getGuestOsTimezoneOffset() != offset) {
-                return true;
+                if (vm.getGuestOsTimezoneOffset() != offset) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
