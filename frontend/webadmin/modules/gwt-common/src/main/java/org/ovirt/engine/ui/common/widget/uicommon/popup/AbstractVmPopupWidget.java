@@ -1392,7 +1392,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         EnableableFormLabel label = new EnableableFormLabel();
-        label.setText(constants.tzVmPopup());
+        label.setText(constants.timeZoneVm());
         timeZoneEditorWithInfo = new EntityModelWidgetWithInfo(label, timeZoneEditor);
         timeZoneEditorWithInfo.setExplanation(templates.italicText(constants.timeZoneInfo()));
 
