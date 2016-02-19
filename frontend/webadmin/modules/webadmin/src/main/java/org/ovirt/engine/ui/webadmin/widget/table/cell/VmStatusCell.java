@@ -134,26 +134,27 @@ public class VmStatusCell extends AbstractCell<VM> {
     }
 
     private boolean hasDifferentTimezone(VM vm) {
-        String timeZone = vm.getTimeZone();
-        if(timeZone != null && !timeZone.isEmpty()) {
-            int offset = 0;
-            String javaZoneId = null;
-            if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
-                // convert to java & calculate offset
-                javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
-            } else {
-                javaZoneId = timeZone;
-            }
+        if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
+            String timeZone = vm.getTimeZone();
+            if (timeZone != null && !timeZone.isEmpty()) {
+                int offset = 0;
+                String javaZoneId = null;
+                if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
+                    // convert to java & calculate offset
+                    javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
+                } else {
+                    javaZoneId = timeZone;
+                }
 
-            if (javaZoneId != null) {
-                offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
-            }
+                if (javaZoneId != null) {
+                    offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
+                }
 
-            if(vm.getGuestOsTimezoneOffset() != offset) {
-                return true;
+                if (vm.getGuestOsTimezoneOffset() != offset) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
