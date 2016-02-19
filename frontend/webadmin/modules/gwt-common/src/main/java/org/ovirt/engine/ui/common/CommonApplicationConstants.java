@@ -535,7 +535,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Directory Domain")
     String domainVm();
 
-    @DefaultStringValue("Time Zone")
+    @DefaultStringValue("Hardware Clock Time Offset")
     String timeZoneVm();
 
     @DefaultStringValue("Installed Applications")
@@ -685,9 +685,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Domain")
     String domainVmPopup();
-
-    @DefaultStringValue("Time Zone")
-    String tzVmPopup();
 
     @DefaultStringValue("Console")
     String consoleVmPopup();
