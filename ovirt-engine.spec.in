@@ -202,7 +202,7 @@ Conflicts:	ovirt-engine-wildfly-overlay >= 11.0.0
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
-Requires:	%{name}-cli >= 4.0.0.0
+Requires:	%{name}-cli >= 3.6.2.0
 Requires:	%{name}-dbscripts = %{version}-%{release}
 Requires:	%{name}-restapi = %{version}-%{release}
 Requires:	%{name}-tools = %{version}-%{release}
