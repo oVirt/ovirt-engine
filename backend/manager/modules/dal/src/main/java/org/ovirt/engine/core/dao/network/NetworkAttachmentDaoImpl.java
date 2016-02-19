@@ -149,42 +149,15 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     @Override
     public void save(NetworkAttachment entity) {
         verifyRelationWithHostNetworkQos(entity);
-        verifyUnsetStoragePoolIdAndNameOnQos(entity);
-        persistQosChanges(entity);
+        hostNetworkQosDao.persistQosChanges(entity.getId(), entity.getHostNetworkQos());
         super.save(entity);
     }
 
     @Override
     public void update(NetworkAttachment entity) {
         verifyRelationWithHostNetworkQos(entity);
-        verifyUnsetStoragePoolIdAndNameOnQos(entity);
-        persistQosChanges(entity);
+        hostNetworkQosDao.persistQosChanges(entity.getId(), entity.getHostNetworkQos());
         super.update(entity);
-    }
-
-    private void persistQosChanges(NetworkAttachment attachment) {
-        Guid id = attachment.getId();
-        HostNetworkQos oldQos = hostNetworkQosDao.get(id);
-        HostNetworkQos qos = attachment.getHostNetworkQos();
-        if (qos == null) {
-            if (oldQos != null) {
-                hostNetworkQosDao.remove(id);
-            }
-        } else {
-            qos.setId(id);
-            if (oldQos == null) {
-                hostNetworkQosDao.save(qos);
-            } else if (!qos.equals(oldQos)) {
-                hostNetworkQosDao.update(qos);
-            }
-        }
-    }
-
-    private void verifyUnsetStoragePoolIdAndNameOnQos(NetworkAttachment entity) {
-        HostNetworkQos hostNetworkQos = entity.getHostNetworkQos();
-        if ((hostNetworkQos != null) && (hostNetworkQos.getStoragePoolId() != null || hostNetworkQos.getName() != null)) {
-            throw new IllegalArgumentException("When persisting overriding qos instance, there must not be storagePoolId nor name set.");
-        }
     }
 
     private void verifyRelationWithHostNetworkQos(NetworkAttachment entity) {
