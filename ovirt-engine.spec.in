@@ -189,6 +189,7 @@ BuildRequires:	python2-devel
 %if 0%{?with_python3}
 BuildRequires:	python3-devel
 %endif
+BuildRequires:	systemd
 BuildRequires:	unzip
 
 Requires(pre):	shadow-utils
@@ -256,8 +257,6 @@ Requires:	%{name}-setup >= %{version}-%{release}
 Conflicts:	freeipa-server
 Conflicts:	ipa-server
 
-BuildRequires:	systemd
-
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
 system that provides advanced capabilities for managing the Open
@@ -309,6 +308,7 @@ Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.5.0
 Requires:	python-jinja2
 Requires:	spice-html5
+
 Requires(pre):	shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
