@@ -16,7 +16,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
-import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -81,14 +80,14 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
             Collection<VdsNetworkInterface> paramValues,
             MapSqlParameterMapper<VdsNetworkInterface> mapper) {
         for (VdsNetworkInterface entity : paramValues) {
-            persistQosChanges(entity);
+            hostNetworkQosDao.persistQosChanges(entity.getId(), entity.getQos());
         }
         getCallsHandler().executeStoredProcAsBatch(procedureName, paramValues, mapper);
     }
 
     @Override
     public void saveInterfaceForVds(VdsNetworkInterface nic) {
-        persistQosChanges(nic);
+        hostNetworkQosDao.persistQosChanges(nic.getId(), nic.getQos());
         MapSqlParameterSource parameterSource = createInterfaceParametersMapper(nic);
         getCallsHandler().executeModification("Insertvds_interface", parameterSource);
     }
@@ -127,7 +126,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     @Override
     public void updateInterfaceForVds(VdsNetworkInterface nic) {
-        persistQosChanges(nic);
+        hostNetworkQosDao.persistQosChanges(nic.getId(), nic.getQos());
         getCallsHandler().executeModification("Updatevds_interface", createInterfaceParametersMapper(nic));
     }
 
@@ -159,24 +158,6 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
                 .addValue("ad_partner_mac", nic.getAdPartnerMac())
                 .addValue("reported_switch_type", nic.getReportedSwitchType() == null ? null : nic.getReportedSwitchType().getOptionValue());
-    }
-
-    private void persistQosChanges(VdsNetworkInterface entity) {
-        Guid id = entity.getId();
-        HostNetworkQos oldQos = hostNetworkQosDao.get(id);
-        HostNetworkQos qos = entity.getQos();
-        if (qos == null) {
-            if (oldQos != null) {
-                hostNetworkQosDao.remove(id);
-            }
-        } else {
-            qos.setId(id);
-            if (oldQos == null) {
-                hostNetworkQosDao.save(qos);
-            } else if (!qos.equals(oldQos)) {
-                hostNetworkQosDao.update(qos);
-            }
-        }
     }
 
     @Override

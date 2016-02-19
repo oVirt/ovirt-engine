@@ -48,6 +48,28 @@ public class HostNetworkQosDaoImpl extends QosBaseDaoImpl<HostNetworkQos> implem
                 parameterSource);
     }
 
+    @Override
+    public void persistQosChanges(Guid qosId, HostNetworkQos qos) {
+        HostNetworkQos oldQos = get(qosId);
+        boolean qosOfGivenIdAlreadyExist = oldQos != null;
+
+        if (qos == null) {
+            if (qosOfGivenIdAlreadyExist) {
+                remove(qosId);
+            }
+        } else {
+            qos.setId(qosId);
+            if (!qosOfGivenIdAlreadyExist) {
+                save(qos);
+            } else {
+                boolean qosChanged = !qos.equals(oldQos);
+                if (qosChanged) {
+                    update(qos);
+                }
+            }
+        }
+    }
+
     public static class HostNetworkQosDaoDbFacadaeImplMapper extends QosBaseDaoFacadaeImplMapper<HostNetworkQos> {
 
         public static final HostNetworkQosDaoDbFacadaeImplMapper MAPPER = new HostNetworkQosDaoDbFacadaeImplMapper();
