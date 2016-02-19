@@ -472,7 +472,7 @@ public enum HelpTag {
 
     restart_host("restart_host", HelpTagType.WEBADMIN, "Host Tab > Power Management Menu > Restart Host(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    run_virtual_machine("run_virtual_machine", HelpTagType.COMMON, "VMs Tab > Run Virtual Machine(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+    run_once_virtual_machine("run_once_virtual_machine", HelpTagType.COMMON, "VMs Tab > Run Once"), //$NON-NLS-1$ //$NON-NLS-2$
 
     save_network_configuration("save_network_configuration", HelpTagType.WEBADMIN, "'Hosts' main tab -> Network sub-tab -> 'Save Network Configuration' confirmation dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 

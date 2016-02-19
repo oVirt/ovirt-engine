@@ -653,8 +653,8 @@ public abstract class RunOnceModel extends Model {
 
     public void init() {
         setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
-        setHelpTag(HelpTag.run_virtual_machine);
-        setHashName("run_virtual_machine"); //$NON-NLS-1$
+        setHelpTag(HelpTag.run_once_virtual_machine);
+        setHashName("run_once_virtual_machine"); //$NON-NLS-1$
         setIsoImagePath(vm.getIsoPath()); // needs to be called before iso list is updated
         getAttachFloppy().setEntity(false);
         getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
