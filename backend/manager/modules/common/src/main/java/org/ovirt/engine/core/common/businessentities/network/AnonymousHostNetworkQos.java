@@ -4,22 +4,31 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.qos.QosBase;
-import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.compat.Guid;
 
-/**
- * <a href="http://www.ovirt.org/develop/release-management/features/network/detailed-host-network-qos/">wiki doc</a>
- */
-public class HostNetworkQos extends QosBase {
+public class AnonymousHostNetworkQos implements BusinessEntity<Guid> {
 
-    private static final long serialVersionUID = 490527123959847064L;
+    private static final long serialVersionUID = 2692739166236838360L;
+
+    private static final String UNLIMITED = "Unlimited";
+    private Guid id = Guid.Empty;
 
     @Valid
     private HostNetworkQosProperties hostNetworkQosProperties = new HostNetworkQosProperties();
 
-    public HostNetworkQos() {
-        super(QosType.HOSTNETWORK);
+    public AnonymousHostNetworkQos() {
+    }
+
+    @Override
+    public Guid getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Guid id) {
+        this.id = id;
     }
 
     public Integer getOutAverageLinkshare() {
@@ -50,6 +59,10 @@ public class HostNetworkQos extends QosBase {
         return hostNetworkQosProperties.isEmpty();
     }
 
+    protected String renderQosParameter(Object qosParameter) {
+        return (qosParameter == null) ? UNLIMITED : String.valueOf(qosParameter);
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
@@ -64,18 +77,16 @@ public class HostNetworkQos extends QosBase {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof HostNetworkQos)) {
+        if (!(o instanceof AnonymousHostNetworkQos)) {
             return false;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
-        HostNetworkQos that = (HostNetworkQos) o;
-        return Objects.equals(hostNetworkQosProperties, that.hostNetworkQosProperties);
+        AnonymousHostNetworkQos that = (AnonymousHostNetworkQos) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(hostNetworkQosProperties, that.hostNetworkQosProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), hostNetworkQosProperties);
+        return Objects.hash(getId(), hostNetworkQosProperties);
     }
 }

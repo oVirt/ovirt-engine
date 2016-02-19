@@ -233,6 +233,8 @@
         <!--QoS-->
         <include name="common/businessentities/network/NetworkQoS.java"/>
         <include name="common/businessentities/network/HostNetworkQos.java"/>
+        <include name="common/businessentities/network/AnonymousHostNetworkQos.java"/>
+        <include name="common/businessentities/network/HostNetworkQosProperties.java"/>
         <include name="common/businessentities/qos/QosBase.java"/>
         <include name="common/businessentities/qos/QosType.java"/>
         <include name="common/businessentities/qos/StorageQos.java"/>
