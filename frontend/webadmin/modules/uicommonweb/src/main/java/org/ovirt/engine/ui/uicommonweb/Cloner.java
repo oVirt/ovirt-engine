@@ -234,6 +234,7 @@ public final class Cloner {
         obj.setVdsType(instance.getVdsType());
         obj.setUniqueId(instance.getUniqueId());
         obj.setVdsSpmPriority(instance.getVdsSpmPriority());
+        obj.setProtocol(instance.getProtocol());
 
         return obj;
     }
