@@ -905,18 +905,21 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                     updatePmTypeList(pmTypes);
                 }
             }), cluster.getCompatibilityVersion());
-            if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
-                getProtocol().setIsAvailable(false);
-            } else {
-                getProtocol().setIsAvailable(true);
-            }
+
+            boolean clusterSupportsJsonrpcOnly = cluster.getCompatibilityVersion().greaterOrEquals(Version.v3_6);
             Boolean jsonSupported =
                     (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
                             cluster.getCompatibilityVersion().toString());
-            if (!jsonSupported) {
-                getProtocol().setEntity(jsonSupported);
+            if (clusterSupportsJsonrpcOnly) {
+                getProtocol().setIsAvailable(false);
+                getProtocol().setEntity(true);
             } else {
-                getProtocol().setEntity(vdsProtocol == null ? jsonSupported : VdsProtocol.STOMP == vdsProtocol);
+                getProtocol().setIsAvailable(true);
+                if (jsonSupported) {
+                    getProtocol().setEntity(vdsProtocol == null ? true : VdsProtocol.STOMP == vdsProtocol);
+                } else {
+                    getProtocol().setEntity(false);
+                }
             }
 
             getProtocol().setIsChangeable(jsonSupported);
