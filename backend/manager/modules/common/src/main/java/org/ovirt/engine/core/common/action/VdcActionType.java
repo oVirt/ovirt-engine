@@ -75,6 +75,7 @@ public enum VdcActionType {
     ActivateVds(108, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
     InstallVdsInternal(109, QuotaDependency.NONE),
     ClearNonResponsiveVdsVms(110, QuotaDependency.NONE),
+    SshHostReboot(111, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
     ApproveVds(112, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     HandleVdsCpuFlagsOrClusterChanged(114, QuotaDependency.NONE),
     InitVdsOnUp(115, QuotaDependency.NONE),

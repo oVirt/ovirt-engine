@@ -107,6 +107,10 @@ public enum AuditLogType {
     SYSTEM_VDS_RESTART(121, AuditLogTimeInterval.MINUTE.getValue()),
     SYSTEM_FAILED_VDS_RESTART(122, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue()),
+    // SSH restart
+    SYSTEM_SSH_HOST_RESTART(197, AuditLogTimeInterval.MINUTE.getValue()),
+    SYSTEM_FAILED_SSH_HOST_RESTART(198, AuditLogSeverity.ERROR,
+            AuditLogTimeInterval.MINUTE.getValue()),
 
     // Host time drift Alert
     VDS_TIME_DRIFT_ALERT(604, AuditLogSeverity.WARNING,

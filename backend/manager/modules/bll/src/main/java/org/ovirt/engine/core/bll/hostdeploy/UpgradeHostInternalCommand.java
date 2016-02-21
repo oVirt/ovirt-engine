@@ -11,10 +11,12 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.HostUpgradeManager;
 import org.ovirt.engine.core.bll.host.Updateable;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -66,7 +68,10 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 Updateable upgradeManager = new HostUpgradeManager();
                 upgradeManager.update(getVds());
                 if (vdsType == VDSType.oVirtNode) {
-                    //TODO : reboot host here
+                    setVdsStatus(VDSStatus.Reboot);
+                    runInternalAction(VdcActionType.SshHostReboot,
+                            new VdsActionParameters(getVds().getId()),
+                            ExecutionHandler.createInternalJobContext());
                 }
             } catch (Exception e) {
                 setVdsStatus(VDSStatus.InstallFailed);

@@ -1383,6 +1383,10 @@ public enum ConfigValues {
     SshSoftFencingCommand,
 
     @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("systemctl reboot")
+    SshHostRebootCommand,
+
+    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/sbin/poweroff")
     SshVdsPowerdownCommand,
 
