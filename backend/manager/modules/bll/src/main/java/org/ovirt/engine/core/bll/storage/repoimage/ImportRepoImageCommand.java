@@ -45,6 +45,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     public ImportRepoImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         getParameters().setCommandType(getActionType());
+        addAuditLogCustomValues();
     }
 
     protected ProviderProxyFactory getProviderProxyFactory() {
@@ -182,16 +183,23 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         switch (getActionState()) {
             case EXECUTE:
                 if (!getParameters().getTaskGroupSuccess()) {
-                    return AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE;
+                    return getParameters().getImportAsTemplate() ?
+                            AuditLogType.USER_IMPORT_IMAGE_AS_TEMPLATE_FINISHED_FAILURE :
+                            AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE;
                 }
                 if (getParameters().getExecutionIndex() == 0 && getSucceeded()) {
-                    return AuditLogType.USER_IMPORT_IMAGE;
+                    return getParameters().getImportAsTemplate() ? AuditLogType.USER_IMPORT_IMAGE_AS_TEMPLATE :
+                            AuditLogType.USER_IMPORT_IMAGE;
                 }
                 break;
             case END_SUCCESS:
-                return AuditLogType.USER_IMPORT_IMAGE_FINISHED_SUCCESS;
+                return getParameters().getImportAsTemplate() ?
+                        AuditLogType.USER_IMPORT_IMAGE_AS_TEMPLATE_FINISHED_SUCCESS :
+                        AuditLogType.USER_IMPORT_IMAGE_FINISHED_SUCCESS;
             case END_FAILURE:
-                return AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE;
+                return getParameters().getImportAsTemplate() ?
+                        AuditLogType.USER_IMPORT_IMAGE_AS_TEMPLATE_FINISHED_FAILURE :
+                        AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE;
         }
         return AuditLogType.UNASSIGNED;
     }
@@ -263,5 +271,11 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     protected StorageDomainValidator createStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
+    }
+
+    private void addAuditLogCustomValues() {
+        if (getParameters().getImportAsTemplate()) {
+            addCustomValue("TemplateName", getParameters().getTemplateName());
+        }
     }
 }
