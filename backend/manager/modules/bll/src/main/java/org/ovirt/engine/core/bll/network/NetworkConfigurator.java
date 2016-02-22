@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class NetworkConfigurator {
 
     private static final int VDSM_RESPONSIVENESS_PERIOD_IN_SECONDS = 120;
-    private static final String MANAGEMENET_NETWORK_CONFIG_ERR = "Failed to configure management network";
+    private static final String MANAGEMENT_NETWORK_CONFIG_ERR = "Failed to configure management network";
     private static final String NETWORK_CONFIG_LOG_ERR = "Failed to configure management network: {0}";
     private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
     private final VDS host;
@@ -90,7 +90,7 @@ public class NetworkConfigurator {
             auditLogDirector.log(event,
                     AuditLogType.INVALID_INTERFACE_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
                     NETWORK_CONFIG_LOG_ERR);
-            throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
+            throw new NetworkConfiguratorException(MANAGEMENT_NETWORK_CONFIG_ERR);
         }
     }
 
@@ -188,7 +188,7 @@ public class NetworkConfigurator {
             auditLogDirector.log(event,
                     AuditLogType.VLAN_ID_MISMATCH_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
                     NETWORK_CONFIG_LOG_ERR);
-            throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
+            throw new NetworkConfiguratorException(MANAGEMENT_NETWORK_CONFIG_ERR);
         }
 
         return nic;
@@ -252,13 +252,13 @@ public class NetworkConfigurator {
                 auditLogDirector.log(createEvent(),
                         AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK,
                         NETWORK_CONFIG_LOG_ERR);
-                throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
+                throw new NetworkConfiguratorException(MANAGEMENT_NETWORK_CONFIG_ERR);
             }
         } else {
             auditLogDirector.log(createEvent(),
                     AuditLogType.SETUP_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
                     NETWORK_CONFIG_LOG_ERR);
-            throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
+            throw new NetworkConfiguratorException(MANAGEMENT_NETWORK_CONFIG_ERR);
         }
     }
 
