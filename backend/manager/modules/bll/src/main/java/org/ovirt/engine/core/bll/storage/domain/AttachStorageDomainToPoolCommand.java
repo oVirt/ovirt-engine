@@ -54,6 +54,13 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         super(parameters, commandContext);
     }
 
+    /**
+     * Constructor for command creation when compensation is applied on startup
+     */
+    public AttachStorageDomainToPoolCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected List<DiskImage> getAllOVFDisks(Guid storageDomainId, Guid storagePoolId) {
         return super.getAllOVFDisks(storageDomainId, storagePoolId);
@@ -67,14 +74,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(LockProperties.Scope.Execution);
-    }
-
-    /**
-     * Constructor for command creation when compensation is applied on startup
-     */
-
-    public AttachStorageDomainToPoolCommand(Guid commandId) {
-        super(commandId);
     }
 
     @Override
