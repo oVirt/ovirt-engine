@@ -410,9 +410,9 @@ public class VmAnalyzer {
             if (balloonInfo == null) {
                 return;
             }
-            /* last memory is null the first time we check it or when
-               we're not getting the balloon info from vdsm
-            */
+            // last memory is null the first time we check it or when
+            // we're not getting the balloon info from vdsm
+            // TODO: getBalloonLastMemory always returns null - need to fix
             if (balloonInfo.getBalloonLastMemory() == null || balloonInfo.getBalloonLastMemory() == 0) {
                 balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
                 return;

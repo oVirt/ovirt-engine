@@ -760,18 +760,15 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static VmBalloonInfo getBalloonInfo(Map<String, Object> xmlRpcStruct) {
-        Map<String, Object> balloonInfo = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_balloonInfo);
         VmBalloonInfo vmBalloonInfo = new VmBalloonInfo();
-        if (balloonInfo != null && balloonInfo.size() > 0) {
+        Map<String, Object> balloonInfo = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_balloonInfo);
+        if (balloonInfo != null && !balloonInfo.isEmpty()) {
             vmBalloonInfo.setCurrentMemory(assignLongValue(balloonInfo, VdsProperties.vm_balloon_cur));
             vmBalloonInfo.setBalloonMaxMemory(assignLongValue(balloonInfo, VdsProperties.vm_balloon_max));
             vmBalloonInfo.setBalloonTargetMemory(assignLongValue(balloonInfo, VdsProperties.vm_balloon_target));
             vmBalloonInfo.setBalloonMinMemory(assignLongValue(balloonInfo, VdsProperties.vm_balloon_min));
-            if (balloonInfo.size() >= 4) { // only if all 4 properties are found the balloon is considered enabled (available from 3.3)
-                vmBalloonInfo.setBalloonDeviceEnabled(true);
-            }
-        } else {
-            vmBalloonInfo.setBalloonDeviceEnabled(false);
+            // only if all 4 properties are found the balloon is considered enabled (available from 3.3)
+            vmBalloonInfo.setBalloonDeviceEnabled(balloonInfo.size() >= 4);
         }
         return vmBalloonInfo;
     }
