@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2015 Red Hat, Inc.
+# Copyright (C) 2015-2016 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -335,20 +335,7 @@ class Plugin(plugin.PluginBase):
             'RABBIT_USERID': odockerccons.Const.RABBIT_USER,
         }
 
-        hostname = osetuphostname.Hostname(plugin=self).getHostname(
-            envkey=None,
-            whichhost=_('this'),
-            supply_default=True,
-            validate_syntax=True,
-            system=True,
-            dns=False,
-            local_non_loopback=self.environment[
-                osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION
-            ],
-            reverse_dns=self.environment[
-                osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
-            ],
-        )
+        hostname = osetuphostname.Hostname(plugin=self)
         dnsresolved = hostname.isResolvedByDNS(fqdn)
         # TODO: check if we also need to force container DNS
         for cont in self._dimages:
