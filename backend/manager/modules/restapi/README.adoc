@@ -9,6 +9,44 @@ API.
 
 == Features added in oVirt 4.0
 
+=== Support for versions 3 and 4 of the API
+
+Version 4 of the engine supports versions 3 and 4 of the API. Version 3
+of the API will be identical to the API currently provided by version
+3.6 of the engine. Version 4 will be different, as described in the
+<<Backwards compatibility breaking changes in oVirt 4.0, below>>.
+
+Users of the API can select the version using the HTTP `Version` header.
+The value of the header should be the version number. For example, to
+retrieve the list of virtual machines requesting explicitly version 3 of
+the API:
+
+  GET /ovirt-engine/api/vms HTTP/1.1
+  Version: 3
+  ...
+
+Alternatively, for users that can't modify their software to send the
+`Version` header, it is also possible to add the `/v3` prefix to the
+URL, as in most cases the URL will be a configuration parameter:
+
+  GET /ovirt-engine/api/v3/vms HTTP/1.1
+  ...
+
+When neither the header nor the URL prefix are used the server will
+automatically select a version. The default is version `4`, but this can
+be changed using the `ENGINE_API_DEFAULT_VERSION` parameter:
+
+  $ echo "ENGINE_API_DEFAULT_VERSION=3" > \
+  /etc/ovirt-engine/engine.conf.d/99-set-default-version.conf
+  $ systemctl restart ovirt-engine
+
+NOTE: Take into account that changing this parameter affects all users
+of the engine that don't specify the version explicitly.
+
+The SDKs provided by the oVirt project have already been modified to
+send the correct `Version` header, so users don't need to do anything if
+they are using versions 3.6.3.0 or later.
+
 === Support change of allocation policy of disks imported
 
 Adding support for changing the allocation policy of disks imported from
