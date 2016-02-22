@@ -256,7 +256,8 @@ public class CoCoAsyncTaskHelper {
 
             @Override
             public Void runInTransaction() {
-                if (!asyncTask.getChildCmdEntity().getRootCommandId().equals(asyncTask.getChildCmdEntity().getId())) {
+                if (asyncTask.getChildCmdEntity().getRootCommandId() != null &&
+                        !asyncTask.getChildCmdEntity().getRootCommandId().equals(asyncTask.getChildCmdEntity().getId())) {
                     coco.persistCommand(asyncTask.getRootCmdEntity());
                 }
                 coco.persistCommand(asyncTask.getChildCmdEntity());
