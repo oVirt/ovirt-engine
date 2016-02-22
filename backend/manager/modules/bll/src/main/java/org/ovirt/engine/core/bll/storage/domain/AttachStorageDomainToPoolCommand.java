@@ -260,8 +260,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected boolean validate() {
-        // We can share only ISO or Export domain , or a data domain
-        // which is not attached.
         StorageDomainToPoolRelationValidator
                 storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getStoragePool());
         boolean returnValue =
