@@ -109,6 +109,6 @@ public class MergeExtendCommand<T extends MergeParameters>
 
     @Override
     public CommandCallback getCallback() {
-        return new MergeExtendCommandCallback();
+        return new ConcurrentChildCommandsExecutionCallback();
     }
 }
