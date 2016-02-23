@@ -155,22 +155,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private CommandStatus commandStatus = CommandStatus.NOT_STARTED;
 
-    protected boolean isDataCenterWithSpm() {
-        return isDataCenterWithSpm(getStoragePool());
-    }
-
-    protected boolean isDataCenterWithSpm(StoragePool storagePool) {
-         return !FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
-     }
-
-     protected boolean isDataCenterWithoutSpm() {
-         return FeatureSupported.dataCenterWithoutSpm(getStoragePool().getCompatibilityVersion());
-     }
-
-    protected CommandActionState getActionState() {
-        return actionState;
-    }
-
     protected CommandBase() {
         this(Guid.newGuid());
     }
@@ -187,20 +171,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
         commandId = commandIdFromParameters;
         taskHandlers = initTaskHandlers();
-    }
-
-    protected void initUser() {
-        DbUser user = getSessionDataContainer().getUser(context.getEngineContext().getSessionId(), true);
-        if (user != null) {
-            setCurrentUser(user);
-        }
-        if (getSessionDataContainer().getPrincipalName(context.getEngineContext().getSessionId()) == null) {
-            // command was most probably executed from Quartz job, so session doesn't contain any user info
-            // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
-            setUserName("SYSTEM");
-        } else {
-            setUserName(getSessionDataContainer().getUserName(context.getEngineContext().getSessionId()));
-        }
     }
 
     /**
@@ -220,6 +190,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         if (!isCompensationContext()) {
             initCommandBase();
             init();
+        }
+    }
+
+    protected void initUser() {
+        DbUser user = getSessionDataContainer().getUser(context.getEngineContext().getSessionId(), true);
+        if (user != null) {
+            setCurrentUser(user);
+        }
+        if (getSessionDataContainer().getPrincipalName(context.getEngineContext().getSessionId()) == null) {
+            // command was most probably executed from Quartz job, so session doesn't contain any user info
+            // we need to set username to fake internal user so audit logs will not contain "null@N/A" as username
+            setUserName("SYSTEM");
+        } else {
+            setUserName(getSessionDataContainer().getUserName(context.getEngineContext().getSessionId()));
         }
     }
 
@@ -2504,6 +2488,22 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     protected final <P extends VdcActionParametersBase> P withRootCommandInfo(P params) {
         return withRootCommandInfo(params, getActionType());
+    }
+
+    protected boolean isDataCenterWithSpm() {
+        return isDataCenterWithSpm(getStoragePool());
+    }
+
+    protected boolean isDataCenterWithSpm(StoragePool storagePool) {
+        return !FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
+    }
+
+    protected boolean isDataCenterWithoutSpm() {
+        return FeatureSupported.dataCenterWithoutSpm(getStoragePool().getCompatibilityVersion());
+    }
+
+    protected CommandActionState getActionState() {
+        return actionState;
     }
 
     private class DefaultCommandTransactionCompletionListener extends NoOpTransactionCompletionListener {
