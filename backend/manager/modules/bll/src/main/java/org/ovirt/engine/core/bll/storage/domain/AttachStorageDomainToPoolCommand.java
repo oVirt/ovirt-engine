@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             }
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
                 StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
-                       Arrays.asList(getStorageDomain().getId()),
+                        Collections.singletonList(getStorageDomain().getId()),
                         getParameters().getSessionId());
                 parameters.setIsInternal(true);
                 parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
