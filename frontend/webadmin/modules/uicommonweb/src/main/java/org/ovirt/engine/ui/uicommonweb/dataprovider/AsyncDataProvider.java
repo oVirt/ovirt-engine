@@ -133,6 +133,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
@@ -1184,7 +1185,7 @@ public class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesFromStorageDomain,
-                new IdQueryParameters(storageId),
+                new GetVmTemplatesFromStorageDomainParameters(storageId, false),
                 aQuery);
     }
 

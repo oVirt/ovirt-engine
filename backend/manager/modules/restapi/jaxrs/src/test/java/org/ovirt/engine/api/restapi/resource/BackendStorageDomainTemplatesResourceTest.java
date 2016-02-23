@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -92,7 +93,7 @@ public class BackendStorageDomainTemplatesResourceTest
         switch (domainType) {
         case Data:
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesFromStorageDomain,
-                                         IdQueryParameters.class,
+                                         GetVmTemplatesFromStorageDomainParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { STORAGE_DOMAIN_ID },
                                          setUpTemplates(),

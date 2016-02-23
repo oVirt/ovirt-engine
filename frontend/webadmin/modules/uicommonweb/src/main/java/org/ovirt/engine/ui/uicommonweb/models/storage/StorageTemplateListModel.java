@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -62,7 +62,8 @@ public class StorageTemplateListModel extends SearchableListModel<StorageDomain,
             }
         };
 
-        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
+        GetVmTemplatesFromStorageDomainParameters tempVar =
+                new GetVmTemplatesFromStorageDomainParameters(getEntity().getId(), true);
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, tempVar, _asyncQuery);
     }
