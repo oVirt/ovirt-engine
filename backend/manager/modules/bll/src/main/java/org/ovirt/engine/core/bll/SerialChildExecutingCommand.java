@@ -18,4 +18,12 @@ public interface SerialChildExecutingCommand {
      * method to handle immediately (before endWithFailure() is called) a failure.
      */
     public void handleFailure();
+
+    /**
+     * method to indicate whether on failed execution of child commands the command
+     * should proceed and execute the next operation or not.
+     */
+    default boolean ignoreChildCommandFailure() {
+        return false;
+    }
 }

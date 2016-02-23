@@ -24,7 +24,7 @@ public class SerialChildCommandsExecutionCallback extends ChildCommandsCallbackB
             int completedChildren) {
         Guid cmdId = command.getCommandId();
         SerialChildExecutingCommand serialChildExecutingCommand = (SerialChildExecutingCommand) command;
-        if (!anyFailed) {
+        if (!anyFailed || serialChildExecutingCommand.ignoreChildCommandFailure()) {
             try {
                 boolean endCommand = !serialChildExecutingCommand.performNextOperation(completedChildren);
                 if (!endCommand) {
