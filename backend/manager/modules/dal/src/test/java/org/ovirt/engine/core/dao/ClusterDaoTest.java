@@ -16,6 +16,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -66,6 +67,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setEmulatedMachine("rhel6.4.0");
         newGroup.setArchitecture(ArchitectureType.x86_64);
         newGroup.setGlusterCliBasedSchedulingOn(true);
+        newGroup.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.AUTO);
 
     }
 

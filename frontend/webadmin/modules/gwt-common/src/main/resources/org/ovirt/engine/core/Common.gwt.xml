@@ -436,6 +436,7 @@
         <include name="common/businessentities/ErrataCounts.java"/>
         <include name="common/businessentities/ErrataCount.java"/>
         <include name="common/businessentities/ErrataData.java"/>
+        <include name="common/businessentities/MigrationBandwidthLimitType.java"/>
     </source>
 
     <super-source path="ui/uioverrides" />

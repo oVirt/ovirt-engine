@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterHostsAndVMs;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
@@ -255,7 +256,9 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("is_auto_converge", group.getAutoConverge())
                 .addValue("is_migrate_compressed", group.getMigrateCompressed())
                 .addValue("gluster_tuned_profile", group.getGlusterTunedProfile())
-                .addValue("ksm_merge_across_nodes", group.isKsmMergeAcrossNumaNodes());
+                .addValue("ksm_merge_across_nodes", group.isKsmMergeAcrossNumaNodes())
+                .addValue("migration_bandwidth_limit_type", group.getMigrationBandwidthLimitType())
+                .addValue("custom_migration_bandwidth_limit", group.getCustomMigrationNetworkBandwidth());
 
         return parameterSource;
     }
@@ -326,6 +329,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
             entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
             entity.setGlusterTunedProfile(rs.getString("gluster_tuned_profile"));
             entity.setKsmMergeAcrossNumaNodes(rs.getBoolean("ksm_merge_across_nodes"));
+            entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));
+            entity.setCustomMigrationNetworkBandwidth(getInteger(rs, "custom_migration_bandwidth_limit"));
 
             return entity;
         }

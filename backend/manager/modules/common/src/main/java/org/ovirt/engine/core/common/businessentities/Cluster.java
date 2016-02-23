@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -116,6 +117,21 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     private String glusterTunedProfile;
 
     private boolean ksmMergeAcrossNumaNodes;
+
+    /**
+     * How max sum of bandwidths of both outgoing and incoming migrations on one host are limited
+     */
+    @NotNull
+    private MigrationBandwidthLimitType migrationBandwidthLimitType;
+
+    /**
+     * Maximum of sum of bandwidths of both outgoing and incoming migrations on one host. <br/>
+     * Relevant only if {@link #migrationBandwidthLimitType} is {@link MigrationBandwidthLimitType#CUSTOM}.
+     * In that case, it may not be null. <br/>
+     * Unit: Mbps
+     */
+    @Min(1)
+    private Integer customMigrationNetworkBandwidth;
 
     public Cluster() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -465,6 +481,22 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         this.ksmMergeAcrossNumaNodes = ksmMergeAcrossNumaNodes;
     }
 
+    public Integer getCustomMigrationNetworkBandwidth() {
+        return customMigrationNetworkBandwidth;
+    }
+
+    public void setCustomMigrationNetworkBandwidth(Integer customMigrationNetworkBandwidth) {
+        this.customMigrationNetworkBandwidth = customMigrationNetworkBandwidth;
+    }
+
+    public MigrationBandwidthLimitType getMigrationBandwidthLimitType() {
+        return migrationBandwidthLimitType;
+    }
+
+    public void setMigrationBandwidthLimitType(MigrationBandwidthLimitType migrationBandwidthLimitType) {
+        this.migrationBandwidthLimitType = migrationBandwidthLimitType;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -502,7 +534,9 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 glusterTunedProfile,
                 addtionalFeaturesSupported,
                 maintenanceReasonRequired,
-                ksmMergeAcrossNumaNodes
+                ksmMergeAcrossNumaNodes,
+                customMigrationNetworkBandwidth,
+                migrationBandwidthLimitType
         );
     }
 
@@ -553,7 +587,9 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 && Objects.equals(glusterTunedProfile, other.glusterTunedProfile)
                 && Objects.equals(maintenanceReasonRequired, other.maintenanceReasonRequired)
                 && Objects.equals(addtionalFeaturesSupported, other.addtionalFeaturesSupported)
-                && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes;
+                && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes
+                && Objects.equals(customMigrationNetworkBandwidth, other.customMigrationNetworkBandwidth)
+                && Objects.equals(migrationBandwidthLimitType, other.migrationBandwidthLimitType);
     }
 
 }
