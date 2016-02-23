@@ -261,21 +261,21 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     protected boolean validate() {
         StorageDomainToPoolRelationValidator
                 storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getStoragePool());
-        boolean returnValue =
-                checkStoragePool()
-                        && initializeVds()
-                        && checkStorageDomain()
-                        && validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool());
+        if (!checkStoragePool()
+                        || !initializeVds()
+                        || !checkStorageDomain()
+                        || !validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
+            return false;
+        }
 
-        if (returnValue && getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
+        if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
-            returnValue = false;
-            addValidationMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
+            return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }
-        if (returnValue && getStoragePool().getStatus() != StoragePoolStatus.Uninitialized) {
-            returnValue = checkMasterDomainIsUp();
+        if (getStoragePool().getStatus() != StoragePoolStatus.Uninitialized) {
+            return checkMasterDomainIsUp();
         }
-        return returnValue;
+        return true;
     }
 
     @Override
