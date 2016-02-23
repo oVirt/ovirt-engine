@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -13,27 +13,18 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InterfacePanel extends VerticalPanel {
 
-    private final boolean isSelectionAvailable;
-
-    public InterfacePanel(boolean isSelectionEnabled) {
-        super();
-        this.isSelectionAvailable = isSelectionEnabled;
-    }
 
     public void addInterfaces(List<HostInterface> interfaces) {
         for (HostInterface hostInterface : interfaces) {
-            add(new InterfaceElementPanel(hostInterface, isSelectionAvailable));
+            add(new InterfaceElementPanel(hostInterface));
         }
     }
 }
 
-class InterfaceElementPanel extends TogglePanel {
+class InterfaceElementPanel extends HorizontalPanel {
 
-    private final boolean isSelectionAvailable;
-
-    public InterfaceElementPanel(HostInterface hostInterface, boolean isSelectionEnabled) {
-        super(hostInterface);
-        this.isSelectionAvailable = isSelectionEnabled;
+    public InterfaceElementPanel(HostInterface hostInterface) {
+        super();
         add(createRow(hostInterface));
     }
 
@@ -50,13 +41,9 @@ class InterfaceElementPanel extends TogglePanel {
         row.getColumnFormatter().setWidth(0, "30px"); //$NON-NLS-1$
         row.getColumnFormatter().setWidth(1, "200px"); //$NON-NLS-1$
 
-        // Check box and interface status icon
+        // Interface status icon
         row.setWidget(0, 0, new HorizontalPanel() {
             {
-                if (isSelectionAvailable) {
-                    add(getCheckBox());
-                }
-
                 add(new InterfaceStatusImage(hostInterface.getStatus()));
             }
         });

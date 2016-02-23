@@ -51,16 +51,11 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
@@ -74,6 +69,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLa
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceProxyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -184,13 +180,8 @@ public class HostModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> getHostInterfaceListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<DetachConfirmationPopupPresenterWidget> detachConfirmPopupProvider,
-            final Provider<HostManagementConfirmationPopupPresenterWidget> hostManagementConfirmationdetachConfirmPopupProvider,
-            final Provider<HostInterfacePopupPresenterWidget> hostInterfacePopupProvider,
             final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
-            final Provider<HostManagementPopupPresenterWidget> hostManagementPopupProvider,
             final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
-            final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<VfsConfigPopupPresenterWidget> vfsConfigPopupProvider,
             final Provider<SetupNetworksLabelPopupPresenterWidget> setupNetworksLabelPopupProvider,
@@ -203,9 +194,6 @@ public class HostModule extends AbstractGinModule {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostInterfaceListModel source,
                             UICommand lastExecutedCommand) {
-                        if ("OnEditManagementNetworkConfirmation".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
-                            return hostManagementConfirmationdetachConfirmPopupProvider.get();
-                        }
                         return super.getConfirmModelPopup(source, lastExecutedCommand);
                     }
 
@@ -217,21 +205,9 @@ public class HostModule extends AbstractGinModule {
                             if (windowModel instanceof HostBondInterfaceModel) {
                                 return setupNetworksBondPopupProvider.get();
                             } else if (windowModel instanceof HostManagementNetworkModel) {
-                                HostManagementNetworkModel hostManagementNetworkModel = (HostManagementNetworkModel) windowModel;
-
-                                if (hostManagementNetworkModel.isSetupNetworkMode()) {
-                                    return setupNetworksManagementPopupProvider.get();
-                                } else {
-                                    return hostManagementPopupProvider.get();
-                                }
+                                return setupNetworksManagementPopupProvider.get();
                             } else if (windowModel instanceof HostInterfaceModel) {
-                                HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) windowModel;
-
-                                if (hostInterfaceModel.isSetupNetworkMode()) {
-                                    return setupNetworksInterfacePopupProvider.get();
-                                } else {
-                                    return hostInterfacePopupProvider.get();
-                                }
+                                return setupNetworksInterfacePopupProvider.get();
                             } else if (windowModel instanceof VfsConfigModel) {
                                 return vfsConfigPopupProvider.get();
                             } else if (windowModel instanceof SetupNetworksLabelModel) {
@@ -240,16 +216,8 @@ public class HostModule extends AbstractGinModule {
                         }
 
                         // Resolve by last executed command
-                        if (lastExecutedCommand == getModel().getEditCommand()) {
-                            return hostInterfacePopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getEditManagementNetworkCommand()) {
-                            return hostManagementPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getBondCommand()) {
-                            return hostBondPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
+                        if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
                             return hostSetupNetworksPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getDetachCommand()) {
-                            return detachConfirmPopupProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
                         }

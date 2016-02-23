@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.shared.EventBus;
@@ -99,31 +100,6 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts()), "100px"); //$NON-NLS-1$
 
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.addEditInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEditCommand();
-            }
-        });
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.editManageNetInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEditManagementNetworkCommand();
-            }
-        });
-        // TODO: separator
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.bondInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getBondCommand();
-            }
-        });
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.detachInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDetachCommand();
-            }
-        });
         // TODO: separator
         table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.setupHostNetworksInterface()) {
             @Override
@@ -164,15 +140,6 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         hostInterfaceForm = new HostInterfaceForm(getDetailModel());
         contentPanel.remove(contentPanel.getWidgetCount() - 1);
         contentPanel.add(hostInterfaceForm);
-    }
-
-    @Override
-    public void setRefreshButtonVisibility(boolean visible) {
-        if (visible) {
-            table.showRefreshButton();
-        } else {
-            table.hideRefreshButton();
-        }
     }
 
     @Override

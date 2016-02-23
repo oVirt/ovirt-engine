@@ -15,11 +15,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class HostInterfaceForm extends Composite {
 
     private final Grid grid;
-    private boolean isSelectionAvailable;
 
     @SuppressWarnings("unchecked")
     public HostInterfaceForm(final HostInterfaceListModel listModel) {
-        isSelectionAvailable = listModel.getIsSelectionAvailable();
         grid = new Grid(1, 4);
         grid.getColumnFormatter().setWidth(0, "230px"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(1, "200px"); //$NON-NLS-1$
@@ -48,8 +46,6 @@ public class HostInterfaceForm extends Composite {
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
                 if ("isSelectionAvailable".equals(propName)) { //$NON-NLS-1$
-                    isSelectionAvailable = listModel.getIsSelectionAvailable();
-
                     if (listModel.getItems() != null) {
                         showModels((List<HostInterfaceLineModel>) listModel.getItems());
                     }
@@ -59,7 +55,7 @@ public class HostInterfaceForm extends Composite {
     }
 
     InterfacePanel createInterfacePanel(HostInterfaceLineModel lineModel) {
-        InterfacePanel panel = new InterfacePanel(isSelectionAvailable);
+        InterfacePanel panel = new InterfacePanel();
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         panel.addInterfaces(lineModel.getInterfaces());
@@ -67,14 +63,14 @@ public class HostInterfaceForm extends Composite {
     }
 
     BondPanel createBondPanel(HostInterfaceLineModel lineModel) {
-        BondPanel panel = new BondPanel(lineModel, isSelectionAvailable);
+        BondPanel panel = new BondPanel(lineModel);
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         return panel;
     }
 
     VLanPanel createVLanPanel(HostInterfaceLineModel lineModel) {
-        VLanPanel panel = new VLanPanel(isSelectionAvailable);
+        VLanPanel panel = new VLanPanel();
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         panel.addVLans(lineModel);

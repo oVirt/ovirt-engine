@@ -2518,15 +2518,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("VLAN")
     String vlanInterface();
 
-    @DefaultStringValue("Add / Edit")
-    String addEditInterface();
-
-    @DefaultStringValue("Edit Management Network")
-    String editManageNetInterface();
-
-    @DefaultStringValue("Detach")
-    String detachInterface();
-
     @DefaultStringValue("Save Network Configuration")
     String saveNetConfigInterface();
 

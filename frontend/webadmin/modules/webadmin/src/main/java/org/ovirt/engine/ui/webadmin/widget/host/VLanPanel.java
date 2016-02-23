@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -29,17 +28,10 @@ public class VLanPanel extends VerticalPanel {
     public static final String ADDRESS_COLUMN_WIDTH = "120px"; //$NON-NLS-1$
     public static final String OUT_OF_SYNC_WIDTH = "75px"; //$NON-NLS-1$
 
-    private final boolean isSelectionAvailable;
-
-    public VLanPanel(boolean isSelectionEnabled) {
-        super();
-        this.isSelectionAvailable = isSelectionEnabled;
-    }
-
     public void addVLans(HostInterfaceLineModel lineModel) {
         boolean hasVlan = lineModel.getVlanSize() != 0;
         for (HostVLan hostVLan : lineModel.getVLans()) {
-            add(new VLanElementPanel(hostVLan, isSelectionAvailable));
+            add(new VLanElementPanel(hostVLan));
         }
 
         if (!hasVlan || !StringHelper.isNullOrEmpty(lineModel.getNetworkName())
@@ -49,31 +41,25 @@ public class VLanPanel extends VerticalPanel {
     }
 }
 
-class VLanElementPanel extends TogglePanel {
+class VLanElementPanel extends HorizontalPanel {
 
     private static final ApplicationResources resources = AssetProvider.getResources();
 
-    private boolean isSelectionAvailable = false;
-
-    public VLanElementPanel(HostVLan hostVLan, boolean isSelectionEnabled) {
-        super(hostVLan);
-        this.isSelectionAvailable = isSelectionEnabled;
+    public VLanElementPanel(HostVLan hostVLan) {
+        super();
         add(createRow(hostVLan));
     }
 
     public VLanElementPanel(HostInterfaceLineModel lineModel) {
-        super(lineModel);
+        super();
         add(createBlankRow(lineModel));
     }
 
     Grid createRow(final HostVLan hostVLan) {
-        // Check box, icon and name
+        // Icon and name
         HorizontalPanel checkboxPanel = new HorizontalPanel();
         checkboxPanel.setWidth("100%"); //$NON-NLS-1$
 
-        if (isSelectionAvailable) {
-            checkboxPanel.add(getCheckBox());
-        }
         checkboxPanel.add(new Image(resources.splitRotateImage()));
         checkboxPanel.add(new Label(new HostVLanNameRenderer().render(hostVLan)));
 

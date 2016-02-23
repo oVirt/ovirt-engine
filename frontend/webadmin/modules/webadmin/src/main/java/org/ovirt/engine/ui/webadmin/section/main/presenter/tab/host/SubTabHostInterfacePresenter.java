@@ -6,14 +6,13 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent;
 import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent.ManualRefreshHandler;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent;
-import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
@@ -36,7 +35,6 @@ public class SubTabHostInterfacePresenter
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
         void removeContent();
-        void setRefreshButtonVisibility(boolean visible);
         void setParentOverflow();
     }
 
@@ -66,12 +64,6 @@ public class SubTabHostInterfacePresenter
                 }
             }
         }));
-        getModelProvider().getModel().getTimer().addGridTimerStateChangeEventHandler(new GridTimerStateChangeEventHandler() {
-            @Override
-            public void onGridTimerStateChange(GridTimerStateChangeEvent event) {
-                getView().setRefreshButtonVisibility(!getModelProvider().getModel().getTimer().isActive());
-            }
-        });
     }
 
     @Override
