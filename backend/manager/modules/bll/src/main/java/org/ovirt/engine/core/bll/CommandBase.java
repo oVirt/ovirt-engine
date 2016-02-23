@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.inject.Inject;
@@ -1193,15 +1195,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             List<QuotaConsumptionParameter> consumptionParameters = getQuotaConsumptionParameters();
 
             if (consumptionParameters != null) {
-                for (QuotaConsumptionParameter parameter : consumptionParameters) {
-                    if (parameter.getQuotaGuid() != null && !Guid.Empty.equals(parameter.getQuotaGuid())
-                            && !QuotaConsumptionParameter.QuotaAction.RELEASE.equals(parameter.getQuotaAction())) {
-                        quotaPermissionList.add(new PermissionSubject(parameter.getQuotaGuid(),
+                quotaPermissionList.addAll(consumptionParameters.stream()
+                        .filter(parameter -> parameter.getQuotaGuid() != null)
+                        .filter(parameter -> !Guid.Empty.equals(parameter.getQuotaGuid()))
+                        .filter(parameter -> QuotaConsumptionParameter.QuotaAction.RELEASE != parameter.getQuotaAction())
+                        .map(parameter -> new PermissionSubject(parameter.getQuotaGuid(),
                                 VdcObjectType.Quota,
                                 ActionGroup.CONSUME_QUOTA,
-                                EngineMessage.USER_NOT_AUTHORIZED_TO_CONSUME_QUOTA));
-                    }
-                }
+                                EngineMessage.USER_NOT_AUTHORIZED_TO_CONSUME_QUOTA))
+                        .collect(Collectors.toList()));
             }
         }
     }
@@ -1409,23 +1411,23 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         StringBuilder builder = new StringBuilder();
 
         // Iterate all over the entities , which should be affected.
-        for (PermissionSubject permSubject : permissionSubjects) {
-            if (permSubject.getObjectId() != null) {
-                // Add comma when there are more than one entity
-                // affected.
-                if (builder.length() != 0) {
-                    builder.append(", ");
-                }
-                builder.append(" ID: ").append(permSubject.getObjectId())
-                        .append(" Type: ").append(permSubject.getObjectType());
-                if (permSubject.getActionGroup() != null) {
-                    builder.append("Action group ")
+        // Add comma when there are more than one entity
+// affected.
+        permissionSubjects.stream().filter(permSubject -> permSubject.getObjectId() != null).forEach(permSubject -> {
+            // Add comma when there are more than one entity
+            // affected.
+            if (builder.length() != 0) {
+                builder.append(", ");
+            }
+            builder.append(" ID: ").append(permSubject.getObjectId())
+                    .append(" Type: ").append(permSubject.getObjectType());
+            if (permSubject.getActionGroup() != null) {
+                builder.append("Action group ")
                         .append(permSubject.getActionGroup().name())
                         .append(" with role type ")
                         .append(permSubject.getActionGroup().getRoleType().name());
-                }
             }
-        }
+        });
         return builder;
     }
 
@@ -1850,9 +1852,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
-        for (Guid taskID : taskIds) {
-            CommandCoordinatorUtil.startPollingTask(taskID);
-        }
+        taskIds.forEach(CommandCoordinatorUtil::startPollingTask);
     }
 
     protected boolean noAsyncOperations() {
@@ -2081,9 +2081,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         if (!validationResult.isValid()) {
             addValidationMessage(validationResult.getMessage());
 
-            for (String variableReplacement : validationResult.getVariableReplacements()) {
-                addValidationMessage(variableReplacement);
-            }
+            validationResult.getVariableReplacements().forEach(this::addValidationMessage);
         }
 
         return validationResult.isValid();
@@ -2099,20 +2097,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      */
     protected void addValidationMessage(EngineMessage message) {
         getReturnValue().getValidationMessages().add(message.name());
-    }
-
-    /**
-     * Adds one or more messages to the {@link CommandBase#validate()}'s return value. This return value will be sent
-     * to the client for the detailed information of why the action can't be performed.
-     *
-     * @param messages
-     *            The messages to add.
-     */
-
-    protected final void addValidationMessages(EngineMessage... messages) {
-        for (EngineMessage msg : messages) {
-            addValidationMessage(msg);
-        }
     }
 
     /**
