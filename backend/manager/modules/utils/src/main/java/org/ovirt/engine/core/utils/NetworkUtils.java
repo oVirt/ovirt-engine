@@ -27,22 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class NetworkUtils {
-    public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
     private static final Logger log = LoggerFactory.getLogger(NetworkUtils.class);
     public static Integer getDefaultMtu() {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
-    }
-
-    public static boolean isBondVlan(List<VdsNetworkInterface> interfaces, VdsNetworkInterface iface) {
-        if (NetworkCommonUtils.isVlan(iface)) {
-            for (VdsNetworkInterface i : interfaces) {
-                if (Boolean.TRUE.equals(i.getBonded()) && i.getName().equals(iface.getBaseInterface())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -114,16 +101,6 @@ public final class NetworkUtils {
         } else {
             return network != null && network.getQosId() != null;
         }
-    }
-
-    /**
-     * Returns true if a given network is non-VM network with no Vlan tagging, else false.
-     *
-     * @param network
-     *            The network to check
-     */
-    public static boolean isNonVmNonVlanNetwork(Network network) {
-        return !network.isVmNetwork() && !isVlan(network);
     }
 
     /**

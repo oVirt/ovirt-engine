@@ -1405,14 +1405,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Bond name doesn't exist.")
     String NETWORK_BOND_NOT_EXISTS();
 
-    @DefaultStringValue("Cannot check connectivity on non management network.")
-    String NETWORK_CHECK_CONNECTIVITY();
-
     @DefaultStringValue("Invalid parameters.\n-Please check that bond name is formatted as <bondYYY>.\n-Bond consist of at least two network interfaces(NICs).")
     String NETWORK_BOND_PARAMETERS_INVALID();
-
-    @DefaultStringValue("Network '${NetworkName}' is mandatory, it cannot be modified.")
-    String NETWORK_DEFAULT_UPDATE_NAME_INVALID();
 
     @DefaultStringValue("Network Interface '${NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY}' already belongs to the bond.")
     String NETWORK_INTERFACE_ALREADY_IN_BOND();
@@ -1495,9 +1489,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network interface '${LABEL_ATTACH_TO_IMPROPER_INTERFACE_ENTITY}' cannot be labeled. Label can be provided only to interfaces or to bonds (not to slaves nor vlans).")
     String LABEL_ATTACH_TO_IMPROPER_INTERFACE();
 
-    @DefaultStringValue("Network name doesn't exist.")
-    String NETWORK_INTERFACE_NOT_EXISTS();
-
     @DefaultStringValue("Cannot attach more than one ISO Storage Domain to the same Data Center. If you want to use a newly created Domain, detach the existing attached Domain and attach the new one.")
     String ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN();
 
@@ -1509,9 +1500,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot change Data Center type when Storage Domains are still attached to it.\n-Please detach all attached Storage Domains and retry.")
     String ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS();
-
-    @DefaultStringValue("The Network Interface is already attached to a Logical Network.")
-    String NETWORK_INTERFACE_ALREADY_HAVE_NETWORK();
 
     @DefaultStringValue("The specified Logical Network doesn't exist.")
     String NETWORK_NOT_EXISTS();
@@ -1910,9 +1898,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The Network ('${NetworkName}') could not be removed since several iSCSI bonds (${IscsiBonds_COUNTER}) are using this network:\n ${IscsiBonds}.\nPlease remove the network first from those iSCSI bonds, and try again.")
     String NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK();
 
-    @DefaultStringValue("Previous network name is required.")
-    String NETWORK_OLD_NETWORK_NOT_SPECIFIED();
-
     @DefaultStringValue("Cannot ${action} ${type}. VMs in a state other than \"Down\" were detected.\n-Please ensure all VMs associated with this Storage Domain are stopped and in the Down state first.")
     String ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS();
 
@@ -1966,12 +1951,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Hosted Engine is not configured on this host.")
     String ACTION_TYPE_FAILED_VDS_HA_NOT_CONFIGURED();
-
-    @DefaultStringValue("Bond is not attached to Network.")
-    String NETWORK_BOND_NOT_ATTACH_TO_NETWORK();
-
-    @DefaultStringValue("Network Interface is not attached to Logical Network.")
-    String NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK();
 
     @DefaultStringValue("Bonding cannot be applied on an Interface where VLAN is defined.\n-Please remove VLAN from the interface.")
     String NETWORK_INTERFACE_IN_USE_BY_VLAN();
@@ -2100,14 +2079,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Bond attached to vlan, remove bonds vlan first")
     String NETWORK_BOND_HAVE_ATTACHED_VLANS();
 
-    @DefaultStringValue("Cannot attach non vlan network to vlan interface")
-    String NETWORK_INTERFACE_CONNECT_TO_VLAN();
-
     @DefaultStringValue("Cannot create disk more than ${max}_disk_size GB")
     String ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED();
-
-    @DefaultStringValue("Cannot edit Network while Host is Active, change the Host to Maintenance mode and try again.")
-    String NETWORK_HOST_IS_BUSY();
 
     @DefaultStringValue("Cannot change format to RAW on export VM.")
     String VM_CANNOT_EXPORT_RAW_FORMAT();
@@ -2621,9 +2594,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot remove Data Center with networks, please remove all networks first.")
     String ERROR_CANNOT_REMOVE_POOL_WITH_NETWORKS();
-
-    @DefaultStringValue("Cannot remove the default Network.")
-    String NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Renaming a network label while configured on hosts interfaces is not supported. Please unlabel the network first and later specify the new one.")
     String ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED();

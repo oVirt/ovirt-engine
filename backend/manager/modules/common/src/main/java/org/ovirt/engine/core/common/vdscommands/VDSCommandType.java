@@ -33,7 +33,6 @@ public enum VDSCommandType {
     UpdateVdsVMsCleared("org.ovirt.engine.core.vdsbroker"),
     AddNetwork("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RemoveNetwork("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    EditNetwork("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetSafeNetworkConfig("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ConnectStorageServer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DisconnectStorageServer("org.ovirt.engine.core.vdsbroker.vdsbroker"),

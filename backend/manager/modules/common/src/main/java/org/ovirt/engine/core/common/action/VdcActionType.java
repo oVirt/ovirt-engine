@@ -103,9 +103,6 @@ public enum VdcActionType {
     HostEnrollCertificateInternal(140, QuotaDependency.NONE),
 
     // Network
-    UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
-    AttachNetworkToVdsInterface(150, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
-    DetachNetworkFromVdsInterface(151, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     AddBond(152, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     RemoveBond(153, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     AddNetwork(154, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
