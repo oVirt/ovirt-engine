@@ -77,122 +77,120 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected void executeCommand() {
-        if (getStorageDomain() != null) {
-            if (isCinderStorageDomain()) {
-                handleCinderDomain();
-                return;
+        if (isCinderStorageDomain()) {
+            handleCinderDomain();
+            return;
+        }
+        if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
+            StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
+                    Collections.singletonList(getStorageDomain().getId()),
+                    getParameters().getSessionId());
+            parameters.setIsInternal(true);
+            parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
+
+            VdcReturnValueBase returnValue = runInternalAction(
+                    VdcActionType.AddStoragePoolWithStorages,
+                    parameters);
+            setSucceeded(returnValue.getSucceeded());
+            if (!returnValue.getSucceeded()) {
+                getReturnValue().setFault(returnValue.getFault());
             }
-            if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
-                StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
-                        Collections.singletonList(getStorageDomain().getId()),
-                        getParameters().getSessionId());
-                parameters.setIsInternal(true);
-                parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
+        } else {
+            map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
+                    getParameters().getStoragePoolId()));
+            if (map == null) {
+                executeInNewTransaction(() -> {
+                    map = new StoragePoolIsoMap(getStorageDomain().getId(), getParameters()
+                            .getStoragePoolId(), StorageDomainStatus.Locked);
+                    getStoragePoolIsoMapDao().save(map);
+                    getCompensationContext().snapshotNewEntity(map);
+                    getCompensationContext().stateChanged();
+                    return null;
+                });
+                connectHostsInUpToDomainStorageServer();
 
-                VdcReturnValueBase returnValue = runInternalAction(
-                        VdcActionType.AddStoragePoolWithStorages,
-                        parameters);
-                setSucceeded(returnValue.getSucceeded());
-                if (!returnValue.getSucceeded()) {
-                    getReturnValue().setFault(returnValue.getFault());
-                }
-            } else {
-                map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                        getParameters().getStoragePoolId()));
-                if (map == null) {
-                    executeInNewTransaction(() -> {
-                        map = new StoragePoolIsoMap(getStorageDomain().getId(), getParameters()
-                                .getStoragePoolId(), StorageDomainStatus.Locked);
-                        getStoragePoolIsoMapDao().save(map);
-                        getCompensationContext().snapshotNewEntity(map);
-                        getCompensationContext().stateChanged();
-                        return null;
-                    });
-                    connectHostsInUpToDomainStorageServer();
-
-                    // Forcibly detach only data storage domains.
-                    if (getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
-                        @SuppressWarnings("unchecked")
-                        Pair<StorageDomainStatic, Guid> domainFromIrs =
-                                (Pair<StorageDomainStatic, Guid>) runVdsCommand(
-                                        VDSCommandType.HSMGetStorageDomainInfo,
-                                        new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(),
-                                                getParameters().getStorageDomainId())
-                                ).getReturnValue();
-                        // If the storage domain is already related to another Storage Pool, detach it by force.
-                        Guid storagePoolId = domainFromIrs.getSecond();
-                        if (storagePoolId != null) {
-                            if (FeatureSupported.importDataStorageDomain(getStoragePool().getCompatibilityVersion())) {
-                                // Master domain version is not relevant since force remove at
-                                // DetachStorageDomainVdsCommand does not use it.
-                                // Storage pool id can be empty
-                                DetachStorageDomainVDSCommandParameters detachParams =
-                                        new DetachStorageDomainVDSCommandParameters(getStoragePoolIdFromVds(),
-                                                getParameters().getStorageDomainId(),
-                                                Guid.Empty,
-                                                0);
-                                detachParams.setForce(true);
-                                detachParams.setDetachFromOldStoragePool(true);
-                                VDSReturnValue returnValue =
-                                        runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
-                                if (!returnValue.getSucceeded()) {
-                                    log.warn("Detaching Storage Domain '{}' from it's previous storage pool '{}'"
-                                                    + " has failed. The meta data of the Storage Domain might still"
-                                                    + " indicate that it is attached to a different Storage Pool.",
+                // Forcibly detach only data storage domains.
+                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
+                    @SuppressWarnings("unchecked")
+                    Pair<StorageDomainStatic, Guid> domainFromIrs =
+                            (Pair<StorageDomainStatic, Guid>) runVdsCommand(
+                                    VDSCommandType.HSMGetStorageDomainInfo,
+                                    new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(),
+                                            getParameters().getStorageDomainId())
+                            ).getReturnValue();
+                    // If the storage domain is already related to another Storage Pool, detach it by force.
+                    Guid storagePoolId = domainFromIrs.getSecond();
+                    if (storagePoolId != null) {
+                        if (FeatureSupported.importDataStorageDomain(getStoragePool().getCompatibilityVersion())) {
+                            // Master domain version is not relevant since force remove at
+                            // DetachStorageDomainVdsCommand does not use it.
+                            // Storage pool id can be empty
+                            DetachStorageDomainVDSCommandParameters detachParams =
+                                    new DetachStorageDomainVDSCommandParameters(getStoragePoolIdFromVds(),
                                             getParameters().getStorageDomainId(),
                                             Guid.Empty,
                                             0);
-                                    throw new EngineException(
-                                            returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
-                                                    : EngineError.ENGINE,
-                                            returnValue.getExceptionString());
-                                }
+                            detachParams.setForce(true);
+                            detachParams.setDetachFromOldStoragePool(true);
+                            VDSReturnValue returnValue =
+                                    runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
+                            if (!returnValue.getSucceeded()) {
+                                log.warn("Detaching Storage Domain '{}' from it's previous storage pool '{}'"
+                                                + " has failed. The meta data of the Storage Domain might still"
+                                                + " indicate that it is attached to a different Storage Pool.",
+                                        getParameters().getStorageDomainId(),
+                                        Guid.Empty,
+                                        0);
+                                throw new EngineException(
+                                        returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
+                                                : EngineError.ENGINE,
+                                        returnValue.getExceptionString());
                             }
                         }
-                        createDefaultDiskProfile();
                     }
-
-                    runVdsCommand(VDSCommandType.AttachStorageDomain,
-                            new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
-                                    getParameters().getStorageDomainId()));
-                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk = new ArrayList<>();
-                    if (getStorageDomain().getStorageDomainType().isDataDomain()) {
-                        unregisteredEntitiesFromOvfDisk.addAll(
-                                getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
-                                        getStoragePoolIdFromVds()));
-                    }
-                    executeInNewTransaction(() -> {
-                        final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
-                        map.setStatus(StorageDomainStatus.Maintenance);
-                        getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
-
-                        if (sdType == StorageDomainType.Master) {
-                            calcStoragePoolStatusByDomainsStatus();
-                        }
-
-                        // upgrade the domain format to the storage pool format
-                        updateStorageDomainFormatIfNeeded(getStorageDomain());
-                        List<DiskImage> ovfStoreDiskImages =
-                                getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
-                        registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
-
-                        // Update unregistered entities
-                        for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
-                            getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
-                                    getParameters().getStorageDomainId());
-                            getUnregisteredOVFDataDao().saveOVFData(ovf);
-                            log.info("Adding OVF data of entity id '{}' and entity name '{}'",
-                                    ovf.getEntityId(),
-                                    ovf.getEntityName());
-                        }
-                        return null;
-                    });
-
-                    if (getParameters().getActivate()) {
-                        attemptToActivateDomain();
-                    }
-                    setSucceeded(true);
+                    createDefaultDiskProfile();
                 }
+
+                runVdsCommand(VDSCommandType.AttachStorageDomain,
+                        new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
+                                getParameters().getStorageDomainId()));
+                final List<OvfEntityData> unregisteredEntitiesFromOvfDisk = new ArrayList<>();
+                if (getStorageDomain().getStorageDomainType().isDataDomain()) {
+                    unregisteredEntitiesFromOvfDisk.addAll(
+                            getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
+                                    getStoragePoolIdFromVds()));
+                }
+                executeInNewTransaction(() -> {
+                    final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
+                    map.setStatus(StorageDomainStatus.Maintenance);
+                    getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+
+                    if (sdType == StorageDomainType.Master) {
+                        calcStoragePoolStatusByDomainsStatus();
+                    }
+
+                    // upgrade the domain format to the storage pool format
+                    updateStorageDomainFormatIfNeeded(getStorageDomain());
+                    List<DiskImage> ovfStoreDiskImages =
+                            getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
+                    registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
+
+                    // Update unregistered entities
+                    for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
+                        getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
+                                getParameters().getStorageDomainId());
+                        getUnregisteredOVFDataDao().saveOVFData(ovf);
+                        log.info("Adding OVF data of entity id '{}' and entity name '{}'",
+                                ovf.getEntityId(),
+                                ovf.getEntityName());
+                    }
+                    return null;
+                });
+
+                if (getParameters().getActivate()) {
+                    attemptToActivateDomain();
+                }
+                setSucceeded(true);
             }
         }
     }
