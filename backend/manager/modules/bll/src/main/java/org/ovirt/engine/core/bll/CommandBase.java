@@ -116,14 +116,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
-    private T _parameters;
-    private VdcReturnValueBase _returnValue;
-    private CommandActionState _actionState = CommandActionState.EXECUTE;
+    private T parameters;
+    private VdcReturnValueBase returnValue;
+    private CommandActionState actionState = CommandActionState.EXECUTE;
     private VdcActionType actionType;
     private final List<Class<?>> validationGroups = new ArrayList<>();
     private final Guid commandId;
     private boolean quotaChanged = false;
-    private String _description = "";
+    private String description = "";
     private TransactionScopeOption scope;
     private TransactionScopeOption endActionScope;
     private List<QuotaConsumptionParameter> consumptionParameters;
@@ -170,7 +170,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      }
 
     protected CommandActionState getActionState() {
-        return _actionState;
+        return actionState;
     }
 
     protected CommandBase() {
@@ -180,7 +180,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     protected CommandBase(T parameters, CommandContext cmdContext) {
         this.context = cmdContext;
         this.commandData = new HashMap<>();
-        _parameters = parameters;
+        this.parameters = parameters;
 
         Guid commandIdFromParameters = parameters.getCommandId();
         if (commandIdFromParameters == null) {
@@ -243,7 +243,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             setJobId(executionContext.getStep().getJobId());
         }
 
-        setCorrelationId(_parameters.getCorrelationId());
+        setCorrelationId(parameters.getCorrelationId());
     }
 
     /**
@@ -381,12 +381,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         getReturnValue().setValid(internalValidate());
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
-        return _returnValue;
+        return returnValue;
     }
 
     public VdcReturnValueBase executeAction() {
         determineExecutionReason();
-        _actionState = CommandActionState.EXECUTE;
+        actionState = CommandActionState.EXECUTE;
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         setActionMessageParameters();
@@ -608,9 +608,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         // introduce a new actionState.
         // Currently it was decided that ROLLBACK_FLOW will cause endWithFailure
         if (isEndSuccessfully()) {
-            _actionState = CommandActionState.END_SUCCESS;
+            actionState = CommandActionState.END_SUCCESS;
         } else {
-            _actionState = CommandActionState.END_FAILURE;
+            actionState = CommandActionState.END_FAILURE;
         }
     }
 
@@ -712,7 +712,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             getCurrentTaskHandler().endSuccessfully();
             getParameters().incrementExecutionIndex();
             if (getExecutionIndex() < getTaskHandlers().size()) {
-                _actionState = CommandActionState.EXECUTE;
+                actionState = CommandActionState.EXECUTE;
                 execute();
             }
         } else {
@@ -1303,7 +1303,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             processExceptionToClient(new EngineFault(e, e.getVdsError().getCode()));
         } catch (OpenStackResponseException e) {
             // Adding a message to executeFailedMessages is needed only when the list is empty
-            if (_returnValue.getExecuteFailedMessages().isEmpty()) {
+            if (returnValue.getExecuteFailedMessages().isEmpty()) {
                 processExceptionToClient(new EngineFault(e, EngineError.ENGINE));
             }
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
@@ -1555,18 +1555,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     @Override
     public T getParameters() {
-        return _parameters;
+        return parameters;
     }
 
     public VdcReturnValueBase getReturnValue() {
-        if (_returnValue == null) {
-            _returnValue = createReturnValue();
+        if (returnValue == null) {
+            returnValue = createReturnValue();
         }
-        return _returnValue;
+        return returnValue;
     }
 
     public void setReturnValue(VdcReturnValueBase returnValue) {
-        _returnValue = returnValue;
+        this.returnValue = returnValue;
     }
 
     public VdcActionType getActionType() {
@@ -1584,17 +1584,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected String getDescription() {
-        return _description;
+        return description;
     }
 
     protected void setDescription(String value) {
-        _description = value;
+        description = value;
     }
 
     private void processExceptionToClient(EngineFault fault) {
         fault.setSessionID(getParameters().getSessionId());
-        _returnValue.getExecuteFailedMessages().add(fault.getError().name());
-        _returnValue.setFault(fault);
+        returnValue.getExecuteFailedMessages().add(fault.getError().name());
+        returnValue.setFault(fault);
     }
 
     Map<String, Guid> taskKeyToTaskIdMap = new HashMap<>();
@@ -1904,10 +1904,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * command parameters
      */
     protected LockProperties getLockProperties() {
-        LockProperties lockProperties = _parameters.getLockProperties();
+        LockProperties lockProperties = parameters.getLockProperties();
         if (lockProperties == null) {
             lockProperties = applyLockProperties(getLockingPropertiesSettings());
-            _parameters.setLockProperties(lockProperties);
+            parameters.setLockProperties(lockProperties);
         }
         return lockProperties;
     }
@@ -2055,7 +2055,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     @Override
     public Object runInTransaction() {
-        if (_actionState == CommandActionState.EXECUTE) {
+        if (actionState == CommandActionState.EXECUTE) {
             executeActionInTransactionScope();
         } else {
             endActionInTransactionScope();
@@ -2280,7 +2280,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     @Override
     public void setCorrelationId(String correlationId) {
         // correlation ID thread local variable is set for non multi-action
-        if (!_parameters.getMultipleAction()) {
+        if (!parameters.getMultipleAction()) {
             CorrelationIdTracker.setCorrelationId(correlationId);
         }
         super.setCorrelationId(correlationId);
