@@ -47,7 +47,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     private TimeSpan defaultEndTime;
 
-    private String clusterpName;
+    private String clusterName;
 
     private int vmPoolAssignedCount;
 
@@ -237,11 +237,11 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
 
     public String getClusterName() {
-        return this.clusterpName;
+        return this.clusterName;
     }
 
     public void setClusterName(String value) {
-        this.clusterpName = value;
+        this.clusterName = value;
     }
 
     @Override
