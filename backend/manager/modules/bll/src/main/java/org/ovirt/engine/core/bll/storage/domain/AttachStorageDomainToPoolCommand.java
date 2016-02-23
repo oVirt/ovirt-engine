@@ -259,12 +259,15 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected boolean validate() {
-        StorageDomainToPoolRelationValidator
-                storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getStoragePool());
         if (!checkStoragePool()
                         || !initializeVds()
-                        || !checkStorageDomain()
-                        || !validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
+                        || !checkStorageDomain()) {
+            return false;
+        }
+
+        StorageDomainToPoolRelationValidator
+                storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getStoragePool());
+        if (!validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
             return false;
         }
 
