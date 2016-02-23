@@ -113,8 +113,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         extends AuditLogableBase
         implements TransactionMethod<Object>, Command<T> {
 
-    /* Multiplier used to convert GB to bytes or vice versa. */
-    protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
     private T parameters;
     private VdcReturnValueBase returnValue;

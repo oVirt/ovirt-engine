@@ -71,6 +71,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
 
+    /* Multiplier used to convert GB to bytes or vice versa. */
+    private static final long BYTES_IN_GB = 1024 * 1024 * 1024;
+
     private List<PermissionSubject> listPermissionSubjects;
     private final Map<Guid, List<Disk>> otherVmDisks = new HashMap<>();
     private final List<VM> vmsDiskSnapshotPluggedTo = new LinkedList<>();
