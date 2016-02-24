@@ -13,8 +13,8 @@ import org.ovirt.engine.core.compat.Guid;
  * depending on what is needed.
  */
 public abstract class PendingResource {
-    protected Guid host;
-    protected Guid vm;
+    private Guid host;
+    private Guid vm;
 
     public PendingResource(Guid host, VM vm) {
         this.host = host;

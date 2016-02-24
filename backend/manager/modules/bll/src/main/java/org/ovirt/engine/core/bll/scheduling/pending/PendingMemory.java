@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
  * by not yet started VM on a specified host
  */
 public class PendingMemory extends PendingResource {
-    long sizeInMb;
+    private long sizeInMb;
 
     public PendingMemory(VDS host, VM vm, long sizeInMb) {
         super(host, vm);
@@ -41,13 +41,13 @@ public class PendingMemory extends PendingResource {
 
         PendingMemory that = (PendingMemory) o;
 
-        return vm.equals(that.vm);
+        return getVm().equals(that.getVm());
 
     }
 
     @Override
     public int hashCode() {
-        return vm.hashCode();
+        return getVm().hashCode();
     }
 
     public static int collectForHost(PendingResourceManager manager, Guid host) {

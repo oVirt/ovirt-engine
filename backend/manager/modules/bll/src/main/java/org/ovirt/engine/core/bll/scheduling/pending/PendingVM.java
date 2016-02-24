@@ -31,13 +31,13 @@ public class PendingVM extends PendingResource {
 
         PendingVM that = (PendingVM) o;
 
-        return vm.equals(that.vm);
+        return getVm().equals(that.getVm());
 
     }
 
     @Override
     public int hashCode() {
-        return vm.hashCode();
+        return getVm().hashCode();
     }
 
     public static Set<Guid> collectForHost(PendingResourceManager manager, Guid host) {

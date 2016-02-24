@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
  * by not yet started VM on a specified host
  */
 public class PendingCpuCores extends PendingResource {
-    int coreCount;
+    private int coreCount;
 
     public PendingCpuCores(VDS host, VM vm, int coreCount) {
         super(host, vm);
@@ -41,13 +41,13 @@ public class PendingCpuCores extends PendingResource {
 
         PendingCpuCores that = (PendingCpuCores) o;
 
-        return vm.equals(that.vm);
+        return getVm().equals(that.getVm());
 
     }
 
     @Override
     public int hashCode() {
-        return vm.hashCode();
+        return getVm().hashCode();
     }
 
     public static int collectForHost(PendingResourceManager manager, Guid host) {

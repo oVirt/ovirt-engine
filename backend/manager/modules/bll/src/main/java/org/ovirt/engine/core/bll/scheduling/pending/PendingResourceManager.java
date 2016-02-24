@@ -26,11 +26,11 @@ public class PendingResourceManager {
     private static final Logger log = LoggerFactory.getLogger(PendingResourceManager.class);
 
     // All internal structures have to be thread-safe for concurrent access
-    final Map<Guid, Set<PendingResource>> resourcesByHost = new ConcurrentHashMap<>();
-    final Map<Guid, Set<PendingResource>> resourcesByVm = new ConcurrentHashMap<>();
-    final Map<PendingResource, PendingResource> pendingResources = new ConcurrentHashMap<>();
+    private final Map<Guid, Set<PendingResource>> resourcesByHost = new ConcurrentHashMap<>();
+    private final Map<Guid, Set<PendingResource>> resourcesByVm = new ConcurrentHashMap<>();
+    private final Map<PendingResource, PendingResource> pendingResources = new ConcurrentHashMap<>();
 
-    final ResourceManager resourceManager;
+    private final ResourceManager resourceManager;
 
     public PendingResourceManager() {
         resourceManager = null;
