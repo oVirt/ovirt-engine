@@ -48,6 +48,7 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
     }
 
     @Override
-    protected void logToAudit(){
+    protected boolean shouldLogToAudit(){
+        return false;
     }
 }

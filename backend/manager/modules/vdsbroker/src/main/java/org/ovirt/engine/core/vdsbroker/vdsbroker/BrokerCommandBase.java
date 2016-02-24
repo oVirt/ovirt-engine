@@ -197,9 +197,20 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         tempVar.setMessage(getReturnStatus().message);
         outEx.setVdsError(tempVar);
 
-        logToAudit();
+        logToAuditIfNeeded();
 
         throw outEx;
+    }
+
+    private void logToAuditIfNeeded(){
+        if (shouldLogToAudit()) {
+            logToAudit();
+        }
+    }
+
+    protected boolean shouldLogToAudit() {
+        // if error is in expected errors list, don't audit log it
+        return !getParameters().getExpectedEngineErrors().contains(getReturnValueFromStatus(getReturnStatus()));
     }
 
     protected void logToAudit(){
