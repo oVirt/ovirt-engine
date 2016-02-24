@@ -411,7 +411,7 @@ public class VmMapper extends VmBaseMapper {
                 os.setDistribution(entity.getGuestOsDistribution());
                 String kernelVersionString = entity.getGuestOsKernelVersion();
                 if(StringUtils.isNotEmpty(kernelVersionString)) {
-                    org.ovirt.engine.api.model.Version kernelVersion = VersionMapper.fromKernelVersionString(kernelVersionString);
+                    org.ovirt.engine.api.model.Version kernelVersion = VersionMapper.fromVersionString(kernelVersionString);
                     if(kernelVersion != null) {
                         if(os.getKernel() == null) {
                             os.setKernel(new Kernel());
