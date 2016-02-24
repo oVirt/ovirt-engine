@@ -1820,7 +1820,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Import Domain")
     String importDomainStorage();
 
-    @DefaultStringValue("Edit")
+    @DefaultStringValue("Manage Domain")
     String editStorage();
 
     @DefaultStringValue("Remove")

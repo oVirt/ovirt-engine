@@ -142,7 +142,7 @@ public enum HelpTag {
 
     edit_data_center("edit_data_center", HelpTagType.WEBADMIN, "Data Center Tab > Edit Data Center"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_domain("edit_domain", HelpTagType.WEBADMIN, "Storage Tab > Edit Domain"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_domain("edit_domain", HelpTagType.WEBADMIN, "Storage Tab > Manage Domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_host("edit_host", HelpTagType.WEBADMIN, "Host Tab > Edit Host"), //$NON-NLS-1$ //$NON-NLS-2$
 
