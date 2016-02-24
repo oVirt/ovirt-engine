@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+	xmlns:q="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.qos">
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView.Style">
+		.syncInfo {
+			width: 100%;
+		}
+
+		.sectionStyle {
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+
+		.customPropertiesStyle {
+			max-height: 40px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="415px" height="590px">
+		<d:content>
+			<g:VerticalPanel ui:field="mainPanel" >
+				<ge:StringEntityModelLabelEditor ui:field="nameEditor" />
+				<ge:StringEntityModelLabelEditor ui:field="bootProtocolLabel" />
+				<e:EnumRadioEditor ui:field="bootProtocol" />
+				<ge:StringEntityModelTextBoxEditor ui:field="address" />
+				<ge:StringEntityModelTextBoxEditor ui:field="subnet" />
+				<ge:StringEntityModelTextBoxEditor ui:field="gateway" />
+				<g:FlowPanel addStyleNames="{style.sectionStyle}" >
+					<ge:EntityModelCheckBoxEditor ui:field="qosOverridden" />
+					<q:HostNetworkQosWidget ui:field="qosWidget" />
+				</g:FlowPanel>
+				<g:FlowPanel ui:field="customPropertiesPanel" addStyleNames="{style.sectionStyle}" >
+					<ge:StringEntityModelLabelEditor ui:field="customPropertiesLabel" />
+					<k:KeyValueWidget ui:field="customPropertiesWidget" addStyleNames="{style.customPropertiesStyle}" />
+				</g:FlowPanel>
+				<g:HorizontalPanel>
+					<ge:EntityModelCheckBoxEditor ui:field="isToSync" />
+					<d:InfoIcon ui:field="isToSyncInfo"/>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

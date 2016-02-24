@@ -2785,14 +2785,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("ENGINE Web Admin Documentation")
     String engineWebAdminDoc();
 
-    // Detach confirmation popup
-    @DefaultStringValue("Are you sure you want to Detach the following Network Interface?")
-    String areYouSureDetachConfirmPopup();
-
-    @DefaultStringValue("<I>Changes done to the Networking configuration are temporary until explicitly saved.<BR>" +
-            "Check the check-box below to make the changes persistent.</I>")
-    String changesTempWarningDetachConfirmPopup();
-
     @DefaultStringValue("Save network configuration")
     String saveNetCongDetachConfirmPopup();
 

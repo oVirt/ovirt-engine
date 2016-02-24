@@ -348,30 +348,26 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             final String logicalNetworkModelName = network.getName();
 
             if (logicalNetworkModel.isManagement()) {
-                networkDialogModel = new HostManagementNetworkModel(true);
+                networkDialogModel = new HostManagementNetworkModel();
                 networkDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
                 networkDialogModel.setEntity(network);
                 networkDialogModel.setNoneBootProtocolAvailable(false);
-                networkDialogModel.getInterface().setIsAvailable(false);
             } else {
-                networkDialogModel = new HostInterfaceModel(true);
+                networkDialogModel = new HostInterfaceModel();
                 networkDialogModel.setTitle(ConstantsManager.getInstance()
                         .getMessages()
                         .editNetworkTitle(logicalNetworkModelName));
                 networkDialogModel.getName().setIsAvailable(false);
-                networkDialogModel.getNetwork().setIsChangeable(false);
                 networkDialogModel.getGateway()
                         .setIsAvailable((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
                                 version));
             }
 
-            networkDialogModel.getNetwork().setSelectedItem(network);
             networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetworkModelName));
             networkDialogModel.getAddress().setEntity(nic.getAddress());
             networkDialogModel.getSubnet().setEntity(nic.getSubnet());
             networkDialogModel.getGateway().setEntity(nic.getGateway());
             networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getAddress()));
-            networkDialogModel.getBondingOptions().setIsAvailable(false);
             networkDialogModel.setBootProtocol(nic.getBootProtocol());
 
             NetworkAttachment networkAttachment =

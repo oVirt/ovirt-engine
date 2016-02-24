@@ -5,22 +5,16 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class SetupNetworksManagementPopupView extends SetupNetworksInterfacePopupView implements SetupNetworksManagementPopupPresenterWidget.ViewDef {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @Inject
     public SetupNetworksManagementPopupView(EventBus eventBus) {
-
         super(eventBus);
-
-        nameEditor.setLabel(constants.networkNameInterface() + ":"); //$NON-NLS-1$
     }
 
     @Override
@@ -42,10 +36,4 @@ public class SetupNetworksManagementPopupView extends SetupNetworksInterfacePopu
             nameEditor.asValueBox().setValue(object.getEntity().getName());
         }
     }
-
-    @Override
-    public void focusInput() {
-        interfaceEditor.setFocus(true);
-    }
-
 }
