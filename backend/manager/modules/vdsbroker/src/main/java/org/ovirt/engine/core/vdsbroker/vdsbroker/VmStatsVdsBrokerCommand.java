@@ -34,6 +34,7 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
     }
 
     @Override
-    protected void logToAudit(){
+    protected boolean shouldLogToAudit() {
+        return false;
     }
 }
