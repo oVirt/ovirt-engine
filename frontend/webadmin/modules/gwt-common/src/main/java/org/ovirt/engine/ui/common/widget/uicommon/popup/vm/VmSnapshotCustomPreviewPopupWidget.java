@@ -307,27 +307,34 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             disksOfActiveSnapshot = Collections.emptyList();
         }
 
+        SnapshotModel selectedModel = previewSnapshotModel.getSnapshotModel();
         boolean includeAllDisksOfSnapshot = selectedDisks.containsAll(disksOfSelectedSnapshot);
-        boolean includeMemory = previewSnapshotModel.getSnapshotModel().getMemory().getEntity();
+        boolean includeMemory = selectedModel.getMemory().getEntity();
+        boolean includeMemoryDifferentClusterVersion = includeMemory && !selectedModel.isVMWithMemoryCompatible();
 
         SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());
 
-        HTML partialSnapshotWarningWidget = new HTML(templates.iconWithText(
-                warningImage, constants.snapshotPreviewWithExcludedDisksWarning()));
-        HTML memoryWarningWidget = new HTML(templates.iconWithText(
-                warningImage, constants.snapshotPreviewWithMemoryAndPartialDisksWarning()));
-
-        warningPanel.clear();
-
-        // Show warning in case of previewing a memory snapshot and excluding disks of the selected snapshot.
-        if (!includeAllDisksOfSnapshot && includeMemory) {
-            warningPanel.add(memoryWarningWidget);
+        String warningText = ""; //$NON-NLS-1$
+        if (includeMemoryDifferentClusterVersion) {
+            // Show warning when snapshot with memory originates in different cluster version
+            warningText += constants.snapshotPreviewWithMemoryFromDifferentClusterVersion();
         }
 
-        // Show warning when excluding disks.
-        if (isDisksExcluded(disksOfActiveSnapshot, selectedDisks)) {
-            warningPanel.add(partialSnapshotWarningWidget);
+        if (!includeAllDisksOfSnapshot && includeMemory) {
+            // Show warning in case of previewing a memory snapshot and excluding disks of the selected snapshot.
+            warningText += constants.snapshotPreviewWithMemoryAndPartialDisksWarning();
+        } else if (isDisksExcluded(disksOfActiveSnapshot, selectedDisks)) {
+            // Show warning when excluding disks.
+            warningText += constants.snapshotPreviewWithExcludedDisksWarning();
+        }
+
+        warningPanel.clear();
+        if (!warningText.isEmpty()) {
+            warningPanel.add(new HTML(templates.iconWithText(warningImage, warningText)));
+            warningPanel.setVisible(true);
+        } else {
+            warningPanel.setVisible(false);
         }
     }
 
