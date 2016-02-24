@@ -1457,13 +1457,13 @@ public class IrsProxyData {
                     newDomainUnreachableByHost = true;
                 }
                 // existing domains in problem
-                updateDomainInProblemData(domainId, vdsId, vdsName);
+                updateDomainInProblemData(domainId, vdsId, vdsName, domainMonitoringResult);
             } else {
                 if (domainNotFound) {
                     newDomainUnreachableByHost = true;
                 }
                 // new domains in problems
-                addDomainInProblemData(domainId, vdsId, vdsName);
+                addDomainInProblemData(domainId, vdsId, vdsName, domainMonitoringResult);
             }
         }
 
@@ -1507,9 +1507,11 @@ public class IrsProxyData {
         }
     }
 
-    private void addDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
+    private void addDomainInProblemData(Guid domainId, Guid vdsId, String vdsName,
+                                        DomainMonitoringResult domainMonitoringResult) {
         _domainsInProblem.put(domainId, new HashSet<>(Arrays.asList(vdsId)));
-        log.warn("domain '{}' in problem. vds: '{}'", getDomainIdTuple(domainId), vdsName);
+        log.warn("domain '{}' in problem '{}'. vds: '{}'", getDomainIdTuple(domainId), domainMonitoringResult,
+                vdsName);
         Class[] inputType = new Class[] { Guid.class };
         Object[] inputParams = new Object[] { domainId };
         String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "onTimer", inputType,
@@ -1648,8 +1650,10 @@ public class IrsProxyData {
         }
     }
 
-    private void updateDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
-        log.debug("domain '{}' still in problem. vds: '{}'", getDomainIdTuple(domainId), vdsName);
+    private void updateDomainInProblemData(Guid domainId, Guid vdsId, String vdsName,
+                                           DomainMonitoringResult domainMonitoringResult) {
+        log.debug("domain '{}' still in problem '{}'. vds: '{}'", getDomainIdTuple(domainId),
+                domainMonitoringResult, vdsName);
         _domainsInProblem.get(domainId).add(vdsId);
     }
 
