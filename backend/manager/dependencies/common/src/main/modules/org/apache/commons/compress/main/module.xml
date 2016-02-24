@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <module xmlns="urn:jboss:module:1.1" name="org.apache.commons.compress">
-
   <resources>
     <resource-root path="commons-compress.jar"/>
   </resources>
-
-  <dependencies>
-    <module name="org.tukaani.xz"/>
-  </dependencies>
 </module>

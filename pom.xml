@@ -86,7 +86,6 @@
     <infinispan.version>5.2.5.Final</infinispan.version>
     <snakeyaml.version>1.8</snakeyaml.version>
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
-    <tukaani-xz.version>1.0</tukaani-xz.version>
     <fop.version>1.0</fop.version>
     <xmlgraphics-commons.version>1.4</xmlgraphics-commons.version>
     <batik.version>1.7</batik.version>
