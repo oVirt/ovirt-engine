@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -54,27 +53,6 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             neededPermissions = true;
         }
         return permissions;
-    }
-
-    @Override
-    protected boolean checkPermissions(List<PermissionSubject> permSubjects) {
-        if (!getCurrentUser().isAdmin()) {
-            for (PermissionSubject permissionSubject : permSubjects) {
-                if (ActionGroup.RECONNECT_TO_VM == permissionSubject.getActionGroup()
-                        && VdcObjectType.VM == permissionSubject.getObjectType()
-                        && Objects.equals(getVmId(), permissionSubject.getObjectId())
-                        && getVm() != null
-                        && getVm().getConsoleUserId() != null
-                        && getDbUserDao().get(getVm().getConsoleUserId()).isAdmin()) {
-                    log.info("Non-admin user (id={}) can't steal console from admin user (id={}), vm id={}",
-                            getUserId(),
-                            getVm().getConsoleUserId(),
-                            getVm().getId());
-                    return failValidation(EngineMessage.SETTING_VM_TICKET_FAILED_CONSOLE_OF_VM_CURRENTLY_USED_BY_ADMIN_USER);
-                }
-            }
-        }
-        return super.checkPermissions(permSubjects);
     }
 
     String getConsoleUserName() {

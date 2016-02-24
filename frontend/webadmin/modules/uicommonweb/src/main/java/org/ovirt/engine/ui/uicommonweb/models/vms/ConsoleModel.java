@@ -10,6 +10,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -141,13 +143,13 @@ public abstract class ConsoleModel extends EntityModel<VM> {
      * Executes given command. The confirmation dialog is displayed when it's
      * not safe to take over the console, which is when
      *  - allow console reconnect is disabled AND
-     *  - there is an active console user who is different from current portal user and has not reconnect permissions AND
+     *  - there is an active console user who is different from current portal user  AND
      *  - current portal user has not reconnect permissions (this is to prevent extra information dialog. backend
      *    validation will not allow connecting this user and frontend will display warning message anyway)
      */
     protected void executeCommandWithConsoleSafenessWarning(final UICommand command) {
         VM vm = getEntity();
-        if (vm.getAllowConsoleReconnect() || vm.getConsoleCurentUserName() == null ||
+        if (vm.getAllowConsoleReconnect() || vm.getConsoleUserId() == null ||
             Frontend.getInstance().getLoggedInUser().getId().equals(vm.getConsoleUserId())) {
             command.execute();
             return;
@@ -171,7 +173,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
                 if (returnValue) {
                     displayConsoleConnectConfirmPopup(command);
                 } else {
-                    command.execute(); //user will be stopped by backend validation
+                    displayUserCantReconnectDialog();
                 }
             }
         };
@@ -191,6 +193,12 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         };
 
         Frontend.getInstance().runQuery(VdcQueryType.HasAdElementReconnectPermission, consoleUserReconnectPermParams, consoleUserReconnectPermissionQuery);
+    }
+
+    private void displayUserCantReconnectDialog() {
+        final ErrorPopupManager popupManager =
+                (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
+        popupManager.show(ConstantsManager.getInstance().getConstants().userCantReconnectToVm());
     }
 
     private void displayConsoleConnectConfirmPopup(final UICommand onConfirmCommand) {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
+
 import com.google.gwt.i18n.client.Constants;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
@@ -2276,6 +2277,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("There may be users connected to the console who will not be able to reconnect. Do you want to proceed?")
     String confirmConsoleConnectMessage();
+
+    @DefaultStringValue("Console connection denied. Another user has already accessed the console of this VM. The VM should either be rebooted to allow another user to access it, or changed by an admin to not enforce a reboot between users accessing its console.")
+    String userCantReconnectToVm();
 
     @DefaultStringValue("No disks selected")
     String noDisksSelected();

@@ -294,12 +294,12 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
     private void handleTicketGenerationError(VdcReturnValueBase commandResult) {
         getQueryReturnValue().setSucceeded(false);
         if (commandResult.getValidationMessages().contains(
-                EngineMessage.SETTING_VM_TICKET_FAILED_CONSOLE_OF_VM_CURRENTLY_USED_BY_ADMIN_USER.name())) {
+                EngineMessage.USER_CANNOT_FORCE_RECONNECT_TO_VM.name())) {
             getQueryReturnValue().setExceptionString(
-                    EngineMessage.SETTING_VM_TICKET_FAILED_CONSOLE_OF_VM_CURRENTLY_USED_BY_ADMIN_USER.name());
+                    EngineMessage.USER_CANNOT_FORCE_RECONNECT_TO_VM.name());
             return;
         }
-        getQueryReturnValue().setExceptionString(EngineMessage.GENERAL_FAILURE.name());
+        getQueryReturnValue().setExceptionString(EngineMessage.SETTING_VM_TICKET_FAILED.name());
     }
 
     private String getVdsCertificateSubject() {
