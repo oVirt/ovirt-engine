@@ -61,7 +61,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeR
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostFenceAgentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostFenceProxyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
@@ -329,7 +328,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeProfil
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeRebalanceStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.MoveHostPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostConfigureLocalStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostFenceAgentPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostFenceProxyPopupView;
@@ -1337,9 +1335,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(SetupNetworksManagementPopupPresenterWidget.class,
                 SetupNetworksManagementPopupPresenterWidget.ViewDef.class,
                 SetupNetworksManagementPopupView.class);
-        bindPresenterWidget(HostBondPopupPresenterWidget.class,
-                HostBondPopupPresenterWidget.ViewDef.class,
-                HostBondPopupView.class);
         bindPresenterWidget(SetupNetworksBondPopupPresenterWidget.class,
                 SetupNetworksBondPopupPresenterWidget.ViewDef.class,
                 SetupNetworksBondPopupView.class);

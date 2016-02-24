@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+
+    <d:SimpleDialogPanel width="400px" height="150px">
+        <d:content>
+            <g:VerticalPanel ui:field="mainPanel">
+                    <ge:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" addStyleNames="hbpv_bondSuggestEditor_pfly_fix" />
+                    <e:ListModelListBoxEditor ui:field="bondingModeEditor" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="customBondEditor" visible="false" />
+            </g:VerticalPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

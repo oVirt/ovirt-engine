@@ -27,9 +27,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksBondModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
@@ -259,7 +259,7 @@ public class NetworkModule extends AbstractGinModule {
                             Model windowModel) {
 
                         // Resolve by dialog model
-                        if (windowModel instanceof HostBondInterfaceModel) {
+                        if (windowModel instanceof SetupNetworksBondModel) {
                             return setupNetworksBondPopupProvider.get();
                         } else if (windowModel instanceof HostManagementNetworkModel) {
                             return setupNetworksManagementPopupProvider.get();

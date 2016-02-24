@@ -2805,9 +2805,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Bond Name")
     String bondNameHostPopup();
 
-    @DefaultStringValue("Network")
-    String networkHostPopup();
-
     @DefaultStringValue("Bonding Mode")
     String bondingModeHostPopup();
 
@@ -2837,10 +2834,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Sync network")
     String syncNetwork();
-
-    @DefaultStringValue("<I>Changes done to the Networking configuration are temporary until explicitly saved.<BR>" +
-            "Check the check-box below to make the changes persistent.</I>")
-    String changesTempHostPopup();
 
     @DefaultStringValue("Save network configuration")
     String saveNetConfigHostPopup();
