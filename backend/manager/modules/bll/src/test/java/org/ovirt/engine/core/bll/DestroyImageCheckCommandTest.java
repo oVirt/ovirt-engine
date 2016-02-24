@@ -71,6 +71,7 @@ public class DestroyImageCheckCommandTest {
                             params.getStorageDomainId(),
                             params.getImageGroupId(),
                             volumeId);
+            vdsParams.setExpectedEngineErrors(Collections.singleton(EngineError.VolumeDoesNotExist));
 
             if (failedVolumes.contains(volumeId)) {
                 doReturn(null).when(cmd).runVdsCommand(eq(VDSCommandType.SPMGetVolumeInfo), refEq(vdsParams));

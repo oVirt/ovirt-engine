@@ -47,6 +47,8 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
                 getParameters().getStorageDomainId(),
                 getParameters().getImageGroupId(),
                 volumeId);
+
+        params.setExpectedEngineErrors(Collections.singleton(EngineError.VolumeDoesNotExist));
         try {
             runVdsCommand(VDSCommandType.SPMGetVolumeInfo, params);
         } catch (EngineException e) {

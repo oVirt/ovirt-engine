@@ -24,6 +24,7 @@ public class SPMGetVolumeInfoVDSCommand<P extends SPMGetVolumeInfoVDSCommandPara
                 getParameters().getStorageDomainId(),
                 getParameters().getImageGroupId(),
                 getParameters().getImageId());
+        params.setExpectedEngineErrors(getParameters().getExpectedEngineErrors());
         setVDSReturnValue(resourceManager.runVdsCommand(VDSCommandType.GetVolumeInfo, params));
     }
 
