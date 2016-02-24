@@ -1925,6 +1925,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Saving memory may cause data loss when excluding disks!")
     String snapshotCreationWithMemoryAndPartialDisksWarning();
 
+    @DefaultStringValue("Memory restore from different cluster version can cause failure.")
+    String snapshotPreviewWithMemoryFromDifferentClusterVersion();
+
     @DefaultStringValue("Previewing memory may cause data loss when excluding disks!")
     String snapshotPreviewWithMemoryAndPartialDisksWarning();
 

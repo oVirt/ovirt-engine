@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -426,5 +427,19 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         public String toString() {
             return description;
         }
+    }
+
+    public boolean isVMWithMemoryCompatible() {
+        return isVMWithMemoryCompatible(getVm());
+    }
+
+    public boolean isVMWithMemoryCompatible(VM vm) {
+        Version recentClusterVersion = vm.getVdsGroupCompatibilityVersion();
+        // the cluster version in which the memory snapshot was taken
+        Version originalClusterVersion = vm.getClusterCompatibilityVersionOrigin();
+
+        return originalClusterVersion != null
+                && recentClusterVersion.getMajor() == originalClusterVersion.getMajor()
+                && recentClusterVersion.getMinor() == originalClusterVersion.getMinor();
     }
 }

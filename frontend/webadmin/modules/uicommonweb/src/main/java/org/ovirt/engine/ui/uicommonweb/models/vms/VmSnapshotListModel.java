@@ -404,7 +404,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
                 boolean showMemorySnapshotWarning = isMemorySnapshotSupported() && !snapshot.getMemoryVolume().isEmpty();
                 boolean showPartialSnapshotWarning = !disksExcludedFromSnapshot.isEmpty();
-                boolean oldClusterSnapshotWithMemory = showMemorySnapshotWarning && !isVMWithMemoryCompatible(vm);
 
                 if (showMemorySnapshotWarning || showPartialSnapshotWarning) {
                     SnapshotModel model = new SnapshotModel();
@@ -412,7 +411,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     model.setDisks(snapshotDisks);
                     model.setShowMemorySnapshotWarning(showMemorySnapshotWarning);
                     model.setShowPartialSnapshotWarning(showPartialSnapshotWarning);
-                    model.setOldClusterSnapshotWithMemory(oldClusterSnapshotWithMemory);
+                    model.setOldClusterSnapshotWithMemory(showMemorySnapshotWarning && !model.isVMWithMemoryCompatible(vm));
                     setWindow(model);
 
                     model.setTitle(showPartialSnapshotWarning ?
@@ -427,16 +426,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 }
             }
         }), snapshot.getId());
-    }
-
-    private boolean isVMWithMemoryCompatible(VM vm) {
-        Version recentClusterVersion = vm.getVdsGroupCompatibilityVersion();
-            // the cluster version in which the memory snapshot was taken
-        Version originalClusterVersion = vm.getClusterCompatibilityVersionOrigin();
-
-        return originalClusterVersion != null
-                && recentClusterVersion.getMajor() == originalClusterVersion.getMajor()
-                && recentClusterVersion.getMinor() == originalClusterVersion.getMinor();
     }
 
     private void updateVmActiveDisks() {
