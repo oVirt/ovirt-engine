@@ -28,9 +28,13 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.Dao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(ArquillianRules.class)
 public abstract class TransactionalTestBase {
+
+    @ArquillianRule
+    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @Inject
     protected VmBuilder vmBuilder;
@@ -54,7 +58,7 @@ public abstract class TransactionalTestBase {
     public TransactionRollbackRule rollbackRule = new TransactionRollbackRule();
 
     public static JavaArchive createDeployment(){
-        return createDeployment(new ArrayList<Class<?>>());
+        return createDeployment(new ArrayList<>());
     }
 
     public static JavaArchive createDeployment(List<Class<?>> classes){
@@ -75,7 +79,7 @@ public abstract class TransactionalTestBase {
         if (classes != null && classes.length > 0){
             classList.addAll(Arrays.asList(classes));
         }
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+        return ShrinkWrap.create(JavaArchive.class)
                 .addPackages(true, Dao.class.getPackage()) // add all DAOs
                 .addPackage(AbstractBuilder.class.getPackage()) // add all builder
                 .addPackage(TransactionRollbackRule.class.getPackage()) // database related stuff
@@ -85,7 +89,6 @@ public abstract class TransactionalTestBase {
                         EmptyAsset.INSTANCE,
                         ArchivePaths.create("beans.xml")
                 );
-        return archive;
     }
 
     @Before
