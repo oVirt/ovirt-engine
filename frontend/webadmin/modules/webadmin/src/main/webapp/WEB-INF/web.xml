@@ -50,6 +50,10 @@
         <filter-name>SsoLoginFilter</filter-name>
         <url-pattern>/WebAdmin.html</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>SsoLoginFilter</filter-name>
+        <url-pattern>/dashboard_data</url-pattern>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>BrandingFilter</filter-name>
@@ -97,6 +101,15 @@
     <servlet-mapping>
         <servlet-name>SsoPostLoginServlet</servlet-name>
         <url-pattern>/sso/oauth2-callback</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>dashboardData</servlet-name>
+        <servlet-class>org.ovirt.engine.ui.frontend.server.dashboard.DashboardDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dashboardData</servlet-name>
+        <url-pattern>/dashboard_data</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

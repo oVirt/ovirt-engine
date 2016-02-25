@@ -259,6 +259,29 @@
           </validation>
         </datasource>
 
+        <datasource jndi-name="java:/DWHDataSource" pool-name="DWHDataSource" enabled="true" use-ccm="false">
+          <connection-url><![CDATA[{{ config.get('DWH_DB_URL') }}]]></connection-url>
+          <driver>postgresql</driver>
+          <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+          <pool>
+            <min-pool-size>{{ config.getinteger('ENGINE_DB_MIN_CONNECTIONS') }}</min-pool-size>
+            <max-pool-size>{{ config.getinteger('ENGINE_DB_MAX_CONNECTIONS') }}</max-pool-size>
+            <prefill>true</prefill>
+          </pool>
+          <security>
+            <user-name><![CDATA[{{ config.get('DWH_DB_USER') }}]]></user-name>
+            <password><![CDATA[{{ config.get('DWH_DB_PASSWORD') }}]]></password>
+          </security>
+          <statement>
+            <prepared-statement-cache-size>100</prepared-statement-cache-size>
+            <share-prepared-statements/>
+          </statement>
+          <validation>
+            <validate-on-match>true</validate-on-match>
+            <check-valid-connection-sql>select 1</check-valid-connection-sql>
+          </validation>
+        </datasource>
+
         <drivers>
           <driver name="postgresql" module="org.postgresql">
             <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
