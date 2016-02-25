@@ -33,7 +33,7 @@ public class CommandEntityDaoTest extends BaseGenericDaoTestCase<Guid, CommandEn
         Map<String, Serializable> data = new HashMap<>();
         data.put("NEXT_COMMAND_TYPE", VdcActionType.DestroyImage);
         CommandEntity commandEntity = new CommandEntity();
-        commandEntity.setCommandType(VdcActionType.AddBond);
+        commandEntity.setCommandType(VdcActionType.AddCluster);
         commandEntity.setCreatedAt(new Date(System.currentTimeMillis()));
         commandEntity.setId(Guid.newGuid());
         commandEntity.setCommandStatus(CommandStatus.ACTIVE);

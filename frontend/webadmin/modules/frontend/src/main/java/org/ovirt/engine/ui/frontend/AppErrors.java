@@ -1399,14 +1399,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Unknown Data Center status.")
     String ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL();
 
-    @DefaultStringValue("Bond name already exists.")
-    String NETWORK_BOND_NAME_EXISTS();
-
     @DefaultStringValue("Bond name doesn't exist.")
     String NETWORK_BOND_NOT_EXISTS();
-
-    @DefaultStringValue("Invalid parameters.\n-Please check that bond name is formatted as <bondYYY>.\n-Bond consist of at least two network interfaces(NICs).")
-    String NETWORK_BOND_PARAMETERS_INVALID();
 
     @DefaultStringValue("Network Interface '${NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY}' already belongs to the bond.")
     String NETWORK_INTERFACE_ALREADY_IN_BOND();
@@ -1536,9 +1530,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. There is no VM network interface profile for the network the user can use.\n- Please use a VM network interface profile instead of a network name.")
     String ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK();
-
-    @DefaultStringValue("The specified external network cannot be configured on the host's interface.")
-    String EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED();
 
     @DefaultStringValue("The external network '${EXTERNAL_NETWORK_HAVING_NAME_CANNOT_BE_PROVISIONED_ENTITY}' cannot be configured on the host's interface.")
     String EXTERNAL_NETWORK_HAVING_NAME_CANNOT_BE_PROVISIONED();
@@ -1951,9 +1942,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Hosted Engine is not configured on this host.")
     String ACTION_TYPE_FAILED_VDS_HA_NOT_CONFIGURED();
-
-    @DefaultStringValue("Bonding cannot be applied on an Interface where VLAN is defined.\n-Please remove VLAN from the interface.")
-    String NETWORK_INTERFACE_IN_USE_BY_VLAN();
 
     @DefaultStringValue("Logical Network is already attached to Cluster.")
     String NETWORK_ALREADY_ATTACHED_TO_CLUSTER();

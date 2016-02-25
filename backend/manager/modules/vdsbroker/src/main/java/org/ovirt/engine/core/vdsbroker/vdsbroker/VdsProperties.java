@@ -102,18 +102,14 @@ public final class VdsProperties {
     // Network related properties
     public static final String NETWORK = "network";
     public static final String LINK_ACTIVE = "linkActive";
-    public static final String BOOT_PROTOCOL = "BOOTPROTO";
     public static final String STP = "STP";
     public static final String MTU = "mtu";
     public static final String VLAN_ID = "vlanid";
     public static final String BASE_INTERFACE = "iface";
-    public static final String BONDING_OPTIONS = "BONDING_OPTS";
-    public static final String DHCP = "dhcp";
     public static final String FORCE = "force";
     public static final String CONNECTIVITY_CHECK = "connectivityCheck";
     public static final String CONNECTIVITY_TIMEOUT = "connectivityTimeout";
     public static final String IP_ADDRESS = "IPADDR";
-    public static final String NETMASK = "NETMASK";
     public static final String GATEWAY = "GATEWAY";
     public static final String GLOBAL_GATEWAY = "gateway";
     public static final String DISPLAY_NETWORK = "displayNetwork";
