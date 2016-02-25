@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
+import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
@@ -60,6 +61,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             loadService(PmHealthCheckManager.class);
             loadService(EngineBackupAwarenessManager.class);
             CommandCoordinatorUtil.initAsyncTaskManager();
+            loadService(CommandCallbacksPoller.class);
             loadService(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
             StoragePoolStatusHandler.init();

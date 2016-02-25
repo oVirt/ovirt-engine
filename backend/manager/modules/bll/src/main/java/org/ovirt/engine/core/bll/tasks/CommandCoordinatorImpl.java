@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +47,8 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     CommandCoordinatorImpl() {
         coCoAsyncTaskHelper = new CoCoAsyncTaskHelper(this);
-        commandsRepository = new CommandsRepository();
-        cmdExecutor = new CommandExecutor(commandsRepository);
+        commandsRepository = Injector.get(CommandsRepository.class);
+        cmdExecutor = Injector.get(CommandExecutor.class);
     }
 
     public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
