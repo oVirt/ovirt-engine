@@ -1307,6 +1307,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 // set the status to ENDED_SUCCESSFULLY if the status is ACTIVE
                 if (getTaskType() == AsyncTaskType.notSupported &&
                         getReturnValue().getVdsmTaskIdList().isEmpty() &&
+                        getReturnValue().getInternalVdsmTaskIdList().isEmpty() &&
                         getCallback() == null &&
                         commandStatus == CommandStatus.ACTIVE) {
                     setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY);
