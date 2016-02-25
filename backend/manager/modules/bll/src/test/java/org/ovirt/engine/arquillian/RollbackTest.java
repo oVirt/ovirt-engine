@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.dao.DuplicateKeyException;
 
 @Category(IntegrationTest.class)
@@ -43,5 +44,10 @@ public class RollbackTest extends TransactionalTestBase {
     @Test
     public void shouldRollbackAfterPersistingPart2() {
         vmBuilder.id(VM2_GUID).persist();
+    }
+
+    @Test
+    public void shouldHaveAccessToMockedContainerTransactionManager() {
+        TransactionSupport.executeInNewTransaction(() -> null);
     }
 }
