@@ -48,6 +48,11 @@ public class V3Server<DELEGATE> {
      * @param delegate the reference to the V4 implementation of the service.
      */
     public V3Server(DELEGATE delegate) {
+        // This assert is an attempt to hint code checking tools that the "delegate" will always be non-null. Note
+        // that assertions are by default disabled during runtime, so this doesn't have any real effect.
+        assert delegate != null;
+
+        // Save the reference to the V4 delegate:
         this.delegate = delegate;
     }
 
