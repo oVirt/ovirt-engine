@@ -1245,8 +1245,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             } else {
                 // if the command is not an async task and has no custom callback
                 // set the status to SUCCEEDED if the status is ACTIVE
-                if (getTaskType() == AsyncTaskType.notSupported &&
-                        getReturnValue().getVdsmTaskIdList().isEmpty() &&
+                if (getReturnValue().getVdsmTaskIdList().isEmpty() &&
+                        getReturnValue().getInternalVdsmTaskIdList().isEmpty() &&
                         getCallback() == null &&
                         commandStatus == CommandStatus.ACTIVE) {
                     setCommandStatus(CommandStatus.SUCCEEDED);
