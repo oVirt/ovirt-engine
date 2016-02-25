@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import static org.ovirt.engine.core.bll.tasks.CommandsRepository.CommandContainer;
+
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,26 +41,12 @@ public class CommandExecutor {
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(Config.<Integer>getValue(ConfigValues.CommandCoordinatorThreadPoolSize));
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
-
-    private static class CommandContainer {
-        private int initialDelay;     // Total delay between callback executions
-        private int remainingDelay;   // Remaining delay to next callback execution
-        private CommandCallback callback;
-
-        public CommandContainer(CommandCallback callback, int executionDelay) {
-            this.callback = callback;
-            this.initialDelay = executionDelay;
-            this.remainingDelay = executionDelay;
-        }
-    }
-
-    private final CommandCoordinatorImpl coco;
-    private final Map<Guid, CommandContainer> cmdCallbackMap = new ConcurrentHashMap<>();
+    private final CommandsRepository commandsRepository;
     private boolean cmdExecutorInitialized;
     private final int pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
 
-    CommandExecutor(CommandCoordinatorImpl coco) {
-        this.coco = coco;
+    CommandExecutor(CommandsRepository commandsRepository) {
+        this.commandsRepository = commandsRepository;
         SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
         scheduler.scheduleAFixedDelayJob(this, "invokeCallbackMethods", new Class[]{},
                 new Object[]{}, pollingRate, pollingRate, TimeUnit.SECONDS);
@@ -69,30 +55,32 @@ public class CommandExecutor {
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public void invokeCallbackMethods() {
         initCommandExecutor();
-        Iterator<Entry<Guid, CommandContainer>> iterator = cmdCallbackMap.entrySet().iterator();
+        Iterator<Entry<Guid, CommandContainer>> iterator = commandsRepository.getCommandsCallback().entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<Guid, CommandContainer> entry = iterator.next();
 
             // Decrement counter; execute if it reaches 0
-            if ((entry.getValue().remainingDelay -= pollingRate) > 0) {
+            CommandContainer commandContainer = entry.getValue();
+            commandContainer.setRemainingDelay(commandContainer.getRemainingDelay() - pollingRate);
+            if (commandContainer.getRemainingDelay() > 0) {
                 continue;
             }
 
             Guid cmdId = entry.getKey();
-            CommandCallback callback = entry.getValue().callback;
-            CommandStatus status = coco.getCommandStatus(cmdId);
+            CommandCallback callback = commandContainer.getCallback();
+            CommandStatus status = commandsRepository.getCommandStatus(cmdId);
             boolean errorInCallback = false;
             try {
                 switch (status) {
                     case FAILED:
-                        callback.onFailed(cmdId, coco.getChildCommandIds(cmdId));
+                        callback.onFailed(cmdId, commandsRepository.getChildCommandIds(cmdId));
                         break;
                     case SUCCEEDED:
-                        callback.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
+                        callback.onSucceeded(cmdId, commandsRepository.getChildCommandIds(cmdId));
                         break;
                     case ACTIVE:
-                        if (coco.getCommandEntity(cmdId).isExecuted()) {
-                            callback.doPolling(cmdId, coco.getChildCommandIds(cmdId));
+                        if (commandsRepository.getCommandEntity(cmdId).isExecuted()) {
+                            callback.doPolling(cmdId, commandsRepository.getChildCommandIds(cmdId));
                         }
                         break;
                     default:
@@ -103,47 +91,45 @@ public class CommandExecutor {
                 handleError(ex, status, cmdId);
             } finally {
                 if (CommandStatus.FAILED.equals(status) || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
-                    coco.updateCallbackNotified(cmdId);
+                    commandsRepository.updateCallbackNotified(cmdId);
                     iterator.remove();
-                    CommandEntity cmdEntity = coco.getCommandEntity(entry.getKey());
+                    CommandEntity cmdEntity = commandsRepository.getCommandEntity(entry.getKey());
                     if (cmdEntity != null) {
                         // When a child finishes, its parent's callback should execute shortly thereafter
                         Guid rootCommandId = cmdEntity.getRootCommandId();
-                        if (!Guid.isNullOrEmpty(rootCommandId) && cmdCallbackMap.containsKey(rootCommandId)) {
-                            cmdCallbackMap.get(rootCommandId).initialDelay = pollingRate;
-                            cmdCallbackMap.get(rootCommandId).remainingDelay = pollingRate;
+                        if (!Guid.isNullOrEmpty(rootCommandId) && commandsRepository.getCommandsCallback().containsKey(rootCommandId)) {
+                            commandsRepository.getCommandsCallback().get(rootCommandId).setInitialDelay(pollingRate);
+                            commandsRepository.getCommandsCallback().get(rootCommandId).setRemainingDelay(pollingRate);
                         }
                     }
-                } else if (status != coco.getCommandStatus(cmdId)) {
-                    entry.getValue().initialDelay = pollingRate;
-                    entry.getValue().remainingDelay = pollingRate;
+                } else if (status != commandsRepository.getCommandStatus(cmdId)) {
+                    commandContainer.setInitialDelay(pollingRate);
+                    commandContainer.setRemainingDelay(pollingRate);
                 } else {
                     int maxDelay = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds);
-                    entry.getValue().initialDelay = Math.min(maxDelay, entry.getValue().initialDelay * 2);
-                    entry.getValue().remainingDelay = entry.getValue().initialDelay;
+                    commandContainer.setInitialDelay(Math.min(maxDelay, commandContainer.getInitialDelay() * 2));
+                    commandContainer.setRemainingDelay(commandContainer.getInitialDelay());
                 }
             }
         }
-        if (!cmdCallbackMap.isEmpty()) {
+        if (!commandsRepository.getCommandsCallback().isEmpty()) {
             markExpiredCommandsAsFailure();
         }
     }
 
     private void markExpiredCommandsAsFailure() {
-        for (Entry<Guid, CommandContainer> entry : cmdCallbackMap.entrySet()) {
-            List<Guid> childCmdIds = coco.getChildCommandIds(entry.getKey());
+        for (Entry<Guid, CommandContainer> entry : commandsRepository.getCommandsCallback().entrySet()) {
+            List<Guid> childCmdIds = commandsRepository.getChildCommandIds(entry.getKey());
             if (childCmdIds.isEmpty()) {
                 markExpiredCommandAsFailure(entry.getKey());
             } else {
-                for (Guid childId : childCmdIds) {
-                    markExpiredCommandAsFailure(childId);
-                }
+                childCmdIds.forEach(this::markExpiredCommandAsFailure);
             }
         }
     }
 
     private void markExpiredCommandAsFailure(Guid cmdId) {
-        CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
+        CommandEntity cmdEntity = commandsRepository.getCommandEntity(cmdId);
         if (cmdEntity != null && cmdEntity.getCommandStatus() == CommandStatus.ACTIVE) {
             Calendar cal = Calendar.getInstance();
             Integer cmdLifeTimeInMin = cmdEntity.getCommandParameters().getLifeInMinutes();
@@ -155,7 +141,7 @@ public class CommandExecutor {
                         cmdEntity.getCommandType(),
                         cmdEntity.getId(),
                         cmdEntity.getCreatedAt());
-                coco.updateCommandStatus(cmdId, CommandStatus.FAILED);
+                commandsRepository.updateCommandStatus(cmdId, CommandStatus.FAILED);
             }
         }
     }
@@ -167,7 +153,7 @@ public class CommandExecutor {
                 cmdId);
         log.error("Exception", ex);
         if (!CommandStatus.FAILED.equals(status)) {
-            coco.updateCommandStatus(cmdId, CommandStatus.FAILED);
+            commandsRepository.updateCommandStatus(cmdId, CommandStatus.FAILED);
         }
     }
 
@@ -187,26 +173,17 @@ public class CommandExecutor {
 
     private void initCommandExecutor() {
         if (!cmdExecutorInitialized) {
-            for (CommandEntity cmdEntity : coco.getCommandsWithCallbackEnabled()) {
+            for (CommandEntity cmdEntity : commandsRepository.getCommands(true)) {
                 if (!cmdEntity.isExecuted() &&
                         cmdEntity.getCommandStatus() != CommandStatus.FAILED &&
                         cmdEntity.getCommandStatus() != CommandStatus.EXECUTION_FAILED) {
-                    coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.EXECUTION_FAILED);
+                    commandsRepository.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.EXECUTION_FAILED);
                 }
                 if (!cmdEntity.isCallbackNotified()) {
-                    addToCallbackMap(cmdEntity);
+                    commandsRepository.addToCallbackMap(cmdEntity);
                 }
             }
             cmdExecutorInitialized = true;
-        }
-    }
-
-    public void addToCallbackMap(CommandEntity cmdEntity) {
-        if (!cmdCallbackMap.containsKey(cmdEntity.getId())) {
-            CommandBase<?> cmd = coco.retrieveCommand(cmdEntity.getId());
-            if (cmd != null && cmd.getCallback() != null) {
-                cmdCallbackMap.put(cmdEntity.getId(), new CommandContainer(cmd.getCallback(), pollingRate));
-            }
         }
     }
 
@@ -217,12 +194,13 @@ public class CommandExecutor {
         CommandCallback callBack = command.getCallback();
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
         if (callBack != null) {
-            cmdCallbackMap.put(command.getCommandId(), new CommandContainer(callBack, pollingRate));
+            commandsRepository.getCommandsCallback().put(command.getCommandId(), new CommandContainer(callBack, pollingRate));
         }
+
         Future<VdcReturnValueBase> retVal;
         try {
             retVal = executor.submit(() -> executeCommand(command, cmdContext));
-        } catch(RejectedExecutionException ex) {
+        } catch (RejectedExecutionException ex) {
             command.setCommandStatus(CommandStatus.FAILED);
             log.error("Failed to submit command to executor service, command '{}' status has been set to FAILED",
                     command.getCommandId());
@@ -232,20 +210,20 @@ public class CommandExecutor {
     }
 
     private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
-        VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, cmdContext != null ?
-                cmdContext.getExecutionContext() : null);
+        VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command,
+                cmdContext != null ? cmdContext.getExecutionContext() : null);
         updateCommand(command, result);
         return result;
     }
 
     private void updateCommand(final CommandBase<?> command,
                                final VdcReturnValueBase result) {
-        CommandEntity cmdEntity = coco.getCommandEntity(command.getCommandId());
+        CommandEntity cmdEntity = commandsRepository.getCommandEntity(command.getCommandId());
         cmdEntity.setReturnValue(result);
         if (!result.isValid()) {
             cmdEntity.setCommandStatus(CommandStatus.FAILED);
         }
-        coco.persistCommand(cmdEntity);
+        commandsRepository.persistCommand(cmdEntity);
     }
 
     static class RejectedExecutionFuture implements Future<VdcReturnValueBase> {

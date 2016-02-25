@@ -3,20 +3,16 @@ package org.ovirt.engine.core.bll.tasks;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandContextsCache;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -44,19 +40,14 @@ import org.slf4j.LoggerFactory;
 public class CommandCoordinatorImpl extends CommandCoordinator {
 
     private static final Logger log = LoggerFactory.getLogger(CommandCoordinator.class);
-    private final CommandsCache commandsCache;
-    private final CommandContextsCache contextsCache;
     private final CoCoAsyncTaskHelper coCoAsyncTaskHelper;
     private final CommandExecutor cmdExecutor;
-    private Object LOCK = new Object();
-    private volatile boolean childHierarchyInitialized;
-    private ConcurrentHashMap<Guid, List<Guid>> childHierarchy = new ConcurrentHashMap<>();
+    private final CommandsRepository commandsRepository;
 
     CommandCoordinatorImpl() {
-        commandsCache = new CommandsCacheImpl();
-        contextsCache = new CommandContextsCacheImpl(commandsCache);
         coCoAsyncTaskHelper = new CoCoAsyncTaskHelper(this);
-        cmdExecutor = new CommandExecutor(this);
+        commandsRepository = new CommandsRepository();
+        cmdExecutor = new CommandExecutor(commandsRepository);
     }
 
     public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
@@ -65,57 +56,27 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
-        initChildHierarchy();
-        if (Guid.isNullOrEmpty(cmdEntity.getId())) {
-            return;
-        }
-        persistCommand(cmdEntity);
-        saveCommandContext(cmdEntity.getId(), cmdContext);
+        commandsRepository.persistCommand(cmdEntity, cmdContext);
     }
 
     @Override
     public void persistCommand(CommandEntity cmdEntity) {
-        if (Guid.isNullOrEmpty(cmdEntity.getId())) {
-            return;
-        }
-        CommandEntity existingCmdEntity = commandsCache.get(cmdEntity.getId());
-        if (existingCmdEntity != null) {
-            cmdEntity.setExecuted(existingCmdEntity.isExecuted());
-            cmdEntity.setCallbackNotified(existingCmdEntity.isCallbackNotified());
-        }
-        commandsCache.put(cmdEntity);
-        // check if callback is enabled or if parent command has callback enabled
-        if (cmdEntity.isCallbackEnabled() ||
-                (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
-                        commandsCache.get(cmdEntity.getParentCommandId()) != null &&
-                        commandsCache.get(cmdEntity.getParentCommandId()).isCallbackEnabled()
-                )) {
-            buildCmdHierarchy(cmdEntity);
-            if (!cmdEntity.isCallbackNotified()) {
-                cmdExecutor.addToCallbackMap(cmdEntity);
-            }
-        }
+        commandsRepository.persistCommand(cmdEntity);
     }
 
     @Override
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
-        commandsCache.persistCommandAssociatedEntities(cmdAssociatedEntities);
+        commandsRepository.getCommandsCache().persistCommandAssociatedEntities(cmdAssociatedEntities);
     }
 
     @Override
     public List<Guid> getCommandIdsByEntityId(Guid entityId) {
-        return commandsCache.getCommandIdsByEntityId(entityId);
+        return commandsRepository.getCommandsCache().getCommandIdsByEntityId(entityId);
     }
 
     @Override
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
-        return commandsCache.getCommandAssociatedEntities(cmdId);
-    }
-
-    void saveCommandContext(Guid cmdId, CommandContext cmdContext) {
-        if (cmdContext != null) {
-            contextsCache.put(cmdId, cmdContext);
-        }
+        return commandsRepository.getCommandsCache().getCommandAssociatedEntities(cmdId);
     }
 
     /**
@@ -131,7 +92,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public CommandEntity getCommandEntity(Guid commandId) {
-        return Guid.isNullOrEmpty(commandId) ? null : commandsCache.get(commandId);
+        return commandsRepository.getCommandEntity(commandId);
     }
 
     @Override
@@ -145,56 +106,17 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public List<CommandEntity> getCommandsWithCallbackEnabled() {
-        return getCommands(true);
-    }
-
-
-    public List<CommandEntity> getCommands(boolean onlyWithCallbackEnabled) {
-        List<CommandEntity> cmdEntities = new ArrayList<>();
-        CommandEntity cmdEntity;
-        for (Guid cmdId : commandsCache.keySet()) {
-            cmdEntity = commandsCache.get(cmdId);
-            if (!onlyWithCallbackEnabled || commandsCache.get(cmdId).isCallbackEnabled()) {
-                cmdEntities.add(cmdEntity);
-            }
-        }
-        return cmdEntities;
+        return commandsRepository.getCommands(true);
     }
 
     @Override
     public CommandBase<?> retrieveCommand(Guid commandId) {
-        return buildCommand(commandsCache.get(commandId), contextsCache.get(commandId));
-    }
-
-    private CommandBase<?> buildCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
-        CommandBase<?> command = null;
-        if (cmdEntity != null) {
-            if (cmdContext == null) {
-                cmdContext = new CommandContext(new EngineContext()).withExecutionContext(new ExecutionContext());
-            }
-            command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getCommandParameters(), cmdContext);
-            command.setCommandStatus(cmdEntity.getCommandStatus(), false);
-            command.setCommandData(cmdEntity.getData());
-            command.setReturnValue(cmdEntity.getReturnValue());
-            if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
-                    ! cmdEntity.getParentCommandId().equals(cmdEntity.getId()) &&
-                    command.getParameters().getParentParameters() == null) {
-                CommandBase<?> parentCommand = retrieveCommand(cmdEntity.getParentCommandId());
-                if (parentCommand != null) {
-                    command.getParameters().setParentParameters(parentCommand.getParameters());
-                }
-            }
-        }
-        return command;
+        return commandsRepository.retrieveCommand(commandId);
     }
 
     @Override
     public CommandStatus getCommandStatus(final Guid commandId) {
-        CommandEntity cmdEntity = commandsCache.get(commandId);
-        if (cmdEntity != null) {
-            return cmdEntity.getCommandStatus();
-        }
-        return CommandStatus.UNKNOWN;
+        return commandsRepository.getCommandStatus(commandId);
     }
 
     @Override
@@ -202,49 +124,45 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         for (Guid childCmdId : new ArrayList<>(getChildCommandIds(commandId))) {
             removeAllCommandsInHierarchy(childCmdId);
         }
+
         removeCommand(commandId);
     }
 
     @Override
     public void removeCommand(final Guid commandId) {
-        commandsCache.remove(commandId);
-        contextsCache.remove(commandId);
-        updateCmdHierarchy(commandId);
+        commandsRepository.removeCommand(commandId);
     }
 
     @Override
     public void removeAllCommandsBeforeDate(final DateTime cutoff) {
-        commandsCache.removeAllCommandsBeforeDate(cutoff);
-        synchronized(LOCK) {
-            childHierarchyInitialized = false;
-        }
+        commandsRepository.removeAllCommandsBeforeDate(cutoff);
     }
 
     @Override
     public void updateCommandData(final Guid commandId, final Map<String, Serializable> data) {
-        commandsCache.updateCommandData(commandId, data);
+        commandsRepository.getCommandsCache().updateCommandData(commandId, data);
     }
 
     @Override
     public void updateCommandStatus(final Guid commandId, final CommandStatus status) {
-        commandsCache.updateCommandStatus(commandId, status);
+        commandsRepository.updateCommandStatus(commandId, status);
     }
 
     @Override
     public void updateCommandExecuted(Guid commandId) {
-        commandsCache.updateCommandExecuted(commandId);
+        commandsRepository.getCommandsCache().updateCommandExecuted(commandId);
     }
 
     @Override
     public void updateCallbackNotified(final Guid commandId) {
-        commandsCache.updateCallbackNotified(commandId);
+        commandsRepository.getCommandsCache().updateCallbackNotified(commandId);
     }
 
     @Override
     public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId) {
         CommandEntity cmdEntity;
-        for (Guid cmdId : commandsCache.keySet()) {
-            cmdEntity = commandsCache.get(cmdId);
+        for (Guid cmdId : commandsRepository.getCommandsCache().keySet()) {
+            cmdEntity = commandsRepository.getCommandsCache().get(cmdId);
             if (cmdEntity != null && !Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
                     !cmdEntity.getRootCommandId().equals(cmdId) &&
                     cmdEntity.getRootCommandId().equals(rootCommandId)) {
@@ -256,11 +174,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public List<Guid> getChildCommandIds(Guid cmdId) {
-        initChildHierarchy();
-        if (childHierarchy.containsKey(cmdId)) {
-            return childHierarchy.get(cmdId);
-        }
-        return Collections.emptyList();
+        return commandsRepository.getChildCommandIds(cmdId);
     }
 
     @Override
@@ -279,42 +193,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId) {
-        return commandsCache.getChildCmdsByParentCmdId(cmdId);
-    }
-
-    private void initChildHierarchy() {
-        if (!childHierarchyInitialized) {
-            synchronized(LOCK) {
-                if (!childHierarchyInitialized) {
-                    childHierarchy.clear();
-                    for (CommandEntity cmd : getCommands(false)) {
-                        buildCmdHierarchy(cmd);
-                    }
-                }
-                childHierarchyInitialized = true;
-            }
-        }
-    }
-
-    private void buildCmdHierarchy(CommandEntity cmdEntity) {
-        if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) && !cmdEntity.getId().equals(cmdEntity.getParentCommandId())) {
-            childHierarchy.putIfAbsent(cmdEntity.getParentCommandId(), new ArrayList<>());
-            if (!childHierarchy.get(cmdEntity.getParentCommandId()).contains(cmdEntity.getId())) {
-                childHierarchy.get(cmdEntity.getParentCommandId()).add(cmdEntity.getId());
-            }
-        }
-    }
-
-    private void updateCmdHierarchy(Guid cmdId) {
-        for (List<Guid> childIds : childHierarchy.values()) {
-            if (childIds.contains(cmdId)) {
-                childIds.remove(cmdId);
-                break;
-            }
-        }
-        if (childHierarchy.containsKey(cmdId) && childHierarchy.get(cmdId).size() == 0) {
-            childHierarchy.remove(cmdId);
-        }
+        return commandsRepository.getCommandsCache().getChildCmdsByParentCmdId(cmdId);
     }
 
     @Override
@@ -380,7 +259,12 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                            VdcActionType parentCommand,
                            String description,
                            Map<Guid, VdcObjectType> entitiesMap) {
-        return coCoAsyncTaskHelper.createTask(taskId, command, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
+        return coCoAsyncTaskHelper.createTask(taskId,
+                command,
+                asyncTaskCreationInfo,
+                parentCommand,
+                description,
+                entitiesMap);
 
     }
 
@@ -403,16 +287,14 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         coCoAsyncTaskHelper.revertTasks(command);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ArrayList<AsyncTaskCreationInfo> getAllTasksInfo(Guid storagePoolID) {
         return (ArrayList<AsyncTaskCreationInfo>) runVdsCommand(VDSCommandType.SPMGetAllTasksInfo,
                 new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<Guid, AsyncTaskStatus>  getAllTasksStatuses(Guid storagePoolID) {
+    public Map<Guid, AsyncTaskStatus> getAllTasksStatuses(Guid storagePoolID) {
         return (Map<Guid, AsyncTaskStatus> ) runVdsCommand(VDSCommandType.SPMGetAllTasksStatuses,
                 new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue();
     }
@@ -445,7 +327,8 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public SPMTask construct(AsyncTaskCreationInfo creationInfo, AsyncTask asyncTask) {
-        return AsyncTaskFactory.construct(this, creationInfo.getTaskType(), new AsyncTaskParameters(creationInfo, asyncTask), true);
+        return AsyncTaskFactory.construct(this,
+                creationInfo.getTaskType(), new AsyncTaskParameters(creationInfo, asyncTask), true);
     }
 
     @Override
@@ -461,5 +344,4 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     protected BackendInternal getBackend() {
         return Backend.getInstance();
     }
-
 }
