@@ -82,6 +82,9 @@ public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID 
 
     @Override
     public void removeAllInBatch(Collection<T> entities) {
+        if (entities.isEmpty()) {
+            return;
+        }
         // TODO: batch remove all should probably use only IDs (and id parameter source) as its non-batch counterpart
         removeAllInBatch(getProcedureNameForRemove(), entities, getBatchMapper());
     }
@@ -95,11 +98,17 @@ public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID 
 
     @Override
     public void saveAllInBatch(Collection<T> entities) {
+        if (entities.isEmpty()) {
+            return;
+        }
         getCallsHandler().executeStoredProcAsBatch(getProcedureNameForSave(), entities, getBatchMapper());
     }
 
     @Override
     public void updateAllInBatch(Collection<T> entities) {
+        if (entities.isEmpty()) {
+            return;
+        }
         updateAllInBatch(getProcedureNameForUpdate(), entities, getBatchMapper());
     }
 
