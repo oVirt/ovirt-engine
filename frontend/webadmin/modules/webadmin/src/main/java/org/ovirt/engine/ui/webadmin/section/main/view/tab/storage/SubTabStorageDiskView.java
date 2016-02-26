@@ -133,5 +133,29 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
                 return getDetailModel().getRemoveCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getUploadCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getCancelUploadCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getPauseUploadCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getResumeUploadCommand();
+            }
+        });
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
 import org.ovirt.engine.core.common.action.UploadImageStatusParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,6 +26,8 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -40,7 +43,9 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
@@ -1023,4 +1028,147 @@ public class UploadImageModel extends Model implements ICommandTarget {
             self.@org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel::setUploadStateByString(Ljava/lang/String;)(state);
         }
     }-*/;
+
+
+    /**
+     * Build and display the Upload Image dialog.
+     *
+     * @param parent Parent model
+     * @param helpTag Help tag (dependent upon location in UI)
+     * @param limitToStorageDomainId Pre-selected storage domain, or null to not limit selection
+     * @param resumeUploadDisk DiskImage corresponding to upload being resumed, or null for new upload
+     */
+    public static <T extends Model & ICommandTarget> void showUploadDialog(
+            T parent,
+            HelpTag helpTag,
+            Guid limitToStorageDomainId,
+            DiskImage resumeUploadDisk) {
+        UploadImageModel model = new UploadImageModel(limitToStorageDomainId, resumeUploadDisk);
+        model.setTitle(resumeUploadDisk == null
+                ? ConstantsManager.getInstance().getConstants().uploadImageTitle()
+                : ConstantsManager.getInstance().getConstants().uploadImageResumeTitle());
+        model.setHelpTag(helpTag);
+        model.setHashName("upload_disk_image"); //$NON-NLS-1$
+
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", parent); //$NON-NLS-1$
+        model.setCancelCommand(cancelCommand);
+        model.getCommands().add(cancelCommand);
+
+        parent.setWindow(model);
+        model.initialize();
+    }
+
+    /**
+     * Display the cancellation dialog for Image Upload, showing the list of selected
+     * items which will be cancelled upon confirmation.  The parent model must have an
+     * "OnCancelUpload" UICommand handler defined, which should call onCancelUpload().
+     *
+     * @param parent Parent model
+     * @param helptag Help tag (dependent upon location in UI)
+     * @param images List of selected images
+     * @param <T> Model which implements ICommandTarget
+     */
+    public static <T extends Model & ICommandTarget> void showCancelUploadDialog(
+            T parent,
+            HelpTag helptag,
+            List<DiskImage> images) {
+        ConfirmationModel model = new ConfirmationModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().uploadImageCancelTitle());
+        model.setHelpTag(helptag);
+        model.setHashName("cancel_upload_image"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().uploadImageCancelConfirmationMessage());
+        parent.setWindow(model);
+
+        ArrayList<String> items = new ArrayList<>();
+        for (DiskImage image : images) {
+            items.add(image.getDiskAlias());
+        }
+        model.setItems(items);
+
+        UICommand okCommand = new UICommand("OnCancelUpload", parent); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", parent); //$NON-NLS-1$
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    public static void onCancelUpload(ConfirmationModel model, List<DiskImage> images) {
+        if (model.getProgress() != null) {
+            return;
+        }
+
+        model.startProgress(null);
+
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        for (DiskImage image : images) {
+            ImageTransferUpdates updates = new ImageTransferUpdates();
+            updates.setPhase(ImageTransferPhase.CANCELLED);
+            UploadImageStatusParameters parameters = new UploadImageStatusParameters();
+            parameters.setUpdates(updates);
+            parameters.setDiskId(image.getId());
+            list.add(parameters);
+        }
+
+        Frontend.getInstance().runMultipleAction(VdcActionType.UploadImageStatus, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        localModel.getCancelCommand().execute(); //parent.cancel();
+                    }
+                }, model);
+    }
+
+    public static void pauseUploads(List<DiskImage> images) {
+                ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        for (DiskImage image : images) {
+            ImageTransferUpdates updates = new ImageTransferUpdates();
+            updates.setPhase(ImageTransferPhase.PAUSED_USER);
+            UploadImageStatusParameters parameters = new UploadImageStatusParameters();
+            parameters.setUpdates(updates);
+            parameters.setDiskId(image.getId());
+            list.add(parameters);
+        }
+        Frontend.getInstance().runMultipleAction(VdcActionType.UploadImageStatus, list);
+    }
+
+    public static boolean isCancelAllowed(List<? extends Disk> disks) {
+        if (disks == null || disks.isEmpty()) {
+            return false;
+        }
+        for (Disk disk : disks) {
+            if (!(disk instanceof DiskImage)
+                    || disk.getImageTransferPhase() == null
+                    || !disk.getImageTransferPhase().canBeCancelled()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isPauseAllowed(List<? extends Disk> disks) {
+        if (disks == null || disks.isEmpty()) {
+            return false;
+        }
+        for (Disk disk : disks) {
+            if (!(disk instanceof DiskImage)
+                    || disk.getImageTransferPhase() == null
+                    || !disk.getImageTransferPhase().canBePaused()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isResumeAllowed(List<? extends Disk> disks) {
+        return disks != null
+                && disks.size() == 1
+                && disks.get(0) instanceof DiskImage
+                && disks.get(0).getImageTransferPhase() != null
+                && disks.get(0).getImageTransferPhase().canBeResumed();
+    }
+
 }

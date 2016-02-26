@@ -341,6 +341,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Storage Type")
     String dataCenterPopupStorageTypeLabel();
 
+    @DefaultStringValue("Upload")
+    String uploadImage();
+
+    @DefaultStringValue("Cancel Upload")
+    String uploadImageCancel();
+
+    @DefaultStringValue("Pause Upload")
+    String uploadImagePause();
+
+    @DefaultStringValue("Resume Upload")
+    String uploadImageResume();
+
     @DefaultStringValue("Shared")
     String storageTypeShared();
 
