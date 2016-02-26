@@ -860,7 +860,7 @@ fi
 %dir %{engine_etc}/branding
 %dir %{engine_etc}/extensions.d
 %dir %{engine_java}
-%doc LICENSE
+%license LICENSE
 %ghost %config(noreplace) %{engine_etc}/engine.conf
 %{engine_data}/branding/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
@@ -876,11 +876,14 @@ fi
 %endif
 
 %files extensions-api-impl -f .mfiles-extensions-api
+%license LICENSE
 
 %files extensions-api-impl-javadoc
 %{engine_doc}/ovirt-engine-extensions-api/
+%license LICENSE
 
 %files lib
+%license LICENSE
 %{engine_data}/bin/java-home
 %{python2_sitelib}/ovirt_engine/
 %if 0%{?with_python3}
@@ -888,7 +891,7 @@ fi
 %endif
 
 %files backend -f .mfiles-backend
-
+%license LICENSE
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
@@ -947,7 +950,7 @@ fi
 %ghost %config(noreplace) %{engine_pki}/serial.txt
 
 %files setup-base
-
+%license LICENSE
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
 %dir %{engine_data}/firewalld
 %dir %{engine_data}/setup
@@ -974,12 +977,13 @@ fi
 %{engine_state}/setup/
 
 %files setup
+%license LICENSE
 
 # package cannot be empty
 %ghost %{engine_data}/setup/ovirt-engine-setup-ghost
 
 %files setup-plugin-ovirt-engine
-
+%license LICENSE
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %{_bindir}/engine-upgrade-check
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
@@ -995,7 +999,7 @@ fi
 %ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
 %files setup-plugin-ovirt-engine-common
-
+%license LICENSE
 %{engine_data}/setup/bin/ovirt-engine-provisiondb
 %{engine_data}/setup/ovirt_engine_setup/engine_common/
 %{engine_data}/setup/ovirt_engine_setup/provisiondb/
@@ -1011,13 +1015,13 @@ fi
 %endif
 
 %files setup-plugin-websocket-proxy
-
+%license LICENSE
 %{engine_data}/firewalld/websocket-proxy/
 %{engine_data}/setup/ovirt_engine_setup/websocket_proxy/
 %{engine_data}/setup/plugins/*/websocket_proxy/
 
 %files setup-plugin-vmconsole-proxy-helper
-
+%license LICENSE
 %{engine_data}/conf/ovirt-vmconsole-proxy.conf
 %{engine_data}/firewalld/vmconsole-proxy/
 %{engine_data}/setup/ovirt_engine_setup/vmconsole_proxy_helper/
@@ -1025,52 +1029,52 @@ fi
 
 %if %{ovirt_with_docker}
 %files setup-plugin-dockerc
-
+%license LICENSE
 %{engine_data}/firewalld/dockerc/
 %{engine_data}/setup/ovirt_engine_setup/dockerc/
 %{engine_data}/setup/plugins/*/dockerc/
 %endif
 
 %files dbscripts
-
+%license LICENSE
 %{engine_data}/dbscripts/
 
 %files restapi -f .mfiles-restapi
-
+%license LICENSE
 %{engine_restapi_war}/
 
 %files userportal
-
+%license LICENSE
 %config %{engine_etc}/usbfilter.txt
 %{engine_ear}/userportal.war
 
 %files userportal-debuginfo
-
+%license LICENSE
 %{engine_data}/gwt-symbols/userportal/
 
 %files webadmin-portal
-
+%license LICENSE
 %{engine_ear}/webadmin.war
 
 %files webadmin-portal-debuginfo
-
+%license LICENSE
 %{engine_data}/gwt-symbols/webadmin/
 
 %files websocket-proxy
-
+%license LICENSE
 %{engine_data}/services/ovirt-websocket-proxy
 %{engine_etc}/ovirt-websocket-proxy.conf.d/
 
 %{_unitdir}/ovirt-websocket-proxy.service
 
 %files vmconsole-proxy-helper
-
+%license LICENSE
 %{_libexecdir}/ovirt-vmconsole-proxy-helper/
 %{engine_data}/conf/ovirt-vmconsole-proxy-helper.conf
 %{engine_etc}/ovirt-vmconsole-proxy-helper.conf.d/
 
 %files tools -f .mfiles-tools
-
+%license LICENSE
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-notifier
 %config(noreplace) %{engine_etc}/engine-config/engine-config.conf
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/notifier
