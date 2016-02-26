@@ -349,10 +349,10 @@ Requires:	logrotate
 Requires:	otopi >= 1.5.0
 Requires:	python-paramiko
 Requires(pre):	shadow-utils
-Conflicts:	%{name}-dwh < 3.5.0
-Conflicts:	%{name}-reports < 3.5.0
-Conflicts:	%{name}-dwh-setup < 3.6.0
-Conflicts:	%{name}-reports-setup < 3.6.0
+Conflicts:	%{name}-dwh < 3.6.0
+Conflicts:	%{name}-reports < 3.6.0
+Conflicts:	%{name}-dwh-setup < 4.0.0
+Conflicts:	%{name}-reports-setup < 4.0.0
 
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
