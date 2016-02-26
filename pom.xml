@@ -417,7 +417,7 @@
       </snapshots>
     </repository>
     <repository>
-      <!-- temporary until vdsm-jsonrpc-java-client and ovirt-host-deploy 1.3.0 released -->
+      <!-- Required till we build without -SNAPSHOT dependencies -->
       <id>sonatype-snapshots</id>
       <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
       <snapshots>
