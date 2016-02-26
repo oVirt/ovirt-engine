@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.lock.AcquireReadLock;
 
 public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     protected MacPool macPool;
@@ -19,6 +20,12 @@ public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     @Override
     public int getAvailableMacsCount() {
         return macPool.getAvailableMacsCount();
+    }
+
+    @Override
+    @AcquireReadLock
+    public int getTotalMacsCount() {
+        return macPool.getTotalMacsCount();
     }
 
     @Override

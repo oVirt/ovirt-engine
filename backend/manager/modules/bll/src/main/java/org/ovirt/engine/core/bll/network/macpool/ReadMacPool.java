@@ -14,6 +14,12 @@ public interface ReadMacPool {
     int getAvailableMacsCount();
 
     /**
+     * @return number of MACs in pool.
+     */
+    @AcquireReadLock
+    int getTotalMacsCount();
+
+    /**
      * Please note, that what this method returns needs not to be accurate. In transactional execution after you
      * release mac, this will be kept used until end of transaction, and only after that it will be released. So if you
      * release mac and invoke this method before tx ends, you'll get 'unexpected' result.

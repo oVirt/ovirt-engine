@@ -98,6 +98,10 @@ class Range {
         return availableMacsCount;
     }
 
+    public int getNumberOfMacsInRange() {
+        return numberOfMacsInRange;
+    }
+
     public List<Long> allocateMacs(int numberOfMacs) {
         if (numberOfMacs > getAvailableCount()) {
             throw new IllegalStateException("Insufficient amount of free MACs.");

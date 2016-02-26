@@ -120,6 +120,14 @@ class MacsStorage {
         return count;
     }
 
+    public int getTotalNumberOfMacs() {
+        int count = 0;
+        for (Range range : ranges) {
+            count += range.getNumberOfMacsInRange();
+        }
+        return count;
+    }
+
     private Range findIncludingRange(long mac) {
         for (Range range : ranges) {
             if (range.contains(mac)) {

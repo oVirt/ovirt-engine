@@ -106,9 +106,12 @@ public final class MacPoolUsingRanges implements MacPool {
 
     @Override
     public int getAvailableMacsCount() {
-        int availableMacsSize = macsStorage.getAvailableMacsCount();
-        log.debug("Number of available Mac addresses = {}", availableMacsSize);
-        return availableMacsSize;
+        return macsStorage.getAvailableMacsCount();
+    }
+
+    @Override
+    public int getTotalMacsCount() {
+        return macsStorage.getTotalNumberOfMacs();
     }
 
     @Override
