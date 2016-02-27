@@ -790,6 +790,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
+        if (vmFromParams.isUseHostCpuFlags() && getVdsGroup().getArchitecture().isPpcFamily()) {
+            return failCanDoAction(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
+        }
+
         if (isVirtioScsiEnabled())  {
             // Verify cluster compatibility
             if (!FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
