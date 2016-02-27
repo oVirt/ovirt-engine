@@ -640,6 +640,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failCanDoAction(EngineMessage.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
+        if (vmFromParams.isUseHostCpuFlags() && getVdsGroup().getArchitecture().isPpcFamily()) {
+            return failCanDoAction(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
+        }
+
         if (getInstanceTypeId() != null && getInstanceType() == null) {
             // invalid instance type
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST);

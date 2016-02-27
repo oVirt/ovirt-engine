@@ -3801,6 +3801,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Sound device is not supported on '${clusterArch}' architecture.")
     String SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Host CPU passthrough is not supported on '${clusterArch}' architecture.")
+    String USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH();
+
     @DefaultStringValue("The guest OS doesn't support the following CPUs: ${unsupportedCpus}. Its possible to change the cluster cpu or set a different one per VM")
     String CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS();
 
