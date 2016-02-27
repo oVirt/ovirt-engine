@@ -37,17 +37,16 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ApiSummary;
+import org.ovirt.engine.api.model.ApiSummaryItem;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DetailedLink;
-import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.ProductInfo;
 import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.SpecialObjects;
-import org.ovirt.engine.api.model.StorageDomains;
-import org.ovirt.engine.api.model.Users;
+import org.ovirt.engine.api.model.Tag;
+import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.ClustersResource;
@@ -197,18 +196,20 @@ public class BackendApiResource
         return buffer.toString();
     }
 
-    private Link createBlankTemplateLink() {
-        Link link = new Link();
-        link.setRel("templates/blank");
-        link.setHref(getTemplateBlankUri());
-        return link;
+    private Template createBlankTemplate() {
+        Template template = new Template();
+        String id = "00000000-0000-0000-0000-000000000000";
+        template.setId(id);
+        template.setHref(getLinkBase() + "/templates/" + id);
+        return template;
     }
 
-    private Link createRootTagLink() {
-        Link link = new Link();
-        link.setRel("tags/root");
-        link.setHref(getTagRootUri());
-        return link;
+    private Tag createRootTag() {
+        Tag tag = new Tag();
+        String id = "00000000-0000-0000-0000-000000000000";
+        tag.setId(id);
+        tag.setHref(getLinkBase() + "/tags/" + id);
+        return tag;
     }
 
     private Api getApi() {
@@ -222,9 +223,10 @@ public class BackendApiResource
                 api.getLinks().add(LinkCreator.createLink(detailedLink.getHref(), detailedLink.getRel(), detailedLink.getRequest().getUrl().getParametersSets()));
             }
             //add special links
-            api.setSpecialObjects(new SpecialObjects());
-            api.getSpecialObjects().getLinks().add(createBlankTemplateLink());
-            api.getSpecialObjects().getLinks().add(createRootTagLink());
+            SpecialObjects specialObjects = new SpecialObjects();
+            specialObjects.setBlankTemplate(createBlankTemplate());
+            specialObjects.setRootTag(createRootTag());
+            api.setSpecialObjects(specialObjects);
         }
         return api;
     }
@@ -243,18 +245,11 @@ public class BackendApiResource
                         detailedLink.getRequest().getUrl().getParametersSets()));
             }
             // add special links
-            api.setSpecialObjects(new SpecialObjects());
-            api.getSpecialObjects().getLinks().add(createRootTagLink());
+            SpecialObjects specialObjects = new SpecialObjects();
+            specialObjects.setRootTag(createRootTag());
+            api.setSpecialObjects(specialObjects);
         }
         return api;
-    }
-
-    private String getTagRootUri() {
-        return LinkCreator.combine(getLinkBase(), "tags/00000000-0000-0000-0000-000000000000");
-    }
-
-    private String getTemplateBlankUri() {
-        return LinkCreator.combine(getLinkBase(), "templates/00000000-0000-0000-0000-000000000000");
     }
 
     private void addHeader(BaseResource response, Response.ResponseBuilder responseBuilder) {
@@ -282,7 +277,7 @@ public class BackendApiResource
     @Override
     public Response head() {
         appMode = getCurrent().getApplicationMode();
-        Api api = null;
+        Api api;
         if(appMode == ApplicationMode.GlusterOnly) {
             api = getGlusterApi();
         }
@@ -305,7 +300,7 @@ public class BackendApiResource
         } else if (QueryHelper.hasConstraint(getUriInfo(), SCHEMA_CONSTRAINT_PARAMETER)) {
             return getSchema();
         } else {
-            BaseResource response = null;
+            BaseResource response;
             if (appMode == ApplicationMode.GlusterOnly) {
                 response = addGlusterSummary(addSystemVersion(getGlusterApi()));
             }
@@ -369,14 +364,15 @@ public class BackendApiResource
     }
 
     private Api addSystemVersion(Api api) {
-        String productVersion = getConfigurationValueDefault(String.class,
-                ConfigurationValues.ProductRPMVersion);
+        String productVersion = getConfigurationValueDefault(String.class, ConfigurationValues.ProductRPMVersion);
         BrandingManager obrand = BrandingManager.getInstance();
-        api.setProductInfo(new ProductInfo());
-        api.getProductInfo().setName(obrand.getMessage("obrand.backend.product"));
-        api.getProductInfo().setVendor(obrand.getMessage("obrand.backend.vendor"));
-        api.getProductInfo().setFullVersion(productVersion);
-        api.getProductInfo().setVersion(getVersion());
+        ProductInfo productInfo = new ProductInfo();
+        productInfo.setName(obrand.getMessage("obrand.backend.product"));
+        productInfo.setVendor(obrand.getMessage("obrand.backend.vendor"));
+        Version version = getVersion();
+        version.setFullVersion(productVersion);
+        productInfo.setVersion(version);
+        api.setProductInfo(productInfo);
         return api;
     }
 
@@ -415,21 +411,21 @@ public class BackendApiResource
 
             ApiSummary summary = new ApiSummary();
 
-            summary.setVms(new Vms());
-            summary.getVms().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD));
-            summary.getVms().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD));
+            summary.setVms(new ApiSummaryItem());
+            summary.getVms().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD));
+            summary.getVms().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD));
 
-            summary.setHosts(new Hosts());
-            summary.getHosts().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD));
-            summary.getHosts().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD));
+            summary.setHosts(new ApiSummaryItem());
+            summary.getHosts().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD));
+            summary.getHosts().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD));
 
-            summary.setUsers(new Users());
-            summary.getUsers().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD));
-            summary.getUsers().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD));
+            summary.setUsers(new ApiSummaryItem());
+            summary.getUsers().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD));
+            summary.getUsers().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD));
 
-            summary.setStorageDomains(new StorageDomains());
-            summary.getStorageDomains().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD));
-            summary.getStorageDomains().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD));
+            summary.setStorageDomains(new ApiSummaryItem());
+            summary.getStorageDomains().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD));
+            summary.getStorageDomains().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD));
 
             api.setSummary(summary);
         }
@@ -441,21 +437,17 @@ public class BackendApiResource
 
         ApiSummary summary = new ApiSummary();
 
-        summary.setHosts(new Hosts());
-        summary.getHosts().setTotal(get(stats, "total_vds"));
-        summary.getHosts().setActive(get(stats, "active_vds"));
+        summary.setHosts(new ApiSummaryItem());
+        summary.getHosts().setTotal(stats.get("total_vds"));
+        summary.getHosts().setActive(stats.get("active_vds"));
 
-        summary.setUsers(new Users());
-        summary.getUsers().setTotal(get(stats, "total_users"));
-        summary.getUsers().setActive(get(stats, "active_users"));
+        summary.setUsers(new ApiSummaryItem());
+        summary.getUsers().setTotal(stats.get("total_users"));
+        summary.getUsers().setActive(stats.get("active_users"));
 
         api.setSummary(summary);
 
         return api;
-    }
-
-    private long get(HashMap<String, Integer> stats, String key) {
-        return stats.get(key).longValue();
     }
 
     @Override

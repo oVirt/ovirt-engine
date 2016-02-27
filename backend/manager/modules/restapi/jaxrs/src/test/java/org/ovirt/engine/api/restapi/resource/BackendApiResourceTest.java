@@ -5,7 +5,6 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 
 import java.util.ArrayList;
@@ -42,12 +41,7 @@ import org.ovirt.engine.core.compat.Version;
 
 public class BackendApiResourceTest extends EasyMockSupport {
 
-    private static final String ROOT_TAG_REL = "tags/root";
-
     private static final String ROOT_TAG_HREF = "/ovirt-engine/api/tags/00000000-0000-0000-0000-000000000000";
-
-    private static final String BLANK_TEMPLATE_REL = "templates/blank";
-
     private static final String BLANK_TEMPLATE_HREF = "/ovirt-engine/api/templates/00000000-0000-0000-0000-000000000000";
 
     protected BackendApiResource resource;
@@ -352,7 +346,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
         assertContainsBlankTemplate(api.getSpecialObjects());
         assertNotNull(api.getProductInfo());
         assertNotNull(api.getProductInfo().getVersion());
-        assertNotNull(api.getProductInfo().getFullVersion());
+        assertNotNull(api.getProductInfo().getVersion().getFullVersion());
         assertEquals(MAJOR,    api.getProductInfo().getVersion().getMajor().intValue());
         assertEquals(MINOR,    api.getProductInfo().getVersion().getMinor().intValue());
         assertEquals(BUILD,    api.getProductInfo().getVersion().getBuild().intValue());
@@ -401,21 +395,13 @@ public class BackendApiResourceTest extends EasyMockSupport {
 
 
     private static void assertContainsBlankTemplate(SpecialObjects objs) {
-        for (Link link : objs.getLinks()) {
-            if (link.getHref().equals(BLANK_TEMPLATE_HREF) && link.getRel().equals(BLANK_TEMPLATE_REL)) {
-                return;
-            }
-        }
-        fail();
+        assertNotNull(objs.getBlankTemplate());
+        assertEquals(objs.getBlankTemplate().getHref(), BLANK_TEMPLATE_HREF);
     }
 
     private static void assertContainsRootTag(SpecialObjects objs) {
-        for (Link link : objs.getLinks()) {
-            if (link.getHref().equals(ROOT_TAG_HREF) && link.getRel().equals(ROOT_TAG_REL)) {
-                return;
-            }
-        }
-        fail();
+        assertNotNull(objs.getRootTag());
+        assertEquals(objs.getRootTag().getHref(), ROOT_TAG_HREF);
     }
 
     protected UriInfo setUpUriInfo() {

@@ -57,61 +57,6 @@
     <xs:attribute name="rel" type="xs:string"/>
   </xs:complexType>
 
-  <!-- API -->
-
-  <xs:element name="api" type="Api"/>
-
-  <xs:complexType name="Api">
-    <xs:complexContent>
-      <xs:extension base="BaseResource">
-        <xs:sequence>
-          <xs:element ref="special_objects" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="product_info" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="summary" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="time" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="special_objects" type="SpecialObjects"/>
-
-  <xs:complexType name="SpecialObjects">
-    <xs:complexContent>
-      <xs:extension base="BaseResource">
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="summary" type="ApiSummary"/>
-
-  <xs:complexType name="ApiSummary">
-    <xs:sequence>
-      <xs:element ref="vms" minOccurs="0" maxOccurs="1">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="Vms"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-      <xs:element ref="hosts" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="users" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="storage_domains" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <!-- Faults -->
-
-  <xs:element name="fault" type="Fault"/>
-
-  <xs:complexType name="Fault">
-    <xs:sequence>
-      <xs:element name="reason" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="detail" type="xs:string" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-  </xs:complexType>
-
-
   <xs:element name="usage_message" type="UsageMessage"/>
 
   <xs:complexType name="UsageMessage">
@@ -162,24 +107,6 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
-  </xs:complexType>
-
-  <!-- Version numbers -->
-
-  <xs:element name="system_version" type="Version"/>
-
-  <xs:element name="product_info" type="ProductInfo"/>
-
-  <xs:complexType name="ProductInfo">
-    <xs:complexContent>
-      <xs:extension base="BaseResource">
-        <xs:sequence>
-          <xs:element name="vendor" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element type="Version" name="version" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="full_version" type="xs:string" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
 
   <!-- Capabilities -->

@@ -62,6 +62,12 @@
       <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>metamodel-runtime</artifactId>
+      <version>${metamodel.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -115,9 +121,9 @@
                 <argument>${project.basedir}/target/generated-resources/model.jar</argument>
                 <argument>--version-prefix</argument>
                 <argument>V4</argument>
-                <argument>--xml</argument>
+                <argument>--xml-description</argument>
                 <argument>${project.basedir}/target/generated-resources/model.xml</argument>
-                <argument>--json</argument>
+                <argument>--json-description</argument>
                 <argument>${project.basedir}/target/generated-resources/model.json</argument>
                 <argument>--in-schema</argument>
                 <argument>${project.basedir}/src/main/schema/api.xsd</argument>

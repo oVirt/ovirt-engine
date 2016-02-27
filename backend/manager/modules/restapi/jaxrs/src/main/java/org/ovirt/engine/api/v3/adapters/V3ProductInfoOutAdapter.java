@@ -16,33 +16,31 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
-import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
-
 import org.ovirt.engine.api.model.ProductInfo;
+import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3ProductInfo;
+import org.ovirt.engine.api.v3.types.V3Version;
 
 public class V3ProductInfoOutAdapter implements V3Adapter<ProductInfo, V3ProductInfo> {
     @Override
     public V3ProductInfo adapt(ProductInfo from) {
         V3ProductInfo to = new V3ProductInfo();
-        if (from.isSetLinks()) {
-            to.getLinks().addAll(adaptOut(from.getLinks()));
-        }
-        if (from.isSetActions()) {
-            to.setActions(adaptOut(from.getActions()));
-        }
         if (from.isSetName()) {
             to.setName(from.getName());
         }
         if (from.isSetVendor()) {
             to.setVendor(from.getVendor());
         }
-        if (from.isSetVendor()) {
-            to.setVersion(adaptOut(from.getVersion()));
-        }
-        if (from.isSetFullVersion()) {
-            to.setFullVersion(from.getFullVersion());
+        Version fromVersion = from.getVersion();
+        if (fromVersion != null) {
+            V3Version toVersion = new V3Version();
+            toVersion.setMajor(fromVersion.getMajor());
+            toVersion.setMinor(fromVersion.getMinor());
+            toVersion.setBuild(fromVersion.getBuild());
+            toVersion.setRevision(fromVersion.getRevision());
+            to.setVersion(toVersion);
+            to.setFullVersion(fromVersion.getFullVersion());
         }
         return to;
     }

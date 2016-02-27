@@ -11,6 +11,7 @@ import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
+import org.ovirt.engine.api.resource.NetworkFiltersResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterHooksResource;
@@ -109,6 +110,11 @@ public class BackendClusterResource<P extends BackendClustersResource>
     @Override
     public AssignedCpuProfilesResource getCpuProfilesResource() {
         return inject(new BackendAssignedCpuProfilesResource(id));
+    }
+
+    @Override
+    public NetworkFiltersResource getNetworkFiltersResource() {
+        return null;
     }
 
     protected Guid getDataCenterId(Cluster cluster) {
