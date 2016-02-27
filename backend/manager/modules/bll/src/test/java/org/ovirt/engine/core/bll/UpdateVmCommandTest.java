@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -587,6 +588,41 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER);
         verify(inClusterUpgradeValidator, times(1)).isVmReadyForUpgrade(any(VM.class));
+    }
+
+    @Test
+    public void testBlockUseHostCpuWithPPCArch() {
+        // given
+        prepareVmToPassValidate();
+        command.initEffectiveCompatibilityVersion();
+        vm.setClusterArch(ArchitectureType.ppc64le);
+        group.setArchitecture(ArchitectureType.ppc);
+        when(osRepository.getArchitectureFromOS(OsType.Windows.ordinal())).thenReturn(ArchitectureType.ppc);
+        vmStatic.setUseHostCpuFlags(true);
+        vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+
+        // when
+        boolean validInput = command.validate();
+
+        // then
+        assertFalse("validate should fail with can't use host CPU.", validInput);
+        assertValidateMessage(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
+    }
+
+    @Test
+    public void testAllowUseHostCpuWithX86Arch() {
+        // given
+        prepareVmToPassValidate();
+        command.initEffectiveCompatibilityVersion();
+        vm.setClusterArch(ArchitectureType.x86_64);
+        vmStatic.setUseHostCpuFlags(true);
+        vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+
+        // when
+        boolean validInput = command.validate();
+
+        // then
+        assertTrue(validInput);
     }
 
     private void mockVmValidator() {

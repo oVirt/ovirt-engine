@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -766,6 +767,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (!isCpuSharesValid(vmFromParams)) {
             return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
+        }
+
+        if (vmFromParams.isUseHostCpuFlags() && (ArchitectureType.ppc == getCluster().getArchitecture().getFamily())) {
+            return failValidation(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
         }
 
         if (isVirtioScsiEnabled())  {

@@ -44,6 +44,8 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -76,6 +78,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
 @SuppressWarnings("serial")
@@ -122,6 +125,9 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Mock
     VmDao vmDao;
+
+    @Mock
+    VmStaticDao vmStaticDao;
 
     @Mock
     ClusterDao clusterDao;
@@ -467,11 +473,16 @@ public class AddVmCommandTest extends BaseCommandTest {
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
     }
 
+    private void initializeVmStaticDaoMock(VM vm) {
+        when(vmStaticDao.get(any(Guid.class))).thenReturn(vm.getStaticData());
+    }
+
     private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB) {
         VM vm = initializeMock(domainSizeGB);
         AddVmCommand<AddVmParameters> cmd = createCommand(vm);
         cmd.poolPerDc = macPoolPerDc;
         initCommandMethods(cmd);
+        initializeVmStaticDaoMock(vm);
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         doReturn(createStoragePool()).when(cmd).getStoragePool();
         return cmd;
@@ -501,6 +512,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(deviceDao).when(cmd).getVmDeviceDao();
+        doReturn(vmStaticDao).when(cmd).getVmStaticDao();
 
     }
 
@@ -558,6 +570,18 @@ public class AddVmCommandTest extends BaseCommandTest {
             cluster.setCompatibilityVersion(Version.v4_0);
             cluster.setCpuName("Intel Conroe Family");
             cluster.setArchitecture(ArchitectureType.x86_64);
+        }
+
+        return cluster;
+    }
+
+    private Cluster createPpcCluster() {
+        if (cluster == null) {
+            cluster = new Cluster();
+            cluster.setClusterId(Guid.newGuid());
+            cluster.setCompatibilityVersion(Version.v4_0);
+            cluster.setCpuName("PPC8");
+            cluster.setArchitecture(ArchitectureType.ppc64);
         }
 
         return cluster;
@@ -782,5 +806,28 @@ public class AddVmCommandTest extends BaseCommandTest {
 
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+    }
+
+    @Test
+    public void testBlockUseHostCpuWithPPCArch() {
+        mockConfig();
+        AddVmCommand<AddVmParameters> cmd = setupCanAddPpcTest();
+        cmd.setEffectiveCompatibilityVersion(Version.v4_0);
+        doReturn(Collections.<DiskImageBase> emptyList()).when(cmd).getImagesToCheckDestinationStorageDomains();
+        Cluster cluster = createPpcCluster();
+        when(clusterDao.get(any(Guid.class))).thenReturn(cluster);
+        doReturn(clusterDao).when(dbFacade).getClusterDao();
+        doReturn(true).when(cmd).areParametersLegal(Collections.<String> emptyList());
+        doReturn(true).when(cmd).validateAddVmCommand();
+        doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
+        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.ppc64);
+        cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
+        cmd.getParameters().getVm().setUseHostCpuFlags(true);
+        cmd.getParameters().getVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        cmd.getParameters().getVm().setClusterId(cluster.getId());
+        cmd.getParameters().getVm().setVmOs(OsType.Other.ordinal());
+
+        ValidateTestUtils.runAndAssertValidateFailure
+                (cmd, EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
     }
 }
