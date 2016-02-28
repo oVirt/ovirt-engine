@@ -359,14 +359,14 @@ public class VmDeviceCommonUtils {
     /**
      * Find a device in the map with the given type.
      */
-    public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
+    public static VmDevice findVmDeviceByType(Map<?, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
         return findVmDeviceByType(vmManagedDeviceMap, type.getName());
     }
 
     /**
      * Find a device in the map with the given type.
      */
-    public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, String typeName) {
+    public static VmDevice findVmDeviceByType(Map<?, VmDevice> vmManagedDeviceMap, String typeName) {
         for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
             if (vmDevice.getDevice().equals(typeName)) {
                 return vmDevice;

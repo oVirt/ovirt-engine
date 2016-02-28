@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -491,6 +492,10 @@ public class VmDevicesMonitoring implements BackendService {
 
             Guid deviceId = getDeviceId(vdsmDevice);
             VmDevice dbDevice = dbDeviceMap.get(new VmDeviceId(deviceId, vmId));
+            if (dbDevice == null) {
+                dbDevice = getByDeviceType((String) vdsmDevice.get(VdsProperties.Device), dbDeviceMap);
+                deviceId = dbDevice != null ? dbDevice.getDeviceId() : deviceId;
+            }
             String logicalName = getDeviceLogicalName(change.getVdsId(), vmInfo, vdsmDevice);
 
             if (deviceId == null || dbDevice == null) {
@@ -510,6 +515,23 @@ public class VmDevicesMonitoring implements BackendService {
         }
 
         handleRemovedDevices(change, vmId, processedDeviceIds, dbDevices);
+    }
+
+    /**
+     * Some of the devices need special treatment:
+     * virtio-serial: this device was unmanaged before 3.6 and since 3.6 it is managed.
+     * if the VM is running while the engine is upgraded we might still get it as unmanaged
+     * from VDSM and since we generate IDs for unmanaged devices, we won't be able to find
+     * it by its ID. therefore, we check by its type, assuming that there is only one
+     * virtio-serial per VM.
+     *
+     */
+    private VmDevice getByDeviceType(String deviceTypeName, Map<?, VmDevice> dbDevices) {
+        if (VmDeviceType.VIRTIOSERIAL.getName().equals(deviceTypeName)) {
+            return VmDeviceCommonUtils.findVmDeviceByType(dbDevices, deviceTypeName);
+        }
+
+        return null;
     }
 
     private void processDevice(Change change, VmDevice device) {
