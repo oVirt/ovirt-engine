@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.storage.domain.DeactivateStorageDomainCommand;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -165,12 +164,6 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         boolean reconstructOpSucceeded = reconstructMaster();
         setActionReturnValue(reconstructOpSucceeded);
         connectAndRefreshAllUpHosts(reconstructOpSucceeded);
-        if (!isLastMaster && reconstructOpSucceeded && !FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
-            // all vms/templates metadata should be copied to the new master domain, so we need
-            // to perform increment of the db version for all the vms in the storage pool.
-            // currently this method is used for both templates and vms.
-            getVmStaticDao().incrementDbGenerationForAllInStoragePool(getStoragePoolId());
-        }
         if (isLastMaster) {
             getCompensationContext().resetCompensation();
         }

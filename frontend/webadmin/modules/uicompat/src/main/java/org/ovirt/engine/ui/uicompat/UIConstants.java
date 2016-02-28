@@ -252,9 +252,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Storage")
     String storageTitle();
 
-    @DefaultStringValue("The selected Data Center compatibility version does not support importing a data domain with its entities (VM's and Templates). The domain will be imported without them.")
-    String dataCenterDoesntSupportImportDataDomainAlert();
-
     @DefaultStringValue("The selected domain already has an ISO domain and an export domains attached")
     String noStoragesToImport();
 
@@ -2095,9 +2092,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("V4.1")
     String nfsVersion41();
-
-    @DefaultStringValue("DirectLUN disk is not supported by the Data Center Compatibility Version")
-    String directLUNDiskNotSupported();
 
     @DefaultStringValue("Shareable Disk is not supported by the Data Center Compatibility Version")
     String shareableDiskNotSupported();

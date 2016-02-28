@@ -345,7 +345,6 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getClusterId(),
                         getStoragePoolId(),
-                        getCluster().getCompatibilityVersion(),
                         AuditLogType.ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES);
 
         for (VmNetworkInterface iface : getVmFromConfiguration().getInterfaces()) {

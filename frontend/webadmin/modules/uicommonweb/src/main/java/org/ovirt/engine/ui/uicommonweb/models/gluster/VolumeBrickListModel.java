@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -355,8 +354,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             @Override
             public void onSuccess(Object model, Object result) {
                 Cluster cluster = (Cluster) result;
-                volumeBrickModel.getForce()
-                        .setIsAvailable(GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getCompatibilityVersion()));
+                volumeBrickModel.getForce().setIsAvailable(true);
                 volumeBrickModel.setIsBrickProvisioningSupported(GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion()));
                 AsyncQuery _asyncQueryInner = new AsyncQuery();
                 _asyncQueryInner.setModel(model);
@@ -1212,32 +1210,10 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                Cluster cluster = (Cluster) returnValue;
-                if (Version.v3_2.compareTo(cluster.getCompatibilityVersion()) <= 0) {
-                    onShowBrickAdvancedDetails(volumeEntity);
-                }
-                else {
-                    ConfirmationModel model = new ConfirmationModel();
-                    setWindow(model);
-                    model.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
-                    model.setMessage(ConstantsManager.getInstance()
-                            .getMessages()
-                            .brickDetailsNotSupportedInClusterCompatibilityVersion(
-                                    cluster.getCompatibilityVersion() != null ? cluster.getCompatibilityVersion()
-                                    .toString()
-                                    : "")); //$NON-NLS-1$
-                    model.setHelpTag(HelpTag.brick_details_not_supported);
-                    model.setHashName("brick_details_not_supported"); //$NON-NLS-1$
-
-                    UICommand command = new UICommand("Cancel", VolumeBrickListModel.this); //$NON-NLS-1$
-                    command.setTitle(ConstantsManager.getInstance().getConstants().close());
-                    command.setIsCancel(true);
-                    model.getCommands().add(command);
-                }
+                onShowBrickAdvancedDetails(volumeEntity);
             }
         }),
                 volumeEntity.getClusterId());
-
     }
 
     private void onShowBrickAdvancedDetails(GlusterVolumeEntity volumeEntity) {

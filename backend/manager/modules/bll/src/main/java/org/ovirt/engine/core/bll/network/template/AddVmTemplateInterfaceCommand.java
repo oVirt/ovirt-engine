@@ -85,9 +85,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             Version clusterCompatibilityVersion = getCluster().getCompatibilityVersion();
             VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion, getVmTemplate().getOsId());
 
-            return validate(nicValidator.linkedOnlyIfSupported())
-                    && validate(nicValidator.isCompatibleWithOs())
-                    && validate(nicValidator.emptyNetworkValid())
+            return validate(nicValidator.isCompatibleWithOs())
                     && validate(nicValidator.profileValid(getVmTemplate().getClusterId()))
                     && validate(nicValidator.typeMatchesProfile())
                     && validate(nicValidator.passthroughIsLinked());

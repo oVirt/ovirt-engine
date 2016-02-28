@@ -591,8 +591,7 @@ public abstract class RunOnceModel extends Model {
         setCustomPropertySheet(new KeyValueModel());
 
         setBootMenuEnabled(new EntityModel<>(false));
-        getBootMenuEnabled().setIsAvailable(
-                AsyncDataProvider.getInstance().isBootMenuSupported(vm.getCompatibilityVersion().toString()));
+        getBootMenuEnabled().setIsAvailable(true);
         setRunAndPause(new EntityModel<>(false));
         setRunAsStateless(new EntityModel<>(false));
 
@@ -616,10 +615,8 @@ public abstract class RunOnceModel extends Model {
 
         setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-        boolean spiceCopyPasteToggle =
-                AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(vm.getCompatibilityVersion().toString());
-        getSpiceCopyPasteEnabled().setIsChangeable(spiceCopyPasteToggle);
-        getSpiceCopyPasteEnabled().setIsAvailable(spiceCopyPasteToggle);
+        getSpiceCopyPasteEnabled().setIsChangeable(true);
+        getSpiceCopyPasteEnabled().setIsAvailable(true);
 
         // System tab
         setEmulatedMachine(new ListModel<String>());

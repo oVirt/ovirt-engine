@@ -8,7 +8,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,11 +23,6 @@ public class NetworkExclusivenessValidatorResolverTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-            mockConfig(NetworkExclusivenessPermissiveValidation, Version.v3_0.toString(), false),
-            mockConfig(NetworkExclusivenessPermissiveValidation, Version.v3_1.toString(), false),
-            mockConfig(NetworkExclusivenessPermissiveValidation, Version.v3_2.toString(), false),
-            mockConfig(NetworkExclusivenessPermissiveValidation, Version.v3_3.toString(), false),
-            mockConfig(NetworkExclusivenessPermissiveValidation, Version.v3_4.toString(), false),
             mockConfig(NetworkExclusivenessPermissiveValidation, Version.v3_5.toString(), false),
             mockConfig(NetworkExclusivenessPermissiveValidation, Version.v3_6.toString(), true));
 
@@ -69,29 +63,14 @@ public class NetworkExclusivenessValidatorResolverTest {
     }
 
     @Test
-    public void testResolveNetworkExclusivenessValidatorAllLegacy() {
-
-        final Set<Version> supportedVersions = new HashSet<>();
-        for (int i = 0; i < 6; i++) {
-            supportedVersions.add(new Version(3, i));
-        }
-        final NetworkExclusivenessValidator actual =
-                underTest.resolveNetworkExclusivenessValidator(supportedVersions);
-
-        assertThat(actual, sameInstance(legacyNetworkExclusivenessValidator));
-    }
-
-    @Test
     public void testResolveNetworkExclusivenessValidatorEveryLegacyVersion() {
 
-        for (int i = 0; i < 6; i++) {
-            final Version version = new Version(3, i);
-            final NetworkExclusivenessValidator actual =
-                    underTest.resolveNetworkExclusivenessValidator(Collections.singleton(version));
+        final Version version = Version.v3_5;
+        final NetworkExclusivenessValidator actual =
+                underTest.resolveNetworkExclusivenessValidator(Collections.singleton(version));
 
-            assertThat(version.getValue() + " supposed to return the legacy validator",
-                    actual,
-                    sameInstance(legacyNetworkExclusivenessValidator));
-        }
+        assertThat(version.getValue() + " supposed to return the legacy validator",
+                actual,
+                sameInstance(legacyNetworkExclusivenessValidator));
     }
 }

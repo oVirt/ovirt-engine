@@ -27,7 +27,6 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -86,7 +85,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         VdsStatic vdsStatic = getParameters().getVdsStaticData();
         if (vdsStatic.getProtocol() == null) {
             Cluster cluster = getCluster();
-            if (cluster != null && FeatureSupported.jsonProtocol(cluster.getCompatibilityVersion())) {
+            if (cluster != null) {
                 vdsStatic.setProtocol(VdsProtocol.STOMP);
             } else {
                 vdsStatic.setProtocol(VdsProtocol.XML);

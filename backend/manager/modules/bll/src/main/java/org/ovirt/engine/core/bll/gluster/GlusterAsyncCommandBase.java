@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -41,11 +40,6 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         GlusterVolumeEntity glusterVolume = getGlusterVolume();
         if (!super.validate()) {
             return false;
-        }
-
-        if (!GlusterFeatureSupported.glusterAsyncTasks(getCluster().getCompatibilityVersion())) {
-            addValidationMessageVariable("compatibilityVersion", getCluster().getCompatibilityVersion().getValue());
-            return failValidation(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL);
         }
 
         if (!glusterVolume.isOnline()) {

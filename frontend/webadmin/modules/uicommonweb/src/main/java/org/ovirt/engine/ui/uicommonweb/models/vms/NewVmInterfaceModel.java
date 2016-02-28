@@ -119,12 +119,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initLinked() {
-        if (hotUpdateSupported) {
-            getLinked().setEntity(true);
-        } else {
-            getLinked().setEntity(true);
-            getLinked().setIsAvailable(false);
-        }
+        getLinked().setEntity(true);
     }
 
     @Override

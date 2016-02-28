@@ -169,7 +169,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         mockOsRepository();
-        mockOsRepositoryGraphics(0, Version.v3_3, new Pair<>(GraphicsType.SPICE, DisplayType.qxl));
+        mockOsRepositoryGraphics(0, Version.v4_0, new Pair<>(GraphicsType.SPICE, DisplayType.qxl));
         mockGraphicsDevices(vm.getId());
 
         mockStorageDomainDaoGetAllStoragesForPool(AVAILABLE_SPACE_GB);
@@ -555,7 +555,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         if (cluster == null) {
             cluster = new Cluster();
             cluster.setClusterId(Guid.newGuid());
-            cluster.setCompatibilityVersion(Version.v3_3);
+            cluster.setCompatibilityVersion(Version.v4_0);
             cluster.setCpuName("Intel Conroe Family");
             cluster.setArchitecture(ArchitectureType.x86_64);
         }
@@ -607,12 +607,9 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockConfig() {
-        mcr.mockConfigValue(ConfigValues.PredefinedVMProperties, Version.v3_0, "");
-        mcr.mockConfigValue(ConfigValues.UserDefinedVMProperties, Version.v3_0, "");
         mcr.mockConfigValue(ConfigValues.InitStorageSparseSizeInGB, 1);
-        mcr.mockConfigValue(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true);
         mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")));
-        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, Version.v3_3, migrationMap);
+        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, Version.v4_0, migrationMap);
         mcr.mockConfigValue(ConfigValues.MaxIoThreadsPerVm, 127);
     }
 

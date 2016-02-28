@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -860,13 +859,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
             }
         }
 
-        if (vds.getClusterCompatibilityVersion() != null
-                && Version.v3_2.compareTo(vds.getClusterCompatibilityVersion()) > 0) {
-            setLogicalCores(vds.getCpuCores());
-        } else {
-            setLogicalCores(vds.getCpuThreads());
-        }
-
+        setLogicalCores(vds.getCpuThreads());
         setOnlineCores(vds.getOnlineCpus() == null ? vds.getOnlineCpus() : vds.getOnlineCpus().replaceAll(",", ", ")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 

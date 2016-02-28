@@ -16,7 +16,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -79,7 +77,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -126,11 +123,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1, true)
-    );
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
@@ -743,7 +735,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         vm.setStatus(status);
         vm.setGuestOs("rhel6");
         vm.setId(vmId);
-        vm.setClusterCompatibilityVersion(Version.v3_1);
         return vm;
     }
 
@@ -753,7 +744,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockVmsStoragePoolInfo(List<VM> vms) {
-        StoragePool storagePool = mockStoragePool(Version.v3_1);
+        StoragePool storagePool = mockStoragePool();
         for (VM vm : vms) {
             vm.setStoragePoolId(storagePool.getId());
         }
@@ -789,7 +780,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
      */
     protected void mockVds() {
         VDS vds = new VDS();
-        vds.setClusterCompatibilityVersion(new Version("3.1"));
         command.setVdsId(Guid.Empty);
         doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(Guid.Empty)).thenReturn(vds);
@@ -798,11 +788,10 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     /**
      * Mock a {@link StoragePool}.
      */
-    private StoragePool mockStoragePool(Version compatibilityVersion) {
+    private StoragePool mockStoragePool() {
         Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
-        storagePool.setCompatibilityVersion(compatibilityVersion);
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
 
         return storagePool;

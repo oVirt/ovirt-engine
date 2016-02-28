@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-
 import java.util.Collections;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -44,15 +42,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
     protected boolean validate() {
         HostValidator hostValidator = new HostValidator(getVds());
 
-        return validate(hostValidator.hostExists())
-                && validate(hostValidator.isUp())
-                && validate(validateMinimumVersionSupport());
-    }
-
-    private ValidationResult validateMinimumVersionSupport() {
-        return FeatureSupported.momPolicyOnHost(getCluster().getCompatibilityVersion())
-                ? ValidationResult.VALID
-                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION);
+        return validate(hostValidator.hostExists()) && validate(hostValidator.isUp());
     }
 
     @Override

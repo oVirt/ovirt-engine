@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -33,11 +30,5 @@ public class GlusterStorageModel extends PosixStorageModel {
     @Override
     public void setVfsChangeability(boolean isVfsChangeable) {
         getVfsType().setIsChangeable(false);
-    }
-
-    @Override
-    public Boolean isSupportedInVersion(Version dcVersion) {
-        return (Boolean) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigurationValues.GlusterFsStorageEnabled, dcVersion.toString());
     }
 }

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -108,18 +107,13 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     protected void executeCommand() {
         if (!getVm().isDown()) {
-            if (FeatureSupported.liveMerge(getVm().getCompatibilityVersion())) {
-                if (!getVm().isQualifiedForSnapshotMerge()) {
-                    log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
-                    throw new EngineException(EngineError.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
-                } else if (getVm().getRunOnVds() == null ||
-                        !getVdsDao().get(getVm().getRunOnVds()).getLiveMergeSupport()) {
-                    log.error("Cannot remove VM snapshot. The host on which VM is running does not support Live Merge");
-                    throw new EngineException(EngineError.VM_HOST_CANNOT_LIVE_MERGE);
-                }
-            } else {
-                log.error("Cannot remove VM snapshot. Vm is not Down and cluster version does not support Live Merge");
-                throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
+            if (!getVm().isQualifiedForSnapshotMerge()) {
+                log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
+                throw new EngineException(EngineError.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
+            } else if (getVm().getRunOnVds() == null ||
+                    !getVdsDao().get(getVm().getRunOnVds()).getLiveMergeSupport()) {
+                log.error("Cannot remove VM snapshot. The host on which VM is running does not support Live Merge");
+                throw new EngineException(EngineError.VM_HOST_CANNOT_LIVE_MERGE);
             }
         }
 
@@ -355,11 +349,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
                 !validateSnapshotType() ||
-                (FeatureSupported.liveMerge(getVm().getCompatibilityVersion())
-                        ? (!validate(vmValidator.vmQualifiedForSnapshotMerge())
-                           || !validate(vmValidator.vmHostCanLiveMerge()))
-                        : !validate(vmValidator.vmDown())) ||
-                !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
+                !validate(vmValidator.vmQualifiedForSnapshotMerge()) ||
+                !validate(vmValidator.vmHostCanLiveMerge())) {
             return false;
         }
 

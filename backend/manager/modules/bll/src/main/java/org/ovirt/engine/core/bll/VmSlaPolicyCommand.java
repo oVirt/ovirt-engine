@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -36,9 +35,6 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
         }
         if (getVm().getStatus() != VMStatus.Up) {
             return failVmStatusIllegal();
-        }
-        if (!FeatureSupported.vmSlaPolicy(getVm().getCompatibilityVersion())) {
-            return failValidation(EngineMessage.VM_SLA_POLICY_NOT_SUPPORTED);
         }
 
         return true;

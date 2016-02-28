@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -515,25 +514,19 @@ public abstract class AbstractDiskModel extends DiskModel {
         }
     }
 
-    private void updateShareableDiskEnabled(StoragePool datacenter) {
-        boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.ShareableDiskEnabled, datacenter.getCompatibilityVersion().getValue());
-
+    private void updateShareableDiskEnabled() {
         getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupported());
-        getIsShareable().setIsChangeable(isShareableDiskEnabled && isEditEnabled());
+        getIsShareable().setIsChangeable(isEditEnabled());
     }
 
-    private void updateDirectLunDiskEnabled(StoragePool datacenter) {
+    private void updateDirectLunDiskEnabled() {
         if (getDiskStorageType().getEntity() != DiskStorageType.LUN) {
             return;
         }
 
-        boolean isDirectLUNDiskkEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.DirectLUNDiskEnabled, datacenter.getCompatibilityVersion().getValue());
-
-        getIsDirectLunDiskAvaialable().setEntity(isDirectLUNDiskkEnabled);
-        setMessage(!isDirectLUNDiskkEnabled ? constants.directLUNDiskNotSupported() : ""); //$NON-NLS-1$
-        getIsModelDisabled().setEntity(!isDirectLUNDiskkEnabled);
+        getIsDirectLunDiskAvaialable().setEntity(true);
+        setMessage(""); //$NON-NLS-1$
+        getIsModelDisabled().setEntity(false);
     }
 
     private void updateShareable(VolumeType volumeType, StorageType storageType) {
@@ -878,8 +871,8 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         setMessage(null);
         getIsModelDisabled().setEntity(false);
-        updateShareableDiskEnabled(datacenter);
-        updateDirectLunDiskEnabled(datacenter);
+        updateShareableDiskEnabled();
+        updateDirectLunDiskEnabled();
         updateInterface(isInVm ? getVm().getCompatibilityVersion() : null);
 
         switch (getDiskStorageType().getEntity()) {

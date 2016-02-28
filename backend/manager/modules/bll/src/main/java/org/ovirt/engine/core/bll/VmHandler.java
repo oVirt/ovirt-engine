@@ -652,12 +652,7 @@ public class VmHandler {
         return legal;
     }
 
-    public static boolean isSingleQxlDeviceLegal(DisplayType displayType, int osId, List<String> reasons,
-            Version compatibilityVersion) {
-        if (!FeatureSupported.singleQxlPci(compatibilityVersion)) {
-             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_INCOMPATIBLE_VERSION.toString());
-             return false;
-         }
+    public static boolean isSingleQxlDeviceLegal(DisplayType displayType, int osId, List<String> reasons) {
         if (displayType != DisplayType.qxl) {
             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE.toString());
             return false;
@@ -703,23 +698,14 @@ public class VmHandler {
     }
 
     /**
-     * Checks that the USB policy is legal for the VM. If it is ENABLED_NATIVE then it is legal only in case the cluster
-     * level is >= 3.1. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
+     * Checks that the USB policy is legal for the VM. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
      *
      * @param messages
      *            - Messages for validate()
      */
-    public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy,
-            int osId, Version compatibilityVersion,
-            List<String> messages) {
+    public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy, int osId, List<String> messages) {
         boolean retVal = true;
-        if (UsbPolicy.ENABLED_NATIVE.equals(usbPolicy)) {
-            if (!Config.<Boolean> getValue(ConfigValues.NativeUSBEnabled, compatibilityVersion
-                    .getValue())) {
-                messages.add(EngineMessage.USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL.toString());
-                retVal = false;
-            }
-        } else if (UsbPolicy.ENABLED_LEGACY.equals(usbPolicy)) {
+        if (UsbPolicy.ENABLED_LEGACY.equals(usbPolicy)) {
             if (osRepository.isLinux(osId)) {
                 messages.add(EngineMessage.USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS.toString());
                 retVal = false;
@@ -1081,12 +1067,9 @@ public class VmHandler {
         return true;
     }
 
-    public static void autoSelectUsbPolicy(VmBase fromParams, Cluster cluster) {
+    public static void autoSelectUsbPolicy(VmBase fromParams) {
         if (fromParams.getUsbPolicy() == null) {
-            Version compatibilityVersion = CompatibilityVersionUtils.getEffective(fromParams, cluster);
-            UsbPolicy usbPolicy = compatibilityVersion.compareTo(Version.v3_1) >= 0 ?
-                    UsbPolicy.ENABLED_NATIVE : UsbPolicy.ENABLED_LEGACY;
-            fromParams.setUsbPolicy(usbPolicy);
+            fromParams.setUsbPolicy(UsbPolicy.ENABLED_NATIVE);
         }
     }
 

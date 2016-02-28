@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
@@ -14,18 +13,10 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
         super(parameters);
     }
 
-    private boolean isStoragePoolMemoryBackend() {
-        return FeatureSupported.storagePoolMemoryBackend(
-                getParameters().getStoragePool().getCompatibilityVersion());
-    }
-
     public void connectStoragePool() {
         Map<String, String> storageDomains = null;
 
-        if (isStoragePoolMemoryBackend()) {
-            storageDomains = StoragePoolDomainHelper.buildStoragePoolDomainsMap(
-                    getParameters().getStorageDomains());
-        }
+        storageDomains = StoragePoolDomainHelper.buildStoragePoolDomainsMap(getParameters().getStorageDomains());
 
         status = getBroker().connectStoragePool(
                 getParameters().getStoragePoolId().toString(),
@@ -36,33 +27,14 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
                 storageDomains);
     }
 
-    public void refreshStoragePool() {
-        status = getBroker().refreshStoragePool(
-                getParameters().getStoragePoolId().toString(),
-                getParameters().getMasterDomainId().toString(),
-                getParameters().getStoragePool().getMasterDomainVersion());
-    }
-
-    protected boolean isRefreshStoragePool() {
-        return getParameters().isRefreshOnly() && !isStoragePoolMemoryBackend();
-    }
-
     @Override
     protected void executeVdsBrokerCommand() {
-        if (isRefreshStoragePool()) {
-            refreshStoragePool();
-        } else {
-            connectStoragePool();
-        }
+        connectStoragePool();
         proceedProxyReturnValue();
     }
 
     protected void proceedProxyReturnValue() {
-        if (isRefreshStoragePool()) {
-            super.proceedProxyReturnValue();
-        } else {
-            proceedConnectProxyReturnValue();
-        }
+        proceedConnectProxyReturnValue();
     }
 
     // Don't throw exception on errors except StoragePoolMasterNotFound for

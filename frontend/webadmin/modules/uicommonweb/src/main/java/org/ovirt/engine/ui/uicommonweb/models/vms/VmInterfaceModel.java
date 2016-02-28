@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -55,7 +54,6 @@ public abstract class VmInterfaceModel extends Model {
     private EntityModel<Boolean> unplugged_IsSelected;
 
     protected final boolean hotPlugSupported;
-    protected final boolean hotUpdateSupported;
     private final VmBase vm;
     private final ArrayList<VmNetworkInterface> vmNicList;
     private final VMStatus vmStatus;
@@ -87,10 +85,6 @@ public abstract class VmInterfaceModel extends Model {
         hotPlugSupported =
                 AsyncDataProvider.getInstance().getNicHotplugSupport(vm.getOsId(),
                         clusterCompatibilityVersion);
-
-        hotUpdateSupported =
-                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
-                        clusterCompatibilityVersion.toString());
 
         setName(new EntityModel<String>());
 
@@ -432,7 +426,7 @@ public abstract class VmInterfaceModel extends Model {
             }
         };
 
-        profileBehavior.initProfiles(hotUpdateSupported, getVm().getClusterId(), dcId, _asyncQuery);
+        profileBehavior.initProfiles(getVm().getClusterId(), dcId, _asyncQuery);
     }
 
     protected void initCommands() {
@@ -475,10 +469,6 @@ public abstract class VmInterfaceModel extends Model {
         boolean isNullProfileSelected = getProfile().getSelectedItem() == null;
 
         if (isNullProfileSelected) {
-            getLinked().setIsChangeable(false);
-            return;
-        }
-        if (!hotUpdateSupported) {
             getLinked().setIsChangeable(false);
             return;
         }

@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -50,9 +49,5 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
         //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
         //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
         getContainer().getHost().setIsChangeable(isPathEditable);
-    }
-
-    public Boolean isSupportedInVersion(Version dcVersion) {
-        return true;
     }
 }

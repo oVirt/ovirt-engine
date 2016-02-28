@@ -696,11 +696,6 @@ public class IrsProxyData {
         }
     }
 
-    private boolean isStoragePoolMemoryBackend(StoragePool pool) {
-        return FeatureSupported.storagePoolMemoryBackend(
-                pool.getCompatibilityVersion());
-    }
-
     private String gethostFromVds() {
         String returnValue = null;
         Guid curVdsId = (currentVdsId != null) ? currentVdsId : Guid.Empty;
@@ -749,10 +744,7 @@ public class IrsProxyData {
             Guid selectedVdsId = selectedVds.getId();
             Integer selectedVdsSpmId = selectedVds.getVdsSpmId();
             triedVdssList.add(selectedVdsId);
-
-            if (isStoragePoolMemoryBackend(storagePool)) {
-                connectStoragePool(selectedVds, storagePool);
-            }
+            connectStoragePool(selectedVds, storagePool);
 
             VDSReturnValue returnValueFromVds = ResourceManager.getInstance().runVdsCommand(
                     VDSCommandType.SpmStatus,
@@ -1269,7 +1261,7 @@ public class IrsProxyData {
         // Unknown domains in pool
         for (VDSDomainsData tempData : data) {
             if (activeDomainsInPool.contains(tempData.getDomainId()) || unknownDomainsInPool.contains(tempData.getDomainId())) {
-                DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, storagePool, false);
+                DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, false);
                 if (domainMonitoringResult.invalidAndActual()) {
                     domainsProblematicReportInfo.put(tempData.getDomainId(), domainMonitoringResult);
                 } else if (domainMonitoringResult.actual() && tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
@@ -1280,7 +1272,7 @@ public class IrsProxyData {
             else if ((inActiveDomainsInPool.contains(tempData.getDomainId()) ||
                     // in data centers with spm, unknown domains are moving to Active status according to the pool metadata.
                     (FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion()) && unknownDomainsInPool.contains(tempData.getDomainId())))
-                    && analyzeDomainReport(tempData, storagePool, false).validAndActual()) {
+                    && analyzeDomainReport(tempData, false).validAndActual()) {
                 log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
                         getDomainIdTuple(tempData.getDomainId()),
                         vdsName,
@@ -1326,7 +1318,7 @@ public class IrsProxyData {
                 AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
     }
 
-    protected List<Guid> obtainDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData, StoragePool storagePool) {
+    protected List<Guid> obtainDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData) {
         List<Guid> domainsInProblem = new LinkedList<>();
         Set<Guid> domainsInPool = new HashSet<>(
                 DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
@@ -1336,7 +1328,7 @@ public class IrsProxyData {
         List<Guid> domainWhichWereSeen = new ArrayList<>();
         for (VDSDomainsData vdsDomainData : vdsDomainsData) {
             if (domainsInPool.contains(vdsDomainData.getDomainId())) {
-                if (analyzeDomainReport(vdsDomainData, storagePool, true).invalidAndActual()) {
+                if (analyzeDomainReport(vdsDomainData, true).invalidAndActual()) {
                     domainsInProblem.add(vdsDomainData.getDomainId());
                 }
                 domainWhichWereSeen.add(vdsDomainData.getDomainId());
@@ -1374,9 +1366,8 @@ public class IrsProxyData {
         }
     }
 
-    private DomainMonitoringResult analyzeDomainReport(VDSDomainsData tempData, StoragePool storagePool, boolean isLog) {
-        if (!tempData.isActual() &&
-                FeatureSupported.reportWhetherDomainMonitoringResultIsActual(storagePool.getCompatibilityVersion())) {
+    private DomainMonitoringResult analyzeDomainReport(VDSDomainsData tempData, boolean isLog) {
+        if (!tempData.isActual()) {
             log.warn("Domain '{}' report isn't an actual report",
                     getDomainIdTuple(tempData.getDomainId()));
             return DomainMonitoringResult.NOT_ACTUAL;

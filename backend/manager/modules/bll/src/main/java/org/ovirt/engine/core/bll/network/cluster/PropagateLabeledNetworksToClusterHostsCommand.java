@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -41,20 +40,11 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
 
         final Map<Guid, ManageNetworkClustersParameters> paramsByClusterId = mapParametersByClusterId();
 
-        for (Entry<Guid, ManageNetworkClustersParameters> singleClusterInput : paramsByClusterId.entrySet()) {
-            final Guid clusterId = singleClusterInput.getKey();
-            if (isSetupNetworkSupported(clusterId)) {
-                final ManageNetworkClustersParameters param = singleClusterInput.getValue();
-                processSingleClusterChanges(param);
-            }
+        for (ManageNetworkClustersParameters param : paramsByClusterId.values()) {
+            processSingleClusterChanges(param);
         }
 
         setSucceeded(true);
-    }
-
-    private boolean isSetupNetworkSupported(Guid clusterId) {
-        final Cluster cluster = getClusterDao().get(clusterId);
-        return NetworkHelper.setupNetworkSupported(cluster.getCompatibilityVersion());
     }
 
     private void processSingleClusterChanges(ManageNetworkClustersParameters param) {

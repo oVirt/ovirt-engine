@@ -37,7 +37,6 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
@@ -45,7 +44,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -727,15 +725,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
         allowOverbookingPanel.setVisible(allowOverbookingEditor.isVisible());
 
-        object.getVersion().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (object.getVersion().getSelectedItem() != null) {
-                    String clusterVersion = object.getVersion().getSelectedItem().getValue();
-                    serialNumberPolicyEditor.setVisible(AsyncDataProvider.getInstance().isSerialNumberPolicySupported(clusterVersion));
-                }
-            }
-        });
+        serialNumberPolicyEditor.setVisible(true);
 
         object.getAdditionalClusterFeatures().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 

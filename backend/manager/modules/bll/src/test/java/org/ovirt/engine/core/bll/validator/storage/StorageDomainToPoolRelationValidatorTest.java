@@ -6,39 +6,31 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDomainToPoolRelationValidatorTest {
-    private static final Version UNSUPPORTED_VERSION = Version.v3_0;
-    private static final Version SUPPORTED_VERSION = Version.v3_3;
-
     private StorageDomain storageDomain;
     private StoragePool storagePool;
     private StorageDomainToPoolRelationValidator validator;
@@ -77,101 +69,10 @@ public class StorageDomainToPoolRelationValidatorTest {
         doReturn(storageDomainDao).when(validator).getStorageDomainDao();
     }
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_0, false),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_4, true),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_5, true),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0, false),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_4, true),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_5, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_6, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v4_0, true),
-            mockConfig(ConfigValues.PosixStorageEnabled, UNSUPPORTED_VERSION.toString(), false),
-            mockConfig(ConfigValues.PosixStorageEnabled, SUPPORTED_VERSION.toString(), true),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, UNSUPPORTED_VERSION.toString(), false),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, SUPPORTED_VERSION.toString(), true)
-    );
-
     @Test
     public void testAttachOnValidDomain() {
         assertThat("Attaching a valid domain to attach was failed",
                 validator.validateDomainCanBeAttachedToPool(), isValid());
-    }
-
-    /**
-     * Mixed types are not allowed on version lower than V3.4, test that attempting to attach a domain of different type
-     * than what already exists in the data center will fail for versions 3.0 to 3.3 inclusive
-     */
-    @Test
-    public void testMixedTypesOnAllVersions() {
-        // Use an old format so the domain will be able to attach to each DC.
-        storageDomain.setStorageFormat(StorageFormatType.V1);
-
-        // Mock the pool to have a NFS type domain
-        when(storagePoolDao.getStorageTypesInPool(storagePool.getId())).thenReturn(Collections.singletonList(StorageType.NFS));
-
-        storageDomain.setStorageType(StorageType.ISCSI);
-        for (Version version : Version.ALL) {
-            if (version.compareTo(Version.v3_0) >= 0) { // No reason to test unsupported versions
-                assertAddingMixedTypes(version, FeatureSupported.mixedDomainTypesOnDataCenter(version));
-            }
-        }
-    }
-
-    private void assertAddingMixedTypes(Version version, boolean addingMixedTypesShouldSucceed) {
-        storagePool.setCompatibilityVersion(version);
-
-        ValidationResult attachDomainResult = validator.validateDomainCanBeAttachedToPool();
-        if (addingMixedTypesShouldSucceed) {
-            assertThat("Attaching an ISCSI domain to a pool with NFS domain with with mixed type allowed failed, version: " + version, attachDomainResult, isValid());
-        }
-        else {
-            assertThat(attachDomainResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED));
-        }
-    }
-
-    @Test
-    public void testPosixDcAndMatchingCompatiblityVersion() {
-        storagePool.setCompatibilityVersion(SUPPORTED_VERSION);
-        storagePool.setIsLocal(false);
-        assertThat(validator.isPosixSupportedInDC(), isValid());
-    }
-
-    @Test
-    public void testPosixDcAndNotMatchingCompatiblityVersion() {
-        storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
-        storagePool.setIsLocal(false);
-        assertThat(validator.isPosixSupportedInDC(),
-                failsWith(EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
-    }
-
-    @Test
-    public void testGlusterDcAndMatchingCompatiblityVersion() {
-        storagePool.setCompatibilityVersion(SUPPORTED_VERSION);
-        storagePool.setIsLocal(false);
-        assertThat(validator.isGlusterSupportedInDC(), isValid());
-    }
-
-    @Test
-    public void testGlusterDcAndNotMatchingCompatiblityVersion() {
-        storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
-        storagePool.setIsLocal(false);
-        assertThat(validator.isGlusterSupportedInDC(),
-                failsWith(EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
-    }
-
-    @Test
-    public void testLocalDcAndMatchingCompatiblityVersion() {
-        storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
-        storagePool.setIsLocal(true);
-        assertThat(validator.isPosixSupportedInDC(), isValid());
     }
 
     @Test
@@ -182,33 +83,9 @@ public class StorageDomainToPoolRelationValidatorTest {
     }
 
     @Test
-    public void testAttachPosixCompatibilityOnLowVersion() {
-        storagePool.setCompatibilityVersion(Version.v3_0);
-
-        storageDomain.setStorageType(StorageType.POSIXFS);
-        storageDomain.setStorageFormat(StorageFormatType.V1);
-
-        ValidationResult attachPosixToLowVersionResult = validator.validateDomainCanBeAttachedToPool();
-        assertThat(attachPosixToLowVersionResult,
-                failsWith(EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
-    }
-
-    @Test
     public void testGlusterCompatibility() {
         storageDomain.setStorageType(StorageType.GLUSTERFS);
         assertThat("Attaching a GLUSTER domain failed while it should have succeeded", validator.validateDomainCanBeAttachedToPool(), isValid());
-    }
-
-    @Test
-    public void testGlusterCompatibilityOnLowVersion() {
-        storagePool.setCompatibilityVersion(Version.v3_0);
-
-        storageDomain.setStorageFormat(StorageFormatType.V1);
-        storageDomain.setStorageType(StorageType.GLUSTERFS);
-
-        ValidationResult attachGlusterToLowVersionResult = validator.validateDomainCanBeAttachedToPool();
-        assertThat(attachGlusterToLowVersionResult,
-                failsWith(EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
     }
 
     @Test
@@ -226,16 +103,6 @@ public class StorageDomainToPoolRelationValidatorTest {
         ValidationResult attachedDomainInsertionResult = validator.validateDomainCanBeAttachedToPool();
         assertThat(attachedDomainInsertionResult,
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL));
-    }
-
-    @Test
-    public void testAttachFailFormatType() {
-        storageDomain.setStorageFormat(StorageFormatType.V3);
-        storagePool.setCompatibilityVersion(Version.v3_0);
-
-        ValidationResult invalidFormatAttachingResult = validator.validateDomainCanBeAttachedToPool();
-        assertThat(invalidFormatAttachingResult,
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL));
     }
 
     /**

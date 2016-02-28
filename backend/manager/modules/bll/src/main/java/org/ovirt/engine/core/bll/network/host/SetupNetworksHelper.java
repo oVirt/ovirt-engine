@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.bll.validator.network.NetworkType;
@@ -82,21 +81,16 @@ public class SetupNetworksHelper {
     private Map<String, List<NetworkType>> ifacesWithExclusiveNetwork = new HashMap<>();
 
     private boolean hostNetworkQosSupported;
-    private boolean networkCustomPropertiesSupported;
 
-    private final ManagementNetworkUtil managementNetworkUtil;
     private EffectiveHostNetworkQos effectiveHostNetworkQos;
     private final NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
 
     public SetupNetworksHelper(SetupNetworksParameters parameters,
                                VDS vds,
-                               ManagementNetworkUtil managementNetworkUtil,
                                NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver) {
-        Validate.notNull(managementNetworkUtil, "managementNetworkUtil can not be null");
         Validate.notNull(networkExclusivenessValidatorResolver, "networkExclusivenessValidatorResolver can not be null");
 
-        this.managementNetworkUtil = managementNetworkUtil;
         this.params = parameters;
         this.vds = vds;
 
@@ -115,8 +109,6 @@ public class SetupNetworksHelper {
 
     private void setSupportedFeatures() {
         hostNetworkQosSupported = FeatureSupported.hostNetworkQos(vds.getClusterCompatibilityVersion());
-        networkCustomPropertiesSupported =
-                FeatureSupported.networkCustomProperties(vds.getClusterCompatibilityVersion());
     }
 
     protected List<String> translateErrorMessages(List<String> messages) {
@@ -150,7 +142,6 @@ public class SetupNetworksHelper {
                 // validate and extract to network map
                 if (violations.isEmpty() && StringUtils.isNotBlank(iface.getNetworkName())) {
                     extractNetwork(iface);
-                    validateGateway(iface);
                 }
             }
         }
@@ -357,10 +348,6 @@ public class SetupNetworksHelper {
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String networkName = iface.getNetworkName();
             if (params.getCustomProperties().hasCustomPropertiesFor(iface) && StringUtils.isNotEmpty(networkName)) {
-                if (!networkCustomPropertiesSupported) {
-                    addViolation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED, networkName);
-                }
-
                 Network network = existingClusterNetworks.get(networkName);
                 boolean isVmOrEmptyNetwork = network == null || network.isVmNetwork();
                 Map<String, String> regExMap = isVmOrEmptyNetwork
@@ -878,18 +865,6 @@ public class SetupNetworksHelper {
                             Collections.singletonMap("networkNames", networkName));
                 }
             }
-        }
-    }
-
-    /**
-     * Validates that gateway is set not on management network just if multiple gateways feature is supported
-     */
-    private void validateGateway(VdsNetworkInterface iface) {
-        if (StringUtils.isNotEmpty(iface.getGateway())
-                && !managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), vds.getClusterId())
-                && !FeatureSupported.multipleGatewaysSupported(vds.getClusterCompatibilityVersion())) {
-
-            addViolation(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY, iface.getNetworkName());
         }
     }
 

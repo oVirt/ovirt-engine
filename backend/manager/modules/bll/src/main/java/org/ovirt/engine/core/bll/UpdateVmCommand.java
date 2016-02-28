@@ -121,7 +121,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         VmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getCluster());
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
         VmHandler.autoSelectDefaultDisplayType(getVmId(),
                 getParameters().getVmStaticData(),
                 getCluster(),
@@ -626,8 +626,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (vmFromParams.getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
                         vmFromParams.getOs(),
-                        getReturnValue().getValidationMessages(),
-                        getEffectiveCompatibilityVersion())) {
+                        getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -701,7 +700,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // Check that the USB policy is legal
         if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(),
                 vmFromParams.getOs(),
-                getEffectiveCompatibilityVersion(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -740,11 +738,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (isVirtioScsiEnabled())  {
-            // Verify cluster compatibility
-            if (!FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
-                return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
-            }
-
             // Verify OS compatibility
             if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
                     getReturnValue().getValidationMessages())) {

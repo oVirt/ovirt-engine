@@ -123,34 +123,33 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxVmNameLength, 64),
             mockConfig(ConfigValues.SupportedClusterLevels,
-                    new HashSet<>(Arrays.asList(Version.v3_0, Version.v3_1))),
+                    new HashSet<>(Arrays.asList(Version.v3_6, Version.v4_0))),
             mockConfig(ConfigValues.VMMinMemorySizeInMB, 256),
             mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
-            mockConfig(ConfigValues.PredefinedVMProperties, "3.1", ""),
-            mockConfig(ConfigValues.UserDefinedVMProperties, "3.1", ""),
-            mockConfig(ConfigValues.PredefinedVMProperties, "3.0", ""),
-            mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", ""),
+            mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, ""),
+            mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, ""),
+            mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, ""),
+            mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, ""),
             mockConfig(ConfigValues.VmPriorityMaxValue, 100),
-            mockConfig(ConfigValues.MaxNumOfVmCpus, "3.0", 16),
-            mockConfig(ConfigValues.MaxNumOfVmSockets, "3.0", 16),
-            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.0", 16),
-            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, "3.0", 1),
-            mockConfig(ConfigValues.MaxNumOfVmCpus, "3.3", 16),
-            mockConfig(ConfigValues.MaxNumOfVmSockets, "3.3", 16),
-            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.3", 16),
-            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, "3.3", 8),
-            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true),
+            mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
+            mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
+            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v3_6, 16),
+            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v3_6, 1),
+            mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
+            mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
+            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v4_0, 16),
+            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v4_0, 8),
             mockConfig(ConfigValues.VncKeyboardLayoutValidValues, Arrays.asList(vncKeyboardLayoutValues.split(","))),
             mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(","))),
-            mockConfig(ConfigValues.IsMigrationSupported, Version.v3_0, migrationMap),
-            mockConfig(ConfigValues.IsMigrationSupported, Version.v3_3, migrationMap),
+            mockConfig(ConfigValues.IsMigrationSupported, Version.v3_6, migrationMap),
+            mockConfig(ConfigValues.IsMigrationSupported, Version.v4_0, migrationMap),
             mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
     );
 
     @Before
     public void setUp() {
         final int osId = 0;
-        final Version version = Version.v3_0;
+        final Version version = Version.v3_6;
 
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
@@ -358,7 +357,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         prepareVmToPassValidate();
         Cluster newGroup = new Cluster();
         newGroup.setId(Guid.newGuid());
-        newGroup.setCompatibilityVersion(Version.v3_0);
+        newGroup.setCompatibilityVersion(Version.v3_6);
         vmStatic.setClusterId(newGroup.getId());
         doReturn(clusterDao).when(command).getClusterDao();
 
@@ -405,9 +404,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
         HashSet<String> value = new HashSet<>();
         value.add(CPU_ID);
-        unsupported.put(new Pair<>(0, Version.v3_0), value);
+        unsupported.put(new Pair<>(0, Version.v3_6), value);
 
-        when(osRepository.isCpuSupported(0, Version.v3_0, CPU_ID)).thenReturn(false);
+        when(osRepository.isCpuSupported(0, Version.v3_6, CPU_ID)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
         command.initEffectiveCompatibilityVersion();
@@ -418,7 +417,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     public void testCannotUpdateOSNotSupportVirtioScsi() {
         prepareVmToPassValidate();
-        group.setCompatibilityVersion(Version.v3_3);
+        group.setCompatibilityVersion(Version.v4_0);
 
         when(command.isVirtioScsiEnabledForVm(any(Guid.class))).thenReturn(true);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(

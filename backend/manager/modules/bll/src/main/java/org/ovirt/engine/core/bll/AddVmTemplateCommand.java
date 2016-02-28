@@ -37,7 +37,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
@@ -143,7 +142,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 parameters.setConsoleEnabled(false);
             }
             VmHandler.updateDefaultTimeZone(parameterMasterVm);
-            VmHandler.autoSelectUsbPolicy(getParameters().getMasterVm(), getCluster());
+            VmHandler.autoSelectUsbPolicy(getParameters().getMasterVm());
             VmHandler.autoSelectDefaultDisplayType(getVmId(),
                     getParameters().getMasterVm(),
                     getCluster(),
@@ -378,7 +377,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Check that the USB policy is legal
         if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(),
                 getParameters().getVm().getOs(),
-                getVm().getCompatibilityVersion(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -397,14 +395,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getVm().getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
-                        getReturnValue().getValidationMessages(),
-                        getVm().getCompatibilityVersion())) {
+                        getReturnValue().getValidationMessages())) {
             return false;
-        }
-
-        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getVm().getCompatibilityVersion())) {
-            return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
         // Check if the watchdog model is supported
@@ -545,8 +537,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     map.put(diskImage, diskImage.getStorageIds().get(0));
                 }
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }
@@ -1076,8 +1067,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
             return true;
         }
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(),
-                getVm().getCompatibilityVersion()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm()));
     }
 
     private Guid getVmSnapshotId() {

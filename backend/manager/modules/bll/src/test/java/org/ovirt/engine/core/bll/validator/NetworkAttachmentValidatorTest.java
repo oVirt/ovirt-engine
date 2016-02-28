@@ -74,8 +74,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_5, false),
-        mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_6, true),
         mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_5, false),
         mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_6, true));
 
@@ -92,7 +90,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachment) {
         return new NetworkAttachmentValidator(attachment,
             host,
-            managementNetworkUtilMock,
             vmInterfaceManager,
             networkClusterDaoMock,
             networkDaoMock,
@@ -488,61 +485,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNetworkId(networkId);
 
         assertThat(createNetworkAttachmentValidator(attachment).networkNotChanged(oldAttachment), isValid());
-    }
-
-    @Test
-    public void testValidateGatewayWhenIpConfigurationIsNotSet() {
-        NetworkAttachment attachment = new NetworkAttachment();
-        assertThat(createNetworkAttachmentValidator(attachment).validateGateway(), isValid());
-    }
-
-    @Test
-    public void testValidateGatewayWhenGatewayIsNull() {
-        doTestValidateGateway(null, false, true, isValid());
-    }
-
-    @Test
-    public void testValidateGatewayWhenGatewayIsNotSpecified() {
-        doTestValidateGateway("", false, true, isValid());
-    }
-
-    @Test
-    public void testValidateGatewayIsNotManagementNetworkAndMultipleGatewaysSupported() {
-        doTestValidateGateway("someGateway", false, true, isValid());
-    }
-
-    @Test
-    public void testValidateGatewayIsManagementNetworkAndMultipleGatewaysSupported() {
-        doTestValidateGateway("someGateway", true, true, isValid());
-    }
-
-    @Test
-    public void testValidateGatewayIsNotManagementNetworkAndMultipleGatewaysNotSupported() {
-        doTestValidateGateway("someGateway", false, false,
-                failsWith(EngineMessage.NETWORK_ATTACH_HAVING_NAME_ILLEGAL_GATEWAY));
-    }
-
-    @Test
-    public void testValidateGatewayIsManagementNetworkAndMultipleGatewayIsNotSupported() {
-        doTestValidateGateway("someGateway", true, false, isValid());
-    }
-
-    private void doTestValidateGateway(String gatewayValue,
-            boolean managementNetwork,
-            boolean multipleGatewaysSupported,
-            Matcher<ValidationResult> resultMatcher) {
-
-        host.setClusterCompatibilityVersion(multipleGatewaysSupported ? Version.v3_6 : Version.v3_5);
-        Network network = createNetwork();
-
-        NetworkAttachment attachment = createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.NONE, null, null);
-        attachment.setNetworkId(network.getId());
-        attachment.getIpConfiguration().getPrimaryAddress().setGateway(gatewayValue);
-
-        when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
-        when(managementNetworkUtilMock.isManagementNetwork(network.getId(), CLUSTER_ID)).thenReturn(managementNetwork);
-
-        assertThat(createNetworkAttachmentValidator(attachment).validateGateway(), resultMatcher);
     }
 
     @Test

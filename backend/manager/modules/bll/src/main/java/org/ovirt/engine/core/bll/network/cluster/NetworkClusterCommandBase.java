@@ -40,8 +40,7 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
     }
 
     private boolean validateExternalNetwork(NetworkClusterValidatorBase validator) {
-        return validate(validator.externalNetworkSupported())
-                && validate(validator.externalNetworkNotDisplay(getNetworkName()))
+        return validate(validator.externalNetworkNotDisplay(getNetworkName()))
                 && validate(validator.externalNetworkNotRequired(getNetworkName()));
     }
 
@@ -51,7 +50,6 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
         boolean result = validate(validator.managementNetworkRequired(network));
         result = result && validate(validator.managementNetworkNotExternal(network));
         result = result && validate(validator.managementNetworkChange());
-        result = result && validate(validator.migrationPropertySupported());
         result = result && validate(validator.glusterNetworkSupported());
         result = result && validate(validator.roleNetworkHasIp());
         result = result && (!getPersistedNetwork().isExternal() || validateExternalNetwork(validator));

@@ -41,7 +41,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
@@ -115,15 +114,9 @@ public class HostSetupNetworksValidatorTest {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_4, false),
-        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_5, true),
-        mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_6, true),
-        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4, false),
         mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5, false),
         mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_6, true));
 
-    @Mock
-    private ManagementNetworkUtil managementNetworkUtil;
     @Mock
     private NetworkExclusivenessValidatorResolver mockNetworkExclusivenessValidatorResolver;
     @Mock
@@ -1086,36 +1079,6 @@ public class HostSetupNetworksValidatorTest {
                 isValid());
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testValidateCustomPropertiesWhenCustomPropertiesFeatureIsNotSupported() throws Exception {
-        Network networkA = createNetworkWithName("networkA");
-
-        NetworkAttachment networkAttachment = createNetworkAttachment(networkA);
-
-        Map<String, String> customProperties = new HashMap<>();
-        customProperties.put("a", "b");
-        networkAttachment.setProperties(customProperties);
-
-        host.setClusterCompatibilityVersion(Version.v3_4);
-
-        HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
-        params.setNetworkAttachments(Collections.singletonList(networkAttachment));
-
-        HostSetupNetworksValidator validator =
-            spy(new HostSetupNetworksValidatorBuilder()
-                .setParams(params)
-                .addNetworks(networkA)
-                .build());
-
-        EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED;
-        assertThat(validator.validateCustomProperties(null,
-                        Collections.<String, String> emptyMap(),
-                        Collections.<String, String> emptyMap()),
-            failsWith(engineMessage,
-                ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, networkA.getName())));
-    }
-
     @Test
     public void testValidateCustomPropertiesWhenCustomPropertyValidationFailed() throws Exception {
         Network networkA = createNetworkWithName("networkA");
@@ -1845,7 +1808,6 @@ public class HostSetupNetworksValidatorTest {
                 existingInterfaces,
                 existingAttachments,
                 new BusinessEntityMap<>(networks),
-                managementNetworkUtil,
                 networkClusterDaoMock,
                 networkDaoMock,
                 vdsDaoMock,

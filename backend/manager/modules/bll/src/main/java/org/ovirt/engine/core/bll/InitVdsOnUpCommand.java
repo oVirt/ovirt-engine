@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
@@ -62,7 +61,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -304,18 +302,16 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private VDSReturnValue runUpdateMomPolicy(final Cluster cluster, final VDS vds) {
         VDSReturnValue returnValue = new VDSReturnValue();
-        if (cluster.getCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
-            try {
-                returnValue = runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
-                                new MomPolicyVDSParameters(vds,
-                                        cluster.isEnableBallooning(),
-                                        cluster.isEnableKsm(),
-                                        cluster.isKsmMergeAcrossNumaNodes())
-                                                );
-            } catch (EngineException e) {
-                log.error("Could not update MoM policy on host '{}'", vds.getName());
-                returnValue.setSucceeded(false);
-            }
+        try {
+            returnValue = runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
+                            new MomPolicyVDSParameters(vds,
+                                    cluster.isEnableBallooning(),
+                                    cluster.isEnableKsm(),
+                                    cluster.isKsmMergeAcrossNumaNodes())
+                                            );
+        } catch (EngineException e) {
+            log.error("Could not update MoM policy on host '{}'", vds.getName());
+            returnValue.setSucceeded(false);
         }
 
         return returnValue;
@@ -397,21 +393,19 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private boolean initGlusterHost() {
         glusterHostUuidFound = true;
-        if (GlusterFeatureSupported.glusterHostUuidSupported(getCluster().getCompatibilityVersion())) {
-            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHostUUID,
-                    new VdsIdVDSCommandParametersBase(getVds().getId()));
-            if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-                Guid addedServerUuid = Guid.createGuidFromString((String) returnValue.getReturnValue());
-                if (hostUuidExists(addedServerUuid)) {
-                    setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_ALREADY_EXISTS, null);
-                    return false;
-                }
-                saveGlusterHostUuid(addedServerUuid);
+        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHostUUID,
+                new VdsIdVDSCommandParametersBase(getVds().getId()));
+        if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
+            Guid addedServerUuid = Guid.createGuidFromString((String) returnValue.getReturnValue());
+            if (hostUuidExists(addedServerUuid)) {
+                setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_ALREADY_EXISTS, null);
+                return false;
             }
-            else {
-                glusterHostUuidFound = false;
-                setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_NOT_FOUND, null);
-            }
+            saveGlusterHostUuid(addedServerUuid);
+        }
+        else {
+            glusterHostUuidFound = false;
+            setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_NOT_FOUND, null);
         }
         refreshGlusterStorageDevices();
         return glusterHostUuidFound && initGlusterPeerProcess();

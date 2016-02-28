@@ -391,22 +391,9 @@ public class UpdateClusterCommandTest {
         when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
         when(clusterDao.getByName(anyString())).thenReturn(createClusterWithNoCpuName());
         mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
-        mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
         allQueriesForVms();
         validateFailedWithReason(EngineMessage.CLUSTER_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
-    }
-
-    @Test
-    public void vdspysGroupWithVirtGlusterNotSupported() {
-        createCommandWithGlusterEnabled();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
-        when(clusterDao.getByName(anyString())).thenReturn(createClusterWithNoCpuName());
-        mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
-        mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.FALSE);
-        cpuExists();
-        allQueriesForVms();
-        validateFailedWithReason(EngineMessage.GLUSTER_NOT_SUPPORTED);
     }
 
     @Test
@@ -414,7 +401,6 @@ public class UpdateClusterCommandTest {
         createCommandWithGlusterEnabled();
         when(clusterDao.get(any(Guid.class))).thenReturn(createDefaultCluster());
         when(clusterDao.getByName(anyString())).thenReturn(createDefaultCluster());
-        mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
         cpuFlagsNotMissing();
         clusterHasVds();

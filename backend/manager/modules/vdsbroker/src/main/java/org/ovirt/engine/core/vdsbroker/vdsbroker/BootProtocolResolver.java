@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -11,12 +10,10 @@ public abstract class BootProtocolResolver {
 
     protected final Map<String, Object> entry;
     private final VdsNetworkInterface iface;
-    private final VDS host;
 
-    protected BootProtocolResolver(Map<String, Object> entry, VdsNetworkInterface iface, VDS host) {
+    protected BootProtocolResolver(Map<String, Object> entry, VdsNetworkInterface iface) {
         this.entry = entry;
         this.iface = iface;
-        this.host = host;
     }
 
     protected abstract String fetchIpAddress();
@@ -40,7 +37,7 @@ public abstract class BootProtocolResolver {
         if (bootproto == NetworkBootProtocol.STATIC_IP) {
             String gateway = fetchGateway();
             if (StringUtils.isNotEmpty(gateway)) {
-                VdsBrokerObjectsBuilder.setGatewayIfNecessary(iface, host, gateway);
+                VdsBrokerObjectsBuilder.setGatewayIfNecessary(iface, gateway);
             }
         }
 

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.host.HostSetupNetworkPoller;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -68,11 +67,6 @@ public class NetworkConfigurator {
             log.info("The management network '{}' is already configured on host '{}'",
                     managementNetworkName,
                     host.getName());
-            return;
-        }
-
-        if (!FeatureSupported.setupManagementNetwork(host.getClusterCompatibilityVersion())) {
-            log.warn("Cluster of host '{}' does not support normalize management network feature", host.getName());
             return;
         }
 

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +52,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     private VmInfoBuilderBase createBuilder() {
-        if (VmDeviceCommonUtils.isOldClusterVersion(vm.getCompatibilityVersion())) {
-            // backward compatibility for 3.0
-            return new VmOldInfoBuilder(vm, createInfo);
-        } else {
-            return new VmInfoBuilder(vm, getParameters().getVdsId(), createInfo);
-        }
+        return new VmInfoBuilder(vm, getParameters().getVdsId(), createInfo);
     }
 
     private void buildVmData() {

@@ -73,8 +73,8 @@ public class GlusterGeoRepSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_5, true),
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_4, false),
+            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_5, false),
+            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v4_0, true),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10)
@@ -95,8 +95,8 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
-        when(glusterUtil.isGlusterGeoReplicationSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(true);
-        when(glusterUtil.isGlusterGeoReplicationSupported(eq(Version.v3_4), any(Guid.class))).thenReturn(false);
+        when(glusterUtil.isGlusterGeoReplicationSupported(eq(Version.v4_0), any(Guid.class))).thenReturn(true);
+        when(glusterUtil.isGlusterGeoReplicationSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(false);
         doReturn(getMockLock()).when(syncJob).acquireGeoRepSessionLock(any(Guid.class));
         doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUIDS[1]);
     }
@@ -237,8 +237,8 @@ public class GlusterGeoRepSyncJobTest {
 
     private List<Cluster> getClusters() {
         List<Cluster> list = new ArrayList<>();
-        list.add(createCluster(0, Version.v3_4));
-        list.add(createCluster(1, Version.v3_5));
+        list.add(createCluster(0, Version.v3_5));
+        list.add(createCluster(1, Version.v4_0));
         return list;
     }
 

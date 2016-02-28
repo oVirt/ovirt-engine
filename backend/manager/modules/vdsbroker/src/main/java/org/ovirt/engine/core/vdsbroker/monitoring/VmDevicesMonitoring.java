@@ -23,7 +23,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.BackendService;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -168,10 +166,6 @@ public class VmDevicesMonitoring implements BackendService {
          * the hash remembered by {@link VmDevicesMonitoring}. The new hash is remembered after that.
          */
         public void updateVm(Guid vmId, String vdsmHash) {
-            if (VmDeviceCommonUtils.isOldClusterVersion(getGroupCompatibilityVersion(vdsId))) {
-                return;
-            }
-
             DevicesChange devicesChange = isVmDevicesChanged(vmId, vdsmHash, fetchTime);
             if (devicesChange == DevicesChange.CHANGED) {
                 lockTouchedVm(vmId);
@@ -189,10 +183,6 @@ public class VmDevicesMonitoring implements BackendService {
          * @param vmInfo FullList VDSM command result
          */
         public void updateVmFromFullList(Map<String, Object> vmInfo) {
-            if (VmDeviceCommonUtils.isOldClusterVersion(getGroupCompatibilityVersion(vdsId))) {
-                return;
-            }
-
             Guid vmId = getVmId(vmInfo);
             if (isVmDevicesChanged(vmId, UPDATE_HASH, fetchTime) == DevicesChange.CHANGED) {
                 addVmToSaveHash(vmId);
@@ -499,7 +489,7 @@ public class VmDevicesMonitoring implements BackendService {
                 dbDevice = getByDeviceType((String) vdsmDevice.get(VdsProperties.Device), dbDeviceMap);
                 deviceId = dbDevice != null ? dbDevice.getDeviceId() : deviceId;
             }
-            String logicalName = getDeviceLogicalName(change.getVdsId(), vmInfo, vdsmDevice);
+            String logicalName = getDeviceLogicalName(vmInfo, vdsmDevice);
 
             if (deviceId == null || dbDevice == null) {
                 VmDevice newDevice = buildNewVmDevice(vmId, vdsmDevice, logicalName);
@@ -558,10 +548,9 @@ public class VmDevicesMonitoring implements BackendService {
         return deviceId == null ? null : new Guid(deviceId);
     }
 
-    private String getDeviceLogicalName(Guid vdsId, Map<String, Object> vmInfo, Map<String, Object> device) {
+    private String getDeviceLogicalName(Map<String, Object> vmInfo, Map<String, Object> device) {
         Guid deviceId = getDeviceId(device);
-        if (deviceId != null && FeatureSupported.reportedDisksLogicalNames(getGroupCompatibilityVersion(vdsId))
-                && VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))) {
+        if (deviceId != null && VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))) {
             try {
                 return getDeviceLogicalName((Map<String, Object>) vmInfo.get(VdsProperties.GuestDiskMapping), deviceId);
             } catch (Exception e) {
@@ -698,10 +687,6 @@ public class VmDevicesMonitoring implements BackendService {
             });
         }
 
-    }
-
-    Version getGroupCompatibilityVersion(Guid vdsId) {
-        return getResourceManager().getVdsManager(vdsId).getGroupCompatibilityVersion();
     }
 
     private boolean shouldLogDeviceDetails(String deviceType) {

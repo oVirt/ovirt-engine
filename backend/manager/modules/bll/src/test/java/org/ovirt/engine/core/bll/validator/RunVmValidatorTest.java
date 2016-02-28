@@ -50,10 +50,10 @@ public class RunVmValidatorTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.VdsSelectionAlgorithm, "General", "0"),
-            mockConfig(ConfigValues.PredefinedVMProperties, "3.0", "0"),
-            mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", "0"),
+            mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, "0"),
+            mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, "0"),
             mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, "general", MEMORY_LIMIT_32_BIT),
-            mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, "3.3", MEMORY_LIMIT_64_BIT)
+            mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
             );
 
     @Spy
@@ -67,7 +67,7 @@ public class RunVmValidatorTest {
     @Test
     public void testValidEmptyCustomProerties() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
+        vm.setClusterCompatibilityVersion(Version.v4_0);
         List<String> messages = new ArrayList<>();
         assertTrue(runVmValidator.validateVmProperties(vm, "", messages));
         assertTrue(messages.isEmpty());
@@ -76,7 +76,7 @@ public class RunVmValidatorTest {
     @Test
     public void testWrongFormatCustomProerties() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
+        vm.setClusterCompatibilityVersion(Version.v4_0);
         List<String> messages = new ArrayList<>();
         assertFalse(runVmValidator.validateVmProperties(vm, "sap_agent;", messages)); // missing '= true'
         assertFalse(messages.isEmpty());
@@ -85,7 +85,7 @@ public class RunVmValidatorTest {
     @Test
     public void testNotValidCustomProerties() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
+        vm.setClusterCompatibilityVersion(Version.v4_0);
         List<String> messages = new ArrayList<>();
         assertFalse(runVmValidator.validateVmProperties(vm, "property=value;", messages));
         assertFalse(messages.isEmpty());
@@ -94,7 +94,7 @@ public class RunVmValidatorTest {
     @Test
     public void testValidCustomProerties() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
+        vm.setClusterCompatibilityVersion(Version.v4_0);
         List<String> messages = new ArrayList<>();
         assertTrue(runVmValidator.validateVmProperties(vm, "sap_agent=true;", messages));
         assertTrue(messages.isEmpty());
@@ -240,7 +240,7 @@ public class RunVmValidatorTest {
     @Test
     public void test32BitMemoryExceedsLimit() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
+        vm.setClusterCompatibilityVersion(Version.v4_0);
         vm.setVmMemSizeMb(MEMORY_LIMIT_32_BIT + 1);
         mockOsRepository();
         validateResult(runVmValidator.validateMemorySize(vm), false, EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
@@ -249,7 +249,7 @@ public class RunVmValidatorTest {
     @Test
     public void test64BitMemoryExceedsLimit() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
+        vm.setClusterCompatibilityVersion(Version.v4_0);
         vm.setVmMemSizeMb(MEMORY_LIMIT_64_BIT + 1);
         vm.setVmOs(_64_BIT_OS);
         mockOsRepository();
@@ -299,7 +299,7 @@ public class RunVmValidatorTest {
         doReturn("").
                 when(utils)
                 .getUserdefinedVMProperties(any(Version.class));
-        doReturn(new HashSet<>(Arrays.asList(Version.v3_2, Version.v3_3))).
+        doReturn(new HashSet<>(Arrays.asList(Version.v3_6, Version.v4_0))).
                 when(utils)
                 .getSupportedClusterLevels();
         doReturn(utils).when(runVmValidator).getVmPropertiesUtils();

@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -287,8 +286,7 @@ public class HostMonitoring {
                 AuditLogType.VDS_LOW_MEM :
                 AuditLogType.VDS_HIGH_MEM_USE;
 
-        if ((stat.getMemFree() < minAvailableThreshold && Version.v3_2.compareTo(vds.getVersion()) <= 0)
-                || stat.getUsageMemPercent() > maxUsedPercentageThreshold) {
+        if (stat.getMemFree() < minAvailableThreshold || stat.getUsageMemPercent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
             logable.addCustomValue("HostName", vds.getName());
             logable.addCustomValue("AvailableMemory", stat.getMemFree().toString());

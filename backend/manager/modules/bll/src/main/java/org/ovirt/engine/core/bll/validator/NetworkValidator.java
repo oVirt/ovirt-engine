@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -64,15 +63,6 @@ public class NetworkValidator {
     }
 
     /**
-     * @return An error iff network is defined as non-VM when that feature is not supported.
-     */
-    public ValidationResult vmNetworkSetCorrectly() {
-        return ValidationResult.failWith(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
-                .unless(network.isVmNetwork()
-                        || FeatureSupported.nonVmNetwork(getDataCenter().getCompatibilityVersion()));
-    }
-
-    /**
      * @return An error iff STP is specified for a non-VM network.
      */
     public ValidationResult stpForVmNetworkOnly() {
@@ -81,12 +71,10 @@ public class NetworkValidator {
     }
 
     /**
-     * @return An error iff nonzero MTU was specified when the MTU feature is not supported.
+     * @return {@link ValidationResult#VALID}, This method exists only so it could be overridden.
      */
     public ValidationResult mtuValid() {
-        return ValidationResult.failWith(EngineMessage.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED)
-                .unless(network.getMtu() == 0
-                        || FeatureSupported.mtuSpecification(getDataCenter().getCompatibilityVersion()));
+        return ValidationResult.VALID;
     }
 
     /**
@@ -279,7 +267,7 @@ public class NetworkValidator {
     }
 
     public boolean canNetworkCompatabilityBeDecreased() {
-        return vmNetworkSetCorrectly().isValid() && mtuValid().isValid();
+        return mtuValid().isValid();
     }
 
     public void setDataCenter(StoragePool dataCenter) {

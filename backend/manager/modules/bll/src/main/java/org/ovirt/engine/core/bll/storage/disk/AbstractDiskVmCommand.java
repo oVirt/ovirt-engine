@@ -20,7 +20,6 @@ import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -35,8 +34,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -199,13 +196,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         VmHandler.updateDisksFromDb(getVm());
     }
 
-    protected boolean isVersionSupportedForShareable(Disk disk, String compVersion) {
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            return Config.<Boolean> getValue(ConfigValues.ShareableDiskEnabled, compVersion);
-        }
-        return true;
-    }
-
     protected boolean isVolumeFormatSupportedForShareable(VolumeFormat volumeFormat) {
         return volumeFormat == VolumeFormat.RAW;
     }
@@ -250,23 +240,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             }
         }
         return false;
-    }
-
-    @Override
-    protected boolean isHotPlugSupported() {
-        if (getParameters().getSnapshotId() == null) {
-            return super.isHotPlugSupported();
-        }
-
-        return isHotPlugDiskSnapshotSupported();
-    }
-
-    protected boolean isHotPlugDiskSnapshotSupported() {
-        if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getClusterCompatibilityVersion())) {
-            return failValidation(EngineMessage.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
-        }
-
-        return true;
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {

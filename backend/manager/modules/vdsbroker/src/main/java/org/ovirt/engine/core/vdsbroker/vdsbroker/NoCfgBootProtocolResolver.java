@@ -2,15 +2,14 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class NoCfgBootProtocolResolver extends BootProtocolResolver {
 
     private String ipAddress;
 
-    public NoCfgBootProtocolResolver(Map<String, Object> entry, VdsNetworkInterface iface, VDS host) {
-        super(entry, iface, host);
+    public NoCfgBootProtocolResolver(Map<String, Object> entry, VdsNetworkInterface iface) {
+        super(entry, iface);
         ipAddress = iface.getAddress();
     }
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.ovfstore;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
@@ -53,16 +53,8 @@ public class OvfDataUpdaterTest {
 
     @Test
     public void poolUpdateOvfStoreOnAnyDomainSupported() throws Exception {
-        doReturn(true).when(ovfDataUpdater).ovfOnAnyDomainSupported(any(StoragePool.class));
         ovfDataUpdater.ovfUpdateTimer();
-        verify(Boolean.TRUE);
-    }
-
-    @Test
-    public void poolUpdateOvfStoreOnAnyDomainUnsupported() throws Exception {
-        doReturn(false).when(ovfDataUpdater).ovfOnAnyDomainSupported(any(StoragePool.class));
-        ovfDataUpdater.ovfUpdateTimer();
-        verify(Boolean.FALSE);
+        verify();
     }
 
     private void mockAnswers() {
@@ -97,10 +89,10 @@ public class OvfDataUpdaterTest {
         }).when(ovfDataUpdater).performOvfUpdateForDomain(any(Guid.class), any(Guid.class));
     }
 
-    private void verify(Boolean expected) {
+    private void verify() {
         for (Map<Guid, Boolean> map1 : map.values()) {
             for (Boolean b : map1.values()) {
-                assertEquals(expected, b);
+                assertTrue(b);
             }
         }
     }

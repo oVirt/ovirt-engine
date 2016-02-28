@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -555,15 +554,7 @@ public class ClusterGuideModel extends GuideModel {
             } else {
                 model.getProtocol().setIsAvailable(true);
             }
-            Boolean jsonSupported =
-                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
-                            cluster.getCompatibilityVersion().toString());
-            if (jsonSupported) {
-                model.getProtocol().setEntity(true);
-            } else {
-                model.getProtocol().setEntity(false);
-                model.getProtocol().setIsChangeable(false);
-            }
+            model.getProtocol().setEntity(true);
         }
     }
 

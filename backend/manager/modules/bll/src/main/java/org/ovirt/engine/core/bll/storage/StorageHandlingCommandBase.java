@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.storage.pool.ActivateDeactivateSingleAsyncOpera
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -480,10 +479,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // ovfDisks cache list updated.
         List<DiskImage> ovfStoreDiskImages = new ArrayList<>(getAllOVFDisks(storageDomainId, storagePoolId));
         if (!ovfStoreDiskImages.isEmpty()) {
-            if (!FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
-                auditLogDirector.log(this, AuditLogType.RETRIEVE_UNREGISTERED_ENTITIES_NOT_SUPPORTED_IN_DC_VERSION);
-                return Collections.emptyList();
-            }
             while (!ovfStoreDiskImages.isEmpty()) {
                 Pair<DiskImage, Long> ovfDiskAndSize = getLatestOVFDisk(ovfStoreDiskImages);
                 DiskImage ovfDisk = ovfDiskAndSize.getFirst();

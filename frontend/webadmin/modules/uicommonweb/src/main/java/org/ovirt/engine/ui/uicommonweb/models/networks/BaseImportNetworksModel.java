@@ -22,13 +22,11 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -275,15 +273,7 @@ public class BaseImportNetworksModel extends Model {
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
-                    Collection<Cluster> clusters =
-                            Linq.where((Collection<Cluster>) returnValue, new IPredicate<Cluster>() {
-
-                        @Override
-                        public boolean match(Cluster source) {
-                                    return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
-                                            source.getCompatibilityVersion().getValue());
-                        }
-                    });
+                    Collection<Cluster> clusters = (Collection<Cluster>) returnValue;
                     dcClusters.put(dcId, clusters);
                     attachNetworkToClusters(network, clusters, publicUse);
                 }

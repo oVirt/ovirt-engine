@@ -34,7 +34,6 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
@@ -401,12 +400,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec) {
-        // TODO check default value for connectionAction
-        return setVmTicket(vmId, otp64, sec, "", new HashMap<>());
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc setVmTicket(String vmId,
             String otp64,
             String sec,
@@ -748,28 +741,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
-        JsonRpcRequest request =
-                new RequestBuilder("StoragePool.getIsoList").withParameter("storagepoolID", spUUID).build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("isolist")
-                        .withResponseType(Object[].class);
-        // check vdsm versions - fileStats vs isolist(latest)
-        return new FileStatsReturnForXmlRpc(response);
-    }
-
-    @Override
-    public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList) {
-        JsonRpcRequest request =
-                new RequestBuilder("LVMVolumeGroup.create").withParameter("name", sdUUID)
-                        .withParameter("devlist", new ArrayList<>(Arrays.asList(deviceList)))
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
-    }
-
-    @Override
     public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("LVMVolumeGroup.create").withParameter("name", sdUUID)
@@ -878,17 +849,6 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("spm_st");
         return new SpmStatusReturnForXmlRpc(response);
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc refreshStoragePool(String spUUID, String msdUUID, int masterVersion) {
-        JsonRpcRequest request =
-                new RequestBuilder("StoragePool.refresh").withParameter("storagepoolID", spUUID)
-                        .withParameter("masterSdUUID", msdUUID)
-                        .withParameter("masterVersion", masterVersion)
-                        .build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override
@@ -1078,24 +1038,6 @@ public class JsonRpcVdsServer implements IVdsServer {
             String[] brickList,
             int replicaCount,
             int stripeCount,
-            String[] transportList) {
-        JsonRpcRequest request =
-                new RequestBuilder("GlusterVolume.create").withParameter("volumeName", volumeName)
-                        .withParameter("bricklist", new ArrayList<>(Arrays.asList(brickList)))
-                        .withParameter("replicaCount", replicaCount)
-                        .withParameter("stripeCount", stripeCount)
-                        .withParameter("transportList", new ArrayList<>(Arrays.asList(transportList)))
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new OneUuidReturnForXmlRpc(response);
-    }
-
-    @Override
-    public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
-            String[] brickList,
-            int replicaCount,
-            int stripeCount,
             String[] transportList,
             boolean force) {
         JsonRpcRequest request =
@@ -1208,21 +1150,6 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new RequestBuilder("GlusterVolume.removeBrickCommit").withParameter("volumeName", volumeName)
                         .withParameter("brickList", new ArrayList<>(Arrays.asList(brickList)))
                         .withParameter("replicaCount", replicaCount)
-                        .build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
-            String[] bricks,
-            int replicaCount,
-            int stripeCount) {
-        JsonRpcRequest request =
-                new RequestBuilder("GlusterVolume.addBrick").withParameter("volumeName", volumeName)
-                        .withParameter("brickList", new ArrayList<>(Arrays.asList(bricks)))
-                        .withParameter("replicaCount", replicaCount)
-                        .withParameter("stripeCount", stripeCount)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);

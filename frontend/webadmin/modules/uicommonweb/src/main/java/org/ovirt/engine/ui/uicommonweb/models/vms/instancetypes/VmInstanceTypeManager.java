@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -15,7 +14,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ProfileBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
@@ -60,10 +58,6 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
     }
 
     private void updateNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> argNics) {
-        boolean hotUpdateSupported =
-                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
-                        getModel().getSelectedCluster().getCompatibilityVersion().toString());
-
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
@@ -85,7 +79,7 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
             }
         });
 
-        behavior.initProfiles(hotUpdateSupported, getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);
+        behavior.initProfiles(getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);
     }
 
     protected abstract ProfileBehavior getNetworkProfileBehavior();

@@ -358,9 +358,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         .getMessages()
                         .editNetworkTitle(logicalNetworkModelName));
                 networkDialogModel.getName().setIsAvailable(false);
-                networkDialogModel.getGateway()
-                        .setIsAvailable((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
-                                version));
+                networkDialogModel.getGateway().setIsAvailable(true);
             }
 
             networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetworkModelName));
@@ -384,23 +382,20 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
             }
 
-            if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
-                    version)) {
-                KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
-                customPropertiesModel.setIsAvailable(true);
-                Map<String, String> validProperties =
-                        KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PreDefinedNetworkCustomProperties,
-                                version));
-                // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
-                // to backend and frontend (lvernia)
-                if (!network.isVmNetwork()) {
-                    validProperties.remove("bridge_opts"); //$NON-NLS-1$
-                }
-                validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
-                        version)));
-                customPropertiesModel.setKeyValueMap(validProperties);
-                customPropertiesModel.deserialize(KeyValueModel.convertProperties(networkAttachment.getProperties()));
+            KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
+            customPropertiesModel.setIsAvailable(true);
+            Map<String, String> validProperties =
+                    KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PreDefinedNetworkCustomProperties,
+                            version));
+            // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
+            // to backend and frontend (lvernia)
+            if (!network.isVmNetwork()) {
+                validProperties.remove("bridge_opts"); //$NON-NLS-1$
             }
+            validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
+                    version)));
+            customPropertiesModel.setKeyValueMap(validProperties);
+            customPropertiesModel.deserialize(KeyValueModel.convertProperties(networkAttachment.getProperties()));
 
             networkDialogModel.getIsToSync().setIsChangeable(!logicalNetworkModel.isInSync());
             networkDialogModel.getIsToSync()

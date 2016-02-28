@@ -418,8 +418,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         return VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
-                        getReturnValue().getValidationMessages(),
-                        getEffectiveCompatibilityVersion());
+                        getReturnValue().getValidationMessages());
     }
 
     protected boolean hostToRunExist() {
@@ -582,7 +581,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         // Check that the USB policy is legal
         if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(), vmFromParams.getOs(),
-                getEffectiveCompatibilityVersion(), getReturnValue().getValidationMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -643,11 +642,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {
-            // Verify cluster compatibility
-            if (!FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
-                return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
-            }
-
             // Verify OS compatibility
             if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
                     getReturnValue().getValidationMessages())) {
@@ -727,8 +721,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             for (DiskImage diskImage : diskImages) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }
@@ -1495,8 +1488,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         boolean isOsSupportedForVirtIoScsi = VmValidationUtils.isDiskInterfaceSupportedByOs(
                 getParameters().getVm().getOs(), getEffectiveCompatibilityVersion(), DiskInterface.VirtIO_SCSI);
 
-        return virtioScsiEnabled != null ? virtioScsiEnabled :
-                FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion()) && isOsSupportedForVirtIoScsi;
+        return virtioScsiEnabled != null ? virtioScsiEnabled : isOsSupportedForVirtIoScsi;
     }
 
     protected boolean isBalloonEnabled() {
@@ -1554,7 +1546,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         }
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getCluster());
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
         // Choose a proper default display type according to the cluster architecture
         VmHandler.autoSelectDefaultDisplayType(vmDevicesSourceId,
             getParameters().getVmStaticData(),

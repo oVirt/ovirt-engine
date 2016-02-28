@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -46,29 +45,11 @@ public class VmNicValidator {
     }
 
     /**
-     * @return An error if unlinking is not supported and the interface is unlinked, otherwise it's OK.
-     */
-    public ValidationResult linkedOnlyIfSupported() {
-        return !FeatureSupported.networkLinking(version) && !nic.isLinked()
-                ? new ValidationResult(EngineMessage.UNLINKING_IS_NOT_SUPPORTED, clusterVersion())
-                : ValidationResult.VALID;
-    }
-
-    /**
      * @return An error if the interface is passthrough and unlinked, otherwise it's OK.
      */
     public ValidationResult passthroughIsLinked() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED)
                 .when(nic.isPassthrough() && !nic.isLinked());
-    }
-
-    /**
-     * @return An error if unlinking is not supported and the network is not set, otherwise it's OK.
-     */
-    public ValidationResult emptyNetworkValid() {
-        return !FeatureSupported.networkLinking(version) && nic.getVnicProfileId() == null
-                ? new ValidationResult(EngineMessage.NULL_NETWORK_IS_NOT_SUPPORTED, clusterVersion())
-                : ValidationResult.VALID;
     }
 
     /**

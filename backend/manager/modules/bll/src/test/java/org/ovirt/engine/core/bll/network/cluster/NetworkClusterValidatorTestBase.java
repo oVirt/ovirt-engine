@@ -19,7 +19,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -142,62 +141,6 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
         testmanagementNetworkRequired(true, false,
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED))
                         .and(replacements(hasItem(NETWORK_NAME_REPLACEMENT))));
-    }
-
-    @Test
-    public void migrationNetworkWhenMigrationNetworkNotSupported() throws Exception {
-        migrationNetworkSupportTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED),
-                false,
-                true);
-    }
-
-    @Test
-    public void migrationNetworkWhenMigrationNetworkSupported() throws Exception {
-        migrationNetworkSupportTest(isValid(),
-                true,
-                true);
-    }
-
-    @Test
-    public void notMigrationNetworkWhenMigrationNetworkNotSupported() throws Exception {
-        migrationNetworkSupportTest(isValid(),
-                false,
-                false);
-    }
-
-    @Test
-    public void notMigrationNetworkWhenMigrationNetworkSupported() throws Exception {
-        migrationNetworkSupportTest(isValid(),
-                true,
-                false);
-    }
-
-    private void migrationNetworkSupportTest(Matcher<ValidationResult> matcher,
-                                             boolean migrationNetworkSupported,
-                                             boolean migration) {
-        mockConfigRule.mockConfigValue(ConfigValues.MigrationNetworkEnabled, version, migrationNetworkSupported);
-        when(networkCluster.isMigration()).thenReturn(migration);
-
-        assertThat(validator.migrationPropertySupported(), matcher);
-    }
-
-    @Test
-    public void externalNetworkNotSupported() throws Exception {
-        externalNetworkSupportTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED),
-                false);
-    }
-
-    @Test
-    public void externalNetworkSupported() throws Exception {
-        externalNetworkSupportTest(isValid(),
-                true);
-    }
-
-    private void externalNetworkSupportTest(Matcher<ValidationResult> matcher,
-                                            boolean externalNetworkSupported) {
-        mockConfigRule.mockConfigValue(ConfigValues.SupportCustomDeviceProperties, version, externalNetworkSupported);
-
-        assertThat(validator.externalNetworkSupported(), matcher);
     }
 
     @Test

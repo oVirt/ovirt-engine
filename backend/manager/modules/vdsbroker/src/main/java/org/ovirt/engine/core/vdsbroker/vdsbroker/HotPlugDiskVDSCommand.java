@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -66,8 +65,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
             vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinToIoThread);
         }
         drive.put(VdsProperties.Shareable,
-                (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(
-                        getParameters().getVm().getCompatibilityVersion()))
+                (vmDevice.getSnapshotId() != null)
                         ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
         drive.put(VdsProperties.Optional, Boolean.FALSE.toString());
         drive.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
@@ -84,8 +82,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 drive.put(VdsProperties.ImageId, diskImage.getId().toString());
                 drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
 
-                VmInfoBuilder.handleIoTune(getParameters().getVm(), vmDevice, diskImage,
-                        new HashMap<>(), new HashMap<>());
+                VmInfoBuilder.handleIoTune(vmDevice, diskImage, new HashMap<>(), new HashMap<>());
                 if (vmDevice.getSpecParams() != null) {
                     drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 }

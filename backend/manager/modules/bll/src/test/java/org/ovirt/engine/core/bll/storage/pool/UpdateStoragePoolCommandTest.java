@@ -27,17 +27,13 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,16 +57,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID),
-            mockConfig(ConfigValues.NonVmNetworkSupported, false),
-            mockConfig(ConfigValues.MTUOverrideSupported, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0.getValue(), false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1.getValue(), false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2.getValue(), false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3.getValue(), false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4.getValue(), true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5.getValue(), true),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_1.getValue(), false),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_1.getValue(), false),
             mockConfig(ConfigValues.StoragePoolNameSizeLimit, 10)
     );
 
@@ -245,85 +231,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
                 (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS))
                 .when(poolValidator).isNotLocalfsWithDefaultCluster();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS);
-    }
-
-    @Test
-    public void cantDowngradeIfImpliesFormatDowngrading() {
-        storagePoolVersion35();
-
-        // Set the current compatibility to be 3.5, and the new to be 3.0. downgrading to 3.0 will cause format downgrading.
-        cmd.getStoragePool().setCompatibilityVersion(Version.v3_0);
-
-        // Add domains to the storage domains list. (cancel the mock)
-        StorageDomain sd = createStorageDomain(StorageFormatType.V3, StorageType.UNKNOWN);
-        setAttachedDomains(sd);
-
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
-    }
-
-    @Test
-    public void cantDowngradeIfGlusterNotSupported() {
-        failOnDowngradingWithStorageType(StorageType.GLUSTERFS);
-    }
-
-    @Test
-    public void cantDowngradeIfPosixNotSupported() {
-        failOnDowngradingWithStorageType(StorageType.POSIXFS);
-    }
-
-    private void failOnDowngradingWithStorageType(StorageType storageType) {
-        storagePoolVersion35();
-        cmd.getStoragePool().setCompatibilityVersion(Version.v3_1);
-
-        // Add domains to the storage domains list. (cancel the mock)
-        StorageDomain sd = createStorageDomain(StorageFormatType.V3, storageType);
-        setAttachedDomains(sd);
-
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
-    }
-
-    @Test
-    public void cantDowngradeIfMixedTypesNotSupported() {
-        storagePoolVersion35();
-        cmd.getStoragePool().setCompatibilityVersion(Version.v3_3);
-
-        // Set mixed storage domains (File, Block).
-        StorageDomain sdISCI = createStorageDomain(StorageFormatType.V3, StorageType.ISCSI);
-        StorageDomain sdNFS = createStorageDomain(StorageFormatType.V3, StorageType.NFS);
-        setAttachedDomains(sdISCI, sdNFS);
-
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
-    }
-
-    private StorageDomain createStorageDomain(StorageFormatType formatType, StorageType storageType) {
-        StorageDomain sd = new StorageDomain();
-        sd.setStorageFormat(formatType);
-        sd.setStorageType(storageType);
-
-        return sd;
-    }
-
-    private void setAttachedDomains(StorageDomain ... sDomains) {
-        List<StorageDomainStatic> sdListWithDomains = new ArrayList<>();
-        for (StorageDomain sd:sDomains) {
-            sdListWithDomains.add(sd.getStorageStaticData());
-
-            // Set the specific validator for this domain.
-            StorageDomainToPoolRelationValidator attachDomainValidator =
-                    spy(new StorageDomainToPoolRelationValidator(sd.getStorageStaticData(), cmd.getStoragePool()));
-            doReturn(new ValidationResult
-                    (EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION))
-                    .when(attachDomainValidator).isStorageDomainTypeFitsPoolIfMixed();
-            doReturn(attachDomainValidator).when(cmd).getAttachDomainValidator(sd.getStorageStaticData());
-        }
-
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(sdListWithDomains);
-    }
-
-    private void storagePoolVersion35() {
-        StoragePool pool = createBasicPool();
-        pool.setCompatibilityVersion(Version.v3_5);
-        when(spDao.get(any(Guid.class))).thenReturn(pool);
     }
 
     private void newPoolNameIsAlreadyTaken() {

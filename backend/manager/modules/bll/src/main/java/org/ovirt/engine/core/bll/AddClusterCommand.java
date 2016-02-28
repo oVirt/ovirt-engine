@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -82,11 +81,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
             attachManagementNetwork();
         }
 
-        // create default CPU profile for supported clusters.
-        if (FeatureSupported.cpuQoS(getParameters().getCluster().getCompatibilityVersion())) {
-            getCpuProfileDao().save(CpuProfileHelper.createCpuProfile(getParameters().getCluster().getId(),
-                    getParameters().getCluster().getName()));
-        }
+        getCpuProfileDao().save(CpuProfileHelper.createCpuProfile(getParameters().getCluster().getId(),
+                getParameters().getCluster().getName()));
 
         if (CollectionUtils.isNotEmpty(cluster.getAddtionalFeaturesSupported())) {
             for (SupportedAdditionalClusterFeature feature : cluster.getAddtionalFeaturesSupported()) {
@@ -137,14 +133,11 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 && validate(validator.dataCenterVersionMismatch())
                 && validate(validator.dataCenterExists())
                 && validate(validator.localStoragePoolAttachedToSingleCluster())
-                && validate(validator.qosBaloonSupported())
-                && validate(validator.glusterServiceSupported())
                 && validate(validator.clusterServiceDefined())
                 && validate(validator.mixedClusterServicesSupported())
                 && validate(validator.attestationServerConfigured())
                 && validate(validator.migrationSupported(getArchitecture()))
                 && validateClusterPolicy()
-                && validate(validator.virtIoRngSupported())
                 && validateManagementNetwork();
     }
 

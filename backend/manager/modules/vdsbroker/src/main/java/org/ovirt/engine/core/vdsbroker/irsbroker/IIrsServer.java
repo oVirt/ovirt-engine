@@ -35,10 +35,6 @@ public interface IIrsServer {
 
     IrsStatsAndStatusXmlRpc getIrsStats();
 
-    FileStatsReturnForXmlRpc getIsoList(String spUUID);
-
-    FileStatsReturnForXmlRpc getFloppyList(String spUUID);
-
     FileStatsReturnForXmlRpc getFileStats(String sdUUID, String pattern, boolean caseSensitive);
 
     StorageStatusReturnForXmlRpc activateStorageDomain(String sdUUID, String spUUID);
@@ -52,8 +48,6 @@ public interface IIrsServer {
     StatusOnlyReturnForXmlRpc attachStorageDomain(String sdUUID, String spUUID);
 
     StatusOnlyReturnForXmlRpc setStorageDomainDescription(String sdUUID, String description);
-
-    StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 
     StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force);
 

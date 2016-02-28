@@ -978,10 +978,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("OVIRT")
     OriginType,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    HotPlugEnabled,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("http://localhost")
     ImageProxyURL,
@@ -1065,22 +1061,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("3")
     VmPoolMonitorMaxAttempts,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    LiveSnapshotEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    PosixStorageEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SendVmTicketUID,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    AdvancedNFSOptionsEnabled,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8192")
     PayloadSize,
@@ -1093,29 +1073,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("4")
     NumberOfUSBSlots,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NativeUSBEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ShareableDiskEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    CpuPinningEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    DirectLUNDiskEnabled,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
     PopulateDirectLUNDiskDescriptionWithLUNId,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    FilteringLUNsEnabled,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("animation")
@@ -1133,18 +1093,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     CpuPinMigrationEnabled,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SupportForceCreateVG,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NonVmNetworkSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    VmSlaPolicySupported,
-
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("0,2")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
@@ -1153,10 +1101,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     NetworkConnectivityCheckTimeoutInSeconds,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SupportBridgesReportByVDSM,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1215,22 +1159,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     EnableMACAntiSpoofingFilterRules,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MacAntiSpoofingFilterRulesSupported,
-
     // Gluster peer status command
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("gluster peer status --xml")
     GlusterPeerStatusCommand,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MTUOverrideSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    PortMirroringSupported,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -1320,10 +1252,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     BootstrapMinimalVdsmVersion,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SupportForceExtendVG,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     MinimalETLVersion,
@@ -1344,10 +1272,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("^ovirt.*$")
     OvirtNodeOS,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NetworkLinkingSupported,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     QuotaCacheIntervalInMinutes,
@@ -1355,11 +1279,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     MinimumPercentageToUpdateQuotaCache,
-
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    HardwareInfoEnabled,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -1391,14 +1310,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("95")
     LogMaxSwapUsedThresholdInPercentage,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    TunnelMigrationEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MigrationSupportForNativeUsb,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("9")
     PgMajorRelease,
@@ -1428,22 +1339,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     RemapCtrlAltDelDefault,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterFsStorageEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterSupport,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterRefreshHeavyWeight,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterHooksEnabled,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("600")
     GlusterRefreshRateHooks,
@@ -1451,14 +1346,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     GlusterServicesEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterHostUUIDSupport,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterAsyncTasksSupport,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
@@ -1475,10 +1362,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     GlusterBrickProvisioningEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterStopServicesSupported,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/,/home,/boot")
@@ -1557,10 +1440,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("Native")
     ClientModeVncDefault,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MigrationNetworkEnabled,
-
     @Reloadable
     @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("20")
@@ -1589,17 +1468,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("120")
     WebSocketProxyTicketValiditySeconds,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SupportCustomDeviceProperties,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     CustomDeviceProperties,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NetworkCustomPropertiesSupported,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
@@ -1609,21 +1480,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     UserDefinedNetworkCustomProperties,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MultipleGatewaysSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MemorySnapshotSupported,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/osinfo.conf.d")
     OsRepositoryConfDir,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    VirtIoScsiEnabled,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/bin/vdsm-tool service-restart vdsmd")
@@ -1666,10 +1525,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     QoSInboundBurstDefaultValue,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SingleQxlPciEnabled,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     UserMessageOfTheDay,
@@ -1689,14 +1544,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     QoSOutboundBurstDefaultValue,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NormalizedMgmtNetworkEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MomPoliciesOnHostSupported,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("http://localhost:18781/")
@@ -1720,39 +1567,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    NetworkQosSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    StorageQosSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    CpuQosSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
     HostNetworkQosSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    DefaultRouteSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    CloudInitSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    HotPlugDiskSnapshotSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    OvfStoreOnAnyDomain,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ImportDataStorageDomain,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
@@ -1760,15 +1575,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    VirtIoRngDeviceSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
     UseFqdnForRdpIfAvailable,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    AbortMigrationOnError,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
@@ -1801,10 +1608,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     SchedulerOverBookingThreshold,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterSupportForceCreateVolume,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -1860,14 +1663,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     ChangePasswordMsg,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GetFileStats,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ImportGlanceImageAsTemplate,
-
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"undefined\":\"true\",\"x86\":\"true\",\"ppc\":\"true\"}")
     IsMigrationSupported,
@@ -1879,10 +1674,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"undefined\":\"true\",\"x86\":\"true\",\"ppc\":\"true\"}")
     IsSuspendSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SerialNumberPolicySupported,
 
     @TypeConverterAttribute(SerialNumberPolicy.class)
     @DefaultValueAttribute("HOST_ID")
@@ -1904,21 +1695,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("2")
     StorageDomainOvfStoreCount,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    IscsiMultipathingSupported,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("en_US")
     DefaultSysprepLocale,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MixedDomainTypesInDataCenter,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    BootMenuSupported,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
@@ -1939,14 +1718,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SpiceFileTransferToggleSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SpiceCopyPasteToggleSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    StoragePoolMemoryBackend,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1500")
@@ -1987,14 +1758,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     KdumpStartedTimeout,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    LiveMergeSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ReportedDisksLogicalNames,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
@@ -2038,26 +1801,12 @@ public enum ConfigValues {
     CORSAllowedOrigins,
 
     /**
-     * Feature to skip fencing if host is connected to at least one storage domain
-     */
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SkipFencingIfSDActiveSupported,
-
-    /**
      * Interval in seconds after which is safe to check host storage lease status when host stopped responding
      * to monitoring
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("90")
     HostStorageLeaseAliveCheckingInterval,
-
-    /**
-     * Specifies whether jsonrpc protocol is supported.
-     */
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    JsonProtocolSupported,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000000")
@@ -2138,10 +1887,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     HostDevicePassthroughSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ReportWhetherDomainMonitoringResultIsActual,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")

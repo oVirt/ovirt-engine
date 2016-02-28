@@ -2,8 +2,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.CreateVGVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -22,12 +20,8 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
         List<String> deviceList = getParameters().getDeviceList();
         String[] deviceArray = deviceList.toArray(new String[deviceList.size()]);
         boolean isForce = getParameters().isForce();
-        boolean supportForceCreateVG = Config.<Boolean> getValue(
-                ConfigValues.SupportForceCreateVG, getVds().getClusterCompatibilityVersion().toString());
 
-        result = supportForceCreateVG ?
-                getBroker().createVG(storageDomainId, deviceArray, isForce) :
-                getBroker().createVG(storageDomainId, deviceArray);
+        result = getBroker().createVG(storageDomainId, deviceArray, isForce);
 
         proceedProxyReturnValue();
         setReturnValue(result.uuid);

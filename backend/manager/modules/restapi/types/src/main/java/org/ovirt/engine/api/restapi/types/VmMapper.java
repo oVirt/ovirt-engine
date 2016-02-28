@@ -118,20 +118,14 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setAllowConsoleReconnect(entity.isAllowConsoleReconnect());
         staticVm.setVncKeyboardLayout(entity.getVncKeyboardLayout());
         staticVm.setVmInit(entity.getVmInit());
-
-        if (FeatureSupported.serialNumberPolicy(clusterVersion)) {
-            staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
-            staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
-        }
+        staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
+        staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
 
         if (FeatureSupported.isSpiceFileTransferToggleSupported(clusterVersion)) {
             staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         }
 
-        if (FeatureSupported.isSpiceCopyPasteToggleSupported(clusterVersion)) {
-            staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
-        }
-
+        staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         staticVm.setRunAndPause(entity.isRunAndPause());
         staticVm.setCpuProfileId(entity.getCpuProfileId());
         if (FeatureSupported.autoConvergence(clusterVersion)) {

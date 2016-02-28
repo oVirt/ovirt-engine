@@ -454,7 +454,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getVmTemplate().getClusterId(),
                         getStoragePoolId(),
-                        getCluster().getCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES);
 
         for (VmNetworkInterface iface : getVmTemplate().getInterfaces()) {
@@ -578,8 +577,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
                 map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }
@@ -587,7 +585,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected boolean setAndValidateCpuProfile() {
         getVmTemplate().setClusterId(getClusterId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(), getEffectiveCompatibilityVersion()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate()));
     }
 
     @Override

@@ -618,7 +618,6 @@ public class SnapshotsManager {
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(vm.getClusterId(),
                         vm.getStoragePoolId(),
-                        vm.getCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES);
 
         vmInterfaceManager.removeAll(vm.getId());

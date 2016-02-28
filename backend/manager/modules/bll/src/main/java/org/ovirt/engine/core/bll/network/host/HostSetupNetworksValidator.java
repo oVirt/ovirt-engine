@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
@@ -62,14 +61,11 @@ public class HostSetupNetworksValidator {
 
     static final String VAR_BOND_NAME = "BondName";
     static final String VAR_NETWORK_NAME = "networkName";
-    public static final String VAR_NETWORK_NAMES = "networkNames";
     static final String VAR_ATTACHMENT_IDS = "attachmentIds";
     static final String VAR_INTERFACE_NAME = "interfaceName";
     static final String VAR_NIC_ID = "nicId";
     static final String VAR_LABELED_NIC_NAME = "labeledNicName";
     static final String VAR_NIC_NAME = "nicName";
-    static final String VAR_VM_NAME = "vmName";
-    static final String VAR_VM_NAMES = "vmNames";
     static final String VAR_LABEL = "label";
 
     private final NetworkExclusivenessValidator networkExclusivenessValidator;
@@ -78,8 +74,6 @@ public class HostSetupNetworksValidator {
     private VDS host;
     private BusinessEntityMap<VdsNetworkInterface> existingInterfacesMap;
     private List<NetworkAttachment> existingAttachments;
-    private final ManagementNetworkUtil managementNetworkUtil;
-    private boolean networkCustomPropertiesSupported;
     private boolean hostNetworkQosSupported;
     private List<VdsNetworkInterface> removedBondVdsNetworkInterface;
     private BusinessEntityMap<VdsNetworkInterface> removedBondVdsNetworkInterfaceMap;
@@ -103,7 +97,6 @@ public class HostSetupNetworksValidator {
             List<VdsNetworkInterface> existingInterfaces,
             List<NetworkAttachment> existingAttachments,
             BusinessEntityMap<Network> networkBusinessEntityMap,
-            ManagementNetworkUtil managementNetworkUtil,
             NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
             VdsDao vdsDao,
@@ -116,7 +109,6 @@ public class HostSetupNetworksValidator {
         this.host = host;
         this.params = params;
         this.existingAttachments = existingAttachments;
-        this.managementNetworkUtil = managementNetworkUtil;
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
@@ -152,7 +144,6 @@ public class HostSetupNetworksValidator {
     private void setSupportedFeatures() {
         Version clusterCompatibilityVersion = host.getClusterCompatibilityVersion();
 
-        networkCustomPropertiesSupported = FeatureSupported.networkCustomProperties(clusterCompatibilityVersion);
         hostNetworkQosSupported = FeatureSupported.hostNetworkQos(clusterCompatibilityVersion);
     }
 
@@ -697,7 +688,6 @@ public class HostSetupNetworksValidator {
 
             vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(existingInterfacesMap);
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(attachmentsById.get(attachment.getId()));
-            vr = skipValidation(vr) ? vr : validator.validateGateway();
             vr = skipValidation(vr) ? vr : networkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(params.getNetworkAttachments());
 
             boolean attachmentUpdated = !isNewAttachment(attachment.getId());
@@ -837,7 +827,6 @@ public class HostSetupNetworksValidator {
     private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachmentToValidate) {
         return new NetworkAttachmentValidator(attachmentToValidate,
             host,
-            managementNetworkUtil,
             new VmInterfaceManager(),
             networkClusterDao,
             networkDao,
@@ -970,12 +959,6 @@ public class HostSetupNetworksValidator {
         for (NetworkAttachment attachment : params.getNetworkAttachments()) {
             Network network = existingNetworkRelatedToAttachment(attachment);
             if (attachment.hasProperties()) {
-                if (!networkCustomPropertiesSupported) {
-                    EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED;
-                    return new ValidationResult(engineMessage,
-                        ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, network.getName()));
-                }
-
                 List<ValidationError> errors =
                     util.validateProperties(network.isVmNetwork() ? validPropertiesForVm : validPropertiesForNonVm,
                         attachment.getProperties());

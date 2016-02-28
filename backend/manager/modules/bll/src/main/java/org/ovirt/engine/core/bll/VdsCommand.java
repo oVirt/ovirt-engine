@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -87,9 +86,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      */
     protected void reestablishConnectionIfNeeded() {
         VDS host = getVds();
-        if (host.getProtocol() == VdsProtocol.XML
-                && FeatureSupported.jsonProtocol(host.getClusterCompatibilityVersion())
-                && host.getHostOs() != null) {
+        if (host.getProtocol() == VdsProtocol.XML && host.getHostOs() != null) {
             VdsStatic hostStaticData = host.getStaticData();
             hostStaticData.setProtocol(VdsProtocol.STOMP);
             getVdsStaticDao().update(hostStaticData);

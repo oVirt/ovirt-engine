@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -123,37 +122,6 @@ public class NetworkValidatorTest {
         assertThat(validator.dataCenterExists(), isValid());
     }
 
-    private void vmNetworkSetupTest(Matcher<ValidationResult> matcher, boolean vmNetwork, boolean featureSupported) {
-        mockConfigRule.mockConfigValue(ConfigValues.NonVmNetworkSupported,
-                dataCenter.getCompatibilityVersion(),
-                featureSupported);
-        when(network.isVmNetwork()).thenReturn(vmNetwork);
-
-        assertThat(validator.vmNetworkSetCorrectly(), matcher);
-    }
-
-    @Test
-    public void vmNetworkWhenSupported() throws Exception {
-        vmNetworkSetupTest(isValid(), true, true);
-    }
-
-    @Test
-    public void vmNetworkWhenNotSupported() throws Exception {
-        vmNetworkSetupTest(isValid(), true, false);
-    }
-
-    @Test
-    public void nonVmNetworkWhenSupported() throws Exception {
-        vmNetworkSetupTest(isValid(), false, true);
-    }
-
-    @Test
-    public void nonVmNetworkWhenNotSupported() throws Exception {
-        vmNetworkSetupTest(failsWith(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL),
-                false,
-                false);
-    }
-
     private void stpTest(Matcher<ValidationResult> matcher, boolean vmNetwork, boolean stp) {
         when(network.isVmNetwork()).thenReturn(vmNetwork);
         when(network.getStp()).thenReturn(stp);
@@ -181,33 +149,9 @@ public class NetworkValidatorTest {
         stpTest(isValid(), false, false);
     }
 
-    private void mtuValidTest(Matcher<ValidationResult> matcher, int mtu, boolean featureSupported) {
-        mockConfigRule.mockConfigValue(ConfigValues.MTUOverrideSupported,
-                dataCenter.getCompatibilityVersion(),
-                featureSupported);
-        when(network.getMtu()).thenReturn(mtu);
-
-        assertThat(validator.mtuValid(), matcher);
-    }
-
     @Test
-    public void nonZeroMtuWhenSupported() throws Exception {
-        mtuValidTest(isValid(), 1, true);
-    }
-
-    @Test
-    public void nonZeroMtuWhenNotSupported() throws Exception {
-        mtuValidTest(failsWith(EngineMessage.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED), 1, false);
-    }
-
-    @Test
-    public void zeroMtuWhenSupported() throws Exception {
-        mtuValidTest(isValid(), 0, true);
-    }
-
-    @Test
-    public void zeroMtuWhenNotSupported() throws Exception {
-        mtuValidTest(isValid(), 0, false);
+    public void mtuValid() {
+        assertThat(validator.mtuValid(), isValid());
     }
 
     private void networkPrefixValidTest(Matcher<ValidationResult> matcher, String networkName) {

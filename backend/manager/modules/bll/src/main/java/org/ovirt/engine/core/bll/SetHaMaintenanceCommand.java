@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.Version;
 
 @NonTransactiveCommandAttribute
 public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParameters> {
@@ -49,9 +48,6 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
         if (!validate(hostValidator.hostExists())
                 || !validate(hostValidator.isUp())) {
             return false;
-        }
-        if (getVds().getClusterCompatibilityVersion().compareTo(Version.v3_4) < 0) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_HA_MAINT_NOT_SUPPORTED);
         }
         if (!getVds().getHighlyAvailableIsConfigured()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_HA_NOT_CONFIGURED);

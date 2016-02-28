@@ -96,21 +96,10 @@ public abstract class StorageModelBehavior extends Model {
     }
 
     public final void updateDataCenterAlert() {
-        StoragePool selectedItem = getModel().getDataCenter().getSelectedItem();
         EntityModel alert = getModel().getDataCenterAlert();
-        if (shouldShowDataCenterAlert(selectedItem)) {
-            alert.setIsAvailable(true);
-            alert.setEntity(getDataCenterAlertMessage());
-        }
-        else {
-            alert.setIsAvailable(false);
-            alert.setEntity("");
-        }
+        alert.setIsAvailable(false);
+        alert.setEntity("");
     }
-
-    public abstract boolean shouldShowDataCenterAlert(StoragePool selectedDataCenter);
-
-    public abstract String getDataCenterAlertMessage();
 
     protected boolean isLocalStorage(IStorageModel storage) {
         return storage.getType() == StorageType.LOCALFS;

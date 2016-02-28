@@ -360,27 +360,20 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         return isSupportBridgesReportByVDSM;
     }
 
-    public void setSupportBridgesReportByVDSM(boolean isSupportBridgesReportByVDSM) {
-        if (!isSupportBridgesReportByVDSM) {
-            getIsVmNetwork().setEntity(true);
-            getIsVmNetwork().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages()
-                    .bridlessNetworkNotSupported(getSelectedDc().getCompatibilityVersion().toString()));
-            getIsVmNetwork().setIsChangeable(false);
-        } else {
-            if (this.isSupportBridgesReportByVDSM != isSupportBridgesReportByVDSM) {
-                initIsVm();
-            }
-            getIsVmNetwork().setIsChangeable(true);
+    public void setSupportBridgesReportByVDSM() {
+        if (!this.isSupportBridgesReportByVDSM) {
+            initIsVm();
         }
-        this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
+        getIsVmNetwork().setIsChangeable(true);
+        this.isSupportBridgesReportByVDSM = true;
     }
 
     public boolean isMTUOverrideSupported() {
         return mtuOverrideSupported;
     }
 
-    public void setMTUOverrideSupported(boolean mtuOverrideSupported) {
-        this.mtuOverrideSupported = mtuOverrideSupported;
+    public void setMTUOverrideSupported() {
+        this.mtuOverrideSupported = true;
         updateMtuSelectorsChangeability();
     }
 
@@ -526,18 +519,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        // Get IsSupportBridgesReportByVDSM
-        boolean isSupportBridgesReportByVDSM =
-                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportBridgesReportByVDSM,
-                        dc.getCompatibilityVersion().toString());
-        setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
-
-        // Get IsMTUOverrideSupported
-        boolean isMTUOverrideSupported =
-                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MTUOverrideSupported,
-                        dc.getCompatibilityVersion().toString());
-
-        setMTUOverrideSupported(isMTUOverrideSupported);
+        setSupportBridgesReportByVDSM();
+        setMTUOverrideSupported();
 
         AsyncQuery query = new AsyncQuery();
         query.asyncCallback = new INewAsyncCallback() {

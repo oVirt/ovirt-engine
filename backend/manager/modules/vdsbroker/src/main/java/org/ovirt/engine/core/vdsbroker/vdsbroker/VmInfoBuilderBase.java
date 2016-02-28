@@ -199,9 +199,7 @@ public abstract class VmInfoBuilderBase {
 
     private void addCpuPinning(final String compatibilityVersion) {
         final String cpuPinning = vm.getCpuPinning();
-        if (StringUtils.isNotEmpty(cpuPinning)
-                && Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
-                        compatibilityVersion))) {
+        if (StringUtils.isNotEmpty(cpuPinning)) {
             final Map<String, Object> pinDict = new HashMap<>();
             for (String pin : cpuPinning.split("_")) {
                 final String[] split = pin.split("#");

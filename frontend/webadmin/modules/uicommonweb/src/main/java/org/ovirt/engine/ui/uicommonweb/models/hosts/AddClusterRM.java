@@ -98,7 +98,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setMaxVdsMemoryOverCommit(clusterModel.getMemoryOverCommit());
                 cluster.setCountThreadsAsCores(Boolean.TRUE.equals(clusterModel.getVersionSupportsCpuThreads().getEntity())
                         && Boolean.TRUE.equals(clusterModel.getCountThreadsAsCores().getEntity()));
-                cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
+                cluster.setTransparentHugepages(true);
                 cluster.setCompatibilityVersion(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
                 ClusterOperationParameters parameters = new ManagementNetworkOnClusterOperationParameters(cluster);

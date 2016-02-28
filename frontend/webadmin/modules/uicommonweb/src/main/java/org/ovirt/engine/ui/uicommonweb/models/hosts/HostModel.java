@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -907,22 +906,15 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             }), cluster.getCompatibilityVersion());
 
             boolean clusterSupportsJsonrpcOnly = cluster.getCompatibilityVersion().greaterOrEquals(Version.v3_6);
-            Boolean jsonSupported =
-                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
-                            cluster.getCompatibilityVersion().toString());
 
             if (clusterSupportsJsonrpcOnly) {
                 getProtocol().setIsAvailable(false);
                 getProtocol().setEntity(true);
             } else {
                 getProtocol().setIsAvailable(true);
-                if (jsonSupported) {
-                    getProtocol().setEntity(vdsProtocol == null ? true : VdsProtocol.STOMP == vdsProtocol);
-                } else {
-                    getProtocol().setEntity(false);
-                }
+                getProtocol().setEntity(vdsProtocol == null ? true : VdsProtocol.STOMP == vdsProtocol);
             }
-            getProtocol().setIsChangeable(jsonSupported);
+            getProtocol().setIsChangeable(true);
             //Match the appropriate selected data center to the selected cluster, don't fire update events.
             if (getDataCenter() != null && getDataCenter().getItems() != null) {
                 for (StoragePool datacenter : getDataCenter().getItems()) {

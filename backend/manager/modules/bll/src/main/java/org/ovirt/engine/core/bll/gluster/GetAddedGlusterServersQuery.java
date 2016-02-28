@@ -7,11 +7,9 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -73,12 +71,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     }
 
     public boolean serverExists(GlusterServerInfo glusterServer) {
-        Cluster cluster = getClusterDao().get(getParameters().getClusterId());
-        if (GlusterFeatureSupported.glusterHostUuidSupported(cluster.getCompatibilityVersion())) {
-            return getDbUtils().serverExists(glusterServer.getUuid());
-        } else {
-            return getDbUtils().serverExists(getParameters().getClusterId(), glusterServer.getHostnameOrIp());
-        }
+        return getDbUtils().serverExists(glusterServer.getUuid());
     }
 
     public ClusterUtils getClusterUtils() {

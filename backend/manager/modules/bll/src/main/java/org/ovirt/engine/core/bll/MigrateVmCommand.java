@@ -265,9 +265,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private boolean isTunnelMigrationUsed() {
-        if (!FeatureSupported.tunnelMigration(getVm().getCompatibilityVersion())) {
-            return false;
-        }
         // if vm has no override for tunnel migration (its null),
         // use cluster's setting
         return getVm().getTunnelMigration() != null ?
@@ -276,11 +273,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private String getMigrationNetworkIp() {
-
-        if (!FeatureSupported.migrationNetwork(getVm().getCompatibilityVersion())) {
-            return null;
-        }
-
         Network migrationNetwork = null;
 
         // Find migrationNetworkCluster

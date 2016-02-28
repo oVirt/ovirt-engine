@@ -2,9 +2,7 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -36,9 +34,6 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected XmlDocument _document;
     protected VmBase vmBase;
     private Version version;
-    private int diskCounter;
-    /** map disk alias to backward compatible disk alias */
-    private Map<String, String> diskAliasesMap;
 
     private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
@@ -48,9 +43,6 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer = new XmlTextWriter();
         this.vmBase = vmBase;
         this.version = version;
-        if (version.compareTo(Version.v3_1) < 0) {
-            diskAliasesMap = new HashMap<>();
-        }
         writeHeader();
     }
 
@@ -251,12 +243,6 @@ public abstract class OvfWriter implements IOvfBuilder {
         if (vmBase.getComment() != null) {
             _writer.writeStartElement(OvfProperties.COMMENT);
             _writer.writeRaw(vmBase.getComment());
-            _writer.writeEndElement();
-        }
-
-        if (!vmInitEnabled() && vmBase.getVmInit() != null && vmBase.getVmInit().getDomain() != null) {
-            _writer.writeStartElement(OvfProperties.DOMAIN);
-            _writer.writeRaw(vmBase.getVmInit().getDomain());
             _writer.writeEndElement();
         }
 
@@ -614,37 +600,9 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected String getBackwardCompatibleUsbPolicy(UsbPolicy usbPolicy) {
         if (usbPolicy == null) {
-            return version.compareTo(Version.v3_1) < 0 ? UsbPolicy.PRE_3_1_DISABLED : UsbPolicy.DISABLED.name();
+            return UsbPolicy.DISABLED.name();
         }
-
-        if (version.compareTo(Version.v3_1) < 0) {
-            switch (usbPolicy) {
-            case ENABLED_LEGACY:
-                return UsbPolicy.PRE_3_1_ENABLED;
-            default:
-                return UsbPolicy.PRE_3_1_DISABLED;
-            }
-        }
-        else {
-            return usbPolicy.toString();
-        }
-    }
-
-    protected boolean vmInitEnabled() {
-        return version.compareTo(Version.v3_4) < 0 ? false : true;
-    }
-
-    protected String getBackwardCompatibleDiskAlias(String diskAlias) {
-        if (version.compareTo(Version.v3_1) >= 0) {
-            return diskAlias;
-        }
-
-        String newDiskAlias = diskAliasesMap.get(diskAlias);
-        if (newDiskAlias == null) {
-            newDiskAlias = "Drive " + ++diskCounter;
-            diskAliasesMap.put(diskAlias, newDiskAlias);
-        }
-        return newDiskAlias;
+        return usbPolicy.toString();
     }
 
     protected void writeOS() {
@@ -738,7 +696,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (DiskImage image : _images) {
             _writer.writeStartElement("Item");
             _writer.writeStartElement(RASD_URI, "Caption");
-            _writer.writeRaw(getBackwardCompatibleDiskAlias(image.getDiskAlias()));
+            _writer.writeRaw(image.getDiskAlias());
             _writer.writeEndElement();
             _writer.writeStartElement(RASD_URI, "InstanceId");
             _writer.writeRaw(image.getImageId().toString());

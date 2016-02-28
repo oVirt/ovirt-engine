@@ -94,7 +94,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setId(clusterId);
         cluster.setStoragePoolId(spId);
-        cluster.setCompatibilityVersion(Version.v3_2);
+        cluster.setCompatibilityVersion(Version.getLast());
         when(clusterDao.get(clusterId)).thenReturn(cluster);
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
 
@@ -140,8 +140,8 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         VmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
-        when(osRepository.getMinimumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(0);
-        when(osRepository.getMaximumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(100);
+        when(osRepository.getMinimumRam(vm.getVmOsId(), Version.getLast())).thenReturn(0);
+        when(osRepository.getMaximumRam(vm.getVmOsId(), Version.getLast())).thenReturn(100);
         when(osRepository.getArchitectureFromOS(14)).thenReturn(ArchitectureType.x86_64);
     }
 

@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -41,12 +39,9 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             getCompensationContext().stateChanged();
             return null;
         });
-        boolean supportForceExtendVG = Config.<Boolean> getValue(
-                ConfigValues.SupportForceExtendVG, getStoragePool().getCompatibilityVersion().toString());
-
         runVdsCommand(VDSCommandType.ExtendStorageDomain,
                 new ExtendStorageDomainVDSCommandParameters(getStoragePoolId(), getStorageDomain()
-                        .getId(), getParameters().getLunIds(), getParameters().isForce(), supportForceExtendVG));
+                        .getId(), getParameters().getLunIds(), getParameters().isForce()));
         executeInNewTransaction(() -> {
             for (LUNs lun : getParameters().getLunsList()) {
                 proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());

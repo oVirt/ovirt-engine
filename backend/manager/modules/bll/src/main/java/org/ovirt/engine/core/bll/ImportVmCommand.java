@@ -32,7 +32,6 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -59,7 +58,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
@@ -360,10 +358,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
-        if (!validateDiskInterface(imageList)) {
-            return false;
-        }
-
         setVmTemplateId(getVm().getVmtGuid());
         if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !validateUniqueVmName()) {
             return false;
@@ -507,17 +501,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             disksDummies.add(diskImage);
         }
         return disksDummies;
-    }
-
-    protected boolean validateDiskInterface(Iterable<DiskImage> images) {
-        for (DiskImage diskImage : images) {
-            if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
-                    !FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
-                return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
-            }
-        }
-
-        return true;
     }
 
     protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
@@ -1099,8 +1082,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
                 }
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }

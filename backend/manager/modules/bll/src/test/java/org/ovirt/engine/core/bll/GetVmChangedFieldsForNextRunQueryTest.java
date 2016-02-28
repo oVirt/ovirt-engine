@@ -54,7 +54,6 @@ public class GetVmChangedFieldsForNextRunQueryTest
 
     private VM createEmptyVm() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v3_4);
         vm.setCustomProperties(StringUtils.EMPTY);
         vm.setPredefinedProperties(StringUtils.EMPTY);
         vm.setUserDefinedProperties(StringUtils.EMPTY);

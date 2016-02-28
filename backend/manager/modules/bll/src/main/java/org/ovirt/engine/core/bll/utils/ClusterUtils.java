@@ -81,7 +81,7 @@ public class ClusterUtils {
     public static Version getCompatibilityVersion(VmBase vmBase) {
         return vmBase.getClusterId() != null ?
                 getInstance().getClusterDao().get(vmBase.getClusterId()).getCompatibilityVersion()
-                : Version.v3_0;
+                : Version.v3_5;
     }
 
     public ClusterDao getClusterDao() {

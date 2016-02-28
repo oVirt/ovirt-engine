@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
@@ -59,13 +58,10 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
 
     @SuppressWarnings("unchecked")
     protected Map<String, String>[] buildStructFromConnectionListObject() {
-        final StoragePool storagePool =
-                DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
         final Map<String, String>[] result = new HashMap[getParameters().getConnectionList().size()];
         int i = 0;
         for (StorageServerConnections connection : getParameters().getConnectionList()) {
             result[i] = StorageConnectionHelper.getInstance().createStructFromConnection(connection,
-                    storagePool,
                     getParameters().getVdsId());
             i++;
         }

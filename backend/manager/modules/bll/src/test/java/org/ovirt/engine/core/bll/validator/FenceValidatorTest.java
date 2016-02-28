@@ -137,7 +137,7 @@ public class FenceValidatorTest {
         VDS vds = new VDS();
         vds.setPmEnabled(true);
         Cluster cluster = new Cluster();
-        cluster.setCompatibilityVersion(Version.v3_3);
+        cluster.setCompatibilityVersion(Version.getLast());
         FenceAgent agent = new FenceAgent();
         agent.setType("Some_Type");
         vds.getFenceAgents().add(agent);
@@ -154,7 +154,7 @@ public class FenceValidatorTest {
         VDS vds = new VDS();
         vds.setPmEnabled(true);
         Cluster cluster = new Cluster();
-        cluster.setCompatibilityVersion(Version.v3_3);
+        cluster.setCompatibilityVersion(Version.getLast());
         FenceAgent agent = new FenceAgent();
         agent.setType("apc");
         vds.getFenceAgents().add(agent);

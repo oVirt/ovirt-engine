@@ -11,8 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -76,22 +74,6 @@ public class ClusterValidator {
                         && !clusterDao.getAllForStoragePool(cluster.getStoragePoolId()).isEmpty());
     }
 
-    public ValidationResult qosBaloonSupported() {
-        Version version = cluster.getCompatibilityVersion();
-        return ValidationResult.failWith(EngineMessage.QOS_BALLOON_NOT_SUPPORTED).when(version != null
-                && Version.v3_3.compareTo(version) > 0 && cluster.isEnableBallooning());
-    }
-
-    public ValidationResult glusterServiceSupported() {
-        return ValidationResult.failWith(EngineMessage.GLUSTER_NOT_SUPPORTED,
-                "compatibilityVersion", cluster.getCompatibilityVersion().getValue())
-                .when(cluster.supportsGlusterService() && !glusterFeatureEnabled());
-    }
-
-    protected boolean glusterFeatureEnabled() {
-        return GlusterFeatureSupported.gluster(cluster.getCompatibilityVersion());
-    }
-
     public ValidationResult clusterServiceDefined() {
         return ValidationResult.failWith(EngineMessage.CLUSTER_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED)
                 .unless(cluster.supportsGlusterService() || cluster.supportsVirtService());
@@ -115,15 +97,6 @@ public class ClusterValidator {
 
     protected boolean migrationSupportedForArch(ArchitectureType arch) {
         return FeatureSupported.isMigrationSupported(arch, cluster.getCompatibilityVersion());
-    }
-
-    public ValidationResult virtIoRngSupported() {
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED)
-                .unless(cluster.getRequiredRngSources().isEmpty() || virtIoRngSupportedInCluster());
-    }
-
-    protected boolean virtIoRngSupportedInCluster() {
-        return FeatureSupported.virtIoRngSupported(cluster.getCompatibilityVersion());
     }
 
     private boolean attestationServerEnabled() {

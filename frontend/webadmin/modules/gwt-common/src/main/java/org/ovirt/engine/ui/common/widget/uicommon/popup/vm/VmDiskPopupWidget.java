@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -291,10 +290,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 }
 
                 boolean isVirtioScsiEnabled = Boolean.TRUE.equals(((EntityModel) sender).getEntity());
-                Version clusterVersion = disk.getVm().getCompatibilityVersion();
 
                 // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
-                interfaceInfoIcon.setVisible(clusterVersion.compareTo(Version.v3_3) >= 0 && !isVirtioScsiEnabled);
+                interfaceInfoIcon.setVisible(!isVirtioScsiEnabled);
             }
         });
 

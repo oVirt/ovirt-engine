@@ -72,8 +72,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> monitorCommand(String vmId, String monitorCommand);
 
-    public Map<String, Object> setVmTicket(String vmId, String otp64, String sec);
-
     public Map<String, Object> setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
 
     public Map<String, Object> addNetwork(String bridge, String vlan, String bond, String[] nics,
@@ -130,8 +128,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getIsoList(String spUUID);
 
-    public Map<String, Object> createVG(String sdUUID, String[] deviceList);
-
     public Map<String, Object> createVG(String sdUUID, String[] deviceList, boolean force);
 
     public Map<String, Object> getVGInfo(String vgUUID);
@@ -155,8 +151,6 @@ public interface VdsServerConnector {
     public Map<String, Object> spmStop(String spUUID);
 
     public Map<String, Object> getSpmStatus(String spUUID);
-
-    public Map<String, Object> refreshStoragePool(String spUUID, String msdUUID, int masterVersion);
 
     public Map<String, Object> getTaskStatus(String taskUUID);
 
@@ -198,12 +192,6 @@ public interface VdsServerConnector {
             String[] brickList,
             int replicaCount,
             int stripeCount,
-            String[] transportList);
-
-    public Map<String, Object> glusterVolumeCreate(String volumeName,
-            String[] brickList,
-            int replicaCount,
-            int stripeCount,
             String[] transportList,
             boolean force);
 
@@ -234,11 +222,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeRemoveBrickCommit(String volumeName,
             String[] brickDirectories,
             int replicaCount);
-
-    public Map<String, Object> glusterVolumeBrickAdd(String volumeName,
-            String[] bricks,
-            int replicaCount,
-            int stripeCount);
 
     public Map<String, Object> glusterVolumeBrickAdd(String volumeName,
             String[] bricks,

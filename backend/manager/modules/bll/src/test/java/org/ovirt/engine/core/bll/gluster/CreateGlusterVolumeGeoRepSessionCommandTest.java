@@ -31,7 +31,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest {
-    private static final Version NOT_SUPPORTED_VERSION = Version.v3_4;
+    private static final Version NOT_SUPPORTED_VERSION = Version.v3_5;
 
     private static final Version SUPPORTED_VERSION = Version.v3_6;
 

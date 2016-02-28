@@ -331,9 +331,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("The virtual machine is running and NIC Hot Plug is not supported on cluster version {0} or by the operating system.")
     String nicHotPlugNotSupported(String clusterVersion);
 
-    @DefaultMessage("Updating 'profile' on a running virtual machine while the NIC is plugged is not supported on cluster version {0}")
-    String hotProfileUpdateNotSupported(String clusterVersion);
-
     @DefaultMessage("Custom({0})")
     String customSpmPriority(int priority);
     @DefaultMessage("Brick Details not supported for this Cluster''s compatibility version({0}).")

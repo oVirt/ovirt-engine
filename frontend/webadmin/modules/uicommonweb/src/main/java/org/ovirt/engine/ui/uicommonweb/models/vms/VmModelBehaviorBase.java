@@ -148,10 +148,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getQuota().setIsAvailable(false);
         }
 
-        getModel().getIsRngEnabled().setIsChangeable(isRngDeviceSupported(getModel()));
-        if (!getModel().getIsRngEnabled().getIsChangable()) {
-            getModel().getIsRngEnabled().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
-        }
+        getModel().getIsRngEnabled().setIsChangeable(true);
         setRngAvailability();
 
         postDataCenterWithClusterSelectedItemChanged();
@@ -835,25 +832,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    private boolean isRngDeviceSupported(UnitVmModel model) {
-        Version clusterVersion = model.getCompatibilityVersion();
-        return clusterVersion == null ? false : (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.VirtIoRngDeviceSupported, clusterVersion.getValue());
-    }
-
     protected void updateCpuSharesAvailability() {
         if (getModel().getSelectedCluster() != null) {
-            boolean availableCpuShares = getModel().getCompatibilityVersion()
-                    .compareTo(Version.v3_3) >= 0;
-            getModel().getCpuSharesAmountSelection().setIsAvailable(availableCpuShares);
-            getModel().getCpuSharesAmount().setIsAvailable(availableCpuShares);
+            getModel().getCpuSharesAmountSelection().setIsAvailable(true);
+            getModel().getCpuSharesAmount().setIsAvailable(true);
         }
     }
 
     protected void updateVirtioScsiAvailability() {
-        boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.VirtIoScsiEnabled, getModel().getCompatibilityVersion().getValue());
-        getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
+        getModel().getIsVirtioScsiEnabled().setIsAvailable(true);
     }
 
     protected void setupTemplateWithVersion(final Guid templateId,
@@ -913,18 +900,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateCpuPinningVisibility() {
         if (getModel().getSelectedCluster() != null) {
-            String compatibilityVersion = getModel().getCompatibilityVersion().toString();
             boolean isLocalSD = getModel().getSelectedDataCenter() != null
                     && getModel().getSelectedDataCenter().isLocal();
 
             // cpu pinning is available on Local SD with no consideration for auto assign value
             boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity()) || isLocalSD;
 
-            if (Boolean.FALSE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
-                    compatibilityVersion))) {
-                hasCpuPinning = false;
-            } else if (Boolean.FALSE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
-                                                                                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()))
+            if (Boolean.FALSE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
+                    AsyncDataProvider.getInstance().getDefaultConfigurationVersion()))
                     && isVmMigratable()
                     && !isLocalSD) {
                 hasCpuPinning = false;
@@ -947,8 +930,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      */
     public void updateUseHostCpuAvailability() {
 
-        boolean clusterSupportsHostCpu =
-                    getCompatibilityVersion() != null && getCompatibilityVersion().compareTo(Version.v3_2) >= 0;
+        boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;
         boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
 
         if (clusterSupportsHostCpu && nonMigratable) {
@@ -1500,15 +1482,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return selectedInstanceType == null || selectedInstanceType instanceof CustomInstanceType;
     }
 
-    protected void updateCpuProfile(Guid clusterId, Version clusterCompatibilityVersion, Guid cpuProfileId) {
-        if (Boolean.TRUE.equals(AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
-                        clusterCompatibilityVersion.getValue()))) {
-            getModel().getCpuProfiles().setIsAvailable(true);
-            fetchCpuProfiles(clusterId, cpuProfileId);
-        } else {
-            getModel().getCpuProfiles().setIsAvailable(false);
-        }
+    protected void updateCpuProfile(Guid clusterId, Guid cpuProfileId) {
+        getModel().getCpuProfiles().setIsAvailable(true);
+        fetchCpuProfiles(clusterId, cpuProfileId);
     }
 
     private void fetchCpuProfiles(Guid clusterId, final Guid cpuProfileId) {

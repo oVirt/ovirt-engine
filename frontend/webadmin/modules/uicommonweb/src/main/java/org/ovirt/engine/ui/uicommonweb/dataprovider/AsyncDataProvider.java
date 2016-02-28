@@ -471,14 +471,9 @@ public class AsyncDataProvider {
             return false;
         }
 
-        boolean archMemorySnapshotSupported = isMemorySnapshotSupportedByArchitecture(
+        return isMemorySnapshotSupportedByArchitecture(
                 vm.getClusterArch(),
                 vm.getCompatibilityVersion());
-
-        return  (Boolean) getConfigValuePreConverted(
-                ConfigurationValues.MemorySnapshotSupported,
-                vm.getCompatibilityVersion().toString())
-                && archMemorySnapshotSupported;
     }
 
     public boolean canVmsBePaused(List<VM> items) {
@@ -490,12 +485,6 @@ public class AsyncDataProvider {
         }
 
         return true;
-    }
-
-    public boolean isLiveMergeSupported(VM vm) {
-        return vm != null && (Boolean) getConfigValuePreConverted(
-                ConfigurationValues.LiveMergeSupported,
-                vm.getCompatibilityVersion().toString());
     }
 
     public void initNicHotplugSupportMap() {
@@ -3208,19 +3197,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, callback);
     }
 
-    public void isSupportBridgesReportByVDSM(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Boolean) source).booleanValue() : true;
-            }
-        };
-        GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.SupportBridgesReportByVDSM);
-        tempVar.setVersion(version);
-        getConfigFromCache(tempVar, aQuery);
-    }
-
     public void fillTagsRecursive(Tags tagToFill, List<Tags> children) {
         ArrayList<Tags> list = new ArrayList<>();
 
@@ -3296,10 +3272,6 @@ public class AsyncDataProvider {
         } else {
             return items.iterator().next();
         }
-    }
-
-    public boolean isVersionMatchStorageType(Version version, boolean isLocalType) {
-        return version.compareTo(new Version(3, 0)) >= 0;
     }
 
     public int getClusterDefaultMemoryOverCommit() {
@@ -3762,10 +3734,6 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public boolean isMixedStorageDomainsSupported(Version version) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.MixedDomainTypesInDataCenter, version.toString());
-    }
-
     public boolean isLsmBetweenMixedStorageDomainsSupported(Version version) {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.LiveStorageMigrationBetweenDifferentStorageTypes,
                 version.toString());
@@ -3876,32 +3844,8 @@ public class AsyncDataProvider {
         return true;
     }
 
-    public boolean isSerialNumberPolicySupported(String version) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SerialNumberPolicySupported, version);
-    }
-
-    public boolean isSkipFencingIfSDActiveSupported(String version) {
-        boolean result = false;
-        if (version != null) {
-            Boolean b = (Boolean) getConfigValuePreConverted(
-                    ConfigurationValues.SkipFencingIfSDActiveSupported,
-                    version
-            );
-            result = (b != null) && b;
-        }
-        return result;
-    }
-
-    public boolean isBootMenuSupported(String version) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.BootMenuSupported, version);
-    }
-
     public boolean isSpiceFileTransferToggleSupported(String version) {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.SpiceFileTransferToggleSupported, version);
-    }
-
-    public boolean isSpiceCopyPasteToggleSupported(String version) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SpiceCopyPasteToggleSupported, version);
     }
 
     public List<IStorageModel> getDataStorageModels() {

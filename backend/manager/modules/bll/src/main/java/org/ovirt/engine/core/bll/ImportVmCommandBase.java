@@ -167,7 +167,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
         return VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
                 vm.getOs(),
-                getEffectiveCompatibilityVersion(),
                 getReturnValue().getValidationMessages());
     }
 
@@ -205,8 +204,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean setAndValidateCpuProfile() {
         getVm().getStaticData().setClusterId(getClusterId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
-                getEffectiveCompatibilityVersion()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData()));
     }
 
     protected boolean validateBallonDevice() {
@@ -490,7 +488,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getClusterId(),
                         getStoragePoolId(),
-                        getEffectiveCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
 
         List<VmNetworkInterface> nics = getVm().getInterfaces();

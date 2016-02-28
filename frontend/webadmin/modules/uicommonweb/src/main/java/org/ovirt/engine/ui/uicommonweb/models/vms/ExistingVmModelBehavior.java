@@ -213,7 +213,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     }), vm.getRunOnVds());
                 }
 
-                updateCpuProfile(vm.getClusterId(), vm.getCompatibilityVersion(), vm.getCpuProfileId());
+                updateCpuProfile(vm.getClusterId(), vm.getCpuProfileId());
             }
         });
     }
@@ -232,9 +232,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public void dataCenterWithClusterSelectedItemChanged() {
         super.dataCenterWithClusterSelectedItemChanged();
         if (getModel().getSelectedCluster() != null) {
-            updateCpuProfile(getModel().getSelectedCluster().getId(),
-                             getCompatibilityVersion(),
-                             vm.getCpuProfileId());
+            updateCpuProfile(getModel().getSelectedCluster().getId(), vm.getCpuProfileId());
 
             if (isInStateWithMemoryVolume(getVm()) && !isRestoreMemoryVolumeSupported()) {
                 getModel().getEditingEnabled().setMessage(getModel().constants.suspendedVMsWhenClusterChange());
@@ -411,17 +409,13 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public boolean isHotSetCpuSupported() {
         Cluster selectedCluster = getModel().getSelectedCluster();
         Version compatibilityVersion = getModel().getCompatibilityVersion();
-        Boolean hotplugEnabled = (Boolean)
-                    AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                            ConfigurationValues.HotPlugEnabled,
-                            compatibilityVersion.getValue());
         boolean hotplugCpuSupported = Boolean.parseBoolean(
                     ((Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                             ConfigurationValues.HotPlugCpuSupported,
                             compatibilityVersion.getValue()))
                     .get(selectedCluster.getArchitecture().name()));
 
-        return getVm().getStatus() == VMStatus.Up && hotplugEnabled && hotplugCpuSupported;
+        return getVm().getStatus() == VMStatus.Up && hotplugCpuSupported;
     }
 
     public int getHostCpu() {

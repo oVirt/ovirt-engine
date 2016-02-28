@@ -65,9 +65,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_1, true),
-            mockConfig(ConfigValues.LiveSnapshotEnabled, Version.v3_6, true),
-            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_1, false),
+            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_5, false),
             mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_6, true)
     );
 
@@ -384,7 +382,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     private void initStoragePool() {
         storagePool = new StoragePool();
-        storagePool.setCompatibilityVersion(Version.v3_1);
+        storagePool.setCompatibilityVersion(Version.v3_5);
 
         when(storagePoolDao.get(any(Guid.class))).thenReturn(storagePool);
         when(command.getStoragePoolId()).thenReturn(storagePoolId);

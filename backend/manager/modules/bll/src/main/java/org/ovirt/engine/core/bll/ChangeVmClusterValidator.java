@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.VmNicValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -54,8 +52,7 @@ public class ChangeVmClusterValidator {
 
             List<VmNic> interfaces = DbFacade.getInstance().getVmNicDao().getAllForVm(vm.getId());
 
-            if (!validateDestinationClusterContainsNetworks(interfaces)
-                    || !validateNics(interfaces, targetCluster.getCompatibilityVersion())) {
+            if (!validateDestinationClusterContainsNetworks(interfaces)) {
                 return false;
             }
 
@@ -74,7 +71,6 @@ public class ChangeVmClusterValidator {
             if (!VmHandler.isUsbPolicyLegal(
                     vm.getUsbPolicy(),
                     vm.getOs(),
-                    vmCompatibilityVersion,
                     parentCommand.getReturnValue().getValidationMessages())) {
                 return false;
             }
@@ -90,11 +86,6 @@ public class ChangeVmClusterValidator {
             }
 
             if (VmDeviceUtils.hasVirtioScsiController(vm.getId())) {
-                // Verify cluster compatibility
-                if (!FeatureSupported.virtIoScsi(vmCompatibilityVersion)) {
-                    return parentCommand.failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
-                }
-
                 // Verify OS compatibility
                 if (!VmHandler.isOsTypeSupportedForVirtioScsi(
                         vm.getOs(),
@@ -147,28 +138,6 @@ public class ChangeVmClusterValidator {
             parentCommand.addValidationMessage(EngineMessage.MOVE_VM_CLUSTER_MISSING_NETWORK);
             parentCommand.addValidationMessageVariable("networks", missingNets.toString());
             return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks that when unlinking/null network is not supported in the destination cluster and a NIC has unlinked/null
-     * network, it's not valid.
-     *
-     * @param interfaces                  The NICs to check.
-     * @param clusterCompatibilityVersion The destination cluster's compatibility version.
-     * @return Whether the NICs are linked correctly and network name is valid (with regards to the destination
-     * cluster).
-     */
-    private boolean validateNics(List<VmNic> interfaces,
-                                 Version clusterCompatibilityVersion) {
-        for (VmNic iface : interfaces) {
-            VmNicValidator nicValidator = new VmNicValidator(iface, clusterCompatibilityVersion);
-            if (!parentCommand.validate(nicValidator.emptyNetworkValid())
-                    || !parentCommand.validate(nicValidator.linkedOnlyIfSupported())) {
-                return false;
-            }
         }
 
         return true;

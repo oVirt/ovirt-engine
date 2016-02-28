@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -172,12 +171,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         Collection<PairQueryable<VdsNetworkInterface, VDS>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
 
-        getSetupNetworksCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && selectedItems.iterator()
-                        .next()
-                        .getSecond()
-                        .getClusterCompatibilityVersion()
-                        .compareTo(Version.v3_1) >= 0);
+        getSetupNetworksCommand().setIsExecutionAllowed(selectedItems.size() == 1);
     }
 
     @Override

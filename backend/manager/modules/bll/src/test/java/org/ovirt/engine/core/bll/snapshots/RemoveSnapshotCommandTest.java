@@ -9,7 +9,6 @@ import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -36,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -45,17 +42,12 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link RemoveSnapshotCommand} class. */
 public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     /** The command to test */
     private RemoveSnapshotCommand<RemoveSnapshotParameters> cmd;
-
-    @Rule
-    public MockConfigRule mcr =
-            new MockConfigRule(mockConfig(ConfigValues.LiveMergeSupported, Version.v3_5, true));
 
     @Mock
     private VmTemplateDao vmTemplateDao;
@@ -223,15 +215,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         cmd.getVm().setStatus(VMStatus.MigratingTo);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
-    }
-
-    @Test
-    public void vmHasPluggedDdeviceSnapshotsAttachedToOtherVms() {
-        prepareForVmValidatorTests();
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM)).when(vmValidator)
-                .vmNotHavingDeviceSnapshotsAttachedToOtherVms(false);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM);
     }
 
     /** Mocks a call to {@link RemoveSnapshotCommand#getSourceImages()} and returns its image guid */

@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -96,22 +95,18 @@ public class ClusterHostListModel extends HostListModel<Cluster> {
     }
 
     private void updateActionAvailability() {
-        if (getEntity().getCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
-            getUpdateMomPolicyCommand().setIsAvailable(true);
-            ArrayList<VDS> items =
-                    getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
-            boolean allHostRunning = !items.isEmpty();
+        getUpdateMomPolicyCommand().setIsAvailable(true);
+        ArrayList<VDS> items =
+                getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
+        boolean allHostRunning = !items.isEmpty();
 
-            for (VDS vds : items) {
-                if (vds.getStatus() != VDSStatus.Up) {
-                    allHostRunning = false;
-                    break;
-                }
+        for (VDS vds : items) {
+            if (vds.getStatus() != VDSStatus.Up) {
+                allHostRunning = false;
+                break;
             }
-            getUpdateMomPolicyCommand().setIsExecutionAllowed(allHostRunning);
-        } else {
-            getUpdateMomPolicyCommand().setIsAvailable(false);
         }
+        getUpdateMomPolicyCommand().setIsExecutionAllowed(allHostRunning);
     }
 
     @Override

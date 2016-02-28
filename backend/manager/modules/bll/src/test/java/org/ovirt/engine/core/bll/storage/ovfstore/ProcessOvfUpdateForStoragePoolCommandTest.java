@@ -118,7 +118,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         ovfUpdateProcessHelper = Mockito.spy(new OvfUpdateProcessHelper());
         doReturn(ITEMS_COUNT_PER_UPDATE).when(command).loadConfigValue();
         doReturn(new ArrayList<DiskImage>()).when(ovfUpdateProcessHelper).getAllImageSnapshots(any(DiskImage.class));
-        doReturn(false).when(command).ovfOnAnyDomainSupported(any(StoragePool.class));
         doCallRealMethod().when(command).executeCommand();
         // init members
         initMembers();
@@ -398,21 +397,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         pool.setStatus(StoragePoolStatus.Up);
     }
 
-    private void verifyCorrectOvfDataUpdaterRun(StoragePool storagePool,
-            Collection<Guid> needToBeUpdated,
-            Collection<Guid> removedGuids) {
+    private void verifyCorrectOvfDataUpdaterRun(Collection<Guid> needToBeUpdated) {
 
-        if (!command.ovfOnAnyDomainSupported(storagePool)) {
-            assertTrue("not all needed vms/templates were updated in vdsm",
-                    CollectionUtils.isEqualCollection(executedUpdatedMetadataForStoragePool.keySet(),
-                            needToBeUpdated));
-            for (Map.Entry<Guid, KeyValuePairCompat<String, List<Guid>>> entry : executedUpdatedMetadataForStoragePool
-                    .entrySet()) {
-                assertEquals("wrong ovf data stored in storage for vm/template",
-                        entry.getKey().toString(),
-                        entry.getValue().getKey());
-            }
-        }
         assertTrue("not all needed vms/templates were updated in db",
                 CollectionUtils.isEqualCollection(executedUpdatedOvfGenerationIdsInDb.keySet(),
                         needToBeUpdated));
@@ -429,11 +415,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                                 .equals(templates.get(storagePoolGenerationEntry.getKey()).getDbGeneration());
             }
             assertTrue("wrong new ovf version persisted for vm/template", isCorrectVersion);
-        }
-
-        if (!command.ovfOnAnyDomainSupported(storagePool)) {
-            assertTrue("not all needed vms/templates were removed from vdsm",
-                    CollectionUtils.isEqualCollection(removedGuids, executedRemovedIds));
         }
     }
 
@@ -468,19 +449,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testOvfDataUpdaterRunWithUpdateAndRemoveHigherThanCountOnePoolOvfOnAnyDomainSupported() {
-        testOvfDataUpdaterRunWithUpdateAndRemoveHigherThanCountOnePool(true);
-        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.<Guid, List<Guid>> emptyMap());
-    }
-
-    @Test
-    public void testOvfDataUpdaterRunWithUpdateAndRemoveHigherThanCountOnePoolOvfOnAnyDomainUnsupported() {
-        testOvfDataUpdaterRunWithUpdateAndRemoveHigherThanCountOnePool(false);
-    }
-
-    public void testOvfDataUpdaterRunWithUpdateAndRemoveHigherThanCountOnePool(boolean ovfOnAnyDomainSupported) {
+    public void testOvfDataUpdaterRunWithUpdateAndRemoveHigherThanCountOnePool() {
         int size = 3 * ITEMS_COUNT_PER_UPDATE + 10;
-        doReturn(ovfOnAnyDomainSupported).when(command).ovfOnAnyDomainSupported(any(StoragePool.class));
+
         List<Guid> vmGuids = generateGuidList(size);
         List<Guid> templatesGuids = generateGuidList(size);
         List<Guid> removedGuids = generateGuidList(size);
@@ -489,15 +460,13 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
         executeCommand();
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any(StoragePool.class), anyMap());
-        if (!ovfOnAnyDomainSupported) {
-            verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
-        }
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
 
         List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
-        verifyCorrectOvfDataUpdaterRun(pool1, idsThatNeededToBeUpdated, removedGuids);
+        verifyCorrectOvfDataUpdaterRun(idsThatNeededToBeUpdated);
+        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.<Guid, List<Guid>> emptyMap());
     }
 
     private void executeCommand() {
@@ -506,20 +475,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testOvfDataUpdaterRunWithUpdateAndRemoveLowerThanCountOvfOnAnyDomainSupported() {
-        testOvfDataUpdaterRunWithUpdateAndRemoveLowerThanCount(true);
-        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.<Guid, List<Guid>> emptyMap());
-    }
-
-    @Test
-    public void testOvfDataUpdaterRunWithUpdateAndRemoveLowerThanCountOvfOnAnyDomainUnupported() {
-        testOvfDataUpdaterRunWithUpdateAndRemoveLowerThanCount(false);
-    }
-
-    public void testOvfDataUpdaterRunWithUpdateAndRemoveLowerThanCount(boolean ovfOnAnyDomainSupported) {
+    public void testOvfDataUpdaterRunWithUpdateAndRemoveLowerThanCount() {
         int size = ITEMS_COUNT_PER_UPDATE - 1;
 
-        doReturn(ovfOnAnyDomainSupported).when(command).ovfOnAnyDomainSupported(any(StoragePool.class));
         List<Guid> vmGuids = generateGuidList(size);
         addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK, pool1.getId());
         List<Guid> templatesGuids = generateGuidList(size);
@@ -529,30 +487,19 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         executeCommand();
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any(StoragePool.class), anyMap());
-        if (!ovfOnAnyDomainSupported) {
-            verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
-        }
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
+
         List<Guid> needToBeUpdated = new LinkedList<>(vmGuids);
         needToBeUpdated.addAll(templatesGuids);
-        verifyCorrectOvfDataUpdaterRun(pool1, needToBeUpdated, removedGuids);
+        verifyCorrectOvfDataUpdaterRun(needToBeUpdated);
+
+        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.<Guid, List<Guid>> emptyMap());
     }
 
     @Test
-    public void testOvfDataUpdaterAllDisksAreLockedNonToRemoveOvfOnAnyDomainSupported() {
-        testOvfDataUpdaterAllDisksAreLockedNonToRemove(true);
-        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
-    }
-
-    @Test
-    public void testOvfDataUpdaterAllDisksAreLockedNonToRemoveOvfOnAnyDomainUnupported() {
-        testOvfDataUpdaterAllDisksAreLockedNonToRemove(false);
-    }
-
-    public void testOvfDataUpdaterAllDisksAreLockedNonToRemove(boolean ovfOnAnyDomainSupported) {
+    public void testOvfDataUpdaterAllDisksAreLockedNonToRemove() {
         int size = ITEMS_COUNT_PER_UPDATE - 1;
 
-        doReturn(ovfOnAnyDomainSupported).when(command).ovfOnAnyDomainSupported(any(StoragePool.class));
         List<Guid> vmGuids = generateGuidList(size);
         List<Guid> removedGuids = Collections.emptyList();
         List<Guid> templatesGuids = generateGuidList(size);
@@ -563,25 +510,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         executeCommand();
-        verify(command, never()).performOvfUpdate(any(StoragePool.class), anyMap());
-        if (!ovfOnAnyDomainSupported) {
-            verify(ovfUpdateProcessHelper, never()).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
-        }
-        verifyCorrectOvfDataUpdaterRun(pool1, Collections.<Guid> emptyList(), removedGuids);
+        verify(command, never()).performOvfUpdate(anyMap());
+        verifyCorrectOvfDataUpdaterRun(Collections.<Guid> emptyList());
     }
 
     @Test
-    public void testOvfDataUpdaterPartOfDisksAreLockedOvfOnAnyDomainSupported() {
-        testOvfDataUpdaterAllDisksAreLockedNonToRemove(true);
-        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
-    }
-
-    @Test
-    public void testOvfDataUpdaterPartOfDisksAreLockedOvfOnAnyDomainUnupported() {
-        testOvfDataUpdaterAllDisksAreLockedNonToRemove(false);
-    }
-
-    public void testOvfDataUpdaterPartOfDisksAreLocked(boolean ovfOnAnyDomainSupported) {
+    public void testOvfDataUpdaterPartOfDisksAreLocked() {
         int size = ITEMS_COUNT_PER_UPDATE - 1;
         // unlocked vms/templates
         List<Guid> vmGuids = generateGuidList(size);
@@ -600,14 +534,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         executeCommand();
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any(StoragePool.class), anyMap());
-        if (!ovfOnAnyDomainSupported) {
-            verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
-        }
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
         // list of ids that should have been updated.
         List<Guid> needToBeUpdated = new LinkedList<>(vmGuids);
         needToBeUpdated.addAll(templatesGuids);
-        verifyCorrectOvfDataUpdaterRun(pool1, needToBeUpdated, removedGuids);
+        verifyCorrectOvfDataUpdaterRun(needToBeUpdated);
+        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
     }
 
     private int numberOfTimesToBeCalled(int size, boolean isBothVmAndTemplates) {
@@ -623,17 +555,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testOvfDataUpdaterAllVmsAndTemplatesAreLockedOvfOnAnyDomainSupported() {
-        testOvfDataUpdaterAllVmsAndTemplatesAreLocked(true);
-        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
-    }
-
-    @Test
-    public void testOvfDataUpdaterAllVmsAndTemplatesAreLockedOvfOnAnyDomainUnupported() {
-        testOvfDataUpdaterAllVmsAndTemplatesAreLocked(false);
-    }
-
-    public void testOvfDataUpdaterAllVmsAndTemplatesAreLocked(boolean ovfOnAnyDomainSupported) {
+    public void testOvfDataUpdaterAllVmsAndTemplatesAreLocked() {
         int size = ITEMS_COUNT_PER_UPDATE - 1;
         List<Guid> vmGuids = generateGuidList(size);
         addVms(vmGuids, 2, VMStatus.ImageLocked, ImageStatus.OK, pool1.getId());
@@ -644,25 +566,13 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         command.executeCommand();
-        verify(command, never()).performOvfUpdate(any(StoragePool.class), anyMap());
-        if (!ovfOnAnyDomainSupported) {
-            verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
-        }
-        verifyCorrectOvfDataUpdaterRun(pool1, Collections.<Guid> emptyList(), removedGuids);
-    }
-
-    @Test
-    public void testOvfDataUpdaterPartOfVmsAndTemplatesAreLockedOvfOnAnyDomainSupported() {
-        testOvfDataUpdaterPartOfVmsAndTemplatesAreLocked(true);
+        verify(command, never()).performOvfUpdate(anyMap());
+        verifyCorrectOvfDataUpdaterRun(Collections.<Guid> emptyList());
         verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
     }
 
     @Test
-    public void testOvfDataUpdaterPartOfVmsAndTemplatesAreLockedOvfOnAnyDomainUnupported() {
-        testOvfDataUpdaterPartOfVmsAndTemplatesAreLocked(false);
-    }
-
-    public void testOvfDataUpdaterPartOfVmsAndTemplatesAreLocked(boolean ovfOnAnyDomainSupported) {
+    public void testOvfDataUpdaterPartOfVmsAndTemplatesAreLocked() {
         int size = ITEMS_COUNT_PER_UPDATE;
         List<Guid> vmGuids = generateGuidList(size);
         List<Guid> removedGuids = generateGuidList(size);
@@ -685,25 +595,13 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         List<Guid> neededToBeUpdated = new LinkedList<>(vmGuidsUnlocked);
         neededToBeUpdated.addAll(templatesGuidsUnlocked);
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any(StoragePool.class), anyMap());
-        if (!ovfOnAnyDomainSupported) {
-            verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
-        }
-        verifyCorrectOvfDataUpdaterRun(pool1, neededToBeUpdated, removedGuids);
-    }
-
-    @Test
-    public void testUpdatedDbGenerationOvfOnAnyDomainSupported() {
-        testUpdatedDbGeneration(true);
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
+        verifyCorrectOvfDataUpdaterRun(neededToBeUpdated);
         verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
     }
 
     @Test
-    public void testUpdatedDbGenerationOvfOnAnyDomainUnupported() {
-        testUpdatedDbGeneration(false);
-    }
-
-    public void testUpdatedDbGeneration(boolean ovfOnAnyDomainSupported) {
+    public void testUpdatedDbGeneration() {
         int size = 3 * ITEMS_COUNT_PER_UPDATE + 10;
         List<Guid> vmGuids = generateGuidList(size);
         List<Guid> templatesGuids = generateGuidList(size);
@@ -717,15 +615,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         executeCommand();
 
-        verify(command, never()).performOvfUpdate(any(StoragePool.class), anyMap());
-        if (!ovfOnAnyDomainSupported) {
-            verify(ovfUpdateProcessHelper, never()).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
-        }
-
+        verify(command, never()).performOvfUpdate(anyMap());
         List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
-        verifyCorrectOvfDataUpdaterRun(pool1, Collections.<Guid> emptyList(), removedGuids);
+        verifyCorrectOvfDataUpdaterRun(Collections.<Guid> emptyList());
+        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
     }
 
     @Test
@@ -733,13 +628,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         Guid poolId = pool1.getId();
         StorageDomainOvfInfo ovfInfo = poolDomainsOvfInfo.entrySet().iterator().next().getValue().getFirst().get(0);
         ovfInfo.setStatus(StorageDomainOvfInfoStatus.OUTDATED);
-        doReturn(true).when(command).ovfOnAnyDomainSupported(any(StoragePool.class));
         initTestForPool(pool1,
                 Collections.<Guid> emptyList(),
                 Collections.<Guid> emptyList(),
                 Collections.<Guid> emptyList());
         executeCommand();
-        verify(command, never()).performOvfUpdate(any(StoragePool.class), anyMap());
+        verify(command, never()).performOvfUpdate(anyMap());
         Map<Guid, List<Guid>> domainsRequiredUpdateForPool =
                 Collections.singletonMap(poolId, Arrays.asList(ovfInfo.getStorageDomainId()));
         verifyOvfUpdatedForSupportedPools(Arrays.asList(poolId), domainsRequiredUpdateForPool);

@@ -7,10 +7,6 @@ import org.ovirt.engine.core.compat.StringFormat;
  * Errors reasons that may appear during custom properties validation
  */
 public enum ValidationFailureReason {
-    UNSUPPORTED_VERSION(
-            EngineMessage.ACTION_TYPE_FAILED_CUSTOM_PROPERTIES_NOT_SUPPORTED_IN_VERSION,
-            "$NotSupportedInVersion %1$s"),
-
     INVALID_DEVICE_TYPE(
             EngineMessage.ACTION_TYPE_FAILED_INVALID_DEVICE_TYPE_FOR_CUSTOM_PROPERTIES,
             "$InvalidDeviceType %1$s"),

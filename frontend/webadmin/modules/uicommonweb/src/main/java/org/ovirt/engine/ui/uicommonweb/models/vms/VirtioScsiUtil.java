@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -48,10 +47,7 @@ public class VirtioScsiUtil {
                             callAfterUpdates();
                         } else {
                             if (Guid.isNullOrEmpty(vmId)) {
-                                Cluster cluster = model.getSelectedCluster();
-                                boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                                        ConfigurationValues.VirtIoScsiEnabled, cluster.getCompatibilityVersion().getValue());
-                                model.getIsVirtioScsiEnabled().setEntity(isVirtioScsiEnabled);
+                                model.getIsVirtioScsiEnabled().setEntity(true);
                                 callAfterUpdates();
                             } else {
                                 AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(model, new INewAsyncCallback() {

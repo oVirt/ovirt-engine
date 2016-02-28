@@ -989,8 +989,7 @@ public class VmDeviceUtils {
             }
             VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vmId));
             VmHandler.updateNetworkInterfacesFromDb(vm);
-            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getCompatibilityVersion());
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
             dao.updateBootOrderInBatch(devices);
         }
     }
@@ -1502,12 +1501,6 @@ public class VmDeviceUtils {
             addCdDevice(vmBase.getId());
         }
 
-        // add sound card for desktops imported from old versions only, since devices didn't exist
-        Version ovfVer = new Version(vmBase.getOvfVersion());
-        if (!hasSound && VmDeviceCommonUtils.isOldClusterVersion(ovfVer) && vmBase.getVmType() == VmType.Desktop) {
-            addSoundDevice(vmBase);
-        }
-
         // add unmanaged devices
         for (VmDevice vmDevice : vmBase.getUnmanagedDeviceList()) {
             vmDeviceToAdd.add(vmDevice);
@@ -1524,17 +1517,13 @@ public class VmDeviceUtils {
                                                VmDevice vmDevice,
                                                Guid deviceId,
                                                List<VmDevice> vmDevicesToUpdate) {
-        // update device information only if OVF supports devices - from 3.1
-        Version ovfVer = new Version(vmBase.getOvfVersion());
-        if (!VmDeviceCommonUtils.isOldClusterVersion(ovfVer)) {
-            VmDevice exportedDevice = vmBase.getManagedDeviceMap().get(deviceId);
-            if (exportedDevice != null) {
-                vmDevice.setAddress(exportedDevice.getAddress());
-                vmDevice.setBootOrder(exportedDevice.getBootOrder());
-                vmDevice.setIsPlugged(exportedDevice.getIsPlugged());
-                vmDevice.setIsReadOnly(exportedDevice.getIsReadOnly());
-                vmDevicesToUpdate.add(vmDevice);
-            }
+        VmDevice exportedDevice = vmBase.getManagedDeviceMap().get(deviceId);
+        if (exportedDevice != null) {
+            vmDevice.setAddress(exportedDevice.getAddress());
+            vmDevice.setBootOrder(exportedDevice.getBootOrder());
+            vmDevice.setIsPlugged(exportedDevice.getIsPlugged());
+            vmDevice.setIsReadOnly(exportedDevice.getIsReadOnly());
+            vmDevicesToUpdate.add(vmDevice);
         }
     }
 

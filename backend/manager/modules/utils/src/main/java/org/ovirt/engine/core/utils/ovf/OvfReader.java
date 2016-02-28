@@ -383,15 +383,7 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setSingleQxlPci(Boolean.parseBoolean(selectSingleNode(node, "rasd:SinglePciQxl", _xmlNS).innerText));
         }
 
-        if (new Version(getVersion()).compareTo(Version.v3_1) >= 0) {
-            readManagedVmDevice(node, Guid.newGuid());
-        } else {
-            // before v3.1 we had just one monitor item for all the monitors so in this
-            // case we need to add monitor devices according to the numOfMonitors field
-            for (int i=0; i<vmBase.getNumOfMonitors(); ++i) {
-                readManagedVmDevice(node, Guid.newGuid());
-            }
-        }
+        readManagedVmDevice(node, Guid.newGuid());
     }
 
     protected Integer parseNodeInteger(XmlNode sourceNode, String string, Integer defaultValue) {
@@ -553,7 +545,6 @@ public abstract class OvfReader implements IOvfBuilder {
             if (node != null) {
                 readOsSection(node);
                 if (!osRepository.isLinux(vmBase.getOsId())
-                        || !FeatureSupported.singleQxlPci(version)
                         || vmBase.getDefaultDisplayType() != DisplayType.qxl) {
                     vmBase.setSingleQxlPci(false);
                 }

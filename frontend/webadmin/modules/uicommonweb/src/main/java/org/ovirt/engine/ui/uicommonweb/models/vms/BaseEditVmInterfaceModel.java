@@ -120,12 +120,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initLinked() {
-        if (hotUpdateSupported) {
-            getLinked().setEntity(getNic().isLinked());
-        } else {
-            getLinked().setEntity(true);
-            getLinked().setIsAvailable(false);
-        }
+        getLinked().setEntity(getNic().isLinked());
     }
 
     @Override

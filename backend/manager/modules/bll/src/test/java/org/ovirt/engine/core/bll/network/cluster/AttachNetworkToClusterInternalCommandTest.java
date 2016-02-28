@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -71,7 +70,6 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
 
     @Before
     public void setup() {
-        existingGroup.setCompatibilityVersion(Version.v3_1);
         param = new AttachNetworkToClusterParameter(getExistingCluster(), getNetwork());
 
         underTest = new TestAttachNetworkToClusterCommand(param);

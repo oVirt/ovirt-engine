@@ -565,9 +565,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Custom properties are not supported in version: ${NotSupportedInVersion}")
     String ACTION_TYPE_FAILED_CUSTOM_PROPERTIES_NOT_SUPPORTED_IN_VERSION();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Network custom properties are not supported in the cluster's compatibility version, but they were supplied for the following network(s): ${ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST}.")
-    String ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${type}. Some network custom properties contained errors (bad syntax, non-existing keys or invalid values), please take a closer look at the following network(s): ${ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST}. Refer to the engine log for further details.")
     String ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT();
 
@@ -1231,9 +1228,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("User does not have a valid e-mail address.")
     String USER_DOES_NOT_HAVE_A_VALID_EMAIL();
 
-    @DefaultStringValue("Native USB support is only available on cluster level 3.1 or higher.")
-    String USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL();
-
     @DefaultStringValue("Legacy USB support is not available on Linux VMs.")
     String USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS();
 
@@ -1404,9 +1398,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Unknown Data Center status.")
     String ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL();
-
-    @DefaultStringValue("Data Center version does not support mixed storage types.")
-    String ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED();
 
     @DefaultStringValue("Bond name already exists.")
     String NETWORK_BOND_NAME_EXISTS();
@@ -1811,9 +1802,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks do not have the same MTU value: ${NETWORK_MTU_DIFFERENCES_LIST}.")
     String NETWORK_MTU_DIFFERENCES();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Overriding MTU is not supported for this Data Center's compatibility version.")
-    String NETWORK_MTU_OVERRIDE_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${type}. Network belongs to a different data-center.")
     String ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC();
 
@@ -1831,9 +1819,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Network cluster ${NetworkCluster} appears more than once.")
     String ACTION_TYPE_FAILED_DUPLICATE_NETWORK_CLUSTER_INPUT();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Migration network is not supported for this cluster version.")
-    String ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The provider does not exist in the system.")
     String ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST();
@@ -1867,9 +1852,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. External network details (except name and description) cannot be changed.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. External networks are not supported for this cluster's compatibility version.")
-    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be used as a display network.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_DISPLAY();
@@ -1982,14 +1964,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The selected Template has undefined architecture")
     String ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Setting hosted engine maintenance mode is only supported on cluster version 3.4 and above.")
-    String ACTION_TYPE_FAILED_VDS_HA_MAINT_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${type}. Hosted Engine is not configured on this host.")
     String ACTION_TYPE_FAILED_VDS_HA_NOT_CONFIGURED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The cluster's compatibility version doesn't support MoM Policy update.")
-    String ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION();
 
     @DefaultStringValue("Bond is not attached to Network.")
     String NETWORK_BOND_NOT_ATTACH_TO_NETWORK();
@@ -2045,9 +2021,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cannot set single display device to non Linux operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Cluster does not support Single Qxl Pci devices.")
-    String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_INCOMPATIBLE_VERSION();
-
     @DefaultStringValue("Cannot ${action} ${type}. Illegal Domain name: ${Domain}. Domain name has unsupported special character ${Char}.")
     String ACTION_TYPE_FAILED_ILLEGAL_DOMAIN_NAME();
 
@@ -2057,17 +2030,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. This action will cause storage format downgrading which is not supported. The following storage domains cannot be downgraded: ${formatDowngradedDomains}.")
     String ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following storage domains are not supported in the selected version: ${unsupportedVersionDomains}.")
-    String ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION();
-
     @DefaultStringValue("Cannot decrease cluster compatibility version beneath data center compatibility version.")
     String ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC();
 
     @DefaultStringValue("Cannot ${action} ${type}. Selected Compatibility Version is not supported.")
     String ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Selected data center compatibility version does not support live snapshot.")
-    String ACTION_TYPE_FAILED_DATA_CENTER_VERSION_DOESNT_SUPPORT_LIVE_SNAPSHOT();
 
     @DefaultStringValue("Network address must be specified when using static ip")
     String NETWORK_ADDR_MANDATORY_IN_STATIC_IP();
@@ -2250,12 +2217,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("\"Local Storage\" data domain cannot be detached from Data Center")
     String CLUSTER_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE();
 
-    @DefaultStringValue("\"File based storage\" is not supported with data center compatibility version.")
-    String DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
-
-    @DefaultStringValue("\"Gluster based storage\" is not supported with current data center compatibility version.")
-    String DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
-
     @DefaultStringValue("Cinder based storage is not supported with current data center compatibility version.")
     String DATA_CENTER_CINDER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
 
@@ -2309,9 +2270,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The default gateway should be set only on the Management Network")
     String NETWORK_ATTACH_ILLEGAL_GATEWAY();
-
-    @DefaultStringValue("The default gateway set on network '${NETWORK_ATTACH_ILLEGAL_GATEWAY_ENTITY}', but it should be set only on the Management Network.")
-    String NETWORK_ATTACH_HAVING_NAME_ILLEGAL_GATEWAY();
 
     @DefaultStringValue("A slave interface is not properly configured. Please verify slaves do not contain any of the following properties: network name, boot protocol, IP address, netmask, gateway or vlan-ID notation (as part of interface's name or explicitly).")
     String SLAVE_INTERFACE_IS_MISCONFIGURED();
@@ -2673,9 +2631,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following VMs are set to run specifically only on this Host: ${VmNames}.\nIn order to ${action} ${type}, you need to remove the association between the VMs and the Host (Using Edit VM properties).")
     String ACTION_TYPE_FAILED_DETECTED_PINNED_VMS();
 
-    @DefaultStringValue("Activate/Deactivate while VM is running, is only supported for Clusters of version 3.1 and above.")
-    String HOT_PLUG_IS_NOT_SUPPORTED();
-
     @DefaultStringValue("Hot plugging a CPU is not supported for cluster version ${clusterVersion} and architecture ${architecture}.")
     String HOT_PLUG_CPU_IS_NOT_SUPPORTED();
 
@@ -2694,32 +2649,17 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Plugged memory must be multiplication of ${multiplicationSize}.")
     String ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Activation/Deactivation of Disk Snapshot is not supported for clusters of version ${clusterVersion}.")
-    String HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${diskAlias} to ${vmName}. Hot plugging a disk to an IDE interface is not supported.")
     String HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Link state is set to 'Down' on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
-    String UNLINKING_IS_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${type}. Unlinking of 'passthrough' vm network interface is not supported.")
     String ACTION_TYPE_FAILED_UNLINKING_OF_PASSTHROUGH_VNIC_IS_NOT_SUPPORTED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. There is no network on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
-    String NULL_NETWORK_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. There is Network QoS on the profile, this is not supported for clusters of version ${clusterVersion}.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host Network QoS is not supported in the cluster's compatibility version, but QoS was configured on the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST}.")
     String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Network labels are not supported in the cluster's compatibility version, but are configured on the host's interfaces.")
-    String ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Updating the virtual machine interface while the virtual machine is running is not supported for clusters of version ${clusterVersion}.")
-    String HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The network interface type is not compatible with the selected operating system.")
     String ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS();
@@ -2777,9 +2717,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. SCSI device pass-throguh is not supported for a read-only disk.")
     String SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK();
-
-    @DefaultStringValue("VirtIO-SCSI interface is only available on cluster level 3.3 or higher.")
-    String VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL();
 
     @DefaultStringValue("Cannot ${action} ${type}. VirtIO-SCSI is disabled for the VM")
     String CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED();
@@ -2858,9 +2795,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed ${action} ${type}. The following networks (${networks}) are not defined in the cluster.")
     String ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER();
 
-    @DefaultStringValue("Failed ${action} ${type}. One or more network interfaces have incomplete network configuration. Please configure these interfaces and try again.")
-    String ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED();
-
     @DefaultStringValue("Non-VM networks are not supported in this Data-Center.")
     String NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL();
 
@@ -2927,9 +2861,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Bricks are required.")
     String ACTION_TYPE_FAILED_BRICKS_REQUIRED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Adding bricks with 'Force' option is not supported.")
-    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Replica count must be > 2 for a REPLICATE volume.")
     String ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2();
@@ -3213,9 +3144,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("SSH Authentication failed. Please make sure password is correct.")
     String SSH_AUTHENTICATION_FAILED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Gluster service is not supported in compatibility version ${compatibilityVersion}.")
-    String GLUSTER_NOT_SUPPORTED();
-
     @DefaultStringValue("Volume id is invalid.")
     String GLUSTER_VOLUME_ID_INVALID();
 
@@ -3293,9 +3221,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster CLI based scheduling is enabled.")
     String ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Gluster task management is not supported in compatibility version ${compatibilityVersion}.")
-    String GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL();
 
     @DefaultStringValue("Cannot ${action} ${type}. The selected cluster doesn't support Storage provisioning.")
     String ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER();
@@ -3485,9 +3410,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Policy unit is attached to the following cluster policies: ${cpNames}.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_POLICY_UNIT_ATTACHED_TO_CLUSTER_POLICY();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Cloud-Init is only supported on cluster compatibility version 3.3 and higher.")
-    String ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Alignment scan of a disk attached to a running VM is not supported.")
     String ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING();
@@ -3708,9 +3630,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The specified iSCSI bond does not exist.")
     String ISCSI_BOND_NOT_EXIST();
-
-    @DefaultStringValue("Cannot ${action} ${type}. iSCSI Bond is only supported on Data Center compatibility versions 3.4 and higher.")
-    String ISCSI_BOND_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Custom serial number must be non-empty when \"Custom\" serial number policy is specified.")
     String ACTION_TYPE_FAILED_INVALID_SERIAL_NUMBER();

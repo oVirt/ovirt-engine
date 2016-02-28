@@ -1380,11 +1380,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         if (getEnableKsm().getEntity() == false) {
             getKsmPolicyForNumaSelection().setIsChangeable(false);
         }
-        // hide KsmPolicyForNuma is cluseter version bellow 3.4
-        Version version = getEntity().getCompatibilityVersion();
-        if (version.compareTo(Version.v3_4) < 0) {
-            getKsmPolicyForNumaSelection().setIsAvailable(false);
-        }
     }
 
     private void loadCurrentClusterManagementNetwork() {
@@ -1593,16 +1588,15 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         };
         AsyncDataProvider.getInstance().getCPUList(_asyncQuery, version);
 
-        // CPU Thread support is only available for clusters of version 3.2 or greater
-        getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
+        getVersionSupportsCpuThreads().setEntity(true);
         getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
-        getEnableBallooning().setIsChangeable(version.compareTo(Version.v3_3) >= 0);
+        getEnableBallooning().setIsChangeable(true);
 
         setRngSourcesCheckboxes(version);
 
         updateFencingPolicyContent(version);
 
-        updateKSMPolicy(version);
+        updateKSMPolicy();
 
         updateMigrateOnError();
 
@@ -1615,19 +1609,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    private void updateKSMPolicy(Version version) {
-        // enable KSM control from version 3.4
-        boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
-        getEnableKsm().setIsChangeable(!isSmallerThanVersion3_4);
+    private void updateKSMPolicy() {
+        getEnableKsm().setIsChangeable(true);
         getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
-        // for version 3.3 and lower the default is true.
-        if (isSmallerThanVersion3_4) {
-            getEnableKsm().setEntity(true);
-        }
 
-        // allow KSM with NUMA awareness only from version 3.4
-        boolean isLowerVersionThen3_4 = version.compareTo(Version.v3_4) < 0;
-        getKsmPolicyForNumaSelection().setIsAvailable(!isLowerVersionThen3_4);
+        getKsmPolicyForNumaSelection().setIsAvailable(true);
         getKsmPolicyForNumaSelection().setChangeProhibitionReason(ConstantsManager.getInstance()
                 .getConstants()
                 .ksmWithNumaAwarnessNotAvailable());
@@ -1742,25 +1728,17 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void setRngSourcesCheckboxes(Version ver) {
-        boolean rngSupported = isRngSupportedForClusterVersion(ver);
-        getRngRandomSourceRequired().setIsChangeable(rngSupported);
-        getRngHwrngSourceRequired().setIsChangeable(rngSupported);
+        getRngRandomSourceRequired().setIsChangeable(true);
+        getRngHwrngSourceRequired().setIsChangeable(true);
 
         String defaultRequiredRngSourcesCsv = defaultClusterRngSourcesCsv(ver);
 
-        if (rngSupported) {
-            getRngRandomSourceRequired().setEntity(getIsNew()
-                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.RANDOM.name().toLowerCase())
-                    : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.RANDOM));
-            getRngHwrngSourceRequired().setEntity(getIsNew()
-                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.HWRNG.name().toLowerCase())
-                    : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.HWRNG));
-        } else { // reset
-            getRngRandomSourceRequired().setEntity(false);
-            getRngHwrngSourceRequired().setEntity(false);
-            getRngRandomSourceRequired().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().rngNotSupportedByClusterCV());
-            getRngHwrngSourceRequired().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().rngNotSupportedByClusterCV());
-        }
+        getRngRandomSourceRequired().setEntity(getIsNew()
+                ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.RANDOM.name().toLowerCase())
+                : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.RANDOM));
+        getRngHwrngSourceRequired().setEntity(getIsNew()
+                ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.HWRNG.name().toLowerCase())
+                : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.HWRNG));
     }
 
     private void updateFencingPolicyContent(Version ver) {
@@ -1775,19 +1753,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             }
         } else {
             // skipFencingIfSDActive is enabled for supported cluster level if fencing is not disabled
-            boolean supported = AsyncDataProvider.getInstance().isSkipFencingIfSDActiveSupported(ver.getValue());
-            getSkipFencingIfSDActiveEnabled().setIsChangeable(
-                    supported && getFencingEnabledModel().getEntity());
-            if (supported) {
-                if (getEntity() == null) {
-                    // this can happen when creating new cluster and cluster dialog is shown
-                    getSkipFencingIfSDActiveEnabled().setEntity(true);
-                } else {
-                    getSkipFencingIfSDActiveEnabled().setEntity(
-                            getEntity().getFencingPolicy().isSkipFencingIfSDActive());
-                }
+            getSkipFencingIfSDActiveEnabled().setIsChangeable(getFencingEnabledModel().getEntity());
+            if (getEntity() == null) {
+                // this can happen when creating new cluster and cluster dialog is shown
+                getSkipFencingIfSDActiveEnabled().setEntity(true);
             } else {
-                getSkipFencingIfSDActiveEnabled().setEntity(false);
+                getSkipFencingIfSDActiveEnabled().setEntity(
+                        getEntity().getFencingPolicy().isSkipFencingIfSDActive());
             }
         }
     }
@@ -2043,22 +2015,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void validateRngRequiredSource() {
-        Version clusterVersion = getVersion().getSelectedItem();
-        boolean rngSupportedForCluster = isRngSupportedForClusterVersion(clusterVersion);
-
-        getRngRandomSourceRequired().setIsValid(rngSupportedForCluster || !getRngRandomSourceRequired().getEntity());
-        getRngHwrngSourceRequired().setIsValid(rngSupportedForCluster || !getRngHwrngSourceRequired().getEntity());
-    }
-
-    private boolean isRngSupportedForClusterVersion(Version version) {
-        if (version == null) {
-            return false;
-        }
-
-        Boolean supported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VirtIoRngDeviceSupported, version.toString());
-        return (supported == null)
-                ? false
-                : supported;
+        getRngRandomSourceRequired().setIsValid(true);
+        getRngHwrngSourceRequired().setIsValid(true);
     }
 
     private String defaultClusterRngSourcesCsv(Version ver) {

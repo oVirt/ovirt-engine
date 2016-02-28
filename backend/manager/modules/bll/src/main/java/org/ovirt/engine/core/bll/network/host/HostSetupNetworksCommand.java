@@ -268,7 +268,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getExistingNics(),
                 getExistingAttachments(),
                 getNetworkBusinessEntityMap(),
-                managementNetworkUtil,
                 networkClusterDao,
                 networkDao,
                 vdsDao,
@@ -597,7 +596,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                     + "therefore 'defaultRoute' will not be sent via the SetupNetworks",
                 getVdsName(),
                 getVdsId());
-        } else if (FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet))) {
+        } else {
             defaultRouteSupported = true;
         }
 

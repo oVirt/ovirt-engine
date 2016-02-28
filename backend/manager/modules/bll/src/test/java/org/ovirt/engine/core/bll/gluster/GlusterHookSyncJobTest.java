@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
@@ -74,8 +73,7 @@ public class GlusterHookSyncJobTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
-            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
-            mockConfig(ConfigValues.GlusterHooksEnabled, "3.2", true));
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10));
 
     @Before
     public void init() {
@@ -200,7 +198,6 @@ public class GlusterHookSyncJobTest {
         cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);
-        cluster.setCompatibilityVersion(Version.v3_2);
         return cluster;
     }
 

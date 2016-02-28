@@ -29,7 +29,6 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
@@ -113,8 +112,6 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand);
 
-    StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec);
-
     StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
 
     StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,
@@ -165,10 +162,6 @@ public interface IVdsServer {
 
     StorageDomainListReturnForXmlRpc getStorageDomainsList(String spUUID, int domainType, String poolType, String path);
 
-    FileStatsReturnForXmlRpc getIsoList(String spUUID);
-
-    OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList);
-
     OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force);
 
     OneVGReturnForXmlRpc getVGInfo(String vgUUID);
@@ -192,8 +185,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc spmStop(String spUUID);
 
     SpmStatusReturnForXmlRpc spmStatus(String spUUID);
-
-    StatusOnlyReturnForXmlRpc refreshStoragePool(String spUUID, String msdUUID, int masterVersion);
 
     TaskStatusReturnForXmlRpc getTaskStatus(String taskUUID);
 
@@ -239,12 +230,6 @@ public interface IVdsServer {
             String[] brickList,
             int replicaCount,
             int stripeCount,
-            String[] transportList);
-
-    OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
-            String[] brickList,
-            int replicaCount,
-            int stripeCount,
             String[] transportList,
             boolean force);
 
@@ -272,11 +257,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterVolumeRemoveBricksCommit(String volumeName,
             String[] brickList,
             int replicaCount);
-
-    StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
-            String[] bricks,
-            int replicaCount,
-            int stripeCount);
 
     StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
             String[] bricks,

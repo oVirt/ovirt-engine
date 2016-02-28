@@ -72,9 +72,7 @@ public class GlusterServiceSyncJobTest {
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 5),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 500),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
-            mockConfig(ConfigValues.GlusterServicesEnabled,
-                    Version.v3_3.toString(),
-                    true));
+            mockConfig(ConfigValues.GlusterServicesEnabled, Version.getLast(), true));
 
     @Mock
     private GlusterServiceDao serviceDao;
@@ -171,7 +169,7 @@ public class GlusterServiceSyncJobTest {
         Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_ID);
         cluster.setGlusterService(true);
-        cluster.setCompatibilityVersion(Version.v3_3);
+        cluster.setCompatibilityVersion(Version.getLast());
         return cluster;
     }
 

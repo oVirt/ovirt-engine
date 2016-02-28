@@ -114,11 +114,6 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
-        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getCluster().getCompatibilityVersion(),
-                getParameters().isForce()))) {
-            return false;
-        }
-
         return validateBricks(volume);
     }
 

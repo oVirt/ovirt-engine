@@ -27,27 +27,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmDevicesMonitoringTest {
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.ReportedDisksLogicalNames, Version.v4_0, false)
-    );
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -82,7 +74,6 @@ public class VmDevicesMonitoringTest {
         initialHashes.add(new Pair<>(VM_ID, INITIAL_HASH));
         doReturn(initialHashes).when(vmDynamicDao).getAllDevicesHashes();
 
-        doReturn(Version.v4_0).when(vdsManager).getGroupCompatibilityVersion();
         doReturn(vdsManager).when(resourceManager).getVdsManager(VDS_ID);
 
         doReturn(vmDynamicDao).when(vmDevicesMonitoring).getVmDynamicDao();

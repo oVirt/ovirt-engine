@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
@@ -200,9 +199,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         UpdateVmNicValidator nicValidator =
                 new UpdateVmNicValidator(getInterface(), getVm().getClusterCompatibilityVersion(), getVm().getOs());
         if (!validate(nicValidator.unplugPlugNotRequired())
-                || !validate(nicValidator.linkedOnlyIfSupported())
                 || !validate(nicValidator.isCompatibleWithOs())
-                || !validate(nicValidator.emptyNetworkValid())
                 || !validate(nicValidator.hotUpdatePossible())
                 || !validate(nicValidator.profileValid(getVm().getClusterId()))
                 || !validate(nicValidator.canVnicWithExternalNetworkBePlugged())
@@ -336,10 +333,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
          */
         public ValidationResult hotUpdatePossible() {
             if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
-                if (!FeatureSupported.networkLinking(version)) {
-                    return new ValidationResult(EngineMessage.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
-                            clusterVersion());
-                } else if (portMirroringEnabled(getInterface().getVnicProfileId())
+                if (portMirroringEnabled(getInterface().getVnicProfileId())
                         || portMirroringEnabled(oldIface.getVnicProfileId())) {
                     return new ValidationResult(EngineMessage.CANNOT_PERFORM_HOT_UPDATE_WITH_PORT_MIRRORING);
                 }

@@ -60,7 +60,6 @@ import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -408,7 +407,7 @@ public class BackendVmsResource extends
         } else if (instanceTypeId != null || templateId != null) {
             List<VmRngDevice> devices = VmHelper.getRngDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId);
             if (devices != null && !devices.isEmpty()) {
-                boolean supported = cluster.getRequiredRngSources().contains(devices.get(0).getSource()) && FeatureSupported.virtIoRngSupported(cluster.getCompatibilityVersion());
+                boolean supported = cluster.getRequiredRngSources().contains(devices.get(0).getSource());
                 if (shouldCopyDevice(supported, templateId, instanceTypeId)) {
                     params.setUpdateRngDevice(true);
                     params.setRngDevice(!devices.isEmpty() ? devices.iterator().next() : null);

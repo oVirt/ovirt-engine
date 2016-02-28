@@ -2,13 +2,12 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class CfgBootProtocolResolver extends BootProtocolResolver {
 
-    public CfgBootProtocolResolver(Map<String, Object> entry, VdsNetworkInterface iface, VDS host) {
-        super((Map<String, Object>) entry.get("cfg"), iface, host);
+    public CfgBootProtocolResolver(Map<String, Object> entry, VdsNetworkInterface iface) {
+        super((Map<String, Object>) entry.get("cfg"), iface);
     }
 
     @Override

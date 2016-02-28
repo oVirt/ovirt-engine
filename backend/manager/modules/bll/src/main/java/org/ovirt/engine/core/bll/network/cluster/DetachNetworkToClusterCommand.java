@@ -39,7 +39,7 @@ public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParam
         setSucceeded(returnValue.getSucceeded());
 
         if (returnValue.getSucceeded()) {
-            if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getPersistedNetwork(), getCluster().getCompatibilityVersion())) {
+            if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getPersistedNetwork())) {
                 detachLabeledNetworksFromClusterHosts();
             }
         } else {

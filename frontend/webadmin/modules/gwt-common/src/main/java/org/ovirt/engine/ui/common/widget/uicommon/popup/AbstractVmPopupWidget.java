@@ -1678,12 +1678,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                Version compatibilityVersion = object.getCompatibilityVersion();
-                if (compatibilityVersion != null) {
-                    boolean enabled = AsyncDataProvider.getInstance()
-                            .isSerialNumberPolicySupported(compatibilityVersion.getValue());
-                    changeApplicationLevelVisibility(serialNumberPolicyEditor, enabled);
-                }
+                changeApplicationLevelVisibility(serialNumberPolicyEditor, true);
             }
         });
 
@@ -1728,14 +1723,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
      * certain, configurable cluster version.
      */
     protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
-        Version compatibilityVersion = object.getCompatibilityVersion();
         changeApplicationLevelVisibility(
                 nativeUsbWarningMessage,
-                object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
-                        && compatibilityVersion != null
-                        && !(Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                                ConfigurationValues.MigrationSupportForNativeUsb,
-                                compatibilityVersion.getValue()));
+                object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE);
     }
 
     private void addDiskAllocation(UnitVmModel model) {

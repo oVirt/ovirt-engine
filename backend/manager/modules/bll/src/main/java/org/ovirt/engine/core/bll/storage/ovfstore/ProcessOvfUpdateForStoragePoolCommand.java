@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -79,32 +78,24 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
         itemsCountPerUpdate = loadConfigValue();
         proccessedDomains = new HashSet<>();
         StoragePool pool = getStoragePool();
-        if (ovfOnAnyDomainSupported(pool)) {
-            proccessDomainsForOvfUpdate(pool);
-        }
+        proccessDomainsForOvfUpdate(pool);
 
-        logInfoIfNeeded(pool, "Attempting to update VM OVFs in Data Center '{}'",
-                pool.getName());
+        log.info("Attempting to update VM OVFs in Data Center '{}'", pool.getName());
         initProcessedInfoLists();
 
         updateOvfForVmsOfStoragePool(pool);
 
-        logInfoIfNeeded(pool, "Successfully updated VM OVFs in Data Center '{}'",
-                pool.getName());
-        logInfoIfNeeded(pool, "Attempting to update template OVFs in Data Center '{}'",
-                pool.getName());
+        log.info("Successfully updated VM OVFs in Data Center '{}'", pool.getName());
+        log.info("Attempting to update template OVFs in Data Center '{}'", pool.getName());
 
         updateOvfForTemplatesOfStoragePool(pool);
 
-        logInfoIfNeeded(pool, "Successfully updated templates OVFs in Data Center '{}'",
-                pool.getName());
-        logInfoIfNeeded(pool, "Attempting to remove unneeded template/vm OVFs in Data Center '{}'",
-                pool.getName());
+        log.info("Successfully updated templates OVFs in Data Center '{}'", pool.getName());
+        log.info("Attempting to remove unneeded template/vm OVFs in Data Center '{}'", pool.getName());
 
         removeOvfForTemplatesAndVmsOfStoragePool(pool);
 
-        logInfoIfNeeded(pool, "Successfully removed unneeded template/vm OVFs in Data Center '{}'",
-                pool.getName());
+        log.info("Successfully removed unneeded template/vm OVFs in Data Center '{}'", pool.getName());
 
         getReturnValue().setActionReturnValue(proccessedDomains);
         setSucceeded(true);
@@ -115,13 +106,6 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
         return Collections.singletonMap(getParameters().getStoragePoolId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.OVF_UPDATE,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-    }
-
-    private void logInfoIfNeeded(StoragePool pool, String message, Object... args) {
-        // if supported, the info would be logged when executing for each domain
-        if (!ovfOnAnyDomainSupported(pool)) {
-            log.info(message, args);
-        }
     }
 
     protected void proccessDomainsForOvfUpdate(StoragePool pool) {
@@ -165,7 +149,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata =
                     populateVmsMetadataForOvfUpdate(idsToProcess);
             if (!vmsAndTemplateMetadata.isEmpty()) {
-                performOvfUpdate(pool, vmsAndTemplateMetadata);
+                performOvfUpdate(vmsAndTemplateMetadata);
             }
         }
     }
@@ -178,12 +162,6 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     protected void removeOvfForTemplatesAndVmsOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
         removedOvfIdsInfo = getVmAndTemplatesGenerationsDao().getIdsForOvfDeletion(poolId);
-
-        if (!ovfOnAnyDomainSupported(pool)) {
-            for (Guid id : removedOvfIdsInfo) {
-                getOvfUpdateProcessHelper().executeRemoveVmInSpm(poolId, id, Guid.Empty);
-            }
-        }
 
         markDomainsWithOvfsForOvfUpdate(removedOvfIdsInfo);
         getVmAndTemplatesGenerationsDao().deleteOvfGenerations(removedOvfIdsInfo);
@@ -199,15 +177,9 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
      * Perform vdsm call which performs ovf update for the given metadata map
      *
      */
-    protected void performOvfUpdate(StoragePool pool,
-                                    Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata) {
-        if (ovfOnAnyDomainSupported(pool)) {
-            markDomainsWithOvfsForOvfUpdate(vmsAndTemplateMetadata.keySet());
-        } else if (getParameters().isUpdateStorage()) {
-            getOvfUpdateProcessHelper().executeUpdateVmInSpmCommand(pool.getId(), vmsAndTemplateMetadata, Guid.Empty);
-        } else {
-            log.info("No storage update was performed.");
-        }
+    protected void performOvfUpdate(Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata) {
+
+        markDomainsWithOvfsForOvfUpdate(vmsAndTemplateMetadata.keySet());
 
         int i = 0;
         while (i < proccessedIdsInfo.size()) {
@@ -278,7 +250,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata =
                     populateTemplatesMetadataForOvfUpdate(idsToProcess);
             if (!vmsAndTemplateMetadata.isEmpty()) {
-                performOvfUpdate(pool, vmsAndTemplateMetadata);
+                performOvfUpdate(vmsAndTemplateMetadata);
             }
         }
     }
@@ -366,10 +338,6 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
         proccessedIdsInfo = new LinkedList<>();
         proccessedOvfGenerationsInfo = new LinkedList<>();
         proccessedOvfConfigurationsInfo = new LinkedList<>();
-    }
-
-    protected boolean ovfOnAnyDomainSupported(StoragePool pool) {
-        return FeatureSupported.ovfStoreOnAnyDomain(pool.getCompatibilityVersion());
     }
 
     @Override

@@ -512,8 +512,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      * Check if Memory Snapshot is supported
      */
     private boolean isMemorySnapshotSupported() {
-        return FeatureSupported.memorySnapshot(getVm().getCompatibilityVersion())
-                && FeatureSupported.isMemorySnapshotSupportedByArchitecture(
+        return FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                         getVm().getClusterArch(), getVm().getCompatibilityVersion());
     }
 
@@ -686,7 +685,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     protected boolean validateVM(VmValidator vmValidator) {
-        LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getCompatibilityVersion(), getVds());
+        LiveSnapshotValidator validator = new LiveSnapshotValidator(getVds());
         return (getVm().isDown() || validate(validator.validateSnapshot())) &&
                 validate(vmValidator.vmNotSavingRestoring()) &&
                 validate(vmValidator.validateVmStatusUsingMatrix(VdcActionType.CreateAllSnapshotsFromVm));

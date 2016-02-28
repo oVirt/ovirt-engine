@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -448,21 +446,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             addHostAction.setTitle(DataCenterConfigureHostsAction);
             UICommand selectHost = new UICommand("SelectHost", this); //$NON-NLS-1$
             selectHost.setTitle(DataCenterSelectHostsAction);
-            boolean hasMaintenance3_0Host = false;
-
-            Version version3_0 = new Version(3, 0);
-            for (VDS vds : allHosts) {
-                String[] hostVersions = vds.getSupportedClusterLevels().split("[,]", -1); //$NON-NLS-1$
-                for (String hostVersion : hostVersions) {
-                    if (version3_0.compareTo(new Version(hostVersion)) <= 0) {
-                        hasMaintenance3_0Host = true;
-                        break;
-                    }
-                }
-                if (hasMaintenance3_0Host) {
-                    break;
-                }
-            }
 
             if (localStorageHost != null) {
                 String hasHostReason =
@@ -489,9 +472,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 selectHost.setIsExecutionAllowed(false);
             }
 
-            if (hasMaintenance3_0Host) {
-                getOptionalActions().add(selectHost);
-            }
+            getOptionalActions().add(selectHost);
             getCompulsoryActions().add(addHostAction);
         }
 
@@ -1204,7 +1185,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                                     ArrayList<StorageDomain> unattachedStorage =
                                                                                             new ArrayList<>();
                                                                                     boolean addToList;
-                                                                                    Version version3_0 = new Version(3, 0);
                                                                                     for (StorageDomain item : storageDomains) {
                                                                                         addToList = false;
                                                                                         if (item.getStorageDomainType() == StorageDomainType.Data
@@ -1212,13 +1192,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                                                 .isLocal()
                                                                                                 && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
                                                                                             if (getEntity().getStoragePoolFormatType() == null) {
-                                                                                                // compat logic: in case its not v1 and the version is less than 3.0 continue.
-                                                                                                if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
-                                                                                                        && dataCenterGuideModel.getEntity()
-                                                                                                        .getCompatibilityVersion()
-                                                                                                        .compareTo(version3_0) < 0) {
-                                                                                                    continue;
-                                                                                                }
                                                                                                 addToList = true;
                                                                                             } else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData()
                                                                                                     .getStorageFormat()) {
@@ -1281,7 +1254,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
         }
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
-        cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
+        cluster.setTransparentHugepages(true);
         cluster.setCompatibilityVersion(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
@@ -1460,15 +1433,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                             model.getProtocol().setIsAvailable(true);
                         }
                     }
-                    Boolean jsonSupported =
-                            (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
-                                    cluster.getCompatibilityVersion().toString());
-                    if (jsonSupported) {
-                        model.getProtocol().setEntity(true);
-                    } else {
-                        model.getProtocol().setEntity(false);
-                        model.getProtocol().setIsChangeable(false);
-                    }
+                    model.getProtocol().setEntity(true);
                 }
             }
         });

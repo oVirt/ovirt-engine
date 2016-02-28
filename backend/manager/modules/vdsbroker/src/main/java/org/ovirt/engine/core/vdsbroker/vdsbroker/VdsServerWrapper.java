@@ -37,7 +37,6 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
@@ -357,18 +356,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.setVmTicket(vmId, otp64, sec);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.setVmTicket(vmId, otp64, sec, connectionAction, params);
@@ -608,29 +595,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getIsoList(spUUID);
-            FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-    }
-
-    @Override
-    public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.createVG(sdUUID, deviceList);
-            OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.createVG(sdUUID, deviceList, force);
@@ -731,18 +695,6 @@ public class VdsServerWrapper implements IVdsServer {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getSpmStatus(spUUID);
             SpmStatusReturnForXmlRpc wrapper = new SpmStatusReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc refreshStoragePool(String spUUID, String msdUUID, int masterVersion) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.refreshStoragePool(spUUID, msdUUID, masterVersion);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
@@ -957,23 +909,6 @@ public class VdsServerWrapper implements IVdsServer {
             String[] brickList,
             int replicaCount,
             int stripeCount,
-            String[] transportList) {
-        try {
-            return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeName,
-                    brickList,
-                    replicaCount,
-                    stripeCount,
-                    transportList));
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-    }
-
-    @Override
-    public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
-            String[] brickList,
-            int replicaCount,
-            int stripeCount,
             String[] transportList,
             boolean force) {
         try {
@@ -1085,21 +1020,6 @@ public class VdsServerWrapper implements IVdsServer {
             return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickCommit(volumeName,
                     brickDirectories,
                     replicaCount));
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
-            String[] bricks,
-            int replicaCount,
-            int stripeCount) {
-        try {
-            Map<String, Object> xmlRpcReturnValue =
-                    vdsServer.glusterVolumeBrickAdd(volumeName, bricks, replicaCount, stripeCount);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

@@ -113,13 +113,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
 
-        if (disk.isShareable()
-                && !isVersionSupportedForShareable(disk, getStoragePoolDao().get(getVm().getStoragePoolId())
-                        .getCompatibilityVersion()
-                        .getValue())) {
-            return failValidation(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-        }
-
         if (!isOperationPerformedOnDiskSnapshot() && !disk.isShareable() && disk.getNumberOfVms() > 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
@@ -155,7 +148,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
         if (getParameters().isPlugUnPlug()
                 && getVm().getStatus() != VMStatus.Down) {
-            return canPerformDiskHotPlug(disk);
+            return isDiskSupportedForPlugUnPlug(disk);
         }
         return true;
     }

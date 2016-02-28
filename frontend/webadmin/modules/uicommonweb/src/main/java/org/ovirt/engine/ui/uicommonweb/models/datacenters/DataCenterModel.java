@@ -247,21 +247,11 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
                 DataCenterModel dataCenterModel = (DataCenterModel) model;
                 ArrayList<Version> versions = (ArrayList<Version>) result;
 
-                // Rebuild version items.
-                ArrayList<Version> list = new ArrayList<>();
-                Boolean isLocalType = dataCenterModel.getStoragePoolType().getSelectedItem();
-
-                for (Version item : versions) {
-                    if (AsyncDataProvider.getInstance().isVersionMatchStorageType(item, isLocalType)) {
-                        list.add(item);
-                    }
-                }
-
                 Version selectedVersion = null;
                 if (dataCenterModel.getVersion().getSelectedItem() != null) {
                     selectedVersion = dataCenterModel.getVersion().getSelectedItem();
                     boolean hasSelectedVersion = false;
-                    for (Version version : list) {
+                    for (Version version : versions) {
                         if (selectedVersion.equals(version)) {
                             selectedVersion = version;
                             hasSelectedVersion = true;
@@ -273,10 +263,10 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
                     }
                 }
 
-                dataCenterModel.getVersion().setItems(list);
+                dataCenterModel.getVersion().setItems(versions);
 
                 if (selectedVersion == null) {
-                    dataCenterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(list));
+                    dataCenterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
                     if (getEntity() != null) {
                         initVersion();
                     }

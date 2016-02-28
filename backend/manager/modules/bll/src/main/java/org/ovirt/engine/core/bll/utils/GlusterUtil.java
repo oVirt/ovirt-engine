@@ -4,12 +4,9 @@ import static org.ovirt.engine.core.common.FeatureSupported.supportedInConfig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,12 +31,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -255,41 +250,15 @@ public class GlusterUtil {
     }
 
     public boolean isHostExists(List<GlusterServerInfo> glusterServers, VDS server) {
-        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getClusterCompatibilityVersion())) {
-            GlusterServer glusterServer = DbFacade.getInstance().getGlusterServerDao().getByServerId(server.getId());
-            if (glusterServer != null) {
-                for (GlusterServerInfo glusterServerInfo : glusterServers) {
-                    if (glusterServerInfo.getUuid().equals(glusterServer.getGlusterServerUuid())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        else {
-            for (GlusterServerInfo glusterServer : glusterServers) {
-                if (glusterServer.getHostnameOrIp().equals(server.getHostName())) {
+        GlusterServer glusterServer = DbFacade.getInstance().getGlusterServerDao().getByServerId(server.getId());
+        if (glusterServer != null) {
+            for (GlusterServerInfo glusterServerInfo : glusterServers) {
+                if (glusterServerInfo.getUuid().equals(glusterServer.getGlusterServerUuid())) {
                     return true;
-                }
-                try {
-                    String glusterHostAddr = InetAddress.getByName(glusterServer.getHostnameOrIp()).getHostAddress();
-                    for (VdsNetworkInterface vdsNwInterface : getVdsInterfaces(server.getId())) {
-                        if (glusterHostAddr.equals(vdsNwInterface.getAddress())) {
-                            return true;
-                        }
-                    }
-                } catch (UnknownHostException e) {
-                    log.error("Could not resolve IP address of the host '{}': {}",
-                            glusterServer.getHostnameOrIp(),
-                            e.getMessage());
                 }
             }
         }
         return false;
-    }
-
-    private List<VdsNetworkInterface> getVdsInterfaces(Guid vdsId) {
-        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vdsId);
-        return (interfaces == null) ? new ArrayList<>() : interfaces;
     }
 
     public boolean isVolumeThinlyProvisioned(GlusterVolumeEntity volume) {

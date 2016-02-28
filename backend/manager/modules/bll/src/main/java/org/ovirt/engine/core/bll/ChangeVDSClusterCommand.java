@@ -5,14 +5,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
-import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -56,7 +54,6 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -88,7 +85,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     private Version sourceClusterCompatibilityVersion = getSourceCluster().getCompatibilityVersion();
     private final Version targetClusterCompatibilityVersion = getTargetCluster().getCompatibilityVersion();
     private List<Network> targetClusterNetworks;
-    private List<Network> sourceClusterNetworks;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -172,46 +168,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        if (movingWithinSameDataCenter() && customPropertiesFeatureBecomesUnsupportedInTargetCluster()) {
-            for (NetworkAttachment networkAttachment : networkAttachmentDao.getAllForHost(getVdsId())) {
-                if (networkAttachment.hasProperties() && networkExistInTargetCluster(networkAttachment.getNetworkId())) {
-                    EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED;
-                    Guid networkId = networkAttachment.getNetworkId();
-                    Network networkById = getNetworkById(getSourceClusterNetworks(), networkId);
-                    String networkName = networkById == null ? networkId.toString() : networkById.getName();
-                    return failValidation(engineMessage,
-                        ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, networkName));
-                }
-            }
-        }
-
-        if (!targetClusterSupportsSetupNetworks() && hostHasLabeledNics()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED);
-        }
-
         return true;
-    }
-
-    private boolean networkExistInTargetCluster(Guid networkId) {
-        return getNetworkById(targetClusterNetworks, networkId) != null;
-    }
-
-    private boolean movingWithinSameDataCenter() {
-        return Objects.equals(getSourceCluster().getStoragePoolId(), getTargetCluster().getStoragePoolId());
-    }
-
-    private Network getNetworkById(List<Network> networks, Guid networkId) {
-        for (Network network : networks) {
-            if (Objects.equals(network.getId(), networkId)) {
-                return network;
-            }
-        }
-        return null;
-    }
-
-    private boolean customPropertiesFeatureBecomesUnsupportedInTargetCluster() {
-        return FeatureSupported.networkCustomProperties(sourceClusterCompatibilityVersion)
-                && !FeatureSupported.networkCustomProperties(targetClusterCompatibilityVersion);
     }
 
     private boolean isDetachedSourceCluster() {
@@ -330,19 +287,11 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 getTargetClusterNetworks());
         persister.persistNetworkAttachments();
 
-        if (targetClusterSupportsSetupNetworks() && VDSStatus.PendingApproval != getVds().getStatus()) {
+        if (VDSStatus.PendingApproval != getVds().getStatus()) {
             configureNetworks();
         }
 
         setSucceeded(true);
-    }
-
-    private List<Network> getSourceClusterNetworks() {
-        if (sourceClusterNetworks == null) {
-            sourceClusterNetworks = networkDao.getAllForCluster(getSourceCluster().getId());
-        }
-
-        return sourceClusterNetworks;
     }
 
     private List<Network> getTargetClusterNetworks() {
@@ -351,10 +300,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         return targetClusterNetworks;
-    }
-
-    private boolean targetClusterSupportsSetupNetworks() {
-        return NetworkHelper.setupNetworkSupported(getTargetCluster().getCompatibilityVersion());
     }
 
     private void configureNetworks() {

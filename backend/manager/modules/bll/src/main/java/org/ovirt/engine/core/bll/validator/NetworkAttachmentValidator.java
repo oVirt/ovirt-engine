@@ -7,7 +7,6 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -44,13 +43,11 @@ public class NetworkAttachmentValidator {
     private final VDS host;
     private Network network;
 
-    private final ManagementNetworkUtil managementNetworkUtil;
     private NetworkCluster networkCluster;
     private NetworkValidator networkValidator;
 
     public NetworkAttachmentValidator(NetworkAttachment attachment,
             VDS host,
-            ManagementNetworkUtil managementNetworkUtil,
             VmInterfaceManager vmInterfaceManager,
             NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
@@ -59,7 +56,6 @@ public class NetworkAttachmentValidator {
 
         this.attachment = attachment;
         this.host = host;
-        this.managementNetworkUtil = managementNetworkUtil;
         this.vmInterfaceManager = vmInterfaceManager;
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
@@ -203,21 +199,6 @@ public class NetworkAttachmentValidator {
             ReplacementUtils.createSetVariableString(VAR_NETWORK_ATTACHMENT_ID, oldAttachmentId))
 
             .when(when);
-    }
-
-    public ValidationResult validateGateway() {
-        IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-
-        boolean invalidGateway = ipConfiguration != null
-            && ipConfiguration.hasPrimaryAddressSet()
-            && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway())
-            && !managementNetworkUtil.isManagementNetwork(getNetwork().getId(), host.getClusterId())
-            && !FeatureSupported.multipleGatewaysSupported(host.getClusterCompatibilityVersion());
-
-        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACH_HAVING_NAME_ILLEGAL_GATEWAY;
-        return ValidationResult.failWith(engineMessage,
-            ReplacementUtils.getVariableAssignmentString(engineMessage, attachment.getNetworkName()))
-            .when(invalidGateway);
     }
 
     public ValidationResult networkNotAttachedToHost() {

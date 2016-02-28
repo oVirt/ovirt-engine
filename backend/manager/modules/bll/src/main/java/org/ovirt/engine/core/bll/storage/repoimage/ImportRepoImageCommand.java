@@ -20,7 +20,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -228,9 +227,6 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
             }
 
             setStoragePoolId(getParameters().getStoragePoolId());
-            if (!FeatureSupported.importGlanceImageAsTemplate(getStoragePool().getCompatibilityVersion())) {
-                return failValidation(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-            }
         }
 
         DiskImage diskImage = null;

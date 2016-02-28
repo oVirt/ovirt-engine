@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -44,30 +42,11 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
     private StoragePool storagePool;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_0, false),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_4, true),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_5, true),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_6, true),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v4_0, true),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0, false),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_4, true),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_5, true),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_6, true),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v4_0, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3, false),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_6, true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v4_0, true)
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void setUp() {
-        storagePool = createStoragePool(Version.v3_4);
+        storagePool = createStoragePool();
 
         initCommand();
 
@@ -118,12 +97,11 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
         assertTrue(cmd.checkStoragePool());
     }
 
-    private static StoragePool createStoragePool(Version compatibilityVersion) {
+    private static StoragePool createStoragePool() {
         StoragePool pool = new StoragePool();
         pool.setName("DefaultStoragePool");
         pool.setId(Guid.newGuid());
         pool.setIsLocal(false);
-        pool.setCompatibilityVersion(compatibilityVersion);
         return pool;
     }
 

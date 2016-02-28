@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -121,31 +120,29 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     // If the storage domain is already related to another Storage Pool, detach it by force.
                     Guid storagePoolId = domainFromIrs.getSecond();
                     if (storagePoolId != null) {
-                        if (FeatureSupported.importDataStorageDomain(getStoragePool().getCompatibilityVersion())) {
-                            // Master domain version is not relevant since force remove at
-                            // DetachStorageDomainVdsCommand does not use it.
-                            // Storage pool id can be empty
-                            DetachStorageDomainVDSCommandParameters detachParams =
-                                    new DetachStorageDomainVDSCommandParameters(getStoragePoolIdFromVds(),
-                                            getParameters().getStorageDomainId(),
-                                            Guid.Empty,
-                                            0);
-                            detachParams.setForce(true);
-                            detachParams.setDetachFromOldStoragePool(true);
-                            VDSReturnValue returnValue =
-                                    runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
-                            if (!returnValue.getSucceeded()) {
-                                log.warn("Detaching Storage Domain '{}' from it's previous storage pool '{}'"
-                                                + " has failed. The meta data of the Storage Domain might still"
-                                                + " indicate that it is attached to a different Storage Pool.",
+                        // Master domain version is not relevant since force remove at
+                        // DetachStorageDomainVdsCommand does not use it.
+                        // Storage pool id can be empty
+                        DetachStorageDomainVDSCommandParameters detachParams =
+                                new DetachStorageDomainVDSCommandParameters(getStoragePoolIdFromVds(),
                                         getParameters().getStorageDomainId(),
                                         Guid.Empty,
                                         0);
-                                throw new EngineException(
-                                        returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
-                                                : EngineError.ENGINE,
-                                        returnValue.getExceptionString());
-                            }
+                        detachParams.setForce(true);
+                        detachParams.setDetachFromOldStoragePool(true);
+                        VDSReturnValue returnValue =
+                                runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
+                        if (!returnValue.getSucceeded()) {
+                            log.warn("Detaching Storage Domain '{}' from it's previous storage pool '{}'"
+                                            + " has failed. The meta data of the Storage Domain might still"
+                                            + " indicate that it is attached to a different Storage Pool.",
+                                    getParameters().getStorageDomainId(),
+                                    Guid.Empty,
+                                    0);
+                            throw new EngineException(
+                                    returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
+                                            : EngineError.ENGINE,
+                                    returnValue.getExceptionString());
                         }
                     }
                     createDefaultDiskProfile();
@@ -209,8 +206,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
      * Creating default disk profile for existing storage domain.
      */
     private void createDefaultDiskProfile() {
-        if (FeatureSupported.storageQoS(getStoragePool().getCompatibilityVersion())
-                && getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
+        if (getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
             final DiskProfile diskProfile =
                     DiskProfileHelper.createDiskProfile(getStorageDomain().getId(),
                             getStorageDomainName());

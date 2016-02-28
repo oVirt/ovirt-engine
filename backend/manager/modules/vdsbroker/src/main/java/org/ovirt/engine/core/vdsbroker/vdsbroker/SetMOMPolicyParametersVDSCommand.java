@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
@@ -18,11 +17,8 @@ public class SetMOMPolicyParametersVDSCommand extends VdsBrokerCommand<MomPolicy
 
     @Override
     protected void executeVdsBrokerCommand() {
-        // Do not do anything when the Host's compatibility level is too old
-        if (getVds().getClusterCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
-            status = getBroker().setMOMPolicyParameters(initDeviceStructure());
-            proceedProxyReturnValue();
-        }
+        status = getBroker().setMOMPolicyParameters(initDeviceStructure());
+        proceedProxyReturnValue();
     }
     protected Map<String, Object> initDeviceStructure() {
         Map<String, Object> deviceStruct = new HashMap<>();

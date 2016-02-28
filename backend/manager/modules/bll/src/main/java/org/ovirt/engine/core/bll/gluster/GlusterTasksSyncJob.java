@@ -79,7 +79,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
         Map<Guid, Set<Guid>> tasksFromClustersMap = new HashMap<>();
         for (Cluster cluster : clusters) {
-            if (!getGlusterTaskUtils().supportsGlusterAsyncTasksFeature(cluster)) {
+            if (!cluster.supportsGlusterService()) {
                 continue;
             }
             try {

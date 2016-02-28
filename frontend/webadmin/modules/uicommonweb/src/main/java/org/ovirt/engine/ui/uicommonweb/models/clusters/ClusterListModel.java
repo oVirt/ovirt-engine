@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -47,7 +46,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
-import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
@@ -253,14 +251,10 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         super.updateDetailsAvailability();
         Cluster cluster = getSelectedItem();
         getClusterVmListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
-        getClusterServiceModel().setIsAvailable(cluster != null && cluster.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(cluster.getCompatibilityVersion()));
-        getClusterGlusterHookListModel().setIsAvailable(cluster != null && cluster.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterHookSupported(cluster.getCompatibilityVersion()));
+        getClusterServiceModel().setIsAvailable(cluster != null && cluster.supportsGlusterService());
+        getClusterGlusterHookListModel().setIsAvailable(cluster != null && cluster.supportsGlusterService());
         getAffinityGroupListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
-        getCpuProfileListModel().setIsAvailable(cluster != null && cluster.supportsVirtService()
-                && Boolean.TRUE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
-                cluster.getCompatibilityVersion().getValue())));
+        getCpuProfileListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
     }
 
     @Override
@@ -657,9 +651,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                 && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
         cluster.setEnableKsm(Boolean.TRUE.equals(model.getEnableKsm().getEntity()));
         cluster.setKsmMergeAcrossNumaNodes(model.getKsmPolicyForNuma());
-        cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity())
-                && version.compareTo(Version.v3_3) >= 0);
-        cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
+        cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity()));
+        cluster.setTransparentHugepages(true); //$NON-NLS-1$
         cluster.setCompatibilityVersion(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());

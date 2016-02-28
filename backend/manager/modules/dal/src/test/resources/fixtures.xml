@@ -29,14 +29,14 @@
             <value>general</value>
         </row>
         <row>
-            <value>NonVmNetworkSupported</value>
+            <value>CinderProviderSupported</value>
             <value>false</value>
-            <value>3.0</value>
+            <value>3.5</value>
         </row>
         <row>
-            <value>NonVmNetworkSupported</value>
+            <value>CinderProviderSupported</value>
             <value>true</value>
-            <value>3.2</value>
+            <value>3.6</value>
         </row>
         <!-- Required by InsertExternalAuditLog -->
         <row>

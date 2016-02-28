@@ -113,7 +113,6 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         helper = new SetupNetworksHelper(
                 getParameters(),
                 vds,
-                managementNetworkUtil,
                 networkExclusivenessValidatorResolver);
 
         List<String> validationMessages = helper.validate();

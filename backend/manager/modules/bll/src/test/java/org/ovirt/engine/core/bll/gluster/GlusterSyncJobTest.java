@@ -63,7 +63,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -97,14 +96,6 @@ public class GlusterSyncJobTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterRefreshRateLight, 5),
             mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300),
-            mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.1", false),
-            mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.2", true),
-            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.1", false),
-            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.2", false),
-            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.3", true),
-            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.1", false),
-            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.2", false),
-            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, "3.3", false),
             mockConfig(ConfigValues.GlusterMetaVolumeName, "gluster_shared_storage"));
 
     @ClassRule
@@ -188,34 +179,32 @@ public class GlusterSyncJobTest {
         glusterManager = Mockito.spy(GlusterSyncJob.getInstance());
     }
 
-    private void createObjects(Version version) {
-        existingServer1 = createServer(SERVER_ID_1, SERVER_NAME_1, version);
-        existingServer2 = createServer(SERVER_ID_2, SERVER_NAME_2, version);
+    private void createObjects() {
+        existingServer1 = createServer(SERVER_ID_1, SERVER_NAME_1);
+        existingServer2 = createServer(SERVER_ID_2, SERVER_NAME_2);
         existingServers.add(existingServer1);
         existingServers.add(existingServer2);
-        existingServers.add(createServer(SERVER_ID_3, SERVER_NAME_3, version));
+        existingServers.add(createServer(SERVER_ID_3, SERVER_NAME_3));
 
         existingDistVol = createDistVol(DIST_VOL_NAME, EXISTING_VOL_DIST_ID);
         existingReplVol = createReplVol();
     }
 
-    private void createCluster(Version version) {
+    private void createCluster() {
         existingCluster = new Cluster();
         existingCluster.setId(CLUSTER_ID);
         existingCluster.setName("cluster");
         existingCluster.setGlusterService(true);
         existingCluster.setVirtService(false);
-        existingCluster.setCompatibilityVersion(version);
         existingCluster.setGlusterCliBasedSchedulingOn(true);
-        createObjects(version);
+        createObjects();
     }
 
-    private VDS createServer(Guid serverId, String hostname, Version version) {
+    private VDS createServer(Guid serverId, String hostname) {
         VDS vds = new VDS();
         vds.setId(serverId);
         vds.setHostName(hostname);
         vds.setStatus(VDSStatus.Up);
-        vds.setClusterCompatibilityVersion(version);
         return vds;
     }
 
@@ -636,24 +625,7 @@ public class GlusterSyncJobTest {
 
     @Test
     public void testRefreshLightWeight() throws Exception {
-        createCluster(Version.v3_2);
-        setupMocks();
-
-        glusterManager.refreshLightWeightData();
-        verifyMocksForLightWeight();
-    }
-
-    @Test
-    public void testRefreshHeavyWeightFor31() throws Exception {
-        createCluster(Version.v3_1);
-        setupMocks();
-        glusterManager.refreshHeavyWeightData();
-        verifyMocksForHeavyWeight();
-    }
-
-    @Test
-    public void testRefreshLightWeightFor33() throws Exception {
-        createCluster(Version.v3_3);
+        createCluster();
         setupMocks();
         doReturn(getGlusterServer()).when(glusterServerDao).getByServerId(any(Guid.class));
 
@@ -662,8 +634,8 @@ public class GlusterSyncJobTest {
     }
 
     @Test
-    public void testRefreshHeavyWeightFor32() throws Exception {
-        createCluster(Version.v3_2);
+    public void testRefreshHeavyWeight() throws Exception {
+        createCluster();
         setupMocks();
         glusterManager.refreshHeavyWeightData();
         verifyMocksForHeavyWeight();
@@ -676,10 +648,6 @@ public class GlusterSyncJobTest {
         inOrder.verify(clusterDao, times(1)).getAll();
 
         VerificationMode mode = times(1);
-        if (existingCluster.getCompatibilityVersion() == Version.v3_1) {
-            // nothing else should happen if the cluster has compatibility level 3.1
-            mode = Mockito.never();
-        }
 
         // get the UP server from cluster
         inOrder.verify(clusterUtils, mode).getRandomUpServer(CLUSTER_ID);

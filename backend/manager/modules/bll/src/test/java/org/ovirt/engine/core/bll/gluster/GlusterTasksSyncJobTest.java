@@ -98,8 +98,6 @@ public class GlusterTasksSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, Version.v3_2, false),
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, Version.v3_3, true),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
@@ -296,8 +294,8 @@ public class GlusterTasksSyncJobTest {
 
     private List<Cluster> getClusters() {
         List<Cluster> list = new ArrayList<>();
-        list.add(createCluster(0, Version.v3_2));
-        list.add(createCluster(1, Version.v3_3));
+        list.add(createCluster(0, Version.v3_6));
+        list.add(createCluster(1, Version.v4_0));
         return list;
     }
 

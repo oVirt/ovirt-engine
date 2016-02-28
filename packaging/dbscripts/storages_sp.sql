@@ -1298,22 +1298,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
--- This SP returns a distinct list of the storage types of the data domains in the pool (ignoring ISO/Export etc.)
-CREATE OR REPLACE FUNCTION GetStorageTypesInPoolByPoolId (v_storage_pool_id UUID)
-RETURNS SETOF INT STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT DISTINCT storage_type
-    FROM storage_domains
-    WHERE storage_pool_id = v_storage_pool_id
-        AND storage_domain_type IN (
-            0,
-            1
-            );-- 0 = MASTER, 1 = DATA
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 -- This SP returns the number of images in the specified storage domain
 CREATE OR REPLACE FUNCTION GetNumberOfImagesInStorageDomain (v_storage_domain_id UUID)
 RETURNS SETOF BIGINT STABLE AS $PROCEDURE$

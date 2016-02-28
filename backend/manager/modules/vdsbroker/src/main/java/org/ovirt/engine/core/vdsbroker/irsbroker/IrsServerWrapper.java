@@ -107,20 +107,6 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.getIsoList(spUUID);
-        FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
-    public FileStatsReturnForXmlRpc getFloppyList(String spUUID) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.getFloppyList(spUUID);
-        FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
     public FileStatsReturnForXmlRpc getFileStats(String sdUUID, String pattern, boolean caseSensitive) {
         Map<String, Object> xmlRpcReturnValue = irsServer.getFileStats(sdUUID, pattern, caseSensitive);
         FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
@@ -167,13 +153,6 @@ public class IrsServerWrapper implements IIrsServer {
     @Override
     public StatusOnlyReturnForXmlRpc setStorageDomainDescription(String sdUUID, String description) {
         Map<String, Object> xmlRpcReturnValue = irsServer.setStorageDomainDescription(sdUUID, description);
-        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.extendStorageDomain(sdUUID, spUUID, devlist);
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }

@@ -36,8 +36,8 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     private static final String STORAGE = "STORAGE";
-    private static final Version SUPPORTED_VERSION = new Version(3, 6);
-    private static final Version UNSUPPORTED_VERSION = new Version(3, 0);
+    private static final Version SUPPORTED_VERSION = Version.v3_6;
+    private static final Version UNSUPPORTED_VERSION = Version.v3_5;
     private Guid sdId;
     private StorageDomain sd;
     private StoragePool sp;
@@ -115,10 +115,10 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     @Test
     public void validateWrongVersion() {
-        sp.setCompatibilityVersion(Version.v3_0);
+        sp.setCompatibilityVersion(UNSUPPORTED_VERSION);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
-        sp.setCompatibilityVersion(Version.v3_6);
+        sp.setCompatibilityVersion(SUPPORTED_VERSION);
     }
 
     @Test

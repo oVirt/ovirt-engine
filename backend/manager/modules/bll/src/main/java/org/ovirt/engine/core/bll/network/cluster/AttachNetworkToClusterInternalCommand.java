@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -63,7 +62,6 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
     protected boolean validate() {
         return networkNotAttachedToCluster()
                 && clusterExists()
-                && changesAreClusterCompatible()
                 && logicalNetworkExists()
                 && validateAttachment();
     }
@@ -90,16 +88,6 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
 
         addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
         return false;
-    }
-
-    private boolean changesAreClusterCompatible() {
-        if (!getParameters().getNetwork().isVmNetwork()) {
-            if (!FeatureSupported.nonVmNetwork(getCluster().getCompatibilityVersion())) {
-                addValidationMessage(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean networkNotAttachedToCluster() {

@@ -64,11 +64,11 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
 
     @Test
     public void testGetValue() {
-        // Verify that values for 3.0 and 3.2 are from DB (since the entries are present in fixtures.xml)
-        // and for 3.1, it's the default value from annotation in ConfigValues.
-        // 3.0 -> false, 3.1 -> true, 3.2 -> true
-        Assert.assertFalse(Config.<Boolean> getValue(ConfigValues.NonVmNetworkSupported, "3.0"));
-        Assert.assertTrue(Config.<Boolean> getValue(ConfigValues.NonVmNetworkSupported, "3.1"));
-        Assert.assertTrue(Config.<Boolean> getValue(ConfigValues.NonVmNetworkSupported, "3.2"));
+        // Verify that values for 3.5 and 3.6 are from DB (since the entries are present in fixtures.xml)
+        // and for 4.0, it's the default value from annotation in ConfigValues.
+        // 3.5 -> false, 3.6 -> true, 4.0 -> true
+        Assert.assertFalse(Config.<Boolean> getValue(ConfigValues.CinderProviderSupported, "3.5"));
+        Assert.assertTrue(Config.<Boolean> getValue(ConfigValues.CinderProviderSupported, "3.6"));
+        Assert.assertTrue(Config.<Boolean> getValue(ConfigValues.CinderProviderSupported, "4.0"));
     }
 }

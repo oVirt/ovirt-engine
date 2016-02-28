@@ -11,14 +11,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -31,7 +29,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -40,7 +37,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,12 +44,7 @@ public class VmInterfaceManagerTest {
 
     private static final String NETWORK_NAME = "networkName";
     private static final String VM_NAME = "vmName";
-    private static final Version VERSION_3_2 = new Version(3, 2);
     private static final int OS_ID = 0;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HotPlugEnabled, VERSION_3_2.getValue(), true));
 
     @Mock
     private MacPoolManagerStrategy macPoolManagerStrategy;
@@ -94,20 +85,19 @@ public class VmInterfaceManagerTest {
 
     @Test
     public void add() {
-        runAddAndVerify(createNewInterface(), false, times(0), OS_ID, VERSION_3_2);
+        runAddAndVerify(createNewInterface(), false, times(0), OS_ID);
     }
 
     @Test
     public void addWithExistingMacAddressSucceed() {
         VmNic iface = createNewInterface();
-        runAddAndVerify(iface, true, times(1), OS_ID, VERSION_3_2);
+        runAddAndVerify(iface, true, times(1), OS_ID);
     }
 
     protected void runAddAndVerify(VmNic iface,
             boolean reserveExistingMac,
             VerificationMode addMacVerification,
-            int osId,
-            Version version) {
+            int osId) {
         OsRepository osRepository = mock(OsRepository.class);
         when(vmInterfaceManager.getOsRepository()).thenReturn(osRepository);
         when(osRepository.hasNicHotplugSupport(any(Integer.class), any(Version.class))).thenReturn(true);

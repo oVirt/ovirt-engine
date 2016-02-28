@@ -31,10 +31,7 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
 
     @Override
     protected void postBuild(VmBase vm, UnitVmModel model) {
-        if (supported(ConfigurationValues.BootMenuSupported, model)) {
-            model.getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
-        }
-
+        model.getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
         model.getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
         model.getIsDeleteProtected().setEntity(vm.isDeleteProtected());
         model.selectSsoMethod(vm.getSsoMethod());
@@ -43,9 +40,7 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
             model.getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         }
 
-        if (supported(ConfigurationValues.SpiceCopyPasteToggleSupported, model)) {
-            model.getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-        }
+        model.getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
 
         if (supported(ConfigurationValues.AutoConvergenceSupported, model)) {
             model.getAutoConverge().setSelectedItem(vm.getAutoConverge());

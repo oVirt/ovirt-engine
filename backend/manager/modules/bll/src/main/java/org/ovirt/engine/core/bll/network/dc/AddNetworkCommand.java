@@ -72,7 +72,6 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     protected boolean validate() {
         AddNetworkValidator validator = getNetworkValidator();
         return validate(validator.dataCenterExists())
-                && validate(validator.vmNetworkSetCorrectly())
                 && validate(validator.stpForVmNetworkOnly())
                 && validate(validator.mtuValid())
                 && validate(validator.networkPrefixValid())

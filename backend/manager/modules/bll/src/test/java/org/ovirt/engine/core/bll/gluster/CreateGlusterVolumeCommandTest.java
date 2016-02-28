@@ -12,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
-import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -25,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
@@ -46,9 +43,6 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Mock
     ClusterDao clusterDao;
-
-    @Mock
-    GlusterVolumeValidator validator;
 
     @Mock
     NetworkDao networkDao;
@@ -90,7 +84,6 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         cluster.setId(clusterId);
         cluster.setVirtService(false);
         cluster.setGlusterService(glusterEnabled);
-        cluster.setCompatibilityVersion(Version.v3_1);
         return cluster;
     }
 
@@ -99,16 +92,12 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
-        doReturn(validator).when(command).createVolumeValidator();
         doReturn(networkDao).when(command).getNetworkDao();
         doReturn(interfaceDao).when(command).getInterfaceDao();
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getCluster(true)).when(clusterDao).get(Mockito.any(Guid.class));
-        doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
-                .isForceCreateVolumeAllowed(Version.v3_1, true);
     }
 
     private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks) {
@@ -174,17 +163,6 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
-    }
-
-    @Test
-    public void validateFailsWithForceNotSupported() {
-        CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(getVolume(2, true), true);
-        CreateGlusterVolumeCommand command = new CreateGlusterVolumeCommand(parameters, null);
-        cmd = spy(command);
-        prepareMocks(cmd);
-
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
     }
 
     @Test

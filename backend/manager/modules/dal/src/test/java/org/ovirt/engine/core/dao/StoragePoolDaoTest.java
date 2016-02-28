@@ -8,8 +8,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -17,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -46,7 +43,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
         newPool = new StoragePool();
         newPool.setName("newPoolDude");
         newPool.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
-        newPool.setCompatibilityVersion(new Version("3.0"));
+        newPool.setCompatibilityVersion(Version.getLast());
 
     }
 
@@ -324,34 +321,6 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetStorageTypesInPoolForMixedTypes() {
-        Guid poolId = FixturesTool.STORAGE_POOL_MIXED_TYPES;
-        List<StorageType> storageTypes = dao.getStorageTypesInPool(poolId);
-        assertStorageTypes(storageTypes, StorageType.POSIXFS, StorageType.NFS, StorageType.ISCSI);
-    }
-
-    @Test
-    public void testGetStorageTypesInPoolForSingleType() {
-        Guid poolId = FixturesTool.STORAGE_POOL_NFS;
-        List<StorageType> storageTypes = dao.getStorageTypesInPool(poolId);
-        assertStorageTypes(storageTypes, StorageType.NFS);
-    }
-
-    @Test
-    public void testGetStorageTypesInPoolForNonExistingPool() {
-        Guid poolId = Guid.newGuid();
-        List<StorageType> storageTypes = dao.getStorageTypesInPool(poolId);
-        assertTrue("Number of storage types in a non existing pool returned results", storageTypes.isEmpty());
-    }
-
-    @Test
-    public void testGetStorageTypesInPoolForEmptyPool() {
-        Guid poolId = FixturesTool.STORAGE_POOL_NO_DOMAINS;
-        List<StorageType> storageTypes = dao.getStorageTypesInPool(poolId);
-        assertTrue("Number of storage types in a non existing pool returned results", storageTypes.isEmpty());
-    }
-
-    @Test
     public void testGetAllDataCentersByMacPoolId() {
         assertThat(dao.getAllDataCentersByMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID).size(), is(6));
     }
@@ -359,16 +328,5 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllDataCentersByMacPoolIdForNonExistingMacPoolId() {
         assertThat(dao.getAllDataCentersByMacPoolId(Guid.newGuid()).size(), is(0));
-    }
-
-    private void assertStorageTypes(List<StorageType> typesList, StorageType... expectedTypes) {
-        assertEquals("Number of storage types different than expected storage type in the pool", typesList.size(), expectedTypes.length);
-
-        List<StorageType> expectedTypesList = new ArrayList<>(Arrays.asList(expectedTypes));
-
-        expectedTypesList.removeAll(typesList);
-
-        assertTrue(String.format("The following storage types were expected but were missing: %s", expectedTypesList), expectedTypesList.isEmpty());
-
     }
 }

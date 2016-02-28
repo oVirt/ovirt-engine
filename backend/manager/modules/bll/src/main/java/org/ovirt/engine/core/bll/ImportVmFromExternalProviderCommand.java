@@ -154,8 +154,7 @@ implements QuotaStorageDependent {
         for (DiskImage diskImage : getVm().getImages()) {
             map.put(diskImage, getStorageDomainId());
         }
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                getStoragePool().getCompatibilityVersion(), getCurrentUser()));
+        return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
     }
 
     private ValidationResult validateRequestedProxyHost() {

@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -2053,8 +2052,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
 
         VM vm = getSelectedItem();
-        if (vm == null || !vm.isHostedEngine()
-              || vm.getCompatibilityVersion().compareTo(Version.v3_4) < 0) {
+        if (vm == null || !vm.isHostedEngine()) {
             setHaMaintenanceAvailability(false);
         } else {
             setHaMaintenanceAvailability(true);

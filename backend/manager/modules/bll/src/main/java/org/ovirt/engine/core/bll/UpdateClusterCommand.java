@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
-import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -41,11 +40,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -118,17 +115,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 getParameters().getCluster().setDetectEmulatedMachine(true);
             } else {
                 getParameters().getCluster().setEmulatedMachine(emulatedMachine);
-            }
-            // create default CPU profile for cluster that is being upgraded.
-            // and set all attached vms and templates with cpu profile
-            Guid clusterId = getParameters().getClusterId();
-            if (!FeatureSupported.cpuQoS(oldGroup.getCompatibilityVersion()) &&
-                    FeatureSupported.cpuQoS(getParameters().getCluster().getCompatibilityVersion()) &&
-                    getCpuProfileDao().getAllForCluster(clusterId).isEmpty()) {
-                CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(clusterId,
-                        getParameters().getCluster().getName());
-                getCpuProfileDao().save(cpuProfile);
-                getVmStaticDao().updateVmCpuProfileIdForClusterId(clusterId, cpuProfile.getId());
             }
         }
         else if (oldGroup.getArchitecture() != getCluster().getArchitecture()) {
@@ -431,21 +417,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
         }
 
-        if (getCluster().getCompatibilityVersion() != null
-                && Version.v3_3.compareTo(getCluster().getCompatibilityVersion()) > 0
-                && getCluster().isEnableBallooning()) {
-            // Members of pre-3.3 clusters don't support ballooning; here we act like a 3.2 engine
-            addValidationMessage(EngineMessage.QOS_BALLOON_NOT_SUPPORTED);
-            result = false;
-        }
-
-        if (getCluster().supportsGlusterService()
-                && !GlusterFeatureSupported.gluster(getCluster().getCompatibilityVersion())) {
-            addValidationMessage(EngineMessage.GLUSTER_NOT_SUPPORTED);
-            addValidationMessageVariable("compatibilityVersion", getCluster().getCompatibilityVersion().getValue());
-            result = false;
-        }
-
         if (result) {
             if (!(getCluster().supportsGlusterService() || getCluster().supportsVirtService())) {
                 addValidationMessage(EngineMessage.CLUSTER_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
@@ -481,12 +452,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         if (result) {
             result = validateClusterPolicy();
-        }
-        // non-empty required sources list and rng-unsupported cluster version
-        if (result && !getCluster().getRequiredRngSources().isEmpty()
-                && !FeatureSupported.virtIoRngSupported(getCluster().getCompatibilityVersion())) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
-            result = false;
         }
         if (result && getParameters().isForceResetEmulatedMachine()) {
             for (VDS vds : allForCluster) {

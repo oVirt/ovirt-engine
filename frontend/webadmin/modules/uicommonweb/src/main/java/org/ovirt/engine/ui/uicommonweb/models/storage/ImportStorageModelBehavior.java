@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -126,23 +125,5 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
         }
 
         return false;
-    }
-
-    @Override
-    public boolean shouldShowDataCenterAlert(StoragePool selectedDataCenter) {
-        return selectedDataCenter != null && !StorageModel.UnassignedDataCenterId.equals(selectedDataCenter.getId()) &&
-                !isImportDataDomainEnabled(selectedDataCenter);
-    }
-
-    @Override
-    public String getDataCenterAlertMessage() {
-        return ConstantsManager.getInstance().getConstants().dataCenterDoesntSupportImportDataDomainAlert();
-    }
-
-    private boolean isImportDataDomainEnabled(StoragePool dataCenter) {
-        boolean ovfStoreOnAnyDomainEnabled = (Boolean) AsyncDataProvider.getInstance().
-                getConfigValuePreConverted(ConfigurationValues.ImportDataStorageDomain,
-                        dataCenter.getCompatibilityVersion().getValue());
-        return ovfStoreOnAnyDomainEnabled;
     }
 }

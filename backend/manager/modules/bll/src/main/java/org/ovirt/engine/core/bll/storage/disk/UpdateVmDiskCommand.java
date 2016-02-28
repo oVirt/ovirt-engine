@@ -299,12 +299,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return failValidation(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
             }
 
-            if (!isVersionSupportedForShareable(getOldDisk(), getStoragePoolDao().get(getVm().getStoragePoolId())
-                    .getCompatibilityVersion()
-                    .getValue())) {
-                return failValidation(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-            }
-
             if (!isVolumeFormatSupportedForShareable(((DiskImage) getNewDisk()).getVolumeFormat())) {
                 return failValidation(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
             }
@@ -714,8 +708,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
             Map<DiskImage, Guid> map = new HashMap<>();
             map.put(diskImage, diskImage.getStorageIds().get(0));
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }

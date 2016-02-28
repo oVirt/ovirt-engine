@@ -73,7 +73,6 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -518,7 +517,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     // TODO asynch event handler - design infra code to allow async events in segregated thread
     public void onMomPolicyChange(@Observes @MomPolicyUpdate final Cluster cluster) {
-        if (cluster == null || cluster.getCompatibilityVersion().compareTo(Version.v3_4) < 0) {
+        if (cluster == null) {
             return;
         }
         List<VDS> activeHostsInCluster =

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -21,13 +20,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.CalculateBaseNic;
 import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Replaced by {@link org.ovirt.engine.core.vdsbroker.vdsbroker.HostSetupNetworksVDSCommand}
@@ -39,12 +35,11 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     protected static final String BOOT_PROTOCOL = "bootproto";
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
-    private static final String DEFAULT_ROUTE = "defaultRoute";
+    protected static final String DEFAULT_ROUTE = "defaultRoute";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
-    private static final Logger log = LoggerFactory.getLogger(SetupNetworksVDSCommand.class);
 
     @Inject
-    private ManagementNetworkUtil managementNetworkUtil;
+    ManagementNetworkUtil managementNetworkUtil;
 
     @Inject
     NetworkAttachmentDao networkAttachmentDao;
@@ -69,17 +64,6 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         VDS host = getParameters().getVds();
 
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getClusterCompatibilityVersion());
-
-        Set<Version> supportedClusterVersionsSet = host.getSupportedClusterVersionsSet();
-        boolean supportedClusterVersionsAvailable = !supportedClusterVersionsSet.isEmpty();
-        if (!supportedClusterVersionsAvailable) {
-            log.warn("Host '{}' ('{}') doesn't contain Supported Cluster Versions, therefore 'defaultRoute'"
-                    + " will not be sent via the SetupNetworks", host.getName(), host.getId());
-        }
-
-        boolean defaultRouteSupported =
-                supportedClusterVersionsAvailable
-                        && FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet));
 
         CustomPropertiesForVdsNetworkInterface customProperties = getParameters().getCustomProperties();
         for (Network network : getParameters().getNetworks()) {
@@ -121,8 +105,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 new HostNetworkQosMapper(opts).serialize(hostNetworkQos);
             }
 
-            if (defaultRouteSupported
-                    && managementNetworkUtil.isManagementNetwork(network.getId(), host.getClusterId())
+            if (managementNetworkUtil.isManagementNetwork(network.getId(), host.getClusterId())
                     && (iface.getBootProtocol() == NetworkBootProtocol.DHCP
                     || (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
                     && StringUtils.isNotEmpty(iface.getGateway())))) {

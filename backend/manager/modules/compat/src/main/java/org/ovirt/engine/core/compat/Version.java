@@ -18,17 +18,10 @@ public class Version implements Comparable<Version>, Serializable {
     private int revision;
 
     // please note that versions must be in sync with dbscripts/common_sp.sql::fn_db_add_config_value_for_versions_up_to
-    public static final Version v3_0 = new Version(3, 0);
-    public static final Version v3_1 = new Version(3, 1);
-    public static final Version v3_2 = new Version(3, 2);
-    public static final Version v3_3 = new Version(3, 3);
-    public static final Version v3_4 = new Version(3, 4);
     public static final Version v3_5 = new Version(3, 5);
     public static final Version v3_6 = new Version(3, 6);
     public static final Version v4_0 = new Version(4, 0);
-    public static final List<Version> ALL = Collections.unmodifiableList(
-        Arrays.asList(v3_0, v3_1, v3_2, v3_3, v3_4, v3_5, v3_6, v4_0)
-    );
+    public static final List<Version> ALL = Collections.unmodifiableList(Arrays.asList(v3_5, v3_6, v4_0));
 
 
     public Version(String value) {

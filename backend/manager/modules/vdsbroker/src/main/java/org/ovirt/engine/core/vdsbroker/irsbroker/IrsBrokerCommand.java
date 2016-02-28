@@ -68,7 +68,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     public static List<Guid> fetchDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData, StoragePool storagePool) {
         IrsProxyData proxy = _irsProxyData.get(storagePool.getId());
         if (proxy != null) {
-            return proxy.obtainDomainsReportedAsProblematic(vdsDomainsData, storagePool);
+            return proxy.obtainDomainsReportedAsProblematic(vdsDomainsData);
         }
         return Collections.emptyList();
     }

@@ -1,13 +1,10 @@
 package org.ovirt.engine.core.bll.transport;
 
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
@@ -19,7 +16,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -42,7 +38,6 @@ public class ProtocolDetector implements AutoCloseable {
     private Integer retryAttempts = null;
     private final ResourceManager resourceManager;
     private final VdsStaticDao vdsStaticDao;
-    private final VdsDynamicDao vdsDynamicDao;
     private final AuditLogDirector auditLogDirector;
     private boolean fallbackTriggered;
     private VDS vds;
@@ -50,14 +45,12 @@ public class ProtocolDetector implements AutoCloseable {
     public ProtocolDetector(VDS vds,
                             ResourceManager resourceManager,
                             VdsStaticDao vdsStaticDao,
-                            VdsDynamicDao vdsDynamicDao,
                             AuditLogDirector auditLogDirector) {
         this.vds = vds;
         this.retryAttempts = Config.<Integer> getValue(ConfigValues.ProtocolFallbackRetries);
         this.connectionTimeout = Config.<Integer> getValue(ConfigValues.ProtocolFallbackTimeoutInMilliSeconds);
         this.resourceManager = resourceManager;
         this.vdsStaticDao = vdsStaticDao;
-        this.vdsDynamicDao = vdsDynamicDao;
         this.auditLogDirector = auditLogDirector;
     }
 
@@ -138,24 +131,14 @@ public class ProtocolDetector implements AutoCloseable {
     public void close() throws Exception {
         if (fallbackTriggered) {
             setFallbackProtocol(VdsProtocol.STOMP);
-            VdsDynamic host = vdsDynamicDao.get(vds.getId());
 
             // warn if host supports jsonrpc in cluster which supports only jsonrpc, and fallback was triggered
-            if (isJsonProtocolSupported(host) && vds.getClusterCompatibilityVersion().greaterOrEquals(Version.v3_6)) {
+            if (vds.getClusterCompatibilityVersion().greaterOrEquals(Version.v3_6)) {
                 // Report an error for protocol incompatibility
                 AuditLogableBase event = new AuditLogableBase();
                 event.setVds(vds);
                 auditLogDirector.log(event, AuditLogType.HOST_PROTOCOL_INCOMPATIBLE_WITH_CLUSTER);
             }
         }
-    }
-
-    private boolean isJsonProtocolSupported(VdsDynamic host) {
-        if (host.getSupportedClusterVersionsSet().isEmpty()) {
-            return false;
-        }
-
-        Version maxSupportedVersion = Collections.max(host.getSupportedClusterVersionsSet());
-        return maxSupportedVersion != null && FeatureSupported.jsonProtocol(maxSupportedVersion);
     }
 }

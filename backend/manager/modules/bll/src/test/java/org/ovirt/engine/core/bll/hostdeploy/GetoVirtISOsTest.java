@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -34,7 +33,6 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
     private static final String OVIRT_ISOS_DATA_DIR = ".";
     private static final String AVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 6.2 - 20111010.0.el6";
     private static final String UNAVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 8.2 - 20111010.0.el6";
-    private static final Version EXISTING_CLUSTER_VERSION = new Version("3.1");
     private static final String OVIRT_NODEOS = "^rhevh.*";
 
     @Rule
@@ -64,7 +62,6 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
         vds.setId(vdsId);
         vds.setVdsType(VDSType.oVirtNode);
         vds.setHostOs(AVAILABLE_OVIRT_ISO_VERSION);
-        vds.setClusterCompatibilityVersion(EXISTING_CLUSTER_VERSION);
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
 
         when(getQueryParameters().getId()).thenReturn(vdsId);
@@ -83,7 +80,6 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
         vds.setId(vdsId);
         vds.setVdsType(VDSType.oVirtNode);
         vds.setHostOs(UNAVAILABLE_OVIRT_ISO_VERSION);
-        vds.setClusterCompatibilityVersion(EXISTING_CLUSTER_VERSION);
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
 
         when(getQueryParameters().getId()).thenReturn(vdsId);

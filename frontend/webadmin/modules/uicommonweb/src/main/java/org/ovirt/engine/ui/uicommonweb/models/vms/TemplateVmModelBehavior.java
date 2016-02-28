@@ -163,8 +163,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateMigrationForLocalSD();
         updateOSValues();
         if (getModel().getSelectedCluster() != null) {
-            updateCpuProfile(getModel().getSelectedCluster().getId(),
-                    getCompatibilityVersion(), template.getCpuProfileId());
+            updateCpuProfile(getModel().getSelectedCluster().getId(), template.getCpuProfileId());
         }
         updateCustomPropertySheet();
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());

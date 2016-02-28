@@ -13,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -97,11 +96,6 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
     private final List<VmDeviceGeneralType> supportedDeviceTypes;
 
     /**
-     * Error thrown if device custom properties are to be set for a device in unsupported cluster version
-     */
-    protected final List<ValidationError> unsupportedVersionValidationError;
-
-    /**
      * Error thrown if device custom properties are to be set for a device with UNKNOWN type
      */
     protected final List<ValidationError> invalidDeviceTypeValidationError;
@@ -149,8 +143,6 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
         devicePropValidationStr = sb.toString();
         devicePropValidationPattern = Pattern.compile(devicePropValidationStr);
 
-        unsupportedVersionValidationError =
-                Arrays.asList(new ValidationError(ValidationFailureReason.UNSUPPORTED_VERSION, ""));
         invalidDeviceTypeValidationError =
                 Arrays.asList(new ValidationError(ValidationFailureReason.INVALID_DEVICE_TYPE, ""));
     }
@@ -189,27 +181,25 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
             for (Version version : versions) {
                 // load device properties
                 devicePropertiesStr = getCustomDeviceProperties(version);
-                if (FeatureSupported.deviceCustomProperties(version)) {
-                    deviceProperties.put(version, new EnumMap<>(VmDeviceGeneralType.class));
-                    Matcher typeMatcher = devicePropSplitPattern.matcher(devicePropertiesStr);
-                    while (typeMatcher.find()) {
-                        String dcpStr = typeMatcher.group();
-                        // device type definition starts with "{type="
-                        int start = TYPE_PREFIX_LEN;
-                        int end = dcpStr.length() - 1;
-                        if (dcpStr.endsWith(PROPERTIES_DELIMETER)) {
-                            // remove trailing ;
-                            end--;
-                        }
-                        dcpStr = dcpStr.substring(start, end);
-                        int idx = dcpStr.indexOf(PROPERTIES_DELIMETER);
-                        VmDeviceGeneralType type = VmDeviceGeneralType.forValue(dcpStr.substring(0, idx));
-                        // properties definition for device starts with ";prop={"
-                        String propStr = dcpStr.substring(idx + PROP_PREFIX_LEN, dcpStr.length() - 1);
-                        Map<String, String> props = new HashMap<>();
-                        parsePropertiesRegex(propStr, props);
-                        deviceProperties.get(version).put(type, props);
+                deviceProperties.put(version, new EnumMap<>(VmDeviceGeneralType.class));
+                Matcher typeMatcher = devicePropSplitPattern.matcher(devicePropertiesStr);
+                while (typeMatcher.find()) {
+                    String dcpStr = typeMatcher.group();
+                    // device type definition starts with "{type="
+                    int start = TYPE_PREFIX_LEN;
+                    int end = dcpStr.length() - 1;
+                    if (dcpStr.endsWith(PROPERTIES_DELIMETER)) {
+                        // remove trailing ;
+                        end--;
                     }
+                    dcpStr = dcpStr.substring(start, end);
+                    int idx = dcpStr.indexOf(PROPERTIES_DELIMETER);
+                    VmDeviceGeneralType type = VmDeviceGeneralType.forValue(dcpStr.substring(0, idx));
+                    // properties definition for device starts with ";prop={"
+                    String propStr = dcpStr.substring(idx + PROP_PREFIX_LEN, dcpStr.length() - 1);
+                    Map<String, String> props = new HashMap<>();
+                    parsePropertiesRegex(propStr, props);
+                    deviceProperties.get(version).put(type, props);
                 }
             }
         } catch (Exception ex) {
@@ -224,10 +214,6 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
      *            version of the cluster that the VM containing the device is in
      */
     public Set<VmDeviceGeneralType> getDeviceTypesWithProperties(Version version) {
-        if (!FeatureSupported.deviceCustomProperties(version)) {
-            return Collections.emptySet();
-        }
-
         EnumMap<VmDeviceGeneralType, Map<String, String>> map = deviceProperties.get(version);
         if (map.isEmpty()) {
             // no device type has any properties
@@ -249,10 +235,6 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
      * @return map of device properties
      */
     public Map<String, String> getDeviceProperties(Version version, VmDeviceGeneralType type) {
-        if (!FeatureSupported.deviceCustomProperties(version)) {
-            return new HashMap<>();
-        }
-
         Map<String, String> map = deviceProperties.get(version).get(type);
         if (map == null) {
             // no defined properties for specified type
@@ -288,10 +270,6 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
         if (properties == null || properties.isEmpty()) {
             // No errors in case of empty value
             return Collections.emptyList();
-        }
-
-        if (!FeatureSupported.deviceCustomProperties(version)) {
-            return unsupportedVersionValidationError;
         }
 
         if (!supportedDeviceTypes.contains(type)) {

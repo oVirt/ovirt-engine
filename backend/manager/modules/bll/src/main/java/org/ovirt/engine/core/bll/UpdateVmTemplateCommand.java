@@ -78,7 +78,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData(), getCluster());
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData());
         VmHandler.updateDefaultTimeZone(parameters.getVmTemplateData());
         VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
                 getParameters().getVmTemplateData(),
@@ -181,7 +181,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         boolean returnValue = VmHandler.isUsbPolicyLegal(
                 getParameters().getVmTemplateData().getUsbPolicy(),
                 getParameters().getVmTemplateData().getOsId(),
-                getVmTemplate().getCompatibilityVersion(),
                 getReturnValue().getValidationMessages());
 
         // Check if the OS type is supported
@@ -220,8 +219,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
                         getParameters().getVmTemplateData().getOsId(),
-                        getReturnValue().getValidationMessages(),
-                        getVmTemplate().getCompatibilityVersion())) {
+                        getReturnValue().getValidationMessages())) {
             returnValue = false;
         }
 
@@ -458,8 +456,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return true;
         }
 
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
-                getVmTemplate().getCompatibilityVersion()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate()));
     }
 
     private boolean isInstanceType() {

@@ -1,19 +1,15 @@
 package org.ovirt.engine.core.bll.validator;
 
-
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Version;
 
 public class VirtIoRngValidator {
 
     public ValidationResult canAddRngDevice(Cluster cluster, VmRngDevice rngDevice) {
         VmRngDevice.Source source = rngDevice.getSource();
         boolean supported = cluster != null &&
-                isFeatureSupported(cluster.getCompatibilityVersion()) &&
                 cluster.getRequiredRngSources().contains(source);
 
         if (!supported) {
@@ -22,9 +18,5 @@ public class VirtIoRngValidator {
 
         return ValidationResult.VALID;
 
-    }
-
-    protected boolean isFeatureSupported(Version clusterVersion) {
-        return FeatureSupported.virtIoRngSupported(clusterVersion);
     }
 }

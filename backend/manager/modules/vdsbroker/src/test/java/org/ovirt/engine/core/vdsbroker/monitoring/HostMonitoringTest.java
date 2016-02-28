@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -98,7 +97,6 @@ public class HostMonitoringTest {
     private void initVds() {
         vds = new VDS();
         vds.setId(new Guid("00000000-0000-0000-0000-000000000012"));
-        vds.setClusterCompatibilityVersion(Version.v3_4);
     }
 
     /**

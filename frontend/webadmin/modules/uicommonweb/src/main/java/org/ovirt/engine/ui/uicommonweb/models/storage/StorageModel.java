@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -506,17 +505,6 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         // Filter hosts
         hosts = Linq.where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
 
-        // Allow only hosts with version above 2.2 for export storage.
-        ArrayList<VDS> list = new ArrayList<>();
-        if (getCurrentStorageItem() != null && getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
-            for (VDS host : hosts) {
-                if (host.getClusterCompatibilityVersion().compareTo(new Version("2.2")) >= 0) { //$NON-NLS-1$
-                    list.add(host);
-                }
-            }
-            hosts = list;
-        }
-
         VDS oldSelectedItem = getHost().getSelectedItem();
         VDS selectedItem = null;
 
@@ -577,21 +565,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                         || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
                     formats.add(StorageFormatType.V1);
                 }
-                else if ((getCurrentStorageItem().getType() == StorageType.NFS
-                        || getCurrentStorageItem().getType() == StorageType.LOCALFS)
-                        && (dataCenter.getCompatibilityVersion().compareTo(Version.v3_1) < 0)) {
-                    formats.add(StorageFormatType.V1);
-                }
-                else if (getCurrentStorageItem().getType().isBlockDomain()
-                        && dataCenter.getCompatibilityVersion().compareTo(Version.v3_0) < 0) {
-                    formats.add(StorageFormatType.V1);
-                }
-                else if (getCurrentStorageItem().getType().isBlockDomain()
-                        && dataCenter.getCompatibilityVersion().compareTo(Version.v3_0) == 0) {
-                    formats.add(StorageFormatType.V2);
-                    selectItem = StorageFormatType.V2;
-                }
-                else if (dataCenter.getCompatibilityVersion().compareTo(Version.v3_1) >= 0) {
+                else {
                     formats.add(StorageFormatType.V3);
                     selectItem = StorageFormatType.V3;
                 }

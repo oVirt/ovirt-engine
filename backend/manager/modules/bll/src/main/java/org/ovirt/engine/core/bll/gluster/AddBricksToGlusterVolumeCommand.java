@@ -64,11 +64,6 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             return false;
         }
 
-        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getCluster().getCompatibilityVersion(),
-                getParameters().isForce()))) {
-            return false;
-        }
-
         if (getGlusterVolume().getVolumeType().isReplicatedType()) {
             if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);

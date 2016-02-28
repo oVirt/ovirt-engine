@@ -4,12 +4,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -23,17 +21,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
-    private static final Version SUPPORTED_VERSION = new Version(3, 4);
-    private static final Version UNSUPPORTED_VERSION = new Version(3, 3);
-
     @Mock
     GlusterVolumeDao volumeDao;
 
@@ -42,11 +33,6 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     private final Guid volumeId3 = new Guid("000000000000-0000-0000-0000-00000003");
     private final Guid volumeId4 = new Guid("000000000000-0000-0000-0000-00000004");
     private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, UNSUPPORTED_VERSION.getValue(), false),
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, SUPPORTED_VERSION.getValue(), true));
 
     @Mock
     protected Cluster cluster;
@@ -64,7 +50,6 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getReplicatedVolume(volumeId3, 2)).when(volumeDao).getById(volumeId3);
         doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
         doReturn(null).when(volumeDao).getById(null);
-        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(cluster).when(command).getCluster();
     }
 
@@ -158,16 +143,4 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
-
-    @Test
-    public void validateFailsOnCompat() {
-        cmd = spy(createTestCommand(volumeId1));
-        prepareMocks(cmd);
-        doReturn(UNSUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
-    }
-
 }

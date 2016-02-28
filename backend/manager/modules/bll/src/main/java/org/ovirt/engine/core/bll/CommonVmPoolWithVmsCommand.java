@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -374,10 +373,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
         }
 
-        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
-            return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
-        }
         if (!setAndValidateDiskProfiles()) {
             return false;
         }
@@ -497,15 +492,13 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
-            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
     }
 
     protected boolean setAndValidateCpuProfile() {
-        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVmStaticData(),
-                getEffectiveCompatibilityVersion()));
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVmStaticData()));
     }
 
     @Override

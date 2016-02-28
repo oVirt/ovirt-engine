@@ -983,7 +983,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         VM vm = (VM) entity;
 
-        if (vm.getRunOnVds() == null || !AsyncDataProvider.getInstance().isLiveMergeSupported(vm)) {
+        if (vm.getRunOnVds() == null) {
             setLiveMergeSupported(false);
             return;
         }

@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -187,12 +186,7 @@ public class RunVmValidator {
      * @return true if all VM network interfaces are valid
      */
     public ValidationResult validateNetworkInterfaces() {
-        ValidationResult validationResult = validateInterfacesConfigured(vm);
-        if (!validationResult.isValid()) {
-            return validationResult;
-        }
-
-        validationResult = validateInterfacesAttachedToClusterNetworks(vm, getClusterNetworksNames(), getInterfaceNetworkNames());
+        ValidationResult validationResult = validateInterfacesAttachedToClusterNetworks(getClusterNetworksNames(), getInterfaceNetworkNames());
         if (!validationResult.isValid()) {
             return validationResult;
         }
@@ -428,38 +422,16 @@ public class RunVmValidator {
     }
 
     /**
-     * Checking that the interfaces are all configured, interfaces with no network are allowed only if network linking
-     * is supported.
-     *
-     * @return true if all VM network interfaces are attached to existing cluster networks, or to no network (when
-     *         network linking is supported).
-     */
-    protected ValidationResult validateInterfacesConfigured(VM vm) {
-        for (VmNetworkInterface nic : vm.getInterfaces()) {
-            if (nic.getVnicProfileId() == null) {
-                return FeatureSupported.networkLinking(vm.getClusterCompatibilityVersion()) ?
-                        ValidationResult.VALID:
-                            new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
-            }
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * @param vm The VM to be run
      * @param clusterNetworkNames cluster logical networks names
      * @param interfaceNetworkNames VM interface network names
      * @return true if all VM network interfaces are attached to existing cluster networks
      */
-    protected ValidationResult validateInterfacesAttachedToClusterNetworks(VM vm,
+    protected ValidationResult validateInterfacesAttachedToClusterNetworks(
             final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
 
         Set<String> result = new HashSet<>(interfaceNetworkNames);
         result.removeAll(clusterNetworkNames);
-        if (FeatureSupported.networkLinking(vm.getClusterCompatibilityVersion())) {
-            result.remove(null);
-        }
+        result.remove(null);
 
         // If after removing the cluster network names we still have objects, then we have interface on networks that
         // aren't attached to the cluster

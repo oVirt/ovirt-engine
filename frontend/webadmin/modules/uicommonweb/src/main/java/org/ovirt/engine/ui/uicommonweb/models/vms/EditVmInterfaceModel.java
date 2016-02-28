@@ -85,7 +85,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
         boolean isPlugged = isPluggedBeforeAndAfterEdit();
 
-        if (isVmUp() && hotUpdateSupported && isPlugged && selectedNetworkExternal()) {
+        if (isVmUp() && isPlugged && selectedNetworkExternal()) {
             getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
                     .hotLinkStateUpdateNotSupportedExternalNetworks());
@@ -104,11 +104,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
         boolean isPlugged = isPluggedBeforeAndAfterEdit();
 
         if (isVmUp() && isPlugged) {
-            if (!hotUpdateSupported) {
-                getProfile().setChangeProhibitionReason(ConstantsManager.getInstance()
-                        .getMessages()
-                        .hotProfileUpdateNotSupported(getClusterCompatibilityVersion().toString()));
-            } else if (selectedNetworkExternal()) {
+            if (selectedNetworkExternal()) {
                 getProfile().setChangeProhibitionReason(ConstantsManager.getInstance()
                         .getConstants()
                         .hotNetworkUpdateNotSupportedExternalNetworks());

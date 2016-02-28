@@ -183,7 +183,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     try (ProtocolDetector detector = new ProtocolDetector(getVds(),
                             resourceManager,
                             getVdsStaticDao(),
-                            getVdsDynamicDao(),
                             auditLogDirector)) {
                         if (detector.shouldCheckProtocolTofallback()) {
                             // we need to check whether we are connecting to vdsm which supports xmlrpc only

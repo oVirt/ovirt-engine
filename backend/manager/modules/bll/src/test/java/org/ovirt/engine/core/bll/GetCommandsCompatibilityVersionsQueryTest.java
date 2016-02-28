@@ -25,8 +25,8 @@ import org.ovirt.engine.core.dao.ActionGroupDao;
 public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetCommandsCompatibilityVersionsQuery<VdcQueryParametersBase>> {
 
     private ActionGroupDao actionGroupDaoMock;
-    private static final Version RUN_VM_VERSION = Version.v3_0;
-    private static final Version ADD_VM_FROM_SNAPSHOT_VERSION = Version.v3_1;
+    private static final Version RUN_VM_VERSION = Version.v3_6;
+    private static final Version ADD_VM_FROM_SNAPSHOT_VERSION = Version.v4_0;
 
     @Before
     @Override

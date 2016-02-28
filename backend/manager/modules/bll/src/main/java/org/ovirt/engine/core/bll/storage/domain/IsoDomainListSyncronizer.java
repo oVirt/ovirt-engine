@@ -20,12 +20,10 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -39,7 +37,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetFileStatsParameters;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,7 +46,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -657,8 +653,7 @@ public class IsoDomainListSyncronizer {
     private boolean updateAllFileListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
         VDSReturnValue fileStatsVDSReturnValue = getFileStats(repoStoragePoolId,
                 repoStorageDomainId,
-                ALL_FILES_PATTERN,
-                null);
+                ALL_FILES_PATTERN);
 
         Map<String, Map<String, Object>> fileStats = fileStatsFromVDSReturnValue(fileStatsVDSReturnValue);
         updateIsoListFromVDSM(repoStoragePoolId,
@@ -696,8 +691,7 @@ public class IsoDomainListSyncronizer {
     private boolean updateUnknownFileListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
         VDSReturnValue fileStatsVDSReturnValue = getFileStats(repoStoragePoolId,
                 repoStorageDomainId,
-                ALL_FILES_PATTERN,
-                null);
+                ALL_FILES_PATTERN);
 
         Map<String, Map<String, Object>> fileStats = fileStatsFromVDSReturnValue(fileStatsVDSReturnValue);
         removeFileStatsForComplyingFileNames(fileStats, ISO_FILE_PATTERN_REGEX);
@@ -723,8 +717,7 @@ public class IsoDomainListSyncronizer {
     private boolean updateIsoListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
         VDSReturnValue fileStats = getFileStats(repoStoragePoolId,
                 repoStorageDomainId,
-                ISO_VDSM_FILE_PATTERN,
-                VDSCommandType.GetIsoList);
+                ISO_VDSM_FILE_PATTERN);
 
         return updateIsoListFromVDSM(repoStoragePoolId, repoStorageDomainId, fileStatsFromVDSReturnValue(fileStats));
     }
@@ -795,8 +788,7 @@ public class IsoDomainListSyncronizer {
 
         VDSReturnValue fileStats = getFileStats(repoStoragePoolId,
                 repoStorageDomainId,
-                FLOPPY_VDSM_FILE_PATTERN,
-                VDSCommandType.GetFloppyList);
+                FLOPPY_VDSM_FILE_PATTERN);
 
         return updateFloppyListFromVDSM(repoStoragePoolId, repoStorageDomainId, fileStatsFromVDSReturnValue(fileStats));
     }
@@ -815,25 +807,13 @@ public class IsoDomainListSyncronizer {
 
     private VDSReturnValue getFileStats(Guid repoStoragePoolId,
             Guid repoStorageDomainId,
-            String filePattern,
-            VDSCommandType alternateGetFileStatsCommand) {
+            String filePattern) {
 
         try {
-            StoragePool dc = getStoragePoolDao().get(repoStoragePoolId);
             VDSBrokerFrontend resourceManager = Backend.getInstance().getResourceManager();
-            boolean vdsmFileStatsSupported = FeatureSupported.getFileStats(dc.getCompatibilityVersion());
-            if (vdsmFileStatsSupported) {
-                return resourceManager.runVdsCommand(VDSCommandType.GetFileStats,
-                        new GetFileStatsParameters(repoStoragePoolId,
-                                repoStorageDomainId, filePattern, false));
-            } else {
-                if (alternateGetFileStatsCommand == null) {
-                    return null;
-                } else {
-                    return resourceManager.runVdsCommand(alternateGetFileStatsCommand,
-                            new IrsBaseVDSCommandParameters(repoStoragePoolId));
-                }
-            }
+            return resourceManager.runVdsCommand(VDSCommandType.GetFileStats,
+                    new GetFileStatsParameters(repoStoragePoolId,
+                            repoStorageDomainId, filePattern, false));
         } catch (Exception e) {
             log.warn("The refresh process for pattern {} failed: {}", filePattern, e.getMessage());
             log.debug("Exception", e);
@@ -910,9 +890,5 @@ public class IsoDomainListSyncronizer {
 
     private StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
-    }
-
-    private StoragePoolDao getStoragePoolDao() {
-        return DbFacade.getInstance().getStoragePoolDao();
     }
 }

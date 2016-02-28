@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -77,7 +76,6 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
         cluster.setId(clusterId);
         cluster.setVirtService(false);
         cluster.setGlusterService(true);
-        cluster.setCompatibilityVersion(Version.v3_1);
         return cluster;
     }
 

@@ -15,14 +15,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
@@ -42,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -52,14 +49,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
-    private static final Version SUPPORTED_VERSION = new Version(3, 4);
-    private static final Version UNSUPPORTED_VERSION = new Version(3, 3);
-
     @Mock
     GlusterVolumeDao volumeDao;
     @Mock
@@ -72,11 +64,6 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     private final Guid volumeWithoutAsyncTask = new Guid("000000000000-0000-0000-0000-00000003");
     private final Guid volumeWithoutRebalanceTask = new Guid("000000000000-0000-0000-0000-00000004");
     private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, UNSUPPORTED_VERSION.getValue(), false),
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, SUPPORTED_VERSION.getValue(), true));
 
     @Mock
     protected Cluster cluster;
@@ -96,7 +83,6 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getvolumeWithoutRebalanceTask(volumeWithoutRebalanceTask)).when(volumeDao)
                 .getById(volumeWithoutRebalanceTask);
         doReturn(null).when(volumeDao).getById(null);
-        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(cluster).when(command).getCluster();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }

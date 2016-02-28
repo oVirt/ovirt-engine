@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -184,8 +183,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                     addSharedLockEntry(vds);
                 }
             }
-            if (getParameters().isStopGlusterService() && (!vds.getClusterSupportsGlusterService()
-                    || !GlusterFeatureSupported.isGlusterStopServicesSupported(vds.getClusterCompatibilityVersion()))) {
+            if (getParameters().isStopGlusterService() && !vds.getClusterSupportsGlusterService()) {
                 result = false;
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_SERVICE_MAINTENANCE_NOT_SUPPORTED_FOR_CLUSTER);
                 break;

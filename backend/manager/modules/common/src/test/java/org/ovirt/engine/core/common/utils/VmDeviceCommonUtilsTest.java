@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
@@ -24,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmDeviceCommonUtilsTest {
@@ -34,13 +31,6 @@ public class VmDeviceCommonUtilsTest {
 
     @Mock
     private VM vm;
-
-    @Test
-    public void isOldClusterLevel() {
-        assertTrue(VmDeviceCommonUtils.isOldClusterVersion(Version.v3_0));
-        assertFalse(VmDeviceCommonUtils.isOldClusterVersion(Version.v3_1));
-        assertFalse(VmDeviceCommonUtils.isOldClusterVersion(new Version("4.0")));
-    }
 
     @Test
     public void testUpdateVmDevicesBootOrder() {
@@ -66,8 +56,7 @@ public class VmDeviceCommonUtilsTest {
         // ordered according to their names and not according to their position in the list
         VmDeviceCommonUtils.updateVmDevicesBootOrder(
                 vm,
-                Arrays.asList(bootableDisk, nic2, cd, nic1, nonBootableDisk, unmanagedNic),
-                false);
+                Arrays.asList(bootableDisk, nic2, cd, nic1, nonBootableDisk, unmanagedNic));
 
         int index = 1;
         assertEquals("Wrong boot order for CD", index++, cd.getBootOrder());

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -13,7 +12,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -333,10 +331,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
-            Boolean migrationNetworkEnabled =
-                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MigrationNetworkEnabled,
-                            clusterNetworkModel.getCluster().getCompatibilityVersion().toString());
-            return migrationNetworkEnabled && clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
         }
     }
 

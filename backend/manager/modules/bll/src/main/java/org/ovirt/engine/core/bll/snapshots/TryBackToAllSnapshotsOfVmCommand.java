@@ -139,7 +139,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected void executeVmCommand() {
         final boolean restoreMemory = getParameters().isRestoreMemory() &&
-                FeatureSupported.memorySnapshot(getVm().getCompatibilityVersion()) &&
                 FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                         getVm().getClusterArch(),
                         getVm().getCompatibilityVersion());

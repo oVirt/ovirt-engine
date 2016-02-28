@@ -646,7 +646,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             }
         });
 
-        // Set override IP tables flag true for v3.0 clusters.
         hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -655,14 +654,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 ListModel<Cluster> clusterModel = hostModel.getCluster();
 
                 if (clusterModel.getSelectedItem() != null) {
-
-                    Version v3 = new Version(3, 0);
-                    Cluster cluster = clusterModel.getSelectedItem();
-
-                    boolean isLessThan3 = cluster.getCompatibilityVersion().compareTo(v3) < 0;
-
-                    hostModel.getOverrideIpTables().setIsAvailable(!isLessThan3);
-                    hostModel.getOverrideIpTables().setEntity(!isLessThan3 && updateOverrideIpTables);
+                    hostModel.getOverrideIpTables().setIsAvailable(true);
+                    hostModel.getOverrideIpTables().setEntity(updateOverrideIpTables);
                 }
 
                 clusterChanging = false;
@@ -683,16 +676,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         hostModel.getProtocol().setIsAvailable(true);
                         hostModel.getProtocol().setIsChangeable(true);
                     }
-                    Boolean jsonSupported =
-                            (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
-                                    cluster.getCompatibilityVersion().toString());
-                    if (jsonSupported) {
-                        hostModel.getProtocol().setEntity(true);
-                        hostModel.getProtocol().setIsChangeable(true);
-                    } else {
-                        hostModel.getProtocol().setEntity(false);
-                        hostModel.getProtocol().setIsChangeable(false);
-                    }
+                    hostModel.getProtocol().setEntity(true);
+                    hostModel.getProtocol().setIsChangeable(true);
                 }
             }
         });
@@ -1294,13 +1279,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getUserPassword().setIsAvailable(true);
         model.getUserPassword().setIsChangeable(true);
 
-        Version v3 = new Version(3, 0);
-        boolean isLessThan3 = host.getClusterCompatibilityVersion().compareTo(v3) < 0;
-
-        if (!isLessThan3) {
-            model.getOverrideIpTables().setIsAvailable(true);
-            model.getOverrideIpTables().setEntity(true);
-        }
+        model.getOverrideIpTables().setIsAvailable(true);
+        model.getOverrideIpTables().setEntity(true);
         model.getActivateHostAfterInstall().setEntity(true);
         addInstallCommands(model, host, false);
         getWindow().stopProgress();
@@ -1537,45 +1517,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     private void configureLocalStorage3(ConfigureLocalStorageModel model) {
-
         VDS host = getSelectedItem();
+        model.setDefaultNames(host);
 
-        boolean hostSupportLocalStorage = false;
-        Version version3_0 = new Version(3, 0);
+        UICommand onConfigureLocalStorageCommand = UICommand.createDefaultOkUiCommand("OnConfigureLocalStorage", this); //$NON-NLS-1$
+        model.getCommands().add(onConfigureLocalStorageCommand);
 
-        if (host.getSupportedClusterLevels() != null) {
-
-            String[] array = host.getSupportedClusterLevels().split("[,]", -1); //$NON-NLS-1$
-
-            for (int i = 0; i < array.length; i++) {
-                if (version3_0.compareTo(new Version(array[i])) <= 0) {
-                    hostSupportLocalStorage = true;
-                    break;
-                }
-            }
-        }
-
-        if (hostSupportLocalStorage) {
-
-            model.setDefaultNames(host);
-
-            UICommand onConfigureLocalStorageCommand = UICommand.createDefaultOkUiCommand("OnConfigureLocalStorage", this); //$NON-NLS-1$
-            model.getCommands().add(onConfigureLocalStorageCommand);
-
-            UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-            model.getCommands().add(cancelCommand);
-        } else {
-
-            model.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .hostDoesntSupportLocalStorageConfigurationMsg());
-
-            UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-            cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
-            cancelCommand.setIsCancel(true);
-            cancelCommand.setIsDefault(true);
-            model.getCommands().add(cancelCommand);
-        }
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.getCommands().add(cancelCommand);
     }
 
     private void onConfigureLocalStorage() {

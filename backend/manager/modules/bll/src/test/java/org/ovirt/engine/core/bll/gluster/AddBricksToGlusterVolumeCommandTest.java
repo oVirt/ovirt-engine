@@ -12,9 +12,6 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.ValidateTestUtils;
-import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -29,9 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
@@ -54,9 +49,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     ClusterDao clusterDao;
 
     @Mock
-    GlusterVolumeValidator validator;
-
-    @Mock
     NetworkDao networkDao;
 
     @Mock
@@ -67,8 +59,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
 
     private final Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
-
-    private final Guid glusterIfaceId = new Guid("bbbb0a21-bbf2-4ffd-aab6-4da0b3b2ccec");
 
     private final Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
 
@@ -143,7 +133,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
-        doReturn(validator).when(command).createVolumeValidator();
         doReturn(networkDao).when(command).getNetworkDao();
         doReturn(interfaceDao).when(command).getInterfaceDao();
 
@@ -154,12 +143,9 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getCluster()).when(command).getCluster();
-        doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
-                .isForceCreateVolumeAllowed(Version.v3_1, true);
     }
 
-    private void prepareInterfaceMocks(AddBricksToGlusterVolumeCommand command) {
+    private void prepareInterfaceMocks() {
         doReturn(getNetworks()).when(networkDao).getAllForCluster(any(Guid.class));
         doReturn(getNetworkInterfaces()).when(interfaceDao).getAllInterfacesForVds(serverId);
     }
@@ -190,7 +176,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         cluster.setId(clusterId);
         cluster.setVirtService(false);
         cluster.setGlusterService(true);
-        cluster.setCompatibilityVersion(Version.v3_1);
         return cluster;
     }
 
@@ -244,14 +229,6 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsWithForceNotSupported() {
-        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, true));
-        prepareMocks(cmd);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
-    }
-
-    @Test
     public void validateFailsWithDuplicateBricks() {
         cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0, false));
         prepareMocks(cmd);
@@ -262,7 +239,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     public void validateFailsDiffInterface() {
         cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false));
         prepareMocks(cmd);
-        prepareInterfaceMocks(cmd);
+        prepareInterfaceMocks();
         assertFalse(cmd.validate());
     }
 

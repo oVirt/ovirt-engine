@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -212,11 +211,6 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         // Prevent attaching a VM network when a VM network is already attached
         if (vmNetworkNonVlan(attachedNetwork) || vmNetworkNonVlan(logicalNetwork)) {
-            return false;
-        }
-
-        // Verify that only VM networks exists on the nic if the non-Vm network feature isn't supported by the cluster
-        if (!FeatureSupported.nonVmNetwork(getVds().getClusterCompatibilityVersion()) && !iface.isBridged()) {
             return false;
         }
 

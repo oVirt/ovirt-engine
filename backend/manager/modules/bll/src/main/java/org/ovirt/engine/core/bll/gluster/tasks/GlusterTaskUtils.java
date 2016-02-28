@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusDetail;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -234,11 +233,6 @@ public class GlusterTaskUtils {
                 logMessage(cluster.getId(), volume , taskTypeStrMap.get(task.getType()), task.getStatus().name().toLowerCase(), taskTypeAuditMsg.get(task.getType()));
             }
         }
-    }
-
-    public boolean supportsGlusterAsyncTasksFeature(Cluster cluster) {
-        return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterAsyncTasks(cluster.getCompatibilityVersion());
     }
 
     public GlusterVolumeDao getVolumeDao() {

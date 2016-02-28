@@ -30,7 +30,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -174,10 +173,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         if (isDiskPlugged()) {
             VmValidator vmValidator = createVmValidator(getVm());
-            if (isLiveMergeSupported()
-                    ? (!validate(vmValidator.vmQualifiedForSnapshotMerge())
-                       || !validate(vmValidator.vmHostCanLiveMerge()))
-                    : !validate(vmValidator.vmDown())) {
+            if (!validate(vmValidator.vmQualifiedForSnapshotMerge()) || !validate(vmValidator.vmHostCanLiveMerge())) {
                 return false;
             }
         }
@@ -195,10 +191,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         }
 
         return true;
-    }
-
-    protected boolean isLiveMergeSupported() {
-        return FeatureSupported.liveMerge(getVm().getCompatibilityVersion());
     }
 
     @Override

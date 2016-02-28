@@ -118,14 +118,6 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsInitFormatDataDomain30() {
-        sd.setStorageFormat(null);
-        sp.setCompatibilityVersion(Version.v3_0);
-        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
-        assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
-    }
-
-    @Test
     public void validateSucceedsInitFormatIsoDomain() {
         sd.setStorageFormat(null);
         sd.setStorageDomainType(StorageDomainType.ISO);
@@ -201,13 +193,6 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageDomainType(StorageDomainType.Master);
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-    }
-
-    @Test
-    public void validateFailsUnsupportedFormat() {
-        sp.setCompatibilityVersion(Version.v3_0);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
     }
 
     @Test

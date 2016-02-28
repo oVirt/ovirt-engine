@@ -9,9 +9,7 @@ import org.ovirt.engine.core.utils.ConfigUtilsBase;
 
 public class VmMapperMockConfigUtils extends ConfigUtilsBase {
     List<ConfigValues> booleanValues = Arrays.asList(
-            ConfigValues.SerialNumberPolicySupported,
             ConfigValues.SpiceFileTransferToggleSupported,
-            ConfigValues.SpiceCopyPasteToggleSupported,
             ConfigValues.AutoConvergenceSupported,
             ConfigValues.MigrationCompressionSupported,
             ConfigValues.IoThreadsSupported

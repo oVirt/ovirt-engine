@@ -94,7 +94,7 @@ public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase {
                 "AnyVM",
                 VmEntityType.TEMPLATE,
                 ArchitectureType.x86_64,
-                Version.v3_4,
+                Version.getLast(),
                 FixturesTool.STORAGE_DOAMIN_NFS2_1,
                 null,
                 ovfExtraData);

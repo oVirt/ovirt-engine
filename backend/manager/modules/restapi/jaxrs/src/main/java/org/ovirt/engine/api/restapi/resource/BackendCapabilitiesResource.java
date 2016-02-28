@@ -74,7 +74,6 @@ import org.ovirt.engine.api.model.NfsVersions;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.NicInterfaces;
 import org.ovirt.engine.api.model.NicStatus;
-import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.OsTypeUtils;
 import org.ovirt.engine.api.model.OsTypes;
 import org.ovirt.engine.api.model.PayloadEncoding;
@@ -166,36 +165,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private final FeaturesHelper featuresHelper = new FeaturesHelper();
 
-    public static final Version VERSION_3_0 = new Version() {
-        {
-            major = 3;
-            minor = 0;
-        }
-    };
-    public static final Version VERSION_3_1 = new Version() {
-        {
-            major = 3;
-            minor = 1;
-        }
-    };
-    public static final Version VERSION_3_2 = new Version() {
-        {
-            major = 3;
-            minor = 2;
-        }
-    };
-    public static final Version VERSION_3_3 = new Version() {
-        {
-            major = 3;
-            minor = 3;
-        }
-    };
-    public static final Version VERSION_3_4 = new Version() {
-        {
-            major = 3;
-            minor = 4;
-        }
-    };
     public static final Version VERSION_3_5 = new Version() {
         {
             major = 3;
@@ -381,74 +350,58 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addSnapshotStatuses(VersionCaps version, SnapshotStatus[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
-            version.setSnapshotStatuses(new SnapshotStatuses());
-            for (SnapshotStatus mode : values) {
-                version.getSnapshotStatuses().getSnapshotStatuses().add(mode.value());
-            }
+        version.setSnapshotStatuses(new SnapshotStatuses());
+        for (SnapshotStatus mode : values) {
+            version.getSnapshotStatuses().getSnapshotStatuses().add(mode.value());
         }
     }
 
     private void addPayloadEncodings(VersionCaps version, PayloadEncoding[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.setPayloadEncodings(new PayloadEncodings());
-            for (PayloadEncoding mode : values) {
-                version.getPayloadEncodings().getPayloadEncodings().add(mode.value());
-            }
+        version.setPayloadEncodings(new PayloadEncodings());
+        for (PayloadEncoding mode : values) {
+            version.getPayloadEncodings().getPayloadEncodings().add(mode.value());
         }
     }
 
     private void addCpuModes(VersionCaps version, CpuMode[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
-            version.setCpuModes(new CpuModes());
-            for (CpuMode mode : values) {
-                version.getCpuModes().getCpuModes().add(mode.value());
-            }
+        version.setCpuModes(new CpuModes());
+        for (CpuMode mode : values) {
+            version.getCpuModes().getCpuModes().add(mode.value());
         }
     }
 
     private void addScsiGenericIoOptions(VersionCaps version, ScsiGenericIO[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.setSgioOptions(new ScsiGenericIoOptions());
-            for (ScsiGenericIO mode : values) {
-                version.getSgioOptions().getScsiGenericIoOptions().add(mode.value());
-            }
+        version.setSgioOptions(new ScsiGenericIoOptions());
+        for (ScsiGenericIO mode : values) {
+            version.getSgioOptions().getScsiGenericIoOptions().add(mode.value());
         }
     }
 
     private void addWatchdogModels(VersionCaps version, WatchdogModel[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.setWatchdogModels(new WatchdogModels());
-            for (WatchdogModel watchdogModel : values) {
-                version.getWatchdogModels().getWatchdogModels().add(watchdogModel.value());
-            }
+        version.setWatchdogModels(new WatchdogModels());
+        for (WatchdogModel watchdogModel : values) {
+            version.getWatchdogModels().getWatchdogModels().add(watchdogModel.value());
         }
     }
 
     private void addWatchdogActions(VersionCaps version, WatchdogAction[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.setWatchdogActions(new WatchdogActions());
-            for (WatchdogAction watchdogAction : values) {
-                version.getWatchdogActions().getWatchdogActions().add(watchdogAction.value());
-            }
+        version.setWatchdogActions(new WatchdogActions());
+        for (WatchdogAction watchdogAction : values) {
+            version.getWatchdogActions().getWatchdogActions().add(watchdogAction.value());
         }
     }
 
     private void addReportedDeviceTypes(VersionCaps version, ReportedDeviceType[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
-            version.setReportedDeviceTypes(new ReportedDeviceTypes());
-            for (ReportedDeviceType reportedDeviceType : values) {
-                version.getReportedDeviceTypes().getReportedDeviceTypes().add(reportedDeviceType.value());
-            }
+        version.setReportedDeviceTypes(new ReportedDeviceTypes());
+        for (ReportedDeviceType reportedDeviceType : values) {
+            version.getReportedDeviceTypes().getReportedDeviceTypes().add(reportedDeviceType.value());
         }
     }
 
     private void addIpVersions(VersionCaps version, IpVersion[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
-            version.setIpVersions(new IpVersions());
-            for (IpVersion ipVersion : values) {
-                version.getIpVersions().getIpVersions().add(ipVersion.value());
-            }
+        version.setIpVersions(new IpVersions());
+        for (IpVersion ipVersion : values) {
+            version.getIpVersions().getIpVersions().add(ipVersion.value());
         }
     }
 
@@ -458,11 +411,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addNetworkUsages(VersionCaps version, NetworkUsage[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
-            version.setUsages(new Usages());
-            for (NetworkUsage usage : values) {
-                version.getUsages().getUsages().add(usage.value());
-            }
+        version.setUsages(new Usages());
+        for (NetworkUsage usage : values) {
+            version.getUsages().getUsages().add(usage.value());
         }
     }
 
@@ -474,17 +425,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addGlusterTypesAndStates(VersionCaps version) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
-            addGlusterVolumeTypes(version, GlusterVolumeType.values());
-            addTransportTypes(version, TransportType.values());
-            addGlusterVolumeStates(version, GlusterState.values());
-            addGlusterBrickStates(version, GlusterState.values());
-        }
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            addGlusterHookContentTypes(version, HookContentType.values());
-            addStages(version, HookStage.values());
-            addGlusterHookStates(version, HookStatus.values());
-        }
+        addGlusterVolumeTypes(version, GlusterVolumeType.values());
+        addTransportTypes(version, TransportType.values());
+        addGlusterVolumeStates(version, GlusterState.values());
+        addGlusterBrickStates(version, GlusterState.values());
+        addGlusterHookContentTypes(version, HookContentType.values());
+        addStages(version, HookStage.values());
+        addGlusterHookStates(version, HookStatus.values());
     }
 
     private Version getCurrentVersion() {
@@ -497,21 +444,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private void addOsTypes(VersionCaps version) {
         version.setOsTypes(new OsTypes());
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.getOsTypes().getOsTypes().addAll(OsTypeUtils.getAllValues());
-        } else {
-            for (OsType type : OsType.values()) {
-                version.getOsTypes().getOsTypes().add(type.name());
-            }
-        }
+        version.getOsTypes().getOsTypes().addAll(OsTypeUtils.getAllValues());
     }
 
     private void addNfsVersions(VersionCaps version, NfsVersion[] nfsVersions) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
-            version.setNfsVersions(new NfsVersions());
-            for (NfsVersion nfsVersion : nfsVersions) {
-                version.getNfsVersions().getNfsVersions().add(nfsVersion.value());
-            }
+        version.setNfsVersions(new NfsVersions());
+        for (NfsVersion nfsVersion : nfsVersions) {
+            version.getNfsVersions().getNfsVersions().add(nfsVersion.value());
         }
     }
 
@@ -523,20 +462,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addVmAffinities(VersionCaps version, VmAffinity[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_0)) {
-            version.setVmAffinities(new VmAffinities());
-            for (VmAffinity affinity : values) {
-                version.getVmAffinities().getVmAffinities().add(affinity.value());
-            }
+        version.setVmAffinities(new VmAffinities());
+        for (VmAffinity affinity : values) {
+            version.getVmAffinities().getVmAffinities().add(affinity.value());
         }
     }
 
     private void addVmDeviceType(VersionCaps version, VmDeviceType[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
-            version.setVmDeviceTypes(new VmDeviceTypes());
-            for (VmDeviceType type : values) {
-                version.getVmDeviceTypes().getVmDeviceTypes().add(type.value());
-            }
+        version.setVmDeviceTypes(new VmDeviceTypes());
+        for (VmDeviceType type : values) {
+            version.getVmDeviceTypes().getVmDeviceTypes().add(type.value());
         }
     }
 
@@ -560,11 +495,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addConfigurationTypes(VersionCaps version, ConfigurationType[] types) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.setConfigurationTypes(new ConfigurationTypes());
-            for (ConfigurationType type : types) {
-                version.getConfigurationTypes().getConfigurationTypes().add(type.value());
-            }
+        version.setConfigurationTypes(new ConfigurationTypes());
+        for (ConfigurationType type : types) {
+            version.getConfigurationTypes().getConfigurationTypes().add(type.value());
         }
     }
 
@@ -649,18 +582,10 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         ret.add(StorageType.ISCSI);
         ret.add(StorageType.FCP);
         ret.add(StorageType.NFS);
+        ret.add(StorageType.LOCALFS);
+        ret.add(StorageType.POSIXFS);
+        ret.add(StorageType.GLUSTERFS);
 
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_0)) {
-            ret.add(StorageType.LOCALFS);
-        }
-
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
-            ret.add(StorageType.POSIXFS);
-        }
-
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            ret.add(StorageType.GLUSTERFS);
-        }
         return ret;
     }
 
@@ -700,20 +625,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addMigrateOnErrorOptions(VersionCaps version, MigrateOnError[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_0)) {
-            version.setErrorHandling(new org.ovirt.engine.api.model.ErrorHandlingOptions());
-            for (MigrateOnError option : values) {
-                version.getErrorHandling().getErrorHandling().add(option.value());
-            }
+        version.setErrorHandling(new org.ovirt.engine.api.model.ErrorHandlingOptions());
+        for (MigrateOnError option : values) {
+            version.getErrorHandling().getErrorHandling().add(option.value());
         }
     }
 
     private void addStorageFormatOptions(VersionCaps version, StorageFormat... formats) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_0)) {
-            version.setStorageFormats(new StorageFormats());
-            for (StorageFormat format : formats) {
-                version.getStorageFormats().getStorageFormats().add(format.value());
-            }
+        version.setStorageFormats(new StorageFormats());
+        for (StorageFormat format : formats) {
+            version.getStorageFormats().getStorageFormats().add(format.value());
         }
     }
 
@@ -866,11 +787,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addPmProxyTypes(VersionCaps version, PmProxyType[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
-            version.setPmProxyTypes(new PmProxyTypes());
-            for (PmProxyType pmProxyType : values) {
-                version.getPmProxyTypes().getPmProxyTypes().add(pmProxyType.value());
-            }
+        version.setPmProxyTypes(new PmProxyTypes());
+        for (PmProxyType pmProxyType : values) {
+            version.getPmProxyTypes().getPmProxyTypes().add(pmProxyType.value());
         }
     }
 
@@ -882,11 +801,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private void addAuthenticationMethods(VersionCaps version, AuthenticationMethod[] values) {
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            version.setAuthenticationMethods(new org.ovirt.engine.api.model.AuthenticationMethod());
-            for (AuthenticationMethod authType : values) {
-                version.getAuthenticationMethods().getAuthenticationMethod().add(authType.value());
-            }
+        version.setAuthenticationMethods(new org.ovirt.engine.api.model.AuthenticationMethod());
+        for (AuthenticationMethod authType : values) {
+            version.getAuthenticationMethods().getAuthenticationMethod().add(authType.value());
         }
     }
 
@@ -937,9 +854,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private void addSupportedQosTypes(VersionCaps version) {
         version.setQosTypes(new QosTypes());
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
-            addQosTypes(version, QosType.NETWORK);
-        }
+        addQosTypes(version, QosType.NETWORK);
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
             addQosTypes(version, QosType.STORAGE, QosType.CPU);
         }

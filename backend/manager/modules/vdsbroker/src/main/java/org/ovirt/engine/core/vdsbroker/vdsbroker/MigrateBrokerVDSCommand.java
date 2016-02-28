@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 
 public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -30,16 +27,11 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         migrationInfo.put(VdsProperties.dst, String.format("%1$s", parameters.getDstHost()));
         migrationInfo.put(VdsProperties.method,
                 VdsProperties.migrationMethodtoString(parameters.getMigrationMethod()));
-
-        if (FeatureSupported.tunnelMigration(parameters.getClusterVersion())) {
-            migrationInfo.put(VdsProperties.TUNNELED, Boolean.toString(parameters.isTunnelMigration()));
-        }
+        migrationInfo.put(VdsProperties.TUNNELED, Boolean.toString(parameters.isTunnelMigration()));
+        migrationInfo.put("abortOnError", Boolean.TRUE.toString());
 
         if (StringUtils.isNotBlank(parameters.getDstQemu())) {
             migrationInfo.put(VdsProperties.DST_QEMU, parameters.getDstQemu());
-        }
-        if (Config.<Boolean> getValue(ConfigValues.AbortMigrationOnError, parameters.getClusterVersion().getValue())) {
-            migrationInfo.put("abortOnError", Boolean.TRUE.toString());
         }
 
         if (parameters.getMigrationDowntime() != 0) {

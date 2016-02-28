@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VmRngDevice.Source;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -222,59 +221,6 @@ public class ClusterValidatorTest {
     }
 
     @Test
-    public void qosBaloonSupportNotRequired() {
-        assertThat(validator.qosBaloonSupported(), isValid());
-    }
-
-    @Test
-    public void qosBaloonSupported() {
-        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_3);
-        when(cluster.isEnableBallooning()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
-
-        assertThat(validator.qosBaloonSupported(), isValid());
-    }
-
-    @Test
-    public void qosBaloonNotSupported() {
-        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
-        when(cluster.isEnableBallooning()).thenReturn(true);
-        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
-
-        assertThat(validator.qosBaloonSupported(), failsWith(EngineMessage.QOS_BALLOON_NOT_SUPPORTED));
-    }
-
-    @Test
-    public void glusterServiceSupported() {
-        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
-        when(cluster.supportsGlusterService()).thenReturn(true);
-        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
-        doReturn(true).when(validator).glusterFeatureEnabled();
-
-        assertThat(validator.glusterServiceSupported(), isValid());
-    }
-
-    @Test
-    public void glusterServiceNotRequired() {
-        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
-        when(cluster.supportsGlusterService()).thenReturn(false);
-        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
-
-        assertThat(validator.glusterServiceSupported(), isValid());
-    }
-
-    @Test
-    public void glusterServiceNotSupported() {
-        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
-        when(cluster.supportsGlusterService()).thenReturn(true);
-        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
-        doReturn(false).when(validator).glusterFeatureEnabled();
-
-        assertThat(validator.glusterServiceSupported(),
-                failsWith(EngineMessage.GLUSTER_NOT_SUPPORTED, "compatibilityVersion", null));
-    }
-
-    @Test
     public void clusterServiceDefined() {
         when(cluster.supportsGlusterService()).thenReturn(true);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
@@ -360,31 +306,5 @@ public class ClusterValidatorTest {
 
         assertThat(validator.migrationSupported(RandomUtils.instance().nextEnum(ArchitectureType.class)),
                 failsWith(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED));
-    }
-
-    @Test
-    public void virtIoRngNotRequired() {
-        assertThat(validator.virtIoRngSupported(), isValid());
-    }
-
-    @Test
-    public void virtIoRngSupported() {
-        when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(RandomUtils.instance()
-                .nextEnum(Source.class)));
-        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
-        doReturn(true).when(validator).virtIoRngSupportedInCluster();
-
-        assertThat(validator.virtIoRngSupported(), isValid());
-    }
-
-    @Test
-    public void virtIoRngNotSupported() {
-        when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(RandomUtils.instance()
-                .nextEnum(Source.class)));
-        validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
-        doReturn(false).when(validator).virtIoRngSupportedInCluster();
-
-        assertThat(validator.virtIoRngSupported(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED));
     }
 }

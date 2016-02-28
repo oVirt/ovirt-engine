@@ -26,59 +26,51 @@ public class FeaturesHelper {
 
     public Features getFeatures(Version version) {
         Features features = new Features();
-        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_0)) {
-            addFeatureTransparentHugePages(features);
-        }
-        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_1)) {
-            addFeatureGluster(features);
-            addFeaturePosixDevice(features);
-            addFeaturePortMirroring(features);
-            addFeatureServerTime(features);
-            addFeatureHostMemory(features);
-            addFeatureHostSockets(features, version);
-            addFeatureIgnoreCase(features);
-            addFeatureMaxResults(features);
-            addFeatureJSONContentType(features);
-            addFeatureCorrelationId(features);
-            addFeatureDiskActivation(features);
-            addFeatureNicActivation(features);
-            addFeatureSnapshotsRefactoring(features);
-            addFeatureRemoveTemplateFromSD(features);
-            addFeatureFloatingDisks(features);
-            addFeatureAsyncDelete(features);
-            addFeatureSessionBasedAuthentication(features);
-        }
-        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_3)) {
-            addFeatureVmApplications(features);
-            addFeatureVirtioScsi(features);
-            addFeatureComment(features);
-            addFeatureRefreshHostCapabilities(features);
-            addFeatureMemorySnapshot(features);
-            addWatchdogFeature(features);
-            addSshAuthenticationFeature(features);
-            addForceSelectSpmFeature(features);
-            addConsoleFeature(features);
-            addFeatureStorageServerConnections(features);
-            addFeatureStorageServerConnectionsForDomain(features);
-            addFeatureAttachDetachStorageServerConnectionsForDomain(features);
-            addSingleQxlPciFeature(features);
-            addFeatureAddVmFromOvf(features);
-            addVnicProfilesFeature(features);
-            addStorageDomainImageFeature(features);
-            addGlusterHooksFeature(features);
-            addFeatureReportVmFQDN(features);
-            addFeatureAttachDiskSnapshot(features);
-            addFeatureCloudInit(features);
-            addFeatureSchedulingPolicy(features);
-        }
-        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_4)) {
-            addGlusterBricksFeature(features);
-            addFeatureCopyMoveDiskInAdditionalContext(features);
-            addNetworkLabelsFeature(features);
-            addRebootFeature(features);
-            addMaintenanceFeature(features);
-            addIscsiBondFeature(features);
-        }
+        addFeatureTransparentHugePages(features);
+        addFeatureGluster(features);
+        addFeaturePosixDevice(features);
+        addFeaturePortMirroring(features);
+        addFeatureServerTime(features);
+        addFeatureHostMemory(features);
+        addFeatureHostSockets(features);
+        addFeatureIgnoreCase(features);
+        addFeatureMaxResults(features);
+        addFeatureJSONContentType(features);
+        addFeatureCorrelationId(features);
+        addFeatureDiskActivation(features);
+        addFeatureNicActivation(features);
+        addFeatureSnapshotsRefactoring(features);
+        addFeatureRemoveTemplateFromSD(features);
+        addFeatureFloatingDisks(features);
+        addFeatureAsyncDelete(features);
+        addFeatureSessionBasedAuthentication(features);
+        addFeatureVmApplications(features);
+        addFeatureVirtioScsi(features);
+        addFeatureComment(features);
+        addFeatureRefreshHostCapabilities(features);
+        addFeatureMemorySnapshot(features);
+        addWatchdogFeature(features);
+        addSshAuthenticationFeature(features);
+        addForceSelectSpmFeature(features);
+        addConsoleFeature(features);
+        addFeatureStorageServerConnections(features);
+        addFeatureStorageServerConnectionsForDomain(features);
+        addFeatureAttachDetachStorageServerConnectionsForDomain(features);
+        addSingleQxlPciFeature(features);
+        addFeatureAddVmFromOvf(features);
+        addVnicProfilesFeature(features);
+        addStorageDomainImageFeature(features);
+        addGlusterHooksFeature(features);
+        addFeatureReportVmFQDN(features);
+        addFeatureAttachDiskSnapshot(features);
+        addFeatureCloudInit(features);
+        addFeatureSchedulingPolicy(features);
+        addGlusterBricksFeature(features);
+        addFeatureCopyMoveDiskInAdditionalContext(features);
+        addNetworkLabelsFeature(features);
+        addRebootFeature(features);
+        addMaintenanceFeature(features);
+        addIscsiBondFeature(features);
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_5)) {
             addBookmarksFeature(features);
             addNetworkCustomPropertiesFeature(features);
@@ -308,7 +300,7 @@ public class FeaturesHelper {
         features.getFeature().add(feature);
     }
 
-    private void addFeatureHostSockets(Features features, Version version) {
+    private void addFeatureHostSockets(Features features) {
         Feature feature = new Feature();
         feature.setHost(new Host());
         feature.setName("Display Host Sockets");
@@ -316,9 +308,7 @@ public class FeaturesHelper {
         feature.getHost().setCpu(new Cpu());
         feature.getHost().getCpu().setTopology(new CpuTopology());
         feature.getHost().getCpu().getTopology().setSockets(4);
-        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_2)) {
-            feature.getHost().getCpu().getTopology().setThreads(2);
-        }
+        feature.getHost().getCpu().getTopology().setThreads(2);
         features.getFeature().add(feature);
     }
 

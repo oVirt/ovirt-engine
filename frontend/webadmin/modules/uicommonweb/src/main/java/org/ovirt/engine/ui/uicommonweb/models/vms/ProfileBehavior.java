@@ -20,8 +20,7 @@ public abstract class ProfileBehavior {
     private List<Network> clusterNetworks = new ArrayList<>();
     private String managementNetworkName;
 
-    public void initProfiles(final boolean hotUpdateSupported,
-            final Guid clusterId,
+    public void initProfiles(final Guid clusterId,
             final Guid dcId,
             final AsyncQuery profilesQuery) {
 
@@ -34,9 +33,7 @@ public abstract class ProfileBehavior {
                 ProfileBehavior.this.clusterNetworks = clusterNetworks;
 
                 List<VnicProfileView> vnicProfiles = new ArrayList<>();
-                if (hotUpdateSupported) {
-                    vnicProfiles.add(VnicProfileView.EMPTY);
-                }
+                vnicProfiles.add(VnicProfileView.EMPTY);
 
                 if (returnValue == null) {
                     return vnicProfiles;

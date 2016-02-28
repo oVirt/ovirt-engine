@@ -3,13 +3,11 @@ package org.ovirt.engine.core.bll.profiles;
 import java.util.Optional;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
@@ -24,11 +22,7 @@ public class CpuProfileHelper {
         return cpuProfile;
     }
 
-    public static ValidationResult setAndValidateCpuProfileForUser(VmBase vmBase, Version version, Guid userId) {
-        if (!FeatureSupported.cpuQoS(version)) {
-            return ValidationResult.VALID;
-        }
-
+    public static ValidationResult setAndValidateCpuProfileForUser(VmBase vmBase, Guid userId) {
         if (vmBase.getCpuProfileId() == null) {
             return assignFirstCpuProfile(vmBase);
         }
@@ -72,10 +66,7 @@ public class CpuProfileHelper {
         }
     }
 
-    public static ValidationResult setAndValidateCpuProfile(VmBase vmBase, Version version) {
-        if (!FeatureSupported.cpuQoS(version)) {
-            return ValidationResult.VALID;
-        }
+    public static ValidationResult setAndValidateCpuProfile(VmBase vmBase) {
         if (vmBase.getCpuProfileId() == null) {
             return assignFirstCpuProfile(vmBase);
         } else {

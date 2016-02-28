@@ -1,15 +1,9 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import java.util.List;
-
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -38,47 +32,6 @@ public class StorageDomainToPoolRelationValidator {
 
     private boolean isStorageDomainOfTypeIsoOrExport() {
         return storageDomainStatic.getStorageDomainType().isIsoOrImportExportDomain();
-    }
-
-    public ValidationResult isStorageDomainTypeSupportedInPool() {
-        if (storageDomainStatic.getStorageType() == StorageType.GLUSTERFS) {
-            return isGlusterSupportedInDC();
-        }
-
-        if (storageDomainStatic.getStorageType() == StorageType.POSIXFS) {
-            return isPosixSupportedInDC();
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * Checks that the DC compatibility version supports Posix domains.
-     * In case there is mismatch, a proper validate message will be added
-     *
-     * @return The result of the validation
-     */
-    public ValidationResult isPosixSupportedInDC() {
-        if (!storagePool.isLocal() &&
-                !Config.<Boolean> getValue(ConfigValues.PosixStorageEnabled, storagePool.getCompatibilityVersion().toString())) {
-            return new ValidationResult(EngineMessage.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
-        }
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * Checks that the DC compatibility version supports Gluster domains.
-     * In case there is mismatch, a proper validate message will be added
-     *
-     * @return true if the version matches
-     */
-    public ValidationResult isGlusterSupportedInDC() {
-        if (!storagePool.isLocal() &&
-                !Config.<Boolean> getValue(ConfigValues.GlusterFsStorageEnabled,
-                        storagePool.getCompatibilityVersion().toString())) {
-            return new ValidationResult(EngineMessage.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
-        }
-        return ValidationResult.VALID;
     }
 
     /**
@@ -137,29 +90,6 @@ public class StorageDomainToPoolRelationValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult isStorageDomainTypeFitsPoolIfMixed() {
-        boolean isBlockDomain = storageDomainStatic.getStorageType().isBlockDomain();
-
-        if (!isMixedTypesAllowedInDC()) {
-            List<StorageType> storageTypesOnPool =
-                    getStoragePoolDao().getStorageTypesInPool(storagePool.getId());
-            for (StorageType storageType : storageTypesOnPool) {
-                if (storageType.isBlockDomain() != isBlockDomain) {
-                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
-                }
-            }
-        }
-        return ValidationResult.VALID;
-    }
-
-
-    // TODO: Should be removed when 3.0 compatibility will not be supported, for now we are blocking the possibility
-    // to mix NFS domains with block domains on 3.0 pools since block domains on 3.0 pools can be in V2 format while NFS
-    // domains on 3.0 can only be in V1 format
-    public boolean isMixedTypesAllowedInDC() {
-        return FeatureSupported.mixedDomainTypesOnDataCenter(storagePool.getCompatibilityVersion());
-    }
-
     public ValidationResult isStorageDomainNotInAnyPool() {
         if (storageDomainStatic != null) {
             // check if there is no pool-domain map
@@ -186,16 +116,10 @@ public class StorageDomainToPoolRelationValidator {
             if (!(valResult = isStorageDomainLocalityFitsDC()).isValid()) {
                 return valResult;
             }
-            if (!(valResult = isStorageDomainTypeFitsPoolIfMixed()).isValid()) {
-                return valResult;
-            }
         } else {
             if (!(valResult = validateAmountOfIsoAndExportDomainsInDC()).isValid()) {
                 return valResult;
             }
-        }
-        if (!(valResult = isStorageDomainTypeSupportedInPool()).isValid()) {
-            return valResult;
         }
         return ValidationResult.VALID;
     }

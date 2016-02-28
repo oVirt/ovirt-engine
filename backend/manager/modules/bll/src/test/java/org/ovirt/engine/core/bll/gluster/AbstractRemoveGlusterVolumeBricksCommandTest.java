@@ -1,11 +1,8 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.ClassRule;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -18,18 +15,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
-
-    protected static final Version SUPPORTED_VERSION = new Version(3, 4);
-    protected static final Version UNSUPPORTED_VERSION = new Version(3, 3);
 
     @Mock
     GlusterVolumeDao volumeDao;
@@ -42,11 +33,6 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
 
     @Mock
     protected Cluster cluster;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, SUPPORTED_VERSION.getValue(), true),
-            mockConfig(ConfigValues.GlusterAsyncTasksSupport, UNSUPPORTED_VERSION.getValue(), false));
 
     protected final Guid volumeWithRemoveBricksTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     protected final Guid volumeWithoutAsyncTask = new Guid("000000000000-0000-0000-0000-00000003");

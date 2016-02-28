@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -229,11 +228,7 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
             setCoresPerSocket(null);
         }
 
-        if (vds.getClusterCompatibilityVersion() != null
-                && Version.v3_2.compareTo(vds.getClusterCompatibilityVersion()) > 0) {
-            // Members of pre-3.2 clusters don't support SMT; here we act like a 3.1 engine
-            setThreadsPerCore(constants.unsupported());
-        } else if (vds.getCpuThreads() == null || vds.getCpuCores() == null || vds.getCpuCores() == 0) {
+        if (vds.getCpuThreads() == null || vds.getCpuCores() == null || vds.getCpuCores() == 0) {
             setThreadsPerCore(constants.unknown());
         } else {
             Integer threads = vds.getCpuThreads() / vds.getCpuCores();

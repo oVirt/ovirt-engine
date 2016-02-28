@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
@@ -331,10 +330,6 @@ public class VdsManager {
 
     public Guid getClusterId() {
         return cachedVds.getClusterId();
-    }
-
-    public Version getGroupCompatibilityVersion() {
-        return cachedVds.getClusterCompatibilityVersion();
     }
 
     private void logFailureMessage(RuntimeException ex) {
@@ -657,8 +652,7 @@ public class VdsManager {
             // Verify version capabilities
             HashSet<Version> hostVersions = null;
             Version clusterCompatibility = vds.getClusterCompatibilityVersion();
-            if (FeatureSupported.hardwareInfo(clusterCompatibility) &&
-                // If the feature is enabled in cluster level, we continue by verifying that this VDS also
+            if (// Verify that this VDS also
                 // supports the specific cluster level. Otherwise getHardwareInfo API won't exist for the
                 // host and an exception will be raised by VDSM.
                 (hostVersions = vds.getSupportedClusterVersionsSet()) != null &&

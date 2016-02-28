@@ -49,7 +49,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/devices/watchdog/models").put("value", WATCH_DOG_MODELS);
         preferences.node("/os/rhel7/devices/maxPciDevices").put("value", MAX_PCI_DEVICES);
         preferences.node("/os/rhel7/resources/minimum/ram").put("value", "1024");
-        preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.1", "512");
+        preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.5", "512");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/cirrus,SPICE/qxl");
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
@@ -252,17 +252,17 @@ public class OsRepositoryImplTest {
     @Test
     public void testVersionedValue() {
         assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
-        assertEquals(512, OsRepositoryImpl.INSTANCE.getMinimumRam(777, Version.v3_1));
+        assertEquals(512, OsRepositoryImpl.INSTANCE.getMinimumRam(777, Version.v3_5));
     }
 
     @Test
     public void testDerivedVersionedValue() {
-        assertEquals(512, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v3_1));
+        assertEquals(512, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v3_5));
     }
 
     @Test
     public void testdefaultVersionedValue() {
-        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v3_2));
+        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v3_6));
     }
 
     @Test

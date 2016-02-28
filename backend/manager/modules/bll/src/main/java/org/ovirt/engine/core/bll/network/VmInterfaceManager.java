@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicat
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -77,8 +76,7 @@ public class VmInterfaceManager {
 
         if (reserveExistingMac) {
 
-            if (FeatureSupported.hotPlug(clusterCompatibilityVersion)
-                && getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
+            if (getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
                 macPool.forceAddMac(iface.getMacAddress());
             } else if (!macPool.addMac(iface.getMacAddress())) {
                 auditLogMacInUse(iface);

@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
@@ -36,8 +35,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
 
     private boolean shouldUseCallback() {
         CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(getCommandId());
-        return (commandEntity != null && commandEntity.isCallbackEnabled())
-                || (shouldPerformOvfUpdate() && ovfOnAnyDomainSupported());
+        return (commandEntity != null && commandEntity.isCallbackEnabled()) || shouldPerformOvfUpdate();
     }
 
     @Override
@@ -67,10 +65,8 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
             parameters.setUpdateStorage(false);
             runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters, null);
 
-            if (ovfOnAnyDomainSupported()) {
-                runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
-                        createProcessOvfUpdateForDomainParams(), null);
-            }
+            runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
+                    createProcessOvfUpdateForDomainParams(), null);
         }
 
         if (noAsyncOperations()) {
@@ -83,10 +79,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     protected boolean shouldPerformOvfUpdate() {
         return !getParameters().isInactive() && getStorageDomain().getStatus() == StorageDomainStatus.Active
                 && getStorageDomain().getStorageDomainType().isDataDomain();
-    }
-
-    private boolean ovfOnAnyDomainSupported() {
-        return FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion());
     }
 
     private ProcessOvfUpdateForStorageDomainCommandParameters createProcessOvfUpdateForDomainParams() {

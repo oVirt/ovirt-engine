@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -326,21 +325,11 @@ public class GlusterSyncJob extends GlusterJob {
      * Returns the equivalent GlusterServer from the list of fetched servers.
      */
     private GlusterServerInfo findGlusterServer(VDS server, List<GlusterServerInfo> fetchedServers) {
-        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getClusterCompatibilityVersion())) {
-            // compare gluster host uuid stored in server with the ones fetched from list
-            GlusterServer glusterServer = getGlusterServerDao().getByServerId(server.getId());
-            for (GlusterServerInfo fetchedServer : fetchedServers) {
-                if (fetchedServer.getUuid().equals(glusterServer.getGlusterServerUuid())) {
-                    return fetchedServer;
-                }
-            }
-        } else {
-            List<String> vdsIps = getVdsIps(server);
-            for (GlusterServerInfo fetchedServer : fetchedServers) {
-                if (fetchedServer.getHostnameOrIp().equals(server.getHostName())
-                        || vdsIps.contains(fetchedServer.getHostnameOrIp())) {
-                    return fetchedServer;
-                }
+        // compare gluster host uuid stored in server with the ones fetched from list
+        GlusterServer glusterServer = getGlusterServerDao().getByServerId(server.getId());
+        for (GlusterServerInfo fetchedServer : fetchedServers) {
+            if (fetchedServer.getUuid().equals(glusterServer.getGlusterServerUuid())) {
+                return fetchedServer;
             }
         }
         return null;
@@ -396,13 +385,8 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private boolean isSameServer(VDS upServer, GlusterServerInfo server) {
-        if (GlusterFeatureSupported.glusterHostUuidSupported(upServer.getClusterCompatibilityVersion())) {
-            GlusterServer glusterUpServer = getGlusterServerDao().getByServerId(upServer.getId());
-            return glusterUpServer.getGlusterServerUuid().equals(server.getUuid());
-        } else {
-            return server.getHostnameOrIp().equals(upServer.getHostName())
-                || getVdsIps(upServer).contains(server.getHostnameOrIp());
-        }
+        GlusterServer glusterUpServer = getGlusterServerDao().getByServerId(upServer.getId());
+        return glusterUpServer.getGlusterServerUuid().equals(server.getUuid());
     }
 
     /**
@@ -925,8 +909,7 @@ public class GlusterSyncJob extends GlusterJob {
         log.debug("Refreshing Gluster Data [heavyweight]");
 
         for (Cluster cluster : getClusterDao().getAll()) {
-            if (GlusterFeatureSupported.refreshHeavyWeight(cluster.getCompatibilityVersion())
-                    && cluster.supportsGlusterService()) {
+            if (cluster.supportsGlusterService()) {
                 try {
                     refreshClusterHeavyWeightData(cluster);
                 } catch (Exception e) {

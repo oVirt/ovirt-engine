@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -56,7 +55,7 @@ public class GlusterHookSyncJob extends GlusterJob {
      * @param throwError - set to true if this method should throw exception.
      */
     public void refreshHooksInCluster(Cluster cluster, boolean throwError) {
-        if (!supportsGlusterHookFeature(cluster)) {
+        if (!cluster.supportsGlusterService()) {
             return;
         }
 
@@ -335,9 +334,4 @@ public class GlusterHookSyncJob extends GlusterJob {
         serverHook.setChecksum(returnedHook.getChecksum());
         return serverHook;
     }
-
-    private boolean supportsGlusterHookFeature(Cluster cluster) {
-        return cluster.supportsGlusterService() && GlusterFeatureSupported.glusterHooks(cluster.getCompatibilityVersion());
-    }
-
 }

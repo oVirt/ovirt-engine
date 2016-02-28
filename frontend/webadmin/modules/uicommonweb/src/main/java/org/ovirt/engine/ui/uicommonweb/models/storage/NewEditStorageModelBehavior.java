@@ -1,16 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -60,16 +53,6 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
     }
 
     @Override
-    public boolean shouldShowDataCenterAlert(StoragePool selectedDataCenter) {
-        return false;
-    }
-
-    @Override
-    public String getDataCenterAlertMessage() {
-        return "";
-    }
-
-    @Override
     public boolean isImport() {
         return false;
     }
@@ -81,11 +64,6 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
     }
 
     private void checkCanItemBeSelected(final IStorageModel item, StoragePool dataCenter, boolean isNoExportOrIsoStorageAttached) {
-        if (Boolean.FALSE.equals(item.isSupportedInVersion(dataCenter.getCompatibilityVersion()))) {
-            updateItemSelectability(item, false);
-            return;
-        }
-
         boolean isExistingStorage = getModel().getStorage() != null &&
                 item.getType() == getModel().getStorage().getStorageType();
 
@@ -133,28 +111,8 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
                 return;
             }
 
-            if (AsyncDataProvider.getInstance().isMixedStorageDomainsSupported(dataCenter.getCompatibilityVersion())) {
-                updateItemSelectability(item, true);
-                return;
-            } else {
-                IdQueryParameters params = new IdQueryParameters(dataCenter.getId());
-                Frontend.getInstance().runQuery(VdcQueryType.GetStorageTypesInPoolByPoolId, params,
-                                                new AsyncQuery(getModel(), new INewAsyncCallback() {
-                                                    @Override
-                                                    public void onSuccess(Object model, Object ReturnValue) {
-                                                        List<StorageType> storageTypes = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                                        for (StorageType storageType : storageTypes) {
-                                                            if (storageType.isBlockDomain() != item.getType().isBlockDomain()) {
-                                                                updateItemSelectability(item, false);
-                                                                return;
-                                                            }
-                                                        }
-                                                        updateItemSelectability(item, true);
-                                                        return;
-                                                    }
-                                                }));
-                return;
-            }
+            updateItemSelectability(item, true);
+            return;
         }
         updateItemSelectability(item, false);
     }

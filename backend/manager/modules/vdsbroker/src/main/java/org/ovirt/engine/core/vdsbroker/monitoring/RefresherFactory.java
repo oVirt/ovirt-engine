@@ -20,8 +20,7 @@ public class RefresherFactory {
     private VmStatsRefresher getRefresherForVds(VdsManager vdsManager) {
         Version version = vdsManager.getCompatibilityVersion();
         VDS vds = vdsManager.getCopyVds();
-        if (FeatureSupported.jsonProtocol(version)
-                && VdsProtocol.STOMP == vds.getProtocol()
+        if (VdsProtocol.STOMP == vds.getProtocol()
                 && FeatureSupported.vmStatsEvents(version)
                 && FeatureSupported.events(version)) {
             return new EventVmStatsRefresher(vdsManager);

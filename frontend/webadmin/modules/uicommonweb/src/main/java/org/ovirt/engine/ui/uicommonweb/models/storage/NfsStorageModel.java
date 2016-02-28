@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
@@ -236,12 +234,8 @@ public class NfsStorageModel extends FileStorageModel {
     }
 
     private void containerDataCenterChanged() {
-
-        // Show advanced NFS options for <=3.1
         StoragePool dataCenter = getContainer().getDataCenter().getSelectedItem();
-        Version ver31 = new Version(3, 1);
-
-        boolean available = dataCenter != null && (dataCenter.getCompatibilityVersion().compareTo(ver31) >= 0 || dataCenter.getId().equals(Guid.Empty));
+        boolean available = dataCenter != null;
 
         getVersion().setIsAvailable(available);
         getRetransmissions().setIsAvailable(available);

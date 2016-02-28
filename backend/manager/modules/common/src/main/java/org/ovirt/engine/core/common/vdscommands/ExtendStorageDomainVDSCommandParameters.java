@@ -7,11 +7,10 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
     public ExtendStorageDomainVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
-            ArrayList<String> deviceList, boolean force, boolean supportForceExtendVG) {
+            ArrayList<String> deviceList, boolean force) {
         super(storagePoolId, storageDomainId);
         setDeviceList(deviceList);
         setForce(force);
-        setSupportForceExtendVG(supportForceExtendVG);
     }
 
     private ArrayList<String> privateDeviceList;
@@ -32,16 +31,6 @@ public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDoma
 
     public void setForce(boolean force) {
         this.force = force;
-    }
-
-    private boolean supportForceExtendVG;
-
-    public boolean isSupportForceExtendVG() {
-        return supportForceExtendVG;
-    }
-
-    public void setSupportForceExtendVG(boolean supportForceExtendVG) {
-        this.supportForceExtendVG = supportForceExtendVG;
     }
 
     public ExtendStorageDomainVDSCommandParameters() {

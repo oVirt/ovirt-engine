@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
@@ -41,14 +39,10 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         VM vm = getParameters().getVm();
 
         if (!nic.isPassthrough()) {
-            Version clusterVersion = getParameters().getVm().getCompatibilityVersion();
             map.put(VdsProperties.Type, vmDevice.getType().getValue());
             map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
             map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
-
-            if (FeatureSupported.networkLinking(clusterVersion)) {
-                map.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
-            }
+            map.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
 
             addAddress(map, vmDevice.getAddress());
             map.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
@@ -58,7 +52,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
             map.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
             VmInfoBuilder.addProfileDataToNic(map, vm, vmDevice, nic);
-            VmInfoBuilder.addNetworkFiltersToNic(map, clusterVersion);
+            VmInfoBuilder.addNetworkFiltersToNic(map);
         } else {
             VmInfoBuilder.addNetworkVirtualFunctionProperties(map, nic, vmDevice, vmDevice.getHostDevice(), vm);
         }

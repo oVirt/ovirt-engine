@@ -74,9 +74,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
-            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1, true),
-            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true)
+            mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE)
             );
 
     @Mock
@@ -278,7 +276,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(storageId, parameters);
 
         mockVm();
-        mockStorageDomain(storageId, Version.v3_1);
+        mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockInterfaceList();
         mockMaxPciSlots();
@@ -300,7 +298,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(storageId, parameters);
 
         mockVm();
-        mockStorageDomain(storageId, Version.v3_1);
+        mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
 
@@ -321,7 +319,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
         mockVm();
-        mockStorageDomain(storageId, StorageType.GLUSTERFS, Version.v3_1);
+        mockStorageDomain(storageId, StorageType.GLUSTERFS);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
 
@@ -466,11 +464,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
     /**
      * Mock a {@link StoragePool}.
      */
-    private StoragePool mockStoragePool(Version compatibilityVersion) {
+    private StoragePool mockStoragePool() {
         Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
-        storagePool.setCompatibilityVersion(compatibilityVersion);
         storagePool.setStatus(StoragePoolStatus.Up);
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
 
@@ -484,24 +481,17 @@ public class AddDiskCommandTest extends BaseCommandTest {
      *            Id of the domain.
      */
     private StorageDomain mockStorageDomain(Guid storageId) {
-        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, new Version());
+        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN);
     }
 
     private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType) {
-        return mockStorageDomain(storageId, 6, 4, storageType, new Version());
+        return mockStorageDomain(storageId, 6, 4, storageType);
     }
 
-    private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType, Version version) {
-        return mockStorageDomain(storageId, 6, 4, storageType, version);
-    }
-
-    private StorageDomain mockStorageDomain(Guid storageId, Version version) {
-        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, version);
-    }
 
     private StorageDomain mockStorageDomain(Guid storageId, int availableSize, int usedSize,
-            StorageType storageType, Version version) {
-        StoragePool storagePool = mockStoragePool(version);
+            StorageType storageType) {
+        StoragePool storagePool = mockStoragePool();
         Guid storagePoolId = storagePool.getId();
 
         StorageDomain sd = new StorageDomain();
@@ -842,7 +832,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
 
         VM vm = mockVm();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
@@ -867,7 +856,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
 
         VM vm = mockVm();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
         mockMaxPciSlots();
 
         DiskValidator diskValidator = spyDiskValidator(disk);
@@ -891,7 +879,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
 
         VM vm = mockVm();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
         mockMaxPciSlots();
 
         DiskValidator diskValidator = spyDiskValidator(disk);
@@ -912,7 +899,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(Guid.newGuid(), parameters);
 
         VM vm = mockVm();
-        vm.setClusterCompatibilityVersion(Version.v3_3);
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(

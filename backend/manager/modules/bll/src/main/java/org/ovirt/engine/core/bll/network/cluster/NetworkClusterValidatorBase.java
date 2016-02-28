@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -141,29 +140,6 @@ public abstract class NetworkClusterValidatorBase {
 
     VdsDao getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
-    }
-
-    /**
-     * Make sure the migration network is valid.
-     *
-     * @return Error if the migration network feature is not supported and this network is marked as migration and is
-     *         not the management network.
-     */
-    public ValidationResult migrationPropertySupported() {
-        return networkCluster.isMigration() && !FeatureSupported.migrationNetwork(version)
-                ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED)
-                : ValidationResult.VALID;
-    }
-
-    /**
-     * Make sure the external network attachment is supported for the version.
-     *
-     * @return Error iff the external network attachment is not supported.
-     */
-    public ValidationResult externalNetworkSupported() {
-        return FeatureSupported.deviceCustomProperties(version)
-                ? ValidationResult.VALID
-                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED);
     }
 
     /**

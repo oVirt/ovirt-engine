@@ -2021,32 +2021,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
 
-        if (Version.v3_1.compareTo(getCompatibilityVersion()) > 0) {
-            if (AsyncDataProvider.getInstance().isWindowsOsType(osType)) {
-                getUsbPolicy().setItems(Arrays.asList(
-                        UsbPolicy.DISABLED,
-                        UsbPolicy.ENABLED_LEGACY
-                ));
-            } else {
-                getUsbPolicy().setItems(Arrays.asList(UsbPolicy.DISABLED));
-                getUsbPolicy().setIsChangeable(false);
-            }
-        }
-
-        if (Version.v3_1.compareTo(getCompatibilityVersion()) <= 0) {
-            if (AsyncDataProvider.getInstance().isLinuxOsType(osType)) {
-                getUsbPolicy().setItems(Arrays.asList(
-                        UsbPolicy.DISABLED,
-                        UsbPolicy.ENABLED_NATIVE
-                ));
-            } else {
-                getUsbPolicy().setItems(
-                        Arrays.asList(
-                                UsbPolicy.DISABLED,
-                                UsbPolicy.ENABLED_LEGACY,
-                                UsbPolicy.ENABLED_NATIVE
-                        ));
-            }
+        if (AsyncDataProvider.getInstance().isLinuxOsType(osType)) {
+            getUsbPolicy().setItems(Arrays.asList(
+                    UsbPolicy.DISABLED,
+                    UsbPolicy.ENABLED_NATIVE
+            ));
+        } else {
+            getUsbPolicy().setItems(
+                    Arrays.asList(
+                            UsbPolicy.DISABLED,
+                            UsbPolicy.ENABLED_LEGACY,
+                            UsbPolicy.ENABLED_NATIVE
+                    ));
         }
 
         if (!graphicsTypes.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
@@ -2183,14 +2169,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateBootMenu() {
         if (getSelectedCluster() != null) {
-            Version version = getCompatibilityVersion();
-            final boolean supported = AsyncDataProvider.getInstance().isBootMenuSupported(version.toString());
-            if (!supported) {
-                getBootMenuEnabled().setEntity(false);
-                getBootMenuEnabled().setChangeProhibitionReason(
-                        ConstantsManager.getInstance().getMessages().bootMenuNotSupported(version.toString(2)));
-            }
-            getBootMenuEnabled().setIsChangeable(supported);
+            getBootMenuEnabled().setIsChangeable(true);
         }
     }
 
@@ -2199,9 +2178,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean isLinux = getIsLinuxOS();
         boolean isQxl = getDisplayType().getSelectedItem() == DisplayType.qxl;
         boolean isSpice = getGraphicsType().getSelectedItem() == GraphicsTypes.SPICE;
-        boolean clusterSupportsSinglePci = Version.v3_3.compareTo(getCompatibilityVersion()) <= 0;
 
-        return isLinux && isQxl && isSpice && clusterSupportsSinglePci;
+        return isLinux && isQxl && isSpice;
     }
 
     private void handleQxlClusterLevel() {
@@ -2221,8 +2199,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
             boolean spiceCopyPasteToggle = selectedGraphics != null
-                    && selectedGraphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE)
-                    && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getCompatibilityVersion().toString());
+                    && selectedGraphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE);
             if (!spiceCopyPasteToggle) {
                 handleQxlChangeProhibitionReason(
                         getSpiceCopyPasteEnabled(),

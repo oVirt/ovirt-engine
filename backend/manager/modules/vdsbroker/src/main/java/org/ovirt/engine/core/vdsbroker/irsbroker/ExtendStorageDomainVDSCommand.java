@@ -19,9 +19,7 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
         String[] deviceArray = deviceList.toArray(new String[deviceList.size()]);
         boolean isForce = getParameters().isForce();
 
-        status = getParameters().isSupportForceExtendVG() ?
-                getIrsProxy().extendStorageDomain(storageDomainId, storagePoolId, deviceArray, isForce) :
-                getIrsProxy().extendStorageDomain(storageDomainId, storagePoolId, deviceArray);
+        status = getIrsProxy().extendStorageDomain(storageDomainId, storagePoolId, deviceArray, isForce);
 
         proceedProxyReturnValue();
     }

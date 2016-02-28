@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
-import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -96,15 +95,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         });
 
         if (!getNetwork().isExternal()) {
-            if (NetworkHelper.setupNetworkSupported(getStoragePool().getCompatibilityVersion())) {
-                applyNetworkChangesToHosts();
-            } else if (!onlyPermittedFieldsChanged() || !allowedNetworkLabelManipulation()) {
-                List<VdsNetworkInterface> nics =
-                        getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(getNetwork().getId());
-                if (!nics.isEmpty()) {
-                    auditLogDirector.log(this, AuditLogType.MULTI_UPDATE_NETWORK_NOT_POSSIBLE);
-                }
-            }
+            applyNetworkChangesToHosts();
         }
 
         setSucceeded(true);
@@ -139,7 +130,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         final UpdateNetworkValidator validatorOld =
                 new UpdateNetworkValidator(getOldNetwork(), vmNetworkInterfaceDao, clusterDao, vmDao);
         return validate(validatorNew.dataCenterExists())
-                && validate(validatorNew.vmNetworkSetCorrectly())
                 && validate(validatorNew.stpForVmNetworkOnly())
                 && validate(validatorNew.mtuValid())
                 && validate(validatorNew.networkPrefixValid())

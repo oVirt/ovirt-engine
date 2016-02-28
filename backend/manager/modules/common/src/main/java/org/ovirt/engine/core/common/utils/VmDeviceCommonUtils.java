@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 
 public class VmDeviceCommonUtils {
 
@@ -85,9 +84,8 @@ public class VmDeviceCommonUtils {
      */
     public static void updateVmDevicesBootOrder(
             VM vm,
-            List<VmDevice> devices,
-            boolean isOldCluster) {
-        updateVmDevicesBootOrder(vm, vm.getDefaultBootSequence(), devices, isOldCluster);
+            List<VmDevice> devices) {
+        updateVmDevicesBootOrder(vm, vm.getDefaultBootSequence(), devices);
     }
 
     /**
@@ -96,8 +94,7 @@ public class VmDeviceCommonUtils {
     public static void updateVmDevicesBootOrder(
             VM vm,
             BootSequence bootSequence,
-            List<VmDevice> devices,
-            boolean isOldCluster) {
+            List<VmDevice> devices) {
 
         int bootOrder = 0;
 
@@ -111,23 +108,23 @@ public class VmDeviceCommonUtils {
 
         switch (bootSequence) {
         case C:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             break;
         case CD:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case CDN:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case CN:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case CND:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
@@ -136,11 +133,11 @@ public class VmDeviceCommonUtils {
             break;
         case DC:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             break;
         case DCN:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case DN:
@@ -150,18 +147,18 @@ public class VmDeviceCommonUtils {
         case DNC:
             bootOrder = setCDBootOrder(devices, bootOrder);
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             break;
         case N:
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case NC:
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             break;
         case NCD:
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case ND:
@@ -171,7 +168,7 @@ public class VmDeviceCommonUtils {
         case NDC:
             bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
             break;
         }
     }
@@ -240,8 +237,7 @@ public class VmDeviceCommonUtils {
      */
     private static int setDiskBootOrder(VM vm,
             List<VmDevice> devices,
-            int bootOrder,
-            boolean isOldCluster) {
+            int bootOrder) {
         LinkedList<VmDevice> diskDevices = new LinkedList<>();
         for (VmDevice device : devices) {
             if (isDisk(device)) {
@@ -249,9 +245,6 @@ public class VmDeviceCommonUtils {
                 if (id != null && !id.equals(Guid.Empty)) {
                     if (device.getSnapshotId() == null) {
                         diskDevices.addFirst(device);
-                        if (isOldCluster) { // Only one system disk can be bootable in old version.
-                            break;
-                        }
                     } else {
                         diskDevices.addLast(device);
                     }
@@ -263,9 +256,6 @@ public class VmDeviceCommonUtils {
             BaseDisk disk = getDisk(vm, device.getDeviceId());
             if (disk != null && disk.isBoot()) {
                 device.setBootOrder(++bootOrder);
-                if (isOldCluster) { // Only one system disk can be bootable in old version.
-                    break;
-                }
             }
         }
 
@@ -312,13 +302,6 @@ public class VmDeviceCommonUtils {
             }
         }
         return ret;
-    }
-
-    /**
-     * "old" level is considered anything lower than 3.1 at the moment
-     */
-    public static boolean isOldClusterVersion(Version version) {
-        return version.compareTo(Version.v3_1) < 0;
     }
 
     public static boolean isInWhiteList(VmDeviceGeneralType type, String device) {

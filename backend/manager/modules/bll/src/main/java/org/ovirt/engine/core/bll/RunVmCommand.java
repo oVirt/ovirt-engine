@@ -187,10 +187,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return StringUtils.EMPTY;
         }
 
-        if (!FeatureSupported.memorySnapshot(getVm().getCompatibilityVersion())) {
-            return StringUtils.EMPTY;
-        }
-
         return getActiveSnapshot().getMemoryVolume();
     }
 

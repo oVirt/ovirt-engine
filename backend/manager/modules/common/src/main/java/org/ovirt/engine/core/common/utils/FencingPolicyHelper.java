@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.Set;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.compat.Version;
 
@@ -18,29 +17,13 @@ public class FencingPolicyHelper {
             throw new IllegalArgumentException();
         }
 
-        Version ver = Version.ALL.get(0);
-        if (fp.isSkipFencingIfSDActive()) {
-            for (Version v : Version.ALL) {
-                if (FeatureSupported.isSkipFencingIfSDActiveSupported(v)) {
-                    ver = v;
-                    break;
-                }
-            }
-        }
-        return ver;
+        return Version.ALL.get(0);
     }
 
     /**
      * Returns true if specified set of cluster levels contains at least one level, which supports fencing policy
      */
     public static boolean isFencingPolicySupported(Set<Version> clusterLevels) {
-        boolean supported = false;
-        for (Version v : clusterLevels) {
-            if (FeatureSupported.isSkipFencingIfSDActiveSupported(v)) {
-                supported = true;
-                break;
-            }
-        }
-        return supported;
+        return !clusterLevels.isEmpty();
     }
 }

@@ -219,29 +219,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
-        // duplicated in IVdsServer#getIsoList
-        JsonRpcRequest request =
-                new RequestBuilder("StoragePool.getIsoList").withParameter("storagepoolID", spUUID).build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("isolist")
-                        .withResponseType(Object[].class);
-        // check vdsm versions - fileStats vs isolist(latest)
-        return new FileStatsReturnForXmlRpc(response);
-    }
-
-    @Override
-    public FileStatsReturnForXmlRpc getFloppyList(String spUUID) {
-        JsonRpcRequest request =
-                new RequestBuilder("StoragePool.getFloppyList").withParameter("storagepoolID", spUUID).build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("isolist")
-                        .withResponseType(Object[].class);
-        // TODO check which response key to use isolist works for getIsoList
-        return new FileStatsReturnForXmlRpc(response);
-    }
-
-    @Override
     public FileStatsReturnForXmlRpc getFileStats(String sdUUID, String pattern, boolean caseSensitive) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.getFileStats").withParameter("storagedomainID", sdUUID)
@@ -326,11 +303,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist) {
-        return extendStorageDomain(sdUUID, spUUID, devlist, false);
     }
 
     @Override

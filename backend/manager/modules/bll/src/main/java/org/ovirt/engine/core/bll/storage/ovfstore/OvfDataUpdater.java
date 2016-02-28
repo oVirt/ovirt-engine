@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -72,23 +71,17 @@ public class OvfDataUpdater {
                 log.error("Exception while trying to update or remove VMs/Templates ovf in Data Center '{}'.", pool.getName());
             }
 
-            if (ovfOnAnyDomainSupported(pool)) {
-                log.debug("Attempting to update ovfs in domain in Data Center '{}'",
-                        pool.getName());
+            log.debug("Attempting to update ovfs in domain in Data Center '{}'",
+                    pool.getName());
 
-                Set<Guid> domainsToUpdate = returnValueBase.getActionReturnValue();
-                if (domainsToUpdate != null) {
-                    for (Guid id : domainsToUpdate) {
-                        performOvfUpdateForDomain(pool.getId(), id);
-                    }
-                } else {
-                    log.error("Data Center '{}' domains list for OVF update returned as NULL");
+            Set<Guid> domainsToUpdate = returnValueBase.getActionReturnValue();
+            if (domainsToUpdate != null) {
+                for (Guid id : domainsToUpdate) {
+                    performOvfUpdateForDomain(pool.getId(), id);
                 }
+            } else {
+                log.error("Data Center '{}' domains list for OVF update returned as NULL");
             }
         }
-    }
-
-    protected boolean ovfOnAnyDomainSupported(StoragePool pool) {
-        return FeatureSupported.ovfStoreOnAnyDomain(pool.getCompatibilityVersion());
     }
 }

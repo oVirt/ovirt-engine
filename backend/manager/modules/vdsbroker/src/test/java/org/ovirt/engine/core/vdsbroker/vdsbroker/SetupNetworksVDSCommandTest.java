@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -74,6 +74,9 @@ public class SetupNetworksVDSCommandTest {
     @Mock
     private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
+    @Mock
+    ManagementNetworkUtil managementNetworkUtil;
+
     @Rule
     public MockConfigRule configRule = new MockConfigRule();
 
@@ -85,11 +88,7 @@ public class SetupNetworksVDSCommandTest {
 
     @Before
     public void mockConfig() {
-        HashSet<Version> supportedClusters = new HashSet<>();
-        supportedClusters.add(version);
-        when(host.getSupportedClusterVersionsSet()).thenReturn(supportedClusters);
         when(host.getClusterCompatibilityVersion()).thenReturn(version);
-        configRule.mockConfigValue(ConfigValues.DefaultRouteSupported, version, Boolean.FALSE);
         configRule.mockConfigValue(ConfigValues.DefaultMTU, 1500);
         configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, false);
     }
@@ -372,6 +371,7 @@ public class SetupNetworksVDSCommandTest {
         result.networkAttachmentDao = networkAttachmentDao;
         result.effectiveHostNetworkQos = effectiveHostNetworkQos;
         result.calculateBaseNic = calculateBaseNic;
+        result.managementNetworkUtil = managementNetworkUtil;
 
         return result;
     }

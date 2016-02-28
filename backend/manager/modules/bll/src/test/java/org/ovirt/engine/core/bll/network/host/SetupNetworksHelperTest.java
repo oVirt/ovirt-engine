@@ -34,7 +34,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.bll.validator.network.NetworkType;
@@ -80,24 +79,14 @@ public class SetupNetworksHelperTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_3, true),
-            mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2, false),
-            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_2, false),
-            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_3, false),
-            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4, true),
-            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5, true),
-            mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_3, false),
-            mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_4, false),
-            mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_5, true),
-            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_2, ""),
-            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_3, ""),
-            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_4, ""),
+
+            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5, false),
+            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v4_0, true),
             mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_5, ""),
-            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_2, ""),
-            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_3, ""),
-            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_4, ""),
+            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v4_0, ""),
+            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_5, ""),
             mockConfig(ConfigValues.UserDefinedNetworkCustomProperties,
-                    Version.v3_5.toString(),
+                    Version.v4_0.toString(),
                     "bridge_opts=^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$"),
             mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
     private final CustomPropertiesForVdsNetworkInterface customProperties = new CustomPropertiesForVdsNetworkInterface();
@@ -119,9 +108,6 @@ public class SetupNetworksHelperTest {
 
     @Mock
     private GlusterBrickDao brickDao;
-
-    @Mock
-    private ManagementNetworkUtil managementNetworkUtil;
 
     @Mock
     private NetworkAttachmentDao networkAttachmentDao;
@@ -268,31 +254,12 @@ public class SetupNetworksHelperTest {
 
         VDS vds = mock(VDS.class);
         when(vds.getId()).thenReturn(Guid.Empty);
-        when(vds.getClusterCompatibilityVersion()).thenReturn(Version.v3_3);
+        when(vds.getClusterCompatibilityVersion()).thenReturn(Version.getLast());
         when(vds.getHostName()).thenReturn(RandomUtils.instance().nextString(10));
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
 
         validateAndAssertNetworkModified(helper, net);
-    }
-
-    @Test
-    public void unsupportedGatewayChanged() {
-        Network net = createNetwork("otherThenMgmtNetwork");
-        mockExistingNetworks(net);
-        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
-        nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
-        nic.setGateway(RandomUtils.instance().nextString(10));
-        mockExistingIfaces(nic);
-        nic.setGateway(RandomUtils.instance().nextString(10));
-
-        VDS vds = mock(VDS.class);
-        when(vds.getId()).thenReturn(Guid.Empty);
-
-        SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
-        when(vds.getClusterCompatibilityVersion()).thenReturn(Version.v3_2);
-
-        validateAndExpectViolation(helper, EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY, nic.getNetworkName());
     }
 
     @Test
@@ -435,7 +402,7 @@ public class SetupNetworksHelperTest {
 
         iface.setQos(qos);
 
-        return createHelper(createParametersForNics(iface), Version.v3_4);
+        return createHelper(createParametersForNics(iface), Version.v4_0);
     }
 
     @Test
@@ -489,10 +456,10 @@ public class SetupNetworksHelperTest {
             mockExistingIfaces(master, slave1, slave2, vlan1);
             slave1.setBondName(master.getName());
             slave2.setBondName(master.getName());
-            return createHelper(createParametersForNics(master, slave1, slave2, vlan1, vlan2), Version.v3_4);
+            return createHelper(createParametersForNics(master, slave1, slave2, vlan1, vlan2), Version.v4_0);
         } else {
             mockExistingIfaces(master, vlan1);
-            return createHelper(createParametersForNics(master, vlan1, vlan2), Version.v3_4);
+            return createHelper(createParametersForNics(master, vlan1, vlan2), Version.v4_0);
         }
     }
 
@@ -545,22 +512,6 @@ public class SetupNetworksHelperTest {
     }
 
     @Test
-    public void customPropertiesNotSupported() {
-        Network network = createManagementNetwork();
-        mockExistingNetworks(network);
-        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
-        mockExistingIfaces(iface);
-        customProperties.add(iface, createCustomProperties());
-        customProperties.add(iface, createCustomProperties());
-
-        SetupNetworksHelper helper = createHelper(createParametersForNics(iface));
-
-        validateAndExpectViolation(helper,
-            EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
-            network.getName());
-    }
-
-    @Test
     public void customPropertiesNoNetwork() {
         mockExistingNetworks();
         VdsNetworkInterface iface = createNic("eth0", null);
@@ -610,7 +561,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(iface);
         customProperties.add(iface, createCustomProperties());
 
-        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v4_0);
 
         validateAndExpectNoViolations(helper);
         assertNoBondsModified(helper);
@@ -1777,7 +1728,6 @@ public class SetupNetworksHelperTest {
     }
 
     private Network createManagementNetwork() {
-        when(managementNetworkUtil.isManagementNetwork(eq(MANAGEMENT_NETWORK_NAME), any(Guid.class))).thenReturn(true);
         return createNetwork(MANAGEMENT_NETWORK_NAME);
     }
 
@@ -1856,7 +1806,6 @@ public class SetupNetworksHelperTest {
     }
 
     private VdsNetworkInterface createManagementNetworkNic(String nicName) {
-        when(managementNetworkUtil.isManagementNetwork(eq(MANAGEMENT_NETWORK_NAME), any(Guid.class))).thenReturn(true);
         return createNic(nicName, MANAGEMENT_NETWORK_NAME);
     }
 
@@ -2176,7 +2125,7 @@ public class SetupNetworksHelperTest {
 
     @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
-        return createHelper(params, Version.v3_3);
+        return createHelper(params, Version.v3_5);
     }
 
     @SuppressWarnings("deprecation")
@@ -2188,7 +2137,7 @@ public class SetupNetworksHelperTest {
 
     @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds) {
-        return createHelper(params, vds, Version.v3_3);
+        return createHelper(params, vds, Version.v4_0);
     }
 
     @SuppressWarnings("deprecation")
@@ -2203,7 +2152,7 @@ public class SetupNetworksHelperTest {
                 NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_MSG);
 
         SetupNetworksHelper helper = spy(
-                new SetupNetworksHelper(params, vds, managementNetworkUtil, networkExclusivenessValidatorResolver));
+                new SetupNetworksHelper(params, vds, networkExclusivenessValidatorResolver));
 
         when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);
         doReturn(null).when(helper).translateErrorMessages(Matchers.<List<String>> any());

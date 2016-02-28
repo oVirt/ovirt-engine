@@ -300,7 +300,6 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
         host.setSupportedClusterLevels("3.4,3.5");
         FenceProxyLocator locator = setupLocator();
 
-        assertTrue(locator.isFencingPolicySupported(host, Version.v3_0));
         assertTrue(locator.isFencingPolicySupported(host, Version.v3_5));
         assertFalse(locator.isFencingPolicySupported(host, Version.v3_6));
     }
@@ -360,7 +359,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
         host.setId(Guid.newGuid());
         host.setClusterId(clusterId);
         host.setStoragePoolId(dcId);
-        host.setClusterCompatibilityVersion(Version.v3_0);
+        host.setClusterCompatibilityVersion(Version.v3_5);
         host.setStatus(status);
         host.setHostName("host-" + host.getId());
         return host;

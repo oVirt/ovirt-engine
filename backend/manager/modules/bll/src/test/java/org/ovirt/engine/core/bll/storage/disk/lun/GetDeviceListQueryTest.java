@@ -14,33 +14,22 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.LunDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQueryParameters, GetDeviceListQuery<GetDeviceListQueryParameters>> {
-    private DbFacade dbFacadeMock;
     private LunDao lunDaoMock;
-    private VdsDao vdsDaoMock;
-    private StorageDomainDao storageDomainDaoMock;
     private VDSBrokerFrontend vdsBrokerFrontendMock;
 
     private Guid vdsId;
     private StorageType storageType;
-    private VDS vds;
 
     // LUNs list retrieved from DB
     private List<LUNs> lunsFromDb;
@@ -56,23 +45,8 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      */
     @Test
     public void testExecuteQueryWithFilteringLUNsEnabled() {
-        mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1, true);
-
         // Create expected result
         lunsExpected = Collections.emptyList();
-
-        internalExecuteQuery();
-    }
-
-    /**
-     * Test query execution when LUNs filtering is disabled
-     */
-    @Test
-    public void testExecuteQueryWithFilteringLUNsDisabled() {
-        mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1, false);
-
-        // Create expected result
-        lunsExpected = lunsInput;
 
         internalExecuteQuery();
     }
@@ -104,16 +78,11 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      * Mock the DbFacade/VDSBroker and the Daos
      */
     private void prepareMocks() {
-        dbFacadeMock = getDbFacadeMockInstance();
         vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
         doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
 
         lunDaoMock = mock(LunDao.class);
-        when(dbFacadeMock.getLunDao()).thenReturn(lunDaoMock);
-        vdsDaoMock = mock(VdsDao.class);
-        when(dbFacadeMock.getVdsDao()).thenReturn(vdsDaoMock);
-        storageDomainDaoMock = mock(StorageDomainDao.class);
-        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDaoMock);
+        when(getDbFacadeMockInstance().getLunDao()).thenReturn(lunDaoMock);
     }
 
     /**
@@ -126,13 +95,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
 
         storageType = StorageType.UNKNOWN;
         when(getQueryParameters().getStorageType()).thenReturn(storageType);
-
-        vds = new VDS();
-        vds.setClusterCompatibilityVersion(Version.v3_1);
-        when(vdsDaoMock.get(getQueryParameters().getId())).thenReturn(vds);
-
-        List<StorageDomain> domainsList = Collections.emptyList();
-        when(storageDomainDaoMock.getAll()).thenReturn(domainsList);
     }
 
     /**

@@ -36,28 +36,8 @@ public class VersionStorageFormatUtil {
         }
     }
 
-    private static class V2FormatTypeMapper implements StorageFormatTypeMapper {
-        @Override
-        public StorageFormatType getPreferred(StorageType type) {
-            if (type != null && type.isBlockDomain()) {
-                return StorageFormatType.V2;
-            }
-            return StorageFormatType.V1;
-        }
-
-        @Override
-        public StorageFormatType getRequired(StorageType t) {
-            return StorageFormatType.V1;
-        }
-    }
-
     private static final Map<Version, StorageFormatTypeMapper> versionToFormat = new TreeMap<>();
     static {
-        versionToFormat.put(Version.v3_0, new V2FormatTypeMapper());
-        versionToFormat.put(Version.v3_1, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
-        versionToFormat.put(Version.v3_2, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
-        versionToFormat.put(Version.v3_3, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
-        versionToFormat.put(Version.v3_4, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
         versionToFormat.put(Version.v3_5, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
         versionToFormat.put(Version.v3_6, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
         versionToFormat.put(Version.v4_0, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));

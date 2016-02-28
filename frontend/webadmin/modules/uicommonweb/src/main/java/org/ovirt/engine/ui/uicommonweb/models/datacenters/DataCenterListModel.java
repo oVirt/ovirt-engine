@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -893,33 +892,24 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
-        boolean iscsiBondSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.IscsiMultipathingSupported,
-                storagePool.getCompatibilityVersion().getValue()
-        );
+        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
 
-        if (iscsiBondSupported) {
-            AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                boolean hasIscsiStorage = false;
 
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    boolean hasIscsiStorage = false;
+                ArrayList<StorageServerConnections> connections = (ArrayList<StorageServerConnections>) returnValue;
 
-                    ArrayList<StorageServerConnections> connections = (ArrayList<StorageServerConnections>) returnValue;
-
-                    for (StorageServerConnections connection : connections) {
-                        if (connection.getStorageType() == StorageType.ISCSI) {
-                            hasIscsiStorage = true;
-                            break;
-                        }
+                for (StorageServerConnections connection : connections) {
+                    if (connection.getStorageType() == StorageType.ISCSI) {
+                        hasIscsiStorage = true;
+                        break;
                     }
-
-                    iscsiBondListModel.setIsAvailable(hasIscsiStorage);
                 }
-            }), storagePool.getId(), StorageType.ISCSI);
-        } else {
-            iscsiBondListModel.setIsAvailable(false);
-        }
+
+                iscsiBondListModel.setIsAvailable(hasIscsiStorage);
+            }
+        }), storagePool.getId(), StorageType.ISCSI);
     }
 
     @Override

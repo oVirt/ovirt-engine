@@ -1703,7 +1703,6 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Map<String, Object>> networks =
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORKS);
         Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(host.getInterfaces());
-        boolean bridgesReported = FeatureSupported.bridgesReportByVdsm(host.getClusterCompatibilityVersion());
         if (networks != null) {
             host.getNetworkNames().clear();
             for (Entry<String, Map<String, Object>> entry : networks.entrySet()) {
@@ -1721,15 +1720,12 @@ public class VdsBrokerObjectsBuilder {
                      * only be extracted for bridged networks and from bridge entries (not network entries)
                      **/
                     Map<String, Object> effectiveProperties =
-                            (bridgesReported && bridgedNetwork && bridgeProperties != null) ? bridgeProperties
-                                    : networkProperties;
+                            (bridgedNetwork && bridgeProperties != null) ? bridgeProperties : networkProperties;
                     String addr = extractAddress(effectiveProperties);
                     String subnet = extractSubnet(effectiveProperties);
                     String gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
 
-                    List<VdsNetworkInterface> interfaces =
-                            bridgesReported ? findNetworkInterfaces(vdsInterfaces, interfaceName, bridgeProperties)
-                                    : findBridgedNetworkInterfaces(networkProperties, vdsInterfaces);
+                    List<VdsNetworkInterface> interfaces = findNetworkInterfaces(vdsInterfaces, interfaceName, bridgeProperties);
                     for (VdsNetworkInterface iface : interfaces) {
                         iface.setNetworkName(networkName);
                         iface.setAddress(addr);
@@ -1742,7 +1738,7 @@ public class VdsBrokerObjectsBuilder {
                             iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
                         }
 
-                        setGatewayIfNecessary(iface, host, gateway);
+                        setGatewayIfNecessary(iface, gateway);
 
                         if (bridgedNetwork) {
                             addBootProtocol(effectiveProperties, host, iface);
@@ -2066,8 +2062,8 @@ public class VdsBrokerObjectsBuilder {
     private static void addBootProtocol(Map<String, Object> entry, VDS host, VdsNetworkInterface iface) {
         BootProtocolResolver resolver =
                 FeatureSupported.cfgEntriesDeprecated(host.getClusterCompatibilityVersion())
-                        ? new NoCfgBootProtocolResolver(entry, iface, host)
-                        : new CfgBootProtocolResolver(entry, iface, host);
+                        ? new NoCfgBootProtocolResolver(entry, iface)
+                        : new CfgBootProtocolResolver(entry, iface);
         resolver.resolve();
     }
 
@@ -2099,13 +2095,8 @@ public class VdsBrokerObjectsBuilder {
      * @param gateway
      *            the gateway value to be set
      */
-    public static void setGatewayIfNecessary(VdsNetworkInterface iface, VDS host, String gateway) {
-        final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
-        if (FeatureSupported.multipleGatewaysSupported(host.getClusterCompatibilityVersion())
-                || managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), host.getClusterId())
-                || iface.getName().equals(host.getActiveNic())) {
-            iface.setGateway(gateway);
-        }
+    public static void setGatewayIfNecessary(VdsNetworkInterface iface, String gateway) {
+        iface.setGateway(gateway);
     }
 
     private static ManagementNetworkUtil getManagementNetworkUtil() {

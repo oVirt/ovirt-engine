@@ -55,7 +55,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
         newGroup = new Cluster();
         newGroup.setName("New VDS Group");
-        newGroup.setCompatibilityVersion(new Version("3.0"));
+        newGroup.setCompatibilityVersion(Version.getLast());
         newGroup.setVirtService(true);
         newGroup.setGlusterService(false);
         newGroup.setClusterPolicyId(existingCluster.getClusterPolicyId());

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -320,22 +319,13 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                         else if (a.getStorageDomainType() == dcStorageModel.getStorageDomainType()) {
                             if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data) {
                                 if (dcStorageModel.getEntity().getStoragePoolFormatType() == null) {
-                                    // skip V3 format for DC ver <= 3
-                                    if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V3
-                                            && dcStorageModel.getEntity()
-                                                    .getCompatibilityVersion()
-                                                    .compareTo(Version.v3_0) <= 0) {
-                                        continue;
-                                    }
-
                                     addToList = true;
                                 }
                                 else if (dcStorageModel.getEntity().getStoragePoolFormatType() == a.getStorageStaticData()
                                         .getStorageFormat()) {
                                     addToList = true;
                                 }
-                                else if (dcStorageModel.getEntity().getCompatibilityVersion().compareTo(Version.v3_1) >= 0) {
-                                    // if DC is >= 3.1 we support upgrading
+                                else {
                                     if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V1
                                             || a.getStorageStaticData().getStorageFormat() == StorageFormatType.V2) {
                                         addToList = true;

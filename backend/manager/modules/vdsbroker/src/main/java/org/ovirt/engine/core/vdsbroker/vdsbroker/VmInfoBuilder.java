@@ -404,7 +404,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                                 .toLowerCase());
 
-                        handleIoTune(vm, vmDevice, diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
+                        handleIoTune(vmDevice, diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
                         break;
                     case LUN:
                         LunDisk lunDisk = (LunDisk) disk;
@@ -418,8 +418,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 }
                 addBootOrder(vmDevice, struct);
                 struct.put(VdsProperties.Shareable,
-                        (vmDevice.getSnapshotId() != null
-                        && FeatureSupported.hotPlugDiskSnapshot(vm.getCompatibilityVersion()))
+                        (vmDevice.getSnapshotId() != null)
                                 ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
                 struct.put(VdsProperties.Optional, Boolean.FALSE.toString());
                 struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
@@ -489,22 +488,19 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     /**
      * Prepare the ioTune limits map and add it to the specParams if supported by the cluster
      *
-     * @param vm The VM the vmDevice belongs to
      * @param vmDevice The disk device with QoS limits
      * @param diskImage The image that backs up the vmDevice
      * @param diskProfileStorageQosMap Cache object to reuse existing disk profiles entitites when iterating
      * @param storageQosIoTuneMap Cache object to reuse existing ioTune QoS entitites when iterating
      */
-    static void handleIoTune(VM vm, VmDevice vmDevice, DiskImage diskImage, Map<Guid, Guid> diskProfileStorageQosMap, Map<Guid, Map<String, Long>> storageQosIoTuneMap) {
-        if (FeatureSupported.storageQoS(vm.getCompatibilityVersion())) {
-            Map<String, Long> ioTune = buildIoTune(diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
+    static void handleIoTune(VmDevice vmDevice, DiskImage diskImage, Map<Guid, Guid> diskProfileStorageQosMap, Map<Guid, Map<String, Long>> storageQosIoTuneMap) {
+        Map<String, Long> ioTune = buildIoTune(diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
 
-            if (ioTune != null) {
-                if (vmDevice.getSpecParams() == null) {
-                    vmDevice.setSpecParams(new HashMap<>());
-                }
-                vmDevice.getSpecParams().put(VdsProperties.Iotune, ioTune);
+        if (ioTune != null) {
+            if (vmDevice.getSpecParams() == null) {
+                vmDevice.setSpecParams(new HashMap<>());
             }
+            vmDevice.getSpecParams().put(VdsProperties.Iotune, ioTune);
         }
     }
 
@@ -599,8 +595,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     addNetworkInterfaceProperties(struct,
                             vmInterface,
                             vmDevice,
-                            VmInfoBuilder.evaluateInterfaceType(ifaceType, vm.getHasAgent()),
-                            vm.getCompatibilityVersion());
+                            VmInfoBuilder.evaluateInterfaceType(ifaceType, vm.getHasAgent()));
                 }
 
                 devices.add(struct);
@@ -690,8 +685,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             VmDeviceCommonUtils.updateVmDevicesBootOrder(
                     vm,
                     vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
-                    managedDevices,
-                    VmDeviceCommonUtils.isOldClusterVersion(vm.getCompatibilityVersion()));
+                    managedDevices);
             for (VmDevice vmDevice : managedDevices) {
                 for (Map struct : devices) {
                     String deviceId = (String) struct.get(VdsProperties.DeviceId);
@@ -782,14 +776,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void addNetworkInterfaceProperties(Map<String, Object> struct,
             VmNic vmInterface,
             VmDevice vmDevice,
-            String nicModel,
-            Version clusterVersion) {
+            String nicModel) {
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
-
-        if (FeatureSupported.networkLinking(clusterVersion)) {
-            struct.put(VdsProperties.LINK_ACTIVE, String.valueOf(vmInterface.isLinked()));
-        }
+        struct.put(VdsProperties.LINK_ACTIVE, String.valueOf(vmInterface.isLinked()));
 
         addAddress(vmDevice, struct);
         struct.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
@@ -799,7 +789,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.NIC_TYPE, nicModel);
 
         addProfileDataToNic(struct, vm, vmDevice, vmInterface);
-        addNetworkFiltersToNic(struct, clusterVersion);
+        addNetworkFiltersToNic(struct);
     }
 
     static void addNetworkVirtualFunctionProperties(Map<String, Object> struct,
@@ -847,55 +837,37 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 networkName = network.getName();
                 log.debug("VNIC '{}' is using profile '{}' on network '{}'",
                         nic.getName(), vnicProfile, networkName);
-                if (!addQosForDevice(struct, vnicProfile, vm.getCompatibilityVersion())) {
-                    unsupportedFeatures.add(VnicProfileProperties.NETWORK_QOS);
-                }
+                addQosForDevice(struct, vnicProfile);
             }
         }
 
         struct.put(VdsProperties.NETWORK, networkName);
 
-        if (!addPortMirroringToVmInterface(struct, vnicProfile, vm.getClusterCompatibilityVersion(), network)) {
-            unsupportedFeatures.add(VnicProfileProperties.PORT_MIRRORING);
-        }
+        addPortMirroringToVmInterface(struct, vnicProfile, network);
 
-        if (!addCustomPropertiesForDevice(struct,
+        addCustomPropertiesForDevice(struct,
                 vm,
                 vmDevice,
                 vm.getCompatibilityVersion(),
-                getVnicCustomProperties(vnicProfile))) {
-            unsupportedFeatures.add(VnicProfileProperties.CUSTOM_PROPERTIES);
-        }
+                getVnicCustomProperties(vnicProfile));
 
         reportUnsupportedVnicProfileFeatures(vm, nic, vnicProfile, unsupportedFeatures);
     }
 
-    private static boolean addPortMirroringToVmInterface(Map<String, Object> struct,
+    private static void addPortMirroringToVmInterface(Map<String, Object> struct,
             VnicProfile vnicProfile,
-            Version version,
             Network network) {
 
         if (vnicProfile != null && vnicProfile.isPortMirroring()) {
-            if (FeatureSupported.portMirroring(version)) {
-                struct.put(VdsProperties.PORT_MIRRORING, network == null ? Collections.<String> emptyList()
-                        : Collections.singletonList(network.getName()));
-            } else {
-                return false;
-            }
+            struct.put(VdsProperties.PORT_MIRRORING, network == null ? Collections.<String> emptyList()
+                    : Collections.singletonList(network.getName()));
         }
 
-        return true;
     }
 
-    private static boolean addQosForDevice(Map<String, Object> struct,
-            VnicProfile vnicProfile,
-            Version clusterCompatibilityVersion) {
+    private static void addQosForDevice(Map<String, Object> struct, VnicProfile vnicProfile) {
 
         Guid qosId = vnicProfile.getNetworkQosId();
-        if (!FeatureSupported.networkQoS(clusterCompatibilityVersion)) {
-            return qosId == null;
-        }
-
         Map<String, Object> specParams = (Map<String, Object>) struct.get(VdsProperties.SpecParams);
         if (specParams == null) {
             specParams = new HashMap<>();
@@ -905,8 +877,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         NetworkQosMapper qosMapper =
                 new NetworkQosMapper(specParams, VdsProperties.QOS_INBOUND, VdsProperties.QOS_OUTBOUND);
         qosMapper.serialize(networkQoS);
-
-        return true;
     }
 
     public static Map<String, String> getVnicCustomProperties(VnicProfile vnicProfile) {
@@ -919,7 +889,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         return customProperties == null ? new HashMap<>() : customProperties;
     }
 
-    public static boolean addCustomPropertiesForDevice(Map<String, Object> struct,
+    public static void addCustomPropertiesForDevice(Map<String, Object> struct,
             VM vm,
             VmDevice vmDevice,
             Version clusterVersion,
@@ -936,19 +906,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
 
         if (!customProperties.isEmpty()) {
-            if (FeatureSupported.deviceCustomProperties(clusterVersion)) {
-                struct.put(VdsProperties.Custom, customProperties);
-            } else {
-                return false;
-            }
+            struct.put(VdsProperties.Custom, customProperties);
         }
-
-        return true;
     }
 
-    public static void addNetworkFiltersToNic(Map<String, Object> struct, Version clusterVersion) {
-        if (FeatureSupported.antiMacSpoofing(clusterVersion)
-                && Config.<Boolean> getValue(ConfigValues.EnableMACAntiSpoofingFilterRules)) {
+    public static void addNetworkFiltersToNic(Map<String, Object> struct) {
+        if (Config.<Boolean> getValue(ConfigValues.EnableMACAntiSpoofingFilterRules)) {
             struct.put(VdsProperties.NW_FILTER, NetworkFilters.NO_MAC_SPOOFING.getFilterName());
         }
     }
@@ -1318,51 +1281,48 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * have almost the same libvirt version support
      */
     private void addNumaSetting(final String compatibilityVersion) {
-        if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
-                compatibilityVersion))) {
-            List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
-            List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDao()
-                    .getAllVdsNumaNodeByVdsId(vdsId);
-            if (totalVdsNumaNodes.isEmpty()) {
-                log.warn("No NUMA nodes found for host {} for vm {} {}",  vdsId, vm.getName(), vm.getId());
+        List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
+        List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDao()
+                .getAllVdsNumaNodeByVdsId(vdsId);
+        if (totalVdsNumaNodes.isEmpty()) {
+            log.warn("No NUMA nodes found for host {} for vm {} {}",  vdsId, vm.getName(), vm.getId());
+            return;
+        }
+
+        // if user didn't set specific NUMA conf
+        // create a default one with one guest numa node
+        if (vmNumaNodes.isEmpty()) {
+            if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
+                VmNumaNode vmNode = new VmNumaNode();
+                vmNode.setIndex(0);
+                vmNode.setMemTotal(vm.getMemSizeMb());
+                for (int i = 0; i < vm.getNumOfCpus(); i++) {
+                    vmNode.getCpuIds().add(i);
+                }
+                vmNumaNodes.add(vmNode);
+            } else {
+                // no need to send numa if memory hotplug not supported
                 return;
             }
+        }
+        NumaTuneMode numaTune = vm.getNumaTuneMode();
 
-            // if user didn't set specific NUMA conf
-            // create a default one with one guest numa node
-            if (vmNumaNodes.isEmpty()) {
-                if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
-                    VmNumaNode vmNode = new VmNumaNode();
-                    vmNode.setIndex(0);
-                    vmNode.setMemTotal(vm.getMemSizeMb());
-                    for (int i = 0; i < vm.getNumOfCpus(); i++) {
-                        vmNode.getCpuIds().add(i);
-                    }
-                    vmNumaNodes.add(vmNode);
-                } else {
-                    // no need to send numa if memory hotplug not supported
-                    return;
-                }
+        if (numaTune != null) {
+            Map<String, Object> numaTuneSetting =
+                    NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes);
+            if (!numaTuneSetting.isEmpty()) {
+                createInfo.put(VdsProperties.NUMA_TUNE, numaTuneSetting);
             }
-            NumaTuneMode numaTune = vm.getNumaTuneMode();
-
-            if (numaTune != null) {
-                Map<String, Object> numaTuneSetting =
-                        NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes);
-                if (!numaTuneSetting.isEmpty()) {
-                    createInfo.put(VdsProperties.NUMA_TUNE, numaTuneSetting);
-                }
-            }
-            List<Map<String, Object>> createVmNumaNodes = NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodes);
-            if (!createVmNumaNodes.isEmpty()) {
-                createInfo.put(VdsProperties.VM_NUMA_NODES, createVmNumaNodes);
-            }
-            if (StringUtils.isEmpty(vm.getCpuPinning())) {
-                Map<String, Object> cpuPinDict =
-                        NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
-                if (!cpuPinDict.isEmpty()) {
-                    createInfo.put(VdsProperties.cpuPinning, cpuPinDict);
-                }
+        }
+        List<Map<String, Object>> createVmNumaNodes = NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodes);
+        if (!createVmNumaNodes.isEmpty()) {
+            createInfo.put(VdsProperties.VM_NUMA_NODES, createVmNumaNodes);
+        }
+        if (StringUtils.isEmpty(vm.getCpuPinning())) {
+            Map<String, Object> cpuPinDict =
+                    NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
+            if (!cpuPinDict.isEmpty()) {
+                createInfo.put(VdsProperties.cpuPinning, cpuPinDict);
             }
         }
     }

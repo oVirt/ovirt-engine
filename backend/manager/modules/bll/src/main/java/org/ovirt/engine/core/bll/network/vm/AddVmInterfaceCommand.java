@@ -133,9 +133,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         Version compatibilityVersion = getVm().getClusterCompatibilityVersion();
         VmNicValidator nicValidator = new VmNicValidator(getInterface(), compatibilityVersion, getVm().getOs());
 
-        if (!validate(nicValidator.linkedOnlyIfSupported())
-                || !validate(nicValidator.isCompatibleWithOs())
-                || !validate(nicValidator.emptyNetworkValid())
+        if (!validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.profileValid(vm.getClusterId()))
                 || !validate(nicValidator.typeMatchesProfile())
                 || !validate(nicValidator.passthroughIsLinked())) {

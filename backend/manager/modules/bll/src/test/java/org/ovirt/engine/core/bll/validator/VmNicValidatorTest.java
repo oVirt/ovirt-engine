@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -12,14 +10,12 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,7 +33,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,14 +43,7 @@ public class VmNicValidatorTest {
     private static final ArrayList<String> NETWORK_DEVICES = new ArrayList<>(
             Arrays.asList("rtl8139", "pv"));
 
-    private static final String CLUSTER_VERSION_REPLACEMENT =
-            String.format(VmNicValidator.CLUSTER_VERSION_REPLACEMENT_FORMAT, CLUSTER_VERSION);
-
-    private final Guid DEFAULT_GUID = Guid.newGuid();
     private final Guid OTHER_GUID = Guid.newGuid();
-
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Mock
     private VmNic nic;
@@ -92,52 +79,6 @@ public class VmNicValidatorTest {
     }
 
     @Test
-    public void unlinkedWhenUnlinkingNotSupported() throws Exception {
-        unlinkingTest(both(failsWith(EngineMessage.UNLINKING_IS_NOT_SUPPORTED))
-                .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))),
-                false,
-                false);
-    }
-
-    @Test
-    public void linkedWhenUnlinkingNotSupported() throws Exception {
-        unlinkingTest(isValid(), false, true);
-    }
-
-    @Test
-    public void unlinkedWhenUnlinkingSupported() throws Exception {
-        unlinkingTest(isValid(), true, false);
-    }
-
-    @Test
-    public void linkedWhenUnlinkingSupported() throws Exception {
-        unlinkingTest(isValid(), true, true);
-    }
-
-    @Test
-    public void nullVnicProfileWhenUnlinkingNotSupported() throws Exception {
-        vnicProfileLinkingTest(both(failsWith(EngineMessage.NULL_NETWORK_IS_NOT_SUPPORTED))
-                .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))),
-                false,
-                null);
-    }
-
-    @Test
-    public void validVnicProfileWhenUnlinkingNotSupported() throws Exception {
-        vnicProfileLinkingTest(isValid(), false, VNIC_PROFILE_ID);
-    }
-
-    @Test
-    public void nullVnicProfileWhenUnlinkingSupported() throws Exception {
-        vnicProfileLinkingTest(isValid(), true, null);
-    }
-
-    @Test
-    public void validVnicProfileWhenUnlinkingSupported() throws Exception {
-        vnicProfileLinkingTest(isValid(), true, VNIC_PROFILE_ID);
-    }
-
-    @Test
     public void e1000VmInterfaceTypeWhenNotIsCompatibleWithOs() throws Exception {
         isCompatibleWithOsTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS),
                 VmInterfaceType.e1000.getValue());
@@ -151,22 +92,6 @@ public class VmNicValidatorTest {
     @Test
     public void rtl8139VmInterfaceTypeWhenIsCompatibleWithOs() throws Exception {
         isCompatibleWithOsTest(isValid(), VmInterfaceType.rtl8139.getValue());
-    }
-
-    private void unlinkingTest(Matcher<ValidationResult> matcher, boolean networkLinkingSupported, boolean nicLinked) {
-        mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
-        when(nic.isLinked()).thenReturn(nicLinked);
-
-        assertThat(validator.linkedOnlyIfSupported(), matcher);
-    }
-
-    private void vnicProfileLinkingTest(Matcher<ValidationResult> matcher,
-            boolean networkLinkingSupported,
-            Guid vnicProfileId) {
-        mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
-        when(nic.getVnicProfileId()).thenReturn(vnicProfileId);
-
-        assertThat(validator.emptyNetworkValid(), matcher);
     }
 
     private void isCompatibleWithOsTest(Matcher<ValidationResult> matcher, int vmInterfaceType) {

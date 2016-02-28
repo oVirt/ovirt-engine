@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
@@ -40,8 +38,8 @@ public class DiskProfileHelper {
         return profile;
     }
 
-    public static ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map, Version version, DbUser user) {
-        if (map == null || !FeatureSupported.storageQoS(version)) {
+    public static ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map, DbUser user) {
+        if (map == null) {
             return ValidationResult.VALID;
         }
 

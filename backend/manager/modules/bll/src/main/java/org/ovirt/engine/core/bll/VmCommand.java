@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -356,27 +355,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         } else {
             VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
         }
-    }
-
-    protected boolean canPerformDiskHotPlug(Disk disk) {
-        return isHotPlugSupported()
-                && isDiskSupportedForPlugUnPlug(disk);
-    }
-
-    protected boolean canPerformNicHotPlug() {
-        return isHotPlugSupported()
-                && isNicSupportedForPlugUnPlug();
-    }
-
-    /**
-     * check that hotplug is enabled via the 3.1 config paramter {@literal ConfigValues.HotPlugEnabled}
-     */
-    protected boolean isHotPlugSupported() {
-        if (FeatureSupported.hotPlug(getVm().getCompatibilityVersion())) {
-            return true;
-        }
-
-        return failValidation(EngineMessage.HOT_PLUG_IS_NOT_SUPPORTED);
     }
 
     /**

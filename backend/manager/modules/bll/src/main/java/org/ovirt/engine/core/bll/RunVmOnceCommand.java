@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -65,11 +64,6 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         if (getParameters().getVmInit() != null) {
-            if (!osRepository.isWindows(getVm().getOs()) &&
-                    !FeatureSupported.cloudInit(getVm().getCompatibilityVersion())) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
-            }
-
             if (getParameters().getVmInit().isPasswordAlreadyStored()) {
                 VmBase temp = new VmBase();
                 temp.setId(getParameters().getVmId());
