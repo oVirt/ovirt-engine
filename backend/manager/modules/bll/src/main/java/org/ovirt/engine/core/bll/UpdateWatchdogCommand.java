@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
+@CanDoActionSupportsTransaction
 public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
     public UpdateWatchdogCommand(WatchdogParameters parameters) {

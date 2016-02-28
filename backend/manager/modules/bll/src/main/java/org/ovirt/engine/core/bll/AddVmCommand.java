@@ -955,12 +955,21 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void addVmWatchdog() {
         VmWatchdog vmWatchdog = getParameters().getWatchdog();
         if (vmWatchdog != null) {
-            WatchdogParameters parameters = new WatchdogParameters();
-            parameters.setId(getParameters().getVmId());
-            parameters.setAction(vmWatchdog.getAction());
-            parameters.setModel(vmWatchdog.getModel());
-            runInternalAction(VdcActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
+            VdcActionType actionType = VmDeviceUtils.hasWatchdog(getVmTemplateId()) ?
+                    VdcActionType.UpdateWatchdog : VdcActionType.AddWatchdog;
+            runInternalAction(
+                    actionType,
+                    buildWatchdogParameters(vmWatchdog),
+                    cloneContextAndDetachFromParent());
         }
+    }
+
+    private WatchdogParameters buildWatchdogParameters(VmWatchdog vmWatchdog) {
+        WatchdogParameters parameters = new WatchdogParameters();
+        parameters.setId(getParameters().getVmId());
+        parameters.setAction(vmWatchdog.getAction());
+        parameters.setModel(vmWatchdog.getModel());
+        return parameters;
     }
 
     private void addVmRngDevice() {
