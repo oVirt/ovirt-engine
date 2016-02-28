@@ -2,17 +2,13 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -23,14 +19,10 @@ import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 
 public class CreateBrickCommandTest extends BaseCommandTest {
 
-    private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private final Guid HOST_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     @Mock
@@ -46,12 +38,6 @@ public class CreateBrickCommandTest extends BaseCommandTest {
      * The command under test.
      */
     private CreateBrickCommand cmd;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_6, true),
-            mockConfig(ConfigValues.GlusterBrickProvisioningEnabled, Version.v3_5, false)
-            );
 
     @Test
     public void validateSucceeds() {
@@ -73,7 +59,6 @@ public class CreateBrickCommandTest extends BaseCommandTest {
         assertFalse(cmd.validate());
 
         mockIsGlusterEnabled(true);
-        mockCompatibilityVersion(Version.v3_5);
         assertFalse(cmd.validate());
     }
 
@@ -138,17 +123,10 @@ public class CreateBrickCommandTest extends BaseCommandTest {
         doReturn(status).when(vds).getStatus();
         mockIsGlusterEnabled(true);
         doReturn(glusterUtil).when(command).getGlusterUtil();
-        when(glusterUtil.isGlusterBrickProvisioningSupported(eq(Version.v3_6), any(Guid.class))).thenReturn(true);
-        when(glusterUtil.isGlusterBrickProvisioningSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(false);
-        mockCompatibilityVersion(Version.v3_6);
     }
 
     private void mockIsGlusterEnabled(boolean glusterService) {
         when(cluster.supportsGlusterService()).thenReturn(glusterService);
-    }
-
-    private void mockCompatibilityVersion(Version version) {
-        when(cluster.getCompatibilityVersion()).thenReturn(version);
     }
 
     private StorageDevice getStorageDevice(String name, Guid id) {

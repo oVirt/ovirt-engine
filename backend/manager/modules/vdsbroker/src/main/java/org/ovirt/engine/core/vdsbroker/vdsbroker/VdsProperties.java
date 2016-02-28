@@ -102,7 +102,6 @@ public final class VdsProperties {
     // Network related properties
     public static final String NETWORK = "network";
     public static final String LINK_ACTIVE = "linkActive";
-    public static final String BOOT_PROTOCOL = "BOOTPROTO";
     public static final String STP = "STP";
     public static final String MTU = "mtu";
     public static final String VLAN_ID = "vlanid";
@@ -110,11 +109,6 @@ public final class VdsProperties {
     public static final String FORCE = "force";
     public static final String CONNECTIVITY_CHECK = "connectivityCheck";
     public static final String CONNECTIVITY_TIMEOUT = "connectivityTimeout";
-    public static final String IP_ADDRESS = "IPADDR";
-    public static final String IPV6_ADDRESS = "IPV6ADDR";
-    public static final String NETMASK = "NETMASK";
-    public static final String GATEWAY = "GATEWAY";
-    public static final String IPV6_DEFAULT_GATEWAY = "IPV6_DEFAULTGW";
     public static final String GLOBAL_GATEWAY = "gateway";
     public static final String IPV6_GLOBAL_GATEWAY = "ipv6gateway";
     public static final String DISPLAY_NETWORK = "displayNetwork";

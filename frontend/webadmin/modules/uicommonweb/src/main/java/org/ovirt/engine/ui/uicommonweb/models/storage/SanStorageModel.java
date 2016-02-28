@@ -2,10 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -611,24 +608,6 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         }
 
         return usedLunsMessages;
-    }
-
-    public Map<LunStatus, List<LUNs>> getLunsMapByStatus(List<LunModel> lunModels) {
-        Map<LunStatus, List<LUNs>> lunsMapByStatus = new HashMap<>();
-        lunsMapByStatus.put(LunStatus.Unknown, new LinkedList<LUNs>());
-        lunsMapByStatus.put(LunStatus.Used, new LinkedList<LUNs>());
-
-        for (LunModel lunModel : lunModels) {
-            switch (lunModel.getStatus()) {
-            case Used:
-                lunsMapByStatus.get(LunStatus.Used).add(lunModel.getEntity());
-                break;
-            case Unknown:
-                lunsMapByStatus.get(LunStatus.Unknown).add(lunModel.getEntity());
-                break;
-            }
-        }
-        return lunsMapByStatus;
     }
 
     public ArrayList<String> getPartOfSdLunsMessages() {

@@ -1598,9 +1598,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The label '${NicLabel}' is already defined on other interface ${LabeledNic} on the host.")
     String OTHER_INTERFACE_ALREADY_LABELED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. SR-IOV is not supported on the selected cluster version.")
-    String ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${type}. The selected network interface ${nicName} has VFs that are in use.")
     String ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED();
 
@@ -1790,17 +1787,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks: ${networkIds} do not exist in the Data Center: ${dataCenterId}.")
     String NETWORKS_DONT_EXIST_IN_DATA_CENTER();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces can have only a single VM Logical Network, or at most one non-VM Logical Network and/or several VLAN Logical Networks: ${NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST}.")
-    String NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK();
-
     @DefaultStringValue("Cannot ${action} ${type}. At most one VLAN-untagged Logical Network is allowed on a NIC (optionally in conjunction with several VLAN Logical Networks). The following Network Interfaces violate that rule: ${NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_UNTAGGED_NETWORK_LIST}.")
     String NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_UNTAGGED_NETWORK();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following bonds consist of less than two Network Interfaces: ${NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST}.")
     String NETWORK_BONDS_INVALID_SLAVE_COUNT();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The VM(s) '${NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST}' are actively using the Logical Network(s) '${networkNames}'. Please stop the VMs and try again.")
-    String NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following VMs are actively using the Logical Network '${networkName}' : '${NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST}'. Please stop the VMs and try again.")
     String SINGLE_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS();
@@ -1885,9 +1876,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. 'Port Mirroring' and 'Qos' are not supported on passthrough profiles.")
     String ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Passthrough profile is not supported on the selected data center version.")
-    String ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be changed while the virtual machine is running")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED();
@@ -2012,9 +2000,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected display type is not supported by the operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. In this cluster version only one graphics is supported")
-    String ACTION_TYPE_FAILED_ONLY_ONE_GRAPHICS_SUPPORTED_IN_THIS_CLUSTER_LEVEL();
-
     @DefaultStringValue("Cannot ${action} ${type}. Floppy devices are not supported by the operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS();
 
@@ -2077,9 +2062,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Disk is being moved or copied.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Source and target domains must both be either file domains or block domains in this Data Center compatibility version.")
-    String ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT();
 
     @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being exported.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED();
@@ -2220,14 +2202,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("\"Local Storage\" data domain cannot be detached from Data Center")
     String CLUSTER_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE();
 
-    @DefaultStringValue("Cinder based storage is not supported with current data center compatibility version.")
-    String DATA_CENTER_CINDER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
-
     @DefaultStringValue("Cannot ${action} ${type}. There is already an existing Cinder provider with the same IP address.")
     String ACTION_TYPE_FAILED_CINDER_ALREADY_EXISTS();
-
-    @DefaultStringValue("Extend LUN size is not supported with current data center compatibility version.")
-    String ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION();
 
     @DefaultStringValue("Updating Host's Cluster cannot be performed through update Host action, please use Change Host Cluster action instead.")
     String VDS_CANNOT_UPDATE_CLUSTER();
@@ -2654,9 +2630,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. There is Network QoS on the profile, this is not supported for clusters of version ${clusterVersion}.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_IS_NOT_SUPPORTED();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Host Network QoS is not supported in the cluster's compatibility version, but QoS was configured on the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST}.")
-    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The network interface type is not compatible with the selected operating system.")
     String ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS();
@@ -3168,9 +3141,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session not found.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_INVALID();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Geo-replication is not supported.")
-    String ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} ${type}. One or more remote hosts are inaccessible.")
     String ACTION_TYPE_FAILED_ONE_OR_MORE_REMOTE_HOSTS_ARE_NOT_ACCESSIBLE();
 
@@ -3200,9 +3170,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Cannot reset the configuration to its default value.")
     String ACTION_TYPE_FAILED_GLUSTER_GEOREP_CONFIG_DEFAULT_SET();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Volume snapshot feature not supported.")
-    String ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Remote cluster is not maintained by engine.")
     String ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE();

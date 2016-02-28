@@ -21,17 +21,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -48,8 +45,6 @@ public class VnicProfileValidatorTest {
     private static final String OTHER_VNIC_PROFILE_NAME = "myothervnicprofile";
     private static final Guid DEFAULT_GUID = Guid.newGuid();
     private static final Guid OTHER_GUID = Guid.newGuid();
-
-    private static final Version VERSION = new Version(1, 0);
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
@@ -407,46 +402,5 @@ public class VnicProfileValidatorTest {
         when(vnicProfile.isPassthrough()).thenReturn(passthrough);
         when(vnicProfile.isPortMirroring()).thenReturn(portMirroring);
         when(vnicProfile.getNetworkQosId()).thenReturn(qosId);
-    }
-
-    @Test
-    public void passthroughProfileSriovSupported() {
-        passthroughProfileSriovSupportedTest(true, true);
-        assertThat(validator.passthroughProfileIsSupported(), isValid());
-    }
-
-    @Test
-    public void passthroughProfileSriovNotSupported() {
-        passthroughProfileSriovSupportedTest(true, false);
-        assertThat(validator.passthroughProfileIsSupported(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_NOT_SUPPORTED));
-    }
-
-    @Test
-    public void nonPassthroughProfileSriovSupported() {
-        passthroughProfileSriovSupportedTest(false, true);
-        assertThat(validator.passthroughProfileIsSupported(), isValid());
-    }
-
-    @Test
-    public void nonPassthroughProfileSriovNotSupported() {
-        passthroughProfileSriovSupportedTest(false, false);
-        assertThat(validator.passthroughProfileIsSupported(), isValid());
-    }
-
-    private void passthroughProfileSriovSupportedTest(boolean isVnicPassthrough, boolean isSriovSupported) {
-        when(vnicProfile.isPassthrough()).thenReturn(isVnicPassthrough);
-        mcr.mockConfigValue(ConfigValues.NetworkSriovSupported, VERSION, isSriovSupported);
-
-        // Configure network
-        Guid dcId = Guid.newGuid();
-        when(networkDao.get(any(Guid.class))).thenReturn(network);
-        when(network.getDataCenterId()).thenReturn(dcId);
-
-        // Configure dc
-        StoragePool dc = new StoragePool();
-        dc.setId(dcId);
-        dc.setCompatibilityVersion(VERSION);
-        when(dcDao.get(network.getDataCenterId())).thenReturn(dc);
     }
 }

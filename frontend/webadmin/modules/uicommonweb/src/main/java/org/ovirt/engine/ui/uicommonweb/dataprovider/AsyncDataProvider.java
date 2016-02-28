@@ -189,7 +189,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -2689,17 +2688,6 @@ public class AsyncDataProvider {
         return cachedConfigValuesPreConvert.get(key);
     }
 
-
-    public boolean supportedForUnitVmModel(ConfigurationValues feature, UnitVmModel model) {
-        Version version = model.getCompatibilityVersion();
-
-        if (version == null) {
-            return false;
-        } else {
-            return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(feature, version.getValue());
-        }
-    }
-
     /**
      * Get configuration value from 'cachedConfigValuesPreConvert' (raw values from vdc_options table).
      */
@@ -3383,11 +3371,6 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public boolean isLsmBetweenMixedStorageDomainsSupported(Version version) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.LiveStorageMigrationBetweenDifferentStorageTypes,
-                version.toString());
-    }
-
     public Integer getMaxIoThreadsPerVm() {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.MaxIoThreadsPerVm);
     }
@@ -3488,10 +3471,6 @@ public class AsyncDataProvider {
             }
         }
         return true;
-    }
-
-    public boolean isSpiceFileTransferToggleSupported(String version) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SpiceFileTransferToggleSupported, version);
     }
 
     public boolean isMigrationPoliciesSupported(Version clusterVersion) {
@@ -3839,12 +3818,6 @@ public class AsyncDataProvider {
 
     public ArrayList<LibvirtSecretUsageType> getLibvirtSecretUsageTypeList() {
         return new ArrayList<>(Arrays.asList(LibvirtSecretUsageType.values()));
-    }
-
-    public boolean isNetworkExclusivenessPermissiveValidation(String version) {
-        return (Boolean) getConfigValuePreConverted(
-                ConfigurationValues.NetworkExclusivenessPermissiveValidation,
-                version);
     }
 
     public int getUploadImageUiInactivityTimeoutInSeconds() {

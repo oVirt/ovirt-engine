@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,16 +14,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -35,22 +31,18 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
     private final InterfaceDao interfaceDao;
     private final HostDeviceDao hostDeviceDao;
     private final HostNicVfsConfigDao hostNicVfsConfigDao;
-    private final VdsDao vdsDao;
 
     @Inject
     NetworkDeviceHelperImpl(InterfaceDao interfaceDao,
             HostDeviceDao hostDeviceDao,
-            HostNicVfsConfigDao hostNicVfsConfigDao,
-            VdsDao vdsDao) {
+            HostNicVfsConfigDao hostNicVfsConfigDao) {
         Objects.requireNonNull(interfaceDao, "interfaceDao cannot be null");
         Objects.requireNonNull(hostDeviceDao, "hostDeviceDao cannot be null");
         Objects.requireNonNull(hostNicVfsConfigDao, "hostNicVfsConfigDao cannot be null");
-        Objects.requireNonNull(vdsDao, "vdsDao cannot be null");
 
         this.interfaceDao = interfaceDao;
         this.hostDeviceDao = hostDeviceDao;
         this.hostNicVfsConfigDao = hostNicVfsConfigDao;
-        this.vdsDao = vdsDao;
     }
 
     @Override
@@ -299,11 +291,6 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
     @Override
     public Map<Guid, Guid> getVfMap(final Guid hostId) {
-        final VDS host = vdsDao.get(hostId);
-        if (!FeatureSupported.sriov(host.getClusterCompatibilityVersion())) {
-            return Collections.emptyMap();
-        }
-
         final List<VdsNetworkInterface> hostNics = interfaceDao.getAllInterfacesForVds(hostId);
         final List<HostDevice> hostDevices = hostDeviceDao.getHostDevicesByHostId(hostId);
         final Map<String, HostDevice> hostDevicesByName = Entities.entitiesByName(hostDevices);

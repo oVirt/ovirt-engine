@@ -645,8 +645,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         return new UpdateClusterNetworkClusterValidator(
                 interfaceDao,
                 networkDao,
-                managementNetworkCluster,
-                getCluster().getCompatibilityVersion());
+                managementNetworkCluster);
     }
 
     public SupportedHostFeatureDao getHostFeatureDao() {

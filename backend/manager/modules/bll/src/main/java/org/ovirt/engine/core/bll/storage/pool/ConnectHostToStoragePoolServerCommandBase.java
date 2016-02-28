@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.FCPStorageHelper;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -66,16 +65,14 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
     }
 
     private void updateConnectionMapForFiberChannel(Set<StorageDomainStatus> statuses) {
-        if (FeatureSupported.refreshLunSupported(getStoragePool().getCompatibilityVersion())) {
-            List<StorageDomain> storageDomainList =
-                    getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
-            for (StorageDomain sd : storageDomainList) {
-                if (sd.getStorageType() == StorageType.FCP && statuses.contains(sd.getStatus())) {
-                    MultiValueMapUtils.addToMap(StorageType.FCP,
-                            FCPStorageHelper.getFCPConnection(),
-                            getConnectionsTypeMap());
-                    break;
-                }
+        List<StorageDomain> storageDomainList =
+                getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
+        for (StorageDomain sd : storageDomainList) {
+            if (sd.getStorageType() == StorageType.FCP && statuses.contains(sd.getStatus())) {
+                MultiValueMapUtils.addToMap(StorageType.FCP,
+                        FCPStorageHelper.getFCPConnection(),
+                        getConnectionsTypeMap());
+                break;
             }
         }
     }
@@ -94,10 +91,6 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
     }
 
     protected boolean unregisterLibvirtSecrets() {
-        if (FeatureSupported.cinderProviderSupported(getStoragePool().getCompatibilityVersion())) {
-            // Unregister all libvirt secrets if needed
-            return registerLibvirtSecrets(Collections.<LibvirtSecret>emptyList(), true);
-        }
-        return true;
+        return registerLibvirtSecrets(Collections.emptyList(), true);
     }
 }

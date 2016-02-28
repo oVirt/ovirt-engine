@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -14,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -124,18 +122,6 @@ public class VnicProfileValidator {
         }
 
         return vnicProfileNotUsedByVms();
-    }
-
-    /**
-     * @return An error iff the vNic profile is marked as 'passthrough' and SR-IOV feature isn't supported in the
-     *         profile's dc compatibility version
-     */
-    public ValidationResult passthroughProfileIsSupported() {
-        StoragePool dataCenter = dcDao.get(getNetwork().getDataCenterId());
-        Version dcCompatibilityVersion = dataCenter.getCompatibilityVersion();
-
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_NOT_SUPPORTED)
-                .when(vnicProfile.isPassthrough() && !FeatureSupported.sriov(dcCompatibilityVersion));
     }
 
     public ValidationResult passthroughNotChangedIfUsedByVms() {

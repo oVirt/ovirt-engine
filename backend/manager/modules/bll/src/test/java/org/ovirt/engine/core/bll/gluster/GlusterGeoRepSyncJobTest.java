@@ -4,7 +4,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -45,8 +44,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterGeoRepSyncJobTest {
-    private static final Guid[] CLUSTER_GUIDS = { new Guid("CC111111-1111-1111-1111-111111111111"),
-            new Guid("CC222222-2222-2222-2222-222222222222") };
+    private static final Guid CLUSTER_GUID = new Guid("CC111111-1111-1111-1111-111111111111");
 
     @Mock
     private GlusterGeoRepDao geoRepDao;
@@ -73,8 +71,6 @@ public class GlusterGeoRepSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_5, false),
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v4_0, true),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10)
@@ -95,10 +91,8 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
-        when(glusterUtil.isGlusterGeoReplicationSupported(eq(Version.v4_0), any(Guid.class))).thenReturn(true);
-        when(glusterUtil.isGlusterGeoReplicationSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(false);
         doReturn(getMockLock()).when(syncJob).acquireGeoRepSessionLock(any(Guid.class));
-        doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUIDS[1]);
+        doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUID);
     }
 
     @Test
@@ -237,18 +231,17 @@ public class GlusterGeoRepSyncJobTest {
 
     private List<Cluster> getClusters() {
         List<Cluster> list = new ArrayList<>();
-        list.add(createCluster(0, Version.v3_5));
-        list.add(createCluster(1, Version.v4_0));
+        list.add(createCluster());
         return list;
     }
 
-    private Cluster createCluster(int index, Version v) {
+    private static Cluster createCluster() {
         Cluster cluster = new Cluster();
-        cluster.setId(CLUSTER_GUIDS[index]);
+        cluster.setId(CLUSTER_GUID);
         cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);
-        cluster.setCompatibilityVersion(v);
+        cluster.setCompatibilityVersion(Version.v4_0);
         return cluster;
     }
 

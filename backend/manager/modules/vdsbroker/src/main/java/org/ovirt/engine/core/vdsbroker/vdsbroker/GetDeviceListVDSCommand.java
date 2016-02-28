@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
@@ -43,20 +42,10 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         int storageType = getParameters().getStorageType().getValue();
         List<String> lunsIdList = getParameters().getLunIds();
         String[] lunsIdArray = lunsIdList != null ? lunsIdList.toArray(new String[lunsIdList.size()]) : null;
-        if (isCheckStatusSupported()) {
-            _result = getBroker().getDeviceList(storageType, lunsIdArray, getParameters().isCheckStatus());
-        } else{
-            _result = getBroker().getDeviceList(storageType);
-        }
-
+        _result = getBroker().getDeviceList(storageType, lunsIdArray, getParameters().isCheckStatus());
 
         proceedProxyReturnValue();
         setReturnValue(parseLUNList(_result.lunList));
-    }
-
-    private boolean isCheckStatusSupported() {
-        return FeatureSupported.getDeviceListWithoutStatusSupported(
-                getVds().getClusterCompatibilityVersion());
     }
 
     public static ArrayList<LUNs> parseLUNList(Map<String, Object>[] lunList) {

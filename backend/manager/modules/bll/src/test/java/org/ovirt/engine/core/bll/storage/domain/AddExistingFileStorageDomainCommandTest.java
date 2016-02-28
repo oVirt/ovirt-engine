@@ -149,7 +149,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
     private static StoragePool getStoragePool() {
         StoragePool storagePool = new StoragePool();
         storagePool.setId(Guid.newGuid());
-        storagePool.setCompatibilityVersion(Version.v3_5);
+        storagePool.setCompatibilityVersion(Version.getLast());
         return storagePool;
     }
 

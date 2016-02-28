@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel {
     protected List<String> problematicDisksForWarning = new ArrayList<>();
-    private boolean isLsmBetweenMixedStorageDomainsSupportedInDC;
 
     public MoveDiskModel() {
         super();
@@ -122,22 +121,13 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
 
     @Override
     protected void postInitStorageDomains() {
-        isLsmBetweenMixedStorageDomainsSupportedInDC = AsyncDataProvider.getInstance().
-                isLsmBetweenMixedStorageDomainsSupported(getDataCenter().getCompatibilityVersion());
-
         super.postInitStorageDomains();
 
-        boolean someDomainsFiltered = false;
         // Add warning for raw/thin disks that reside on a file domain
         // and selected to be cold moved to a block domain (as it will cause
         // the disks to become preallocated, and it may consume considerably
         // more space on the target domain).
         for (final DiskModel diskModel : getDisks()) {
-            if (isFilterDestinationDomainsBySourceType(diskModel)) { // No need for warning for this disk domains are filtered
-                someDomainsFiltered = true;
-                continue;
-            }
-
             ListModel<StorageDomain> sourceStorageDomains = diskModel.getSourceStorageDomain();
             if (sourceStorageDomains.getItems().iterator().hasNext() &&
                     !sourceStorageDomains.getItems().iterator().next().getStorageType().isFileDomain()) {
@@ -158,10 +148,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             updateProblematicDisk(diskModel);
         }
 
-        if (someDomainsFiltered) {
-            setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationStorageFilteringNote());
-        }
-
+        setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationStorageFilteringNote());
     }
 
     private void updateProblematicDisk(DiskModel diskModel) {
@@ -221,11 +208,6 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     }
 
     @Override
-    protected boolean isFilterDestinationDomainsBySourceType(DiskModel model) {
-        return model.isPluggedToRunningVm() && !isLsmBetweenMixedStorageDomainsSupportedInDC;
-    }
-
-    @Override
     protected void doExecute() {
         super.doExecute();
 
@@ -247,13 +229,13 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     }
 
     @Override
-    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, boolean shouldFilterBySourceType, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
         // can not move to the same storage domain
         if (sourceActiveStorageDomains.contains(sd)) {
             return false;
         }
 
-        return super.allowedStorageDomain(sourceActiveStorageDomains, shouldFilterBySourceType, diskImage, templateDisk, sd);
+        return super.allowedStorageDomain(sourceActiveStorageDomains, diskImage, templateDisk, sd);
     }
 
 

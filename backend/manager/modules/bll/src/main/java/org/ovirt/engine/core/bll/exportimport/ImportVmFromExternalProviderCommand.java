@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
@@ -193,8 +192,7 @@ implements QuotaStorageDependent {
     }
 
     private boolean isHostInSupportedClusterForProxyHost(VDS host) {
-        return FeatureSupported.importVmFromExternalProvider(host.getClusterCompatibilityVersion())
-                && getClusterDao().get(host.getClusterId()).getArchitecture() != ArchitectureType.ppc64;
+        return getClusterDao().get(host.getClusterId()).getArchitecture() != ArchitectureType.ppc64;
     }
 
     @Override

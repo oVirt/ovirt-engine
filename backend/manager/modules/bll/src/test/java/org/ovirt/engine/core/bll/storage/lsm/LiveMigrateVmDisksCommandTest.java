@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -10,7 +9,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -39,9 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -62,12 +57,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     private final Guid diskProfileId = Guid.newGuid();
 
     private StoragePool storagePool;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_5, false),
-            mockConfig(ConfigValues.LiveStorageMigrationBetweenDifferentStorageTypes, Version.v3_6, true)
-    );
 
     @Mock
     private DiskImageDao diskImageDao;
@@ -237,33 +226,23 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateInvalidFileToBlock() {
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, false);
-    }
-
-    @Test
-    public void validateInvalidBlockToFile() {
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, false);
-    }
-
-    @Test
     public void validateFileToBlockSupported() {
         storagePool.setCompatibilityVersion(Version.v3_6);
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, true);
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI);
     }
 
     @Test
     public void validateBlockToFileSupported() {
         storagePool.setCompatibilityVersion(Version.v3_6);
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, true);
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS);
     }
 
     @Test
     public void validateBlockToBlock() {
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.ISCSI, true);
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.ISCSI);
     }
 
-    private void validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType sourceType, StorageType destType, boolean shouldSucceed) {
+    private void validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType sourceType, StorageType destType) {
         createParameters();
 
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
@@ -277,12 +256,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertEquals(shouldSucceed, command.validate());
-        if (!shouldSucceed) {
-            assertTrue(command.getReturnValue()
-                    .getValidationMessages()
-                    .contains(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT.toString()));
-        }
+        assertTrue(command.validate());
     }
 
     @Test
@@ -382,7 +356,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     private void initStoragePool() {
         storagePool = new StoragePool();
-        storagePool.setCompatibilityVersion(Version.v3_5);
 
         when(storagePoolDao.get(any(Guid.class))).thenReturn(storagePool);
         when(command.getStoragePoolId()).thenReturn(storagePoolId);

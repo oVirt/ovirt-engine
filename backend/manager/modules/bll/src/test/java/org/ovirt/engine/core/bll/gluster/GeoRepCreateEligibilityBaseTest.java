@@ -31,7 +31,7 @@ public class GeoRepCreateEligibilityBaseTest {
     private Guid SLAVE_VOLUME_3_ID = Guid.newGuid();
     private Guid SLAVE_VOLUME_4_ID = Guid.newGuid();
 
-    private static final Version CLUSTER_COMPATIBILITY_VERSION = Version.v3_5;
+    private static final Version CLUSTER_COMPATIBILITY_VERSION = Version.getLast();
 
     public GeoRepCreateEligibilityBaseTest() {
         super();

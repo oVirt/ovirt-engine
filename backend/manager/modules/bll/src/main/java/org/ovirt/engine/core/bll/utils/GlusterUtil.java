@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import static org.ovirt.engine.core.common.FeatureSupported.supportedInConfig;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Time;
@@ -25,7 +23,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
@@ -41,11 +38,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -66,10 +61,6 @@ public class GlusterUtil {
     private static final String HOST_NAME = "hostname";
     private static final String STATE = "state";
     private static final int PEER_IN_CLUSTER = 3;
-
-    public static final String FEATURE_GLUSTER_GEO_REPLICATION = "GLUSTER_GEO_REPLICATION";
-    public static final String FEATURE_GLUSTER_SNAPSHOT = "GLUSTER_SNAPSHOT";
-    public static final String FEATURE_GLUSTER_BRICK_MANAGEMENT = "GLUSTER_BRICK_MANAGEMENT";
 
     private GlusterUtil() {
 
@@ -394,68 +385,4 @@ public class GlusterUtil {
             return null;
         }
     }
-
-    /**
-     * Checks if the given features is supported as additional feature in the cluster
-     */
-    private boolean isFeatureSupportedAsAdditionalFeature(Guid clusterId, String featureName) {
-        Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported =
-                getClusterFeatureDao().getSupportedFeaturesByClusterId(clusterId);
-        for (SupportedAdditionalClusterFeature supportedFeature : addtionalFeaturesSupported) {
-            if (supportedFeature.getFeature().getName().equals(featureName)) {
-                return supportedFeature.isEnabled();
-            }
-        }
-        return false;
-    }
-
-    private ClusterFeatureDao getClusterFeatureDao() {
-        return DbFacade.getInstance().getClusterFeatureDao();
-    }
-
-    /**
-     *
-     * @param version
-     *            Compatibility version to check for.
-     * @return <code>true</code> if gluster geo-replication management feature is enabled, <code>false</code> if it's
-     *         not.
-     */
-    public boolean isGlusterGeoReplicationSupported(Version version, Guid clusterId) {
-        if(supportedInConfig(ConfigValues.GlusterGeoReplicationEnabled, version)){
-            return true;
-        }else if(clusterId != null){
-            return isFeatureSupportedAsAdditionalFeature(clusterId, FEATURE_GLUSTER_GEO_REPLICATION);
-        }
-        return false;
-    }
-
-    /**
-     * @param version
-     *            Compatibility version to check for.
-     * @return <code>true</code> if gluster snapshot management feature is enabled, <code>false</code> if it's not.
-     */
-    public boolean isGlusterSnapshotSupported(Version version, Guid clusterId) {
-        if (supportedInConfig(ConfigValues.GlusterVolumeSnapshotSupported, version)) {
-            return true;
-        } else if (clusterId != null) {
-            return isFeatureSupportedAsAdditionalFeature(clusterId, FEATURE_GLUSTER_SNAPSHOT);
-        }
-        return false;
-    }
-
-    /**
-     *
-     * @param version
-     *            Compatibility version to check for.
-     * @return <code>true</code> if disk provisioning feature is enabled, <code>false</code> if it's not.
-     */
-    public boolean isGlusterBrickProvisioningSupported(Version version, Guid clusterId) {
-        if (supportedInConfig(ConfigValues.GlusterBrickProvisioningEnabled, version)) {
-            return true;
-        } else if (clusterId != null) {
-            return isFeatureSupportedAsAdditionalFeature(clusterId, FEATURE_GLUSTER_BRICK_MANAGEMENT);
-        }
-        return false;
-    }
-
 }

@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -83,7 +82,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private List<VdsNetworkInterface> hostNics;
 
-    private Version sourceClusterCompatibilityVersion = getSourceCluster().getCompatibilityVersion();
     private final Version targetClusterCompatibilityVersion = getTargetCluster().getCompatibilityVersion();
     private List<Network> targetClusterNetworks;
 
@@ -156,17 +154,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         if (!(VDSStatus.PendingApproval == vds.getStatus() || isDetachedSourceCluster() || isSameManagementNetwork())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_CLUSTER_DIFFERENT_MANAGEMENT_NETWORKS);
-        }
-
-        if (FeatureSupported.hostNetworkQos(sourceClusterCompatibilityVersion)
-                && !FeatureSupported.hostNetworkQos(targetClusterCompatibilityVersion)) {
-            for (VdsNetworkInterface iface : getHostNics()) {
-                if (iface.getQos() != null) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
-                            String.format("$ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST %s",
-                                    iface.getNetworkName()));
-                }
-            }
         }
 
         return true;

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -230,9 +229,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                                                                                              addToAttachCandidateDatacenters(dataCenter, addDatacenter);
                                                                                              break;
                                                                                          case Volume:
-                                                                                             boolean isCinderSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                                                                                                     ConfigurationValues.CinderProviderSupported, dataCenter.getCompatibilityVersion().toString());
-                                                                                             addDatacenter = isCinderSupported && dataCenter.getStatus() == StoragePoolStatus.Up;
+                                                                                             addDatacenter = dataCenter.getStatus() == StoragePoolStatus.Up;
                                                                                              addToAttachCandidateDatacenters(dataCenter, addDatacenter);
                                                                                              break;
                                                                                          case ISO:

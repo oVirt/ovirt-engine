@@ -289,7 +289,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         StoragePool pool = new StoragePool();
         pool.setId(Guid.newGuid());
         pool.setName("Default");
-        pool.setCompatibilityVersion(Version.v3_5);
         return pool;
     }
 

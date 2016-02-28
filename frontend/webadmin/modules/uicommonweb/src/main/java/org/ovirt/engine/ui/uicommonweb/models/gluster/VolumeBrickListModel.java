@@ -355,7 +355,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             public void onSuccess(Object model, Object result) {
                 Cluster cluster = (Cluster) result;
                 volumeBrickModel.getForce().setIsAvailable(true);
-                volumeBrickModel.setIsBrickProvisioningSupported(GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion()));
+                volumeBrickModel.setIsBrickProvisioningSupported();
                 AsyncQuery _asyncQueryInner = new AsyncQuery();
                 _asyncQueryInner.setModel(model);
                 _asyncQueryInner.asyncCallback = new INewAsyncCallback() {

@@ -186,7 +186,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
     protected void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
         new BuilderExecutor<>(callback,
                 new NameAndDescriptionVmBaseToUnitBuilder(),
-                new HwOnlyVmBaseToUnitBuilder().withEveryFeatureSupported())
+                new HwOnlyVmBaseToUnitBuilder())
                 .build(vmBase, getModel());
     }
 

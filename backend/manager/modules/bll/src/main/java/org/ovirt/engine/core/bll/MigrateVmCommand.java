@@ -200,16 +200,14 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected void getDowntime() {
-        if (FeatureSupported.migrateDowntime(getVm().getCompatibilityVersion())) {
-            try {
-                VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
-                        new MigrateStatusVDSCommandParameters(getDestinationVdsId(), getVmId()));
-                if (retVal != null) {
-                    actualDowntime = (Integer) retVal.getReturnValue();
-                }
-            } catch (EngineException e) {
-                migrationErrorCode = e.getErrorCode();
+        try {
+            VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
+                    new MigrateStatusVDSCommandParameters(getDestinationVdsId(), getVmId()));
+            if (retVal != null) {
+                actualDowntime = (Integer) retVal.getReturnValue();
             }
+        } catch (EngineException e) {
+            migrationErrorCode = e.getErrorCode();
         }
     }
 
@@ -226,35 +224,27 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private Boolean getAutoConverge() {
-        if (FeatureSupported.autoConvergence(getVm().getCompatibilityVersion())) {
-            if (getVm().getAutoConverge() != null) {
-                return getVm().getAutoConverge();
-            }
-
-            if (getCluster().getAutoConverge() != null) {
-                return getCluster().getAutoConverge();
-            }
-
-            return Config.getValue(ConfigValues.DefaultAutoConvergence);
+        if (getVm().getAutoConverge() != null) {
+            return getVm().getAutoConverge();
         }
 
-        return null;
+        if (getCluster().getAutoConverge() != null) {
+            return getCluster().getAutoConverge();
+        }
+
+        return Config.getValue(ConfigValues.DefaultAutoConvergence);
     }
 
     private Boolean getMigrateCompressed() {
-        if (FeatureSupported.migrationCompression(getVm().getCompatibilityVersion())) {
-            if (getVm().getMigrateCompressed() != null) {
-                return getVm().getMigrateCompressed();
-            }
-
-            if (getCluster().getMigrateCompressed() != null) {
-                return getCluster().getMigrateCompressed();
-            }
-
-            return Config.getValue(ConfigValues.DefaultMigrationCompression);
+        if (getVm().getMigrateCompressed() != null) {
+            return getVm().getMigrateCompressed();
         }
 
-        return null;
+        if (getCluster().getMigrateCompressed() != null) {
+            return getCluster().getMigrateCompressed();
+        }
+
+        return Config.getValue(ConfigValues.DefaultMigrationCompression);
     }
 
     private int getMaximumMigrationDowntime() {

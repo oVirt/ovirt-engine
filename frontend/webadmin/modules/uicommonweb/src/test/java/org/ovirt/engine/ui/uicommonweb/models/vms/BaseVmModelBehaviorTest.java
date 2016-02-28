@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
@@ -14,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
@@ -107,22 +104,10 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
             }
         };
 
-        mockAsyncDataProvider(model);
-
         model.initialize(null);
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
 
         return model;
-    }
-
-    protected void mockAsyncDataProvider(UnitVmModel model) {
-        when(adp.supportedForUnitVmModel(ConfigurationValues.MultipleGraphicsSupported, model)).thenReturn(true);
-        when(adp.supportedForUnitVmModel(ConfigurationValues.SpiceFileTransferToggleSupported, model)).thenReturn(true);
-        when(adp.supportedForUnitVmModel(ConfigurationValues.AutoConvergenceSupported, model)).thenReturn(true);
-        when(adp.supportedForUnitVmModel(ConfigurationValues.MigrationCompressionSupported, model)).thenReturn(true);
-        when(adp.supportedForUnitVmModel(ConfigurationValues.IoThreadsSupported, model)).thenReturn(true);
-        when(adp.getConfigValuePreConverted(ConfigurationValues.IoThreadsSupported, CLUSTER_VERSION.getValue())).thenReturn(true);
-        when(adp.getConfigValuePreConverted(ConfigurationValues.IoThreadsSupported, Version.getLast().getValue())).thenReturn(true);
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder} */

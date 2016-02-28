@@ -20,13 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.scheduling.OS;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.NumaUtils;
 
@@ -137,13 +134,6 @@ public class InClusterUpgradeValidator {
             osToHostIdMap.put(hostOs.getOsFamily(), new HashSet<VDS>());
         }
         osToHostIdMap.get(hostOs.getOsFamily()).add(host);
-    }
-
-    public ValidationResult checkClusterUpgradeIsEnabled(final Cluster cluster) {
-        return ValidationResult.failWith(EngineMessage.MIXED_HOST_VERSIONS_NOT_ALLOWED).when(
-                Config.<Boolean>getValue(ConfigValues.CheckMixedRhelVersions, cluster.getCompatibilityVersion()
-                        .getValue())
-        );
     }
 
     private List<String> toVmEngineMessage(final VM vm, final EngineMessage error) {

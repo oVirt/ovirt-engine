@@ -321,7 +321,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     && validate(validator.passwordNotEmpty(params.isPending(),
                             params.getAuthMethod(),
                             params.getPassword()))
-                    && validate(validator.protocolIsNotXmlrpc(getCluster()));
+                    && validate(validator.protocolIsNotXmlrpc());
         }
 
         if (!(returnValue

@@ -110,8 +110,6 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand);
 
-    StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
-
     StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
@@ -163,8 +161,6 @@ public interface IVdsServer {
     OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force);
 
     OneVGReturnForXmlRpc getVGInfo(String vgUUID);
-
-    LUNListReturnForXmlRpc getDeviceList(int storageType);
 
     LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList, boolean checkStatus);
 

@@ -41,10 +41,6 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
 
     @Override
     protected boolean validate() {
-        if (!getGlusterUtil().isGlusterGeoReplicationSupported(getCluster().getCompatibilityVersion(),
-                getCluster().getId())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED);
-        }
         slaveHost = getSlaveHost();
         if (slaveHost == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);

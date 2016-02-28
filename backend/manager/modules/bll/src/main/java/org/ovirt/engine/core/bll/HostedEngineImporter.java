@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -74,8 +73,7 @@ public class HostedEngineImporter {
      */
     public void doImport(VM vm) {
         StoragePool storagePool = storagePoolDao.getForCluster(vm.getClusterId());
-        Cluster cluster = clusterDAO.get(vm.getClusterId());
-        if (!importSupported(storagePool.getCompatibilityVersion(), cluster.getCompatibilityVersion())) {
+        if (!Config.<Boolean>getValue(ConfigValues.AutoImportHostedEngine)) {
             return;
         }
         VdcReturnValueBase heVmImported;
@@ -109,12 +107,6 @@ public class HostedEngineImporter {
             }
         }
 
-    }
-
-    private boolean importSupported(Version spVersion, Version clusterVersion) {
-        return spVersion.greaterOrEquals(Version.v3_5)
-                && clusterVersion.greaterOrEquals(Version.v3_6)
-                && Config.<Boolean> getValue(ConfigValues.AutoImportHostedEngine);
     }
 
     private boolean removedHEVM(VM vm) {

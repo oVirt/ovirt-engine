@@ -1721,8 +1721,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             return;
         }
 
-        autoConverge.updateChangeability(ConfigurationValues.AutoConvergenceSupported, version);
-        migrateCompressed.updateChangeability(ConfigurationValues.MigrationCompressionSupported, version);
+        autoConverge.setIsChangeable(true);
+        migrateCompressed.setIsChangeable(true);
     }
 
     private void updateMigrateOnError() {

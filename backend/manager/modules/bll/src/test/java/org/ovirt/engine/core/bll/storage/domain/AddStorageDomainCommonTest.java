@@ -85,7 +85,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
 
         sp = new StoragePool();
         sp.setId(spId);
-        sp.setCompatibilityVersion(Version.v3_5);
+        sp.setCompatibilityVersion(Version.getLast());
         when(spDao.get(spId)).thenReturn(sp);
 
         StorageServerConnections conn = new StorageServerConnections();

@@ -163,7 +163,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     public void findProxyHostExcludesHostDueToFencingPolicy() {
         mockExistingHosts(createHost());
         FenceProxyLocator locator = setupLocator(new FencingPolicy());
-        setMinSupportedVersionForFencingPolicy(locator, Version.v3_5);
+        setMinSupportedVersionForFencingPolicy(locator, Version.v3_6);
 
         VDS proxyHost = locator.findProxyHost(false);
 
@@ -297,11 +297,11 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     @Test
     public void testProxyCompatibilityWithFencingPolicy() {
         VDS host = createHost();
-        host.setSupportedClusterLevels("3.4,3.5");
+        host.setSupportedClusterLevels("3.6");
         FenceProxyLocator locator = setupLocator();
 
-        assertTrue(locator.isFencingPolicySupported(host, Version.v3_5));
-        assertFalse(locator.isFencingPolicySupported(host, Version.v3_6));
+        assertTrue(locator.isFencingPolicySupported(host, Version.v3_6));
+        assertFalse(locator.isFencingPolicySupported(host, Version.v4_0));
     }
 
     private void mockFencedHost() {
@@ -359,7 +359,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
         host.setId(Guid.newGuid());
         host.setClusterId(clusterId);
         host.setStoragePoolId(dcId);
-        host.setClusterCompatibilityVersion(Version.v3_5);
+        host.setClusterCompatibilityVersion(Version.v3_6);
         host.setStatus(status);
         host.setHostName("host-" + host.getId());
         return host;

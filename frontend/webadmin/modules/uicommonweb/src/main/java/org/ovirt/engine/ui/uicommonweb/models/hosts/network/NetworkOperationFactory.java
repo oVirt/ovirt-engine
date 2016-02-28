@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 /**
  * A Factory responsible for providing Setup Network Operations for Network Items.<BR>
@@ -127,13 +125,7 @@ public class NetworkOperationFactory {
             networks.addAll(src.getNetworks());
         }
 
-        final String clusterCompatibilityVersion = getClusterCompatibilityVersion(op1);
-        final boolean permissiveValidation = AsyncDataProvider.getInstance()
-                .isNetworkExclusivenessPermissiveValidation(clusterCompatibilityVersion);
-
         // go over the networks and check whether they comply, if not - the reason is important
-        boolean vlanFound = false;
-        String nonVlanVmNetwork = null;
         int nonVlanCounter = 0;
         for (LogicalNetworkModel network : networks) {
             if (!network.isManaged()) {
@@ -158,13 +150,8 @@ public class NetworkOperationFactory {
                 }
             }
 
-            if (network.hasVlan()) {
-                vlanFound = true;
-            } else {
+            if (!network.hasVlan()) {
                 ++nonVlanCounter;
-                if (network.getNetwork().isVmNetwork()) {
-                    nonVlanVmNetwork = network.getName();
-                }
             }
 
             if (nonVlanCounter > 1) {
@@ -175,17 +162,6 @@ public class NetworkOperationFactory {
                 if (op1.aggregatesNetworks()) {
                     dst.setCulpritNetwork(network.getName());
                     return NetworkOperation.NULL_OPERATION_BATCH_TOO_MANY_NON_VLANS;
-                }
-            } else {
-                if (!permissiveValidation && nonVlanVmNetwork != null && vlanFound) {
-                    if (op1 instanceof LogicalNetworkModel) {
-                        return NetworkOperation.NULL_OPERATION_VM_WITH_VLANS;
-                    }
-
-                    if (op1.aggregatesNetworks()) {
-                        dst.setCulpritNetwork(nonVlanVmNetwork);
-                        return NetworkOperation.NULL_OPERATION_BATCH_VM_WITH_VLANS;
-                    }
                 }
             }
 
@@ -225,11 +201,6 @@ public class NetworkOperationFactory {
         }
 
         return NetworkOperation.NULL_OPERATION;
-    }
-
-    private static String getClusterCompatibilityVersion(NetworkItemModel networkItemModel) {
-        final VDS host = networkItemModel.getSetupModel().getEntity();
-        return host.getClusterCompatibilityVersion().getValue();
     }
 
     private static boolean noValidOperationForFirstOperand(NetworkItemModel<?> op1) {

@@ -111,15 +111,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmGraphicsDevices() {
         boolean graphicsOverriden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
-        boolean usesGraphicsAsDevice = FeatureSupported.graphicsDeviceEnabled(vm.getCompatibilityVersion());
 
         Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
         Map<String, Object> specParamsFromVm = buildVmGraphicsSpecParamsFromVm(infos);
 
         if (graphicsOverriden) {
-            buildVmGraphicsDevicesOverriden(infos, usesGraphicsAsDevice, specParamsFromVm);
+            buildVmGraphicsDevicesOverriden(infos, specParamsFromVm);
         } else {
-            buildVmGraphicsDevicesFromDb(usesGraphicsAsDevice, specParamsFromVm);
+            buildVmGraphicsDevicesFromDb(specParamsFromVm);
         }
     }
 
@@ -143,21 +142,17 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * Used when vm is run via run once.
      *
      * @param graphicsInfos - vm graphics
-     * @param usesGraphicsAsDevice - true if vdsm understands graphics as a separate device, false when vdsm creates
-     *                             video and graphics from conf.
      */
-    private void buildVmGraphicsDevicesOverriden(Map<GraphicsType, GraphicsInfo> graphicsInfos, boolean usesGraphicsAsDevice, Map<String, Object> extraSpecParams) {
-        if (usesGraphicsAsDevice) {
-            for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : graphicsInfos.entrySet()) {
-                Map struct = new HashMap();
-                struct.put(VdsProperties.Type, VmDeviceGeneralType.GRAPHICS.getValue());
-                struct.put(VdsProperties.Device, graphicsInfo.getKey().name().toLowerCase());
-                struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
-                if (extraSpecParams != null) {
-                    struct.put(VdsProperties.SpecParams, extraSpecParams);
-                }
-                devices.add(struct);
+    private void buildVmGraphicsDevicesOverriden(Map<GraphicsType, GraphicsInfo> graphicsInfos, Map<String, Object> extraSpecParams) {
+        for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : graphicsInfos.entrySet()) {
+            Map struct = new HashMap();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.GRAPHICS.getValue());
+            struct.put(VdsProperties.Device, graphicsInfo.getKey().name().toLowerCase());
+            struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
+            if (extraSpecParams != null) {
+                struct.put(VdsProperties.SpecParams, extraSpecParams);
             }
+            devices.add(struct);
         }
 
         if (!graphicsInfos.isEmpty()) {
@@ -171,14 +166,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     /**
      * Builds vm graphics from database.
-     *
-     * @param usesGraphicsAsDevice - true if vdsm understands graphics as a separate device, false when vdsm creates
-     *                             video and graphics from conf.
      */
-    private void buildVmGraphicsDevicesFromDb(boolean usesGraphicsAsDevice, Map<String, Object> extraSpecParams) {
-        if (usesGraphicsAsDevice) {
-            buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams);
-        }
+    private void buildVmGraphicsDevicesFromDb(Map<String, Object> extraSpecParams) {
+        buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams);
 
         String legacyDisplay = deriveDisplayTypeLegacy();
         if (legacyDisplay != null) {

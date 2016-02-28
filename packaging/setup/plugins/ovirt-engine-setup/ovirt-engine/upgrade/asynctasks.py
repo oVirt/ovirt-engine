@@ -19,7 +19,6 @@
 """ DB Async tasks handling plugin."""
 
 
-import distutils.version
 import gettext
 import time
 
@@ -112,11 +111,6 @@ class Plugin(plugin.PluginBase):
             )
 
     def _clearZombies(self):
-        inst_v = distutils.version.LooseVersion(
-            self.environment[
-                osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
-            ]
-        ).version[:2]
         _args_base = (
             oenginecons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
@@ -132,22 +126,21 @@ class Plugin(plugin.PluginBase):
             ]
         }
 
-        if inst_v > [3, 4]:
-            # removing zombie commands if present (just for 3.5 and upper)
-            _args_commands = _args_base + ('-r', '-Z',)
-            rc, tasks, stderr = self.execute(
-                args=_args_commands,
-                raiseOnError=False,
-                envAppend=envPwd,
-            )
-            if rc:
-                raise RuntimeError(
-                    _(
-                        'Failed to clear zombie commands. '
-                        'Please access support in attempt to resolve '
-                        'the problem'
-                    )
+        # removing zombie commands if present
+        _args_commands = _args_base + ('-r', '-Z',)
+        rc, tasks, stderr = self.execute(
+            args=_args_commands,
+            raiseOnError=False,
+            envAppend=envPwd,
+        )
+        if rc:
+            raise RuntimeError(
+                _(
+                    'Failed to clear zombie commands. '
+                    'Please access support in attempt to resolve '
+                    'the problem'
                 )
+            )
 
         # than remove zombie tasks ans related jobs and compensation entries
         _args_tasks = _args_base + ('-R', '-z', '-A',)

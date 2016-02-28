@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.common.errors.EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK;
+import static org.ovirt.engine.core.common.errors.EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_UNTAGGED_NETWORK;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +80,7 @@ public class NetworkAttachmentsValidatorTest {
                 Arrays.asList(vlanNetwork, vmNetwork1, vmNetwork2, nonVmNetwork1, nonVmNetwork2));
 
         when(networkExclusivenessValidator.getViolationMessage())
-                .thenReturn(NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK);
+                .thenReturn(NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_UNTAGGED_NETWORK);
     }
 
     private Network createNetworkWithId() {
@@ -117,7 +117,7 @@ public class NetworkAttachmentsValidatorTest {
 
         assertThat(networkTypeCaptor.getValue(), is(expectedNetworksTypes));
         final Matcher<? super ValidationResult> matcher =
-                valid ? isValid() : failsWith(NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK);
+                valid ? isValid() : failsWith(NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_UNTAGGED_NETWORK);
         assertThat(actual, matcher);
     }
 

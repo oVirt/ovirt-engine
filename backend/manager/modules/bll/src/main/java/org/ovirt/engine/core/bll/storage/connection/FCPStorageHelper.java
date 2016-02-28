@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class FCPStorageHelper extends StorageHelperBase {
 
@@ -76,10 +74,7 @@ public class FCPStorageHelper extends StorageHelperBase {
             int type,
             LUNs lun,
             Guid storagePoolId) {
-        if (Guid.isNullOrEmpty(storagePoolId) || !FeatureSupported.refreshLunSupported(DbFacade.getInstance()
-                .getStoragePoolDao()
-                .get(storagePoolId)
-                .getCompatibilityVersion())) {
+        if (Guid.isNullOrEmpty(storagePoolId)) {
             return new Pair<>(true, null);
         }
 

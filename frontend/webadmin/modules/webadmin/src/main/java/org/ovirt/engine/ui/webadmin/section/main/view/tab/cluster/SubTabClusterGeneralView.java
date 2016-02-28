@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
-import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -144,8 +143,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<Cluster, Cl
     public void setMainTabSelectedItem(Cluster selectedItem) {
         driver.edit(getDetailModel());
         form.update();
-        glusterSwiftPanel.setVisible(selectedItem.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterSwiftSupported(selectedItem.getCompatibilityVersion()));
+        glusterSwiftPanel.setVisible(false);
     }
 
     @Override

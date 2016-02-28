@@ -2,14 +2,11 @@ package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
-import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class VfsConfigValidator {
@@ -49,18 +46,6 @@ public class VfsConfigValidator {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED,
                 getNicNameReplacement())
                 .when(oldVfsConfig == null);
-    }
-
-    /**
-     * @return An error iff SR-IOV feature doesn't supported in the nic's cluster compatibility version
-     */
-    public ValidationResult sriovFeatureSupported() {
-
-        VDS host = getDbFacade().getVdsDao().get(getNic().getVdsId());
-        Version clusterCompVer = host.getClusterCompatibilityVersion();
-
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED)
-                .unless(FeatureSupported.sriov(clusterCompVer));
     }
 
     /**

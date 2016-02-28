@@ -4,13 +4,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -25,9 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LunDao;
@@ -36,8 +32,6 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     private static final String STORAGE = "STORAGE";
-    private static final Version SUPPORTED_VERSION = Version.v3_6;
-    private static final Version UNSUPPORTED_VERSION = Version.v3_5;
     private Guid sdId;
     private StorageDomain sd;
     private StoragePool sp;
@@ -52,11 +46,6 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     @Mock
     private LunDao lunsDao;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.RefreshLunSupported, SUPPORTED_VERSION.getValue(), true),
-            mockConfig(ConfigValues.RefreshLunSupported, UNSUPPORTED_VERSION.getValue(), false));
 
     @Before
     public void setUp() {
@@ -111,14 +100,6 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         sd.setStorageFormat(StorageFormatType.V3);
         sd.setStorage(STORAGE);
         return sd;
-    }
-
-    @Test
-    public void validateWrongVersion() {
-        sp.setCompatibilityVersion(UNSUPPORTED_VERSION);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
-        sp.setCompatibilityVersion(SUPPORTED_VERSION);
     }
 
     @Test

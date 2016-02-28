@@ -388,23 +388,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setVmTicket(String vmId,
-            String otp64,
-            String sec,
-            String connectionAction,
-            Map<String, String> params) {
-        JsonRpcRequest request =
-                new RequestBuilder("VM.setTicket").withParameter("vmID", vmId)
-                        .withParameter("password", otp64)
-                        .withParameter("ttl", sec)
-                        .withParameter("existingConnAction", connectionAction)
-                        .withParameter("params", params)
-                        .build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc addNetwork(String bridge,
             String vlan,
             String bond,
@@ -793,18 +776,6 @@ public class JsonRpcVdsServer implements IVdsServer {
                         storageType)
                         .withOptionalParameterAsList("guids", devicesListArray)
                         .withParameter("checkStatus", checkStatus)
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseType(Object[].class)
-                        .withResponseKey("devList");
-        return new LUNListReturnForXmlRpc(response);
-    }
-
-    @Override
-    public LUNListReturnForXmlRpc getDeviceList(int storageType) {
-        JsonRpcRequest request =
-                new RequestBuilder("Host.getDeviceList").withParameter("storageType",
-                        storageType)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseType(Object[].class)

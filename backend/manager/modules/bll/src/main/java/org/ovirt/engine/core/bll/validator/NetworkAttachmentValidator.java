@@ -1,14 +1,11 @@
 package org.ovirt.engine.core.bll.validator;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -19,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -38,7 +34,6 @@ public class NetworkAttachmentValidator {
     private final VdsDao vdsDao;
     private final NetworkDao networkDao;
     private final NetworkClusterDao networkClusterDao;
-    private final VmInterfaceManager vmInterfaceManager;
     private final VmDao vmDao;
 
     private final NetworkAttachment attachment;
@@ -50,7 +45,6 @@ public class NetworkAttachmentValidator {
 
     public NetworkAttachmentValidator(NetworkAttachment attachment,
             VDS host,
-            VmInterfaceManager vmInterfaceManager,
             NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
             VdsDao vdsDao,
@@ -58,7 +52,6 @@ public class NetworkAttachmentValidator {
 
         this.attachment = attachment;
         this.host = host;
-        this.vmInterfaceManager = vmInterfaceManager;
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
@@ -101,24 +94,6 @@ public class NetworkAttachmentValidator {
         }
 
         return ValidationResult.VALID;
-    }
-
-    public ValidationResult networkNotUsedByVms() {
-        return networkNotUsedByVms(getNetwork().getName());
-    }
-
-    private ValidationResult networkNotUsedByVms(String networkName) {
-
-        if (FeatureSupported.changeNetworkUsedByVmSupported(host.getClusterCompatibilityVersion())) {
-            return ValidationResult.VALID;
-        }
-
-        List<String> vmNames =
-                vmInterfaceManager.findActiveVmsUsingNetworks(host.getId(), Collections.singleton(networkName));
-
-        return new PluralMessages().getNetworkInUse(vmNames,
-                EngineMessage.VAR__ENTITIES__VM,
-                EngineMessage.VAR__ENTITIES__VMS);
     }
 
     public ValidationResult notExternalNetwork() {

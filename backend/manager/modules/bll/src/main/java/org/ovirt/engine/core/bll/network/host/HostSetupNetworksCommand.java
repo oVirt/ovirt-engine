@@ -30,7 +30,6 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -445,8 +444,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             getRemovedBondNames());
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
         hostCmdParams.setConnectivityTimeout(timeout);
-        boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(getVds().getClusterCompatibilityVersion());
-        hostCmdParams.setHostNetworkQosSupported(hostNetworkQosSupported);
         hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged());
         return hostCmdParams;
     }

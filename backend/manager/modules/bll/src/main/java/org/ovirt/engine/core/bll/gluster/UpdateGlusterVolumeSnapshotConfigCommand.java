@@ -59,10 +59,6 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
             return false;
         }
 
-        if (!getGlusterUtil().isGlusterSnapshotSupported(getCluster().getCompatibilityVersion(), getCluster().getId())) {
-            failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
-        }
-
         if (getParameters().getConfigParams() == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAMS_IS_EMPTY);
             return false;

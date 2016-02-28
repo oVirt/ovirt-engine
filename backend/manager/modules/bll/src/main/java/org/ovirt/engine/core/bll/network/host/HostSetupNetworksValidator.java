@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.validator.network.DetachNetworkUsedByVmValidato
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -46,7 +45,6 @@ import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -76,7 +74,6 @@ public class HostSetupNetworksValidator {
     private VDS host;
     private BusinessEntityMap<VdsNetworkInterface> existingInterfacesMap;
     private List<NetworkAttachment> existingAttachments;
-    private boolean hostNetworkQosSupported;
     private List<VdsNetworkInterface> removedBondVdsNetworkInterface;
     private BusinessEntityMap<VdsNetworkInterface> removedBondVdsNetworkInterfaceMap;
     private List<NetworkAttachment> removedNetworkAttachments;
@@ -127,10 +124,7 @@ public class HostSetupNetworksValidator {
             existingAttachments);
         existingAttachmentsByNetworkId = new MapNetworkAttachments(existingAttachments).byNetworkId();
 
-        setSupportedFeatures();
-
-        networkExclusivenessValidator =
-                networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(host.getSupportedClusterVersionsSet());
+        networkExclusivenessValidator = networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator();
 
         existingAttachmentsById = Entities.businessEntitiesById(existingAttachments);
         createOrUpdateBondBusinessEntityMap = new BusinessEntityMap<>(params.getCreateOrUpdateBonds());
@@ -143,12 +137,6 @@ public class HostSetupNetworksValidator {
         this.networkAttachmentIpConfigurationValidator = networkAttachmentIpConfigurationValidator;
 
         this.unmanagedNetworkValidator = unmanagedNetworkValidator;
-    }
-
-    private void setSupportedFeatures() {
-        Version clusterCompatibilityVersion = host.getClusterCompatibilityVersion();
-
-        hostNetworkQosSupported = FeatureSupported.hostNetworkQos(clusterCompatibilityVersion);
     }
 
     List<String> translateErrorMessages(List<String> messages) {
@@ -261,11 +249,6 @@ public class HostSetupNetworksValidator {
             if (networkAttachment.isQosOverridden()) {
                 Network network = getNetworkRelatedToAttachment(networkAttachment);
                 String networkName = network.getName();
-                if (!hostNetworkQosSupported) {
-                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
-                        ReplacementUtils.getVariableAssignmentStringWithMultipleValues(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
-                            networkName));
-                }
 
                 HostNetworkQos hostNetworkQos = networkAttachment.getHostNetworkQos();
                 HostNetworkQosValidator qosValidator = createHostNetworkQosValidator(hostNetworkQos);
@@ -695,7 +678,6 @@ public class HostSetupNetworksValidator {
 
             boolean attachmentUpdated = !isNewAttachment(attachment.getId());
             if (attachmentUpdated) {
-                vr = skipValidation(vr) ? vr : validator.networkNotUsedByVms();
                 vr = skipValidation(vr) ? vr : notMovingLabeledNetworkToDifferentNic(attachment);
             }
         }
@@ -831,7 +813,6 @@ public class HostSetupNetworksValidator {
     private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachmentToValidate) {
         return new NetworkAttachmentValidator(attachmentToValidate,
             host,
-            new VmInterfaceManager(),
             networkClusterDao,
             networkDao,
             vdsDao,

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
@@ -300,27 +299,13 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         StorageDomain sourceDomain = getImageSourceDomain(parameters.getImageId());
         StorageDomain destDomain = getStorageDomainById(parameters.getTargetStorageDomainId(), getStoragePoolId());
 
-        return validateSourceStorageDomain(sourceDomain)
-                && validateDestStorage(destDomain)
-                && (liveStorageMigrationSupportedBetweenDifferentStorageTypes() ||
-                validateDestStorageAndSourceStorageOfSameTypes(destDomain, sourceDomain));
+        return validateSourceStorageDomain(sourceDomain) && validateDestStorage(destDomain);
     }
 
     private StorageDomain getImageSourceDomain(Guid imageId) {
         DiskImage diskImage = getDiskImageByImageId(imageId);
         Guid domainId = diskImage.getStorageIds().get(0);
         return getStorageDomainById(domainId, getStoragePoolId());
-    }
-
-    private boolean liveStorageMigrationSupportedBetweenDifferentStorageTypes() {
-        return FeatureSupported.liveStorageMigrationBetweenDifferentStorageTypesSupported(getStoragePool().getCompatibilityVersion());
-    }
-
-    private boolean validateDestStorageAndSourceStorageOfSameTypes(StorageDomain destDomain, StorageDomain sourceDomain) {
-        if (destDomain.getStorageType().getStorageSubtype() != sourceDomain.getStorageType().getStorageSubtype()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT);
-        }
-        return true;
     }
 
     private boolean isValidParametersList() {

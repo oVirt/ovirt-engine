@@ -608,10 +608,8 @@ public abstract class RunOnceModel extends Model {
 
         setSpiceFileTransferEnabled(new EntityModel<Boolean>());
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
-        boolean spiceFileTransferToggle =
-                AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(vm.getCompatibilityVersion().toString());
-        getSpiceFileTransferEnabled().setIsChangeable(spiceFileTransferToggle);
-        getSpiceFileTransferEnabled().setIsAvailable(spiceFileTransferToggle);
+        getSpiceFileTransferEnabled().setIsChangeable(true);
+        getSpiceFileTransferEnabled().setIsAvailable(true);
 
         setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());

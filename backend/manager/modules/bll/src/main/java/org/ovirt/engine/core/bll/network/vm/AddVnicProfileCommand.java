@@ -31,7 +31,6 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.portMirroringNotSetIfExternalNetwork())
                 && validator.validateCustomProperties(getReturnValue().getValidationMessages())
-                && validate(validator.passthroughProfileIsSupported())
                 && validate(validator.passthroughProfileContainsSupportedProperties());
     }
 

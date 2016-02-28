@@ -412,12 +412,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private void refreshGlusterStorageDevices() {
-        if(getGlusterUtil().isGlusterBrickProvisioningSupported(getCluster().getCompatibilityVersion(), getCluster().getId())){
-            try{
-                runInternalAction(VdcActionType.SyncStorageDevices, new SyncGlusterStorageDevicesParameter(getVds().getId(), true));
-            } catch (EngineException e) {
-                log.error("Could not refresh storage devices from gluster host '{}'", getVds().getName());
-            }
+        try{
+            runInternalAction(VdcActionType.SyncStorageDevices, new SyncGlusterStorageDevicesParameter(getVds().getId(), true));
+        } catch (EngineException e) {
+            log.error("Could not refresh storage devices from gluster host '{}'", getVds().getName());
         }
     }
 

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -34,9 +33,6 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     private static final Guid TEST_DC_ID2 = Guid.newGuid();
     private static final Guid TEST_CURRENT_MANAGMENT_NETWORK_ID = Guid.newGuid();
     protected static final Guid TEST_CLUSTER_ID = Guid.newGuid();
-
-    private static final String CLUSTER_VERSION = "7";
-
     private static final String NETWORK_NAME = RandomUtils.instance().nextString(
             RandomUtils.instance().nextInt(1, 10));
 
@@ -60,9 +56,6 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     @Mock
     protected Cluster cluster;
 
-    @Mock
-    protected Version version;
-
     protected T validator;
 
     @Rule
@@ -70,7 +63,6 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
 
     @Before
     public void setup() {
-        when(version.getValue()).thenReturn(CLUSTER_VERSION);
         when(network.getName()).thenReturn(NETWORK_NAME);
         when(currentManagementNetwork.getId()).thenReturn(TEST_CURRENT_MANAGMENT_NETWORK_ID);
 

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -553,11 +552,6 @@ public class VmHandler {
         boolean result = VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType);
         if (!result) {
             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
-        }
-
-        if (graphics.size() > 1 && !FeatureSupported.multipleGraphicsSupported(clusterVersion)) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_GRAPHICS_SUPPORTED_IN_THIS_CLUSTER_LEVEL.name());
-            result = false;
         }
 
         return result;

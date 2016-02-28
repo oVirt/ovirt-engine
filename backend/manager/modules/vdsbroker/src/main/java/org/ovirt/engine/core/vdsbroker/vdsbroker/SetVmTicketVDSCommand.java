@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -17,18 +16,8 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
 
     @Override
     protected void executeVdsBrokerCommand() {
-        if (FeatureSupported.graphicsDeviceEnabled(getVds().getClusterCompatibilityVersion())) {
-            setTicketUsingUpdateDevice();
-        } else {
-            setTicketLegacy();
-        }
-
+        setTicketUsingUpdateDevice();
         proceedProxyReturnValue();
-    }
-
-    private void setTicketLegacy() {
-        status = getBroker().setVmTicket(getParameters().getVmId().toString(), getParameters().getTicket(),
-                String.valueOf(getParameters().getValidTime()), connectionAction, getUidParams());
     }
 
     /**

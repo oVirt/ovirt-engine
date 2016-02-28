@@ -2,12 +2,10 @@ package org.ovirt.engine.core.vdsbroker;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.protocol.Protocol;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IIrsServer;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsServerConnector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsServerWrapper;
@@ -21,7 +19,6 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public class TransportFactory {
     public static IIrsServer createIrsServer(VdsProtocol vdsProtocol,
-            Version version,
             String hostname,
             int port,
             int clientTimeOut,
@@ -51,7 +48,6 @@ public class TransportFactory {
     }
 
     public static IVdsServer createVdsServer(VdsProtocol vdsProtocol,
-            Version version,
             String hostname,
             int port,
             int clientTimeOut,
@@ -68,7 +64,7 @@ public class TransportFactory {
                         Config.getValue(ConfigValues.EncryptHostCommunication));
 
         if (VdsProtocol.STOMP == vdsProtocol) {
-            String eventQueue = getEventsQueue(version);
+            String eventQueue = Config.getValue(ConfigValues.EventQueueName);
             vdsServer = new JsonRpcVdsServer(JsonRpcUtils.createStompClient(hostname,
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
                     Config.getValue(ConfigValues.EncryptHostCommunication),
@@ -85,13 +81,5 @@ public class TransportFactory {
             vdsServer = new VdsServerWrapper(returnValue.getFirst(), httpClient);
         }
         return vdsServer;
-    }
-
-    private static String getEventsQueue(Version version) {
-        String eventsQueue = null;
-        if (FeatureSupported.events(version)) {
-            eventsQueue = Config.getValue(ConfigValues.EventQueueName);
-        }
-        return eventsQueue;
     }
 }

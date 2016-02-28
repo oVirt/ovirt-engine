@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -46,10 +45,6 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     protected boolean validate() {
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
-        }
-
-        if (!FeatureSupported.refreshLunSupported(getStoragePool().getCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
         }
 
         if (!(checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {

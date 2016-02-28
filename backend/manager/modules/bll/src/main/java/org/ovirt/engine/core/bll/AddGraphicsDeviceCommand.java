@@ -3,9 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -44,19 +42,6 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
             for (GraphicsDevice device : devices) {
                 if (device.getGraphicsType().equals(getParameters().getDev().getGraphicsType())) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_DEVICE_WITH_THIS_GRAPHICS_ALLOWED);
-                }
-            }
-
-            if (devices.size() > 0) {
-                // it means that with the one to be added it would be more than one, need to check if supported
-                Cluster cluster = getCluster();
-                if (cluster == null) {
-                    // instance type - supported
-                    return true;
-                }
-
-                if (!FeatureSupported.multipleGraphicsSupported(cluster.getCompatibilityVersion())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_GRAPHICS_SUPPORTED_IN_THIS_CLUSTER_LEVEL);
                 }
             }
 

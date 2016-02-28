@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -74,11 +73,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
     }
 
     private AttachNetworkClusterValidator createNetworkClusterValidator() {
-        return new AttachNetworkClusterValidator(interfaceDao, networkDao, getNetworkCluster(), getClusterVersion());
-    }
-
-    private Version getClusterVersion() {
-        return getCluster().getCompatibilityVersion();
+        return new AttachNetworkClusterValidator(interfaceDao, networkDao, getNetworkCluster());
     }
 
     private boolean logicalNetworkExists() {

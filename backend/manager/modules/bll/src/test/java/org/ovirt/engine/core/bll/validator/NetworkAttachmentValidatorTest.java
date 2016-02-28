@@ -1,30 +1,24 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -37,11 +31,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -63,22 +54,13 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     private VdsDao vdsDaoMock;
 
     @Mock
-    private NetworkValidator networkValidatorMock;
-
-    @Mock
-    VmInterfaceManager vmInterfaceManager;
+    private NetworkValidator networkValidatorMock;;
 
     @Mock
     private ManagementNetworkUtil managementNetworkUtilMock;
 
     @Mock
     private VmDao vmDao;
-
-    @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_5, false),
-        mockConfig(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_6, true));
-
 
     private final VDS host;
 
@@ -92,7 +74,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachment) {
         return new NetworkAttachmentValidator(attachment,
             host,
-            vmInterfaceManager,
             networkClusterDaoMock,
             networkDaoMock,
             vdsDaoMock,
@@ -522,66 +503,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testNetworkNotUsedByVmsWhenNotUsed() {
-        Network network = new Network();
-        network.setId(Guid.newGuid());
-        network.setName("name");
-        host.setClusterCompatibilityVersion(Version.v3_5);
-
-        NetworkAttachment networkAttachment = new NetworkAttachment();
-        networkAttachment.setNetworkId(network.getId());
-
-        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
-
-        when(vmInterfaceManager
-            .findActiveVmsUsingNetworks(eq(host.getId()), collectionContainingOneGivenNetworkName(network.getName())))
-            .thenReturn(Collections.<String>emptyList());
-
-        when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
-
-        assertThat(validator.networkNotUsedByVms(), isValid());
-    }
-
-    @Test
-    public void testNetworkNotUsedByVmsWhenUsedChangeNotSupported() {
-        Network network = new Network();
-        network.setId(Guid.newGuid());
-        network.setName("name");
-
-        NetworkAttachment networkAttachment = new NetworkAttachment();
-        networkAttachment.setNetworkId(network.getId());
-
-        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
-
-        when(vmInterfaceManager
-            .findActiveVmsUsingNetworks(eq(host.getId()), collectionContainingOneGivenNetworkName(network.getName())))
-            .thenReturn(Collections.singletonList("networkName"));
-
-        when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
-
-        host.setClusterCompatibilityVersion(Version.v3_5);
-
-        assertThat(validator.networkNotUsedByVms(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE));
-    }
-
-    @Test
-    public void testNetworkNotUsedByVmsWhenUsedChangeSupported() {
-        Network network = new Network();
-        network.setId(Guid.newGuid());
-        network.setName("name");
-
-        NetworkAttachment networkAttachment = new NetworkAttachment();
-        networkAttachment.setNetworkId(network.getId());
-
-        when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
-        host.setClusterCompatibilityVersion(Version.v3_6);
-
-        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
-
-        assertThat(validator.networkNotUsedByVms(), isValid());
-    }
-
-    @Test
     public void testExistingAttachmentIsReusedNotReused() {
         Guid networkId = Guid.newGuid();
 
@@ -636,15 +557,4 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
                 createNetworkAttachmentValidator(attachment).existingAttachmentIsReused(existingAttachmentsByNetworkId),
                 isValid());
     }
-
-    private Collection<String> collectionContainingOneGivenNetworkName(final String name) {
-        return argThat(new ArgumentMatcher<Collection<String>>() {
-            @Override
-            public boolean matches(Object argument) {
-                //noinspection unchecked
-                return ((Collection<String>) argument).contains(name);
-            }
-        });
-    }
-
 }

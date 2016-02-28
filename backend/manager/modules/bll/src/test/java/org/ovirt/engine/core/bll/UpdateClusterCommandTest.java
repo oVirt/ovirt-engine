@@ -472,26 +472,9 @@ public class UpdateClusterCommandTest {
         cpuExists();
         architectureIsUpdatable();
         cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
-        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator)
-                .checkClusterUpgradeIsEnabled(any(Cluster.class));
         assertTrue(cmd.validate());
         verify(inClusterUpgradeValidator, times(1)).isUpgradePossible(anyList(), anyList());
         verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
-        verify(inClusterUpgradeValidator, times(1)).checkClusterUpgradeIsEnabled(any(Cluster.class));
-    }
-
-    @Test
-    public void shouldCheckIfMixedHostOsIsAllowed() {
-        createCommandWithDefaultCluster();
-        cpuExists();
-        architectureIsUpdatable();
-        cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
-        doReturn(new ValidationResult(EngineMessage.CLUSTER_UPGRADE_CAN_NOT_BE_STARTED))
-                .when(inClusterUpgradeValidator).checkClusterUpgradeIsEnabled(any(Cluster.class));
-        assertFalse(cmd.validate());
-        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
-        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
-        verify(inClusterUpgradeValidator, times(1)).checkClusterUpgradeIsEnabled(any(Cluster.class));
     }
 
     @Test

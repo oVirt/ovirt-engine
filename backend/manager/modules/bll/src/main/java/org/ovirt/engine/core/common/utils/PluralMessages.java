@@ -13,10 +13,6 @@ public class PluralMessages {
             EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES);
     }
 
-    public ValidationResult getNetworkInUse(Collection<String> vmNames) {
-        return getNetworkInUse(vmNames, EngineMessage.VAR__ENTITIES__VM, EngineMessage.VAR__ENTITIES__VMS);
-    }
-
     /**
      * @param names names of entities using the network
      */

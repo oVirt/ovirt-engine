@@ -354,18 +354,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.setVmTicket(vmId, otp64, sec, connectionAction, params);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options) {
         try {
@@ -621,17 +609,6 @@ public class VdsServerWrapper implements IVdsServer {
         try {
             String[] idsList = devicesList == null ? new String[] {} : devicesList;
             Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceList(storageType, idsList, checkStatus);
-            LUNListReturnForXmlRpc wrapper = new LUNListReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-    }
-
-    @Override
-    public LUNListReturnForXmlRpc getDeviceList(int storageType) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceList(storageType);
             LUNListReturnForXmlRpc wrapper = new LUNListReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

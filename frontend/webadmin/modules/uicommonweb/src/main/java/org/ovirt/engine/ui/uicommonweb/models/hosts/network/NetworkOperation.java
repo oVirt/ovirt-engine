@@ -617,41 +617,6 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_VM_WITH_VLANS {
-
-        @Override
-        public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationVmWithVlans();
-        }
-
-        @Override
-        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return getVerb(op1);
-        }
-
-        @Override
-        public boolean isNullOperation() {
-            return true;
-        }
-    },
-    NULL_OPERATION_BATCH_VM_WITH_VLANS {
-
-        @Override
-        public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationVmWithVlans();
-        }
-
-        @Override
-        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return getVerb(op1);
-        }
-
-        @Override
-        public boolean isNullOperation() {
-            return true;
-        }
-
-    },
     NULL_OPERATION_INVALID_BOND_MODE {
 
         @Override

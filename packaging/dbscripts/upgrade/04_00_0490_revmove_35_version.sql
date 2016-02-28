@@ -1,0 +1,33 @@
+-- Delete the 3.5 version
+select fn_db_delete_config_for_version('3.5');
+
+-- Delete config values that are no longer required
+select fn_db_delete_config_value_all_versions('VmStatsEventsSupported');
+select fn_db_delete_config_value_all_versions('GlusterGeoReplicationEnabled');
+select fn_db_delete_config_value_all_versions('GlusterVolumeSnapshotSupported');
+select fn_db_delete_config_value_all_versions('GlusterBrickProvisioningEnabled');
+select fn_db_delete_config_value_all_versions('GlusterNetworkRoleSupported');
+select fn_db_delete_config_value_all_versions('HostNetworkQosSupported');
+select fn_db_delete_config_value_all_versions('GraphicsDeviceEnabled');
+select fn_db_delete_config_value_all_versions('SpiceFileTransferToggleSupported');
+select fn_db_delete_config_value_all_versions('AutoConvergenceSupported');
+select fn_db_delete_config_value_all_versions('MigrationCompressionSupported');
+select fn_db_delete_config_value_all_versions('ImportVmFromExternalProviderSupported');
+select fn_db_delete_config_value_all_versions('HostDevicePassthroughSupported');
+select fn_db_delete_config_value_all_versions('LiveStorageMigrationBetweenDifferentStorageTypes');
+select fn_db_delete_config_value_all_versions('IoThreadsSupported');
+select fn_db_delete_config_value_all_versions('MultipleGraphicsSupported');
+select fn_db_delete_config_value_all_versions('VirtioSerialConsoleSupported');
+select fn_db_delete_config_value_all_versions('TotalNetworkStatisticsReported');
+select fn_db_delete_config_value_all_versions('CfgEntriesDeprecated');
+select fn_db_delete_config_value_all_versions('EventsSupported');
+select fn_db_delete_config_value_all_versions('CinderProviderSupported');
+select fn_db_delete_config_value_all_versions('MigrateDowntimeSupported');
+select fn_db_delete_config_value_all_versions('GlusterVolumeInfoSupported');
+select fn_db_delete_config_value_all_versions('NetworkSriovSupported');
+select fn_db_delete_config_value_all_versions('RefreshLunSupported');
+select fn_db_delete_config_value_all_versions('ChangeNetworkUnderBridgeInUseSupported');
+select fn_db_delete_config_value_all_versions('NetworkExclusivenessPermissiveValidation');
+select fn_db_delete_config_value_all_versions('GetDeviceListWithoutStatusSupported');
+select fn_db_delete_config_value_all_versions('InitialSizeSparseDiskSupported');
+select fn_db_delete_config_value_all_versions('CheckMixedRhelVersions');

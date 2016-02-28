@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 
 @ValidateSupportsTransaction
 public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends NetworkClusterCommandBase<T> {
@@ -38,10 +37,6 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         }
 
         return oldNetworkCluster;
-    }
-
-    private Version getClusterVersion() {
-        return getClusterDao().get(getNetworkCluster().getClusterId()).getCompatibilityVersion();
     }
 
     @Override
@@ -138,7 +133,6 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
                 interfaceDao,
                 networkDao,
                 getNetworkCluster(),
-                getOldNetworkCluster(),
-                getClusterVersion());
+                getOldNetworkCluster());
     }
 }

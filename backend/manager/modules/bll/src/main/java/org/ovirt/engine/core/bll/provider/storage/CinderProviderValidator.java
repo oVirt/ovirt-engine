@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -75,10 +74,6 @@ public class CinderProviderValidator extends ProviderValidator {
         if (!result.isValid()) {
             return result;
         }
-        result = isCinderSupportedInDC();
-        if (!result.isValid()) {
-            return result;
-        }
         result = spValidator.checkStoragePoolNotInStatus(StoragePoolStatus.Up);
         if (!result.isValid()) {
             return result;
@@ -99,20 +94,6 @@ public class CinderProviderValidator extends ProviderValidator {
 
     protected StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
-    }
-
-    /**
-     * Checks that the DC compatibility version supports Cinder domains and it is not local.
-     * In case there is a mismatch, a proper validate message will be added
-     *
-     * @return The result of the validation
-     */
-    public ValidationResult isCinderSupportedInDC() {
-        if (!getStoragePool().isLocal()
-                && !FeatureSupported.cinderProviderSupported(getStoragePool().getCompatibilityVersion())) {
-            return new ValidationResult(EngineMessage.DATA_CENTER_CINDER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
-        }
-        return ValidationResult.VALID;
     }
 
     public ValidationResult isCinderAlreadyExists() {

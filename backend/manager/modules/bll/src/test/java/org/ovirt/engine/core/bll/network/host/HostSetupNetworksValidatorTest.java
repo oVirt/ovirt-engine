@@ -15,7 +15,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 import static org.ovirt.engine.core.utils.ReplacementUtils.replaceWith;
 
 import java.util.ArrayList;
@@ -26,13 +25,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -62,13 +59,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -79,9 +73,6 @@ import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HostSetupNetworksValidatorTest {
-
-    private static final String TEST_VERSION = "123.456";
-    private static final Set<Version> TEST_SUPPORTED_VERSIONS = Collections.singleton(new Version(TEST_VERSION));
 
     private VDS host;
 
@@ -109,13 +100,7 @@ public class HostSetupNetworksValidatorTest {
     @Rule
     public ErrorCollector collector= new ErrorCollector();
 
-
     private Bond bond;
-
-    @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5, false),
-        mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_6, true));
 
     @Mock
     private NetworkExclusivenessValidatorResolver mockNetworkExclusivenessValidatorResolver;
@@ -128,15 +113,13 @@ public class HostSetupNetworksValidatorTest {
     public void setUp() throws Exception {
         host = new VDS();
         host.setId(Guid.newGuid());
-        host.setClusterCompatibilityVersion(Version.v3_5);
         final VdsDynamic vdsDynamic = new VdsDynamic();
-        vdsDynamic.setSupportedClusterLevels(TEST_VERSION);
         host.setDynamicData(vdsDynamic);
 
         bond = new Bond();
         bond.setId(Guid.newGuid());
 
-        when(mockNetworkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(TEST_SUPPORTED_VERSIONS))
+        when(mockNetworkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator())
                 .thenReturn(mockNetworkExclusivenessValidator);
         when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(any())).thenReturn(ValidationResult.VALID);
     }
@@ -1260,23 +1243,10 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateQosOverriddenInterfacesWhenHostNetworkQosIsNotSupported() {
-        Network network = createNetworkWithName("network");
-
-        HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
-
-        assertThat(validator.validateQosOverriddenInterfaces(),
-                ValidationResultMatchers.failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
-                        ReplacementUtils.getVariableAssignmentStringWithMultipleValues(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
-                                network.getName())));
-    }
-
-    @Test
     public void testValidateQosOverriddenInterfacesWhenAttachmentHasQosOverriddenAndRequiredValuesNotPresent() {
         EngineMessage hostNetworkQosValidatorFailure =
             EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES;
 
-        host.setClusterCompatibilityVersion(Version.v3_6);
         Network network = createNetworkWithName("network");
         HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
 
@@ -1300,7 +1270,6 @@ public class HostSetupNetworksValidatorTest {
         EngineMessage hostNetworkQosValidatorFailure =
             EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES;
 
-        host.setClusterCompatibilityVersion(Version.v3_6);
         Network network = createNetworkWithName("network");
         HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
 

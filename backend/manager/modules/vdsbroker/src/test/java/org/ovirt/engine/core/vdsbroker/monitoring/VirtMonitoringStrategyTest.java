@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -148,7 +147,6 @@ public class VirtMonitoringStrategyTest {
         cluster = new Cluster();
         cluster.setEmulatedMachine("pc-1.0");
         cluster.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
-        cluster.setCompatibilityVersion(Version.v3_5);
         org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(cluster);
         return mock;
     }

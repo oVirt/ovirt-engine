@@ -627,7 +627,6 @@ public class IrsProxyData {
                     int heartbeat = Config.<Integer> getValue(ConfigValues.vdsHeartbeatInSeconds) * 1000;
                     int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
                     irsProxy = TransportFactory.createIrsServer(getProtocol(),
-                                    getVersion(),
                                     host,
                                     getmIrsPort(),
                                     clientTimeOut,

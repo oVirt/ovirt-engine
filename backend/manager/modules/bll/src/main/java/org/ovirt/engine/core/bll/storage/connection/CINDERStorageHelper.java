@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -90,8 +89,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     @Override
     public boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext, ConnectHostToStoragePoolServersParameters parameters, List<StorageServerConnections> connections) {
         boolean connectSucceeded = true;
-        if (FeatureSupported.cinderProviderSupported(parameters.getStoragePool().getCompatibilityVersion()) &&
-                isActiveCinderDomainAvailable(parameters.getStoragePoolId())) {
+        if (isActiveCinderDomainAvailable(parameters.getStoragePoolId())) {
             // Validate librbd1 package availability
             boolean isLibrbdAvailable = isLibrbdAvailable(parameters.getVds());
             if (!isLibrbdAvailable) {
@@ -99,7 +97,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
                         parameters.getVds().getName());
                 setNonOperational(cmdContext, parameters.getVdsId(), NonOperationalReason.LIBRBD_PACKAGE_NOT_AVAILABLE);
             }
-            connectSucceeded &= isLibrbdAvailable;
+            connectSucceeded = isLibrbdAvailable;
 
             // Register libvirt secrets if needed
             connectSucceeded &= handleLibvirtSecrets(cmdContext, parameters.getVds(), parameters.getStoragePoolId());
@@ -188,15 +186,13 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
-        if (FeatureSupported.cinderProviderSupported(parameters.getStoragePool().getCompatibilityVersion())) {
-            // unregister all libvirt secrets if needed
-            VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
-                    VDSCommandType.RegisterLibvirtSecrets,
-                    new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.<LibvirtSecret>emptyList(), true));
-            if (!returnValue.getSucceeded()) {
-                log.error("Failed to unregister libvirt secret on vds {}.", parameters.getVds().getName());
-                return new Pair<>(false, AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
-            }
+        // unregister all libvirt secrets if needed
+        VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
+                VDSCommandType.RegisterLibvirtSecrets,
+                new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.<LibvirtSecret>emptyList(), true));
+        if (!returnValue.getSucceeded()) {
+            log.error("Failed to unregister libvirt secret on vds {}.", parameters.getVds().getName());
+            return new Pair<>(false, AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
         }
         return new Pair<>(true, null);
     }

@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -21,11 +20,11 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
 
     @Test
     public void testValidate() {
-        UpdateRngDeviceCommand command = mockCommand(Version.v3_5);
+        UpdateRngDeviceCommand command = mockCommand();
         Assert.assertEquals(true, command.validate());
     }
 
-    private UpdateRngDeviceCommand mockCommand(final Version mockCompatibilityVersion) {
+    private UpdateRngDeviceCommand mockCommand() {
         final Guid vmId = new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db");
         final Guid clusterId = new Guid("e862dae0-5c41-416a-922c-5395e7245c9b");
         final Guid deviceId = new Guid("b24ae590-f42b-49b6-b8f4-cbbc720b230d");
@@ -38,7 +37,6 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         final VmDeviceDao vmDeviceDaoMock = Mockito.mock(VmDeviceDao.class);
         Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG)).thenReturn(Collections.singletonList(new VmDevice()));
         final Cluster cluster = Mockito.mock(Cluster.class);
-        Mockito.when(cluster.getCompatibilityVersion()).thenReturn(mockCompatibilityVersion);
         Mockito.when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
         final ClusterDao clusterMock = Mockito.mock(ClusterDao.class);
         Mockito.when(clusterMock.get(clusterId)).thenReturn(cluster);

@@ -130,7 +130,7 @@ public class OvfManagerTest {
         VM vm = createVM();
         vm.setDefaultDisplayType(DisplayType.cirrus);
         vm.setVmOs(DEFAULT_OS_ID);
-        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_5);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
         manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
@@ -149,7 +149,7 @@ public class OvfManagerTest {
         VM vm = createVM();
         vm.setDefaultDisplayType(DisplayType.cirrus);
         vm.setVmOs(EXISTING_OS_ID);
-        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_5);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
         manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());

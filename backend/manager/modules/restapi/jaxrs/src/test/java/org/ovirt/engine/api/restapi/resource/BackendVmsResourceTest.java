@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
@@ -87,8 +86,6 @@ public class BackendVmsResourceTest
         OsTypeMockUtils.mockOsTypes();
         osRepository = control.createMock(OsRepository.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-
-        Config.setConfigUtils(new VmMapperMockConfigUtils());
     }
 
     @Test

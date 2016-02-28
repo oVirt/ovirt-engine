@@ -34,9 +34,7 @@ public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> ex
 
     @Override
     protected boolean validate() {
-        return validate(getVfsConfigValidator().nicExists())
-                && validate(getVfsConfigValidator().nicSriovEnabled())
-                && validate(getVfsConfigValidator().sriovFeatureSupported());
+        return validate(getVfsConfigValidator().nicExists()) && validate(getVfsConfigValidator().nicSriovEnabled());
     }
 
     @Override

@@ -354,9 +354,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("jms.queue.events")
     EventQueueName,
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    EventsSupported,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     EventProcessingPoolSize,
@@ -1023,14 +1020,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("120")
     NetworkConnectivityCheckTimeoutInSeconds,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    TotalNetworkStatisticsReported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    CfgEntriesDeprecated,
-
     @Reloadable
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"storage domains\":\"true\",\"hosts\":\"true\"}")
@@ -1260,17 +1249,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     GlusterTaskMinWaitForCleanupInMins,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterGeoReplicationEnabled,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     GlusterTunedProfile,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterBrickProvisioningEnabled,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/,/home,/boot")
@@ -1288,10 +1269,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("300")
     GlusterRefreshRateGeoRepStatusInSecs,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterVolumeSnapshotSupported,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
     GlusterRefreshRateSnapshotDiscovery,
@@ -1299,10 +1276,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("gluster_shared_storage")
     GlusterMetaVolumeName,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterNetworkRoleSupported,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
@@ -1470,10 +1443,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("1000")
     MaxSchedulerWeight,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    HostNetworkQosSupported,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
     HostedEngineStorageDomainName,
@@ -1544,10 +1513,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("{\"x86\":\"true\",\"ppc\":\"false\"}")
     HotPlugCpuSupported,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    IoThreadsSupported,
-
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"x86\":\"false\",\"ppc\":\"false\"}")
     HotUnplugCpuSupported,
@@ -1559,10 +1524,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"x86\":\"false\",\"ppc\":\"false\"}")
     HotUnplugMemorySupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    VirtioSerialConsoleSupported,
 
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"undefined\":\"true\",\"x86\":\"true\",\"ppc\":\"true\"}")
@@ -1615,10 +1576,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("RANDOM")
     ClusterRequiredRngSourcesDefault,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    SpiceFileTransferToggleSupported,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1500")
@@ -1770,43 +1727,12 @@ public enum ConfigValues {
     UnsupportedLocalesFilter,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    AutoConvergenceSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MigrationCompressionSupported,
-
-    @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     DefaultAutoConvergence,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     DefaultMigrationCompression,
-
-    /**
-     * Specifies graphics framebuffer device representation is supported.
-     */
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GraphicsDeviceEnabled,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    HostDevicePassthroughSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    CinderProviderSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GlusterVolumeInfoSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NetworkSriovSupported,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("6")
@@ -1820,10 +1746,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("pci,scsi,usb_device")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     HostDevicePassthroughCapabilities,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MigrateDowntimeSupported,
 
     /**
      * A comma delimited list of package names for checking if updates are available for the host
@@ -1864,10 +1786,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("7")
     CertExpirationAlertPeriodInDays,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    LiveStorageMigrationBetweenDifferentStorageTypes,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10000")
     VMConsoleTicketTolerance,
@@ -1884,14 +1802,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("256")
     HotPlugMemoryMultiplicationSizeMb,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    VmStatsEventsSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    RefreshLunSupported,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("HostedEngine")
     HostedEngineVmName,
@@ -1904,29 +1814,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("127")
     MaxIoThreadsPerVm,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NetworkExclusivenessPermissiveValidation,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1048576")
     VMPpc64BitMaxMemorySizeInMB,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    GetDeviceListWithoutStatusSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    InitialSizeSparseDiskSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ImportVmFromExternalProviderSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    MultipleGraphicsSupported,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1947,10 +1837,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     DisplaySupportedBrowserWarning,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    CheckMixedRhelVersions,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")

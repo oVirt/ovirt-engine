@@ -70,8 +70,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> monitorCommand(String vmId, String monitorCommand);
 
-    public Map<String, Object> setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
-
     public Map<String, Object> addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
@@ -131,8 +129,6 @@ public interface VdsServerConnector {
     public Map<String, Object> getVGInfo(String vgUUID);
 
     public Map<String, Object> getDeviceList(int storageType, String[] devicesList, boolean checkStatus);
-
-    public Map<String, Object> getDeviceList(int storageType);
 
     public Map<String, Object> getDevicesVisibility(String[] devicesList);
 

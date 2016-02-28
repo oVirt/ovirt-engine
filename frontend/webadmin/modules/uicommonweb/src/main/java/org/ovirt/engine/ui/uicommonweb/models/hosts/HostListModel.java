@@ -75,7 +75,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
-import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
@@ -1154,9 +1153,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         public void onSuccess(Object target, Object returnValue) {
                             Cluster cluster = (Cluster) returnValue;
                             if (cluster != null) {
-                                maintenance(cluster.isMaintenanceReasonRequired(),
-                                        cluster.supportsGlusterService() && GlusterFeaturesUtil
-                                                .isStopGlusterProcessesSupported(cluster.getCompatibilityVersion()));
+                                maintenance(cluster.isMaintenanceReasonRequired(), cluster.supportsGlusterService());
                             }
                         }
                     }), clusterId);
@@ -1589,12 +1586,10 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
         VDS vds = getSelectedItem();
-        getGlusterSwiftModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getClusterCompatibilityVersion()));
+        getGlusterSwiftModel().setIsAvailable(false);
         getHostBricksListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService());
         getHostVmListModel().setIsAvailable(vds != null && vds.getClusterSupportsVirtService());
-        getGlusterStorageDeviceListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(vds.getClusterCompatibilityVersion()));
+        getGlusterStorageDeviceListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService());
     }
 
     @Override

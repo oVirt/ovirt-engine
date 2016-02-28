@@ -223,12 +223,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      * @return the specified LUN if it's visible to the specified host, or null otherwise.
      */
     protected LUNs getLunDisk(final LUNs lun, VDS vds) {
-        List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUNId());
-
-        // TODO Once we stop supporting 3.5 DCs and earlier, we can remove the filter call.
-
-        // Retrieve LUN from the device list.
-        return luns.stream().filter(o -> o.getId().equals(lun.getId())).findFirst().orElse(null);
+        return executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUNId()).stream().findFirst().orElse(null);
     }
 
     protected List<LUNs> executeGetDeviceList(Guid vdsId, StorageType storageType, String lunId) {

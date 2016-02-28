@@ -5,11 +5,9 @@ import org.apache.commons.lang.StringUtils;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -51,8 +49,7 @@ public class GLUSTERFSStorageHelper extends BaseFsStorageHelper {
     public boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext,
             ConnectHostToStoragePoolServersParameters parameters,
             List<StorageServerConnections> connections) {
-        if (FeatureSupported.glusterVolumeInfoSupported(parameters.getStoragePool().getCompatibilityVersion()) &&
-                isActiveGlusterfsDomainAvailable(parameters.getStoragePoolId())) {
+        if (isActiveGlusterfsDomainAvailable(parameters.getStoragePoolId())) {
             // Validate glusterfs-cli package availability
             if (!canVDSConnectToGlusterfs(parameters.getVds())) {
                 log.error("Couldn't find glusterfs-cli package on vds {} (needed for connecting storage domains).",
@@ -67,12 +64,8 @@ public class GLUSTERFSStorageHelper extends BaseFsStorageHelper {
     }
 
     public static boolean canVDSConnectToGlusterfs(VDS vds) {
-        if (FeatureSupported.glusterVolumeInfoSupported(getStoragePool(vds.getId()).getCompatibilityVersion())) {
-            RpmVersion glusterfsCliVer = vds.getGlusterfsCliVersion();
-            return glusterfsCliVer != null && StringUtils.isNotEmpty(glusterfsCliVer.getRpmRelease());
-        }
-
-        return true;
+        RpmVersion glusterfsCliVer = vds.getGlusterfsCliVersion();
+        return glusterfsCliVer != null && StringUtils.isNotEmpty(glusterfsCliVer.getRpmRelease());
     }
 
     private boolean isActiveGlusterfsDomainAvailable(Guid poolId) {
@@ -81,10 +74,6 @@ public class GLUSTERFSStorageHelper extends BaseFsStorageHelper {
 
     private static VdsDao getVdsDao() {
         return getDbFacade().getVdsDao();
-    }
-
-    private static StoragePool getStoragePool(Guid vdsId) {
-        return getDbFacade().getStoragePoolDao().getForVds(vdsId);
     }
 
     private static DbFacade getDbFacade() {

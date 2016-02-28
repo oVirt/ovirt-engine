@@ -3,13 +3,9 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -21,8 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -31,21 +25,12 @@ import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest {
-    private static final Version NOT_SUPPORTED_VERSION = Version.v3_5;
-
     private static final Version SUPPORTED_VERSION = Version.v3_6;
 
     CreateGlusterVolumeGeoRepSessionCommand command;
 
     private final String slaveVolumeName = "slaveVol";
-    private final String slaveHost = "localhost.localdomain";
     private final Guid masterVolumeId = Guid.newGuid();
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_6, true),
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, NOT_SUPPORTED_VERSION.toString(), false)
-            );
 
     @Mock
     GlusterVolumeDao volumeDao;
@@ -99,8 +84,6 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(vds).when(command).getUpServer();
         doReturn(VDSStatus.Up).when(vds).getStatus();
         doReturn(glusterUtil).when(command).getGlusterUtil();
-        when(glusterUtil.isGlusterGeoReplicationSupported(eq(SUPPORTED_VERSION), any(Guid.class))).thenReturn(true);
-        when(glusterUtil.isGlusterGeoReplicationSupported(eq(NOT_SUPPORTED_VERSION), any(Guid.class))).thenReturn(false);
     }
 
     @Test
@@ -136,24 +119,6 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(new GlusterGeoRepSession()).when(geoRepDao).getGeoRepSession(any(Guid.class),
                 any(Guid.class),
                 any(String.class));
-        assertFalse(command.validate());
-    }
-
-    @Test
-    public void commandFailsVersionNotSupported() {
-        command =
-                spy(new CreateGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(Guid.newGuid(),
-                        slaveVolumeName,
-                        Guid.newGuid(),
-                        null,
-                        null,
-                        false), null));
-        prepareMocks();
-        doReturn(vds).when(command).getUpServer();
-        doReturn(vds).when(command).getSlaveHost();
-        doReturn(NOT_SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
-        doReturn(volume).when(command).getSlaveVolume();
-        doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         assertFalse(command.validate());
     }
 

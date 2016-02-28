@@ -2069,8 +2069,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.PINNED_TO_HOST));
         }
 
-        autoConverge.updateChangeability(ConfigurationValues.AutoConvergenceSupported, version);
-        migrateCompressed.updateChangeability(ConfigurationValues.MigrationCompressionSupported, version);
+        autoConverge.setIsChangeable(true);
+        migrateCompressed.setIsChangeable(true);
     }
 
     private void initGraphicsAndDisplayListeners() {
@@ -2187,15 +2187,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         if (getSelectedCluster() != null) {
             boolean isQxl = getDisplayType().getSelectedItem() == DisplayType.qxl;
-            boolean spiceFileTransferToggle = isQxl
-                    && AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(getCompatibilityVersion().toString());
-            if (!spiceFileTransferToggle) {
+            if (!isQxl) {
                 handleQxlChangeProhibitionReason(
                         getSpiceFileTransferEnabled(),
                         getCompatibilityVersion().toString(),
-                        isQxl);
+                        false);
             }
-            getSpiceFileTransferEnabled().setIsChangeable(spiceFileTransferToggle);
+            getSpiceFileTransferEnabled().setIsChangeable(isQxl);
 
             GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
             boolean spiceCopyPasteToggle = selectedGraphics != null
@@ -2396,9 +2394,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (graphicsTypes.contains(GraphicsTypes.SPICE) && graphicsTypes.contains(GraphicsTypes.VNC)) {
-            if (AsyncDataProvider.getInstance().supportedForUnitVmModel(ConfigurationValues.MultipleGraphicsSupported, this)) {
-                graphicsTypes.add(GraphicsTypes.SPICE_AND_VNC);
-            }
+            graphicsTypes.add(GraphicsTypes.SPICE_AND_VNC);
         }
 
         GraphicsTypes prevSelected = getGraphicsType().getSelectedItem();

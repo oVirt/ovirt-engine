@@ -159,9 +159,9 @@ public class VolumeBrickModel extends Model {
 
     }
 
-    public void setIsBrickProvisioningSupported(boolean isBrickProvisioningSupported) {
-        getShowBricksList().setIsAvailable(isBrickProvisioningSupported);
-        getShowBricksList().setEntity(isBrickProvisioningSupported);
+    public void setIsBrickProvisioningSupported() {
+        getShowBricksList().setIsAvailable(true);
+        getShowBricksList().setEntity(true);
     }
 
     private void updateSelectedBricksActions() {

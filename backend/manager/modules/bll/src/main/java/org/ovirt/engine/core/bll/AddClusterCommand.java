@@ -196,8 +196,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         return new AddClusterNetworkClusterValidator(
                 interfaceDao,
                 networkDao,
-                networkCluster,
-                getCluster().getCompatibilityVersion());
+                networkCluster);
     }
 
     private NetworkCluster createManagementNetworkCluster() {

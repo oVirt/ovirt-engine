@@ -1,26 +1,18 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
-import org.ovirt.engine.core.compat.Version;
 
 public class NetworkStatisticsBuilder {
 
     private static final int BITS_IN_BYTE = 8;
     private static final int BITS_IN_MEGABIT = 1000000;
 
-    private final boolean totalStatsReported;
     private Integer speed;
     private Double currentTime;
     private Double previousTime;
 
-    public NetworkStatisticsBuilder(Version version) {
-        totalStatsReported = FeatureSupported.totalNetworkStatisticsReported(version);
-    }
-
-    public boolean isTotalStatsReported() {
-        return totalStatsReported;
+    public NetworkStatisticsBuilder() {
     }
 
     /**
@@ -43,32 +35,22 @@ public class NetworkStatisticsBuilder {
         existingStats.setReceiveDropRate(reportedStats.getReceiveDropRate());
         existingStats.setTransmitDropRate(reportedStats.getTransmitDropRate());
 
-        if (!isTotalStatsReported()) {
-            existingStats.setReceiveRate(reportedStats.getReceiveRate());
-            existingStats.setTransmitRate(reportedStats.getTransmitRate());
-            existingStats.setReceivedBytes(null);
-            existingStats.setTransmittedBytes(null);
-            existingStats.setReceivedBytesOffset(null);
-            existingStats.setTransmittedBytesOffset(null);
-            existingStats.setSampleTime(null);
-        } else {
-            EffectiveStats rxResult =
-                    computeEffectiveStats(reportedStats.getReceivedBytes(),
-                            existingStats.getReceivedBytes(),
-                            existingStats.getReceivedBytesOffset());
-            EffectiveStats txResult =
-                    computeEffectiveStats(reportedStats.getTransmittedBytes(),
-                            existingStats.getTransmittedBytes(),
-                            existingStats.getTransmittedBytesOffset());
+        EffectiveStats rxResult =
+                computeEffectiveStats(reportedStats.getReceivedBytes(),
+                        existingStats.getReceivedBytes(),
+                        existingStats.getReceivedBytesOffset());
+        EffectiveStats txResult =
+                computeEffectiveStats(reportedStats.getTransmittedBytes(),
+                        existingStats.getTransmittedBytes(),
+                        existingStats.getTransmittedBytesOffset());
 
-            existingStats.setReceivedBytes(rxResult.current);
-            existingStats.setReceivedBytesOffset(rxResult.offset);
-            existingStats.setReceiveRate(rxResult.rate);
-            existingStats.setTransmittedBytes(txResult.current);
-            existingStats.setTransmittedBytesOffset(txResult.offset);
-            existingStats.setTransmitRate(txResult.rate);
-            existingStats.setSampleTime(currentTime);
-        }
+        existingStats.setReceivedBytes(rxResult.current);
+        existingStats.setReceivedBytesOffset(rxResult.offset);
+        existingStats.setReceiveRate(rxResult.rate);
+        existingStats.setTransmittedBytes(txResult.current);
+        existingStats.setTransmittedBytesOffset(txResult.offset);
+        existingStats.setTransmitRate(txResult.rate);
+        existingStats.setSampleTime(currentTime);
     }
 
     private EffectiveStats computeEffectiveStats(Long reported, Long previous, Long offset) {
@@ -105,7 +87,7 @@ public class NetworkStatisticsBuilder {
         return stats;
     }
 
-    public static double truncatePercentage(double value) {
+    private static double truncatePercentage(double value) {
         return Math.min(100, value);
     }
 

@@ -17,7 +17,6 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
     private Set<String> removedBonds;
     private boolean rollbackOnFailure;
     private int connectivityTimeout;
-    private boolean hostNetworkQosSupported;
     private boolean managementNetworkChanged;
 
     public HostSetupNetworksVdsCommandParameters(VDS host,
@@ -84,20 +83,11 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
         this.connectivityTimeout = connectivityTimeout;
     }
 
-    public boolean getHostNetworkQosSupported() {
-        return hostNetworkQosSupported;
-    }
-
-    public void setHostNetworkQosSupported(boolean hostNetworkQosSupported) {
-        this.hostNetworkQosSupported = hostNetworkQosSupported;
-    }
-
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("rollbackOnFailure", isRollbackOnFailure())
                 .append("connectivityTimeout", getConnectivityTimeout())
-                .append("hostNetworkQosSupported", getHostNetworkQosSupported())
                 .append("networks", Entities.collectionToString(getNetworks(), "\t\t"))
                 .append("removedNetworks", getRemovedNetworks())
                 .append("bonds", Entities.collectionToString(getCreateOrUpdateBonds(), "\t\t"))

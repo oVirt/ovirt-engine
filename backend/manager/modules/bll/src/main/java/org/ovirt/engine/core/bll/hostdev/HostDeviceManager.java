@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.BackendService;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -76,8 +75,7 @@ public class HostDeviceManager implements BackendService {
      * @return true if the specified VM is pinned to a host and has host devices directly attached to it
      */
     public boolean checkVmNeedsDirectPassthrough(VM vm) {
-        return vm.getDedicatedVmForVdsList().size() > 0 && supportsHostDevicePassthrough(vm) &&
-                checkVmNeedsDirectPassthrough(vm.getId());
+        return vm.getDedicatedVmForVdsList().size() > 0 && checkVmNeedsDirectPassthrough(vm.getId());
     }
 
     /**
@@ -141,10 +139,6 @@ public class HostDeviceManager implements BackendService {
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.HOST_DEVICES,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-    }
-
-    private static boolean supportsHostDevicePassthrough(VM vm) {
-        return FeatureSupported.hostDevicePassthrough(vm.getCompatibilityVersion());
     }
 
     /**

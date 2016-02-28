@@ -131,14 +131,14 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
     }
 
     @Override
-    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, boolean shouldFilterBySourceType, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
         // can not move template to the same storage domain
         boolean isTemplate = isTemplateDisk(diskImage);
         if (isTemplate && sourceActiveStorageDomains.contains(sd)) {
             return false;
         }
 
-        return super.allowedStorageDomain(sourceActiveStorageDomains, shouldFilterBySourceType, diskImage, templateDisk, sd);
+        return super.allowedStorageDomain(sourceActiveStorageDomains, diskImage, templateDisk, sd);
     }
 
     private boolean isTemplateDisk(DiskImage  diskImage) {

@@ -10,8 +10,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -28,22 +26,19 @@ public abstract class NetworkClusterValidatorBase {
     private static final String HOST_NAME_REPLACEMENT = "$hostName %s";
 
     protected final NetworkCluster networkCluster;
-    private final Version version;
 
     private final InterfaceDao interfaceDao;
     private final NetworkDao networkDao;
 
     public NetworkClusterValidatorBase(InterfaceDao interfaceDao,
             NetworkDao networkDao,
-            NetworkCluster networkCluster,
-            Version version) {
+            NetworkCluster networkCluster) {
         Objects.requireNonNull(interfaceDao, "interfaceDao cannot be null");
         Objects.requireNonNull(networkDao, "networkDao cannot be null");
 
         this.interfaceDao = interfaceDao;
         this.networkDao = networkDao;
         this.networkCluster = networkCluster;
-        this.version = version;
     }
 
     public ValidationResult roleNetworkHasIp() {
@@ -167,18 +162,6 @@ public abstract class NetworkClusterValidatorBase {
         return networkCluster.isRequired() ?
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REQUIRED,
                         String.format(NETWORK_NAME_REPLACEMENT, networkName))
-                : ValidationResult.VALID;
-    }
-
-    /**
-     * Make sure the gluster network is supported for the cluster version
-     *
-     * @return error if gluster network role is not supported for the compatibility version
-     */
-    public ValidationResult glusterNetworkSupported() {
-        return networkCluster.isGluster()
-                && !GlusterFeatureSupported.glusterNetworkRoleSupported(version)
-                ? new ValidationResult(EngineMessage.GLUSTER_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
                 : ValidationResult.VALID;
     }
 }

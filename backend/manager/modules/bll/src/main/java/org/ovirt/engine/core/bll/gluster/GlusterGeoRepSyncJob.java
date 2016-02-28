@@ -474,8 +474,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     }
 
     private boolean supportsGlusterGeoRepFeature(Cluster cluster) {
-        return cluster.supportsGlusterService()
-                && getGlusterUtil().isGlusterGeoReplicationSupported(cluster.getCompatibilityVersion(), cluster.getId());
+        return cluster.supportsGlusterService();
     }
 
 }

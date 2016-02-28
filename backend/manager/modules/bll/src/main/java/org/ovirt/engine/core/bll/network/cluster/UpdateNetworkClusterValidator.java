@@ -4,7 +4,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -17,9 +16,8 @@ public class UpdateNetworkClusterValidator extends NetworkClusterValidatorBase {
     public UpdateNetworkClusterValidator(InterfaceDao interfaceDao,
             NetworkDao networkDao,
             NetworkCluster networkCluster,
-            NetworkCluster oldNetworkCluster,
-            Version version) {
-        super(interfaceDao, networkDao, networkCluster, version);
+            NetworkCluster oldNetworkCluster) {
+        super(interfaceDao, networkDao, networkCluster);
 
         this.oldNetworkCluster = oldNetworkCluster;
     }

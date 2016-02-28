@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -340,26 +338,8 @@ public class HostValidatorTest {
 
     @Test
     public void testValidateXmlProtocolForCluster() {
-        Cluster cluster = mock(Cluster.class);
-        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
         validator = mockHostForProtocol(VdsProtocol.XML);
-        assertThat(validator.protocolIsNotXmlrpc(cluster),
+        assertThat(validator.protocolIsNotXmlrpc(),
                 failsWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION));
-    }
-
-    @Test
-    public void testValidateXmlProtocolSupportedForCluster() {
-        Cluster cluster = mock(Cluster.class);
-        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_5);
-        validator = mockHostForProtocol(VdsProtocol.XML);
-        assertThat(validator.protocolIsNotXmlrpc(cluster), isValid());
-    }
-
-    @Test
-    public void testValidateJsonProtocolForCluster() {
-        Cluster cluster = mock(Cluster.class);
-        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
-        validator = mockHostForProtocol(VdsProtocol.STOMP);
-        assertThat(validator.protocolIsNotXmlrpc(cluster), isValid());
     }
 }

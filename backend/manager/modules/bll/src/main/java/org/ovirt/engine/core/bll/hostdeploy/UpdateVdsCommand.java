@@ -101,7 +101,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
                         oldHost.getClusterCompatibilityVersion().toString())
-                && validate(validator.protocolIsNotXmlrpc(getClusterDao().get(getParameters().getvds().getClusterId())));
+                && validate(validator.protocolIsNotXmlrpc());
     }
 
     private boolean validateNetworkProviderConfiguration() {

@@ -186,7 +186,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     private ArrayList<StorageDomain> getDestinationDomains(ArrayList<StorageDomain> activeStorageDomains,
             ArrayList<StorageDomain> sourceActiveStorageDomains, DiskModel diskModel, boolean isDiskBasedOnTemplate) {
 
-        boolean shouldFilterBySourceType = isFilterDestinationDomainsBySourceType(diskModel);
         DiskImage diskImage = (DiskImage) diskModel.getDisk();
 
         DiskModel templateDisk = null;
@@ -197,7 +196,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<StorageDomain> destinationDomains = new ArrayList<>();
         for (StorageDomain sd : activeStorageDomains) {
             // Storage domain destination should not be a domain which the disk is attached to.
-            if (!allowedStorageDomain(sourceActiveStorageDomains, shouldFilterBySourceType, diskImage, templateDisk, sd)) {
+            if (!allowedStorageDomain(sourceActiveStorageDomains, diskImage, templateDisk, sd)) {
                 continue;
             }
 
@@ -208,15 +207,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return destinationDomains;
     }
 
-    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, boolean shouldFilterBySourceType, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
         // Destination should be in the same pool as the disk.
         boolean connectedToSamePool = sd.getStoragePoolId().equals(diskImage.getStoragePoolId());
         if (!connectedToSamePool) {
-            return false;
-        }
-
-        boolean hasSameSubType = sd.getStorageType().getStorageSubtype() == diskImage.getStorageTypes().get(0).getStorageSubtype();
-        if (shouldFilterBySourceType && !hasSameSubType) {
             return false;
         }
 
@@ -350,10 +344,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         params.setNewAlias(disk.getDiskAlias());
 
         parameters.add(params);
-    }
-
-    protected boolean isFilterDestinationDomainsBySourceType(DiskModel model) {
-        return false;
     }
 
     @Override

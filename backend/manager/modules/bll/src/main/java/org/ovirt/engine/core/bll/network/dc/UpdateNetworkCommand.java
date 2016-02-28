@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -17,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
@@ -25,27 +22,22 @@ import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -139,7 +131,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorOld.networkIsSet(getNetwork().getId()))
                 && validate(validatorOld.notChangingDataCenterId(getNetwork().getDataCenterId()))
                 && validate(validatorNew.networkNameNotUsed())
-                && validate(validatorOld.networkNotUsedByRunningVms())
                 && validate(validatorOld.nonVmNetworkNotUsedByVms(getNetwork()))
                 && validate(validatorOld.nonVmNetworkNotUsedByTemplates(getNetwork()))
                 && validate(validatorOld.notRenamingUsedNetwork(getNetworkName()))
@@ -277,44 +268,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         private boolean networkChangedToNonVmNetwork(Network updatedNetwork) {
             return network.isVmNetwork() && !updatedNetwork.isVmNetwork();
-        }
-
-        public ValidationResult networkNotUsedByRunningVms() {
-            List<VM> runningVms = new ArrayList<>();
-            List<VmNetworkInterface> vnics = vmNetworkInterfaceDao.getAllForNetwork(network.getId());
-            Map<Guid, List<VmNetworkInterface>> vnicsByVmId = NetworkUtils.vmInterfacesByVmId(vnics);
-
-            for (VM vm : getVms()) {
-                if (vm.isRunningOrPaused()) {
-                    for (VmNetworkInterface nic : vnicsByVmId.get(vm.getId())) {
-                        if (VmNetworkCanBeUpdatedPredicate.getInstance().test(nic)) {
-                            runningVms.add(vm);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            final List<VM> runningVmNotSupportNetworkChange = runningVms.stream().filter(new Predicate<VM>() {
-                final Map<Guid, Version> clusterVersions = new HashMap<>();
-
-                @Override
-                public boolean test(VM vm) {
-                    final Guid clusterId = vm.getClusterId();
-                    Version clusterVersion = clusterVersions.get(clusterId);
-                    if (clusterVersion == null) {
-                        final Cluster cluster = clusterDao.get(clusterId);
-                        clusterVersion = cluster.getCompatibilityVersion();
-                        clusterVersions.put(clusterId, clusterVersion);
-                    }
-
-                    return !FeatureSupported.changeNetworkUsedByVmSupported(clusterVersion);
-                }
-            }).collect(Collectors.toList());
-
-            return networkNotUsed(runningVmNotSupportNetworkChange,
-                    EngineMessage.VAR__ENTITIES__VMS,
-                    EngineMessage.VAR__ENTITIES__VM);
         }
 
         public ValidationResult nonVmNetworkNotUsedByTemplates(Network updatedNetwork) {

@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -101,7 +100,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         vm.setId(Guid.newGuid());
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(STORAGE_POOL_ID);
-        vm.setClusterCompatibilityVersion(Version.v3_5);
         doReturn(vm).when(cmd).getVm();
     }
 

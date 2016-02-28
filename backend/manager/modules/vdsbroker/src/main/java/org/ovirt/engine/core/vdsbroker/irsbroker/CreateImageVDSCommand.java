@@ -1,12 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +25,7 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         // NOTE: The 'uuidReturn' variable will contain the taskID and not the
         // created image id!
         String imageInitSize = null;
-        if (isInitialImageSizeSupported() && getParameters().getImageInitialSizeInBytes() != 0) {
+        if (getParameters().getImageInitialSizeInBytes() != 0) {
             imageInitSize = Long.valueOf(getParameters().getImageInitialSizeInBytes()).toString();
         }
         uuidReturn = getIrsProxy().createVolume(
@@ -54,11 +51,5 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.createVolume, getParameters()
                         .getStoragePoolId()));
-    }
-
-    private boolean isInitialImageSizeSupported() {
-        StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
-                getParameters().getStoragePoolId());
-        return FeatureSupported.initialSizeSparseDiskSupported(storagePool.getCompatibilityVersion());
     }
 }

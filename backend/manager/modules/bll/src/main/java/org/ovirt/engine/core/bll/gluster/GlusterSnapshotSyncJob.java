@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
@@ -330,8 +328,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
     }
 
     private boolean supportsGlusterSnapshotFeature(Cluster cluster) {
-        return cluster.supportsGlusterService()
-                && getGlusterUtil().isGlusterSnapshotSupported(cluster.getCompatibilityVersion(), cluster.getId());
+        return cluster.supportsGlusterService();
     }
 
     protected GlusterVolumeDao getGlusterVolumeDao() {
@@ -344,13 +341,5 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
     protected GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
         return DbFacade.getInstance().getGlusterVolumeSnapshotConfigDao();
-    }
-
-    protected GlusterDBUtils getGlusterDbUtils() {
-        return GlusterDBUtils.getInstance();
-    }
-
-    protected GlusterAuditLogUtil getAuditLogUtil() {
-        return GlusterAuditLogUtil.getInstance();
     }
 }

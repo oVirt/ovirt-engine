@@ -338,8 +338,7 @@ public abstract class VmInterfaceModel extends Model {
 
         getNicType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        getProfile().validateSelectedItem(new IValidation[] { new VnicProfileValidation(clusterCompatibilityVersion.toString(),
-                getNicType().getSelectedItem()) });
+        getProfile().validateSelectedItem(new IValidation[] { new VnicProfileValidation(getNicType().getSelectedItem()) });
 
         getMAC().setIsValid(true);
         if (getMAC().getIsChangable()) {

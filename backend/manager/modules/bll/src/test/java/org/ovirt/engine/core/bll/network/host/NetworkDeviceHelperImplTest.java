@@ -32,15 +32,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -78,9 +74,6 @@ public class NetworkDeviceHelperImplTest {
     @Mock
     private HostNicVfsConfigDao hostNicVfsConfigDao;
 
-    @Mock
-    private VdsDao vdsDao;
-
     @Captor
     private ArgumentCaptor<HostDeviceId> hostDeviceIdCaptor;
 
@@ -93,7 +86,7 @@ public class NetworkDeviceHelperImplTest {
 
     @Before
     public void setUp() {
-        networkDeviceHelper = new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao, vdsDao);
+        networkDeviceHelper = new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao);
 
         when(netDevice.getHostId()).thenReturn(HOST_ID);
         when(netDevice.getDeviceName()).thenReturn(NET_DEVICE_NAME);
@@ -304,7 +297,7 @@ public class NetworkDeviceHelperImplTest {
             int numOfVfsHasVlanDeviceAttached,
             int numOfVfsArePartOfBond) {
         networkDeviceHelper =
-                spy(new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao, vdsDao));
+                spy(new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao));
 
         List<HostDevice> devices = new ArrayList<>();
         List<HostDevice> freeVfs = new ArrayList<>();
@@ -578,15 +571,6 @@ public class NetworkDeviceHelperImplTest {
     }
 
     @Test
-    public void testGetVfMapHostDoesNotSupportSriov() {
-        mockHostSupportsSriov(false);
-
-        final Map<Guid, Guid> actual = networkDeviceHelper.getVfMap(HOST_ID);
-
-        assertTrue(actual.isEmpty());
-    }
-
-    @Test
     public void testGetVfMap() {
         final HostDevice pfNetDevice = new HostDevice();
         final HostDevice pfPciDevice = new HostDevice();
@@ -617,19 +601,9 @@ public class NetworkDeviceHelperImplTest {
         vlanNic.setVlanId(666);
         mockNics(Arrays.asList(pfNic, bondNic, vlanNic), true);
 
-        mockHostSupportsSriov(true);
-
         final Map<Guid, Guid> actual = networkDeviceHelper.getVfMap(HOST_ID);
 
         assertEquals(1, actual.size());
         assertThat(actual, hasEntry(NIC_ID, pfNicId));
-    }
-
-    private void mockHostSupportsSriov(boolean support) {
-        final VDS host = new VDS();
-        final Version version = Version.v3_6;
-        host.setClusterCompatibilityVersion(version);
-        mockConfigRule.mockConfigValue(ConfigValues.NetworkSriovSupported, version, support);
-        when(vdsDao.get(HOST_ID)).thenReturn(host);
     }
 }

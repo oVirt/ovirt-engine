@@ -73,7 +73,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
                 attributes.put(VdsProperties.NETWORK_CUSTOM_PROPERTIES, hostNetwork.getProperties());
             }
 
-            if (getParameters().getHostNetworkQosSupported() && hostNetwork.isQosConfiguredOnInterface()) {
+            if (hostNetwork.isQosConfiguredOnInterface()) {
                 HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(attributes);
                 qosMapper.serialize(hostNetwork.getQos());
             }

@@ -62,12 +62,12 @@ Usage: $0 [options]
     -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -t TASK_ID    - Removes a task by its Task ID.
     -c COMMAND_ID - Removes all tasks related to the given Command Id.
-    -T            - Removes/Displays all commands that have running tasks (available from version 3.5)
-    -o            - Removes/Displays all commands. (available from version 3.5)
+    -T            - Removes/Displays all commands that have running tasks
+    -o            - Removes/Displays all commands.
     -z            - Removes/Displays a Zombie task.
     -R            - Removes all tasks (use with -z to clear only zombie tasks).
-    -r            - Removes all commands (use with -T to clear only those with running tasks. Use with -Z to clear only commands with zombie tasks. Available from version 3.5)
-    -Z            - Removes/Displays a command with zombie tasks (available from version 3.5)
+    -r            - Removes all commands (use with -T to clear only those with running tasks. Use with -Z to clear only commands with zombie tasks.
+    -Z            - Removes/Displays a command with zombie tasks.
     -C            - Clear related compensation entries.
     -J            - Clear related Job Steps.
     -A            - Clear all Job Steps and compensation entries.

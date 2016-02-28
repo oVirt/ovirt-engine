@@ -53,7 +53,6 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterSnapshotSyncJobTest {
     private static final Guid CLUSTER_ID_1 = Guid.newGuid();
-    private static final Guid CLUSTER_ID_2 = Guid.newGuid();
     private static final Guid VOLUME_ID_1 = Guid.newGuid();
     private static final String VOLUME_NAME_1 = "VOL1";
     private static final Guid VOLUME_ID_2 = Guid.newGuid();
@@ -95,8 +94,6 @@ public class GlusterSnapshotSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, Version.v4_0, true),
-            mockConfig(ConfigValues.GlusterVolumeSnapshotSupported, Version.v3_5, false),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
             mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10)
@@ -121,8 +118,6 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1)).when(volumeDao)
                 .getByName(CLUSTER_ID_1, VOLUME_NAME_1);
         doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
-        when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(false);
-        when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v4_0), any(Guid.class))).thenReturn(true);
         doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
         doNothing().when(glusterUtil).alertVolumeSnapshotLimitsReached(any(GlusterVolumeEntity.class));
         doNothing().when(glusterUtil).checkAndRemoveVolumeSnapshotLimitsAlert(any(GlusterVolumeEntity.class));
@@ -317,14 +312,6 @@ public class GlusterSnapshotSyncJobTest {
         cluster.setVirtService(false);
         cluster.setCompatibilityVersion(Version.v4_0);
         list.add(cluster);
-
-        Cluster cluster1 = new Cluster();
-        cluster1.setId(CLUSTER_ID_2);
-        cluster1.setName("cluster1");
-        cluster1.setGlusterService(true);
-        cluster1.setVirtService(false);
-        cluster1.setCompatibilityVersion(Version.v3_5);
-        list.add(cluster1);
 
         return list;
     }

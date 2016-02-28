@@ -37,19 +37,6 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
     }
 
     @Override
-    protected boolean validate() {
-        if (!super.validate()) {
-            return false;
-        }
-
-        if (!getGlusterUtil().isGlusterSnapshotSupported(getCluster().getCompatibilityVersion(), getCluster().getId())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
-        }
-
-        return true;
-    }
-
-    @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!isInternalExecution()) {
             return Collections.singletonMap(getGlusterVolumeId().toString(),

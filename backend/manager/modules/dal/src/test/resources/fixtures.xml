@@ -29,13 +29,8 @@
             <value>general</value>
         </row>
         <row>
-            <value>CinderProviderSupported</value>
+            <value>SriovHotPlugSupported</value>
             <value>false</value>
-            <value>3.5</value>
-        </row>
-        <row>
-            <value>CinderProviderSupported</value>
-            <value>true</value>
             <value>3.6</value>
         </row>
         <!-- Required by InsertExternalAuditLog -->
@@ -9193,14 +9188,14 @@
          <row>
              <value>georep-crawl</value>
              <value>Geo-replication session  crawl</value>
-             <value>3.5</value>
+             <value>3.6</value>
              <value></value>
              <value>geo_replication</value>
          </row>
          <row>
              <value>use_meta_volume</value>
              <value>Meta volume for the geo-replication session</value>
-             <value>3.5</value>
+             <value>3.6</value>
              <value>true;false</value>
              <value>geo_replication</value>
          </row>
@@ -9339,35 +9334,35 @@
         <row>
             <value>00000000-0000-0000-0000-000000000001</value>
             <value>TEST_FEATURE_1</value>
-            <value>3.5</value>
+            <value>3.6</value>
             <value>1</value>
             <value>Test Feature-1 for Virt </value>
         </row>
         <row>
             <value>00000000-0000-0000-0000-000000000002</value>
             <value>TEST_FEATURE_2</value>
-            <value>3.5</value>
+            <value>3.6</value>
             <value>2</value>
             <value>Test Feature-2 for Gluster</value>
         </row>
         <row>
             <value>00000000-0000-0000-0000-000000000003</value>
             <value>TEST_FEATURE_3</value>
-            <value>3.5</value>
+            <value>3.6</value>
             <value>255</value>
             <value>Test Feature-3 for both Virt and Gluster</value>
         </row>
         <row>
             <value>00000000-0000-0000-0000-000000000004</value>
             <value>TEST_FEATURE_4</value>
-            <value>3.5</value>
+            <value>3.6</value>
             <value>255</value>
             <value>Test Feature-4 for both Virt and Gluster</value>
         </row>
         <row>
             <value>00000000-0000-0000-0000-000000000005</value>
             <value>TEST_FEATURE_5</value>
-            <value>3.5</value>
+            <value>3.6</value>
             <value>255</value>
             <value>Test Feature-5 for both Virt and Gluster</value>
         </row>

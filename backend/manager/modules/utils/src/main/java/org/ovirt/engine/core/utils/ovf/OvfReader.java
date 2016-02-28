@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -537,7 +536,6 @@ public abstract class OvfReader implements IOvfBuilder {
 
         XmlNodeList list = selectNodes(content, "Section");
 
-        Version version = new Version(getVersion());
         if (list != null) {
             // The Os need to be read before the hardware
             node = getNode(list, "xsi:type", "ovf:OperatingSystemSection_Type");
@@ -600,7 +598,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = selectSingleNode(content, OvfProperties.NUM_OF_IOTHREADS);
         if (node != null) {
-            if (!StringUtils.isEmpty(node.innerText) && !FeatureSupported.isIoThreadsSupported(version)) {
+            if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setNumOfIoThreads(Integer.parseInt(node.innerText));
             }
         }

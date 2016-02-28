@@ -59,7 +59,6 @@ import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -96,7 +95,6 @@ public class VmMapper extends VmBaseMapper {
 
     public static VmStatic map(VmTemplate entity, VmStatic template, Version version) {
         VmStatic staticVm = template != null ? template : new VmStatic();
-        Version clusterVersion = version == null ? Version.getLast() : version;
 
         staticVm.setId(Guid.Empty);
         staticVm.setVmtGuid(entity.getId());
@@ -119,22 +117,12 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setVmInit(entity.getVmInit());
         staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
         staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
-
-        if (FeatureSupported.isSpiceFileTransferToggleSupported(clusterVersion)) {
-            staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
-        }
-
+        staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         staticVm.setRunAndPause(entity.isRunAndPause());
         staticVm.setCpuProfileId(entity.getCpuProfileId());
-        if (FeatureSupported.autoConvergence(clusterVersion)) {
-            staticVm.setAutoConverge(entity.getAutoConverge());
-        }
-
-        if (FeatureSupported.migrationCompression(clusterVersion)) {
-            staticVm.setMigrateCompressed(entity.getMigrateCompressed());
-        }
-
+        staticVm.setAutoConverge(entity.getAutoConverge());
+        staticVm.setMigrateCompressed(entity.getMigrateCompressed());
         staticVm.setCustomProperties(entity.getCustomProperties());
         staticVm.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
         staticVm.setCustomCpuName(entity.getCustomCpuName());
@@ -150,7 +138,6 @@ public class VmMapper extends VmBaseMapper {
     }
 
     private static VmStatic doMapVmBaseHwPartToVmStatic(VmBase entity, VmStatic staticVm, Version version) {
-        Version clusterVersion = version == null ? Version.getLast() : version;
         staticVm.setMemSizeMb(entity.getMemSizeMb());
         staticVm.setAutoStartup(entity.isAutoStartup());
         staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
@@ -167,9 +154,8 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setMigrationSupport(entity.getMigrationSupport());
         staticVm.setMigrationDowntime(entity.getMigrationDowntime());
         staticVm.setMinAllocatedMem(entity.getMinAllocatedMem());
-        if (FeatureSupported.isIoThreadsSupported(clusterVersion)) {
-            staticVm.setNumOfIoThreads(entity.getNumOfIoThreads());
-        }
+        staticVm.setNumOfIoThreads(entity.getNumOfIoThreads());
+
         return staticVm;
     }
 

@@ -37,8 +37,6 @@ public class PoolModelBehaviorBaseTest extends BaseVmModelBehaviorTest {
             }
         };
 
-        mockAsyncDataProvider(model);
-
         return model;
     }
 

@@ -64,12 +64,6 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void sriovFeatureIsNotSupported() {
-        sriovFeatureSupported(false);
-        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED.toString());
-    }
-
-    @Test
     public void nicNotSriovEnabled() {
         nicSriovEnabled(false);
         assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED.toString());
@@ -110,7 +104,6 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     private void setAllValidationsValid() {
         doReturn(true).when(command).wasNumOfVfsChanged();
         nicExists(true);
-        sriovFeatureSupported(true);
         nicSriovEnabled(true);
         allVfsAreFree(true);
         numOfVfsInValidRange(true);
@@ -119,11 +112,6 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     private void nicExists(boolean isValid) {
         when(validator.nicExists()).thenReturn(isValid ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
-    }
-
-    private void sriovFeatureSupported(boolean isValid) {
-        when(validator.sriovFeatureSupported()).thenReturn(isValid ? ValidationResult.VALID
-                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED));
     }
 
     private void nicSriovEnabled(boolean isValid) {

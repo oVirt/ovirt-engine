@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.transport.ProtocolDetector;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
@@ -144,16 +143,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             }
 
             if (parameters.getEnableSerialConsole()) {
-                /* in 3.6.0 we always enable serial console without user intervention. */
-                if (FeatureSupported.virtioSerialConsole(getVds().getClusterCompatibilityVersion())) {
-                    deploy.addUnit(new VdsDeployVmconsoleUnit());
-                } else {
-                    log.warn(
-                            "Installation of Host {} will skip Virtio Serial Console, because it is not supported for clusterLevel {}",
-                            getVds().getName(),
-                            getVds().getClusterCompatibilityVersion()
-                    );
-                }
+                deploy.addUnit(new VdsDeployVmconsoleUnit());
             }
 
             switch (getParameters().getAuthMethod()) {

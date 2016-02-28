@@ -10,24 +10,20 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
@@ -37,8 +33,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 @RunWith(MockitoJUnitRunner.class)
 public class VfsConfigValidatorTest {
 
-    private static final String CLUSTER_VERSION = "7";
-
     private static final String NETWORK_NAME = "net";
 
     private static final String NIC_NAME = "nic";
@@ -46,8 +40,6 @@ public class VfsConfigValidatorTest {
     private static final int NUM_OF_VFS = 5;
 
     private static final Guid NIC_ID = Guid.newGuid();
-
-    private static final Guid HOST_ID = Guid.newGuid();
 
     private static final Guid NETWORK_ID = Guid.newGuid();
 
@@ -64,9 +56,6 @@ public class VfsConfigValidatorTest {
 
     @Mock
     private HostNicVfsConfig oldVfsConfig;
-
-    @Mock
-    private Version version;
 
     @Mock
     private DbFacade dbFacade;
@@ -104,29 +93,6 @@ public class VfsConfigValidatorTest {
     private void createValidator() {
         validator = spy(new VfsConfigValidator(NIC_ID, oldVfsConfig));
         doReturn(dbFacade).when(validator).getDbFacade();
-    }
-
-    @Test
-    public void sriovFeatureSupported() {
-        sriovFeatureSupportTest(isValid(), true);
-    }
-
-    @Test
-    public void sriovFeatureNotSupported() {
-        sriovFeatureSupportTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED), false);
-    }
-
-    private void sriovFeatureSupportTest(Matcher<ValidationResult> matcher,
-            boolean isSupported) {
-        simulateNicExists();
-        when(nic.getVdsId()).thenReturn(HOST_ID);
-        when(vdsDao.get(HOST_ID)).thenReturn(host);
-        when(host.getClusterCompatibilityVersion()).thenReturn(version);
-        when(version.getValue()).thenReturn(CLUSTER_VERSION);
-
-        mockConfigRule.mockConfigValue(ConfigValues.NetworkSriovSupported, version, isSupported);
-
-        assertThat(validator.sriovFeatureSupported(), matcher);
     }
 
     @Test

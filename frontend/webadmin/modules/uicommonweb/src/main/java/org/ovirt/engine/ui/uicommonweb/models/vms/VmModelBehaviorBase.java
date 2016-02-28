@@ -1450,20 +1450,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateNumOfIoThreads() {
-        Version compatibilityVersion = getCompatibilityVersion();
-        if (compatibilityVersion == null) {
-            return;
-        }
+        getModel().getIoThreadsEnabled().setIsChangeable(true);
+        getModel().getNumOfIoThreads().setIsChangeable(true);
 
-        getModel().getIoThreadsEnabled().updateChangeability(ConfigurationValues.IoThreadsSupported, compatibilityVersion);
-        getModel().getNumOfIoThreads().updateChangeability(ConfigurationValues.IoThreadsSupported, compatibilityVersion);
-
-        if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.IoThreadsSupported, compatibilityVersion.getValue())) {
-            getModel().getNumOfIoThreads().setIsAvailable(getModel().getIoThreadsEnabled().getEntity());
-            if (getModel().getIoThreadsEnabled().getEntity() && getModel().getNumOfIoThreads().getEntity() == 0) {
-                getModel().getNumOfIoThreads().setEntity(DEFAULT_NUM_OF_IOTHREADS);
-            }
+        getModel().getNumOfIoThreads().setIsAvailable(getModel().getIoThreadsEnabled().getEntity());
+        if (getModel().getIoThreadsEnabled().getEntity() && getModel().getNumOfIoThreads().getEntity() == 0) {
+            getModel().getNumOfIoThreads().setEntity(DEFAULT_NUM_OF_IOTHREADS);
         }
     }
 

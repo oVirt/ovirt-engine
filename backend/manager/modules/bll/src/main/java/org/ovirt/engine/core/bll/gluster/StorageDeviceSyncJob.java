@@ -175,9 +175,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
     }
 
     private boolean supportsGlusterDiskProvisioning(Cluster cluster) {
-        return cluster.supportsGlusterService()
-                && getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
-                        cluster.getId());
+        return cluster.supportsGlusterService();
     }
 
 }

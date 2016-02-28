@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
@@ -1097,7 +1096,7 @@ public class VdsBrokerObjectsBuilder {
         if (interfaces != null) {
             int networkUsage = 0;
             Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(vds.getInterfaces());
-            NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder(vds.getClusterCompatibilityVersion());
+            NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder();
             for (Entry<String, Object> entry : interfaces.entrySet()) {
                 if (nicsByName.containsKey(entry.getKey())) {
                     VdsNetworkInterface existingIface = nicsByName.get(entry.getKey());
@@ -1112,7 +1111,7 @@ public class VdsBrokerObjectsBuilder {
                             .setStatus(assignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
                     if (!NetworkCommonUtils.isVlan(existingIface) && !existingIface.isPartOfBond()) {
-                        Double ifaceUsage = computeInterfaceUsage(existingIface, statsBuilder.isTotalStatsReported());
+                        Double ifaceUsage = computeInterfaceUsage(existingIface);
                         if (ifaceUsage != null) {
                             networkUsage = (int) Math.max(networkUsage, ifaceUsage);
                         }
@@ -1230,18 +1229,9 @@ public class VdsBrokerObjectsBuilder {
         iface.setSpeed(assignIntValue(dict, VdsProperties.INTERFACE_SPEED));
     }
 
-    private static Double computeInterfaceUsage(VdsNetworkInterface iface, boolean totalStatsReported) {
+    private static Double computeInterfaceUsage(VdsNetworkInterface iface) {
         Double receiveRate = iface.getStatistics().getReceiveRate();
         Double transmitRate = iface.getStatistics().getTransmitRate();
-
-        /**
-         * TODO: only needed if rate reported by vdsm (in which case can't be null) - remove in 4.0 and turn
-         * NetworkStatisticsBuilder.truncatePercentage() private
-         */
-        if (!totalStatsReported) {
-            receiveRate = NetworkStatisticsBuilder.truncatePercentage(receiveRate);
-            transmitRate = NetworkStatisticsBuilder.truncatePercentage(transmitRate);
-        }
 
         if (receiveRate == null) {
             return transmitRate;
@@ -1755,7 +1745,7 @@ public class VdsBrokerObjectsBuilder {
                         iface.setIpv6Gateway(v6gateway);
 
                         if (bridgedNetwork) {
-                            addBootProtocol(effectiveProperties, host, iface);
+                            addBootProtocol(effectiveProperties, iface);
                         }
                     }
 
@@ -1864,7 +1854,6 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Map<String, Object>> bonds =
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
-            boolean cfgEntriesDeprecated = FeatureSupported.cfgEntriesDeprecated(vds.getClusterCompatibilityVersion());
             for (Entry<String, Map<String, Object>> entry : bonds.entrySet()) {
                 VdsNetworkInterface bond = new Bond();
                 updateCommonInterfaceData(bond, vds, entry);
@@ -1878,36 +1867,31 @@ public class VdsBrokerObjectsBuilder {
                     }
 
                     Object bondOptions = null;
-                    if (cfgEntriesDeprecated) {
-                        Map<String, Object> bondOptionsMap = new HashMap<>();
+                    Map<String, Object> bondOptionsMap = new HashMap<>();
 
-                        Map<String, Object> bondOpts = (Map<String, Object>) bondProperties.get("opts");
-                        if (bondOpts != null) {
-                            bondOptionsMap.putAll(bondOpts);
-                        }
-
-                        String bondOptionsString = "";
-                        String mode = (String) bondOptionsMap.get("mode");
-                        String miimon = (String) bondOptionsMap.get("miimon");
-
-                        if (mode != null && miimon != null) {
-                            bondOptionsString = String.format("mode=%s miimon=%s", mode, miimon);
-                            bondOptionsMap.remove("mode");
-                            bondOptionsMap.remove("miimon");
-                        }
-
-                        for (Map.Entry<String, Object> optionEntry : bondOptionsMap.entrySet()) {
-                            bondOptionsString =
-                                    String.format("%s %s=%s",
-                                            bondOptionsString,
-                                            optionEntry.getKey(),
-                                            optionEntry.getValue());
-                        }
-                        bondOptions = bondOptionsString.isEmpty() ? null : bondOptionsString;
-                    } else {
-                        Map<String, Object> config = (Map<String, Object>) bondProperties.get("cfg");
-                        bondOptions = (config == null) ? null : config.get("BONDING_OPTS");
+                    Map<String, Object> bondOpts = (Map<String, Object>) bondProperties.get("opts");
+                    if (bondOpts != null) {
+                        bondOptionsMap.putAll(bondOpts);
                     }
+
+                    String bondOptionsString = "";
+                    String mode = (String) bondOptionsMap.get("mode");
+                    String miimon = (String) bondOptionsMap.get("miimon");
+
+                    if (mode != null && miimon != null) {
+                        bondOptionsString = String.format("mode=%s miimon=%s", mode, miimon);
+                        bondOptionsMap.remove("mode");
+                        bondOptionsMap.remove("miimon");
+                    }
+
+                    for (Entry<String, Object> optionEntry : bondOptionsMap.entrySet()) {
+                        bondOptionsString =
+                                String.format("%s %s=%s",
+                                        bondOptionsString,
+                                        optionEntry.getKey(),
+                                        optionEntry.getValue());
+                    }
+                    bondOptions = bondOptionsString.isEmpty() ? null : bondOptionsString;
                     if (bondOptions != null) {
                         bondOptions = normalizeBondOptions(bondOptions.toString());
                         bond.setBondOptions(bondOptions.toString());
@@ -2037,7 +2021,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setMtu(mtu);
             }
 
-            addBootProtocol(nicProperties, host, iface);
+            addBootProtocol(nicProperties, iface);
         }
     }
 
@@ -2114,31 +2098,24 @@ public class VdsBrokerObjectsBuilder {
         return Injector.get(BootProtocolResolver.class);
     }
 
-    private static void addBootProtocol(Map<String, Object> nicProperties, VDS host, VdsNetworkInterface iface) {
+    private static void addBootProtocol(Map<String, Object> nicProperties, VdsNetworkInterface iface) {
         if (nicProperties == null) {
             return;
         }
-
-        final boolean cfgEntriesDeprecated =
-                FeatureSupported.cfgEntriesDeprecated(host.getClusterCompatibilityVersion());
 
         final BootProtocolResolver resolver = getBootProtocolResolver();
 
         setBootProtocolAndGateway(
                 resolver,
-                cfgEntriesDeprecated ?
-                        new NoCfgIpv4InfoFetcher(nicProperties, iface.getIpv4Address()) :
-                        new CfgIpv4InfoFetcher(nicProperties),
+                new NoCfgIpv4InfoFetcher(nicProperties, iface.getIpv4Address()),
                 iface::setIpv4BootProtocol,
                 iface::setIpv4Gateway);
 
-        if (cfgEntriesDeprecated) {
-            setBootProtocolAndGateway(
-                    resolver,
-                    new NoCfgIpv6InfoFetcher(nicProperties, iface.getIpv6Address()),
-                    iface::setIpv6BootProtocol,
-                    iface::setIpv6Gateway);
-        }
+        setBootProtocolAndGateway(
+                resolver,
+                new NoCfgIpv6InfoFetcher(nicProperties, iface.getIpv6Address()),
+                iface::setIpv6BootProtocol,
+                iface::setIpv6Gateway);
     }
 
     private static void setBootProtocolAndGateway(

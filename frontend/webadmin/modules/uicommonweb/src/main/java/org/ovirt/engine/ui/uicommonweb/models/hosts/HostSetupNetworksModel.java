@@ -358,11 +358,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getIpv4Address()));
             }
 
-            if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
-                    version)) {
-                networkDialogModel.getQosOverridden().setIsAvailable(true);
-                networkDialogModel.getQosModel().setIsAvailable(true);
-            }
+            networkDialogModel.getQosOverridden().setIsAvailable(true);
+            networkDialogModel.getQosModel().setIsAvailable(true);
 
             KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
             customPropertiesModel.setIsAvailable(true);

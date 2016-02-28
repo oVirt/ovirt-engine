@@ -135,11 +135,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
                 return false;
             }
         } else if (!alreadyInUpgradeMode && newCluster.isInUpgradeMode()) {
-            // Check if we can safely start the cluster upgrade
-            if (!validate(getUpgradeValidator().checkClusterUpgradeIsEnabled(getCluster()))) {
-                return false;
-            }
-
             final List<VDS> hosts = getVdsDao().getAllForCluster(getClusterId());
             final List<VM> vms = getVmDao().getAllForCluster(getClusterId());
             populateVMNUMAInfo(vms);
