@@ -47,7 +47,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
             return (DiskImage) ret.getReturnValue();
         } catch (EngineException e) {
-            log.warn("Failed to get info of volume '{0}' using GetImageInfo", targetImage.getImageId(), e);
+            log.warn("Failed to get info of volume '{}' using GetImageInfo", targetImage.getImageId(), e);
             return null;
         }
     }
