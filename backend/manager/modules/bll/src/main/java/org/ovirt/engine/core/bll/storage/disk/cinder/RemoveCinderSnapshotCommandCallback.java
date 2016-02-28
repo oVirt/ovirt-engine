@@ -2,73 +2,40 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 
-public class RemoveCinderSnapshotCommandCallback extends AbstractCinderDiskCommandCallback<RemoveCinderSnapshotDiskCommand<ImagesContainterParametersBase>> {
+public class RemoveCinderSnapshotCommandCallback extends ConcurrentChildCommandsExecutionCallback {
+
     @Override
-    public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
-        super.doPolling(cmdId, childCmdIds);
+    protected void childCommandsExecutionEnded(CommandBase<?> command,
+            boolean anyFailed,
+            List<Guid> childCmdIds,
+            CommandExecutionStatus status,
+            int completedChildren) {
 
-        if (!getCinderBroker().isSnapshotExist(getDiskId())) {
+        RemoveCinderSnapshotDiskCommand<ImagesContainterParametersBase> removeCinderSnapshotDiskCommand =
+                (RemoveCinderSnapshotDiskCommand<ImagesContainterParametersBase>) command;
+        ImagesContainterParametersBase parameters = removeCinderSnapshotDiskCommand.getParameters();
+        Guid diskId = parameters.getDestinationImageId();
+        if (!removeCinderSnapshotDiskCommand.getCinderBroker().isSnapshotExist(diskId)) {
             // Cinder snapshot has been deleted successfully
-            getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
+            setCommandEndStatus(command, false, status, childCmdIds);
             return;
         }
-        ImageStatus imageStatus = getCinderBroker().getSnapshotStatus(getDiskId());
-        DiskImage disk = getDisk();
+        ImageStatus imageStatus = removeCinderSnapshotDiskCommand.getCinderBroker().getSnapshotStatus(diskId);
+        DiskImage disk = command.getDiskImageDao().getSnapshotById(diskId);
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
             case ILLEGAL:
-                getCommand().setCommandStatus(CommandStatus.FAILED);
+                setCommandEndStatus(command, true, status, childCmdIds);
                 break;
             }
         }
-    }
-
-    @Override
-    public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        super.onFailed(cmdId, childCmdIds);
-        getCommand().getParameters().setTaskGroupSuccess(false);
-        getCommand().endAction();
-    }
-
-    @Override
-    public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        super.onSucceeded(cmdId, childCmdIds);
-        getCommand().endAction();
-    }
-
-    @Override
-    protected Guid getDiskId() {
-        return getCommand().getParameters().getDestinationImageId();
-    }
-
-    @Override
-    protected CinderDisk getDisk() {
-        if (disk == null) {
-            disk = (CinderDisk) getDiskImageDao().getSnapshotById(getCommand().getParameters().getDestinationImageId());
-        }
-        return disk;
-    }
-
-    protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
-    }
-
-    @Override
-    protected CinderBroker getCinderBroker() {
-        return getCommand().getCinderBroker();
     }
 }
