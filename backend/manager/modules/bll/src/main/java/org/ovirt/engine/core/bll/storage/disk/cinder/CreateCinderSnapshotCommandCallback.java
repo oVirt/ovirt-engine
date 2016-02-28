@@ -2,90 +2,45 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 
-public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskCommandCallback<CreateCinderSnapshotCommand<CreateCinderSnapshotParameters>> {
+public class CreateCinderSnapshotCommandCallback extends ConcurrentChildCommandsExecutionCallback {
 
     @Override
-    public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
-        super.doPolling(cmdId, childCmdIds);
+    protected void childCommandsExecutionEnded(CommandBase<?> command,
+            boolean anyFailed,
+            List<Guid> childCmdIds,
+            CommandExecutionStatus status,
+            int completedChildren) {
+
+        CreateCinderSnapshotCommand<CreateCinderSnapshotParameters> createCinderSnapshotCommand =
+                (CreateCinderSnapshotCommand<CreateCinderSnapshotParameters>) command;
+        CreateCinderSnapshotParameters parameters = createCinderSnapshotCommand.getParameters();
+        Guid diskId = parameters.getDestinationImageId();
         ImageStatus imageStatus;
-        if (getCommand().getParameters().getSnapshotType().equals(Snapshot.SnapshotType.STATELESS)) {
-            imageStatus = getCinderBroker().getDiskStatus(getDiskId());
+        if (parameters.getSnapshotType().equals(Snapshot.SnapshotType.STATELESS)) {
+            imageStatus = createCinderSnapshotCommand.getCinderBroker().getDiskStatus(diskId);
         } else {
-            imageStatus = getCinderBroker().getSnapshotStatus(getDiskId());
+            imageStatus = createCinderSnapshotCommand.getCinderBroker().getSnapshotStatus(diskId);
         }
 
-        DiskImage disk = getDisk();
+        DiskImage disk = command.getDiskImageDao().getSnapshotById(diskId);
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
             case OK:
-                getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
+                setCommandEndStatus(command, false, status, childCmdIds);
                 break;
             case ILLEGAL:
-                getCommand().setCommandStatus(CommandStatus.FAILED);
+                setCommandEndStatus(command, true, status, childCmdIds);
                 break;
             }
         }
-    }
-
-    @Override
-    public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        super.onFailed(cmdId, childCmdIds);
-        log.error("Failed adding a Cinder snapshot. snapshot ID: {}", getDiskId());
-        getCommand().getParameters().setTaskGroupSuccess(false);
-        getCommand().endAction();
-    }
-
-    @Override
-    public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        super.onSucceeded(cmdId, childCmdIds);
-        getCommand().endAction();
-    }
-
-    @Override
-    protected Guid getDiskId() {
-        // We actually using the destination image id and not the disk id, but the API is strict.
-        return getCommand().getParameters().getDestinationImageId();
-    }
-
-    @Override
-    protected CinderDisk getDisk() {
-        if (disk == null) {
-            disk = (CinderDisk) getDiskImageDao().getSnapshotById(getDiskId());
-        }
-        return disk;
-    }
-
-    protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
-    }
-
-    protected ImageDao getImageDao() {
-        return DbFacade.getInstance().getImageDao();
-    }
-
-    protected BaseDiskDao getBaseDiskDao() {
-        return DbFacade.getInstance().getBaseDiskDao();
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
-    }
-
-    @Override
-    protected CinderBroker getCinderBroker() {
-        return getCommand().getCinderBroker();
     }
 }
