@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
@@ -937,12 +937,21 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void addVmWatchdog() {
         VmWatchdog vmWatchdog = getParameters().getWatchdog();
         if (vmWatchdog != null) {
-            WatchdogParameters parameters = new WatchdogParameters();
-            parameters.setId(getParameters().getVmId());
-            parameters.setAction(vmWatchdog.getAction());
-            parameters.setModel(vmWatchdog.getModel());
-            runInternalAction(VdcActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
+            VdcActionType actionType = VmDeviceUtils.hasWatchdog(getVmTemplateId()) ?
+                    VdcActionType.UpdateWatchdog : VdcActionType.AddWatchdog;
+            runInternalAction(
+                    actionType,
+                    buildWatchdogParameters(vmWatchdog),
+                    cloneContextAndDetachFromParent());
         }
+    }
+
+    private WatchdogParameters buildWatchdogParameters(VmWatchdog vmWatchdog) {
+        WatchdogParameters parameters = new WatchdogParameters();
+        parameters.setId(getParameters().getVmId());
+        parameters.setAction(vmWatchdog.getAction());
+        parameters.setModel(vmWatchdog.getModel());
+        return parameters;
     }
 
     private void addVmRngDevice() {
