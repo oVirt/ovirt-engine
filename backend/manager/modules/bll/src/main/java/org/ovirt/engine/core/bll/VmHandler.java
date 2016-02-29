@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.TransientField;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -142,6 +143,11 @@ public class VmHandler {
         for (Pair<EditableDeviceOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableDeviceOnVmStatusField.class,
                 inspectedClassNames)) {
             updateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+        }
+
+        for (Pair<TransientField, Field> pair : BaseHandler.extractAnnotatedFields(TransientField.class,
+                inspectedClassNames)) {
+            updateVmsStatic.addTransientFields(pair.getSecond().getName());
         }
 
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVm);
