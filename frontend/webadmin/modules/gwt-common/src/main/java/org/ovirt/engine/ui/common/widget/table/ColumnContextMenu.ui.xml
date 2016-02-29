@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style>
+        .container {
+            border: 1px solid #D3D3D3;
+            padding: 3px;
+        }
+    </ui:style>
+
+    <g:FlowPanel ui:field="container" addStyleNames="{style.container}" />
+
+</ui:UiBinder>

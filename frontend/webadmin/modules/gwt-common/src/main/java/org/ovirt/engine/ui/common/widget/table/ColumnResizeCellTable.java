@@ -143,6 +143,8 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     private boolean headerContextMenuEnabled = false;
 
+    private int dragIndex = ColumnController.NO_DRAG;
+
     public ColumnResizeCellTable() {
         super();
     }
@@ -487,6 +489,21 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
             contextPopup.getContextMenu().update();
         }
+    }
+
+    @Override
+    public int getDragIndex() {
+        return dragIndex;
+    }
+
+    @Override
+    public void setDragIndex(int dragIndex) {
+        this.dragIndex = dragIndex;
+    }
+
+    @Override
+    public void updateColumnContextMenu() {
+        contextPopup.getContextMenu().update();
     }
 
     /**
