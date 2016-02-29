@@ -10,6 +10,8 @@ import com.google.gwt.user.cellview.client.Column;
  */
 public interface ColumnController<T> {
 
+    int NO_DRAG = -1;
+
     /**
      * Get column at the given index.
      * <p>
@@ -51,5 +53,20 @@ public interface ColumnController<T> {
      * Does nothing unless both columns are present.
      */
     void swapColumns(Column<T, ?> columnOne, Column<T, ?> columnTwo);
+
+    /**
+     * Get index of the menu item currently being dragged.
+     */
+    int getDragIndex();
+
+    /**
+     * Set index of the menu item currently being dragged.
+     */
+    void setDragIndex(int dragIndex);
+
+    /**
+     * Force update of all context menu items.
+     */
+    void updateColumnContextMenu();
 
 }

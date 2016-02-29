@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style type="org.ovirt.engine.ui.common.widget.table.ColumnContextMenuItem.Style">
+        .container {
+            font-family: Arial,sans-serif;
+            font-size: small;
+            padding: 0 10px;
+            height: 28px;
+            line-height: 24px;
+            border: 2px solid #fff;
+        }
+
+        .checkBox {
+            display: inline-block;
+            margin-top: 0 !important;
+            vertical-align: middle;
+        }
+
+        .title {
+            display: inline-block;
+            padding-left: 10px;
+        }
+
+        .highlightable:hover {
+            background-color: #C3D0E0;
+        }
+
+        .dragSource {
+            border: 2px solid blue;
+        }
+
+        .validDropTarget {
+            border: 2px solid green;
+            background-color: lightgreen;
+        }
+    </ui:style>
+
+    <g:FocusPanel ui:field="container" addStyleNames="{style.container}">
+        <g:FlowPanel>
+            <g:SimpleCheckBox ui:field="checkBox" addStyleNames="{style.checkBox}" />
+            <g:Label ui:field="title" addStyleNames="{style.title}" />
+        </g:FlowPanel>
+    </g:FocusPanel>
+
+</ui:UiBinder>
