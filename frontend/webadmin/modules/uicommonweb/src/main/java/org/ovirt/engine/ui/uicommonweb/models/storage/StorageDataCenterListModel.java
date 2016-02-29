@@ -307,7 +307,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     public void postAttachInit(ArrayList<EntityModel> datacenters) {
-        ListModel model = new ListModel();
+        ListModel<EntityModel> model = new ListModel<>();
         model.setHelpTag(HelpTag.attach_storage);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().attachToDataCenterTitle());
@@ -337,7 +337,10 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             model.getCommands().add(tempVar);
         }
         else {
-            model.setItems(datacenters, datacenters.get(0));
+            model.setItems(datacenters);
+            List<EntityModel> initialSelection = new ArrayList<>();
+            initialSelection.add(datacenters.get(0));
+            model.setSelectedItems(initialSelection);
             UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnAttach", this); //$NON-NLS-1$
             model.getCommands().add(tempVar2);
             UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
