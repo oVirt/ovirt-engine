@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.tasks;
 
-import static org.ovirt.engine.core.bll.tasks.CommandsRepository.CommandContainer;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,12 +13,8 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.BackendUtils;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
@@ -38,23 +32,14 @@ public class CommandExecutor {
             Executors.newFixedThreadPool(Config.<Integer>getValue(ConfigValues.CommandCoordinatorThreadPoolSize));
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
     private final CommandsRepository commandsRepository;
-    private final int pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
 
     @Inject
     CommandExecutor(CommandsRepository commandsRepository) {
         this.commandsRepository = commandsRepository;
     }
 
-    public Future<VdcReturnValueBase> executeAsyncCommand(final VdcActionType actionType,
-                                                          final VdcActionParametersBase parameters,
+    public Future<VdcReturnValueBase> executeAsyncCommand(final CommandBase<?> command,
                                                           final CommandContext cmdContext) {
-        final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
-        CommandCallback callBack = command.getCallback();
-        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
-        if (callBack != null) {
-            commandsRepository.addToCallbackMap(command.getCommandId(), new CommandContainer(callBack, pollingRate));
-        }
-
         Future<VdcReturnValueBase> retVal;
         try {
             retVal = executor.submit(() -> executeCommand(command, cmdContext));
@@ -120,7 +105,8 @@ public class CommandExecutor {
         }
 
         @Override
-        public VdcReturnValueBase get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        public VdcReturnValueBase get(long timeout, TimeUnit unit)
+                throws InterruptedException, ExecutionException, TimeoutException {
             return retValue;
         }
     }

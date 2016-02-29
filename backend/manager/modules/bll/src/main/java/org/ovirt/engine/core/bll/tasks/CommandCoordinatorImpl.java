@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -26,6 +27,8 @@ import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -88,7 +91,16 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     public Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
                                                           VdcActionParametersBase parameters,
                                                           CommandContext cmdContext) {
-        return cmdExecutor.executeAsyncCommand(actionType, parameters, cmdContext);
+        final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
+        CommandCallback callBack = command.getCallback();
+        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
+        if (callBack != null) {
+            commandsRepository.addToCallbackMap(command.getCommandId(),
+                    new CommandsRepository.CommandContainer(callBack,
+                            Config.<Integer> getValue(ConfigValues.AsyncCommandPollingLoopInSeconds)));
+        }
+
+        return cmdExecutor.executeAsyncCommand(command, cmdContext);
     }
 
     @Override
