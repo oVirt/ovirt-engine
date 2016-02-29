@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandContextsCache;
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -200,16 +203,49 @@ public class CommandsRepository {
         return Collections.emptyList();
     }
 
-    public CommandsCache getCommandsCache() {
-        return commandsCache;
-    }
-
     public CommandContextsCache getCommandContextsCache() {
         return contextsCache;
     }
 
     public Map<Guid, CommandContainer> getCommandsCallback() {
         return cmdCallbacksById;
+    }
+
+    public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
+        commandsCache.persistCommandAssociatedEntities(cmdAssociatedEntities);
+    }
+
+    public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId) {
+        return commandsCache.getChildCmdsByParentCmdId(cmdId);
+    }
+
+    public List<Guid> getCommandIdsByEntityId(Guid entityId) {
+        return commandsCache.getCommandIdsByEntityId(entityId);
+    }
+
+    public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
+        return commandsCache.getCommandAssociatedEntities(cmdId);
+    }
+
+    public void updateCommandData(Guid commandId, Map<String, Serializable> data) {
+        commandsCache.updateCommandData(commandId, data);
+    }
+
+    public void updateCommandExecuted(Guid commandId) {
+        commandsCache.updateCommandExecuted(commandId);
+    }
+
+    public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId) {
+        CommandEntity cmdEntity;
+        for (Guid cmdId : commandsCache.keySet()) {
+            cmdEntity = commandsCache.get(cmdId);
+            if (cmdEntity != null && !Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
+                    !cmdEntity.getRootCommandId().equals(cmdId) &&
+                    cmdEntity.getRootCommandId().equals(rootCommandId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static class CommandContainer {

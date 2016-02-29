@@ -67,17 +67,17 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
-        commandsRepository.getCommandsCache().persistCommandAssociatedEntities(cmdAssociatedEntities);
+        commandsRepository.persistCommandAssociatedEntities(cmdAssociatedEntities);
     }
 
     @Override
     public List<Guid> getCommandIdsByEntityId(Guid entityId) {
-        return commandsRepository.getCommandsCache().getCommandIdsByEntityId(entityId);
+        return commandsRepository.getCommandIdsByEntityId(entityId);
     }
 
     @Override
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
-        return commandsRepository.getCommandsCache().getCommandAssociatedEntities(cmdId);
+        return commandsRepository.getCommandAssociatedEntities(cmdId);
     }
 
     /**
@@ -141,7 +141,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void updateCommandData(final Guid commandId, final Map<String, Serializable> data) {
-        commandsRepository.getCommandsCache().updateCommandData(commandId, data);
+        commandsRepository.updateCommandData(commandId, data);
     }
 
     @Override
@@ -151,26 +151,17 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void updateCommandExecuted(Guid commandId) {
-        commandsRepository.getCommandsCache().updateCommandExecuted(commandId);
+        commandsRepository.updateCommandExecuted(commandId);
     }
 
     @Override
     public void updateCallbackNotified(final Guid commandId) {
-        commandsRepository.getCommandsCache().updateCallbackNotified(commandId);
+        commandsRepository.updateCallbackNotified(commandId);
     }
 
     @Override
     public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId) {
-        CommandEntity cmdEntity;
-        for (Guid cmdId : commandsRepository.getCommandsCache().keySet()) {
-            cmdEntity = commandsRepository.getCommandsCache().get(cmdId);
-            if (cmdEntity != null && !Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
-                    !cmdEntity.getRootCommandId().equals(cmdId) &&
-                    cmdEntity.getRootCommandId().equals(rootCommandId)) {
-                return true;
-            }
-        }
-        return false;
+        return commandsRepository.hasCommandEntitiesWithRootCommandId(rootCommandId);
     }
 
     @Override
@@ -194,7 +185,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId) {
-        return commandsRepository.getCommandsCache().getChildCmdsByParentCmdId(cmdId);
+        return commandsRepository.getChildCmdsByParentCmdId(cmdId);
     }
 
     @Override
