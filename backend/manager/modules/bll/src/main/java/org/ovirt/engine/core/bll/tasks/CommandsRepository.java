@@ -203,10 +203,6 @@ public class CommandsRepository {
         return Collections.emptyList();
     }
 
-    public CommandContextsCache getCommandContextsCache() {
-        return contextsCache;
-    }
-
     public Map<Guid, CommandContainer> getCommandsCallback() {
         return cmdCallbacksById;
     }
