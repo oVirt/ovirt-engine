@@ -52,7 +52,7 @@ public class CommandExecutor {
         CommandCallback callBack = command.getCallback();
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
         if (callBack != null) {
-            commandsRepository.getCommandsCallback().put(command.getCommandId(), new CommandContainer(callBack, pollingRate));
+            commandsRepository.addToCallbackMap(command.getCommandId(), new CommandContainer(callBack, pollingRate));
         }
 
         Future<VdcReturnValueBase> retVal;

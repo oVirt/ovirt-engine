@@ -2,10 +2,12 @@ package org.ovirt.engine.core.bll.tasks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Singleton;
@@ -24,11 +26,14 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class CommandsRepository {
 
-    private final Map<Guid, CommandContainer> cmdCallbacksById;
+    private static final Logger log = LoggerFactory.getLogger(CommandsRepository.class);
+    private final Map<Guid, CommandContainer> commandContainers;
     private final CommandsCache commandsCache;
     private final CommandContextsCache contextsCache;
     private final ConcurrentHashMap<Guid, List<Guid>> childHierarchy;
@@ -37,7 +42,7 @@ public class CommandsRepository {
     private volatile boolean childHierarchyInitialized;
 
     public CommandsRepository() {
-        cmdCallbacksById = new ConcurrentHashMap<>();
+        commandContainers = new ConcurrentHashMap<>();
         commandsCache = new CommandsCacheImpl();
         contextsCache = new CommandContextsCacheImpl(commandsCache);
         childHierarchy = new ConcurrentHashMap<>();
@@ -45,12 +50,16 @@ public class CommandsRepository {
     }
 
     public void addToCallbackMap(CommandEntity cmdEntity) {
-        if (!cmdCallbacksById.containsKey(cmdEntity.getId())) {
+        if (!commandContainers.containsKey(cmdEntity.getId())) {
             CommandBase<?> cmd = retrieveCommand(cmdEntity.getId());
             if (cmd != null && cmd.getCallback() != null) {
-                cmdCallbacksById.put(cmdEntity.getId(), new CommandContainer(cmd.getCallback(), pollingRate));
+                addToCallbackMap(cmdEntity.getId(), new CommandContainer(cmd.getCallback(), pollingRate));
             }
         }
+    }
+
+    public void addToCallbackMap(Guid commandId, CommandContainer commandContainer) {
+        commandContainers.put(commandId, commandContainer);
     }
 
     public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
@@ -203,8 +212,8 @@ public class CommandsRepository {
         return Collections.emptyList();
     }
 
-    public Map<Guid, CommandContainer> getCommandsCallback() {
-        return cmdCallbacksById;
+    public Set<Map.Entry<Guid, CommandContainer>> getCommandContainers() {
+        return commandContainers.entrySet();
     }
 
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
@@ -242,6 +251,43 @@ public class CommandsRepository {
             }
         }
         return false;
+    }
+
+    public CommandContainer getCommandCallbackContainer(Guid commandId) {
+        if (Guid.isNullOrEmpty(commandId)) {
+            return null;
+        }
+
+        return commandContainers.get(commandId);
+    }
+
+    public void markExpiredCommandsAsFailure() {
+        for (Guid commandId : commandContainers.keySet()) {
+            List<Guid> childCmdIds = getChildCommandIds(commandId);
+            if (childCmdIds.isEmpty()) {
+                markExpiredCommandAsFailure(commandId);
+            } else {
+                childCmdIds.forEach(this::markExpiredCommandAsFailure);
+            }
+        }
+    }
+
+    private void markExpiredCommandAsFailure(Guid cmdId) {
+        CommandEntity cmdEntity = getCommandEntity(cmdId);
+        if (cmdEntity != null && cmdEntity.getCommandStatus() == CommandStatus.ACTIVE) {
+            Calendar cal = Calendar.getInstance();
+            Integer cmdLifeTimeInMin = cmdEntity.getCommandParameters().getLifeInMinutes();
+            cal.add(Calendar.MINUTE, -1 * (cmdLifeTimeInMin == null ?
+                    Config.<Integer>getValue(ConfigValues.CoCoLifeInMinutes) :
+                    cmdLifeTimeInMin));
+            if (cmdEntity.getCreatedAt().getTime() < cal.getTime().getTime()) {
+                log.warn("Marking expired command as Failed: command '{} ({})' that started at '{}' has been marked as Failed.",
+                        cmdEntity.getCommandType(),
+                        cmdEntity.getId(),
+                        cmdEntity.getCreatedAt());
+                updateCommandStatus(cmdId, CommandStatus.FAILED);
+            }
+        }
     }
 
     static class CommandContainer {

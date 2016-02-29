@@ -2,9 +2,7 @@ package org.ovirt.engine.core.bll.tasks;
 
 import static org.ovirt.engine.core.bll.tasks.CommandsRepository.CommandContainer;
 
-import java.util.Calendar;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
@@ -55,7 +53,7 @@ public class CommandCallbacksPoller implements BackendService {
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public void invokeCallbackMethods() {
         initCommandExecutor();
-        Iterator<Entry<Guid, CommandContainer>> iterator = commandsRepository.getCommandsCallback().entrySet().iterator();
+        Iterator<Entry<Guid, CommandContainer>> iterator = commandsRepository.getCommandContainers().iterator();
         while (iterator.hasNext()) {
             Entry<Guid, CommandContainer> entry = iterator.next();
 
@@ -90,17 +88,18 @@ public class CommandCallbacksPoller implements BackendService {
                 errorInCallback = true;
                 handleError(ex, status, cmdId);
             } finally {
-                if (CommandStatus.FAILED.equals(status) || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
+                if (CommandStatus.FAILED.equals(status)
+                        || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
                     commandsRepository.updateCallbackNotified(cmdId);
                     iterator.remove();
                     CommandEntity cmdEntity = commandsRepository.getCommandEntity(entry.getKey());
                     if (cmdEntity != null) {
                         // When a child finishes, its parent's callback should execute shortly thereafter
-                        Guid rootCommandId = cmdEntity.getRootCommandId();
-                        if (!Guid.isNullOrEmpty(rootCommandId)
-                                && commandsRepository.getCommandsCallback().containsKey(rootCommandId)) {
-                            commandsRepository.getCommandsCallback().get(rootCommandId).setInitialDelay(pollingRate);
-                            commandsRepository.getCommandsCallback().get(rootCommandId).setRemainingDelay(pollingRate);
+                        CommandContainer rootCmdContainer =
+                                commandsRepository.getCommandCallbackContainer(cmdEntity.getRootCommandId());
+                        if (rootCmdContainer != null) {
+                            rootCmdContainer.setInitialDelay(pollingRate);
+                            rootCmdContainer.setRemainingDelay(pollingRate);
                         }
                     }
                 } else if (status != commandsRepository.getCommandStatus(cmdId)) {
@@ -113,38 +112,8 @@ public class CommandCallbacksPoller implements BackendService {
                 }
             }
         }
-        if (!commandsRepository.getCommandsCallback().isEmpty()) {
-            markExpiredCommandsAsFailure();
-        }
-    }
 
-    private void markExpiredCommandsAsFailure() {
-        for (Entry<Guid, CommandContainer> entry : commandsRepository.getCommandsCallback().entrySet()) {
-            List<Guid> childCmdIds = commandsRepository.getChildCommandIds(entry.getKey());
-            if (childCmdIds.isEmpty()) {
-                markExpiredCommandAsFailure(entry.getKey());
-            } else {
-                childCmdIds.forEach(this::markExpiredCommandAsFailure);
-            }
-        }
-    }
-
-    private void markExpiredCommandAsFailure(Guid cmdId) {
-        CommandEntity cmdEntity = commandsRepository.getCommandEntity(cmdId);
-        if (cmdEntity != null && cmdEntity.getCommandStatus() == CommandStatus.ACTIVE) {
-            Calendar cal = Calendar.getInstance();
-            Integer cmdLifeTimeInMin = cmdEntity.getCommandParameters().getLifeInMinutes();
-            cal.add(Calendar.MINUTE, -1 * (cmdLifeTimeInMin == null ?
-                    Config.<Integer>getValue(ConfigValues.CoCoLifeInMinutes) :
-                    cmdLifeTimeInMin));
-            if (cmdEntity.getCreatedAt().getTime() < cal.getTime().getTime()) {
-                log.warn("Marking expired command as Failed: command '{} ({})' that started at '{}' has been marked as Failed.",
-                        cmdEntity.getCommandType(),
-                        cmdEntity.getId(),
-                        cmdEntity.getCreatedAt());
-                commandsRepository.updateCommandStatus(cmdId, CommandStatus.FAILED);
-            }
-        }
+        commandsRepository.markExpiredCommandsAsFailure();
     }
 
     private void handleError(Exception ex, CommandStatus status, Guid cmdId) {
