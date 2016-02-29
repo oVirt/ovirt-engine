@@ -61,6 +61,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -660,7 +661,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
             RefObject<String> tempRef_search = new RefObject<String>(search);
             SystemTreeItemModel model = getSystemTree().getSelectedItem();
             String searchString = getSelectedItem().getSearchString();
-            if (model != null && model.getType().equals(SystemTreeItemType.System) && listModelSearchStringHistory.get(getSelectedItem()) != null) {
+            if (model != null && model.getType().equals(SystemTreeItemType.System) && !StringUtils.isEmpty(listModelSearchStringHistory.get(getSelectedItem()))) {
                 searchString = listModelSearchStringHistory.get(getSelectedItem());
             }
             splitSearchString(searchString, tempRef_prefix, tempRef_search);
