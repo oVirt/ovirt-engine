@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -257,15 +256,14 @@ public class CommandCoordinatorUtil {
 
     private static Collection<CommandAssociatedEntity> buildCommandAssociatedEntities(Guid cmdId,
                                                                                Collection<SubjectEntity> subjectEntities) {
-        if (subjectEntities.size() == 0) {
-            return Collections.emptyList();
+        if (subjectEntities.isEmpty()) {
+            return Collections.emptySet();
         }
-        Set<SubjectEntity> entities = new HashSet<>(subjectEntities);
-        List<CommandAssociatedEntity> results = new ArrayList<>(entities.size());
-        for (SubjectEntity subjectEntity : entities) {
-            results.add(new CommandAssociatedEntity(cmdId, subjectEntity.getEntityType(), subjectEntity.getEntityId()));
-        }
-        return results;
+
+        return subjectEntities.stream().map(subjectEntity -> new CommandAssociatedEntity(cmdId,
+                subjectEntity.getEntityType(),
+                subjectEntity.getEntityId()))
+                .collect(Collectors.toSet());
     }
 
     /**
