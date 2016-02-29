@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
@@ -1177,7 +1176,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             List<QuotaConsumptionParameter> consumptionParameters = getQuotaConsumptionParameters();
 
             if (consumptionParameters != null) {
-                quotaPermissionList.addAll(consumptionParameters.stream()
+                consumptionParameters.stream()
                         .filter(parameter -> parameter.getQuotaGuid() != null)
                         .filter(parameter -> !Guid.Empty.equals(parameter.getQuotaGuid()))
                         .filter(parameter -> QuotaConsumptionParameter.QuotaAction.RELEASE != parameter.getQuotaAction())
@@ -1185,7 +1184,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                                 VdcObjectType.Quota,
                                 ActionGroup.CONSUME_QUOTA,
                                 EngineMessage.USER_NOT_AUTHORIZED_TO_CONSUME_QUOTA))
-                        .collect(Collectors.toList()));
+                        .forEach(quotaPermissionList::add);
             }
         }
     }
