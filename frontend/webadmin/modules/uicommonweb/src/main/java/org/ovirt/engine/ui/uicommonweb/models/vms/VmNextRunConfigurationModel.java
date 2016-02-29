@@ -15,7 +15,6 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
 
     public VmNextRunConfigurationModel() {
         setApplyCpuLater(new EntityModel<Boolean>(false));
-        setLatch(new EntityModel<Boolean>(false));
     }
 
     public boolean isVmUnpinned() {
@@ -23,6 +22,7 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
     }
 
     public void setVmUnpinned() {
+        setLatch(new EntityModel<Boolean>(false));
         getLatch().setIsAvailable(true);
         getLatch().setIsChangeable(true);
         vmUnpinned = true;
