@@ -32,6 +32,12 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         dstStatic.setUnmanagedDeviceList(srcStatic.getUnmanagedDeviceList());
         dstStatic.setOvfVersion(srcStatic.getOvfVersion());
 
+        // Copy creationDate to ignore it, because it is never changed by user.
+        // Without this creationDate will always show change in milliseconds,
+        // because creationDate is saved without milliseconds in OVF, but
+        // with milliseconds in the DB.
+        dstStatic.setCreationDate(srcStatic.getCreationDate());
+
         VmPropertiesUtils vmPropertiesUtils = SimpleDependecyInjector.getInstance().get(VmPropertiesUtils.class);
 
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
