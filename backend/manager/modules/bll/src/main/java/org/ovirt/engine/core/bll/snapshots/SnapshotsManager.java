@@ -556,6 +556,7 @@ public class SnapshotsManager {
 
             // These fields are not saved in the OVF, so get them from the current VM.
             vm.setIsoPath(oldVmStatic.getIsoPath());
+            vm.setCpuProfileId(oldVmStatic.getCpuProfileId());
             vm.setClusterId(oldVmStatic.getClusterId());
             // The VM configuration does not hold the vds group Id.
             // It is necessary to fetch the vm static from the Db, in order to get this information
