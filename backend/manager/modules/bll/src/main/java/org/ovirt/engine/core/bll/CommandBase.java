@@ -1392,11 +1392,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         StringBuilder builder = new StringBuilder();
 
         // Iterate all over the entities , which should be affected.
-        // Add comma when there are more than one entity
-// affected.
         permissionSubjects.stream().filter(permSubject -> permSubject.getObjectId() != null).forEach(permSubject -> {
-            // Add comma when there are more than one entity
-            // affected.
+            // Add comma when there are more than one entity affected.
             if (builder.length() != 0) {
                 builder.append(", ");
             }
