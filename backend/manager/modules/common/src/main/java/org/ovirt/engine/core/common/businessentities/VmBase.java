@@ -266,17 +266,18 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     /**
      * this field is used to save the ovf version,
      * in case the vm object was built from ovf.
-     * not persisted to db.
      */
+    @TransientField
     private String ovfVersion;
 
-    // not persisted to db
+    @TransientField
     private Date exportDate;
 
     /**
      * The cluster version in which the VM configuration was created.
-     * Used by snapshots. Not persisted to DB, stored in OVF.
+     * Used by snapshots. Stored in OVF.
      */
+    @TransientField
     private Version clusterCompatibilityVersionOrigin;
 
     /**

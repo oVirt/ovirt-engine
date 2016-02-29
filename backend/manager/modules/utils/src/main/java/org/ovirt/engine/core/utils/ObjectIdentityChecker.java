@@ -25,6 +25,7 @@ public class ObjectIdentityChecker {
     private Map<Enum<?>, Set<String>> dictionary = new HashMap<>();
     private Set<String> permitted = new HashSet<>();
     private Set<String> hotsetAllowedFields = new HashSet<>();
+    private Set<String> transientFields = new HashSet<>();
     private Set<String> permittedForHostedEngine = new HashSet<>();
 
     public ObjectIdentityChecker(Class<?> type) {
@@ -97,6 +98,12 @@ public class ObjectIdentityChecker {
         }
     }
 
+    public final void addTransientFields(String... fieldNames) {
+        for (String fieldName : fieldNames) {
+            transientFields.add(fieldName);
+        }
+    }
+
     public final boolean isFieldUpdatable(String name) {
         return permitted.contains(name);
     }
@@ -107,6 +114,10 @@ public class ObjectIdentityChecker {
 
     public final boolean isHotSetField(String name) {
         return hotsetAllowedFields.contains(name);
+    }
+
+    public final boolean isTransientField(String name) {
+        return transientFields.contains(name);
     }
 
     public boolean isFieldUpdatable(Enum<?> status, String name, Object fieldContainer) {
@@ -217,7 +228,7 @@ public class ObjectIdentityChecker {
             return fields;
         }
         for (String fieldName : getChangedFields(source, destination)) {
-            if (!isFieldUpdatable(status, fieldName, null, false)) {
+            if (!isFieldUpdatable(status, fieldName, null, false) && !isTransientField(fieldName)) {
                 fields.add(fieldName);
             }
         }

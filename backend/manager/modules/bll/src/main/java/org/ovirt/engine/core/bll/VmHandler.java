@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.TransientField;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -148,7 +149,13 @@ public class VmHandler {
             updateVmsStatic.addField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
         }
 
-        for (Pair<EditableHostedEngineField, Field> pair : BaseHandler.extractAnnotatedFields(EditableHostedEngineField.class, inspectedClassNames)) {
+        for (Pair<TransientField, Field> pair : BaseHandler.extractAnnotatedFields(TransientField.class,
+                inspectedClassNames)) {
+            updateVmsStatic.addTransientFields(pair.getSecond().getName());
+        }
+
+        for (Pair<EditableHostedEngineField, Field> pair : BaseHandler.extractAnnotatedFields(EditableHostedEngineField.class,
+                inspectedClassNames)) {
             updateVmsStatic.addHostedEngineFields(pair.getSecond().getName());
         }
 
