@@ -4909,6 +4909,121 @@
         </row>
     </table>
 
+    <table name="unregistered_disks">
+        <column>disk_id</column>
+        <column>disk_alias</column>
+        <column>disk_description</column>
+        <column>storage_domain_id</column>
+        <column>creation_date</column>
+        <column>last_modified</column>
+        <column>volume_type</column>
+        <column>volume_format</column>
+        <column>actual_size</column>
+        <column>size</column>
+        <row>
+            <value>88296e11-0cad-4e5a-9299-008a7b6f4388</value>
+            <value>UnregisteredDisk</value>
+            <value>This is an unregistered disk</value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>1</value>
+            <value>5</value>
+            <value>1073741824</value>
+            <value>1073741824</value>
+        </row>
+        <row>
+            <value>98296e11-0cad-4e5a-9299-008a7b6f4389</value>
+            <value>UnregisteredDisk2</value>
+            <value>This is an unregistered disk number 2</value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>1</value>
+            <value>5</value>
+            <value>1073741824</value>
+            <value>1073741824</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4310</value>
+            <value>UnregisteredDisk3</value>
+            <value>This is an unregistered disk number 3</value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>1</value>
+            <value>5</value>
+            <value>1073741824</value>
+            <value>1073741824</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4311</value>
+            <value>Disk without description</value>
+            <value></value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>1</value>
+            <value>5</value>
+            <value>1073741824</value>
+            <value>1073741824</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4312</value>
+            <value></value>
+            <value></value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>1</value>
+            <value>5</value>
+            <value>1073741824</value>
+            <value>1073741824</value>
+        </row>
+    </table>
+
+    <table name="unregistered_disks_to_vms">
+        <column>disk_id</column>
+        <column>entity_id</column>
+        <column>entity_name</column>
+        <row>
+            <value>98296e11-0cad-4e5a-9299-008a7b6f4389</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>FirstVM</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4310</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>FirstVM</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4310</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
+            <value>SecondVM</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4311</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>FirstVM</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4311</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
+            <value>SecondVM</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4312</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>FirstVM</value>
+        </row>
+        <row>
+            <value>10296e11-0cad-4e5a-9299-008a7b6f4312</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
+            <value>SecondVM</value>
+        </row>
+    </table>
+
+
     <table name="storage_pool_iso_map">
         <column>storage_id</column>
         <column>storage_pool_id</column>

@@ -285,6 +285,40 @@ public class FixturesTool {
     public static final Guid UNREGISTERED_VM = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4359");
 
     /**
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and description.
+     */
+    protected static final Guid UNREGISTERED_DISK = new Guid("88296e11-0cad-4e5a-9299-008a7b6f4388");
+
+    /**
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and description, attached to vm_id
+     * 77296e00-0cad-4e5a-9299-008a7b6f4355.
+     */
+    protected static final Guid UNREGISTERED_DISK2 = new Guid("98296e11-0cad-4e5a-9299-008a7b6f4389");
+
+    /**
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and description, attached to the following vms_id:
+     * 77296e00-0cad-4e5a-9299-008a7b6f4355,77296e00-0cad-4e5a-9299-008a7b6f4356.
+     */
+    protected static final Guid UNREGISTERED_DISK3 = new Guid("10296e11-0cad-4e5a-9299-008a7b6f4310");
+
+    /**
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and without description, attached to the following
+     * vms_id: 77296e00-0cad-4e5a-9299-008a7b6f4355,77296e00-0cad-4e5a-9299-008a7b6f4356.
+     */
+    protected static final Guid UNREGISTERED_DISK4 = new Guid("10296e11-0cad-4e5a-9299-008a7b6f4311");
+
+    /**
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * (d9ede37f-e6c3-4bf9-a984-19174070aa31) without disk alias nor description, attached to the following vms_id:
+     * 77296e00-0cad-4e5a-9299-008a7b6f4355,77296e00-0cad-4e5a-9299-008a7b6f4356.
+     */
+    protected static final Guid UNREGISTERED_DISK5 = new Guid("10296e11-0cad-4e5a-9299-008a7b6f4312");
+
+    /**
      * Predefined VM with no attached disks
      */
     public static final Guid VM_WITH_NO_ATTACHED_DISKS = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4357");
