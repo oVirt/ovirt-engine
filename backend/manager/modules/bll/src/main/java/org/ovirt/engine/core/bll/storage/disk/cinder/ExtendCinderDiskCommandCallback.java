@@ -2,83 +2,79 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
-public class ExtendCinderDiskCommandCallback extends AbstractCinderDiskCommandCallback<ExtendCinderDiskCommand<UpdateVmDiskParameters>> {
+public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExecutionCallback {
 
     @Override
-    public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
-        super.doPolling(cmdId, childCmdIds);
+    protected void childCommandsExecutionEnded(CommandBase<?> command,
+            boolean anyFailed,
+            List<Guid> childCmdIds,
+            CommandExecutionStatus status,
+            int completedChildren) {
 
-        ImageStatus imageStatus = getCinderBroker().getDiskStatus(getDiskId());
-        DiskImage disk = getDisk();
-        if (imageStatus != null && imageStatus != disk.getImageStatus()) {
+        ExtendCinderDiskCommand<UpdateVmDiskParameters> extendCinderDiskCommand =
+                (ExtendCinderDiskCommand<UpdateVmDiskParameters>) command;
+        ImageStatus imageStatus = extendCinderDiskCommand.getCinderBroker()
+                .getDiskStatus(getDiskId(extendCinderDiskCommand));
+        if (imageStatus != null && imageStatus != getDisk(extendCinderDiskCommand).getImageStatus()) {
             switch (imageStatus) {
-                case OK:
-                    getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
-                    break;
-                case ILLEGAL:
-                    getCommand().setCommandStatus(CommandStatus.FAILED);
-                    break;
+            case OK:
+                setCommandEndStatus(command, false, status, childCmdIds);
+                break;
+            case ILLEGAL:
+                setCommandEndStatus(command, true, status, childCmdIds);
+                break;
             }
         }
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
+        ExtendCinderDiskCommand command = getCommand(cmdId);
+        ImagesHandler.updateImageStatus(getDiskId(command), ImageStatus.ILLEGAL);
+        log.error("Failed extending disk. ID: {}", getDiskId(command));
+        updateAuditLog(command, AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, command.getNewDiskSizeInGB());
+
         super.onFailed(cmdId, childCmdIds);
-
-        ImagesHandler.updateImageStatus(getDiskId(), ImageStatus.ILLEGAL);
-        log.error("Failed extending disk. ID: {}", getDiskId());
-        updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, getCommand().getNewDiskSizeInGB());
-
-        getCommand().getParameters().setTaskGroupSuccess(false);
-        getCommand().endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
+        ExtendCinderDiskCommand command = getCommand(cmdId);
+        command.performDiskUpdate();
+        log.error("Disk has been successfully extended. ID: {}", getDiskId(command));
+        updateAuditLog(command, AuditLogType.USER_EXTEND_DISK_SIZE_SUCCESS, command.getNewDiskSizeInGB());
+
         super.onSucceeded(cmdId, childCmdIds);
-
-        getCommand().performDiskUpdate();
-        log.error("Disk has been successfully extended. ID: {}", getDiskId());
-        updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_SUCCESS, getCommand().getNewDiskSizeInGB());
-
-        getCommand().endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
-    private void updateAuditLog(AuditLogType auditLogType, Long imageSizeInGigabytes) {
-        getCommand().addCustomValue("DiskAlias", getDisk().getDiskAlias());
-        getCommand().addCustomValue("NewSize", String.valueOf(imageSizeInGigabytes));
-        new AuditLogDirector().log(getCommand(), auditLogType);
+    private void updateAuditLog(ExtendCinderDiskCommand command, AuditLogType auditLogType, Long imageSizeInGigabytes) {
+        command.addCustomValue("DiskAlias", getDisk(command).getDiskAlias());
+        command.addCustomValue("NewSize", String.valueOf(imageSizeInGigabytes));
+        new AuditLogDirector().log(command, auditLogType);
     }
 
-    @Override
-    protected Guid getDiskId() {
-        return getCommand().getParameters().getDiskId();
+    protected Guid getDiskId(ExtendCinderDiskCommand<UpdateVmDiskParameters> command) {
+        return command.getParameters().getDiskId();
+    }
+
+    protected CinderDisk getDisk(ExtendCinderDiskCommand<UpdateVmDiskParameters> command) {
+        return (CinderDisk) command.getDiskDao().get(getDiskId(command));
     }
 
     @Override
-    protected CinderDisk getDisk() {
-        if (disk == null) {
-            disk = (CinderDisk) getCommand().getDiskDao().get(getDiskId());
-        }
-        return disk;
-    }
-
-    @Override
-    protected CinderBroker getCinderBroker() {
-        return getCommand().getCinderBroker();
+    protected ExtendCinderDiskCommand<UpdateVmDiskParameters> getCommand(Guid cmdId) {
+        return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }
