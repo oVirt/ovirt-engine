@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,13 +56,12 @@ public class CommandExecutor {
     private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
         VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command,
                 cmdContext != null ? cmdContext.getExecutionContext() : null);
-        updateCommand(command, result);
+        updateCommandResult(command.getCommandId(), result);
         return result;
     }
 
-    private void updateCommand(final CommandBase<?> command,
-                               final VdcReturnValueBase result) {
-        CommandEntity cmdEntity = commandsRepository.getCommandEntity(command.getCommandId());
+    private void updateCommandResult(final Guid commandId, final VdcReturnValueBase result) {
+        CommandEntity cmdEntity = commandsRepository.getCommandEntity(commandId);
         cmdEntity.setReturnValue(result);
         if (!result.isValid()) {
             cmdEntity.setCommandStatus(CommandStatus.FAILED);
