@@ -54,7 +54,7 @@ public interface TaskHelper {
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
 
-    public AsyncTask createAsyncTask(
+    AsyncTask createAsyncTask(
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
