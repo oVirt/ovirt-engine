@@ -8,6 +8,6 @@ import org.ovirt.engine.api.extensions.ExtMap;
 @SuppressWarnings("serial")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @JsonSerialize(keyUsing = JsonExtKeySerializer.class)
-@JsonDeserialize(keyUsing = JsonExtDeserializer.class)
+@JsonDeserialize(keyUsing = JsonExtKeyDeserializer.class)
 public abstract class JsonExtMapMixIn extends ExtMap {
 }
