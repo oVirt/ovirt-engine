@@ -118,11 +118,6 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     @Override
-    public List<CommandEntity> getCommandsWithCallbackEnabled() {
-        return commandsRepository.getCommands(true);
-    }
-
-    @Override
     public CommandBase<?> retrieveCommand(Guid commandId) {
         return commandsRepository.retrieveCommand(commandId);
     }
@@ -164,11 +159,6 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     @Override
     public void updateCommandExecuted(Guid commandId) {
         commandsRepository.updateCommandExecuted(commandId);
-    }
-
-    @Override
-    public void updateCallbackNotified(final Guid commandId) {
-        commandsRepository.updateCallbackNotified(commandId);
     }
 
     @Override

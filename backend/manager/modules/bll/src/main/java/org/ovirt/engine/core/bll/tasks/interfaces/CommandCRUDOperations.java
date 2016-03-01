@@ -29,8 +29,6 @@ public interface CommandCRUDOperations {
 
     CommandStatus getCommandStatus(Guid commandId);
 
-    List<CommandEntity> getCommandsWithCallbackEnabled();
-
     void persistCommand(CommandEntity cmdEntity);
 
     void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext);
@@ -54,8 +52,6 @@ public interface CommandCRUDOperations {
     void updateCommandStatus(Guid commandId, CommandStatus status);
 
     void updateCommandExecuted(Guid commandId);
-
-    void updateCallbackNotified(Guid commandId);
 
     List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId);
 }
