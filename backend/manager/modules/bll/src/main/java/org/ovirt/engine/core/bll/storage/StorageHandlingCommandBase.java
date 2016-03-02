@@ -403,11 +403,11 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             }
             for (Disk disk : unregisteredDisks) {
                 DiskImage ovfStoreDisk = (DiskImage) disk;
-                String diskDecription = ovfStoreDisk.getDescription();
-                if (diskDecription.contains(OvfInfoFileConstants.OvfStoreDescriptionLabel)) {
+                String diskDescription = ovfStoreDisk.getDescription();
+                if (diskDescription.contains(OvfInfoFileConstants.OvfStoreDescriptionLabel)) {
                     Map<String, Object> diskDescriptionMap;
                     try {
-                        diskDescriptionMap = JsonHelper.jsonToMap(diskDecription);
+                        diskDescriptionMap = JsonHelper.jsonToMap(diskDescription);
                     } catch (IOException e) {
                         log.warn("Exception while generating json containing ovf store info: {}", e.getMessage());
                         log.debug("Exception", e);
