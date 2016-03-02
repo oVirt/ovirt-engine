@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -58,6 +59,8 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
     private StorageDomainDao storageDomainDao;
     @Mock
     private StorageDomainStaticDao storageDomainStaticDao;
+    @Mock
+    private DiskImageDao diskImageDao;
     @Mock
     private VdsDao vdsDao;
     @Mock
@@ -88,6 +91,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
+        doReturn(diskImageDao).when(cmd).getDiskImageDao();
         doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
 
         StoragePool pool = new StoragePool();
@@ -96,6 +100,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
         when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
+        when(diskImageDao.getAllForStorageDomain(any(Guid.class))).thenReturn(Collections.EMPTY_LIST);
         when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
         doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
         doReturn(backendInternal).when(cmd).getBackend();
@@ -110,8 +115,8 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         mockGetStorageDomainInfoVdsCommand(storageDomain);
         mockAttachStorageDomainVdsCommand();
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
-        doReturn(Collections.emptyList()).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
-        doReturn(Collections.emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
+        doReturn(Collections.EMPTY_LIST).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
+        doReturn(Collections.EMPTY_LIST).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {

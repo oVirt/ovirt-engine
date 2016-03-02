@@ -11,7 +11,9 @@ import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,13 +23,17 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class OvfUtils {
     private static final String TEMPLATE_ENTITY_TYPE = "<TemplateType>";
     private static final String ENTITY_NAME = "<Name>";
     private static final String END_ENTITY_NAME = "</Name>";
     private static final String OVF_FILE_EXT = ".ovf";
+    private static final int GUID_LENGTH = Guid.Empty.toString().length();
     protected static final Logger log = LoggerFactory.getLogger(TarInMemoryExport.class);
+
     private static String getEntityName(String ovfData) {
         int beginIndexOfEntityName = ovfData.indexOf(ENTITY_NAME) + ENTITY_NAME.length();
         int endIndexOfEntityName = ovfData.indexOf(END_ENTITY_NAME, beginIndexOfEntityName);
@@ -42,6 +48,31 @@ public class OvfUtils {
             vmEntityType = VmEntityType.TEMPLATE;
         }
         return vmEntityType;
+    }
+
+    public static List<Guid> fetchVmDisks(XmlDocument xmlDocument) {
+        List<Guid> disksIds = new ArrayList<>();
+        XmlNodeList nodeList = xmlDocument.selectNodes("//*/Section");
+        XmlNode selectedSection = null;
+        for (XmlNode section : nodeList) {
+            String value = section.attributes.get("xsi:type").getValue();
+            if (value.equals("ovf:DiskSection_Type")) {
+                selectedSection = section;
+                break;
+            }
+        }
+        if (selectedSection != null) {
+            NodeList childNodeList = selectedSection.getChildNodes();
+            for (int k = 0; k < childNodeList.getLength(); k++) {
+                if (childNodeList.item(k).getLocalName().equals("Disk")) {
+                    Node node = childNodeList.item(k).getAttributes().getNamedItem("ovf:fileRef");
+                    if (node != null && node.getTextContent() != null) {
+                        disksIds.add(Guid.createGuidFromString(node.getTextContent().substring(0, GUID_LENGTH)));
+                    }
+                }
+            }
+        }
+        return disksIds;
     }
 
     private static Guid getEntityId(String fileName) {
@@ -64,7 +95,9 @@ public class OvfUtils {
         return ovfEntityData;
     }
 
-    public static List<OvfEntityData> getOvfEntities(byte[] tar, Guid storageDomainId) {
+    public static List<OvfEntityData> getOvfEntities(byte[] tar,
+            List<UnregisteredDisk> unregisteredDisks,
+            Guid storageDomainId) {
         List<OvfEntityData> ovfEntityDataFromTar = new ArrayList<>();
         InputStream is = new ByteArrayInputStream(tar);
 
@@ -82,11 +115,14 @@ public class OvfUtils {
                 String ovfData = new String(fileEntry.getValue().array());
                 VmEntityType vmType = getVmEntityType(ovfData);
                 ArchitectureType archType = null;
+                Guid entityId = getEntityId(fileEntry.getKey());
+                String vmName = getEntityName(ovfData);
                 try {
                     XmlDocument xmlDocument = new XmlDocument(ovfData);
                     archType = getOsSection(xmlDocument);
+                    updateUnregisteredDisksWithVMs(unregisteredDisks, entityId, vmName, xmlDocument);
                 } catch (Exception e) {
-                    log.error("Could not parse architecture type for VM: {}", e.getMessage());
+                    log.error("Could not parse VM's disks or architecture: {}", e.getMessage());
                     log.debug("Exception", e);
                     continue;
                 }
@@ -95,10 +131,11 @@ public class OvfUtils {
                         createOvfEntityData(storageDomainId,
                                 ovfData,
                                 vmType,
-                                getEntityName(ovfData),
+                                vmName,
                                 archType,
-                                getEntityId(fileEntry.getKey()));
-                log.info("Retrieve OVF Entity from storage domain ID '{}' for entity ID '{}', entity name '{}' and VM Type of '{}'",
+                                entityId);
+                log.info(
+                        "Retrieve OVF Entity from storage domain ID '{}' for entity ID '{}', entity name '{}' and VM Type of '{}'",
                         storageDomainId,
                         getEntityId(fileEntry.getKey()),
                         getEntityName(ovfData),
@@ -111,6 +148,24 @@ public class OvfUtils {
         log.info("Finish to fetch OVF files from tar file. The number of OVF entities are {}",
                 ovfEntityDataFromTar.size());
         return ovfEntityDataFromTar;
+    }
+
+    public static void updateUnregisteredDisksWithVMs(List<UnregisteredDisk> unregisteredDisks,
+            Guid entityId,
+            String vmName,
+            XmlDocument xmlDocument) {
+        for (Guid diskId : fetchVmDisks(xmlDocument)) {
+            UnregisteredDisk unregisterDisk = unregisteredDisks.stream()
+                    .filter(unregrDisk -> diskId.equals(unregrDisk.getId()))
+                    .findAny()
+                    .orElse(null);
+            VmBase vm = new VmBase();
+            vm.setId(entityId);
+            vm.setName(vmName);
+            if (unregisterDisk != null) {
+                unregisterDisk.getVms().add(vm);
+            }
+        }
     }
 
     private static ArchitectureType getOsSection(XmlDocument xmlDocument) {

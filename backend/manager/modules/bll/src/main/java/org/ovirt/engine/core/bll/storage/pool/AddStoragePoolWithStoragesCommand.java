@@ -245,19 +245,23 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     private void registerOvfStoreDisks() {
         for (final Guid storageDomainId : getParameters().getStorages()) {
             if (getStorageDomainStaticDao().get(storageDomainId).getStorageDomainType().isDataDomain()) {
-                resetOvfStoreDisks();
+                resetOvfStoreAndUnregisteredDisks();
                 TransactionSupport.executeInNewTransaction(() -> {
                     List<DiskImage> ovfStoreDiskImages = getAllOVFDisks(storageDomainId, getStoragePool().getId());
                     registerAllOvfDisks(ovfStoreDiskImages, storageDomainId);
 
+                    List<OvfEntityData> entitiesFromStorageOvfDisk =
+                            getEntitiesFromStorageOvfDisk(storageDomainId, getStoragePool().getId());
                     // Update unregistered entities
-                    for (OvfEntityData ovf : getEntitiesFromStorageOvfDisk(storageDomainId, getStoragePool().getId())) {
-                        getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(), storageDomainId);
-                        getUnregisteredOVFDataDao().saveOVFData(ovf);
+                    for (Object ovf : entitiesFromStorageOvfDisk) {
+                        OvfEntityData ovfEntityData = (OvfEntityData) ovf;
+                        getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), storageDomainId);
+                        getUnregisteredOVFDataDao().saveOVFData(ovfEntityData);
                         log.info("Adding OVF data of entity id '{}' and entity name '{}'",
-                                ovf.getEntityId(),
-                                ovf.getEntityName());
+                                ovfEntityData.getEntityId(),
+                                ovfEntityData.getEntityName());
                     }
+                    initUnregisteredDisksToDB(storageDomainId);
                     return null;
                 });
             }

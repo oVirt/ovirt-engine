@@ -12,6 +12,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
@@ -47,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -61,6 +64,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
@@ -73,6 +77,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     private CinderBroker cinderBroker;
     protected List<DiskImage> ovfDisks;
+    protected List<UnregisteredDisk> unregisteredDisks = new ArrayList<>();
+
+    @Inject
+    protected UnregisteredDisksDao unregisteredDisksDao;
 
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -329,6 +337,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
     }
 
+    protected void castDiskImagesToUnregisteredDisks(List<DiskImage> disksFromStorage) {
+        for (DiskImage disk : disksFromStorage) {
+            UnregisteredDisk unregisteredDisk = new UnregisteredDisk(disk);
+            unregisteredDisks.add(unregisteredDisk);
+        }
+    }
+
     protected void registerAllOvfDisks(List<DiskImage> ovfStoreDiskImages, Guid storageDomainId) {
         for (DiskImage ovfStoreDiskImage : ovfStoreDiskImages) {
             ovfStoreDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
@@ -389,19 +404,23 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected List<DiskImage> getAllOVFDisks(Guid storageDomainId, Guid storagePoolId) {
+        // Null ovfDisks indicating that the ovfDisks list was not set and also that the unregisteredDisks were not
+        // fetched yet.
         if (ovfDisks == null) {
             ovfDisks = new ArrayList<>();
 
             // Get all unregistered disks.
-            List<Disk> unregisteredDisks = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
+            List<DiskImage> disksFromStorage = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId,
                             storagePoolId)).getReturnValue();
-            if (unregisteredDisks == null) {
+            if (disksFromStorage == null) {
                 log.error("An error occurred while fetching unregistered disks from Storage Domain id '{}'",
                         storageDomainId);
                 return ovfDisks;
+            } else {
+                castDiskImagesToUnregisteredDisks(disksFromStorage);
             }
-            for (Disk disk : unregisteredDisks) {
+            for (Disk disk : disksFromStorage) {
                 DiskImage ovfStoreDisk = (DiskImage) disk;
                 String diskDescription = ovfStoreDisk.getDescription();
                 if (diskDescription.contains(OvfInfoFileConstants.OvfStoreDescriptionLabel)) {
@@ -493,8 +512,11 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
                         getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                         if (vdcReturnValue.getSucceeded()) {
-                            return OvfUtils.getOvfEntities(vdcReturnValue.getActionReturnValue(),
-                                    storageDomainId);
+                            List<OvfEntityData> returnedMap =
+                                    OvfUtils.getOvfEntities(vdcReturnValue.getActionReturnValue(),
+                                            unregisteredDisks,
+                                            storageDomainId);
+                            return returnedMap;
                         } else {
                             log.error("Image data could not be retrieved for disk id '{}' in storage domain id '{}'",
                                     ovfDisk.getId(),
@@ -519,7 +541,26 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             log.warn("There are no OVF_STORE disks on storage domain id {}", storageDomainId);
             auditLogDirector.log(this, AuditLogType.OVF_STORE_DOES_NOT_EXISTS);
         }
-        return Collections.emptyList();
+        return new ArrayList<>();
+    }
+
+    protected void initUnregisteredDisksToDB(Guid storageDomainId) {
+        List<DiskImage> existingDisks = getDiskImageDao().getAllForStorageDomain(getStorageDomainId());
+        for (Object unregisteredDiskObj : unregisteredDisks) {
+            UnregisteredDisk unregisteredDisk = (UnregisteredDisk) unregisteredDiskObj;
+            if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getId()))) {
+                log.info("Disk {} with id '{}' already exists in the engine, therefore will not be " +
+                        "part of the unregistered disks.",
+                        unregisteredDisk.getDiskAlias(),
+                        unregisteredDisk.getId());
+                continue;
+            }
+            unregisteredDisksDao.removeUnregisteredDisk(unregisteredDisk.getId(), storageDomainId);
+            unregisteredDisksDao.saveUnregisteredDisk(unregisteredDisk);
+            log.info("Adding unregistered disk of disk id '{}' and disk alias '{}'",
+                    unregisteredDisk.getId(),
+                    unregisteredDisk.getDiskAlias());
+        }
     }
 
     protected boolean checkStoragePoolNameLengthValid() {
@@ -622,7 +663,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return cinderBroker;
     }
 
-    protected void resetOvfStoreDisks() {
+    protected void resetOvfStoreAndUnregisteredDisks() {
         ovfDisks = null;
+        unregisteredDisks = new ArrayList<>();
     }
 }

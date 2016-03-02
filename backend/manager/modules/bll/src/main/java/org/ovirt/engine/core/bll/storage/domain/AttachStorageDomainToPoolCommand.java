@@ -153,9 +153,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 getParameters().getStorageDomainId()));
                 final List<OvfEntityData> unregisteredEntitiesFromOvfDisk = new ArrayList<>();
                 if (getStorageDomain().getStorageDomainType().isDataDomain()) {
-                    unregisteredEntitiesFromOvfDisk.addAll(
-                            getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
-                                    getStoragePoolIdFromVds()));
+                    List<OvfEntityData> returnValueFromStorageOvfDisk = getEntitiesFromStorageOvfDisk(
+                            getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
+                    unregisteredEntitiesFromOvfDisk.addAll(returnValueFromStorageOvfDisk);
                 }
                 executeInNewTransaction(() -> {
                     final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
@@ -181,6 +181,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 ovf.getEntityId(),
                                 ovf.getEntityName());
                     }
+                    initUnregisteredDisksToDB(getParameters().getStorageDomainId());
                     return null;
                 });
 
