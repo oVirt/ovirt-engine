@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.pending;
 
+import org.ovirt.engine.core.bll.scheduling.utils.VmSpecificPendingResourceEqualizer;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,24 +31,13 @@ public class PendingCpuCores extends PendingResource {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        PendingCpuCores that = (PendingCpuCores) o;
-
-        return getVm().equals(that.getVm());
-
+    public boolean equals(Object other) {
+        return VmSpecificPendingResourceEqualizer.isEqual(this, other);
     }
 
     @Override
     public int hashCode() {
-        return getVm().hashCode();
+        return VmSpecificPendingResourceEqualizer.calcHashCode(this);
     }
 
     public static int collectForHost(PendingResourceManager manager, Guid host) {
