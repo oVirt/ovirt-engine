@@ -120,7 +120,7 @@ public class VideoDeviceSettings {
     private static VideoRAMSettings selectVideoRAMSettings(VmBase vmBase) {
         Version vmVersion = vmBase.getCustomCompatibilityVersion();
         Supplier<Version> clusterVersionSupplier = () -> ClusterUtils.getCompatibilityVersion(vmBase);
-        if (CompatibilityVersionUtils.getEffective(vmVersion, clusterVersionSupplier).greaterOrEquals(new Version(3, 6))) {
+        if (CompatibilityVersionUtils.getEffective(vmVersion, clusterVersionSupplier).greaterOrEquals(Version.v3_6)) {
             return new VgamemVideoRAMSettings();
         } else {
             return new LegacyVideoRAMSettings();
