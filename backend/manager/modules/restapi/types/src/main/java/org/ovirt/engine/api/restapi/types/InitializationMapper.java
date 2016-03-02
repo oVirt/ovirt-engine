@@ -144,6 +144,11 @@ public class InitializationMapper {
         if (model.isSetOrgName()) {
             entity.setOrgName(model.getOrgName());
         }
+
+        if (model.isSetCloudInit()) {
+            VmMapper.map(model.getCloudInit(), entity);
+        }
+
         return entity;
     }
 
