@@ -1,2 +1,9 @@
 <FindBugsFilter>
+    <!-- Ignore auto-generated code -->
+    <Match>
+        <Or>
+            <Package name="org.ovirt.engine.api.xml" />
+            <Package name="org.ovirt.engine.api.json" />
+        </Or>
+    </Match>
 </FindBugsFilter>
