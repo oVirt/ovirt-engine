@@ -329,11 +329,6 @@ public class VmAnalyzerTest {
         // TODO add tests
     }
 
-    @Theory
-    public void updateLunDisks() {
-
-    }
-
     @Before
     public void before() {
         for (VmTestPairs data: VmTestPairs.values()) {
