@@ -1162,6 +1162,11 @@ public class VmMapper extends VmBaseMapper {
         if (model.isSetOrgName()) {
             entity.setOrgName(model.getOrgName());
         }
+
+        if (model.isSetCloudInit()) {
+            map(model.getCloudInit(), entity);
+        }
+
         return entity;
     }
 
