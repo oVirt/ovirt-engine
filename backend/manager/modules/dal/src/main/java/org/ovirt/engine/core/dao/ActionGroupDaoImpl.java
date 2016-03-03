@@ -65,23 +65,6 @@ public class ActionGroupDaoImpl extends BaseDao implements ActionGroupDao {
     }
 
     @Override
-    public void addActionVersionMap(ActionVersionMap actionVersionMap) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type",
-                actionVersionMap.getActionType()).addValue("cluster_minimal_version",
-                actionVersionMap.getClusterMinimalVersion()).addValue("storage_pool_minimal_version",
-                actionVersionMap.getStoragePoolMinimalVersion());
-
-        getCallsHandler().executeModification("Insertaction_version_map", parameterSource);
-    }
-
-    @Override
-    public void removeActionVersionMap(VdcActionType action_type) {
-        cache.remove(action_type);
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type", action_type);
-        getCallsHandler().executeModification("Deleteaction_version_map", parameterSource);
-    }
-
-    @Override
     public List<ActionVersionMap> getAllActionVersionMap() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         return getCallsHandler().executeReadList("GetAllFromaction_version_map",

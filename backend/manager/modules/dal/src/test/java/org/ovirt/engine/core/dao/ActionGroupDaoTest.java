@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ public class ActionGroupDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_ROLE_ID = new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78");
     private ActionGroupDao dao;
     private ActionVersionMap existingActionMap;
-    private ActionVersionMap newActionMap;
 
     @Override
     public void setUp() throws Exception {
@@ -27,10 +25,6 @@ public class ActionGroupDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getActionGroupDao();
         existingActionMap = dao.getActionVersionMapByActionType(VdcActionType.AddVm);
-        newActionMap = new ActionVersionMap();
-        newActionMap.setActionType(VdcActionType.ActivateStorageDomain);
-        newActionMap.setClusterMinimalVersion("3.0");
-        newActionMap.setStoragePoolMinimalVersion("3.0");
     }
 
     @Test
@@ -56,32 +50,5 @@ public class ActionGroupDaoTest extends BaseDaoTestCase {
 
         assertNotNull(result);
         assertEquals(existingActionMap, result);
-    }
-
-    @Test
-    public void testAddActionVersionMap() {
-        dao.addActionVersionMap(newActionMap);
-
-        ActionVersionMap result = dao.getActionVersionMapByActionType(newActionMap.getActionType());
-
-        assertNotNull(result);
-        assertEquals(newActionMap, result);
-    }
-
-    @Test
-    public void testRemoveActionVersionMap() {
-        ActionVersionMap dummy = new ActionVersionMap();
-        dummy.setActionType(VdcActionType.RebootVm);
-        dummy.setClusterMinimalVersion("3.0");
-        dummy.setStoragePoolMinimalVersion("3.0");
-        dao.addActionVersionMap(dummy);
-
-        ActionVersionMap result = dao.getActionVersionMapByActionType(dummy.getActionType());
-        assertNotNull(result);
-
-        dao.removeActionVersionMap(dummy.getActionType());
-
-        result = dao.getActionVersionMapByActionType(dummy.getActionType());
-        assertNull(result);
     }
 }

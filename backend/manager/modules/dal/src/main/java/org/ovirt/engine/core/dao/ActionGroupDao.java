@@ -24,9 +24,5 @@ public interface ActionGroupDao extends Dao {
 
     ActionVersionMap getActionVersionMapByActionType(VdcActionType action_type);
 
-    void addActionVersionMap(ActionVersionMap actionVersionMap);
-
-    void removeActionVersionMap(VdcActionType action_type);
-
     List<ActionVersionMap> getAllActionVersionMap();
 }
