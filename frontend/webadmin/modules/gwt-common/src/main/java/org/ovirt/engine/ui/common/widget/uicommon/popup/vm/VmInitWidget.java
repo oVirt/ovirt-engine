@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -319,9 +320,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     FlowPanel networkOptions;
 
     @UiField(provided = true)
-    @Path(value = "networkBootProtocolList.selectedItem")
+    @Path(value = "ipv4BootProtocolList.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<NetworkBootProtocol> networkBootProtocolEditor;
+    ListModelListBoxEditor<Ipv4BootProtocol> ipv4BootProtocolEditor;
 
     @UiField
     @Path(value = "networkIpAddress.entity")
@@ -416,7 +417,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             }
         });
 
-        networkBootProtocolEditor = new ListModelListBoxEditor<>(new EnumRenderer<NetworkBootProtocol>());
+        ipv4BootProtocolEditor = new ListModelListBoxEditor<>(new EnumRenderer<Ipv4BootProtocol>());
     }
 
     void initComboBoxEditors() {
@@ -462,7 +463,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkLabelSepAddRemove.setText(sep);
         networkRemoveLabel.setText(constants.cloudInitObjectRemoveLabel());
 
-        networkBootProtocolEditor.setLabel(constants.cloudInitNetworkBootProtocolLabel());
+        ipv4BootProtocolEditor.setLabel(constants.cloudInitNetworkBootProtocolLabel());
         networkIpAddressEditor.setLabel(constants.cloudInitNetworkIpAddressLabel());
         networkNetmaskEditor.setLabel(constants.cloudInitNetworkNetmaskLabel());
         networkGatewayEditor.setLabel(constants.cloudInitNetworkGatewayLabel());
@@ -485,7 +486,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         networkListEditor.setWidgetTooltip(constants.cloudInitNetworkToolTip());
         networkNameEditor.setWidgetTooltip(constants.cloudInitNetworkToolTip());
-        networkBootProtocolEditor.setWidgetTooltip(constants.cloudInitNetworkBootProtocolToolTip());
+        ipv4BootProtocolEditor.setWidgetTooltip(constants.cloudInitNetworkBootProtocolToolTip());
         networkIpAddressEditor.setWidgetTooltip(constants.cloudInitNetworkIpAddressToolTip());
         networkNetmaskEditor.setWidgetTooltip(constants.cloudInitNetworkNetmaskToolTip());
         networkGatewayEditor.setWidgetTooltip(constants.cloudInitNetworkGatewayToolTip());
@@ -519,7 +520,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         sysprepDomainEditor.addStyleName(customizableStyle.primaryOption());
-        networkBootProtocolEditor.addStyleName(customizableStyle.primaryOption());
+        ipv4BootProtocolEditor.addStyleName(customizableStyle.primaryOption());
         networkIpAddressEditor.addStyleName(customizableStyle.primaryOption());
         networkNetmaskEditor.addStyleName(customizableStyle.primaryOption());
         networkGatewayEditor.addStyleName(customizableStyle.primaryOption());
@@ -611,11 +612,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             }
         });
 
-        model.getNetworkBootProtocolList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+        model.getIpv4BootProtocolList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                setNetworkStaticDetailsStyle(model.getNetworkBootProtocolList().getSelectedItem() != null
-                        && model.getNetworkBootProtocolList().getSelectedItem() == NetworkBootProtocol.STATIC_IP);
+                setNetworkStaticDetailsStyle(model.getIpv4BootProtocolList().getSelectedItem() != null
+                        && model.getIpv4BootProtocolList().getSelectedItem() == Ipv4BootProtocol.STATIC_IP);
             }
         });
 

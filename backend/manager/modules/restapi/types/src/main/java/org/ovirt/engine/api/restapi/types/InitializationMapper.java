@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.NicConfiguration;
 import org.ovirt.engine.api.model.NicConfigurations;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 
 
 public class InitializationMapper {
@@ -27,7 +27,7 @@ public class InitializationMapper {
         }
 
         if (model.isSetBootProtocol()) {
-            entity.setBootProtocol(BootProtocolMapper.map(model.getBootProtocol(), NetworkBootProtocol.NONE));
+            entity.setBootProtocol(BootProtocolMapper.map(model.getBootProtocol(), Ipv4BootProtocol.NONE));
         }
 
         if (model.isSetIp()) {

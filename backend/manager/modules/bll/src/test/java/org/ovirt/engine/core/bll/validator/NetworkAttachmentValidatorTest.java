@@ -24,9 +24,9 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
@@ -214,7 +214,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             failsWith(engineMessage, ReplacementUtils.getVariableAssignmentString(engineMessage, network.getName())));
     }
 
-    private NetworkAttachment createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol bootProtocol,
+    private NetworkAttachment createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol bootProtocol,
             String address,
             String netmask) {
 
@@ -291,7 +291,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = createNetwork();
 
         NetworkAttachment attachment =
-                createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.NONE, null, null);
+                createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.NONE, null, null);
         attachment.setNetworkId(network.getId());
 
         doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
@@ -318,7 +318,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = createNetwork();
 
         NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.NONE, null, null);
+            createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.NONE, null, null);
         attachment.setNetworkId(network.getId());
 
 
@@ -338,7 +338,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = createNetwork();
 
         NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.DHCP, null, null);
+            createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.DHCP, null, null);
         attachment.setNetworkId(network.getId());
 
         doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(true,
@@ -378,15 +378,15 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @Test
     public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsDhcp() {
-        doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol.DHCP);
+        doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(Ipv4BootProtocol.DHCP);
     }
 
     @Test
     public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsNone() {
-        doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol.NONE);
+        doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(Ipv4BootProtocol.NONE);
     }
 
-    private void doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol bootProtocol) {
+    private void doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(Ipv4BootProtocol bootProtocol) {
         NetworkAttachment attachment = createNetworkAttachmentWithIpConfiguration(bootProtocol, null, null);
 
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
@@ -398,7 +398,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIfaceDoesNotExist() {
 
         NetworkAttachment attachment =
-                createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.STATIC_IP, null, null);
+                createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.STATIC_IP, null, null);
         attachment.setNicName("nicName");
 
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
@@ -420,7 +420,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         existingInterface.setNetworkName(network.getName());
 
         NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.STATIC_IP, null, null);
+            createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.STATIC_IP, null, null);
         attachment.setNicName(existingInterface.getName());
         attachment.setNetworkId(network.getId());
 

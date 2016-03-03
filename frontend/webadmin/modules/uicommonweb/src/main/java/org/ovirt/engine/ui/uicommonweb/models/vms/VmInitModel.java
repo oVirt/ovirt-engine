@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -313,14 +313,14 @@ public class VmInitModel extends Model {
         removeNetworkCommand = value;
     }
 
-    private ListModel<NetworkBootProtocol> networkBootProtocolList;
+    private ListModel<Ipv4BootProtocol> ipv4BootProtocolList;
 
-    public ListModel<NetworkBootProtocol> getNetworkBootProtocolList() {
-        return networkBootProtocolList;
+    public ListModel<Ipv4BootProtocol> getIpv4BootProtocolList() {
+        return ipv4BootProtocolList;
     }
 
-    private void setNetworkBootProtocolList(ListModel<NetworkBootProtocol> value) {
-        networkBootProtocolList = value;
+    private void setIpv4BootProtocolList(ListModel<Ipv4BootProtocol> value) {
+        ipv4BootProtocolList = value;
     }
 
     private EntityModel<String> privateNetworkIpAddress;
@@ -484,7 +484,7 @@ public class VmInitModel extends Model {
         setNetworkEnabled(new EntityModel<Boolean>());
         setNetworkSelectedName(new EntityModel<String>());
         setNetworkList(new ListModel<String>());
-        setNetworkBootProtocolList(new ListModel<NetworkBootProtocol>());
+        setIpv4BootProtocolList(new ListModel<Ipv4BootProtocol>());
         setNetworkIpAddress(new EntityModel<String>());
         setNetworkNetmask(new EntityModel<String>());
         setNetworkGateway(new EntityModel<String>());
@@ -570,8 +570,8 @@ public class VmInitModel extends Model {
 
         isWindowsOS = vm != null ? AsyncDataProvider.getInstance().isWindowsOsType(vm.getOsId()) : true;
 
-        getNetworkBootProtocolList().setItems(Arrays.asList(NetworkBootProtocol.values()));
-        getNetworkBootProtocolList().setSelectedItem(NetworkBootProtocol.NONE);
+        getIpv4BootProtocolList().setItems(Arrays.asList(Ipv4BootProtocol.values()));
+        getIpv4BootProtocolList().setSelectedItem(Ipv4BootProtocol.NONE);
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
         if (vmInit != null) {
@@ -762,7 +762,7 @@ public class VmInitModel extends Model {
                 String name = entry.getKey();
                 VmInitNetwork params = entry.getValue();
 
-                if (params.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+                if (params.getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
                     if (!validateHidden(getNetworkList(), name, null,
                                     new IValidation[] { new VmInitNetworkNameValidation(), new NotEmptyValidation()})
                             || !validateHidden(getNetworkIpAddress(), params.getIp(), null,
@@ -904,7 +904,7 @@ public class VmInitModel extends Model {
             if (!networkMap.isEmpty()) {
                 for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
                     VmInitNetwork params = entry.getValue();
-                    if (params.getBootProtocol() != NetworkBootProtocol.STATIC_IP) {
+                    if (params.getBootProtocol() != Ipv4BootProtocol.STATIC_IP) {
                         params.setIp(null);
                         params.setNetmask(null);
                         params.setGateway(null);
@@ -1028,7 +1028,7 @@ public class VmInitModel extends Model {
         if (lastSelectedNetworkName != null) {
             VmInitNetwork obj = networkMap.get(lastSelectedNetworkName);
             if (obj != null) {
-                obj.setBootProtocol(getNetworkBootProtocolList().getSelectedItem());
+                obj.setBootProtocol(getIpv4BootProtocolList().getSelectedItem());
                 obj.setIp(getNetworkIpAddress().getEntity());
                 obj.setNetmask(getNetworkNetmask().getEntity());
                 obj.setGateway(getNetworkGateway().getEntity());
@@ -1051,9 +1051,9 @@ public class VmInitModel extends Model {
         }
 
         if (obj == null || obj.getBootProtocol() == null) {
-            getNetworkBootProtocolList().setSelectedItem(NetworkBootProtocol.NONE);
+            getIpv4BootProtocolList().setSelectedItem(Ipv4BootProtocol.NONE);
         } else {
-            getNetworkBootProtocolList().setSelectedItem(obj.getBootProtocol());
+            getIpv4BootProtocolList().setSelectedItem(obj.getBootProtocol());
         }
 
         getNetworkIpAddress().setEntity(obj == null ? null : obj.getIp());

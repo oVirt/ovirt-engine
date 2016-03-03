@@ -18,8 +18,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
@@ -32,7 +32,8 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     private static final int DEFAULT_MTU_VALUE = 1500;
     private static final int VALUE_DENOTING_THAT_MTU_SHOULD_BE_SET_TO_DEFAULT_VALUE = 0;
-    private static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.forValue(RandomUtils.instance().nextInt(NetworkBootProtocol.values().length));
+    private static final Ipv4BootProtocol
+            BOOT_PROTOCOL = Ipv4BootProtocol.forValue(RandomUtils.instance().nextInt(Ipv4BootProtocol.values().length));
     private static final String ADDRESS = "ADDRESS";
     private static final String NETMASK = "NETMASK";
     private static final String GATEWAY = "GATEWAY";
@@ -284,17 +285,17 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testIsNetworkInSyncWhenBootProtocolDifferent() throws Exception {
         initIpConfigurationBootProtocol(false);
-        iface.setIpv4BootProtocol(NetworkBootProtocol.forValue(
-                (BOOT_PROTOCOL.getValue() + 1) % NetworkBootProtocol.values().length));
+        iface.setIpv4BootProtocol(Ipv4BootProtocol.forValue(
+                (BOOT_PROTOCOL.getValue() + 1) % Ipv4BootProtocol.values().length));
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
     private void initIpConfigurationBootProtocol(boolean sameBootProtocol) {
         initIpConfiguration();
         when(mockedIPv4Address.getBootProtocol()).thenReturn(BOOT_PROTOCOL);
-        NetworkBootProtocol ifaceBootProtocol =
-                sameBootProtocol ? BOOT_PROTOCOL : NetworkBootProtocol.forValue((BOOT_PROTOCOL.getValue() + 1)
-                        % NetworkBootProtocol.values().length);
+        Ipv4BootProtocol ifaceBootProtocol =
+                sameBootProtocol ? BOOT_PROTOCOL : Ipv4BootProtocol.forValue((BOOT_PROTOCOL.getValue() + 1)
+                        % Ipv4BootProtocol.values().length);
         iface.setIpv4BootProtocol(ifaceBootProtocol);
     }
 
@@ -312,8 +313,8 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testIsNetworkInSyncWhenStaticBootProtocolAddressDifferent() throws Exception {
         initIpConfigurationBootProtocolAddress(BOOT_PROTOCOL, false);
-        iface.setIpv4BootProtocol(NetworkBootProtocol.forValue(
-                (BOOT_PROTOCOL.getValue() + 1) % NetworkBootProtocol.values().length));
+        iface.setIpv4BootProtocol(Ipv4BootProtocol.forValue(
+                (BOOT_PROTOCOL.getValue() + 1) % Ipv4BootProtocol.values().length));
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
@@ -326,33 +327,33 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testIsNetworkInSyncWhenStaticBootProtocolNetmaskDifferent() throws Exception {
         initIpConfigurationBootProtocolNetmask(BOOT_PROTOCOL, false);
-        iface.setIpv4BootProtocol(NetworkBootProtocol.forValue(
-                (BOOT_PROTOCOL.getValue() + 1) % NetworkBootProtocol.values().length));
+        iface.setIpv4BootProtocol(Ipv4BootProtocol.forValue(
+                (BOOT_PROTOCOL.getValue() + 1) % Ipv4BootProtocol.values().length));
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
     @Test
     public void testIsNetworkInSyncWhenBootProtocolNotStaticAddressDifferent() throws Exception {
-        initIpConfigurationBootProtocolAddress(NetworkBootProtocol.NONE, false);
+        initIpConfigurationBootProtocolAddress(Ipv4BootProtocol.NONE, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
     public void testIsNetworkInSyncWhenBootProtocolNotStaticNetmaskDifferent() throws Exception {
-        initIpConfigurationBootProtocolNetmask(NetworkBootProtocol.NONE, false);
+        initIpConfigurationBootProtocolNetmask(Ipv4BootProtocol.NONE, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
     public void testIsNetworkInSyncWhenGatewayEqual(){
-        initIpConfigurationBootProtocolGateway(NetworkBootProtocol.STATIC_IP, true);
+        initIpConfigurationBootProtocolGateway(Ipv4BootProtocol.STATIC_IP, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
     public void testIsNetworkInSyncWhenGatewayBothBlank() {
         List<String> blankValues = Arrays.asList(null, "");
-        initIpConfigurationStaticBootProtocol(NetworkBootProtocol.STATIC_IP);
+        initIpConfigurationStaticBootProtocol(Ipv4BootProtocol.STATIC_IP);
         int blankIndex = RandomUtils.instance().nextInt(2);
         when(mockedIPv4Address.getGateway()).thenReturn(blankValues.get(blankIndex));
         iface.setIpv4Gateway(blankValues.get(blankIndex ^ 1));
@@ -361,16 +362,16 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     @Test
     public void testIsNetworkInSyncWhenGatewayDifferent(){
-        initIpConfigurationBootProtocolGateway(NetworkBootProtocol.STATIC_IP, false);
+        initIpConfigurationBootProtocolGateway(Ipv4BootProtocol.STATIC_IP, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
 
     @Test
     public void testReportConfigurationsOnHostWhenBootProtocolNotStatic() {
-        initIpConfigurationBootProtocolAddress(NetworkBootProtocol.NONE, false);
-        initIpConfigurationBootProtocolNetmask(NetworkBootProtocol.NONE, false);
-        initIpConfigurationBootProtocolGateway(NetworkBootProtocol.NONE, false);
+        initIpConfigurationBootProtocolAddress(Ipv4BootProtocol.NONE, false);
+        initIpConfigurationBootProtocolNetmask(Ipv4BootProtocol.NONE, false);
+        initIpConfigurationBootProtocolGateway(Ipv4BootProtocol.NONE, false);
         NetworkInSyncWithVdsNetworkInterface testedInstanceWithSameNonQosValues =
                 createTestedInstanceWithSameNonQosValues();
         List<ReportedConfiguration> reportedConfigurationList =
@@ -389,9 +390,9 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         boolean syncAddress = RandomUtils.instance().nextBoolean();
         boolean syncNetmask = RandomUtils.instance().nextBoolean();
         boolean syncGateway = RandomUtils.instance().nextBoolean();
-        initIpConfigurationBootProtocolAddress(NetworkBootProtocol.STATIC_IP, syncAddress);
-        initIpConfigurationBootProtocolNetmask(NetworkBootProtocol.STATIC_IP, syncNetmask);
-        initIpConfigurationBootProtocolGateway(NetworkBootProtocol.STATIC_IP, syncGateway);
+        initIpConfigurationBootProtocolAddress(Ipv4BootProtocol.STATIC_IP, syncAddress);
+        initIpConfigurationBootProtocolNetmask(Ipv4BootProtocol.STATIC_IP, syncNetmask);
+        initIpConfigurationBootProtocolGateway(Ipv4BootProtocol.STATIC_IP, syncGateway);
         NetworkInSyncWithVdsNetworkInterface testedInstanceWithSameNonQosValues =
                 createTestedInstanceWithSameNonQosValues();
         List<ReportedConfiguration> reportedConfigurationList =
@@ -417,28 +418,28 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
 
-    private void initIpConfigurationBootProtocolAddress(NetworkBootProtocol networkBootProtocol, boolean syncAddress) {
-        initIpConfigurationStaticBootProtocol(networkBootProtocol);
+    private void initIpConfigurationBootProtocolAddress(Ipv4BootProtocol ipv4BootProtocol, boolean syncAddress) {
+        initIpConfigurationStaticBootProtocol(ipv4BootProtocol);
         when(mockedIPv4Address.getAddress()).thenReturn(ADDRESS);
         iface.setIpv4Address(syncAddress ? ADDRESS : null);
     }
 
-    private void initIpConfigurationBootProtocolNetmask(NetworkBootProtocol networkBootProtocol, boolean syncNetmask) {
-        initIpConfigurationStaticBootProtocol(networkBootProtocol);
+    private void initIpConfigurationBootProtocolNetmask(Ipv4BootProtocol ipv4BootProtocol, boolean syncNetmask) {
+        initIpConfigurationStaticBootProtocol(ipv4BootProtocol);
         when(mockedIPv4Address.getNetmask()).thenReturn(NETMASK);
         iface.setIpv4Subnet(syncNetmask ? NETMASK : null);
     }
 
-    private void initIpConfigurationBootProtocolGateway(NetworkBootProtocol networkBootProtocol, boolean syncGateway) {
-        initIpConfigurationStaticBootProtocol(networkBootProtocol);
+    private void initIpConfigurationBootProtocolGateway(Ipv4BootProtocol ipv4BootProtocol, boolean syncGateway) {
+        initIpConfigurationStaticBootProtocol(ipv4BootProtocol);
         when(mockedIPv4Address.getGateway()).thenReturn(GATEWAY);
         iface.setIpv4Gateway(syncGateway ? GATEWAY : null);
     }
 
-    private void initIpConfigurationStaticBootProtocol(NetworkBootProtocol networkBootProtocol) {
+    private void initIpConfigurationStaticBootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
         initIpConfiguration();
-        when(mockedIPv4Address.getBootProtocol()).thenReturn(networkBootProtocol);
-        iface.setIpv4BootProtocol(networkBootProtocol);
+        when(mockedIPv4Address.getBootProtocol()).thenReturn(ipv4BootProtocol);
+        iface.setIpv4BootProtocol(ipv4BootProtocol);
 
     }
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
@@ -12,7 +13,7 @@ import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -25,7 +26,7 @@ public class BackendHostNicsResourceTest
     public static final Guid PARENT_GUID = GUIDS[0];
     public static final Guid NETWORK_GUID = new Guid("33333333-3333-3333-3333-333333333333");
     public static final String NETWORK_NAME = "skynet";
-    public static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.STATIC_IP;
+    public static final Ipv4BootProtocol BOOT_PROTOCOL = Ipv4BootProtocol.STATIC_IP;
     public static final Guid MASTER_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     public static final String MASTER_NAME = "master";
     private static final Guid SLAVE_GUID = new Guid("66666666-6666-6666-6666-666666666666");
@@ -214,8 +215,8 @@ public class BackendHostNicsResourceTest
         return getMapper(InterfaceStatus.class, NicStatus.class).map(interfaceStatus, params);
     }
 
-    protected BootProtocol map(NetworkBootProtocol networkBootProtocol, BootProtocol params) {
-        return getMapper(NetworkBootProtocol.class, BootProtocol.class).map(networkBootProtocol, params);
+    protected BootProtocol map(Ipv4BootProtocol ipv4BootProtocol, BootProtocol params) {
+        return getMapper(Ipv4BootProtocol.class, BootProtocol.class).map(ipv4BootProtocol, params);
     }
 
     protected void verifyMaster(HostNic model) {

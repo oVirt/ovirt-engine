@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
@@ -89,9 +89,9 @@ public class HostNicMapper {
             }
         }
         if(model.isSetBootProtocol()){
-            NetworkBootProtocol networkBootProtocol = BootProtocolMapper.map(model.getBootProtocol(), null);
-            if(networkBootProtocol != null){
-                entity.setIpv4BootProtocol(networkBootProtocol);
+            Ipv4BootProtocol ipv4BootProtocol = BootProtocolMapper.map(model.getBootProtocol(), null);
+            if(ipv4BootProtocol != null){
+                entity.setIpv4BootProtocol(ipv4BootProtocol);
             }
         }
 

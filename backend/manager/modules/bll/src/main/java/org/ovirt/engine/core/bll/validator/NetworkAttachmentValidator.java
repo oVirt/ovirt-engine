@@ -9,9 +9,9 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -120,7 +120,7 @@ public class NetworkAttachmentValidator {
         boolean failWhen = isRoleNetwork() &&
                 (ipConfiguration == null
                         || !ipConfiguration.hasIpv4PrimaryAddressSet()
-                        || ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.NONE);
+                        || ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.NONE);
 
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
                 ReplacementUtils.createSetVariableString(
@@ -151,7 +151,7 @@ public class NetworkAttachmentValidator {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         if (ipConfiguration != null
                 && ipConfiguration.hasIpv4PrimaryAddressSet()
-                && ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+                && ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
             VdsNetworkInterface existingIface = existingInterfaces.get(attachment.getNicName());
             if (existingIface != null) {
                 String oldAddress = existingIface.getIpv4Address();

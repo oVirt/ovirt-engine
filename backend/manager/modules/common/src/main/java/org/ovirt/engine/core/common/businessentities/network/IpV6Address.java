@@ -26,13 +26,13 @@ public class IpV6Address implements Serializable {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
     private String gateway;
 
-    private NetworkBootProtocol bootProtocol;
+    private Ipv4BootProtocol bootProtocol;
 
-    public NetworkBootProtocol getBootProtocol() {
+    public Ipv4BootProtocol getBootProtocol() {
         return bootProtocol;
     }
 
-    public void setBootProtocol(NetworkBootProtocol bootProtocol) {
+    public void setBootProtocol(Ipv4BootProtocol bootProtocol) {
         this.bootProtocol = bootProtocol;
     }
 

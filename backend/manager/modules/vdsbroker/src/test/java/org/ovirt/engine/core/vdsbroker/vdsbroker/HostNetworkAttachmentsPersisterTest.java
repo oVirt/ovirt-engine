@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterfac
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -87,7 +87,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
         customPropertiesForNics.add(interfaceWithAttachedClusterNetworkA, createCustomProperties());
 
-        interfaceWithAttachedClusterNetworkA.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
+        interfaceWithAttachedClusterNetworkA.setIpv4BootProtocol(Ipv4BootProtocol.STATIC_IP);
         interfaceWithAttachedClusterNetworkA.setIpv4Address(IPV4_ADDRESS);
         interfaceWithAttachedClusterNetworkA.setIpv4Subnet(IPV4_NETMASK);
         interfaceWithAttachedClusterNetworkA.setIpv4Gateway(IPV4_GATEWAY);
@@ -371,7 +371,7 @@ public class HostNetworkAttachmentsPersisterTest {
         address.setAddress(IPV4_ADDRESS);
         address.setNetmask(IPV4_NETMASK);
         address.setGateway(IPV4_GATEWAY);
-        address.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        address.setBootProtocol(Ipv4BootProtocol.STATIC_IP);
         return address;
     }
 
@@ -380,7 +380,7 @@ public class HostNetworkAttachmentsPersisterTest {
         address.setAddress(IPV6_ADDRESS);
         address.setPrefix(IPV6_PREFIX);
         address.setGateway(IPV6_GATEWAY);
-        address.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        address.setBootProtocol(Ipv4BootProtocol.STATIC_IP);
         return address;
     }
 

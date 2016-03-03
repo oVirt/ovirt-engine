@@ -3,18 +3,18 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 
 @ApplicationScoped
 class BootProtocolResolver {
 
-    public NetworkBootProtocol resolve(IpInfoFetcher ipInfoFetcher) {
+    public Ipv4BootProtocol resolve(IpInfoFetcher ipInfoFetcher) {
         if (ipInfoFetcher.isBootProtocolDhcp()) {
-            return NetworkBootProtocol.DHCP;
+            return Ipv4BootProtocol.DHCP;
         } else if (StringUtils.isNotEmpty(ipInfoFetcher.fetchIpAddress())) {
-            return NetworkBootProtocol.STATIC_IP;
+            return Ipv4BootProtocol.STATIC_IP;
         } else {
-            return NetworkBootProtocol.NONE;
+            return Ipv4BootProtocol.NONE;
         }
     }
 }

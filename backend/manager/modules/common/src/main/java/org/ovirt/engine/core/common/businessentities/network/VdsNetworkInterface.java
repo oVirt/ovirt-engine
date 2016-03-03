@@ -31,7 +31,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private String vdsName;
     private String networkName;
 
-    private NetworkBootProtocol ipv4BootProtocol;
+    private Ipv4BootProtocol ipv4BootProtocol;
 
     @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_BAD_FORMAT")
     private String ipv4Address;
@@ -42,7 +42,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     private String ipv4Gateway;
 
-    private NetworkBootProtocol ipv6BootProtocol;
+    private Ipv4BootProtocol ipv6BootProtocol;
 
     @Ipv6
     private String ipv6Address;
@@ -132,7 +132,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      * @param ipv4BootProtocol
      *            the boot protocol
      */
-    public void setIpv4BootProtocol(NetworkBootProtocol ipv4BootProtocol) {
+    public void setIpv4BootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
         this.ipv4BootProtocol = ipv4BootProtocol;
     }
 
@@ -141,7 +141,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      *
      * @return the boot protocol
      */
-    public NetworkBootProtocol getIpv4BootProtocol() {
+    public Ipv4BootProtocol getIpv4BootProtocol() {
         return ipv4BootProtocol;
     }
 
@@ -153,11 +153,11 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.ipv6Address = ipv6Address;
     }
 
-    public NetworkBootProtocol getIpv6BootProtocol() {
+    public Ipv4BootProtocol getIpv6BootProtocol() {
         return ipv6BootProtocol;
     }
 
-    public void setIpv6BootProtocol(NetworkBootProtocol ipv6BootProtocol) {
+    public void setIpv6BootProtocol(Ipv4BootProtocol ipv6BootProtocol) {
         this.ipv6BootProtocol = ipv6BootProtocol;
     }
 

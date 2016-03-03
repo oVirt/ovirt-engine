@@ -25,13 +25,13 @@ public class IPv4Address implements Serializable {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
     private String gateway;
 
-    private NetworkBootProtocol bootProtocol;
+    private Ipv4BootProtocol bootProtocol;
 
-    public NetworkBootProtocol getBootProtocol() {
+    public Ipv4BootProtocol getBootProtocol() {
         return bootProtocol;
     }
 
-    public void setBootProtocol(NetworkBootProtocol bootProtocol) {
+    public void setBootProtocol(Ipv4BootProtocol bootProtocol) {
         this.bootProtocol = bootProtocol;
     }
 

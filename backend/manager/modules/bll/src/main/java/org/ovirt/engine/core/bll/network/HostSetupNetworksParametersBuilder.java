@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -131,8 +131,8 @@ public abstract class HostSetupNetworksParametersBuilder {
                 IPv4Address primaryAddress = attachment.getIpConfiguration().getIpv4PrimaryAddress();
 
                 if (primaryAddress.getBootProtocol() == null
-                        || primaryAddress.getBootProtocol() == NetworkBootProtocol.NONE) {
-                    primaryAddress.setBootProtocol(NetworkBootProtocol.DHCP);
+                        || primaryAddress.getBootProtocol() == Ipv4BootProtocol.NONE) {
+                    primaryAddress.setBootProtocol(Ipv4BootProtocol.DHCP);
                 }
             } else {
                 IpConfiguration ipConfiguration;
@@ -143,7 +143,7 @@ public abstract class HostSetupNetworksParametersBuilder {
                 }
 
                 IPv4Address primaryAddress = new IPv4Address();
-                primaryAddress.setBootProtocol(NetworkBootProtocol.DHCP);
+                primaryAddress.setBootProtocol(Ipv4BootProtocol.DHCP);
                 ipConfiguration.setIPv4Addresses(Collections.singletonList(primaryAddress));
                 attachment.setIpConfiguration(ipConfiguration);
             }

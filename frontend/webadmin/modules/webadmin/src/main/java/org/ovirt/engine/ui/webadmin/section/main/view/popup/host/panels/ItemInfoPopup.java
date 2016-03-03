@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -31,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private final FlexTable contents = new FlexTable();
-    private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<>();
+    private static final EnumRenderer<Ipv4BootProtocol> RENDERER = new EnumRenderer<>();
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationResources resources = AssetProvider.getResources();
@@ -212,10 +213,10 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private void showNic(NetworkInterfaceModel nic) {
         contents.removeAllRows();
         VdsNetworkInterface entity = nic.getOriginalIface();
-        NetworkBootProtocol bootProtocol = entity.getIpv4BootProtocol();
+        Ipv4BootProtocol bootProtocol = entity.getIpv4BootProtocol();
         addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
         addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
-        if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
+        if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
             addRow(constants.addressItemInfo(), entity.getIpv4Address());
             addRow(constants.subnetItemInfo(), entity.getIpv4Subnet());
             addRow(constants.gatewayItemInfo(), entity.getIpv4Gateway());

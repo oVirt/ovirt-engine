@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
@@ -350,8 +350,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     entity.setVdsId(getGuid(rs, "vds_id"));
                     entity.setVdsName(rs.getString("vds_name"));
                     entity.setId(getGuidDefaultEmpty(rs, "id"));
-                    entity.setIpv4BootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
-                    entity.setIpv6BootProtocol(NetworkBootProtocol.forValue(rs.getInt("ipv6_boot_protocol")));
+                    entity.setIpv4BootProtocol(Ipv4BootProtocol.forValue(rs.getInt("boot_protocol")));
+                    entity.setIpv6BootProtocol(Ipv4BootProtocol.forValue(rs.getInt("ipv6_boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
                     entity.setQos(hostNetworkQosDao.get(entity.getId()));

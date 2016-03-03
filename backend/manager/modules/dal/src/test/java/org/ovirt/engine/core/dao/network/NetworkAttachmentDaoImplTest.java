@@ -17,8 +17,8 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
@@ -38,7 +38,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         networkAttachment.setProperties(new HashMap<>());
         networkAttachment.setId(Guid.newGuid());
         networkAttachment.setNetworkId(FixturesTool.NETWORK_ENGINE);
-        networkAttachment.setIpConfiguration(createIpConfiguration(NetworkBootProtocol.DHCP, NetworkBootProtocol.NONE));
+        networkAttachment.setIpConfiguration(createIpConfiguration(Ipv4BootProtocol.DHCP, Ipv4BootProtocol.NONE));
     }
 
     /**
@@ -85,13 +85,13 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
 
     public IPv4Address createPrimaryIpv4Address() {
         IPv4Address iPv4Address = new IPv4Address();
-        iPv4Address.setBootProtocol(NetworkBootProtocol.DHCP);
+        iPv4Address.setBootProtocol(Ipv4BootProtocol.DHCP);
         return iPv4Address;
     }
 
     public IpV6Address createPrimaryIpv6Address() {
         IpV6Address ipv6Address = new IpV6Address();
-        ipv6Address.setBootProtocol(NetworkBootProtocol.DHCP);
+        ipv6Address.setBootProtocol(Ipv4BootProtocol.DHCP);
         return ipv6Address;
     }
 
@@ -172,8 +172,8 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         networkAttachment.setNicId(FixturesTool.NETWORK_ATTACHMENT_NIC);
         dao.save(networkAttachment);
         IpConfiguration ipConfiguration = populateIpConfiguration(networkAttachment.getIpConfiguration(),
-                NetworkBootProtocol.STATIC_IP,
-                NetworkBootProtocol.STATIC_IP);
+                Ipv4BootProtocol.STATIC_IP,
+                Ipv4BootProtocol.STATIC_IP);
 
         networkAttachment.setIpConfiguration(ipConfiguration);
 
@@ -190,14 +190,14 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
     }
 
     private IpConfiguration createIpConfiguration(
-            NetworkBootProtocol ipv4BootProtocol,
-            NetworkBootProtocol ipv6BootProtocol) {
+            Ipv4BootProtocol ipv4BootProtocol,
+            Ipv4BootProtocol ipv6BootProtocol) {
         return populateIpConfiguration(new IpConfiguration(), ipv4BootProtocol, ipv6BootProtocol);
     }
 
     private IpConfiguration populateIpConfiguration(IpConfiguration ipConfiguration,
-            NetworkBootProtocol ipv4BootProtocol,
-            NetworkBootProtocol ipv6BootProtocol) {
+            Ipv4BootProtocol ipv4BootProtocol,
+            Ipv4BootProtocol ipv6BootProtocol) {
 
         ipConfiguration.setIPv4Addresses(Collections.singletonList(createIpv4Address(ipv4BootProtocol)));
         ipConfiguration.setIpV6Addresses(Collections.singletonList(createIpv6Address(ipv6BootProtocol)));
@@ -205,7 +205,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         return ipConfiguration;
     }
 
-    private IPv4Address createIpv4Address(NetworkBootProtocol ipv4BootProtocol) {
+    private IPv4Address createIpv4Address(Ipv4BootProtocol ipv4BootProtocol) {
         IPv4Address primaryIpv4Address = new IPv4Address();
         primaryIpv4Address.setBootProtocol(ipv4BootProtocol);
         primaryIpv4Address.setAddress(randomIpv4Address());
@@ -214,7 +214,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
         return primaryIpv4Address;
     }
 
-    private IpV6Address createIpv6Address(NetworkBootProtocol ipv6BootProtocol) {
+    private IpV6Address createIpv6Address(Ipv4BootProtocol ipv6BootProtocol) {
         IpV6Address primaryIpv6Address = new IpV6Address();
         primaryIpv6Address.setBootProtocol(ipv6BootProtocol);
         primaryIpv6Address.setAddress(randomIpv6Address());

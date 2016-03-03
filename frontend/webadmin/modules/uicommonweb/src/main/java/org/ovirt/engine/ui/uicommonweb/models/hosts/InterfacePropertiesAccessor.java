@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public interface InterfacePropertiesAccessor {
@@ -15,7 +15,7 @@ public interface InterfacePropertiesAccessor {
 
     String getGateway();
 
-    NetworkBootProtocol getBootProtocol();
+    Ipv4BootProtocol getBootProtocol();
 
     boolean isQosOverridden();
 
@@ -46,7 +46,7 @@ public interface InterfacePropertiesAccessor {
         }
 
         @Override
-        public NetworkBootProtocol getBootProtocol() {
+        public Ipv4BootProtocol getBootProtocol() {
             return nic.getIpv4BootProtocol();
         }
 
@@ -73,9 +73,10 @@ public interface InterfacePropertiesAccessor {
 
         public FromNetworkAttachment(NetworkAttachment networkAttachment, HostNetworkQos networkQos) {
             this.networkAttachment = networkAttachment;
-            this.iPv4Address = networkAttachment.getIpConfiguration() == null ? null
-                    : networkAttachment.getIpConfiguration().hasIpv4PrimaryAddressSet()
-                            ? networkAttachment.getIpConfiguration().getIpv4PrimaryAddress() : null;
+            this.iPv4Address = networkAttachment.getIpConfiguration() != null
+                    && networkAttachment.getIpConfiguration().hasIpv4PrimaryAddressSet()
+                            ? networkAttachment.getIpConfiguration().getIpv4PrimaryAddress()
+                            : null;
             this.networkQos = networkQos;
         }
 
@@ -95,7 +96,7 @@ public interface InterfacePropertiesAccessor {
         }
 
         @Override
-        public NetworkBootProtocol getBootProtocol() {
+        public Ipv4BootProtocol getBootProtocol() {
             return iPv4Address.getBootProtocol();
         }
 

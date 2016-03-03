@@ -7,7 +7,7 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.annotation.NoRepetitiveStaticIpInList;
 
@@ -18,7 +18,7 @@ public class NoRepetitiveStaticIpInListConstraint implements ConstraintValidator
         Collection<String> staticIps = new HashSet<>();
         for (VdsNetworkInterface networkInterface : value) {
             String address = networkInterface.getIpv4Address();
-            if (networkInterface.getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP
+            if (networkInterface.getIpv4BootProtocol() == Ipv4BootProtocol.STATIC_IP
                     && address != null && !address.isEmpty()) {
                 if (staticIps.contains(networkInterface.getIpv4Address())) {
                     return false;

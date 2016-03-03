@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -211,7 +211,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                     String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
         }
 
-        if (displayNic.getIpv4BootProtocol() == NetworkBootProtocol.NONE) {
+        if (displayNic.getIpv4BootProtocol() == Ipv4BootProtocol.NONE) {
             log.warn("Host {} has the display network {} configured with improper boot protocol on interface {}.",
                     host.getName(),
                     displayNetwork.getName(),

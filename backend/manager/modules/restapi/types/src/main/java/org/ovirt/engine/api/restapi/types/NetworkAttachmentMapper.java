@@ -21,7 +21,7 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 
 public class NetworkAttachmentMapper {
 
@@ -100,7 +100,7 @@ public class NetworkAttachmentMapper {
         IPv4Address iPv4Address = new IPv4Address();
 
         if (ipAddressAssignment.isSetAssignmentMethod()) {
-            NetworkBootProtocol assignmentMethod =
+            Ipv4BootProtocol assignmentMethod =
                     BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod(), null);
             iPv4Address.setBootProtocol(assignmentMethod);
         }
@@ -123,7 +123,7 @@ public class NetworkAttachmentMapper {
         IpV6Address ipV6Address = new IpV6Address();
 
         if (ipAddressAssignment.isSetAssignmentMethod()) {
-            NetworkBootProtocol assignmentMethod =
+            Ipv4BootProtocol assignmentMethod =
                     BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod(), null);
             ipV6Address.setBootProtocol(assignmentMethod);
         }

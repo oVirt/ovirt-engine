@@ -9,7 +9,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class NetworkCommonUtils {
@@ -84,7 +84,7 @@ public class NetworkCommonUtils {
 
     private static IPv4Address createDefaultIpAddress() {
         IPv4Address output = new IPv4Address();
-        output.setBootProtocol(NetworkBootProtocol.NONE);
+        output.setBootProtocol(Ipv4BootProtocol.NONE);
         return output;
     }
 

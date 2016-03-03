@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 
 public class NetworkParameters implements InterfacePropertiesAccessor {
 
-    private NetworkBootProtocol bootProtocol;
+    private Ipv4BootProtocol bootProtocol;
     private String address;
     private String netmask;
     private String gateway;
@@ -19,11 +19,11 @@ public class NetworkParameters implements InterfacePropertiesAccessor {
     }
 
     @Override
-    public NetworkBootProtocol getBootProtocol() {
+    public Ipv4BootProtocol getBootProtocol() {
         return bootProtocol;
     }
 
-    public void setBootProtocol(NetworkBootProtocol bootProtocol) {
+    public void setBootProtocol(Ipv4BootProtocol bootProtocol) {
         this.bootProtocol = bootProtocol;
     }
 

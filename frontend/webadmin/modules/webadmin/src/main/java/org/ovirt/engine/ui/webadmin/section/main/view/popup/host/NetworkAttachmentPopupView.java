@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
@@ -46,7 +46,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
     StringEntityModelLabelEditor nameEditor;
 
     @UiField(provided = true)
-    EnumRadioEditor<NetworkBootProtocol> ipv4BootProtocol;
+    EnumRadioEditor<Ipv4BootProtocol> ipv4BootProtocol;
 
     @UiField
     @Ignore
@@ -107,7 +107,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
 
         super(eventBus);
 
-        ipv4BootProtocol = new EnumRadioEditor<>(NetworkBootProtocol.class);
+        ipv4BootProtocol = new EnumRadioEditor<>(Ipv4BootProtocol.class);
         qosWidget = new HostNetworkQosWidget();
         customPropertiesWidget = new KeyValueWidget<>("320px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -170,7 +170,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
         boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
         ipv4BootProtocolLabel.setEnabled(bootProtocolsAvailable);
         ipv4BootProtocol.setEnabled(bootProtocolsAvailable);
-        ipv4BootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
+        ipv4BootProtocol.setEnabled(Ipv4BootProtocol.NONE, model.getNoneBootProtocolAvailable());
     }
 
     @Override

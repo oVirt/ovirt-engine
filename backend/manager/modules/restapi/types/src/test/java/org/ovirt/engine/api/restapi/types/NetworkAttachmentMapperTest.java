@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 
 public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<org.ovirt.engine.api.model.NetworkAttachment, NetworkAttachment, NetworkAttachment> {
 
@@ -28,7 +28,7 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
     @Test
     public void testMapFromEntityIpv6Assignment() {
         final IpV6Address entity = new IpV6Address();
-        entity.setBootProtocol(NetworkBootProtocol.NONE);
+        entity.setBootProtocol(Ipv4BootProtocol.NONE);
         entity.setAddress(ADDRESS);
         entity.setGateway(GATEWAY);
         entity.setPrefix(PREFIX);
@@ -54,7 +54,7 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
 
         final IpV6Address actual = NetworkAttachmentMapper.mapIpv6AddressAssignment(model);
 
-        assertEquals(NetworkBootProtocol.STATIC_IP, actual.getBootProtocol());
+        assertEquals(Ipv4BootProtocol.STATIC_IP, actual.getBootProtocol());
         assertEquals(ADDRESS, actual.getAddress());
         assertEquals(GATEWAY, actual.getGateway());
         assertEquals(Integer.valueOf(PREFIX), actual.getPrefix());

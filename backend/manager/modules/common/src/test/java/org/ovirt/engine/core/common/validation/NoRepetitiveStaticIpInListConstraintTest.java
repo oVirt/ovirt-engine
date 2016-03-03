@@ -10,7 +10,7 @@ import javax.validation.Validator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.NoRepetitiveStaticIpInList;
@@ -68,7 +68,7 @@ public class NoRepetitiveStaticIpInListConstraintTest {
     private static VdsNetworkInterface createVdsNetworkInterfaceWithStaticIp(String ip) {
         VdsNetworkInterface networkInterface = new VdsNetworkInterface();
         networkInterface.setIpv4Address(ip);
-        networkInterface.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
+        networkInterface.setIpv4BootProtocol(Ipv4BootProtocol.STATIC_IP);
         return networkInterface;
     }
 

@@ -61,7 +61,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -2120,18 +2120,18 @@ public class VdsBrokerObjectsBuilder {
 
     private static void setBootProtocolAndGateway(
             BootProtocolResolver bootProtocolResolver, IpInfoFetcher ipInfoFetcher,
-            Consumer<NetworkBootProtocol> bootProtocolSetter,
+            Consumer<Ipv4BootProtocol> bootProtocolSetter,
             Consumer<String> gatewaySetter) {
 
-        final NetworkBootProtocol bootProtocol = bootProtocolResolver.resolve(ipInfoFetcher);
+        final Ipv4BootProtocol bootProtocol = bootProtocolResolver.resolve(ipInfoFetcher);
         bootProtocolSetter.accept(bootProtocol);
         setGateway(bootProtocol, ipInfoFetcher, gatewaySetter);
     }
 
-    private static void setGateway(NetworkBootProtocol bootProtocol,
+    private static void setGateway(Ipv4BootProtocol bootProtocol,
             IpInfoFetcher ipInfoFetcher,
             Consumer<String> gatewaySetter) {
-        if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
+        if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
             String gateway = ipInfoFetcher.fetchGateway();
             if (StringUtils.isNotEmpty(gateway)) {
                 gatewaySetter.accept(gateway);

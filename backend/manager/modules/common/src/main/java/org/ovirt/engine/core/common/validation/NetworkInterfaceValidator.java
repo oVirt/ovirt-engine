@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.validation;
 
-import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.STATIC_IP;
+import static org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol.STATIC_IP;
 import static org.ovirt.engine.core.compat.StringHelper.isNullOrEmpty;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 
@@ -24,7 +24,7 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
      */
     @Override
     public boolean isValid(VdsNetworkInterface iface, ConstraintValidatorContext context) {
-        NetworkBootProtocol bootProtocol = iface.getIpv4BootProtocol();
+        Ipv4BootProtocol bootProtocol = iface.getIpv4BootProtocol();
         String address = iface.getIpv4Address();
 
         if (bootProtocol != null && bootProtocol == STATIC_IP) {

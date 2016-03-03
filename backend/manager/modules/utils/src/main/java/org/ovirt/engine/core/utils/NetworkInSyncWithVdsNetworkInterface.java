@@ -10,8 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -142,10 +142,10 @@ public class NetworkInSyncWithVdsNetworkInterface {
         if (!isPrimaryAddressExist()) {
             return;
         }
-        NetworkBootProtocol definedBootProtocol = getPrimaryAddress().getBootProtocol();
+        Ipv4BootProtocol definedBootProtocol = getPrimaryAddress().getBootProtocol();
         result.add(ReportedConfigurationType.BOOT_PROTOCOL, iface.getIpv4BootProtocol(), definedBootProtocol);
 
-        if (definedBootProtocol == NetworkBootProtocol.STATIC_IP && iface.getIpv4BootProtocol() == definedBootProtocol) {
+        if (definedBootProtocol == Ipv4BootProtocol.STATIC_IP && iface.getIpv4BootProtocol() == definedBootProtocol) {
             result.add(ReportedConfigurationType.NETMASK,
                     iface.getIpv4Subnet(), getPrimaryAddress().getNetmask(), isNetworkSubnetInSync());
             result.add(ReportedConfigurationType.IP_ADDRESS,

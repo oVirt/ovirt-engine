@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -28,7 +28,7 @@ public class NetworkAttachmentModel extends Model {
     private EntityModel<String> ipv4Address;
     private EntityModel<String> ipv4Subnet;
     private EntityModel<String> ipv4Gateway;
-    private NetworkBootProtocol ipv4BootProtocol = NetworkBootProtocol.values()[0];
+    private Ipv4BootProtocol ipv4BootProtocol = Ipv4BootProtocol.values()[0];
 
     private EntityModel<String> name;
     private boolean noneBootProtocolAvailable = true;
@@ -121,11 +121,11 @@ public class NetworkAttachmentModel extends Model {
         name = value;
     }
 
-    public NetworkBootProtocol getIpv4BootProtocol() {
+    public Ipv4BootProtocol getIpv4BootProtocol() {
         return ipv4BootProtocol;
     }
 
-    public void setIpv4BootProtocol(NetworkBootProtocol value) {
+    public void setIpv4BootProtocol(Ipv4BootProtocol value) {
         if (ipv4BootProtocol != value) {
             ipv4BootProtocol = value;
             bootProtocolChanged();
@@ -157,7 +157,7 @@ public class NetworkAttachmentModel extends Model {
     }
 
     public boolean getIsStaticAddress() {
-        return getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP;
+        return getIpv4BootProtocol() == Ipv4BootProtocol.STATIC_IP;
     }
 
     public EntityModel<Boolean> getIsToSync() {

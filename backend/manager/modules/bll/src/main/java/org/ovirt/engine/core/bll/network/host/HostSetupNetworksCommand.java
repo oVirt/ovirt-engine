@@ -42,9 +42,9 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
@@ -468,15 +468,15 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private boolean isIpv4GatewaySet(IpConfiguration ipConfiguration) {
         return ipConfiguration.hasIpv4PrimaryAddressSet()
-                && (ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.DHCP
-                        || ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
+                && (ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.DHCP
+                        || ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.STATIC_IP
                                 && StringUtils.isNotEmpty(ipConfiguration.getIpv4PrimaryAddress().getGateway()));
     }
 
     private boolean isIpv6GatewaySet(IpConfiguration ipConfiguration) {
         return ipConfiguration.hasIpv6PrimaryAddressSet()
-                && (ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == NetworkBootProtocol.DHCP
-                        || ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
+                && (ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.DHCP
+                        || ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.STATIC_IP
                                 && StringUtils.isNotEmpty(ipConfiguration.getIpv6PrimaryAddress().getGateway()));
     }
 

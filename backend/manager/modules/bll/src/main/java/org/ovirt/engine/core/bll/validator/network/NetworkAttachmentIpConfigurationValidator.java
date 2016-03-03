@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
@@ -39,8 +39,8 @@ public class NetworkAttachmentIpConfigurationValidator {
                         networkAttachment.getNetworkName(),
                         networkAttachment.getNicName());
             }
-            NetworkBootProtocol bootProtocol = iPv4Address.getBootProtocol();
-            if (bootProtocol == NetworkBootProtocol.DHCP || bootProtocol == NetworkBootProtocol.NONE) {
+            Ipv4BootProtocol bootProtocol = iPv4Address.getBootProtocol();
+            if (bootProtocol == Ipv4BootProtocol.DHCP || bootProtocol == Ipv4BootProtocol.NONE) {
                 if (!validDhcpOrNoneIpAddressDetails(iPv4Address)) {
                     return new ValidationResult(
                             EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
@@ -52,7 +52,7 @@ public class NetworkAttachmentIpConfigurationValidator {
 
                 }
             }
-            if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
+            if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
                 if (!validStaticAddressDetails(iPv4Address)) {
                     return incompleteIpConfigurationValidationResult(
                             EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,

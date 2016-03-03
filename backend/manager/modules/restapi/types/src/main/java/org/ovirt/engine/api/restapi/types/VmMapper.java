@@ -73,7 +73,7 @@ import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -1045,9 +1045,9 @@ public class VmMapper extends VmBaseMapper {
                     }
                     interfaces.add(vmInitInterface);
                     if (iface.isSetBootProtocol()) {
-                        NetworkBootProtocol protocol = BootProtocolMapper.map(iface.getBootProtocol(), vmInitInterface.getBootProtocol());
+                        Ipv4BootProtocol protocol = BootProtocolMapper.map(iface.getBootProtocol(), vmInitInterface.getBootProtocol());
                         vmInitInterface.setBootProtocol(protocol);
-                        if (protocol != NetworkBootProtocol.DHCP && iface.isSetNetwork() && iface.getNetwork().isSetIp()) {
+                        if (protocol != Ipv4BootProtocol.DHCP && iface.isSetNetwork() && iface.getNetwork().isSetIp()) {
                             if (iface.getNetwork().getIp().isSetAddress()) {
                                 vmInitInterface.setIp(iface.getNetwork().getIp().getAddress());
                             }

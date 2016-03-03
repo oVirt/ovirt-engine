@@ -246,11 +246,11 @@ public interface Enums extends LocalizedEnums {
 
     String AdRefStatus___Active();
 
-    String NetworkBootProtocol___NONE();
+    String Ipv4BootProtocol___NONE();
 
-    String NetworkBootProtocol___DHCP();
+    String Ipv4BootProtocol___DHCP();
 
-    String NetworkBootProtocol___STATIC_IP();
+    String Ipv4BootProtocol___STATIC_IP();
 
     String VmEntityType___VM();
 

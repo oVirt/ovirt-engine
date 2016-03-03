@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InterfacePropertiesAccessor;
@@ -67,8 +67,8 @@ public class LogicalNetworkModelParametersHelper {
     private void fixBootProtocolOfMgmtNetworkIfNeeded(NetworkAttachment networkAttachment) {
         IPv4Address ipV4address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
         if (networkModel.isManagement() && (ipV4address.getBootProtocol() == null
-                || ipV4address.getBootProtocol() == NetworkBootProtocol.NONE)) {
-            ipV4address.setBootProtocol(NetworkBootProtocol.DHCP);
+                || ipV4address.getBootProtocol() == Ipv4BootProtocol.NONE)) {
+            ipV4address.setBootProtocol(Ipv4BootProtocol.DHCP);
         }
     }
 
