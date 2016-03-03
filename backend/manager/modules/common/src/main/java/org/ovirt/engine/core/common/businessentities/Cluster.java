@@ -142,6 +142,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         fencingPolicy = new FencingPolicy();
         addtionalFeaturesSupported = new HashSet<>();
         ksmMergeAcrossNumaNodes = true;
+        migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
     }
 
     @Override
