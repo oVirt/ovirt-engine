@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -2083,8 +2085,12 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static BootProtocolResolver getBootProtocolResolver() {
-        return Injector.get(BootProtocolResolver.class);
+    private static Ipv4BootProtocolResolver getIpv4BootProtocolResolver() {
+        return Injector.get(Ipv4BootProtocolResolver.class);
+    }
+
+    private static Ipv6BootProtocolResolver getIpv6BootProtocolResolver() {
+        return Injector.get(Ipv6BootProtocolResolver.class);
     }
 
     private static void addBootProtocol(Map<String, Object> nicProperties, VdsNetworkInterface iface) {
@@ -2092,36 +2098,32 @@ public class VdsBrokerObjectsBuilder {
             return;
         }
 
-        final BootProtocolResolver resolver = getBootProtocolResolver();
-
         setBootProtocolAndGateway(
-                resolver,
+                getIpv4BootProtocolResolver(),
                 new NoCfgIpv4InfoFetcher(nicProperties, iface.getIpv4Address()),
+                bootProtocol -> Ipv4BootProtocol.STATIC_IP == bootProtocol,
                 iface::setIpv4BootProtocol,
                 iface::setIpv4Gateway);
 
         setBootProtocolAndGateway(
-                resolver,
+                getIpv6BootProtocolResolver(),
                 new NoCfgIpv6InfoFetcher(nicProperties, iface.getIpv6Address()),
+                bootProtocol -> Ipv6BootProtocol.STATIC_IP == bootProtocol,
                 iface::setIpv6BootProtocol,
                 iface::setIpv6Gateway);
     }
 
-    private static void setBootProtocolAndGateway(
-            BootProtocolResolver bootProtocolResolver, IpInfoFetcher ipInfoFetcher,
-            Consumer<Ipv4BootProtocol> bootProtocolSetter,
+    private static <T, F extends IpInfoFetcher> void setBootProtocolAndGateway(
+            BootProtocolResolver<T, F> bootProtocolResolver,
+            F infoFetcher,
+            Predicate<T> bootProtocolStaticIpPredicate,
+            Consumer<T> bootProtocolSetter,
             Consumer<String> gatewaySetter) {
 
-        final Ipv4BootProtocol bootProtocol = bootProtocolResolver.resolve(ipInfoFetcher);
+        final T bootProtocol = bootProtocolResolver.resolve(infoFetcher);
         bootProtocolSetter.accept(bootProtocol);
-        setGateway(bootProtocol, ipInfoFetcher, gatewaySetter);
-    }
-
-    private static void setGateway(Ipv4BootProtocol bootProtocol,
-            IpInfoFetcher ipInfoFetcher,
-            Consumer<String> gatewaySetter) {
-        if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
-            String gateway = ipInfoFetcher.fetchGateway();
+        if (bootProtocolStaticIpPredicate.test(bootProtocol)) {
+            String gateway = infoFetcher.fetchGateway();
             if (StringUtils.isNotEmpty(gateway)) {
                 gatewaySetter.accept(gateway);
             }

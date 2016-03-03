@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -239,7 +240,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
 
         private IpV6Address createIpV6Address(ResultSet rs, String v6BootProtocol) throws SQLException {
             final IpV6Address ipV6Address = new IpV6Address();
-            ipV6Address.setBootProtocol(Ipv4BootProtocol.valueOf(v6BootProtocol));
+            ipV6Address.setBootProtocol(Ipv6BootProtocol.valueOf(v6BootProtocol));
             ipV6Address.setAddress(rs.getString("ipv6_address"));
             if (rs.getObject("ipv6_prefix") != null) {
                 ipV6Address.setPrefix(rs. getInt("ipv6_prefix"));

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
-import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
@@ -17,6 +17,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
 
     protected static final String DHCP_BOOT_PROTOCOL = "dhcp";
     protected static final String DHCPV6_BOOT_PROTOCOL = "dhcpv6";
+    protected static final String DHCPV6_AUTOCONF = "ipv6autoconf";
     protected static final String BOOT_PROTOCOL = "bootproto";
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
@@ -104,9 +105,10 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     }
 
     private void addIpv6BootProtocol(Map<String, Object> opts, HostNetwork attachment) {
-        final Ipv4BootProtocol ipv6BootProtocol = attachment.getIpv6BootProtocol();
-        opts.put(DHCPV6_BOOT_PROTOCOL, Ipv4BootProtocol.DHCP == ipv6BootProtocol);
-        if (Ipv4BootProtocol.STATIC_IP == ipv6BootProtocol) {
+        final Ipv6BootProtocol ipv6BootProtocol = attachment.getIpv6BootProtocol();
+        opts.put(DHCPV6_BOOT_PROTOCOL, Ipv6BootProtocol.DHCP == ipv6BootProtocol);
+        opts.put(DHCPV6_AUTOCONF, Ipv6BootProtocol.AUTOCONF == ipv6BootProtocol);
+        if (Ipv6BootProtocol.STATIC_IP == ipv6BootProtocol) {
             putIfNotEmpty(opts, "ipv6addr", getIpv6Address(attachment));
             putIfNotEmpty(opts, "ipv6gateway", attachment.getIpv6Gateway());
         }

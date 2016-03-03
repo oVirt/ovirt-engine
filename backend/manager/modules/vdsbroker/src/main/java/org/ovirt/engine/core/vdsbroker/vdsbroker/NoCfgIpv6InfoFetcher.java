@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-class NoCfgIpv6InfoFetcher implements IpInfoFetcher {
+class NoCfgIpv6InfoFetcher implements Ipv6InfoFetcher {
 
     private final String ipAddress;
     private final Map<String, Object> nicProperties;
@@ -28,4 +28,9 @@ class NoCfgIpv6InfoFetcher implements IpInfoFetcher {
         return Boolean.TRUE.equals(nicProperties.get("dhcpv6"));
     }
 
+    @Override
+    public boolean isBootProtocolAutoconf() {
+        // TODO: YZ - to be revised once is implemented on VDSM side.
+        return Boolean.TRUE.equals(nicProperties.get("ipv6autoconf"));
+    }
 }

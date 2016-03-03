@@ -74,6 +74,7 @@
         <include name="common/businessentities/network/Network.java" />
         <include name="common/businessentities/network/NetworkView.java" />
         <include name="common/businessentities/network/Ipv4BootProtocol.java" />
+        <include name="common/businessentities/network/Ipv6BootProtocol.java" />
         <include name="common/businessentities/network/NetworkStatistics.java" />
         <include name="common/businessentities/network/NetworkStatus.java" />
         <include name="common/businessentities/network/ProviderNetwork.java" />

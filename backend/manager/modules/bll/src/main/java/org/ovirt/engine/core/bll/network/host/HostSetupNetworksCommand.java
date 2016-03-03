@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
@@ -94,7 +96,11 @@ import org.slf4j.LoggerFactory;
 public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> extends VdsCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksCommand.class);
+
     private static final String DEFAULT_BOND_OPTIONS = "mode=4 miimon=100";
+    private static final Set<Ipv6BootProtocol> IPV6_AUTO_BOOT_PROTOCOL =
+            EnumSet.of(Ipv6BootProtocol.DHCP, Ipv6BootProtocol.AUTOCONF);
+
     private BusinessEntityMap<Network> networkBusinessEntityMap;
 
     private Set<String> removedNetworks;
@@ -475,8 +481,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private boolean isIpv6GatewaySet(IpConfiguration ipConfiguration) {
         return ipConfiguration.hasIpv6PrimaryAddressSet()
-                && (ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.DHCP
-                        || ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.STATIC_IP
+                && (IPV6_AUTO_BOOT_PROTOCOL.contains(ipConfiguration.getIpv6PrimaryAddress().getBootProtocol())
+                        || ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == Ipv6BootProtocol.STATIC_IP
                                 && StringUtils.isNotEmpty(ipConfiguration.getIpv6PrimaryAddress().getGateway()));
     }
 

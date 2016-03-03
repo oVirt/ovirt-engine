@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
@@ -66,7 +67,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
         newVdsInterface.setIpv4Subnet("255.255.255.0");
         newVdsInterface.setIpv4Gateway("192.168.122.1");
 
-        newVdsInterface.setIpv6BootProtocol(Ipv4BootProtocol.DHCP);
+        newVdsInterface.setIpv6BootProtocol(Ipv6BootProtocol.AUTOCONF);
         newVdsInterface.setIpv6Address("ipv6 address");
         newVdsInterface.setIpv6Prefix(666);
         newVdsInterface.setIpv6Gateway("ipv6 gateway");

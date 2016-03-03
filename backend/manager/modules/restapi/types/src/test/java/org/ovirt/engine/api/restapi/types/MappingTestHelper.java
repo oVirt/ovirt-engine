@@ -1,11 +1,15 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -115,9 +119,17 @@ public class MappingTestHelper {
                                                         : null);
     }
 
-    public static <E extends Enum> E shuffle(Class<E> enumType) {
-        E[] values = enumType.getEnumConstants();
+    @SafeVarargs
+    public static <E extends Enum<E>> E shuffle(Class<E> enumType, E... excludeValues) {
+        final Set<E> valuesSet = complementOf(enumType, excludeValues);
+        final E[] values = valuesSet.toArray((E[]) Array.newInstance(enumType, valuesSet.size()));
         return values[rand(values.length)];
+    }
+
+    private static <E extends Enum<E>> EnumSet<E> complementOf(Class<E> enumType, E[] excludeValues) {
+        final EnumSet<E> result = EnumSet.allOf(enumType);
+        result.removeAll(Arrays.asList(excludeValues));
+        return result;
     }
 
     private static void shuffle(Method method, Object model) throws Exception {

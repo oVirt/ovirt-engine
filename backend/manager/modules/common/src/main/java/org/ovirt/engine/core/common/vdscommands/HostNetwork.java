@@ -5,6 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -110,7 +111,7 @@ public class HostNetwork {
         return getIpConfiguration().getIpv4PrimaryAddress().getGateway();
     }
 
-    public Ipv4BootProtocol getIpv6BootProtocol() {
+    public Ipv6BootProtocol getIpv6BootProtocol() {
         if (primaryIpv6AddressNotSet()) {
             return null;
         }

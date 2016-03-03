@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -380,7 +381,7 @@ public class HostNetworkAttachmentsPersisterTest {
         address.setAddress(IPV6_ADDRESS);
         address.setPrefix(IPV6_PREFIX);
         address.setGateway(IPV6_GATEWAY);
-        address.setBootProtocol(Ipv4BootProtocol.STATIC_IP);
+        address.setBootProtocol(Ipv6BootProtocol.AUTOCONF);
         return address;
     }
 

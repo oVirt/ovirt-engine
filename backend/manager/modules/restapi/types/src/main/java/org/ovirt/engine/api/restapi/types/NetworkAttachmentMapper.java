@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.types;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import javax.ws.rs.WebApplicationException;
@@ -22,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 
 public class NetworkAttachmentMapper {
 
@@ -101,7 +101,7 @@ public class NetworkAttachmentMapper {
 
         if (ipAddressAssignment.isSetAssignmentMethod()) {
             Ipv4BootProtocol assignmentMethod =
-                    BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod(), null);
+                    Ipv4BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod());
             iPv4Address.setBootProtocol(assignmentMethod);
         }
 
@@ -123,8 +123,7 @@ public class NetworkAttachmentMapper {
         IpV6Address ipV6Address = new IpV6Address();
 
         if (ipAddressAssignment.isSetAssignmentMethod()) {
-            Ipv4BootProtocol assignmentMethod =
-                    BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod(), null);
+            Ipv6BootProtocol assignmentMethod = Ipv6BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod());
             ipV6Address.setBootProtocol(assignmentMethod);
         }
 
@@ -142,8 +141,7 @@ public class NetworkAttachmentMapper {
                     prefix = Integer.valueOf(netmask);
                 } catch (NumberFormatException e) {
                     final String message =
-                            MessageFormat.format("IPv6 prefix has to be integer number. '{}' is not a valid value",
-                                    netmask);
+                            String.format("IPv6 prefix has to be integer number. '%s' is not a valid value", netmask);
                     throw new WebApplicationException(
                             message,
                             e,
@@ -242,8 +240,8 @@ public class NetworkAttachmentMapper {
         }
 
         ipAddressAssignment.setIp(ip);
-        BootProtocol assignmentMethod = BootProtocolMapper.map(iPv4Address.getBootProtocol(), null);
-        ipAddressAssignment.setAssignmentMethod(assignmentMethod);
+        BootProtocol assignmentMethod = Ipv4BootProtocolMapper.map(iPv4Address.getBootProtocol());
+        ipAddressAssignment.setAssignmentMethod(assignmentMethod == null ? null : assignmentMethod);
         return ipAddressAssignment;
     }
 
@@ -264,8 +262,8 @@ public class NetworkAttachmentMapper {
         }
 
         ipAddressAssignment.setIp(ip);
-        BootProtocol assignmentMethod = BootProtocolMapper.map(ipV6Address.getBootProtocol(), null);
-        ipAddressAssignment.setAssignmentMethod(assignmentMethod == null ? null : assignmentMethod);
+        BootProtocol assignmentMethod = Ipv6BootProtocolMapper.map(ipV6Address.getBootProtocol());
+        ipAddressAssignment.setAssignmentMethod(assignmentMethod);
         return ipAddressAssignment;
     }
 

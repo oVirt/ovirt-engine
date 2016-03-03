@@ -3,8 +3,10 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.List;
 
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.InheritableBoolean;
+import org.ovirt.engine.api.model.NicConfiguration;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TimeZone;
@@ -46,6 +48,9 @@ public class TemplateMapperTest
         from.getMigration().setAutoConverge(InheritableBoolean.TRUE);
         from.getMigration().setCompressed(InheritableBoolean.TRUE);
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
+        for (NicConfiguration nicConfiguration : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
+            nicConfiguration.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF));
+        }
         return from;
     }
 

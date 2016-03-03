@@ -1045,7 +1045,7 @@ public class VmMapper extends VmBaseMapper {
                     }
                     interfaces.add(vmInitInterface);
                     if (iface.isSetBootProtocol()) {
-                        Ipv4BootProtocol protocol = BootProtocolMapper.map(iface.getBootProtocol(), vmInitInterface.getBootProtocol());
+                        Ipv4BootProtocol protocol = Ipv4BootProtocolMapper.map(iface.getBootProtocol());
                         vmInitInterface.setBootProtocol(protocol);
                         if (protocol != Ipv4BootProtocol.DHCP && iface.isSetNetwork() && iface.getNetwork().isSetIp()) {
                             if (iface.getNetwork().getIp().isSetAddress()) {

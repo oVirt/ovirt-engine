@@ -42,7 +42,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     private String ipv4Gateway;
 
-    private Ipv4BootProtocol ipv6BootProtocol;
+    private Ipv6BootProtocol ipv6BootProtocol;
 
     @Ipv6
     private String ipv6Address;
@@ -153,11 +153,11 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.ipv6Address = ipv6Address;
     }
 
-    public Ipv4BootProtocol getIpv6BootProtocol() {
+    public Ipv6BootProtocol getIpv6BootProtocol() {
         return ipv6BootProtocol;
     }
 
-    public void setIpv6BootProtocol(Ipv4BootProtocol ipv6BootProtocol) {
+    public void setIpv6BootProtocol(Ipv6BootProtocol ipv6BootProtocol) {
         this.ipv6BootProtocol = ipv6BootProtocol;
     }
 

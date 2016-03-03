@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
-import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 
 public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<org.ovirt.engine.api.model.NetworkAttachment, NetworkAttachment, NetworkAttachment> {
@@ -28,14 +28,14 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
     @Test
     public void testMapFromEntityIpv6Assignment() {
         final IpV6Address entity = new IpV6Address();
-        entity.setBootProtocol(Ipv4BootProtocol.NONE);
+        entity.setBootProtocol(Ipv6BootProtocol.AUTOCONF);
         entity.setAddress(ADDRESS);
         entity.setGateway(GATEWAY);
         entity.setPrefix(PREFIX);
 
         final IpAddressAssignment actual = NetworkAttachmentMapper.mapIpv6AddressAssignment(entity);
 
-        assertEquals(BootProtocol.NONE, actual.getAssignmentMethod());
+        assertEquals(BootProtocol.AUTOCONF, actual.getAssignmentMethod());
         assertEquals(ADDRESS, actual.getIp().getAddress());
         assertEquals(GATEWAY, actual.getIp().getGateway());
         assertEquals(PREFIX_STR, actual.getIp().getNetmask());
@@ -54,7 +54,7 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
 
         final IpV6Address actual = NetworkAttachmentMapper.mapIpv6AddressAssignment(model);
 
-        assertEquals(Ipv4BootProtocol.STATIC_IP, actual.getBootProtocol());
+        assertEquals(Ipv6BootProtocol.STATIC_IP, actual.getBootProtocol());
         assertEquals(ADDRESS, actual.getAddress());
         assertEquals(GATEWAY, actual.getGateway());
         assertEquals(Integer.valueOf(PREFIX), actual.getPrefix());

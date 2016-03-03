@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.resource.HostNicResource;
+import org.ovirt.engine.api.restapi.types.Ipv4BootProtocolMapper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
@@ -201,7 +202,7 @@ public class BackendHostNicsResourceTest
         assertEquals(calcSpeed(NIC_SPEED), model.getSpeed());
         assertNotNull(model.getStatus());
         assertEquals(map(NIC_STATUS, null).value(), model.getStatus().getState());
-        assertEquals(map(BOOT_PROTOCOL, null), model.getBootProtocol());
+        assertEquals(map(BOOT_PROTOCOL), model.getBootProtocol());
     }
 
     private Long calcSpeed(Integer nicSpeed) {
@@ -215,8 +216,8 @@ public class BackendHostNicsResourceTest
         return getMapper(InterfaceStatus.class, NicStatus.class).map(interfaceStatus, params);
     }
 
-    protected BootProtocol map(Ipv4BootProtocol ipv4BootProtocol, BootProtocol params) {
-        return getMapper(Ipv4BootProtocol.class, BootProtocol.class).map(ipv4BootProtocol, params);
+    protected BootProtocol map(Ipv4BootProtocol ipv4BootProtocol) {
+        return Ipv4BootProtocolMapper.map(ipv4BootProtocol);
     }
 
     protected void verifyMaster(HostNic model) {

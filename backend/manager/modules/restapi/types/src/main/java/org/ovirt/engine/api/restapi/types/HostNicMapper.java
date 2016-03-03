@@ -89,7 +89,7 @@ public class HostNicMapper {
             }
         }
         if(model.isSetBootProtocol()){
-            Ipv4BootProtocol ipv4BootProtocol = BootProtocolMapper.map(model.getBootProtocol(), null);
+            Ipv4BootProtocol ipv4BootProtocol = Ipv4BootProtocolMapper.map(model.getBootProtocol());
             if(ipv4BootProtocol != null){
                 entity.setIpv4BootProtocol(ipv4BootProtocol);
             }
@@ -222,7 +222,7 @@ public class HostNicMapper {
             }
         }
 
-        BootProtocol bootProtocol = BootProtocolMapper.map(entity.getIpv4BootProtocol(), null);
+        BootProtocol bootProtocol = Ipv4BootProtocolMapper.map(entity.getIpv4BootProtocol());
         if(bootProtocol!=null){
             model.setBootProtocol(bootProtocol);
         }
