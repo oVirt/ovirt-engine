@@ -33,11 +33,11 @@ public class V3StorageDomainTemplatesServer extends V3Server<StorageDomainTempla
 
     @GET
     public V3Templates list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StorageDomainTemplateServer getTemplateResource(@PathParam("id") String id) {
-        return new V3StorageDomainTemplateServer(delegate.getTemplateResource(id));
+        return new V3StorageDomainTemplateServer(getDelegate().getTemplateResource(id));
     }
 }

@@ -31,6 +31,6 @@ public class V3StorageDomainContentDiskServer extends V3Server<StorageDomainCont
 
     @GET
     public V3Disk get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

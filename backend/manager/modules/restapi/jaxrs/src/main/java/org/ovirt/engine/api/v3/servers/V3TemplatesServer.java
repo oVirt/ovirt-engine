@@ -55,16 +55,16 @@ public class V3TemplatesServer extends V3Server<TemplatesResource> {
                 matrix.putSingle("clone_permissions", String.valueOf(true));
             }
         }
-        return adaptAdd(delegate::add, template);
+        return adaptAdd(getDelegate()::add, template);
     }
 
     @GET
     public V3Templates list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3TemplateServer getTemplateResource(@PathParam("id") String id) {
-        return new V3TemplateServer(delegate.getTemplateResource(id));
+        return new V3TemplateServer(getDelegate().getTemplateResource(id));
     }
 }

@@ -38,16 +38,16 @@ public class V3BookmarksServer extends V3Server<BookmarksResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Bookmark bookmark) {
-        return adaptAdd(delegate::add, bookmark);
+        return adaptAdd(getDelegate()::add, bookmark);
     }
 
     @GET
     public V3Bookmarks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3BookmarkServer getBookmarkResource(@PathParam("id") String id) {
-        return new V3BookmarkServer(delegate.getBookmarkResource(id));
+        return new V3BookmarkServer(getDelegate().getBookmarkResource(id));
     }
 }

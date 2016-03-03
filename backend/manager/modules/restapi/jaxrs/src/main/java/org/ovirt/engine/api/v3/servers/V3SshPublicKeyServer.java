@@ -35,17 +35,17 @@ public class V3SshPublicKeyServer extends V3Server<SshPublicKeyResource> {
 
     @GET
     public V3SSHPublicKey get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3SSHPublicKey update(V3SSHPublicKey key) {
-        return adaptUpdate(delegate::update, key);
+        return adaptUpdate(getDelegate()::update, key);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

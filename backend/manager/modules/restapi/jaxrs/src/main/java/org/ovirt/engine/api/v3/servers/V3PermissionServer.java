@@ -33,11 +33,11 @@ public class V3PermissionServer extends V3Server<PermissionResource> {
 
     @GET
     public V3Permission get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

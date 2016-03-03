@@ -38,16 +38,16 @@ public class V3AssignedVnicProfilesServer extends V3Server<AssignedVnicProfilesR
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3VnicProfile profile) {
-        return adaptAdd(delegate::add, profile);
+        return adaptAdd(getDelegate()::add, profile);
     }
 
     @GET
     public V3VnicProfiles list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3AssignedVnicProfileServer getProfileResource(@PathParam("id") String id) {
-        return new V3AssignedVnicProfileServer(delegate.getProfileResource(id));
+        return new V3AssignedVnicProfileServer(getDelegate().getProfileResource(id));
     }
 }

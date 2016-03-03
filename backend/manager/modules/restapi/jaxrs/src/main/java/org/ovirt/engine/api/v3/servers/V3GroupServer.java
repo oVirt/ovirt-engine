@@ -34,26 +34,26 @@ public class V3GroupServer extends V3Server<GroupResource> {
 
     @GET
     public V3Group get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("roles")
     public V3AssignedRolesServer getRolesResource() {
-        return new V3AssignedRolesServer(delegate.getRolesResource());
+        return new V3AssignedRolesServer(getDelegate().getRolesResource());
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("tags")
     public V3AssignedTagsServer getTagsResource() {
-        return new V3AssignedTagsServer(delegate.getTagsResource());
+        return new V3AssignedTagsServer(getDelegate().getTagsResource());
     }
 }

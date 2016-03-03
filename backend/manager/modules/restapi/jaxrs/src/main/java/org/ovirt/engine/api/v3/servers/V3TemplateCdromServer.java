@@ -31,6 +31,6 @@ public class V3TemplateCdromServer extends V3Server<TemplateCdromResource> {
 
     @GET
     public V3CdRom get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

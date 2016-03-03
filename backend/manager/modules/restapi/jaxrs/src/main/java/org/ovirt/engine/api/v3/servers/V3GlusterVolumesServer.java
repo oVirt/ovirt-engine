@@ -38,16 +38,16 @@ public class V3GlusterVolumesServer extends V3Server<GlusterVolumesResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3GlusterVolume volume) {
-        return adaptAdd(delegate::add, volume);
+        return adaptAdd(getDelegate()::add, volume);
     }
 
     @GET
     public V3GlusterVolumes list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3GlusterVolumeServer getVolumeResource(@PathParam("id") String id) {
-        return new V3GlusterVolumeServer(delegate.getVolumeResource(id));
+        return new V3GlusterVolumeServer(getDelegate().getVolumeResource(id));
     }
 }

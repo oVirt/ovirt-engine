@@ -38,16 +38,16 @@ public class V3FenceAgentsServer extends V3Server<FenceAgentsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Agent agent) {
-        return adaptAdd(delegate::add, agent);
+        return adaptAdd(getDelegate()::add, agent);
     }
 
     @GET
     public V3Agents list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3FenceAgentServer getAgentResource(@PathParam("id") String id) {
-        return new V3FenceAgentServer(delegate.getAgentResource(id));
+        return new V3FenceAgentServer(getDelegate().getAgentResource(id));
     }
 }

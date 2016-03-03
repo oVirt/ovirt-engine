@@ -31,6 +31,6 @@ public class V3SnapshotNicServer extends V3Server<SnapshotNicResource> {
 
     @GET
     public V3NIC get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

@@ -33,11 +33,11 @@ public class V3StorageDomainContentDisksServer extends V3Server<StorageDomainCon
 
     @GET
     public V3Disks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StorageDomainContentDiskServer getDiskResource(@PathParam("id") String id) {
-        return new V3StorageDomainContentDiskServer(delegate.getDiskResource(id));
+        return new V3StorageDomainContentDiskServer(getDelegate().getDiskResource(id));
     }
 }

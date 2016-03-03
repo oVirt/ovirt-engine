@@ -42,7 +42,7 @@ public class V3AttachedStorageDomainServer extends V3Server<AttachedStorageDomai
     @Actionable
     @Path("activate")
     public Response activate(V3Action action) {
-        return adaptAction(delegate::activate, action);
+        return adaptAction(getDelegate()::activate, action);
     }
 
     @POST
@@ -50,26 +50,26 @@ public class V3AttachedStorageDomainServer extends V3Server<AttachedStorageDomai
     @Actionable
     @Path("deactivate")
     public Response deactivate(V3Action action) {
-        return adaptAction(delegate::deactivate, action);
+        return adaptAction(getDelegate()::deactivate, action);
     }
 
     @GET
     public V3StorageDomain get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("disks")
     public V3DisksServer getDisksResource() {
-        return new V3DisksServer(delegate.getDisksResource());
+        return new V3DisksServer(getDelegate().getDisksResource());
     }
 
     @Path("{action: (activate|deactivate)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

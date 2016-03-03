@@ -42,7 +42,7 @@ public class V3DiskServer extends V3Server<DiskResource> {
     @Actionable
     @Path("copy")
     public Response copy(V3Action action) {
-        return adaptAction(delegate::copy, action);
+        return adaptAction(getDelegate()::copy, action);
     }
 
     @POST
@@ -50,12 +50,12 @@ public class V3DiskServer extends V3Server<DiskResource> {
     @Actionable
     @Path("export")
     public Response export(V3Action action) {
-        return adaptAction(delegate::export, action);
+        return adaptAction(getDelegate()::export, action);
     }
 
     @GET
     public V3Disk get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -63,21 +63,21 @@ public class V3DiskServer extends V3Server<DiskResource> {
     @Actionable
     @Path("move")
     public Response move(V3Action action) {
-        return adaptAction(delegate::move, action);
+        return adaptAction(getDelegate()::move, action);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("{action: (copy|export|move)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

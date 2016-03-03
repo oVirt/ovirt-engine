@@ -33,11 +33,11 @@ public class V3DiskSnapshotServer extends V3Server<DiskSnapshotResource> {
 
     @GET
     public V3DiskSnapshot get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

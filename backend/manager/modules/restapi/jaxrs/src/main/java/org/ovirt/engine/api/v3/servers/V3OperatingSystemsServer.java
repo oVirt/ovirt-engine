@@ -33,11 +33,11 @@ public class V3OperatingSystemsServer extends V3Server<OperatingSystemsResource>
 
     @GET
     public V3OperatingSystemInfos list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OperatingSystemServer getOperatingSystemResource(@PathParam("id") String id) {
-        return new V3OperatingSystemServer(delegate.getOperatingSystemResource(id));
+        return new V3OperatingSystemServer(getDelegate().getOperatingSystemResource(id));
     }
 }

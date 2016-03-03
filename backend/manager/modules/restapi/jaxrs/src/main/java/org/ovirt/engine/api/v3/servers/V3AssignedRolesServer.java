@@ -33,11 +33,11 @@ public class V3AssignedRolesServer extends V3Server<AssignedRolesResource> {
 
     @GET
     public V3Roles list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3RoleServer getRoleResource(@PathParam("id") String id) {
-        return new V3RoleServer(delegate.getRoleResource(id));
+        return new V3RoleServer(getDelegate().getRoleResource(id));
     }
 }

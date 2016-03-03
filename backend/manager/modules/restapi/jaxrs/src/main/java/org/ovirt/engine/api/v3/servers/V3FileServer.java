@@ -31,6 +31,6 @@ public class V3FileServer extends V3Server<FileResource> {
 
     @GET
     public V3File get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

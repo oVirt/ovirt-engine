@@ -38,16 +38,16 @@ public class V3OpenstackImageProvidersServer extends V3Server<OpenstackImageProv
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3OpenStackImageProvider provider) {
-        return adaptAdd(delegate::add, provider);
+        return adaptAdd(getDelegate()::add, provider);
     }
 
     @GET
     public V3OpenStackImageProviders list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackImageProviderServer getProviderResource(@PathParam("id") String id) {
-        return new V3OpenstackImageProviderServer(delegate.getProviderResource(id));
+        return new V3OpenstackImageProviderServer(getDelegate().getProviderResource(id));
     }
 }

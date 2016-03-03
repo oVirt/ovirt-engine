@@ -52,7 +52,7 @@ public class V3VmNicServer extends V3Server<VmNicResource> {
     @Actionable
     @Path("activate")
     public Response activate(V3Action action) {
-        return adaptAction(delegate::activate, action);
+        return adaptAction(getDelegate()::activate, action);
     }
 
     @POST
@@ -60,12 +60,12 @@ public class V3VmNicServer extends V3Server<VmNicResource> {
     @Actionable
     @Path("deactivate")
     public Response deactivate(V3Action action) {
-        return adaptAction(delegate::deactivate, action);
+        return adaptAction(getDelegate()::deactivate, action);
     }
 
     @GET
     public V3NIC get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
@@ -79,7 +79,7 @@ public class V3VmNicServer extends V3Server<VmNicResource> {
 
         // Pass the modified request to the V4 server:
         try {
-            return adaptOut(delegate.update(v4Nic));
+            return adaptOut(getDelegate().update(v4Nic));
         }
         catch (WebApplicationException exception) {
             throw adaptException(exception);
@@ -88,16 +88,16 @@ public class V3VmNicServer extends V3Server<VmNicResource> {
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("reporteddevices")
     public V3VmReportedDevicesServer getReportedDevicesResource() {
-        return new V3VmReportedDevicesServer(delegate.getReportedDevicesResource());
+        return new V3VmReportedDevicesServer(getDelegate().getReportedDevicesResource());
     }
 
     @Path("{action: (activate|deactivate)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

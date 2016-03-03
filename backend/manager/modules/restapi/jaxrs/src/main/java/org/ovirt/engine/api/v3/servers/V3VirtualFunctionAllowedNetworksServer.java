@@ -38,16 +38,16 @@ public class V3VirtualFunctionAllowedNetworksServer extends V3Server<VirtualFunc
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Network network) {
-        return adaptAdd(delegate::add, network);
+        return adaptAdd(getDelegate()::add, network);
     }
 
     @GET
     public V3Networks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VirtualFunctionAllowedNetworkServer getNetworkResource(@PathParam("id") String id) {
-        return new V3VirtualFunctionAllowedNetworkServer(delegate.getNetworkResource(id));
+        return new V3VirtualFunctionAllowedNetworkServer(getDelegate().getNetworkResource(id));
     }
 }

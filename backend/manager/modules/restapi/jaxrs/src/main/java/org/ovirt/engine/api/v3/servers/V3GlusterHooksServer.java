@@ -33,11 +33,11 @@ public class V3GlusterHooksServer extends V3Server<GlusterHooksResource> {
 
     @GET
     public V3GlusterHooks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3GlusterHookServer getHookResource(@PathParam("id") String id) {
-        return new V3GlusterHookServer(delegate.getHookResource(id));
+        return new V3GlusterHookServer(getDelegate().getHookResource(id));
     }
 }

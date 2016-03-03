@@ -38,16 +38,16 @@ public class V3VmPoolsServer extends V3Server<VmPoolsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3VmPool pool) {
-        return adaptAdd(delegate::add, pool);
+        return adaptAdd(getDelegate()::add, pool);
     }
 
     @GET
     public V3VmPools list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmPoolServer getPoolResource(@PathParam("id") String id) {
-        return new V3VmPoolServer(delegate.getPoolResource(id));
+        return new V3VmPoolServer(getDelegate().getPoolResource(id));
     }
 }

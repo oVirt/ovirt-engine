@@ -35,17 +35,17 @@ public class V3NetworkAttachmentServer extends V3Server<NetworkAttachmentResourc
 
     @GET
     public V3NetworkAttachment get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3NetworkAttachment update(V3NetworkAttachment attachment) {
-        return adaptUpdate(delegate::update, attachment);
+        return adaptUpdate(getDelegate()::update, attachment);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

@@ -31,6 +31,6 @@ public class V3ExternalDiscoveredHostServer extends V3Server<ExternalDiscoveredH
 
     @GET
     public V3ExternalDiscoveredHost get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

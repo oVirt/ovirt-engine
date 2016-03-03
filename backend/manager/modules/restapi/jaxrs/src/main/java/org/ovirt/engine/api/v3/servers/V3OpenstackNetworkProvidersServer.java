@@ -38,16 +38,16 @@ public class V3OpenstackNetworkProvidersServer extends V3Server<OpenstackNetwork
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3OpenStackNetworkProvider provider) {
-        return adaptAdd(delegate::add, provider);
+        return adaptAdd(getDelegate()::add, provider);
     }
 
     @GET
     public V3OpenStackNetworkProviders list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackNetworkProviderServer getProviderResource(@PathParam("id") String id) {
-        return new V3OpenstackNetworkProviderServer(delegate.getProviderResource(id));
+        return new V3OpenstackNetworkProviderServer(getDelegate().getProviderResource(id));
     }
 }

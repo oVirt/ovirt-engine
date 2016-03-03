@@ -33,11 +33,11 @@ public class V3OpenstackImagesServer extends V3Server<OpenstackImagesResource> {
 
     @GET
     public V3OpenStackImages list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackImageServer getImageResource(@PathParam("id") String id) {
-        return new V3OpenstackImageServer(delegate.getImageResource(id));
+        return new V3OpenstackImageServer(getDelegate().getImageResource(id));
     }
 }

@@ -31,6 +31,6 @@ public class V3ExternalComputeResourceServer extends V3Server<ExternalComputeRes
 
     @GET
     public V3ExternalComputeResource get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

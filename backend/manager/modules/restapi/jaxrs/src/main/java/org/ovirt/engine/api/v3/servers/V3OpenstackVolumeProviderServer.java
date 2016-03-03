@@ -37,32 +37,32 @@ public class V3OpenstackVolumeProviderServer extends V3Server<OpenstackVolumePro
 
     @GET
     public V3OpenStackVolumeProvider get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3OpenStackVolumeProvider update(V3OpenStackVolumeProvider provider) {
-        return adaptUpdate(delegate::update, provider);
+        return adaptUpdate(getDelegate()::update, provider);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("volumetypes")
     public V3OpenstackVolumeTypesServer getVolumeTypesResource() {
-        return new V3OpenstackVolumeTypesServer(delegate.getVolumeTypesResource());
+        return new V3OpenstackVolumeTypesServer(getDelegate().getVolumeTypesResource());
     }
 
     @Path("authenticationkeys")
     public V3OpenstackVolumeAuthenticationKeysServer getAuthenticationKeysResource() {
-        return new V3OpenstackVolumeAuthenticationKeysServer(delegate.getAuthenticationKeysResource());
+        return new V3OpenstackVolumeAuthenticationKeysServer(getDelegate().getAuthenticationKeysResource());
     }
 
     @Path("{action: (importcertificates|testconnectivity)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

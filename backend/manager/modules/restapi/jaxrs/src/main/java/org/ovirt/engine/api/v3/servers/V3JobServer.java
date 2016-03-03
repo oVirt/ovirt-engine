@@ -41,7 +41,7 @@ public class V3JobServer extends V3Server<JobResource> {
     @Actionable
     @Path("clear")
     public Response clear(V3Action action) {
-        return adaptAction(delegate::clear, action);
+        return adaptAction(getDelegate()::clear, action);
     }
 
     @POST
@@ -49,21 +49,21 @@ public class V3JobServer extends V3Server<JobResource> {
     @Actionable
     @Path("end")
     public Response end(V3Action action) {
-        return adaptAction(delegate::end, action);
+        return adaptAction(getDelegate()::end, action);
     }
 
     @GET
     public V3Job get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @Path("steps")
     public V3StepsServer getStepsResource() {
-        return new V3StepsServer(delegate.getStepsResource());
+        return new V3StepsServer(getDelegate().getStepsResource());
     }
 
     @Path("{action: (clear|end)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

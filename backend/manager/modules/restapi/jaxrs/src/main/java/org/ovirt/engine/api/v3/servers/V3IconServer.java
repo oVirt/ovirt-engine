@@ -31,6 +31,6 @@ public class V3IconServer extends V3Server<IconResource> {
 
     @GET
     public V3Icon get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

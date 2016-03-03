@@ -33,11 +33,11 @@ public class V3HostDevicesServer extends V3Server<HostDevicesResource> {
 
     @GET
     public V3HostDevices list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3HostDeviceServer getDeviceResource(@PathParam("id") String id) {
-        return new V3HostDeviceServer(delegate.getDeviceResource(id));
+        return new V3HostDeviceServer(getDelegate().getDeviceResource(id));
     }
 }

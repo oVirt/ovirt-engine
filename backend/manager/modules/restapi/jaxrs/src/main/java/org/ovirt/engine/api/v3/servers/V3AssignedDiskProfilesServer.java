@@ -38,16 +38,16 @@ public class V3AssignedDiskProfilesServer extends V3Server<AssignedDiskProfilesR
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3DiskProfile profile) {
-        return adaptAdd(delegate::add, profile);
+        return adaptAdd(getDelegate()::add, profile);
     }
 
     @GET
     public V3DiskProfiles list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3AssignedDiskProfileServer getProfileResource(@PathParam("id") String id) {
-        return new V3AssignedDiskProfileServer(delegate.getProfileResource(id));
+        return new V3AssignedDiskProfileServer(getDelegate().getProfileResource(id));
     }
 }

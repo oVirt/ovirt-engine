@@ -33,11 +33,11 @@ public class V3FilterServer extends V3Server<FilterResource> {
 
     @GET
     public V3Filter get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

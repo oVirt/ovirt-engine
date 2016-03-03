@@ -39,12 +39,12 @@ public class V3SystemServer extends V3Server<SystemResource> {
 
     @GET
     public Response get() {
-        return adaptRemove(delegate::get);
+        return adaptRemove(getDelegate()::get);
     }
 
     @HEAD
     public Response head() {
-        return adaptResponse(delegate::get);
+        return adaptResponse(getDelegate()::get);
     }
 
     @Path("capabilities")
@@ -57,176 +57,176 @@ public class V3SystemServer extends V3Server<SystemResource> {
     @Actionable
     @Path("reloadconfigurations")
     public Response reloadConfigurations(V3Action action) {
-        return adaptAction(delegate::reloadConfigurations, action);
+        return adaptAction(getDelegate()::reloadConfigurations, action);
     }
 
     @Path("bookmarks")
     public V3BookmarksServer getBookmarksResource() {
-        return new V3BookmarksServer(delegate.getBookmarksResource());
+        return new V3BookmarksServer(getDelegate().getBookmarksResource());
     }
 
     @Path("clusters")
     public V3ClustersServer getClustersResource() {
-        return new V3ClustersServer(delegate.getClustersResource());
+        return new V3ClustersServer(getDelegate().getClustersResource());
     }
 
     @Path("cpuprofiles")
     public V3CpuProfilesServer getCpuProfilesResource() {
-        return new V3CpuProfilesServer(delegate.getCpuProfilesResource());
+        return new V3CpuProfilesServer(getDelegate().getCpuProfilesResource());
     }
 
     @Path("datacenters")
     public V3DataCentersServer getDataCentersResource() {
-        return new V3DataCentersServer(delegate.getDataCentersResource());
+        return new V3DataCentersServer(getDelegate().getDataCentersResource());
     }
 
     @Path("diskprofiles")
     public V3DiskProfilesServer getDiskProfilesResource() {
-        return new V3DiskProfilesServer(delegate.getDiskProfilesResource());
+        return new V3DiskProfilesServer(getDelegate().getDiskProfilesResource());
     }
 
     @Path("disks")
     public V3DisksServer getDisksResource() {
-        return new V3DisksServer(delegate.getDisksResource());
+        return new V3DisksServer(getDelegate().getDisksResource());
     }
 
     @Path("domains")
     public V3DomainsServer getDomainsResource() {
-        return new V3DomainsServer(delegate.getDomainsResource());
+        return new V3DomainsServer(getDelegate().getDomainsResource());
     }
 
     @Path("events")
     public V3EventsServer getEventsResource() {
-        return new V3EventsServer(delegate.getEventsResource());
+        return new V3EventsServer(getDelegate().getEventsResource());
     }
 
     @Path("externalhostproviders")
     public V3ExternalHostProvidersServer getExternalHostProvidersResource() {
-        return new V3ExternalHostProvidersServer(delegate.getExternalHostProvidersResource());
+        return new V3ExternalHostProvidersServer(getDelegate().getExternalHostProvidersResource());
     }
 
     @Path("groups")
     public V3GroupsServer getGroupsResource() {
-        return new V3GroupsServer(delegate.getGroupsResource());
+        return new V3GroupsServer(getDelegate().getGroupsResource());
     }
 
     @Path("hosts")
     public V3HostsServer getHostsResource() {
-        return new V3HostsServer(delegate.getHostsResource());
+        return new V3HostsServer(getDelegate().getHostsResource());
     }
 
     @Path("icons")
     public V3IconsServer getIconsResource() {
-        return new V3IconsServer(delegate.getIconsResource());
+        return new V3IconsServer(getDelegate().getIconsResource());
     }
 
     @Path("instancetypes")
     public V3InstanceTypesServer getInstanceTypesResource() {
-        return new V3InstanceTypesServer(delegate.getInstanceTypesResource());
+        return new V3InstanceTypesServer(getDelegate().getInstanceTypesResource());
     }
 
     @Path("jobs")
     public V3JobsServer getJobsResource() {
-        return new V3JobsServer(delegate.getJobsResource());
+        return new V3JobsServer(getDelegate().getJobsResource());
     }
 
     @Path("macpools")
     public V3MacPoolsServer getMacPoolsResource() {
-        return new V3MacPoolsServer(delegate.getMacPoolsResource());
+        return new V3MacPoolsServer(getDelegate().getMacPoolsResource());
     }
 
     @Path("networks")
     public V3NetworksServer getNetworksResource() {
-        return new V3NetworksServer(delegate.getNetworksResource());
+        return new V3NetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("openstackimageproviers")
     public V3OpenstackImageProvidersServer getOpenstackImageProviersResource() {
-        return new V3OpenstackImageProvidersServer(delegate.getOpenstackImageProviersResource());
+        return new V3OpenstackImageProvidersServer(getDelegate().getOpenstackImageProviersResource());
     }
 
     @Path("openstacknetworkproviders")
     public V3OpenstackNetworkProvidersServer getOpenstackNetworkProvidersResource() {
-        return new V3OpenstackNetworkProvidersServer(delegate.getOpenstackNetworkProvidersResource());
+        return new V3OpenstackNetworkProvidersServer(getDelegate().getOpenstackNetworkProvidersResource());
     }
 
     @Path("openstackvolumeproviders")
     public V3OpenstackVolumeProvidersServer getOpenstackVolumeProvidersResource() {
-        return new V3OpenstackVolumeProvidersServer(delegate.getOpenstackVolumeProvidersResource());
+        return new V3OpenstackVolumeProvidersServer(getDelegate().getOpenstackVolumeProvidersResource());
     }
 
     @Path("operatingsystems")
     public V3OperatingSystemsServer getOperatingSystemsResource() {
-        return new V3OperatingSystemsServer(delegate.getOperatingSystemsResource());
+        return new V3OperatingSystemsServer(getDelegate().getOperatingSystemsResource());
     }
 
     @Path("roles")
     public V3RolesServer getRolesResource() {
-        return new V3RolesServer(delegate.getRolesResource());
+        return new V3RolesServer(getDelegate().getRolesResource());
     }
 
     @Path("schedulingpolicies")
     public V3SchedulingPoliciesServer getSchedulingPoliciesResource() {
-        return new V3SchedulingPoliciesServer(delegate.getSchedulingPoliciesResource());
+        return new V3SchedulingPoliciesServer(getDelegate().getSchedulingPoliciesResource());
     }
 
     @Path("schedulingpolicyunits")
     public V3SchedulingPolicyUnitsServer getSchedulingPolicyUnitsResource() {
-        return new V3SchedulingPolicyUnitsServer(delegate.getSchedulingPolicyUnitsResource());
+        return new V3SchedulingPolicyUnitsServer(getDelegate().getSchedulingPolicyUnitsResource());
     }
 
     @Path("storagedomains")
     public V3StorageDomainsServer getStorageDomainsResource() {
-        return new V3StorageDomainsServer(delegate.getStorageDomainsResource());
+        return new V3StorageDomainsServer(getDelegate().getStorageDomainsResource());
     }
 
     @Path("storageconnections")
     public V3StorageServerConnectionsServer getStorageConnectionsResource() {
-        return new V3StorageServerConnectionsServer(delegate.getStorageConnectionsResource());
+        return new V3StorageServerConnectionsServer(getDelegate().getStorageConnectionsResource());
     }
 
     @Path("katelloerrata")
     public V3EngineKatelloErrataServer getKatelloErrataResource() {
-        return new V3EngineKatelloErrataServer(delegate.getKatelloErrataResource());
+        return new V3EngineKatelloErrataServer(getDelegate().getKatelloErrataResource());
     }
 
     @Path("permissions")
     public V3SystemPermissionsServer getPermissionsResource() {
-        return new V3SystemPermissionsServer(delegate.getPermissionsResource());
+        return new V3SystemPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("tags")
     public V3TagsServer getTagsResource() {
-        return new V3TagsServer(delegate.getTagsResource());
+        return new V3TagsServer(getDelegate().getTagsResource());
     }
 
     @Path("templates")
     public V3TemplatesServer getTemplatesResource() {
-        return new V3TemplatesServer(delegate.getTemplatesResource());
+        return new V3TemplatesServer(getDelegate().getTemplatesResource());
     }
 
     @Path("users")
     public V3UsersServer getUsersResource() {
-        return new V3UsersServer(delegate.getUsersResource());
+        return new V3UsersServer(getDelegate().getUsersResource());
     }
 
     @Path("vmpools")
     public V3VmPoolsServer getVmPoolsResource() {
-        return new V3VmPoolsServer(delegate.getVmPoolsResource());
+        return new V3VmPoolsServer(getDelegate().getVmPoolsResource());
     }
 
     @Path("vms")
     public V3VmsServer getVmsResource() {
-        return new V3VmsServer(delegate.getVmsResource());
+        return new V3VmsServer(getDelegate().getVmsResource());
     }
 
     @Path("vnicprofiles")
     public V3VnicProfilesServer getVnicProfilesResource() {
-        return new V3VnicProfilesServer(delegate.getVnicProfilesResource());
+        return new V3VnicProfilesServer(getDelegate().getVnicProfilesResource());
     }
 
     @Path("{action: (reloadconfigurations)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

@@ -39,7 +39,7 @@ public class V3ExternalProviderServer extends V3Server<ExternalProviderResource>
     @Actionable
     @Path("importcertificates")
     public Response importCertificates(V3Action action) {
-        return adaptAction(delegate::importCertificates, action);
+        return adaptAction(getDelegate()::importCertificates, action);
     }
 
     @POST
@@ -47,16 +47,16 @@ public class V3ExternalProviderServer extends V3Server<ExternalProviderResource>
     @Actionable
     @Path("testconnectivity")
     public Response testConnectivity(V3Action action) {
-        return adaptAction(delegate::testConnectivity, action);
+        return adaptAction(getDelegate()::testConnectivity, action);
     }
 
     @Path("certificates")
     public V3ExternalProviderCertificatesServer getCertificatesResource() {
-        return new V3ExternalProviderCertificatesServer(delegate.getCertificatesResource());
+        return new V3ExternalProviderCertificatesServer(getDelegate().getCertificatesResource());
     }
 
     @Path("{action: (importcertificates|testconnectivity)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

@@ -38,16 +38,16 @@ public class V3SchedulingPoliciesServer extends V3Server<SchedulingPoliciesResou
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3SchedulingPolicy policy) {
-        return adaptAdd(delegate::add, policy);
+        return adaptAdd(getDelegate()::add, policy);
     }
 
     @GET
     public V3SchedulingPolicies list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3SchedulingPolicyServer getPolicyResource(@PathParam("id") String id) {
-        return new V3SchedulingPolicyServer(delegate.getPolicyResource(id));
+        return new V3SchedulingPolicyServer(getDelegate().getPolicyResource(id));
     }
 }

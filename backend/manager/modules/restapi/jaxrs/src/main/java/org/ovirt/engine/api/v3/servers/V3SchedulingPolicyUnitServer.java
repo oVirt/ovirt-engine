@@ -33,11 +33,11 @@ public class V3SchedulingPolicyUnitServer extends V3Server<SchedulingPolicyUnitR
 
     @GET
     public V3SchedulingPolicyUnit get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

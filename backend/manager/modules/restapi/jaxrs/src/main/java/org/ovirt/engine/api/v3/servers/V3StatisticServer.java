@@ -31,6 +31,6 @@ public class V3StatisticServer extends V3Server<StatisticResource> {
 
     @GET
     public V3Statistic get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

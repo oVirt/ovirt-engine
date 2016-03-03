@@ -33,11 +33,11 @@ public class V3VmHostDeviceServer extends V3Server<VmHostDeviceResource> {
 
     @GET
     public V3HostDevice get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

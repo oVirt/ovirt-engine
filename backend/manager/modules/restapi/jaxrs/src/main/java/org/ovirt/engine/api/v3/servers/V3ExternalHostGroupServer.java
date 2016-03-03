@@ -31,6 +31,6 @@ public class V3ExternalHostGroupServer extends V3Server<ExternalHostGroupResourc
 
     @GET
     public V3ExternalHostGroup get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

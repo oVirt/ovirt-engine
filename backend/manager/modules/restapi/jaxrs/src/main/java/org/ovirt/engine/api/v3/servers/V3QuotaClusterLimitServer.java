@@ -33,11 +33,11 @@ public class V3QuotaClusterLimitServer extends V3Server<QuotaClusterLimitResourc
 
     @GET
     public V3QuotaClusterLimit get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

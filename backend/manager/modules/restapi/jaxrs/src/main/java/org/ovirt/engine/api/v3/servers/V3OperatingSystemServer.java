@@ -31,6 +31,6 @@ public class V3OperatingSystemServer extends V3Server<OperatingSystemResource> {
 
     @GET
     public V3OperatingSystemInfo get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

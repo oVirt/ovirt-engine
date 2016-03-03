@@ -34,16 +34,16 @@ public class V3AssignedVnicProfileServer extends V3Server<AssignedVnicProfileRes
 
     @GET
     public V3VnicProfile get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 }

@@ -33,11 +33,11 @@ public class V3TemplateCdromsServer extends V3Server<TemplateCdromsResource> {
 
     @GET
     public V3CdRoms list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3TemplateCdromServer getCdromResource(@PathParam("id") String id) {
-        return new V3TemplateCdromServer(delegate.getCdromResource(id));
+        return new V3TemplateCdromServer(getDelegate().getCdromResource(id));
     }
 }

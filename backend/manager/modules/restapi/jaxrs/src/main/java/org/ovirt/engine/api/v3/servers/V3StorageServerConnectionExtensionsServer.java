@@ -38,16 +38,16 @@ public class V3StorageServerConnectionExtensionsServer extends V3Server<StorageS
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3StorageConnectionExtension extension) {
-        return adaptAdd(delegate::add, extension);
+        return adaptAdd(getDelegate()::add, extension);
     }
 
     @GET
     public V3StorageConnectionExtensions list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StorageServerConnectionExtensionServer getStorageConnectionExtensionResource(@PathParam("id") String id) {
-        return new V3StorageServerConnectionExtensionServer(delegate.getStorageConnectionExtensionResource(id));
+        return new V3StorageServerConnectionExtensionServer(getDelegate().getStorageConnectionExtensionResource(id));
     }
 }

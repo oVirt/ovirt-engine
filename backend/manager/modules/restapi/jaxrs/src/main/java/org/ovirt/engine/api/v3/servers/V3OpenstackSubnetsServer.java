@@ -38,16 +38,16 @@ public class V3OpenstackSubnetsServer extends V3Server<OpenstackSubnetsResource>
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3OpenStackSubnet subnet) {
-        return adaptAdd(delegate::add, subnet);
+        return adaptAdd(getDelegate()::add, subnet);
     }
 
     @GET
     public V3OpenStackSubnets list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackSubnetServer getSubnetResource(@PathParam("id") String id) {
-        return new V3OpenstackSubnetServer(delegate.getSubnetResource(id));
+        return new V3OpenstackSubnetServer(getDelegate().getSubnetResource(id));
     }
 }

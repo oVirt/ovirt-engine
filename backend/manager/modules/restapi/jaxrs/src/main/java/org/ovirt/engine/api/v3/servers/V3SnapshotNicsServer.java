@@ -33,11 +33,11 @@ public class V3SnapshotNicsServer extends V3Server<SnapshotNicsResource> {
 
     @GET
     public V3Nics list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3SnapshotNicServer getNicResource(@PathParam("id") String id) {
-        return new V3SnapshotNicServer(delegate.getNicResource(id));
+        return new V3SnapshotNicServer(getDelegate().getNicResource(id));
     }
 }

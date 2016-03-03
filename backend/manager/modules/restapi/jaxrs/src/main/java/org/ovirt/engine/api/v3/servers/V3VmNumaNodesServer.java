@@ -38,16 +38,16 @@ public class V3VmNumaNodesServer extends V3Server<VmNumaNodesResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3VirtualNumaNode node) {
-        return adaptAdd(delegate::add, node);
+        return adaptAdd(getDelegate()::add, node);
     }
 
     @GET
     public V3VirtualNumaNodes list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmNumaNodeServer getNodeResource(@PathParam("id") String id) {
-        return new V3VmNumaNodeServer(delegate.getNodeResource(id));
+        return new V3VmNumaNodeServer(getDelegate().getNodeResource(id));
     }
 }

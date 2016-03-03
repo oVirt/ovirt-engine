@@ -38,16 +38,16 @@ public class V3MacPoolsServer extends V3Server<MacPoolsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3MacPool pool) {
-        return adaptAdd(delegate::add, pool);
+        return adaptAdd(getDelegate()::add, pool);
     }
 
     @GET
     public V3MacPools list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3MacPoolServer getMacPoolResource(@PathParam("id") String id) {
-        return new V3MacPoolServer(delegate.getMacPoolResource(id));
+        return new V3MacPoolServer(getDelegate().getMacPoolResource(id));
     }
 }

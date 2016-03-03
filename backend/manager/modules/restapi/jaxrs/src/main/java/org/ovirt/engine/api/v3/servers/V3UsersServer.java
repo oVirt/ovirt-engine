@@ -38,16 +38,16 @@ public class V3UsersServer extends V3Server<UsersResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3User user) {
-        return adaptAdd(delegate::add, user);
+        return adaptAdd(getDelegate()::add, user);
     }
 
     @GET
     public V3Users list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3UserServer getUserResource(@PathParam("id") String id) {
-        return new V3UserServer(delegate.getUserResource(id));
+        return new V3UserServer(getDelegate().getUserResource(id));
     }
 }

@@ -33,11 +33,11 @@ public class V3StorageDomainVmsServer extends V3Server<StorageDomainVmsResource>
 
     @GET
     public V3VMs list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StorageDomainVmServer getVmResource(@PathParam("id") String id) {
-        return new V3StorageDomainVmServer(delegate.getVmResource(id));
+        return new V3StorageDomainVmServer(getDelegate().getVmResource(id));
     }
 }

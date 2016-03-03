@@ -38,16 +38,16 @@ public class V3AssignedPermissionsServer extends V3Server<AssignedPermissionsRes
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Permission permission) {
-        return adaptAdd(delegate::add, permission);
+        return adaptAdd(getDelegate()::add, permission);
     }
 
     @GET
     public V3Permissions list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3PermissionServer getPermissionResource(@PathParam("id") String id) {
-        return new V3PermissionServer(delegate.getPermissionResource(id));
+        return new V3PermissionServer(getDelegate().getPermissionResource(id));
     }
 }

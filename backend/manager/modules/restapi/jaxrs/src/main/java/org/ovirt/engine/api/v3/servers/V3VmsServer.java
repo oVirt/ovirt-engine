@@ -67,16 +67,16 @@ public class V3VmsServer extends V3Server<VmsResource> {
             }
         }
 
-        return adaptAdd(delegate::add, vm);
+        return adaptAdd(getDelegate()::add, vm);
     }
 
     @GET
     public V3VMs list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmServer getVmResource(@PathParam("id") String id) {
-        return new V3VmServer(id, delegate.getVmResource(id));
+        return new V3VmServer(id, getDelegate().getVmResource(id));
     }
 }

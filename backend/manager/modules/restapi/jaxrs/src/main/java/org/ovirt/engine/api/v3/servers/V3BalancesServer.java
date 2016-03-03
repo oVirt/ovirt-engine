@@ -38,16 +38,16 @@ public class V3BalancesServer extends V3Server<BalancesResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Balance balance) {
-        return adaptAdd(delegate::add, balance);
+        return adaptAdd(getDelegate()::add, balance);
     }
 
     @GET
     public V3Balances list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3BalanceServer getBalanceResource(@PathParam("id") String id) {
-        return new V3BalanceServer(delegate.getBalanceResource(id));
+        return new V3BalanceServer(getDelegate().getBalanceResource(id));
     }
 }

@@ -43,7 +43,7 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
     @Actionable
     @Path("activate")
     public Response activate(V3Action action) {
-        return adaptAction(delegate::activate, action);
+        return adaptAction(getDelegate()::activate, action);
     }
 
     @POST
@@ -51,7 +51,7 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
     @Actionable
     @Path("deactivate")
     public Response deactivate(V3Action action) {
-        return adaptAction(delegate::deactivate, action);
+        return adaptAction(getDelegate()::deactivate, action);
     }
 
     @POST
@@ -59,12 +59,12 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
     @Actionable
     @Path("export")
     public Response export(V3Action action) {
-        return adaptAction(delegate::export, action);
+        return adaptAction(getDelegate()::export, action);
     }
 
     @GET
     public V3Disk get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -72,27 +72,27 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
     @Actionable
     @Path("move")
     public Response move(V3Action action) {
-        return adaptAction(delegate::move, action);
+        return adaptAction(getDelegate()::move, action);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Disk update(V3Disk disk) {
-        return adaptUpdate(delegate::update, disk);
+        return adaptUpdate(getDelegate()::update, disk);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("{action: (activate|deactivate|export|move)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

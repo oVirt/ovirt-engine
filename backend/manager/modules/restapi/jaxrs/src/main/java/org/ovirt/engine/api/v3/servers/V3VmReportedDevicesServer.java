@@ -33,12 +33,12 @@ public class V3VmReportedDevicesServer extends V3Server<VmReportedDevicesResourc
 
     @GET
     public V3ReportedDevices list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmReportedDeviceServer getReportedDeviceResource(@PathParam("id") String id) {
-        return new V3VmReportedDeviceServer(delegate.getReportedDeviceResource(id));
+        return new V3VmReportedDeviceServer(getDelegate().getReportedDeviceResource(id));
     }
 
 }

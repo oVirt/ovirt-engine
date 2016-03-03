@@ -38,16 +38,16 @@ public class V3SshPublicKeysServer extends V3Server<SshPublicKeysResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3SSHPublicKey key) {
-        return adaptAdd(delegate::add, key);
+        return adaptAdd(getDelegate()::add, key);
     }
 
     @GET
     public V3SSHPublicKeys list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3SshPublicKeyServer getKeyResource(@PathParam("id") String id) {
-        return new V3SshPublicKeyServer(delegate.getKeyResource(id));
+        return new V3SshPublicKeyServer(getDelegate().getKeyResource(id));
     }
 }

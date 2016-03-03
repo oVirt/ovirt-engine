@@ -40,12 +40,12 @@ public class V3HostNicsServer extends V3Server<HostNicsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3HostNIC nic) {
-        return adaptAdd(delegate::add, nic);
+        return adaptAdd(getDelegate()::add, nic);
     }
 
     @GET
     public V3HostNics list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @POST
@@ -53,16 +53,16 @@ public class V3HostNicsServer extends V3Server<HostNicsResource> {
     @Actionable
     @Path("setupnetworks")
     public Response setupNetworks(V3Action action) {
-        return adaptAction(delegate::setupNetworks, action);
+        return adaptAction(getDelegate()::setupNetworks, action);
     }
 
     @Path("{id}")
     public V3HostNicServer getNicResource(@PathParam("id") String id) {
-        return new V3HostNicServer(delegate.getNicResource(id));
+        return new V3HostNicServer(getDelegate().getNicResource(id));
     }
 
     @Path("{action: (setupnetworks)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

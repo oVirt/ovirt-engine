@@ -38,16 +38,16 @@ public class V3JobsServer extends V3Server<JobsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Job job) {
-        return adaptAdd(delegate::add, job);
+        return adaptAdd(getDelegate()::add, job);
     }
 
     @GET
     public V3Jobs list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3JobServer getJobResource(@PathParam("id") String id) {
-        return new V3JobServer(delegate.getJobResource(id));
+        return new V3JobServer(getDelegate().getJobResource(id));
     }
 }

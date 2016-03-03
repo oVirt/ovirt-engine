@@ -35,17 +35,17 @@ public class V3OpenstackVolumeAuthenticationKeyServer extends V3Server<Openstack
 
     @GET
     public V3OpenstackVolumeAuthenticationKey get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3OpenstackVolumeAuthenticationKey update(V3OpenstackVolumeAuthenticationKey key) {
-        return adaptUpdate(delegate::update, key);
+        return adaptUpdate(getDelegate()::update, key);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

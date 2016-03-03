@@ -56,7 +56,7 @@ public class V3VmNicsServer extends V3Server<VmNicsResource> {
         // Pass the modified request to the V4 server (note that we are doing this even if we didn't find a matching
         // VNIC profile, as the V4 server will detect/report/handle the issue better than we can do here):
         try {
-            return adaptResponse(delegate.add(v4Nic));
+            return adaptResponse(getDelegate().add(v4Nic));
         }
         catch (WebApplicationException exception) {
             throw adaptException(exception);
@@ -65,11 +65,11 @@ public class V3VmNicsServer extends V3Server<VmNicsResource> {
 
     @GET
     public V3Nics list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmNicServer getNicResource(@PathParam("id") String id) {
-        return new V3VmNicServer(vmId, delegate.getNicResource(id));
+        return new V3VmNicServer(vmId, getDelegate().getNicResource(id));
     }
 }

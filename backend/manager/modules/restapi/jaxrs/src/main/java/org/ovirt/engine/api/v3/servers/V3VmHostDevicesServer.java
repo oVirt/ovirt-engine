@@ -38,16 +38,16 @@ public class V3VmHostDevicesServer extends V3Server<VmHostDevicesResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3HostDevice device) {
-        return adaptAdd(delegate::add, device);
+        return adaptAdd(getDelegate()::add, device);
     }
 
     @GET
     public V3HostDevices list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmHostDeviceServer getDeviceResource(@PathParam("id") String id) {
-        return new V3VmHostDeviceServer(delegate.getDeviceResource(id));
+        return new V3VmHostDeviceServer(getDelegate().getDeviceResource(id));
     }
 }

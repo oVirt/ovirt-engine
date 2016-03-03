@@ -33,11 +33,11 @@ public class V3GraphicsConsoleServer extends V3Server<GraphicsConsoleResource> {
 
     @GET
     public V3GraphicsConsole get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

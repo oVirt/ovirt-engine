@@ -40,7 +40,7 @@ public class V3StorageDomainServer extends V3Server<StorageDomainResource> {
 
     @GET
     public V3StorageDomain get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -48,13 +48,13 @@ public class V3StorageDomainServer extends V3Server<StorageDomainResource> {
     @Actionable
     @Path("isattached")
     public Response isAttached(V3Action action) {
-        return adaptAction(delegate::isAttached, action);
+        return adaptAction(getDelegate()::isAttached, action);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3StorageDomain update(V3StorageDomain storageDomain) {
-        return adaptUpdate(delegate::update, storageDomain);
+        return adaptUpdate(getDelegate()::update, storageDomain);
     }
 
     @POST
@@ -62,61 +62,61 @@ public class V3StorageDomainServer extends V3Server<StorageDomainResource> {
     @Actionable
     @Path("refreshluns")
     public Response refreshLuns(V3Action action) {
-        return adaptAction(delegate::refreshLuns, action);
+        return adaptAction(getDelegate()::refreshLuns, action);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("diskprofiles")
     public V3AssignedDiskProfilesServer getDiskProfilesResource() {
-        return new V3AssignedDiskProfilesServer(delegate.getDiskProfilesResource());
+        return new V3AssignedDiskProfilesServer(getDelegate().getDiskProfilesResource());
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("disksnapshots")
     public V3DiskSnapshotsServer getDiskSnapshotsResource() {
-        return new V3DiskSnapshotsServer(delegate.getDiskSnapshotsResource());
+        return new V3DiskSnapshotsServer(getDelegate().getDiskSnapshotsResource());
     }
 
     @Path("disks")
     public V3DisksServer getDisksResource() {
-        return new V3DisksServer(delegate.getDisksResource());
+        return new V3DisksServer(getDelegate().getDisksResource());
     }
 
     @Path("files")
     public V3FilesServer getFilesResource() {
-        return new V3FilesServer(delegate.getFilesResource());
+        return new V3FilesServer(getDelegate().getFilesResource());
     }
 
     @Path("images")
     public V3ImagesServer getImagesResource() {
-        return new V3ImagesServer(delegate.getImagesResource());
+        return new V3ImagesServer(getDelegate().getImagesResource());
     }
 
     @Path("storageconnections")
     public V3StorageDomainServerConnectionsServer getStorageConnectionsResource() {
-        return new V3StorageDomainServerConnectionsServer(delegate.getStorageConnectionsResource());
+        return new V3StorageDomainServerConnectionsServer(getDelegate().getStorageConnectionsResource());
     }
 
     @Path("templates")
     public V3StorageDomainTemplatesServer getTemplatesResource() {
-        return new V3StorageDomainTemplatesServer(delegate.getTemplatesResource());
+        return new V3StorageDomainTemplatesServer(getDelegate().getTemplatesResource());
     }
 
     @Path("vms")
     public V3StorageDomainVmsServer getVmsResource() {
-        return new V3StorageDomainVmsServer(delegate.getVmsResource());
+        return new V3StorageDomainVmsServer(getDelegate().getVmsResource());
     }
 
     @Path("{action: (isattached|refreshluns)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

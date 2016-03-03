@@ -33,11 +33,11 @@ public class V3BalanceServer extends V3Server<BalanceResource> {
 
     @GET
     public V3Balance get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

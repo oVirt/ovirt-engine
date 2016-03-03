@@ -39,12 +39,12 @@ public class V3SnapshotServer extends V3Server<SnapshotResource> {
 
     @GET
     public V3Snapshot get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -52,26 +52,26 @@ public class V3SnapshotServer extends V3Server<SnapshotResource> {
     @Actionable
     @Path("restore")
     public Response restore(V3Action action) {
-        return adaptAction(delegate::restore, action);
+        return adaptAction(getDelegate()::restore, action);
     }
 
     @Path("cdroms")
     public V3SnapshotCdromsServer getCdromsResource() {
-        return new V3SnapshotCdromsServer(delegate.getCdromsResource());
+        return new V3SnapshotCdromsServer(getDelegate().getCdromsResource());
     }
 
     @Path("disks")
     public V3SnapshotDisksServer getDisksResource() {
-        return new V3SnapshotDisksServer(delegate.getDisksResource());
+        return new V3SnapshotDisksServer(getDelegate().getDisksResource());
     }
 
     @Path("nics")
     public V3SnapshotNicsServer getNicsResource() {
-        return new V3SnapshotNicsServer(delegate.getNicsResource());
+        return new V3SnapshotNicsServer(getDelegate().getNicsResource());
     }
 
     @Path("{action: (restore)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

@@ -32,11 +32,11 @@ public class V3OpenstackNetworkServer extends V3Server<OpenstackNetworkResource>
 
     @GET
     public V3OpenStackNetwork get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @Path("subnets")
     public V3OpenstackSubnetsServer getSubnetsResource() {
-        return new V3OpenstackSubnetsServer(delegate.getSubnetsResource());
+        return new V3OpenstackSubnetsServer(getDelegate().getSubnetsResource());
     }
 }

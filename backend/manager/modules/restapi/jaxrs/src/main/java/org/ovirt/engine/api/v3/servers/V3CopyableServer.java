@@ -39,11 +39,11 @@ public class V3CopyableServer extends V3Server<CopyableResource> {
     @Actionable
     @Path("copy")
     public Response copy(V3Action action) {
-        return adaptAction(delegate::copy, action);
+        return adaptAction(getDelegate()::copy, action);
     }
 
     @Path("{action: (copy)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

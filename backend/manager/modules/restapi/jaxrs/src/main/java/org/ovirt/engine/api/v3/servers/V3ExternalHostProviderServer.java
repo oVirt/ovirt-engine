@@ -37,42 +37,42 @@ public class V3ExternalHostProviderServer extends V3Server<ExternalHostProviderR
 
     @GET
     public V3ExternalHostProvider get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3ExternalHostProvider update(V3ExternalHostProvider provider) {
-        return adaptUpdate(delegate::update, provider);
+        return adaptUpdate(getDelegate()::update, provider);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("computeresources")
     public V3ExternalComputeResourcesServer getComputeResourcesResource() {
-        return new V3ExternalComputeResourcesServer(delegate.getComputeResourcesResource());
+        return new V3ExternalComputeResourcesServer(getDelegate().getComputeResourcesResource());
     }
 
     @Path("discoveredhosts")
     public V3ExternalDiscoveredHostsServer getDiscoveredHostsResource() {
-        return new V3ExternalDiscoveredHostsServer(delegate.getDiscoveredHostsResource());
+        return new V3ExternalDiscoveredHostsServer(getDelegate().getDiscoveredHostsResource());
     }
 
     @Path("hostgroups")
     public V3ExternalHostGroupsServer getHostGroupsResource() {
-        return new V3ExternalHostGroupsServer(delegate.getHostGroupsResource());
+        return new V3ExternalHostGroupsServer(getDelegate().getHostGroupsResource());
     }
 
     @Path("hosts")
     public V3ExternalHostsServer getHostsResource() {
-        return new V3ExternalHostsServer(delegate.getHostsResource());
+        return new V3ExternalHostsServer(getDelegate().getHostsResource());
     }
 
     @Path("{action: (importcertificates|testconnectivity)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

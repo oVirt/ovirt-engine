@@ -33,11 +33,11 @@ public class V3ExternalComputeResourcesServer extends V3Server<ExternalComputeRe
 
     @GET
     public V3ExternalComputeResources list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3ExternalComputeResourceServer getResourceResource(@PathParam("id") String id) {
-        return new V3ExternalComputeResourceServer(delegate.getResourceResource(id));
+        return new V3ExternalComputeResourceServer(getDelegate().getResourceResource(id));
     }
 }

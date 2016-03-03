@@ -38,16 +38,16 @@ public class V3GraphicsConsolesServer extends V3Server<GraphicsConsolesResource>
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3GraphicsConsole console) {
-        return adaptAdd(delegate::add, console);
+        return adaptAdd(getDelegate()::add, console);
     }
 
     @GET
     public V3GraphicsConsoles list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3GraphicsConsoleServer getConsoleResource(@PathParam("id") String id) {
-        return new V3GraphicsConsoleServer(delegate.getConsoleResource(id));
+        return new V3GraphicsConsoleServer(getDelegate().getConsoleResource(id));
     }
 }

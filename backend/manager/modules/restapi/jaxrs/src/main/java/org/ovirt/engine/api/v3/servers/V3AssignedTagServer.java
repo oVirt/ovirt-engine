@@ -33,11 +33,11 @@ public class V3AssignedTagServer extends V3Server<AssignedTagResource> {
 
     @GET
     public V3Tag get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

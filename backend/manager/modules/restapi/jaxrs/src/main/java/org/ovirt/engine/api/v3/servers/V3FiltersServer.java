@@ -38,16 +38,16 @@ public class V3FiltersServer extends V3Server<FiltersResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Filter filter) {
-        return adaptAdd(delegate::add, filter);
+        return adaptAdd(getDelegate()::add, filter);
     }
 
     @GET
     public V3Filters list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3FilterServer getFilterResource(@PathParam("id") String id) {
-        return new V3FilterServer(delegate.getFilterResource(id));
+        return new V3FilterServer(getDelegate().getFilterResource(id));
     }
 }

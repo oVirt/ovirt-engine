@@ -33,11 +33,11 @@ public class V3DiskSnapshotsServer extends V3Server<DiskSnapshotsResource> {
 
     @GET
     public V3DiskSnapshots list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3DiskSnapshotServer getSnapshotResource(@PathParam("id") String id) {
-        return new V3DiskSnapshotServer(delegate.getSnapshotResource(id));
+        return new V3DiskSnapshotServer(getDelegate().getSnapshotResource(id));
     }
 }

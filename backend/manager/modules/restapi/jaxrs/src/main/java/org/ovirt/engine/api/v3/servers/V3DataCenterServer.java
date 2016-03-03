@@ -36,52 +36,52 @@ public class V3DataCenterServer extends V3Server<DataCenterResource> {
 
     @GET
     public V3DataCenter get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3DataCenter update(V3DataCenter dataCenter) {
-        return adaptUpdate(delegate::update, dataCenter);
+        return adaptUpdate(getDelegate()::update, dataCenter);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("storagedomains")
     public V3AttachedStorageDomainsServer getStorageDomainsResource() {
-        return new V3AttachedStorageDomainsServer(delegate.getStorageDomainsResource());
+        return new V3AttachedStorageDomainsServer(getDelegate().getStorageDomainsResource());
     }
 
     @Path("clusters")
     public V3ClustersServer getClustersResource() {
-        return new V3ClustersServer(delegate.getClustersResource());
+        return new V3ClustersServer(getDelegate().getClustersResource());
     }
 
     @Path("networks")
     public V3NetworksServer getNetworksResource() {
-        return new V3NetworksServer(delegate.getNetworksResource());
+        return new V3NetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("quotas")
     public V3QuotasServer getQuotasResource() {
-        return new V3QuotasServer(delegate.getQuotasResource());
+        return new V3QuotasServer(getDelegate().getQuotasResource());
     }
 
     @Path("qoss")
     public V3QossServer getQossResource() {
-        return new V3QossServer(delegate.getQossResource());
+        return new V3QossServer(getDelegate().getQossResource());
     }
 
     @Path("iscsibonds")
     public V3IscsiBondsServer getIscsiBondsResource() {
-        return new V3IscsiBondsServer(delegate.getIscsiBondsResource());
+        return new V3IscsiBondsServer(getDelegate().getIscsiBondsResource());
     }
 }

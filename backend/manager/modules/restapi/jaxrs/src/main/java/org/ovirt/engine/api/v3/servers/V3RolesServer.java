@@ -38,16 +38,16 @@ public class V3RolesServer extends V3Server<RolesResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Role role) {
-        return adaptAdd(delegate::add, role);
+        return adaptAdd(getDelegate()::add, role);
     }
 
     @GET
     public V3Roles list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3RoleServer getRoleResource(@PathParam("id") String id) {
-        return new V3RoleServer(delegate.getRoleResource(id));
+        return new V3RoleServer(getDelegate().getRoleResource(id));
     }
 }

@@ -31,6 +31,6 @@ public class V3KatelloErratumServer extends V3Server<KatelloErratumResource> {
 
     @GET
     public V3KatelloErratum get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

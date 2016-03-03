@@ -31,6 +31,6 @@ public class V3HostHookServer extends V3Server<HostHookResource> {
 
     @GET
     public V3Hook get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

@@ -32,16 +32,16 @@ public class V3DomainServer extends V3Server<DomainResource> {
 
     @GET
     public V3Domain get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @Path("users")
     public V3DomainUsersServer getUsersResource() {
-        return new V3DomainUsersServer(delegate.getUsersResource());
+        return new V3DomainUsersServer(getDelegate().getUsersResource());
     }
 
     @Path("groups")
     public V3DomainGroupsServer getGroupsResource() {
-        return new V3DomainGroupsServer(delegate.getGroupsResource());
+        return new V3DomainGroupsServer(getDelegate().getGroupsResource());
     }
 }

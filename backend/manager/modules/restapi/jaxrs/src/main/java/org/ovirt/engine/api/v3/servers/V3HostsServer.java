@@ -38,16 +38,16 @@ public class V3HostsServer extends V3Server<HostsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Host host) {
-        return adaptAdd(delegate::add, host);
+        return adaptAdd(getDelegate()::add, host);
     }
 
     @GET
     public V3Hosts list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3HostServer getHostResource(@PathParam("id") String id) {
-        return new V3HostServer(delegate.getHostResource(id));
+        return new V3HostServer(getDelegate().getHostResource(id));
     }
 }

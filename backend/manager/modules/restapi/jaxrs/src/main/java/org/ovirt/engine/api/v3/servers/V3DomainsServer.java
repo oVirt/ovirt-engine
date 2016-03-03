@@ -33,11 +33,11 @@ public class V3DomainsServer extends V3Server<DomainsResource> {
 
     @GET
     public V3Domains list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3DomainServer getDomainResource(@PathParam("id") String id) {
-        return new V3DomainServer(delegate.getDomainResource(id));
+        return new V3DomainServer(getDelegate().getDomainResource(id));
     }
 }

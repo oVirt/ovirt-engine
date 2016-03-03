@@ -33,11 +33,11 @@ public class V3ExternalHostsServer extends V3Server<ExternalHostsResource> {
 
     @GET
     public V3ExternalHosts list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3ExternalHostServer getHostResource(@PathParam("id") String id) {
-        return new V3ExternalHostServer(delegate.getHostResource(id));
+        return new V3ExternalHostServer(getDelegate().getHostResource(id));
     }
 }

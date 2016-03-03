@@ -52,7 +52,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("cancelmigration")
     public Response cancelMigration(V3Action action) {
-        return adaptAction(delegate::cancelMigration, action);
+        return adaptAction(getDelegate()::cancelMigration, action);
     }
 
     @POST
@@ -60,7 +60,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("commitsnapshot")
     public Response commitSnapshot(V3Action action) {
-        return adaptAction(delegate::commitSnapshot, action);
+        return adaptAction(getDelegate()::commitSnapshot, action);
     }
 
     @POST
@@ -68,7 +68,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("clone")
     public Response clone(V3Action action) {
-        return adaptAction(delegate::clone, action);
+        return adaptAction(getDelegate()::clone, action);
     }
 
     @POST
@@ -76,7 +76,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("detach")
     public Response detach(V3Action action) {
-        return adaptAction(delegate::detach, action);
+        return adaptAction(getDelegate()::detach, action);
     }
 
     @POST
@@ -84,7 +84,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("export")
     public Response export(V3Action action) {
-        return adaptAction(delegate::export, action);
+        return adaptAction(getDelegate()::export, action);
     }
 
     @POST
@@ -92,12 +92,12 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("freezefilesystems")
     public Response freezeFilesystems(V3Action action) {
-        return adaptAction(delegate::freezeFilesystems, action);
+        return adaptAction(getDelegate()::freezeFilesystems, action);
     }
 
     @GET
     public V3VM get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -105,7 +105,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("logon")
     public Response logon(V3Action action) {
-        return adaptAction(delegate::logon, action);
+        return adaptAction(getDelegate()::logon, action);
     }
 
     @POST
@@ -113,7 +113,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("maintenance")
     public Response maintenance(V3Action action) {
-        return adaptAction(delegate::maintenance, action);
+        return adaptAction(getDelegate()::maintenance, action);
     }
 
     @POST
@@ -121,7 +121,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("migrate")
     public Response migrate(V3Action action) {
-        return adaptAction(delegate::migrate, action);
+        return adaptAction(getDelegate()::migrate, action);
     }
 
     @POST
@@ -129,7 +129,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("move")
     public Response move(V3Action action) {
-        return adaptAction(delegate::move, action);
+        return adaptAction(getDelegate()::move, action);
     }
 
     @POST
@@ -137,13 +137,13 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("previewsnapshot")
     public Response previewSnapshot(V3Action action) {
-        return adaptAction(delegate::previewSnapshot, action);
+        return adaptAction(getDelegate()::previewSnapshot, action);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3VM update(V3VM vm) {
-        return adaptUpdate(delegate::update, vm);
+        return adaptUpdate(getDelegate()::update, vm);
     }
 
     @POST
@@ -151,12 +151,12 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("reboot")
     public Response reboot(V3Action action) {
-        return adaptAction(delegate::reboot, action);
+        return adaptAction(getDelegate()::reboot, action);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @DELETE
@@ -175,7 +175,7 @@ public class V3VmServer extends V3Server<VmResource> {
                 matrix.putSingle("detach_only", String.valueOf(true));
             }
         }
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -183,7 +183,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("reordermacaddresses")
     public Response reorderMacAddresses(V3Action action) {
-        return adaptAction(delegate::reorderMacAddresses, action);
+        return adaptAction(getDelegate()::reorderMacAddresses, action);
     }
 
     @POST
@@ -191,7 +191,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("shutdown")
     public Response shutdown(V3Action action) {
-        return adaptAction(delegate::shutdown, action);
+        return adaptAction(getDelegate()::shutdown, action);
     }
 
     @POST
@@ -199,7 +199,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("start")
     public Response start(V3Action action) {
-        return adaptAction(delegate::start, action);
+        return adaptAction(getDelegate()::start, action);
     }
 
     @POST
@@ -207,7 +207,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("stop")
     public Response stop(V3Action action) {
-        return adaptAction(delegate::stop, action);
+        return adaptAction(getDelegate()::stop, action);
     }
 
     @POST
@@ -215,7 +215,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("suspend")
     public Response suspend(V3Action action) {
-        return adaptAction(delegate::suspend, action);
+        return adaptAction(getDelegate()::suspend, action);
     }
 
     @POST
@@ -223,7 +223,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("thawfilesystems")
     public Response thawFilesystems(V3Action action) {
-        return adaptAction(delegate::thawFilesystems, action);
+        return adaptAction(getDelegate()::thawFilesystems, action);
     }
 
     @POST
@@ -231,7 +231,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("ticket")
     public Response ticket(V3Action action) {
-        return adaptAction(delegate::ticket, action);
+        return adaptAction(getDelegate()::ticket, action);
     }
 
     @POST
@@ -239,81 +239,81 @@ public class V3VmServer extends V3Server<VmResource> {
     @Actionable
     @Path("undosnapshot")
     public Response undoSnapshot(V3Action action) {
-        return adaptAction(delegate::undoSnapshot, action);
+        return adaptAction(getDelegate()::undoSnapshot, action);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("tags")
     public V3AssignedTagsServer getTagsResource() {
-        return new V3AssignedTagsServer(delegate.getTagsResource());
+        return new V3AssignedTagsServer(getDelegate().getTagsResource());
     }
 
     @Path("graphicsconsoles")
     public V3GraphicsConsolesServer getGraphicsConsolesResource() {
-        return new V3GraphicsConsolesServer(delegate.getGraphicsConsolesResource());
+        return new V3GraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
     }
 
     @Path("katelloerrata")
     public V3KatelloErrataServer getKatelloErrataResource() {
-        return new V3KatelloErrataServer(delegate.getKatelloErrataResource());
+        return new V3KatelloErrataServer(getDelegate().getKatelloErrataResource());
     }
 
     @Path("snapshots")
     public V3SnapshotsServer getSnapshotsResource() {
-        return new V3SnapshotsServer(delegate.getSnapshotsResource());
+        return new V3SnapshotsServer(getDelegate().getSnapshotsResource());
     }
 
     @Path("applications")
     public V3VmApplicationsServer getApplicationsResource() {
-        return new V3VmApplicationsServer(delegate.getApplicationsResource());
+        return new V3VmApplicationsServer(getDelegate().getApplicationsResource());
     }
 
     @Path("cdroms")
     public V3VmCdromsServer getCdromsResource() {
-        return new V3VmCdromsServer(delegate.getCdromsResource());
+        return new V3VmCdromsServer(getDelegate().getCdromsResource());
     }
 
     @Path("disks")
     public V3VmDisksServer getDisksResource() {
-        return new V3VmDisksServer(delegate.getDisksResource());
+        return new V3VmDisksServer(getDelegate().getDisksResource());
     }
 
     @Path("hostdevices")
     public V3VmHostDevicesServer getHostDevicesResource() {
-        return new V3VmHostDevicesServer(delegate.getHostDevicesResource());
+        return new V3VmHostDevicesServer(getDelegate().getHostDevicesResource());
     }
 
     @Path("nics")
     public V3VmNicsServer getNicsResource() {
-        return new V3VmNicsServer(id, delegate.getNicsResource());
+        return new V3VmNicsServer(id, getDelegate().getNicsResource());
     }
 
     @Path("numanodes")
     public V3VmNumaNodesServer getNumaNodesResource() {
-        return new V3VmNumaNodesServer(delegate.getNumaNodesResource());
+        return new V3VmNumaNodesServer(getDelegate().getNumaNodesResource());
     }
 
     @Path("reporteddevices")
     public V3VmReportedDevicesServer getReportedDevicesResource() {
-        return new V3VmReportedDevicesServer(delegate.getReportedDevicesResource());
+        return new V3VmReportedDevicesServer(getDelegate().getReportedDevicesResource());
     }
 
     @Path("sessions")
     public V3VmSessionsServer getSessionsResource() {
-        return new V3VmSessionsServer(delegate.getSessionsResource());
+        return new V3VmSessionsServer(getDelegate().getSessionsResource());
     }
 
     @Path("watchdogs")
     public V3VmWatchdogsServer getWatchdogsResource() {
-        return new V3VmWatchdogsServer(delegate.getWatchdogsResource());
+        return new V3VmWatchdogsServer(getDelegate().getWatchdogsResource());
     }
 
     @Path("{action: (cancelmigration|clone|commitsnapshot|detach|export|freezefilesystems|logon|maintenance|migrate|move|previewsnapshot|reboot|reordermacaddresses|shutdown|start|stop|suspend|thawfilesystems|ticket|undosnapshot)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

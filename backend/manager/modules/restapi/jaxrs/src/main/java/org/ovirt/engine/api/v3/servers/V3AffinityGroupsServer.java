@@ -38,16 +38,16 @@ public class V3AffinityGroupsServer extends V3Server<AffinityGroupsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3AffinityGroup group) {
-        return adaptAdd(delegate::add, group);
+        return adaptAdd(getDelegate()::add, group);
     }
 
     @GET
     public V3AffinityGroups list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3AffinityGroupServer getGroupResource(@PathParam("id") String id) {
-        return new V3AffinityGroupServer(delegate.getGroupResource(id));
+        return new V3AffinityGroupServer(getDelegate().getGroupResource(id));
     }
 }

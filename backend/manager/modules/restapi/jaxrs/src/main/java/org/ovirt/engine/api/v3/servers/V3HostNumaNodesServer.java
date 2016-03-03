@@ -33,11 +33,11 @@ public class V3HostNumaNodesServer extends V3Server<HostNumaNodesResource> {
 
     @GET
     public V3NumaNodes list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3HostNumaNodeServer getNodeResource(@PathParam("id") String id) {
-        return new V3HostNumaNodeServer(delegate.getNodeResource(id));
+        return new V3HostNumaNodeServer(getDelegate().getNodeResource(id));
     }
 }

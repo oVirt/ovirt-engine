@@ -31,6 +31,6 @@ public class V3OpenstackVolumeTypeServer extends V3Server<OpenstackVolumeTypeRes
 
     @GET
     public V3OpenStackVolumeType get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

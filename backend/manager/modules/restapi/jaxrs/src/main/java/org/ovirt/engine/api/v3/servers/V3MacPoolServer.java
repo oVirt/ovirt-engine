@@ -35,17 +35,17 @@ public class V3MacPoolServer extends V3Server<MacPoolResource> {
 
     @GET
     public V3MacPool get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3MacPool update(V3MacPool pool) {
-        return adaptUpdate(delegate::update, pool);
+        return adaptUpdate(getDelegate()::update, pool);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

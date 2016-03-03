@@ -38,16 +38,16 @@ public class V3QuotaStorageLimitsServer extends V3Server<QuotaStorageLimitsResou
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3QuotaStorageLimit limit) {
-        return adaptAdd(delegate::add, limit);
+        return adaptAdd(getDelegate()::add, limit);
     }
 
     @GET
     public V3QuotaStorageLimits list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3QuotaStorageLimitServer getLimitResource(@PathParam("id") String id) {
-        return new V3QuotaStorageLimitServer(delegate.getLimitResource(id));
+        return new V3QuotaStorageLimitServer(getDelegate().getLimitResource(id));
     }
 }

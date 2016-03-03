@@ -33,11 +33,11 @@ public class V3KatelloErrataServer extends V3Server<KatelloErrataResource> {
 
     @GET
     public V3KatelloErrata list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3KatelloErratumServer getKatelloErratumResource(@PathParam("id") String id) {
-        return new V3KatelloErratumServer(delegate.getKatelloErratumResource(id));
+        return new V3KatelloErratumServer(getDelegate().getKatelloErratumResource(id));
     }
 }

@@ -38,16 +38,16 @@ public class V3IscsiBondsServer extends V3Server<IscsiBondsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3IscsiBond bond) {
-        return adaptAdd(delegate::add, bond);
+        return adaptAdd(getDelegate()::add, bond);
     }
 
     @GET
     public V3IscsiBonds list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3IscsiBondServer getIscsiBondResource(@PathParam("id") String id) {
-        return new V3IscsiBondServer(delegate.getIscsiBondResource(id));
+        return new V3IscsiBondServer(getDelegate().getIscsiBondResource(id));
     }
 }

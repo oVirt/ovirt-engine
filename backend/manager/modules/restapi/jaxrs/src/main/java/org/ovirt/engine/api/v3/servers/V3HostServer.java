@@ -48,7 +48,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("activate")
     public Response activate(V3Action action) {
-        return adaptAction(delegate::activate, action);
+        return adaptAction(getDelegate()::activate, action);
     }
 
     @POST
@@ -56,7 +56,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("approve")
     public Response approve(V3Action action) {
-        return adaptAction(delegate::approve, action);
+        return adaptAction(getDelegate()::approve, action);
     }
 
     @POST
@@ -64,7 +64,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("commitnetconfig")
     public Response commitNetConfig(V3Action action) {
-        return adaptAction(delegate::commitNetConfig, action);
+        return adaptAction(getDelegate()::commitNetConfig, action);
     }
 
     @POST
@@ -72,7 +72,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("deactivate")
     public Response deactivate(V3Action action) {
-        return adaptAction(delegate::deactivate, action);
+        return adaptAction(getDelegate()::deactivate, action);
     }
 
     @POST
@@ -80,7 +80,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("enrollcertificate")
     public Response enrollCertificate(V3Action action) {
-        return adaptAction(delegate::enrollCertificate, action);
+        return adaptAction(getDelegate()::enrollCertificate, action);
     }
 
     @POST
@@ -88,7 +88,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("fence")
     public Response fence(V3Action action) {
-        return adaptAction(delegate::fence, action);
+        return adaptAction(getDelegate()::fence, action);
     }
 
     @POST
@@ -96,7 +96,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("forceselectspm")
     public Response forceSelectSpm(V3Action action) {
-        return adaptAction(delegate::forceSelectSpm, action);
+        return adaptAction(getDelegate()::forceSelectSpm, action);
     }
 
     @GET
@@ -105,13 +105,13 @@ public class V3HostServer extends V3Server<HostResource> {
         boolean force = QueryHelper.getBooleanMatrixParameter(ui, "force", true, false);
         if (force) {
             try {
-                delegate.refresh(new Action());
+                getDelegate().refresh(new Action());
             }
             catch (WebApplicationException exception) {
                 throw adaptException(exception);
             }
         }
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -119,7 +119,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("install")
     public Response install(V3Action action) {
-        return adaptAction(delegate::install, action);
+        return adaptAction(getDelegate()::install, action);
     }
 
     @POST
@@ -127,7 +127,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("iscsidiscover")
     public Response iscsiDiscover(V3Action action) {
-        return adaptAction(delegate::iscsiDiscover, action);
+        return adaptAction(getDelegate()::iscsiDiscover, action);
     }
 
     @POST
@@ -135,7 +135,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("iscsilogin")
     public Response iscsiLogin(V3Action action) {
-        return adaptAction(delegate::iscsiLogin, action);
+        return adaptAction(getDelegate()::iscsiLogin, action);
     }
 
     @POST
@@ -143,13 +143,13 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("unregisteredstoragedomainsdiscover")
     public Response unregisteredStorageDomainsDiscover(V3Action action) {
-        return adaptAction(delegate::unregisteredStorageDomainsDiscover, action);
+        return adaptAction(getDelegate()::unregisteredStorageDomainsDiscover, action);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Host update(V3Host host) {
-        return adaptUpdate(delegate::update, host);
+        return adaptUpdate(getDelegate()::update, host);
     }
 
     @POST
@@ -157,7 +157,7 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("upgrade")
     public Response upgrade(V3Action action) {
-        return adaptAction(delegate::upgrade, action);
+        return adaptAction(getDelegate()::upgrade, action);
     }
 
     @POST
@@ -165,12 +165,12 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("refresh")
     public Response refresh(V3Action action) {
-        return adaptAction(delegate::refresh, action);
+        return adaptAction(getDelegate()::refresh, action);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -178,71 +178,71 @@ public class V3HostServer extends V3Server<HostResource> {
     @Actionable
     @Path("setupnetworks")
     public Response setupNetworks(V3Action action) {
-        return adaptAction(delegate::setupNetworks, action);
+        return adaptAction(getDelegate()::setupNetworks, action);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("tags")
     public V3AssignedTagsServer getTagsResource() {
-        return new V3AssignedTagsServer(delegate.getTagsResource());
+        return new V3AssignedTagsServer(getDelegate().getTagsResource());
     }
 
     @Path("fenceagents")
     public V3FenceAgentsServer getFenceAgentsResource() {
-        return new V3FenceAgentsServer(delegate.getFenceAgentsResource());
+        return new V3FenceAgentsServer(getDelegate().getFenceAgentsResource());
     }
 
     @Path("devices")
     public V3HostDevicesServer getDevicesResource() {
-        return new V3HostDevicesServer(delegate.getDevicesResource());
+        return new V3HostDevicesServer(getDelegate().getDevicesResource());
     }
 
     @Path("hooks")
     public V3HostHooksServer getHooksResource() {
-        return new V3HostHooksServer(delegate.getHooksResource());
+        return new V3HostHooksServer(getDelegate().getHooksResource());
     }
 
     @Path("nics")
     public V3HostNicsServer getNicsResource() {
-        return new V3HostNicsServer(delegate.getNicsResource());
+        return new V3HostNicsServer(getDelegate().getNicsResource());
     }
 
     @Path("numanodes")
     public V3HostNumaNodesServer getNumaNodesResource() {
-        return new V3HostNumaNodesServer(delegate.getNumaNodesResource());
+        return new V3HostNumaNodesServer(getDelegate().getNumaNodesResource());
     }
 
     @Path("storage")
     public V3HostStorageServer getStorageResource() {
-        return new V3HostStorageServer(delegate.getStorageResource());
+        return new V3HostStorageServer(getDelegate().getStorageResource());
     }
 
     @Path("katelloerrata")
     public V3KatelloErrataServer getKatelloErrataResource() {
-        return new V3KatelloErrataServer(delegate.getKatelloErrataResource());
+        return new V3KatelloErrataServer(getDelegate().getKatelloErrataResource());
     }
 
     @Path("networkattachments")
     public V3NetworkAttachmentsServer getNetworkAttachmentsResource() {
-        return new V3NetworkAttachmentsServer(delegate.getNetworkAttachmentsResource());
+        return new V3NetworkAttachmentsServer(getDelegate().getNetworkAttachmentsResource());
     }
 
     @Path("storageconnectionextensions")
     public V3StorageServerConnectionExtensionsServer getStorageConnectionExtensionsResource() {
-        return new V3StorageServerConnectionExtensionsServer(delegate.getStorageConnectionExtensionsResource());
+        return new V3StorageServerConnectionExtensionsServer(getDelegate().getStorageConnectionExtensionsResource());
     }
 
     @Path("unmanagednetworks")
     public V3UnmanagedNetworksServer getUnmanagedNetworksResource() {
-        return new V3UnmanagedNetworksServer(delegate.getUnmanagedNetworksResource());
+        return new V3UnmanagedNetworksServer(getDelegate().getUnmanagedNetworksResource());
     }
 
     @Path("{action: (activate|approve|commitnetconfig|deactivate|enrollcertificate|fence|forceselectspm|install|iscsidiscover|iscsilogin|refresh|setupnetworks|unregisteredstoragedomainsdiscover|upgrade)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

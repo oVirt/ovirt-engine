@@ -36,22 +36,22 @@ public class V3CpuProfileServer extends V3Server<CpuProfileResource> {
 
     @GET
     public V3CpuProfile get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3CpuProfile update(V3CpuProfile profile) {
-        return adaptUpdate(delegate::update, profile);
+        return adaptUpdate(getDelegate()::update, profile);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 }

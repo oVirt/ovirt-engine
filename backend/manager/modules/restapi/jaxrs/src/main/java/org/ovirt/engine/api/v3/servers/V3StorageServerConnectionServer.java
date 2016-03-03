@@ -35,17 +35,17 @@ public class V3StorageServerConnectionServer extends V3Server<StorageServerConne
 
     @GET
     public V3StorageConnection get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3StorageConnection update(V3StorageConnection connection) {
-        return adaptUpdate(delegate::update, connection);
+        return adaptUpdate(getDelegate()::update, connection);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

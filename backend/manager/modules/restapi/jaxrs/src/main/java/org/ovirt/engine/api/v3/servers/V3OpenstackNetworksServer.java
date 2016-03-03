@@ -33,11 +33,11 @@ public class V3OpenstackNetworksServer extends V3Server<OpenstackNetworksResourc
 
     @GET
     public V3OpenStackNetworks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackNetworkServer getNetworkResource(@PathParam("id") String id) {
-        return new V3OpenstackNetworkServer(delegate.getNetworkResource(id));
+        return new V3OpenstackNetworkServer(getDelegate().getNetworkResource(id));
     }
 }

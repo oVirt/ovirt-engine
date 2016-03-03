@@ -40,12 +40,12 @@ public class V3EventsServer extends V3Server<EventsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Event event) {
-        return adaptAdd(delegate::add, event);
+        return adaptAdd(getDelegate()::add, event);
     }
 
     @GET
     public V3Events list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @POST
@@ -53,16 +53,16 @@ public class V3EventsServer extends V3Server<EventsResource> {
     @Actionable
     @Path("undelete")
     public Response undelete(V3Action action) {
-        return adaptAction(delegate::undelete, action);
+        return adaptAction(getDelegate()::undelete, action);
     }
 
     @Path("{id}")
     public V3EventServer getEventResource(@PathParam("id") String id) {
-        return new V3EventServer(delegate.getEventResource(id));
+        return new V3EventServer(getDelegate().getEventResource(id));
     }
 
     @Path("{action: (undelete)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

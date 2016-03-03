@@ -36,32 +36,32 @@ public class V3NetworkServer extends V3Server<NetworkResource> {
 
     @GET
     public V3Network get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Network update(V3Network network) {
-        return adaptUpdate(delegate::update, network);
+        return adaptUpdate(getDelegate()::update, network);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("vnicprofiles")
     public V3AssignedVnicProfilesServer getVnicProfilesResource() {
-        return new V3AssignedVnicProfilesServer(delegate.getVnicProfilesResource());
+        return new V3AssignedVnicProfilesServer(getDelegate().getVnicProfilesResource());
     }
 
     @Path("labels")
     public V3LabelsServer getLabelsResource() {
-        return new V3LabelsServer(delegate.getLabelsResource());
+        return new V3LabelsServer(getDelegate().getLabelsResource());
     }
 }

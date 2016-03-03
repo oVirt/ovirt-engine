@@ -36,22 +36,22 @@ public class V3RoleServer extends V3Server<RoleResource> {
 
     @GET
     public V3Role get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Role update(V3Role role) {
-        return adaptUpdate(delegate::update, role);
+        return adaptUpdate(getDelegate()::update, role);
     }
 
     @Path("permits")
     public V3PermitsServer getPermitsResource() {
-        return new V3PermitsServer(delegate.getPermitsResource());
+        return new V3PermitsServer(getDelegate().getPermitsResource());
     }
 }

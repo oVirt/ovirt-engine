@@ -31,6 +31,6 @@ public class V3DomainGroupServer extends V3Server<DomainGroupResource> {
 
     @GET
     public V3Group get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

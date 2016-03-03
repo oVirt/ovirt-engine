@@ -33,11 +33,11 @@ public class V3VmSessionsServer extends V3Server<VmSessionsResource> {
 
     @GET
     public V3Sessions list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmSessionServer getSessionResource(@PathParam("id") String id) {
-        return new V3VmSessionServer(delegate.getSessionResource(id));
+        return new V3VmSessionServer(getDelegate().getSessionResource(id));
     }
 }

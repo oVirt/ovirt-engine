@@ -31,6 +31,6 @@ public class V3ExternalProviderCertificateServer extends V3Server<ExternalProvid
 
     @GET
     public V3Certificate get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

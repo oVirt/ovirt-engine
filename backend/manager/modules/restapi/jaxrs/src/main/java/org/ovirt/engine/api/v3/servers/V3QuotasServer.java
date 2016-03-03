@@ -38,16 +38,16 @@ public class V3QuotasServer extends V3Server<QuotasResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Quota quota) {
-        return adaptAdd(delegate::add, quota);
+        return adaptAdd(getDelegate()::add, quota);
     }
 
     @GET
     public V3Quotas list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3QuotaServer getQuotaResource(@PathParam("id") String id) {
-        return new V3QuotaServer(delegate.getQuotaResource(id));
+        return new V3QuotaServer(getDelegate().getQuotaResource(id));
     }
 }

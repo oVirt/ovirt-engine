@@ -37,27 +37,27 @@ public class V3OpenstackNetworkProviderServer extends V3Server<OpenstackNetworkP
 
     @GET
     public V3OpenStackNetworkProvider get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3OpenStackNetworkProvider update(V3OpenStackNetworkProvider provider) {
-        return adaptUpdate(delegate::update, provider);
+        return adaptUpdate(getDelegate()::update, provider);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("networks")
     public V3OpenstackNetworksServer getNetworksResource() {
-        return new V3OpenstackNetworksServer(delegate.getNetworksResource());
+        return new V3OpenstackNetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("{action: (importcertificates|testconnectivity)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

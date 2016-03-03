@@ -33,11 +33,11 @@ public class V3ExternalHostGroupsServer extends V3Server<ExternalHostGroupsResou
 
     @GET
     public V3ExternalHostGroups list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3ExternalHostGroupServer getGroupResource(@PathParam("id") String id) {
-        return new V3ExternalHostGroupServer(delegate.getGroupResource(id));
+        return new V3ExternalHostGroupServer(getDelegate().getGroupResource(id));
     }
 }

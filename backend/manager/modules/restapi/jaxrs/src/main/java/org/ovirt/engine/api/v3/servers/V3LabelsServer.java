@@ -38,16 +38,16 @@ public class V3LabelsServer extends V3Server<LabelsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Label label) {
-        return adaptAdd(delegate::add, label);
+        return adaptAdd(getDelegate()::add, label);
     }
 
     @GET
     public V3Labels list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3LabelServer getLabelResource(@PathParam("id") String id) {
-        return new V3LabelServer(delegate.getLabelResource(id));
+        return new V3LabelServer(getDelegate().getLabelResource(id));
     }
 }

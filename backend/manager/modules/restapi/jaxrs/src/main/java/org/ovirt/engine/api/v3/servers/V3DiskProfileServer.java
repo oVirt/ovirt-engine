@@ -36,22 +36,22 @@ public class V3DiskProfileServer extends V3Server<DiskProfileResource> {
 
     @GET
     public V3DiskProfile get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3DiskProfile update(V3DiskProfile profile) {
-        return adaptUpdate(delegate::update, profile);
+        return adaptUpdate(getDelegate()::update, profile);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 }

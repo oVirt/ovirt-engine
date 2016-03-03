@@ -45,18 +45,18 @@ public class V3GlusterBricksServer extends V3Server<GlusterBricksResource> {
     @Actionable
     @Path("activate")
     public Response activate(V3Action action) {
-        return adaptAction(delegate::activate, action);
+        return adaptAction(getDelegate()::activate, action);
     }
 
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3GlusterBricks bricks) {
-        return adaptAdd(delegate::add, bricks);
+        return adaptAdd(getDelegate()::add, bricks);
     }
 
     @GET
     public V3GlusterBricks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @POST
@@ -64,13 +64,13 @@ public class V3GlusterBricksServer extends V3Server<GlusterBricksResource> {
     @Actionable
     @Path("migrate")
     public Response migrate(V3Action action) {
-        return adaptAction(delegate::migrate, action);
+        return adaptAction(getDelegate()::migrate, action);
     }
 
     @DELETE
     public Response remove(V3Action action) {
         try {
-            return adaptResponse(delegate.remove(adaptIn(action)));
+            return adaptResponse(getDelegate().remove(adaptIn(action)));
         }
         catch (WebApplicationException exception) {
             throw adaptException(exception);
@@ -82,16 +82,16 @@ public class V3GlusterBricksServer extends V3Server<GlusterBricksResource> {
     @Actionable
     @Path("stopmigrate")
     public Response stopMigrate(V3Action action) {
-        return adaptAction(delegate::stopMigrate, action);
+        return adaptAction(getDelegate()::stopMigrate, action);
     }
 
     @Path("{id}")
     public V3GlusterBrickServer getBrickResource(@PathParam("id") String id) {
-        return new V3GlusterBrickServer(delegate.getBrickResource(id));
+        return new V3GlusterBrickServer(getDelegate().getBrickResource(id));
     }
 
     @Path("{action: (activate|migrate|stopmigrate)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

@@ -33,11 +33,11 @@ public class V3AssignedDiskProfileServer extends V3Server<AssignedDiskProfileRes
 
     @GET
     public V3DiskProfile get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

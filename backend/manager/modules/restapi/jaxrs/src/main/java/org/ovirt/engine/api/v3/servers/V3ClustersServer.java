@@ -46,7 +46,7 @@ public class V3ClustersServer extends V3Server<ClustersResource> {
         Cluster v4Cluster = adaptIn(v3Cluster);
         assignCompatiblePolicy(v3Cluster, v4Cluster);
         try {
-            return adaptResponse(delegate.add(v4Cluster));
+            return adaptResponse(getDelegate().add(v4Cluster));
         }
         catch (WebApplicationException exception) {
             throw adaptException(exception);
@@ -55,11 +55,11 @@ public class V3ClustersServer extends V3Server<ClustersResource> {
 
     @GET
     public V3Clusters list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3ClusterServer getClusterResource(@PathParam("id") String id) {
-        return new V3ClusterServer(delegate.getClusterResource(id));
+        return new V3ClusterServer(getDelegate().getClusterResource(id));
     }
 }

@@ -35,17 +35,17 @@ public class V3VmNumaNodeServer extends V3Server<VmNumaNodeResource> {
 
     @GET
     public V3VirtualNumaNode get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3VirtualNumaNode update(V3VirtualNumaNode node) {
-        return adaptUpdate(delegate::update, node);
+        return adaptUpdate(getDelegate()::update, node);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

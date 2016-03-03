@@ -39,11 +39,11 @@ public class V3MoveableServer extends V3Server<MoveableResource> {
     @Actionable
     @Path("move")
     public Response move(V3Action action) {
-        return adaptAction(delegate::move, action);
+        return adaptAction(getDelegate()::move, action);
     }
 
     @Path("{action: (move)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

@@ -35,17 +35,17 @@ public class V3VmWatchdogServer extends V3Server<VmWatchdogResource> {
 
     @GET
     public V3WatchDog get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3WatchDog update(V3WatchDog watchdog) {
-        return adaptUpdate(delegate::update, watchdog);
+        return adaptUpdate(getDelegate()::update, watchdog);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

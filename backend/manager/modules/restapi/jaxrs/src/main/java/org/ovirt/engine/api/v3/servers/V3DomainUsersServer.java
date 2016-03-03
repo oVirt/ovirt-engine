@@ -33,11 +33,11 @@ public class V3DomainUsersServer extends V3Server<DomainUsersResource> {
 
     @GET
     public V3Users list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3DomainUserServer getUserResource(@PathParam("id") String id) {
-        return new V3DomainUserServer(delegate.getUserResource(id));
+        return new V3DomainUserServer(getDelegate().getUserResource(id));
     }
 }

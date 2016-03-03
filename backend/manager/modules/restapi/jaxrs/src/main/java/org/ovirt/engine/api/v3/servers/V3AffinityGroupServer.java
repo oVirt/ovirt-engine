@@ -36,22 +36,22 @@ public class V3AffinityGroupServer extends V3Server<AffinityGroupResource> {
 
     @GET
     public V3AffinityGroup get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3AffinityGroup update(V3AffinityGroup group) {
-        return adaptUpdate(delegate::update, group);
+        return adaptUpdate(getDelegate()::update, group);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("vms")
     public V3AffinityGroupVmsServer getVmsResource() {
-        return new V3AffinityGroupVmsServer(delegate.getVmsResource());
+        return new V3AffinityGroupVmsServer(getDelegate().getVmsResource());
     }
 }

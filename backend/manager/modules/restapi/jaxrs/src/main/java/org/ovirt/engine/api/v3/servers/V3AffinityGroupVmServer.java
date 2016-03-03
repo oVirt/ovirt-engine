@@ -31,6 +31,6 @@ public class V3AffinityGroupVmServer extends V3Server<AffinityGroupVmResource> {
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

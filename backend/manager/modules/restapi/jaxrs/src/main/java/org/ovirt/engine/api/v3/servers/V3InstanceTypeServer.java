@@ -36,32 +36,32 @@ public class V3InstanceTypeServer extends V3Server<InstanceTypeResource> {
 
     @GET
     public V3InstanceType get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3InstanceType update(V3InstanceType instanceType) {
-        return adaptUpdate(delegate::update, instanceType);
+        return adaptUpdate(getDelegate()::update, instanceType);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("nics")
     public V3InstanceTypeNicsServer getNicsResource() {
-        return new V3InstanceTypeNicsServer(delegate.getNicsResource());
+        return new V3InstanceTypeNicsServer(getDelegate().getNicsResource());
     }
 
     @Path("watchdogs")
     public V3InstanceTypeWatchdogsServer getWatchdogsResource() {
-        return new V3InstanceTypeWatchdogsServer(delegate.getWatchdogsResource());
+        return new V3InstanceTypeWatchdogsServer(getDelegate().getWatchdogsResource());
     }
 
     @Path("graphicsconsoles")
     public V3GraphicsConsolesServer getGraphicsConsolesResource() {
-        return new V3GraphicsConsolesServer(delegate.getGraphicsConsolesResource());
+        return new V3GraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
     }
 }

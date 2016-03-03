@@ -33,11 +33,11 @@ public class V3FilesServer extends V3Server<FilesResource> {
 
     @GET
     public V3Files list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3FileServer getFileResource(@PathParam("id") String id) {
-        return new V3FileServer(delegate.getFileResource(id));
+        return new V3FileServer(getDelegate().getFileResource(id));
     }
 }

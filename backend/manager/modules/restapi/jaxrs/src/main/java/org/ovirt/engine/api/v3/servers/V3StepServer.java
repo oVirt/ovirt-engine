@@ -41,16 +41,16 @@ public class V3StepServer extends V3Server<StepResource> {
     @Actionable
     @Path("end")
     public Response end(V3Action action) {
-        return adaptAction(delegate::end, action);
+        return adaptAction(getDelegate()::end, action);
     }
 
     @GET
     public V3Step get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @Path("{action: (end)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

@@ -38,16 +38,16 @@ public class V3GroupsServer extends V3Server<GroupsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Group group) {
-        return adaptAdd(delegate::add, group);
+        return adaptAdd(getDelegate()::add, group);
     }
 
     @GET
     public V3Groups list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3GroupServer getGroupResource(@PathParam("id") String id) {
-        return new V3GroupServer(delegate.getGroupResource(id));
+        return new V3GroupServer(getDelegate().getGroupResource(id));
     }
 }

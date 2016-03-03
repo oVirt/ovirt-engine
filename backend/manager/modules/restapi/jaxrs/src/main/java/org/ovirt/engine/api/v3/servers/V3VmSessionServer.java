@@ -31,6 +31,6 @@ public class V3VmSessionServer extends V3Server<VmSessionResource> {
 
     @GET
     public V3Session get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

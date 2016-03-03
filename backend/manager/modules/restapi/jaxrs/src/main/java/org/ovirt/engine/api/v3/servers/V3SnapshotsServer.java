@@ -38,16 +38,16 @@ public class V3SnapshotsServer extends V3Server<SnapshotsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Snapshot snapshot) {
-        return adaptAdd(delegate::add, snapshot);
+        return adaptAdd(getDelegate()::add, snapshot);
     }
 
     @GET
     public V3Snapshots list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3SnapshotServer getSnapshotResource(@PathParam("id") String id) {
-        return new V3SnapshotServer(delegate.getSnapshotResource(id));
+        return new V3SnapshotServer(getDelegate().getSnapshotResource(id));
     }
 }

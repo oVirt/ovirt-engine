@@ -35,17 +35,17 @@ public class V3BookmarkServer extends V3Server<BookmarkResource> {
 
     @GET
     public V3Bookmark get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Bookmark update(V3Bookmark bookmark) {
-        return adaptUpdate(delegate::update, bookmark);
+        return adaptUpdate(getDelegate()::update, bookmark);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

@@ -38,16 +38,16 @@ public class V3OpenstackVolumeProvidersServer extends V3Server<OpenstackVolumePr
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3OpenStackVolumeProvider provider) {
-        return adaptAdd(delegate::add, provider);
+        return adaptAdd(getDelegate()::add, provider);
     }
 
     @GET
     public V3OpenStackVolumeProviders list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackVolumeProviderServer getProviderResource(@PathParam("id") String id) {
-        return new V3OpenstackVolumeProviderServer(delegate.getProviderResource(id));
+        return new V3OpenstackVolumeProviderServer(getDelegate().getProviderResource(id));
     }
 }

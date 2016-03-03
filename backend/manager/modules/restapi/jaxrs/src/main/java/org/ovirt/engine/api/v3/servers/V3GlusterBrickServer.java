@@ -39,12 +39,12 @@ public class V3GlusterBrickServer extends V3Server<GlusterBrickResource> {
 
     @GET
     public V3GlusterBrick get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -52,11 +52,11 @@ public class V3GlusterBrickServer extends V3Server<GlusterBrickResource> {
     @Actionable
     @Path("replace")
     public Response replace(V3Action action) {
-        return adaptAction(delegate::replace, action);
+        return adaptAction(getDelegate()::replace, action);
     }
 
     @Path("{action: (replace)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

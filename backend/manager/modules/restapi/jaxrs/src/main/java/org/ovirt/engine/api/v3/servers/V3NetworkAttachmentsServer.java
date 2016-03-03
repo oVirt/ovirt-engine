@@ -38,16 +38,16 @@ public class V3NetworkAttachmentsServer extends V3Server<NetworkAttachmentsResou
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3NetworkAttachment attachment) {
-        return adaptAdd(delegate::add, attachment);
+        return adaptAdd(getDelegate()::add, attachment);
     }
 
     @GET
     public V3NetworkAttachments list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3NetworkAttachmentServer getAttachmentResource(@PathParam("id") String id) {
-        return new V3NetworkAttachmentServer(delegate.getAttachmentResource(id));
+        return new V3NetworkAttachmentServer(getDelegate().getAttachmentResource(id));
     }
 }

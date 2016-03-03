@@ -38,16 +38,16 @@ public class V3AssignedTagsServer extends V3Server<AssignedTagsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Tag tag) {
-        return adaptAdd(delegate::add, tag);
+        return adaptAdd(getDelegate()::add, tag);
     }
 
     @GET
     public V3Tags list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3AssignedTagServer getTagResource(@PathParam("id") String id) {
-        return new V3AssignedTagServer(delegate.getTagResource(id));
+        return new V3AssignedTagServer(getDelegate().getTagResource(id));
     }
 }

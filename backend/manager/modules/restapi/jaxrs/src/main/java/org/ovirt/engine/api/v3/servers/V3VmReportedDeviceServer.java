@@ -31,6 +31,6 @@ public class V3VmReportedDeviceServer extends V3Server<VmReportedDeviceResource>
 
     @GET
     public V3ReportedDevice get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

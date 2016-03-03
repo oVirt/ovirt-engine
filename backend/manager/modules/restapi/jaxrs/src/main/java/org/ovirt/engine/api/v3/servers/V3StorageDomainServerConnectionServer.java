@@ -33,11 +33,11 @@ public class V3StorageDomainServerConnectionServer extends V3Server<StorageDomai
 
     @GET
     public V3StorageConnection get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

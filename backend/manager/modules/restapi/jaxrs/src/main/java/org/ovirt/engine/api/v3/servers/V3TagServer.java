@@ -35,17 +35,17 @@ public class V3TagServer extends V3Server<TagResource> {
 
     @GET
     public V3Tag get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Tag update(V3Tag tag) {
-        return adaptUpdate(delegate::update, tag);
+        return adaptUpdate(getDelegate()::update, tag);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

@@ -38,16 +38,16 @@ public class V3OpenstackVolumeAuthenticationKeysServer extends V3Server<Openstac
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3OpenstackVolumeAuthenticationKey key) {
-        return adaptAdd(delegate::add, key);
+        return adaptAdd(getDelegate()::add, key);
     }
 
     @GET
     public V3OpenstackVolumeAuthenticationKeys list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackVolumeAuthenticationKeyServer getKeyResource(@PathParam("id") String id) {
-        return new V3OpenstackVolumeAuthenticationKeyServer(delegate.getKeyResource(id));
+        return new V3OpenstackVolumeAuthenticationKeyServer(getDelegate().getKeyResource(id));
     }
 }

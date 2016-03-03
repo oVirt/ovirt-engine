@@ -33,11 +33,11 @@ public class V3TemplateDisksServer extends V3Server<TemplateDisksResource> {
 
     @GET
     public V3Disks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3TemplateDiskServer getDiskResource(@PathParam("id") String id) {
-        return new V3TemplateDiskServer(delegate.getDiskResource(id));
+        return new V3TemplateDiskServer(getDelegate().getDiskResource(id));
     }
 }

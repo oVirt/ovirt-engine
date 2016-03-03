@@ -33,11 +33,11 @@ public class V3QuotaStorageLimitServer extends V3Server<QuotaStorageLimitResourc
 
     @GET
     public V3QuotaStorageLimit get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

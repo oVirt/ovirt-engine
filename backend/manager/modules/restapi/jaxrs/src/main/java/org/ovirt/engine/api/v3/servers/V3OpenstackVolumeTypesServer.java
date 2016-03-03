@@ -33,11 +33,11 @@ public class V3OpenstackVolumeTypesServer extends V3Server<OpenstackVolumeTypesR
 
     @GET
     public V3OpenStackVolumeTypes list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3OpenstackVolumeTypeServer getTypeResource(@PathParam("id") String id) {
-        return new V3OpenstackVolumeTypeServer(delegate.getTypeResource(id));
+        return new V3OpenstackVolumeTypeServer(getDelegate().getTypeResource(id));
     }
 }

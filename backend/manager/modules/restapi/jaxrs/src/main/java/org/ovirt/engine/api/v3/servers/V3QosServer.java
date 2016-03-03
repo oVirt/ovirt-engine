@@ -35,17 +35,17 @@ public class V3QosServer extends V3Server<QosResource> {
 
     @GET
     public V3QoS get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3QoS update(V3QoS qos) {
-        return adaptUpdate(delegate::update, qos);
+        return adaptUpdate(getDelegate()::update, qos);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

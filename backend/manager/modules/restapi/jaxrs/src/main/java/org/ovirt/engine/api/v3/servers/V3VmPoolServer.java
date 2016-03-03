@@ -43,32 +43,32 @@ public class V3VmPoolServer extends V3Server<VmPoolResource> {
     @Actionable
     @Path("allocatevm")
     public Response allocateVm(V3Action action) {
-        return adaptAction(delegate::allocateVm, action);
+        return adaptAction(getDelegate()::allocateVm, action);
     }
 
     @GET
     public V3VmPool get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3VmPool update(V3VmPool pool) {
-        return adaptUpdate(delegate::update, pool);
+        return adaptUpdate(getDelegate()::update, pool);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("{action: (allocatevm)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

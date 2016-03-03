@@ -31,6 +31,6 @@ public class V3VmApplicationServer extends V3Server<VmApplicationResource> {
 
     @GET
     public V3Application get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

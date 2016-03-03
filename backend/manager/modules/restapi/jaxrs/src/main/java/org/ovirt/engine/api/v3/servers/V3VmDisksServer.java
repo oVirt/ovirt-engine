@@ -38,16 +38,16 @@ public class V3VmDisksServer extends V3Server<VmDisksResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Disk disk) {
-        return adaptAdd(delegate::add, disk);
+        return adaptAdd(getDelegate()::add, disk);
     }
 
     @GET
     public V3Disks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmDiskServer getDiskResource(@PathParam("id") String id) {
-        return new V3VmDiskServer(delegate.getDiskResource(id));
+        return new V3VmDiskServer(getDelegate().getDiskResource(id));
     }
 }

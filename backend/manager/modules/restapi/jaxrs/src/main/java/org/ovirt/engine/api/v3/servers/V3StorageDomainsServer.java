@@ -38,16 +38,16 @@ public class V3StorageDomainsServer extends V3Server<StorageDomainsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3StorageDomain storageDomain) {
-        return adaptAdd(delegate::add, storageDomain);
+        return adaptAdd(getDelegate()::add, storageDomain);
     }
 
     @GET
     public V3StorageDomains list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StorageDomainServer getStorageDomainResource(@PathParam("id") String id) {
-        return new V3StorageDomainServer(delegate.getStorageDomainResource(id));
+        return new V3StorageDomainServer(getDelegate().getStorageDomainResource(id));
     }
 }

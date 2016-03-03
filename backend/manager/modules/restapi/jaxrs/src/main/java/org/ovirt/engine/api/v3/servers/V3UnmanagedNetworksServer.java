@@ -33,11 +33,11 @@ public class V3UnmanagedNetworksServer extends V3Server<UnmanagedNetworksResourc
 
     @GET
     public V3UnmanagedNetworks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3UnmanagedNetworkServer getUnmanagedNetworkResource(@PathParam("id") String id) {
-        return new V3UnmanagedNetworkServer(delegate.getUnmanagedNetworkResource(id));
+        return new V3UnmanagedNetworkServer(getDelegate().getUnmanagedNetworkResource(id));
     }
 }

@@ -35,17 +35,17 @@ public class V3VmCdromServer extends V3Server<VmCdromResource> {
 
     @GET
     public V3CdRom get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3CdRom update(V3CdRom cdrom) {
-        return adaptUpdate(delegate::update, cdrom);
+        return adaptUpdate(getDelegate()::update, cdrom);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

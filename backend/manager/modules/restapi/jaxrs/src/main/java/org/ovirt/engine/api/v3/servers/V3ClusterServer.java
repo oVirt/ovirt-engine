@@ -46,7 +46,7 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
 
     @GET
     public V3Cluster get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
@@ -55,7 +55,7 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
         Cluster v4Cluster = adaptIn(v3Cluster);
         assignCompatiblePolicy(v3Cluster, v4Cluster);
         try {
-            return adaptOut(delegate.update(v4Cluster));
+            return adaptOut(getDelegate().update(v4Cluster));
         }
         catch (WebApplicationException exception) {
             throw adaptException(exception);
@@ -64,7 +64,7 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -72,41 +72,41 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
     @Actionable
     @Path("resetemulatedmachine")
     public Response resetEmulatedMachine(V3Action action) {
-        return adaptAction(delegate::resetEmulatedMachine, action);
+        return adaptAction(getDelegate()::resetEmulatedMachine, action);
     }
 
     @Path("affinitygroups")
     public V3AffinityGroupsServer getAffinityGroupsResource() {
-        return new V3AffinityGroupsServer(delegate.getAffinityGroupsResource());
+        return new V3AffinityGroupsServer(getDelegate().getAffinityGroupsResource());
     }
 
     @Path("cpuprofiles")
     public V3AssignedCpuProfilesServer getCpuProfilesResource() {
-        return new V3AssignedCpuProfilesServer(delegate.getCpuProfilesResource());
+        return new V3AssignedCpuProfilesServer(getDelegate().getCpuProfilesResource());
     }
 
     @Path("networks")
     public V3AssignedNetworksServer getNetworksResource() {
-        return new V3AssignedNetworksServer(delegate.getNetworksResource());
+        return new V3AssignedNetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("glusterhooks")
     public V3GlusterHooksServer getGlusterHooksResource() {
-        return new V3GlusterHooksServer(delegate.getGlusterHooksResource());
+        return new V3GlusterHooksServer(getDelegate().getGlusterHooksResource());
     }
 
     @Path("glustervolumes")
     public V3GlusterVolumesServer getGlusterVolumesResource() {
-        return new V3GlusterVolumesServer(delegate.getGlusterVolumesResource());
+        return new V3GlusterVolumesServer(getDelegate().getGlusterVolumesResource());
     }
 
     @Path("{action: (resetemulatedmachine)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

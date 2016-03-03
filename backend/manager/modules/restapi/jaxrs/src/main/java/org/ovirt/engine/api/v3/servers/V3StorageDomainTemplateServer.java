@@ -39,7 +39,7 @@ public class V3StorageDomainTemplateServer extends V3Server<StorageDomainTemplat
 
     @GET
     public V3Template get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -47,7 +47,7 @@ public class V3StorageDomainTemplateServer extends V3Server<StorageDomainTemplat
     @Actionable
     @Path("import")
     public Response doImport(V3Action action) {
-        return adaptAction(delegate::doImport, action);
+        return adaptAction(getDelegate()::doImport, action);
     }
 
     @POST
@@ -55,21 +55,21 @@ public class V3StorageDomainTemplateServer extends V3Server<StorageDomainTemplat
     @Actionable
     @Path("register")
     public Response register(V3Action action) {
-        return adaptAction(delegate::register, action);
+        return adaptAction(getDelegate()::register, action);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("disks")
     public V3StorageDomainContentDisksServer getDisksResource() {
-        return new V3StorageDomainContentDisksServer(delegate.getDisksResource());
+        return new V3StorageDomainContentDisksServer(getDelegate().getDisksResource());
     }
 
     @Path("{action: (import|register)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

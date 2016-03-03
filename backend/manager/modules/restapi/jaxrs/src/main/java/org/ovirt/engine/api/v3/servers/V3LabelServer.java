@@ -33,11 +33,11 @@ public class V3LabelServer extends V3Server<LabelResource> {
 
     @GET
     public V3Label get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

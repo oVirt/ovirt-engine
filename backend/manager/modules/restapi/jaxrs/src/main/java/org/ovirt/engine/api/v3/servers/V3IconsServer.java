@@ -33,11 +33,11 @@ public class V3IconsServer extends V3Server<IconsResource> {
 
     @GET
     public V3Icons list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3IconServer getIconResource(@PathParam("id") String id) {
-        return new V3IconServer(delegate.getIconResource(id));
+        return new V3IconServer(getDelegate().getIconResource(id));
     }
 }

@@ -33,11 +33,11 @@ public class V3UnmanagedNetworkServer extends V3Server<UnmanagedNetworkResource>
 
     @GET
     public V3UnmanagedNetwork get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

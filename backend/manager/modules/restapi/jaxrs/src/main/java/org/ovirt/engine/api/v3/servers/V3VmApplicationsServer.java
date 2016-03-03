@@ -33,11 +33,11 @@ public class V3VmApplicationsServer extends V3Server<VmApplicationsResource> {
 
     @GET
     public V3Applications list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmApplicationServer getApplicationResource(@PathParam("id") String id) {
-        return new V3VmApplicationServer(delegate.getApplicationResource(id));
+        return new V3VmApplicationServer(getDelegate().getApplicationResource(id));
     }
 }

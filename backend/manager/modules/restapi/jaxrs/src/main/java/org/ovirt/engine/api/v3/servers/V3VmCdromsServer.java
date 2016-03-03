@@ -38,16 +38,16 @@ public class V3VmCdromsServer extends V3Server<VmCdromsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3CdRom cdrom) {
-        return adaptAdd(delegate::add, cdrom);
+        return adaptAdd(getDelegate()::add, cdrom);
     }
 
     @GET
     public V3CdRoms list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3VmCdromServer getCdromResource(@PathParam("id") String id) {
-        return new V3VmCdromServer(delegate.getCdromResource(id));
+        return new V3VmCdromServer(getDelegate().getCdromResource(id));
     }
 }

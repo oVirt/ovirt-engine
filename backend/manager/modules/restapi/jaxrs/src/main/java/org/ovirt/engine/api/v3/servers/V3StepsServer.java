@@ -38,16 +38,16 @@ public class V3StepsServer extends V3Server<StepsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Step step) {
-        return adaptAdd(delegate::add, step);
+        return adaptAdd(getDelegate()::add, step);
     }
 
     @GET
     public V3Steps list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StepServer getStepResource(@PathParam("id") String id) {
-        return new V3StepServer(delegate.getStepResource(id));
+        return new V3StepServer(getDelegate().getStepResource(id));
     }
 }

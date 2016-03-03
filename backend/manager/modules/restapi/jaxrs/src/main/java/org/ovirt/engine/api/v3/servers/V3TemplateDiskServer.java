@@ -42,7 +42,7 @@ public class V3TemplateDiskServer extends V3Server<TemplateDiskResource> {
     @Actionable
     @Path("copy")
     public Response copy(V3Action action) {
-        return adaptAction(delegate::copy, action);
+        return adaptAction(getDelegate()::copy, action);
     }
 
     @POST
@@ -50,21 +50,21 @@ public class V3TemplateDiskServer extends V3Server<TemplateDiskResource> {
     @Actionable
     @Path("export")
     public Response export(V3Action action) {
-        return adaptAction(delegate::export, action);
+        return adaptAction(getDelegate()::export, action);
     }
 
     @GET
     public V3Disk get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("{action: (copy|export)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

@@ -38,16 +38,16 @@ public class V3TemplateWatchdogsServer extends V3Server<TemplateWatchdogsResourc
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3WatchDog watchdog) {
-        return adaptAdd(delegate::add, watchdog);
+        return adaptAdd(getDelegate()::add, watchdog);
     }
 
     @GET
     public V3WatchDogs list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3TemplateWatchdogServer getWatchdogResource(@PathParam("id") String id) {
-        return new V3TemplateWatchdogServer(delegate.getWatchdogResource(id));
+        return new V3TemplateWatchdogServer(getDelegate().getWatchdogResource(id));
     }
 }

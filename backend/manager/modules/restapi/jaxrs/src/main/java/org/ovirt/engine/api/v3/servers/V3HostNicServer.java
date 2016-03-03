@@ -43,7 +43,7 @@ public class V3HostNicServer extends V3Server<HostNicResource> {
     @Actionable
     @Path("attach")
     public Response attach(V3Action action) {
-        return adaptAction(delegate::attach, action);
+        return adaptAction(getDelegate()::attach, action);
     }
 
     @POST
@@ -51,23 +51,23 @@ public class V3HostNicServer extends V3Server<HostNicResource> {
     @Actionable
     @Path("detach")
     public Response detach(V3Action action) {
-        return adaptAction(delegate::detach, action);
+        return adaptAction(getDelegate()::detach, action);
     }
 
     @GET
     public V3HostNIC get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3HostNIC update(V3HostNIC nic) {
-        return adaptUpdate(delegate::update, nic);
+        return adaptUpdate(getDelegate()::update, nic);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -75,31 +75,31 @@ public class V3HostNicServer extends V3Server<HostNicResource> {
     @Actionable
     @Path("updatevirtualfunctionsconfiguration")
     public Response updateVirtualFunctionsConfiguration(V3Action action) {
-        return adaptAction(delegate::updateVirtualFunctionsConfiguration, action);
+        return adaptAction(getDelegate()::updateVirtualFunctionsConfiguration, action);
     }
 
     @Path("labels")
     public V3LabelsServer getLabelsResource() {
-        return new V3LabelsServer(delegate.getLabelsResource());
+        return new V3LabelsServer(getDelegate().getLabelsResource());
     }
 
     @Path("networkattachments")
     public V3NetworkAttachmentsServer getNetworkAttachmentsResource() {
-        return new V3NetworkAttachmentsServer(delegate.getNetworkAttachmentsResource());
+        return new V3NetworkAttachmentsServer(getDelegate().getNetworkAttachmentsResource());
     }
 
     @Path("virtualfunctionallowedlabels")
     public V3LabelsServer getVirtualFunctionAllowedLabelsResource() {
-        return new V3LabelsServer(delegate.getVirtualFunctionAllowedLabelsResource());
+        return new V3LabelsServer(getDelegate().getVirtualFunctionAllowedLabelsResource());
     }
 
     @Path("virtualfunctionallowednetworks")
     public V3VirtualFunctionAllowedNetworksServer getVirtualFunctionAllowedNetworksResource() {
-        return new V3VirtualFunctionAllowedNetworksServer(delegate.getVirtualFunctionAllowedNetworksResource());
+        return new V3VirtualFunctionAllowedNetworksServer(getDelegate().getVirtualFunctionAllowedNetworksResource());
     }
 
     @Path("{action: (attach|detach|updatevirtualfunctionsconfiguration)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

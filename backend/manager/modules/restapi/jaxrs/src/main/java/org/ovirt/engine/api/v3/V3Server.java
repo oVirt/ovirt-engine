@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.ws.rs.WebApplicationException;
@@ -40,7 +41,7 @@ public class V3Server<DELEGATE> {
     /**
      * The reference to the V4 implementation of the service.
      */
-    protected DELEGATE delegate;
+    private DELEGATE delegate;
 
     /**
      * Creates a new V3 implementation.
@@ -48,7 +49,15 @@ public class V3Server<DELEGATE> {
      * @param delegate the reference to the V4 implementation of the service.
      */
     public V3Server(DELEGATE delegate) {
+        Objects.requireNonNull(delegate, "The delegate of a V3 server can't be null");
         this.delegate = delegate;
+    }
+
+    /**
+     * The reference to the V4 implementation of the service.
+     */
+    protected DELEGATE getDelegate() {
+        return delegate;
     }
 
     // We need to have the URI info object injected, as we need to manually inject into the V4 implementation of

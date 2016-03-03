@@ -39,11 +39,11 @@ public class V3VmGraphicsConsoleServer extends V3Server<VmGraphicsConsoleResourc
     @Actionable
     @Path("proxyticket")
     public Response proxyTicket(V3Action action) {
-        return adaptAction(delegate::proxyTicket, action);
+        return adaptAction(getDelegate()::proxyTicket, action);
     }
 
     @Path("{action: (proxyticket)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

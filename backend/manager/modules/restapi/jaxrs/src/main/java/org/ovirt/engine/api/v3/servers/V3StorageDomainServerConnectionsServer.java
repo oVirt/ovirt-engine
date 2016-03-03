@@ -38,16 +38,16 @@ public class V3StorageDomainServerConnectionsServer extends V3Server<StorageDoma
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3StorageConnection connection) {
-        return adaptAdd(delegate::add, connection);
+        return adaptAdd(getDelegate()::add, connection);
     }
 
     @GET
     public V3StorageConnections list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StorageDomainServerConnectionServer getConnectionResource(@PathParam("id") String id) {
-        return new V3StorageDomainServerConnectionServer(delegate.getConnectionResource(id));
+        return new V3StorageDomainServerConnectionServer(getDelegate().getConnectionResource(id));
     }
 }

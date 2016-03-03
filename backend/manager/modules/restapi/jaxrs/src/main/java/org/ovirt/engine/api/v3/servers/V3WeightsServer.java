@@ -38,16 +38,16 @@ public class V3WeightsServer extends V3Server<WeightsResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Weight weight) {
-        return adaptAdd(delegate::add, weight);
+        return adaptAdd(getDelegate()::add, weight);
     }
 
     @GET
     public V3Weights list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3WeightServer getWeightResource(@PathParam("id") String id) {
-        return new V3WeightServer(delegate.getWeightResource(id));
+        return new V3WeightServer(getDelegate().getWeightResource(id));
     }
 }

@@ -33,11 +33,11 @@ public class V3DomainGroupsServer extends V3Server<DomainGroupsResource> {
 
     @GET
     public V3Groups list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3DomainGroupServer getGroupResource(@PathParam("id") String id) {
-        return new V3DomainGroupServer(delegate.getGroupResource(id));
+        return new V3DomainGroupServer(getDelegate().getGroupResource(id));
     }
 }

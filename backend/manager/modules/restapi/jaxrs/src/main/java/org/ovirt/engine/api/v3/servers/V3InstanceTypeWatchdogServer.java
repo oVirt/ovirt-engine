@@ -35,17 +35,17 @@ public class V3InstanceTypeWatchdogServer extends V3Server<InstanceTypeWatchdogR
 
     @GET
     public V3WatchDog get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3WatchDog update(V3WatchDog watchdog) {
-        return adaptUpdate(delegate::update, watchdog);
+        return adaptUpdate(getDelegate()::update, watchdog);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

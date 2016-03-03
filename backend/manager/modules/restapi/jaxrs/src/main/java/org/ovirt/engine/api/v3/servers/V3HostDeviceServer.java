@@ -31,6 +31,6 @@ public class V3HostDeviceServer extends V3Server<HostDeviceResource> {
 
     @GET
     public V3HostDevice get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

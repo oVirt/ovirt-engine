@@ -33,11 +33,11 @@ public class V3ImagesServer extends V3Server<ImagesResource> {
 
     @GET
     public V3Images list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3ImageServer getImageResource(@PathParam("id") String id) {
-        return new V3ImageServer(delegate.getImageResource(id));
+        return new V3ImageServer(getDelegate().getImageResource(id));
     }
 }

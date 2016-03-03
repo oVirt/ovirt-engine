@@ -33,11 +33,11 @@ public class V3ExternalProviderCertificatesServer extends V3Server<ExternalProvi
 
     @GET
     public V3Certificates list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3ExternalProviderCertificateServer getCertificateResource(@PathParam("id") String id) {
-        return new V3ExternalProviderCertificateServer(delegate.getCertificateResource(id));
+        return new V3ExternalProviderCertificateServer(getDelegate().getCertificateResource(id));
     }
 }

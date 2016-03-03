@@ -39,7 +39,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
 
     @GET
     public V3GlusterVolume get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -47,7 +47,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("getprofilestatistics")
     public Response getProfileStatistics(V3Action action) {
-        return adaptAction(delegate::getProfileStatistics, action);
+        return adaptAction(getDelegate()::getProfileStatistics, action);
     }
 
     @POST
@@ -55,12 +55,12 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("rebalance")
     public Response rebalance(V3Action action) {
-        return adaptAction(delegate::rebalance, action);
+        return adaptAction(getDelegate()::rebalance, action);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -68,7 +68,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("resetalloptions")
     public Response resetAllOptions(V3Action action) {
-        return adaptAction(delegate::resetAllOptions, action);
+        return adaptAction(getDelegate()::resetAllOptions, action);
     }
 
     @POST
@@ -76,7 +76,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("resetoption")
     public Response resetOption(V3Action action) {
-        return adaptAction(delegate::resetOption, action);
+        return adaptAction(getDelegate()::resetOption, action);
     }
 
     @POST
@@ -84,7 +84,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("setoption")
     public Response setOption(V3Action action) {
-        return adaptAction(delegate::setOption, action);
+        return adaptAction(getDelegate()::setOption, action);
     }
 
     @POST
@@ -92,7 +92,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("start")
     public Response start(V3Action action) {
-        return adaptAction(delegate::start, action);
+        return adaptAction(getDelegate()::start, action);
     }
 
     @POST
@@ -100,7 +100,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("startprofile")
     public Response startProfile(V3Action action) {
-        return adaptAction(delegate::startProfile, action);
+        return adaptAction(getDelegate()::startProfile, action);
     }
 
     @POST
@@ -108,7 +108,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("stop")
     public Response stop(V3Action action) {
-        return adaptAction(delegate::stop, action);
+        return adaptAction(getDelegate()::stop, action);
     }
 
     @POST
@@ -116,7 +116,7 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("stopprofile")
     public Response stopProfile(V3Action action) {
-        return adaptAction(delegate::stopProfile, action);
+        return adaptAction(getDelegate()::stopProfile, action);
     }
 
     @POST
@@ -124,16 +124,16 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
     @Actionable
     @Path("stoprebalance")
     public Response stopRebalance(V3Action action) {
-        return adaptAction(delegate::stopRebalance, action);
+        return adaptAction(getDelegate()::stopRebalance, action);
     }
 
     @Path("glusterbricks")
     public V3GlusterBricksServer getGlusterBricksResource() {
-        return new V3GlusterBricksServer(delegate.getGlusterBricksResource());
+        return new V3GlusterBricksServer(getDelegate().getGlusterBricksResource());
     }
 
     @Path("{action: (getprofilestatistics|rebalance|resetalloptions|resetoption|setoption|start|startprofile|stop|stopprofile|stoprebalance)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

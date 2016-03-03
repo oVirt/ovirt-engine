@@ -38,16 +38,16 @@ public class V3InstanceTypesServer extends V3Server<InstanceTypesResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3InstanceType instanceType) {
-        return adaptAdd(delegate::add, instanceType);
+        return adaptAdd(getDelegate()::add, instanceType);
     }
 
     @GET
     public V3InstanceTypes list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3InstanceTypeServer getInstanceTypeResource(@PathParam("id") String id) {
-        return new V3InstanceTypeServer(delegate.getInstanceTypeResource(id));
+        return new V3InstanceTypeServer(getDelegate().getInstanceTypeResource(id));
     }
 }

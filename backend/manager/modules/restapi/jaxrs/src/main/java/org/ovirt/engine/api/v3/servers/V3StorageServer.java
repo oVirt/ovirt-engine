@@ -31,6 +31,6 @@ public class V3StorageServer extends V3Server<StorageResource> {
 
     @GET
     public V3HostStorage get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

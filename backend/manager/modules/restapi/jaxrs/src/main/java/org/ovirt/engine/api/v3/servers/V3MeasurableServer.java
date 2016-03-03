@@ -30,6 +30,6 @@ public class V3MeasurableServer extends V3Server<MeasurableResource> {
 
     @Path("statistics")
     public V3StatisticsServer getStatisticsResource() {
-        return new V3StatisticsServer(delegate.getStatisticsResource());
+        return new V3StatisticsServer(getDelegate().getStatisticsResource());
     }
 }

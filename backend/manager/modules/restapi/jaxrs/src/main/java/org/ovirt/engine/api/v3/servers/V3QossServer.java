@@ -38,16 +38,16 @@ public class V3QossServer extends V3Server<QossResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3QoS qos) {
-        return adaptAdd(delegate::add, qos);
+        return adaptAdd(getDelegate()::add, qos);
     }
 
     @GET
     public V3QoSs list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3QosServer getQosResource(@PathParam("id") String id) {
-        return new V3QosServer(delegate.getQosResource(id));
+        return new V3QosServer(getDelegate().getQosResource(id));
     }
 }

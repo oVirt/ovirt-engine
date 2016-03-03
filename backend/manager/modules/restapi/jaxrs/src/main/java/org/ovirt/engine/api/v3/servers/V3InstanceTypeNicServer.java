@@ -35,17 +35,17 @@ public class V3InstanceTypeNicServer extends V3Server<InstanceTypeNicResource> {
 
     @GET
     public V3NIC get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3NIC update(V3NIC nic) {
-        return adaptUpdate(delegate::update, nic);
+        return adaptUpdate(getDelegate()::update, nic);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

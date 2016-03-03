@@ -38,16 +38,16 @@ public class V3NetworksServer extends V3Server<NetworksResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3Network network) {
-        return adaptAdd(delegate::add, network);
+        return adaptAdd(getDelegate()::add, network);
     }
 
     @GET
     public V3Networks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3NetworkServer getNetworkResource(@PathParam("id") String id) {
-        return new V3NetworkServer(delegate.getNetworkResource(id));
+        return new V3NetworkServer(getDelegate().getNetworkResource(id));
     }
 }

@@ -33,11 +33,11 @@ public class V3HostStorageServer extends V3Server<HostStorageResource> {
 
     @GET
     public V3HostStorage list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StorageServer getStorageResource(@PathParam("id") String id) {
-        return new V3StorageServer(delegate.getStorageResource(id));
+        return new V3StorageServer(getDelegate().getStorageResource(id));
     }
 }

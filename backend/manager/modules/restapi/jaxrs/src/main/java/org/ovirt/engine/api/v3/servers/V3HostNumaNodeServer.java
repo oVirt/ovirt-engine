@@ -31,6 +31,6 @@ public class V3HostNumaNodeServer extends V3Server<HostNumaNodeResource> {
 
     @GET
     public V3NumaNode get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

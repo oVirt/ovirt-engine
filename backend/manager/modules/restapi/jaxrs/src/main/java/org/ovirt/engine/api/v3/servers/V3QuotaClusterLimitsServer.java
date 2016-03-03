@@ -38,16 +38,16 @@ public class V3QuotaClusterLimitsServer extends V3Server<QuotaClusterLimitsResou
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3QuotaClusterLimit limit) {
-        return adaptAdd(delegate::add, limit);
+        return adaptAdd(getDelegate()::add, limit);
     }
 
     @GET
     public V3QuotaClusterLimits list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3QuotaClusterLimitServer getLimitResource(@PathParam("id") String id) {
-        return new V3QuotaClusterLimitServer(delegate.getLimitResource(id));
+        return new V3QuotaClusterLimitServer(getDelegate().getLimitResource(id));
     }
 }

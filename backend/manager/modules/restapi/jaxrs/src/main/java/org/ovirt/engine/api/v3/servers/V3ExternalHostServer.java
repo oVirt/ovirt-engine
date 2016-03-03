@@ -31,6 +31,6 @@ public class V3ExternalHostServer extends V3Server<ExternalHostResource> {
 
     @GET
     public V3ExternalHost get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

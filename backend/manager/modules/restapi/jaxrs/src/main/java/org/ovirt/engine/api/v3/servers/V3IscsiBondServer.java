@@ -36,27 +36,27 @@ public class V3IscsiBondServer extends V3Server<IscsiBondResource> {
 
     @GET
     public V3IscsiBond get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3IscsiBond update(V3IscsiBond bond) {
-        return adaptUpdate(delegate::update, bond);
+        return adaptUpdate(getDelegate()::update, bond);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("networks")
     public V3NetworksServer getNetworksResource() {
-        return new V3NetworksServer(delegate.getNetworksResource());
+        return new V3NetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("storageserverconnections")
     public V3StorageServerConnectionsServer getStorageServerConnectionsResource() {
-        return new V3StorageServerConnectionsServer(delegate.getStorageServerConnectionsResource());
+        return new V3StorageServerConnectionsServer(getDelegate().getStorageServerConnectionsResource());
     }
 }

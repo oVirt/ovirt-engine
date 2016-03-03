@@ -31,6 +31,6 @@ public class V3SnapshotCdromServer extends V3Server<SnapshotCdromResource> {
 
     @GET
     public V3CdRom get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

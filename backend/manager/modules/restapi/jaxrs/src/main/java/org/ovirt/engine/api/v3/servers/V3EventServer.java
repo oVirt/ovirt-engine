@@ -33,11 +33,11 @@ public class V3EventServer extends V3Server<EventResource> {
 
     @GET
     public V3Event get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

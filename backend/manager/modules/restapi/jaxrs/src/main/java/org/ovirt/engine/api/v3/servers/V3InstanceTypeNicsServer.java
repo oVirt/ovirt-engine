@@ -38,16 +38,16 @@ public class V3InstanceTypeNicsServer extends V3Server<InstanceTypeNicsResource>
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3NIC nic) {
-        return adaptAdd(delegate::add, nic);
+        return adaptAdd(getDelegate()::add, nic);
     }
 
     @GET
     public V3Nics list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3InstanceTypeNicServer getNicResource(@PathParam("id") String id) {
-        return new V3InstanceTypeNicServer(delegate.getNicResource(id));
+        return new V3InstanceTypeNicServer(getDelegate().getNicResource(id));
     }
 }

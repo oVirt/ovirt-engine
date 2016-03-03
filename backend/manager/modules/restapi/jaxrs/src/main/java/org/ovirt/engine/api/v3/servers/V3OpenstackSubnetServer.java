@@ -33,11 +33,11 @@ public class V3OpenstackSubnetServer extends V3Server<OpenstackSubnetResource> {
 
     @GET
     public V3OpenStackSubnet get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

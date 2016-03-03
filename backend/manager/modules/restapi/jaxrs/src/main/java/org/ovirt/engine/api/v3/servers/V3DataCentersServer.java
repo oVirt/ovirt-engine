@@ -38,16 +38,16 @@ public class V3DataCentersServer extends V3Server<DataCentersResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3DataCenter dataCenter) {
-        return adaptAdd(delegate::add, dataCenter);
+        return adaptAdd(getDelegate()::add, dataCenter);
     }
 
     @GET
     public V3DataCenters list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3DataCenterServer getDataCenterResource(@PathParam("id") String id) {
-        return new V3DataCenterServer(delegate.getDataCenterResource(id));
+        return new V3DataCenterServer(getDelegate().getDataCenterResource(id));
     }
 }

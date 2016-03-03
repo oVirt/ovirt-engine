@@ -42,7 +42,7 @@ public class V3GlusterHookServer extends V3Server<GlusterHookResource> {
     @Actionable
     @Path("disable")
     public Response disable(V3Action action) {
-        return adaptAction(delegate::disable, action);
+        return adaptAction(getDelegate()::disable, action);
     }
 
     @POST
@@ -50,17 +50,17 @@ public class V3GlusterHookServer extends V3Server<GlusterHookResource> {
     @Actionable
     @Path("enable")
     public Response enable(V3Action action) {
-        return adaptAction(delegate::enable, action);
+        return adaptAction(getDelegate()::enable, action);
     }
 
     @GET
     public V3GlusterHook get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @POST
@@ -68,11 +68,11 @@ public class V3GlusterHookServer extends V3Server<GlusterHookResource> {
     @Actionable
     @Path("resolve")
     public Response resolve(V3Action action) {
-        return adaptAction(delegate::resolve, action);
+        return adaptAction(getDelegate()::resolve, action);
     }
 
     @Path("{action: (disable|enable|resolve)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

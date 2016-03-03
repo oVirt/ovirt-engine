@@ -33,11 +33,11 @@ public class V3VirtualFunctionAllowedNetworkServer extends V3Server<VirtualFunct
 
     @GET
     public V3Network get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

@@ -33,11 +33,11 @@ public class V3HostHooksServer extends V3Server<HostHooksResource> {
 
     @GET
     public V3Hooks list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3HostHookServer getHookResource(@PathParam("id") String id) {
-        return new V3HostHookServer(delegate.getHookResource(id));
+        return new V3HostHookServer(getDelegate().getHookResource(id));
     }
 }

@@ -31,6 +31,6 @@ public class V3DomainUserServer extends V3Server<DomainUserResource> {
 
     @GET
     public V3User get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

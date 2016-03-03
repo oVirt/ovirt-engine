@@ -38,7 +38,7 @@ public class V3OpenstackImageServer extends V3Server<OpenstackImageResource> {
 
     @GET
     public V3OpenStackImage get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
@@ -46,11 +46,11 @@ public class V3OpenstackImageServer extends V3Server<OpenstackImageResource> {
     @Actionable
     @Path("import")
     public Response doImport(V3Action action) {
-        return adaptAction(delegate::doImport, action);
+        return adaptAction(getDelegate()::doImport, action);
     }
 
     @Path("{action: (import)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }

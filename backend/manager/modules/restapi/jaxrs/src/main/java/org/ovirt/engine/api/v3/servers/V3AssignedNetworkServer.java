@@ -35,17 +35,17 @@ public class V3AssignedNetworkServer extends V3Server<AssignedNetworkResource> {
 
     @GET
     public V3Network get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Network update(V3Network network) {
-        return adaptUpdate(delegate::update, network);
+        return adaptUpdate(getDelegate()::update, network);
     }
 }

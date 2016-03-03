@@ -36,32 +36,32 @@ public class V3SchedulingPolicyServer extends V3Server<SchedulingPolicyResource>
 
     @GET
     public V3SchedulingPolicy get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3SchedulingPolicy update(V3SchedulingPolicy policy) {
-        return adaptUpdate(delegate::update, policy);
+        return adaptUpdate(getDelegate()::update, policy);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("filters")
     public V3FiltersServer getFiltersResource() {
-        return new V3FiltersServer(delegate.getFiltersResource());
+        return new V3FiltersServer(getDelegate().getFiltersResource());
     }
 
     @Path("weights")
     public V3WeightsServer getWeightsResource() {
-        return new V3WeightsServer(delegate.getWeightsResource());
+        return new V3WeightsServer(getDelegate().getWeightsResource());
     }
 
     @Path("balances")
     public V3BalancesServer getBalancesResource() {
-        return new V3BalancesServer(delegate.getBalancesResource());
+        return new V3BalancesServer(getDelegate().getBalancesResource());
     }
 }

@@ -35,17 +35,17 @@ public class V3FenceAgentServer extends V3Server<FenceAgentResource> {
 
     @GET
     public V3Agent get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Agent update(V3Agent agent) {
-        return adaptUpdate(delegate::update, agent);
+        return adaptUpdate(getDelegate()::update, agent);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 }

@@ -33,11 +33,11 @@ public class V3SchedulingPolicyUnitsServer extends V3Server<SchedulingPolicyUnit
 
     @GET
     public V3SchedulingPolicyUnits list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3SchedulingPolicyUnitServer getUnitResource(@PathParam("id") String id) {
-        return new V3SchedulingPolicyUnitServer(delegate.getUnitResource(id));
+        return new V3SchedulingPolicyUnitServer(getDelegate().getUnitResource(id));
     }
 }

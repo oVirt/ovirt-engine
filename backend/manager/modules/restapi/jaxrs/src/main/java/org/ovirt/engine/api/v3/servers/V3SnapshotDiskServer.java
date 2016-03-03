@@ -31,6 +31,6 @@ public class V3SnapshotDiskServer extends V3Server<SnapshotDiskResource> {
 
     @GET
     public V3Disk get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 }

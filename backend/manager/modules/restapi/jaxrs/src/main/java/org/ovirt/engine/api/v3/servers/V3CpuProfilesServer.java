@@ -38,16 +38,16 @@ public class V3CpuProfilesServer extends V3Server<CpuProfilesResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     public Response add(V3CpuProfile profile) {
-        return adaptAdd(delegate::add, profile);
+        return adaptAdd(getDelegate()::add, profile);
     }
 
     @GET
     public V3CpuProfiles list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3CpuProfileServer getProfileResource(@PathParam("id") String id) {
-        return new V3CpuProfileServer(delegate.getProfileResource(id));
+        return new V3CpuProfileServer(getDelegate().getProfileResource(id));
     }
 }

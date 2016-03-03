@@ -33,11 +33,11 @@ public class V3StatisticsServer extends V3Server<StatisticsResource> {
 
     @GET
     public V3Statistics list() {
-        return adaptList(delegate::list);
+        return adaptList(getDelegate()::list);
     }
 
     @Path("{id}")
     public V3StatisticServer getStatisticResource(@PathParam("id") String id) {
-        return new V3StatisticServer(delegate.getStatisticResource(id));
+        return new V3StatisticServer(getDelegate().getStatisticResource(id));
     }
 }

@@ -43,62 +43,62 @@ public class V3TemplateServer extends V3Server<TemplateResource> {
     @Actionable
     @Path("export")
     public Response export(V3Action action) {
-        return adaptAction(delegate::export, action);
+        return adaptAction(getDelegate()::export, action);
     }
 
     @GET
     public V3Template get() {
-        return adaptGet(delegate::get);
+        return adaptGet(getDelegate()::get);
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3Template update(V3Template template) {
-        return adaptUpdate(delegate::update, template);
+        return adaptUpdate(getDelegate()::update, template);
     }
 
     @DELETE
     public Response remove() {
-        return adaptRemove(delegate::remove);
+        return adaptRemove(getDelegate()::remove);
     }
 
     @Path("permissions")
     public V3AssignedPermissionsServer getPermissionsResource() {
-        return new V3AssignedPermissionsServer(delegate.getPermissionsResource());
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("tags")
     public V3AssignedTagsServer getTagsResource() {
-        return new V3AssignedTagsServer(delegate.getTagsResource());
+        return new V3AssignedTagsServer(getDelegate().getTagsResource());
     }
 
     @Path("graphicsconsoles")
     public V3GraphicsConsolesServer getGraphicsConsolesResource() {
-        return new V3GraphicsConsolesServer(delegate.getGraphicsConsolesResource());
+        return new V3GraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
     }
 
     @Path("cdroms")
     public V3TemplateCdromsServer getCdromsResource() {
-        return new V3TemplateCdromsServer(delegate.getCdromsResource());
+        return new V3TemplateCdromsServer(getDelegate().getCdromsResource());
     }
 
     @Path("disks")
     public V3TemplateDisksServer getDisksResource() {
-        return new V3TemplateDisksServer(delegate.getDisksResource());
+        return new V3TemplateDisksServer(getDelegate().getDisksResource());
     }
 
     @Path("nics")
     public V3TemplateNicsServer getNicsResource() {
-        return new V3TemplateNicsServer(delegate.getNicsResource());
+        return new V3TemplateNicsServer(getDelegate().getNicsResource());
     }
 
     @Path("watchdogs")
     public V3TemplateWatchdogsServer getWatchdogsResource() {
-        return new V3TemplateWatchdogsServer(delegate.getWatchdogsResource());
+        return new V3TemplateWatchdogsServer(getDelegate().getWatchdogsResource());
     }
 
     @Path("{action: (export)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
-        return new V3ActionServer(delegate.getActionResource(action, oid));
+        return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
 }
