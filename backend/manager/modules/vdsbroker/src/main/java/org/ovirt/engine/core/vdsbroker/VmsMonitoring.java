@@ -554,6 +554,10 @@ public class VmsMonitoring {
 
             Guid deviceId = getDeviceId(device);
             VmDevice vmDevice = deviceMap.get(new VmDeviceId(deviceId, vmId));
+            if (vmDevice == null) {
+                vmDevice = getByDeviceType((String) device.get(VdsProperties.Device), deviceMap);
+                deviceId = vmDevice != null ? vmDevice.getDeviceId() : deviceId;
+            }
             String logicalName = null;
             if (deviceId != null && FeatureSupported.reportedDisksLogicalNames(getVdsManager().getGroupCompatibilityVersion()) &&
                     VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))) {
@@ -580,6 +584,23 @@ public class VmsMonitoring {
         }
 
         handleRemovedDevices(vmId, processedDevices, devices);
+    }
+
+    /**
+     * Some of the devices need special treatment:
+     * virtio-serial: this device was unmanaged before 3.6 and since 3.6 it is managed.
+     * if the VM is running while the engine is upgraded we might still get it as unmanaged
+     * from VDSM and since we generate IDs for unmanaged devices, we won't be able to find
+     * it by its ID. therefore, we check by its type, assuming that there is only one
+     * virtio-serial per VM.
+     *
+     */
+    private VmDevice getByDeviceType(String deviceTypeName, Map<?, VmDevice> dbDevices) {
+        if (VmDeviceType.VIRTIOSERIAL.getName().equals(deviceTypeName)) {
+            return VmDeviceCommonUtils.findVmDeviceByType(dbDevices, deviceTypeName);
+        }
+
+        return null;
     }
 
     private String getDeviceLogicalName(Map<?, ?> diskMapping, Guid deviceId) {

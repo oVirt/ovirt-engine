@@ -392,7 +392,7 @@ public class VmDeviceCommonUtils {
      * @param type
      * @return
      */
-    public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
+    public static VmDevice findVmDeviceByType(Map<?, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
         return findVmDeviceByType(vmManagedDeviceMap, type.getName());
     }
 
@@ -403,7 +403,7 @@ public class VmDeviceCommonUtils {
      * @param typeName
      * @return
      */
-    public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, String typeName) {
+    public static VmDevice findVmDeviceByType(Map<?, VmDevice> vmManagedDeviceMap, String typeName) {
         for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
             if (vmDevice.getDevice().equals(typeName)) {
                 return vmDevice;
