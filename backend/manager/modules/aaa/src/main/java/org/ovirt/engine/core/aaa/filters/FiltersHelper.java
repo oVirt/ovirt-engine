@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HeaderElement;
+import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.message.BasicHeaderValueParser;
 import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.common.constants.SessionConstants;
@@ -115,6 +116,10 @@ public class FiltersHelper {
         byte[] s = new byte[8];
         secureRandom.nextBytes(s);
         return new Base64(0, new byte[0], true).encodeToString(s);
+    }
+
+    public static String getRedirectUriServerName(String name) {
+        return InetAddressUtils.isIPv6Address(name) ? String.format("[%s]", name) : name;
     }
 
     public static Map<String, Object> getPayloadForAuthCode(

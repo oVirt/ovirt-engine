@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 public class WelcomeUtils {
@@ -48,7 +49,7 @@ public class WelcomeUtils {
 
     public static String getOauth2CallbackUrl(HttpServletRequest request) {
         return String.format(OAUTH_CALLBACK_URL_FORMAT, request.getScheme(),
-                request.getServerName(),
+                FiltersHelper.getRedirectUriServerName(request.getServerName()),
                 request.getServerPort(),
                 EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_URI));
     }

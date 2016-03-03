@@ -80,6 +80,33 @@ public class FiltersHelperTest {
     }
 
     /**
+     * Check address gets resolved to ipv6 address properly
+     */
+    @Test
+    public void testGetRedirectUriServerName() {
+        String address = "fe80::56ee:75ff:fe5c:6cc7";
+        assertEquals(String.format("[%s]", address), FiltersHelper.getRedirectUriServerName(address));
+    }
+
+    /**
+     * Check localhost resolves to correct Redirect Uri Server Name
+     */
+    @Test
+    public void testLocalHostGetRedirectUriServerName() {
+        String address = "localhost";
+        assertEquals(address, FiltersHelper.getRedirectUriServerName(address));
+    }
+
+    /**
+     * Check ip address resolves to correct Redirect Uri Server Name
+     */
+    @Test
+    public void testIpGetRedirectUriServerName() {
+        String address = "192.168.1.134";
+        assertEquals(address, FiltersHelper.getRedirectUriServerName(address));
+    }
+
+    /**
      * This method constructs a mocked HTTP request, populates it with values for the {@code Prefer} header, and then
      * calls the method that checks if persistent authentication is enabled. It is intended to simplify other tests.
      *

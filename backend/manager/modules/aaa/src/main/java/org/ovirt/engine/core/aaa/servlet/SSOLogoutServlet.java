@@ -73,7 +73,7 @@ public class SSOLogoutServlet extends HttpServlet {
             log.error("Unable to logout user: {}", error);
         }
         String url = String.format("%s://%s:%s%s/oauth2-callback", request.getScheme(),
-                request.getServerName(),
+                FiltersHelper.getRedirectUriServerName(request.getServerName()),
                 request.getServerPort(),
                 EngineLocalConfig.getInstance().getProperty("ENGINE_URI"));
         String redirectUri = new URLBuilder(url)

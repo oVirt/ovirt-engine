@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.aaa.SSOUtils;
+import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
@@ -38,7 +39,11 @@ public class SSOLoginServlet extends HttpServlet {
         String scope = String.format("ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=%s",
                 EngineLocalConfig.getInstance().getProperty(authSequencePriorityPropertyName));
         request.getSession(true).setAttribute("app_url", request.getParameter("app_url"));
-        String redirectUri = String.format("%s://%s:%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), postActionUrl);
+        String redirectUri = String.format("%s://%s:%s%s",
+                request.getScheme(),
+                FiltersHelper.getRedirectUriServerName(request.getServerName()),
+                request.getServerPort(),
+                postActionUrl);
 
         response.sendRedirect(new URLBuilder(EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_AUTH_URL"), "/oauth/authorize")
                 .addParameter("client_id", EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_CLIENT_ID"))

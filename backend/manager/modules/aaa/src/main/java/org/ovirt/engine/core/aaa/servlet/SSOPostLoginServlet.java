@@ -119,7 +119,7 @@ public class SSOPostLoginServlet extends HttpServlet {
             log.error(ex.getMessage());
             log.debug("User login failure", ex);
             String url = String.format("%s://%s:%s%s/", request.getScheme(),
-                    request.getServerName(),
+                    FiltersHelper.getRedirectUriServerName(request.getServerName()),
                     request.getServerPort(),
                     EngineLocalConfig.getInstance().getProperty("ENGINE_URI"));
             response.sendRedirect(new URLBuilder(url)
