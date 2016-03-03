@@ -192,6 +192,14 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div id=\"{0}\" style='text-align: center;'>{1}</div>")
     SafeHtml hostAdditionalStatusIcon(String id, SafeHtml statusImage);
 
+    @Template("<p>Maximum bandwidth of both outgoing and incoming migrations per Host.</p>"
+            + "<p><b>Auto</b> Bandwidth is copied from Migration Host Network QoS > Rate Limit if it exists. Otherwise "
+            + "it is computed as minimum of link speeds of sending and receiving network interfaces if link speeds are "
+            + "available. Otherwise it behaves as\"VDSM\" option.</p>"
+            + "<p><b>Hypervisor default</b> Bandwidth is controlled by local VDSM setting on sending Host.</p>"
+            + "<p><b>Custom</b> User defined.</p>")
+    SafeHtml migrationBandwidthLimit();
+
     @Template("{0} {1} {2}")
     SafeHtml hostOutOfSyncPreviewSentence(SafeHtml host, SafeHtml outOfsyncSentence, SafeHtml dc);
 }

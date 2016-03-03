@@ -3494,6 +3494,31 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.SpiceFileTransferToggleSupported, version);
     }
 
+    public boolean isMigrationPoliciesSupported(Version clusterVersion) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.MigrationPoliciesSupported, clusterVersion.toString());
+    }
+
+    public List<String> getMigrationPoliciesSupportedVersions() {
+        return getSupportedVersions(ConfigurationValues.MigrationPoliciesSupported);
+    }
+
+    private List<String> getSupportedVersions(ConfigurationValues option) {
+        List<String> versions = new ArrayList<>();
+        for (Entry<KeyValuePairCompat<ConfigurationValues, String>, Object> entry :
+                cachedConfigValuesPreConvert.entrySet()) {
+            if (entry.getKey().getKey() == option && (Boolean) entry.getValue()) {
+                versions.add(entry.getKey().getValue());
+            }
+        }
+        /* because if there is no special value for 'general' version in db then a record for 'general' is added with
+         * value based on ConfigValues > @DefaultValueAttribute
+         */
+        if (versions.size() > 1 && versions.contains(GENERAL)) {
+            versions.remove(GENERAL);
+        }
+        return versions;
+    }
+
     public List<IStorageModel> getDataStorageModels() {
         ArrayList<IStorageModel> models = new ArrayList<>();
         models.addAll(getFileDataStorageModels());

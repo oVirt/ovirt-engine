@@ -382,4 +382,10 @@ public interface Enums extends LocalizedEnums {
     String OpenstackNetworkProviderProperties$BrokerType___RABBIT_MQ();
 
     String LibvirtSecretUsageType___CEPH();
+
+    String MigrationBandwidthLimitType___AUTO();
+
+    String MigrationBandwidthLimitType___VDSM_CONFIG();
+
+    String MigrationBandwidthLimitType___CUSTOM();
 }

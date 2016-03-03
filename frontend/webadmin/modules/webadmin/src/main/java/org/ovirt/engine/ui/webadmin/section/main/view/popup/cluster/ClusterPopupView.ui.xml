@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-    xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
-    xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
-    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+             xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
+             xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+    <ui:with field='templates' type='org.ovirt.engine.ui.webadmin.ApplicationTemplates' />
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView.WidgetStyle">
         .generalTabTopDecorator {
@@ -42,11 +44,11 @@
             margin: 10px 5px;
         }
 
-        .fingerprintLabel textarea{
+        .fingerprintLabel textarea {
             height: 35px;
         }
 
-        .editorContentWidget{
+        .editorContentWidget {
             width: 350px;
             margin-top: 10px;
         }
@@ -116,7 +118,7 @@
         }
 
         .container {
-            width: 100%;
+            width: auto;
         }
 
         .floatLeft {
@@ -139,8 +141,27 @@
             width: 32px;
         }
 
-        .groupHeaderRow {
+        .groupTitle {
+            font-weight: bold;
+            padding-top: 10px;
+            padding-bottom: 5px;
+        }
+
+        .firstRow {
             padding-top: 15px;
+        }
+
+        .narrowGutters {
+            margin-left: -4px;
+            margin-right: -4px;
+        }
+
+        /* http://arnique.net/web-design/58/a-quick-guide-to-changing-bootstraps-gutter-width/ */
+        @external .col-sm-6;
+
+        .narrowGutters .col-sm-6 {
+            padding-left: 4px;
+            padding-right: 4px;
         }
 
         .panelInfo {
@@ -160,10 +181,10 @@
                     <t:DialogTab ui:field="generalTab" label="{constants.clusterPopupGeneralTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
-                                <b:Row ui:field="dataCenterRow" addStyleNames="{style.groupHeaderRow} {style.generalTabTopDecorator}">
+                                <b:Row ui:field="dataCenterRow" addStyleNames="{style.firstRow} {style.generalTabTopDecorator}">
                                     <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.clusterPopupDataCenterLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
-                                <b:Row addStyleNames="{style.groupHeaderRow}">
+                                <b:Row addStyleNames="{style.firstRow}">
                                     <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.clusterPopupNameLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                                 <b:Row>
@@ -240,7 +261,7 @@
                     <t:DialogTab ui:field="optimizationTab" label="{constants.clusterPopupOptimizationTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.groupHeaderRow}">
+                                <b:Row addStyleNames="{style.firstRow}">
                                     <b:Column size="LG_12">
                                         <g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.floatLeft}" text="{constants.clusterPopupMemoryOptimizationPanelTitle}" />
                                         <d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo}" />
@@ -278,7 +299,28 @@
                     <t:DialogTab ui:field="migrationTab" label="{constants.clusterPopupMigrationTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.groupHeaderRow}">
+                                <b:Row addStyleNames="{style.firstRow}">
+                                    <b:Column size="LG_12">
+                                        <g:Label text="{constants.clusterPopupBandwidthLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_6" >
+                                        <l:LabelWithTooltip text="{constants.clusterPopupMigrationBandwidthLimit}" forWidget="{migrationBandwidthLimitTypeEditor}" />
+                                        <d:InfoIcon text="{templates.migrationBandwidthLimit}" addStyleNames="{style.panelInfo}" tooltipPlacement="AUTO"/>
+                                    </b:Column>
+                                    <b:Column size="LG_6" >
+                                        <b:Row addStyleNames="{style.narrowGutters}">
+                                            <b:Column size="SM_6" >
+                                                <ge:BootstrapListBoxListModelEditor ui:field="migrationBandwidthLimitTypeEditor" />
+                                            </b:Column>
+                                            <b:Column size="SM_6" >
+                                                <ge:IntegerEntityModelEditor ui:field="customMigrationBandwidthLimitEditor" />
+                                            </b:Column>
+                                        </b:Row>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.groupTitle}">
                                     <b:Column size="LG_12">
                                         <g:Label text="{constants.clusterPopupResiliencePolicyLabel}" />
                                     </b:Column>
@@ -298,7 +340,7 @@
                     <t:DialogTab ui:field="clusterPolicyTab" label="{constants.clusterPopupClusterPolicyTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.groupHeaderRow}">
+                                <b:Row addStyleNames="{style.firstRow}">
                                     <e:ListModelListBoxEditor ui:field="clusterPolicyEditor" label="{constants.clusterPolicySelectPolicyLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                                 <b:Row>

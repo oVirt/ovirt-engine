@@ -125,4 +125,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("This Browser version isn''t optimal for displaying the application graphics (refer to <a href=\"{0}\">Documentation</a> for details)")
     String browserNotSupported(String supportedBrowserDocumentationUrl);
 
+    @DefaultMessage("Only available in compatibility version(s): {0}")
+    String onlyAvailableInCompatibilityVersions(String versions);
 }

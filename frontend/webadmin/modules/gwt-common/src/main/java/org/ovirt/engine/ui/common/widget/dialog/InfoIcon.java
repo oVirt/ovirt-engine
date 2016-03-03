@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
+import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
@@ -50,6 +51,10 @@ public class InfoIcon extends FocusPanel {
     public void setText(SafeHtml text) {
         setTooltipText(text.asString());
         tooltip.reconfigure();
+    }
+
+    public void setTooltipPlacement(Placement placement) {
+        tooltip.setPlacement(placement);
     }
 
     private void setTooltipText(String text) {

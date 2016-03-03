@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -54,6 +55,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotNullIntegerValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -807,6 +809,26 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.migrateCompressed = migrateCompressed;
     }
 
+    private EntityModel<Integer> customMigrationNetworkBandwidth;
+
+    public EntityModel<Integer> getCustomMigrationNetworkBandwidth() {
+        return customMigrationNetworkBandwidth;
+    }
+
+    public void setCustomMigrationNetworkBandwidth(EntityModel<Integer> customMigrationNetworkBandwidth) {
+        this.customMigrationNetworkBandwidth = customMigrationNetworkBandwidth;
+    }
+
+    public ListModel<MigrationBandwidthLimitType> migrationBandwidthLimitType;
+
+    public ListModel<MigrationBandwidthLimitType> getMigrationBandwidthLimitType() {
+        return migrationBandwidthLimitType;
+    }
+
+    public void setMigrationBandwidthLimitType(ListModel<MigrationBandwidthLimitType> migrationBandwidthLimitType) {
+        this.migrationBandwidthLimitType = migrationBandwidthLimitType;
+    }
+
     public ClusterModel() {
         super();
         ListModel<KsmPolicyForNuma> ksmPolicyForNumaSelection = new ListModel<>();
@@ -1244,6 +1266,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                                         }));
                     }
                 }));
+        setCustomMigrationNetworkBandwidth(new EntityModel<Integer>());
+        setMigrationBandwidthLimitType(new ListModel<MigrationBandwidthLimitType>());
     }
 
     boolean isClusterDetached() {
@@ -1999,8 +2023,22 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 && getSerialNumberPolicy().getCustomSerialNumber().getIsValid()
                 && isFingerprintVerified()) : true);
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
+
+        if (getVersion().getSelectedItem() != null) {
+            if (AsyncDataProvider.getInstance().isMigrationPoliciesSupported(getVersion().getSelectedItem())
+                    && MigrationBandwidthLimitType.CUSTOM.equals(getMigrationBandwidthLimitType().getSelectedItem())) {
+                getCustomMigrationNetworkBandwidth().validateEntity(
+                        new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
+            } else {
+                getCustomMigrationNetworkBandwidth().setIsValid(true);
+            }
+        }
+        final boolean migrationTabValid =
+                getMigrationBandwidthLimitType().getIsValid() && getCustomMigrationNetworkBandwidth().getIsValid();
+        setValidTab(TabName.MIGRATION_TAB, migrationTabValid);
+
         ValidationCompleteEvent.fire(getEventBus(), this);
-        return generalTabValid && getCustomPropertySheet().getIsValid() && getSpiceProxy().getIsValid();
+        return generalTabValid && getCustomPropertySheet().getIsValid() && getSpiceProxy().getIsValid() && migrationTabValid;
     }
 
     public void validateName() {

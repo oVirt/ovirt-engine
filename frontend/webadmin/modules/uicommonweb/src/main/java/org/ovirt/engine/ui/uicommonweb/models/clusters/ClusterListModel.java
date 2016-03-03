@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
+import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -287,6 +289,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         clusterModel.setHelpTag(HelpTag.new_cluster);
         clusterModel.setHashName("new_cluster"); //$NON-NLS-1$
         clusterModel.setIsNew(true);
+        clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
+        clusterModel.getMigrationBandwidthLimitType().setSelectedItem(MigrationBandwidthLimitType.DEFAULT);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -358,6 +362,11 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
         clusterModel.getGlusterTunedProfile().setSelectedItem(cluster.getGlusterTunedProfile());
         clusterModel.getGlusterTunedProfile().setIsChangeable(cluster.getGroupHostsAndVms().getHosts() == 0);
+        clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
+        clusterModel.getMigrationBandwidthLimitType().setSelectedItem(cluster.getMigrationBandwidthLimitType() != null
+                ? cluster.getMigrationBandwidthLimitType()
+                : MigrationBandwidthLimitType.DEFAULT);
+        clusterModel.getCustomMigrationNetworkBandwidth().setEntity(cluster.getCustomMigrationNetworkBandwidth());
 
         if (cluster.supportsTrustedService()) {
             clusterModel.getEnableGlusterService().setIsChangeable(false);
@@ -705,6 +714,11 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         if (Boolean.TRUE.equals(model.getRngHwrngSourceRequired().getEntity())) {
             cluster.getRequiredRngSources().add(VmRngDevice.Source.HWRNG);
         }
+        cluster.setMigrationBandwidthLimitType(model.getMigrationBandwidthLimitType().getSelectedItem());
+        cluster.setCustomMigrationNetworkBandwidth(
+                MigrationBandwidthLimitType.CUSTOM.equals(model.getMigrationBandwidthLimitType().getSelectedItem())
+                ? model.getCustomMigrationNetworkBandwidth().getEntity()
+                : null);
 
         return cluster;
     }

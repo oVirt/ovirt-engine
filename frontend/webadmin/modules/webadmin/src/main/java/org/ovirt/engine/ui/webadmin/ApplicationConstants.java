@@ -942,6 +942,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Resilience Policy")
     String clusterPopupResiliencePolicyLabel();
 
+    @DefaultStringValue("Bandwidth")
+    String clusterPopupBandwidthLabel();
+
     @DefaultStringValue("Scheduling Policy")
     String clusterPopupClusterPolicyTabLabel();
 
@@ -953,6 +956,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Do Not Migrate Virtual Machines")
     String clusterPopupMigrateOnError_NoLabel();
+
+    @DefaultStringValue("Migration speed")
+    String clusterPopupMigrationSpeed();
+
+    @DefaultStringValue("Number of concurrent migrations per Host")
+    String clusterPopupNumberOfConcurrentMigrationsPerHost();
+
+    @DefaultStringValue("Migration bandwidth limit (Mbps)")
+    String clusterPopupMigrationBandwidthLimit();
 
     @DefaultStringValue("Override the default SPICE proxy value")
     String clusterSpiceProxyInfo();

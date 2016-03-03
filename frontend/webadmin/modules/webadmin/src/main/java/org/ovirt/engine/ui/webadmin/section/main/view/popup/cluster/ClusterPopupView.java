@@ -6,6 +6,7 @@ import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -17,6 +18,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
@@ -26,9 +28,11 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelCheckBoxGroup;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.BootstrapListBoxListModelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -289,6 +293,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "migrateOnErrorOption_NO.entity")
     @WithElementId
     EntityModelRadioButtonEditor migrateOnErrorOption_NOEditor;
+
+    @UiField(provided = true)
+    @Path(value = "migrationBandwidthLimitType.selectedItem")
+    @WithElementId
+    BootstrapListBoxListModelEditor<MigrationBandwidthLimitType> migrationBandwidthLimitTypeEditor;
+
+    @UiField
+    @Path(value = "customMigrationNetworkBandwidth.entity")
+    @WithElementId
+    IntegerEntityModelEditor customMigrationBandwidthLimitEditor;
 
     @UiField
     @WithElementId
@@ -558,6 +572,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromGlobal()));
 
         customPropertiesSheetEditor = new KeyValueWidget<>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
+        migrationBandwidthLimitTypeEditor = new BootstrapListBoxListModelEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
     }
 
     private void initCheckBoxEditors() {
@@ -806,5 +821,15 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     private void initAdditionalFeaturesExpander() {
         additionalFeaturesExpander.initWithContent(additionalFeaturesExpanderContent.getElement());
+    }
+
+    @Override
+    public HasEnabledWithHints getMigrationBandwidthLimitTypeEditor() {
+        return migrationBandwidthLimitTypeEditor;
+    }
+
+    @Override
+    public HasEnabledWithHints getCustomMigrationBandwidthLimitEditor() {
+        return customMigrationBandwidthLimitEditor;
     }
 }
