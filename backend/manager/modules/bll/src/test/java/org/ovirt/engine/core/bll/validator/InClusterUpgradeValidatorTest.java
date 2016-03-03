@@ -5,11 +5,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
-import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_CPUS_PINNED;
-import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_NEEDS_PASSTHROUGH;
-import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_NOT_MIGRATABLE;
-import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_NUMA_PINNED;
-import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_SUSPENDED;
 import static org.ovirt.engine.core.common.businessentities.MigrationSupport.PINNED_TO_HOST;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -69,8 +64,7 @@ public class InClusterUpgradeValidatorTest {
         validVM = newVM();
         oldHost = newHost("RHEV Hypervisor - 6.1 - 1.el6");
         newHost1 = newHost("RHEL - 7.2 - 1.el7");
-        newHost2 = newHost("RHEL - 7.2 - 1.el7");
-    }
+        newHost2 = newHost("RHEL - 7.2 - 1.el7"); }
 
     @Test
     public void shouldDetectUpgradeInProgress() {
@@ -111,19 +105,22 @@ public class InClusterUpgradeValidatorTest {
     @Test
     public void shouldDetectNonMigratableVMs() {
         invalidVM.setMigrationSupport(PINNED_TO_HOST);
-        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_NOT_MIGRATABLE);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
+                EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_NOT_MIGRATABLE.name());
     }
 
     @Test
     public void shouldDetectCpuPinning() {
         invalidVM.setCpuPinning("i am pinned");
-        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_CPUS_PINNED);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
+                EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_CPUS_PINNED.name());
     }
 
     @Test
     public void shouldDetectNumaPinning() {
         invalidVM.setvNumaNodeList(Arrays.asList(createVmNumaNode(1, Arrays.asList(createVdsNumaNode(1)))));
-        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_NUMA_PINNED);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
+                EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_NUMA_PINNED.name());
     }
 
     @Test
@@ -135,13 +132,15 @@ public class InClusterUpgradeValidatorTest {
     @Test
     public void shouldDetectSuspendedVM() {
         invalidVM.setStatus(VMStatus.Suspended);
-        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_SUSPENDED);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
+                EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_SUSPENDED.name());
     }
 
     @Test
     public void shouldDetectPassThroughDeviceOnVM() {
         when(hostDeviceManager.checkVmNeedsDirectPassthrough(any(VM.class))).thenReturn(true);
-        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_NEEDS_PASSTHROUGH);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
+                EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_NEEDS_PASSTHROUGH.name());
     }
 
     @Test
@@ -160,7 +159,7 @@ public class InClusterUpgradeValidatorTest {
     }
 
     @Test
-    public void shouldCreateNiceJsonValidationResult() throws IOException {
+    public void shouldCreateNiceValidationResult() throws IOException {
         invalidVM.setCpuPinning("i am pinned");
         invalidVM.setDedicatedVmForVdsList(Guid.newGuid());
         invalidVM.setMigrationSupport(PINNED_TO_HOST);
@@ -168,9 +167,10 @@ public class InClusterUpgradeValidatorTest {
         newHost1.setHostOs("invalid os");
         ValidationResult validationResult = validator.isUpgradePossible(Arrays.asList(newHost1),
                 Arrays.asList(invalidVM));
-
-        assertThat(validationResult.getVariableReplacements().get(0))
-                .contains("VM_CPUS_PINNED", "VM_NOT_MIGRATABLE", "HOST_INVALID_OS");
+        assertThat(validationResult.getVariableReplacements()).contains(
+                "CLUSTER_UPGRADE_DETAIL_HOST_INVALID_OS",
+                "CLUSTER_UPGRADE_DETAIL_VM_CPUS_PINNED",
+                "CLUSTER_UPGRADE_DETAIL_VM_NOT_MIGRATABLE");
     }
 
     @Test

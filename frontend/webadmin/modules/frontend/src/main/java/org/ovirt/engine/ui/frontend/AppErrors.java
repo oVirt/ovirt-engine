@@ -649,10 +649,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Sub Version of selected template (${subVersionId}) is being concurrently removed. Please wait and try again later.")
     String ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED();
 
-    @DefaultStringValue("${json}")
+    @DefaultStringValue("Can not stop cluster upgrade mode, see below for details:")
     String CLUSTER_UPGRADE_NOT_FINISHED();
 
-    @DefaultStringValue("${json}")
+    @DefaultStringValue("Can not start cluster upgrade mode, see below for details:")
     String CLUSTER_UPGRADE_CAN_NOT_BE_STARTED();
 
     @DefaultStringValue("The set cluster compatibility version does not allow mixed major host OS versions. Can not start the cluster upgrade.")
@@ -661,8 +661,29 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot suspend VM. Cluster is in upgrade mode.")
     String VM_CANNOT_SUSPEND_CLUSTER_UPGRADING();
 
-    @DefaultStringValue("Cannot bind VM to specific hosts while cluster is in upgrade mode. Reason: ${json}")
+    @DefaultStringValue("Cannot bind VM to specific hosts while cluster is in upgrade mode. See below for details:")
     String BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER();
+
+    @DefaultStringValue("Host ${hostName} with id ${hostId} has no valid OS descriptor.")
+    String CLUSTER_UPGRADE_DETAIL_HOST_INVALID_OS();
+
+    @DefaultStringValue("Host ${hostName} with id ${hostId} runs a too old OS.")
+    String CLUSTER_UPGRADE_DETAIL_HOST_RUNS_TOO_OLD_OS();
+
+    @DefaultStringValue("VM ${vmName} with id ${vmId} is configured to be not migratable.")
+    String CLUSTER_UPGRADE_DETAIL_VM_NOT_MIGRATABLE();
+
+    @DefaultStringValue("VM ${vmName} with id ${vmId} has pinned CPUs.")
+    String CLUSTER_UPGRADE_DETAIL_VM_CPUS_PINNED();
+
+    @DefaultStringValue("VM ${vmName} with id ${vmId} has pinned NUMA nodes.")
+    String CLUSTER_UPGRADE_DETAIL_VM_NUMA_PINNED();
+
+    @DefaultStringValue("VM ${vmName} with id ${vmId} requires specific host devices.")
+    String CLUSTER_UPGRADE_DETAIL_VM_NEEDS_PASSTHROUGH();
+
+    @DefaultStringValue("VM ${vmName} with id ${vmId} is suspended.")
+    String CLUSTER_UPGRADE_DETAIL_VM_SUSPENDED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
