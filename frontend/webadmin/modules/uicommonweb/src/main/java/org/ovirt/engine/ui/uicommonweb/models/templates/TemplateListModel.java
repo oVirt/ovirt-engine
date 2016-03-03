@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -886,5 +887,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     @Override
     protected void sendWarningForNonExportableDisks(VmTemplate entity) {
         // no op
+    }
+
+    @Override
+    protected void setupNewVmModel(UnitVmModel model,
+            VmType vmType,
+            SystemTreeItemModel systemTreeItemModel,
+            List<UICommand> uiCommands) {
+        super.setupNewVmModel(model, vmType, systemTreeItemModel, uiCommands);
+        model.getProvisioning().setEntity(vmType == VmType.Server);
     }
 }
