@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -458,6 +459,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             result.setSucceeded(false);
         }
         else {
+            if (!runAsInternal) {
+                logExecution(parameters.getSessionId(), String.format("command %s", actionType));
+            }
             CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, context);
             result = runAction(command, runAsInternal);
         }
@@ -525,8 +529,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             String sessionId = parameters.getSessionId();
             if (StringUtils.isEmpty(sessionId)
                     || SessionDataContainer.getInstance().getUser(sessionId, parameters.getRefresh()) == null) {
+                log.debug("Unable to execute query {} as no user session was found", actionType);
                 return getErrorQueryReturnValue(EngineMessage.USER_IS_NOT_LOGGED_IN);
             }
+            logExecution(sessionId,
+                    String.format("query %s with isFiltered : %s", actionType, parameters.isFiltered()));
         }
         Class<CommandBase<? extends VdcActionParametersBase>> clazz =
                 CommandsFactory.getQueryClass(actionType.name());
@@ -710,6 +717,13 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         dbFacade.populateDwhOsInfo(osRepository.getOsNames());
+    }
+
+    private void logExecution(String sessionId, String details) {
+        DbUser user = SessionDataContainer.getInstance().getUser(sessionId, false);
+        log.debug("Executing {}{}",
+                details,
+                user == null ? "." : String.format(" for user %s@%s.", user.getLoginName(), user.getDomain()));
     }
 
    @Override
