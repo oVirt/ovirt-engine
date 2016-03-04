@@ -129,23 +129,6 @@ public class HostNetworkAttachmentsPersisterTest {
             interfaceWithoutAttachedNetwork);
     }
 
-    private HostNetworkAttachmentsPersister createLegacyPersister(List<NetworkAttachment> userNetworkAttachments) {
-        return createLegacyPersister(userNetworkAttachments,
-                interfaceWithAttachedClusterNetworkA,
-                interfaceWithoutAttachedNetwork);
-    }
-
-    private HostNetworkAttachmentsPersister createLegacyPersister(List<NetworkAttachment> userNetworkAttachments,
-            VdsNetworkInterface... vdsNetworkInterfaces) {
-        return new HostNetworkAttachmentsPersister(
-            networkAttachmentDao,
-            hostId,
-            new ArrayList<>(Arrays.asList(vdsNetworkInterfaces)),
-            customPropertiesForNics,
-            userNetworkAttachments,
-            clusterNetworks);
-    }
-
     private HostNetworkAttachmentsPersister createPersister(List<NetworkAttachment> userNetworkAttachments,
             VdsNetworkInterface ... hostInterfaces) {
         return new HostNetworkAttachmentsPersister(
@@ -203,39 +186,6 @@ public class HostNetworkAttachmentsPersisterTest {
 
         callPersistNetworkAttachmentsAndVerifyThatNetworkAttachmentIsSynced(networkAttachmentForClusterNetworkA,
                 createPersister(Collections.<NetworkAttachment> emptyList()));
-    }
-
-    @Test
-    public void testPersistNetworkAttachmentsWhenIpConfigurationChanged() throws Exception {
-        NetworkAttachment networkAttachmentForClusterNetworkA = createNetworkAttachment(clusterNetworkA);
-        networkAttachmentForClusterNetworkA.setNicId(interfaceWithAttachedClusterNetworkA.getId());
-
-
-        //make network attachment out of sync, by changing ip configuration
-        IpConfiguration ipConfiguration =
-                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
-        ipConfiguration.getPrimaryAddress().setAddress("192.168.1.11");
-        networkAttachmentForClusterNetworkA.setIpConfiguration(ipConfiguration);
-        networkAttachmentForClusterNetworkA.setProperties(customPropertiesForNics
-                .getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
-
-        callPersistNetworkAttachmentsAndVerifyThatNetworkAttachmentIsSynced(networkAttachmentForClusterNetworkA,
-                createLegacyPersister(Collections.<NetworkAttachment> emptyList()));
-    }
-
-    @Test
-    public void testPersistNetworkAttachmentsWhenCustomPropertiesChanged() throws Exception {
-        NetworkAttachment networkAttachmentForClusterNetworkA = createNetworkAttachment(clusterNetworkA);
-
-        IpConfiguration ipConfiguration =
-                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
-        networkAttachmentForClusterNetworkA.setIpConfiguration(ipConfiguration);
-
-        //make network attachment out of sync, by changing custom properties
-        networkAttachmentForClusterNetworkA.setProperties(new HashMap<>());
-
-        callPersistNetworkAttachmentsAndVerifyThatNetworkAttachmentIsSynced(networkAttachmentForClusterNetworkA,
-                createLegacyPersister(Collections.<NetworkAttachment> emptyList()));
     }
 
     @Test
@@ -452,36 +402,6 @@ public class HostNetworkAttachmentsPersisterTest {
         assertThat(attachmentBeingPersisted.getNetworkId(), is(clusterNetworkA.getId()));
         assertThat(attachmentBeingPersisted.getNicId(), is(interfaceWithAttachedClusterNetworkA.getId()));
         assertThat(attachmentBeingPersisted.getId(), notNullValue());
-
-        assertIpConfiguration(attachmentBeingPersisted.getIpConfiguration());
-
-        // verify that nothing else happens, namely, interfaceWithoutAttachedNetwork will not trigger persisting any data.
-        verifyNoMoreInteractions(networkAttachmentDao);
-    }
-
-    @Test
-    public void testPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNicWhenUsedLegacyPersister() {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
-
-        createLegacyPersister(Collections.<NetworkAttachment>emptyList(), interfaceWithAttachedClusterNetworkA)
-                .persistNetworkAttachments();
-
-        assertPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNic();
-    }
-
-    private void assertPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNic() {
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
-
-        ArgumentCaptor<NetworkAttachment> networkAttachmentCaptor = ArgumentCaptor.forClass(NetworkAttachment.class);
-        verify(networkAttachmentDao).save(networkAttachmentCaptor.capture());
-
-        NetworkAttachment attachmentBeingPersisted = networkAttachmentCaptor.getValue();
-        assertThat(attachmentBeingPersisted.getNetworkId(), is(clusterNetworkA.getId()));
-        assertThat(attachmentBeingPersisted.getNicId(), is(interfaceWithAttachedClusterNetworkA.getId()));
-        assertThat(attachmentBeingPersisted.getId(), notNullValue());
-
-        Map<String, String> propertiesBeingPersisted = attachmentBeingPersisted.getProperties();
-        assertCustomProperties(propertiesBeingPersisted, createCustomProperties());
 
         assertIpConfiguration(attachmentBeingPersisted.getIpConfiguration());
 
