@@ -618,7 +618,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private Map<String, UserOverriddenNicValues> applyUserConfiguredNics() {
-        List<VdsNetworkInterface> nicsToConfigure = getNicsToConfigureWithoutLabelsUpdates();
+        List<VdsNetworkInterface> nicsToConfigure = getExistingInterfacesAndNewlyCreatedBonds();
 
         updateLabelsOnNicsToConfigure(nicsToConfigure);
 
@@ -649,7 +649,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private void updateAddedModifiedLabelsOnNics(Map<String, VdsNetworkInterface> nicsToConfigureByName) {
-        Map<String, VdsNetworkInterface> labelToExistingNic = getLabelToNic(nicsToConfigureByName);
+        Map<String, VdsNetworkInterface> labelToExistingNic = getLabelToNic(nicsToConfigureByName.values());
         for (NicLabel nicLabel : getParameters().getLabels()) {
             VdsNetworkInterface currentLabelNic = labelToExistingNic.get(nicLabel.getLabel());
             VdsNetworkInterface newLabelNic = nicsToConfigureByName.get(nicLabel.getNicName());
@@ -687,20 +687,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
     }
 
-    private Map<String, VdsNetworkInterface> getLabelToNic(Map<String, VdsNetworkInterface> nicsToConfigureByName) {
-        Map<String, VdsNetworkInterface> labelToExistingNic = new HashMap<>();
-        for (VdsNetworkInterface nic : nicsToConfigureByName.values()) {
-            if (NetworkUtils.isLabeled(nic)) {
-                for (String label : nic.getLabels()) {
-                    labelToExistingNic.put(label, nic);
-                }
-            }
-        }
-
-        return labelToExistingNic;
-    }
-
-    private List<VdsNetworkInterface> getNicsToConfigureWithoutLabelsUpdates() {
+    private List<VdsNetworkInterface> getExistingInterfacesAndNewlyCreatedBonds() {
         List<VdsNetworkInterface> nicsToConfigure = new ArrayList<>();
 
         nicsToConfigure.addAll(interfaceDao.getAllInterfacesForVds(getVdsId()));
@@ -718,7 +705,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private Map<String, VdsNetworkInterface> getLabelToNic(Collection<VdsNetworkInterface> nics) {
         Map<String, VdsNetworkInterface> labelToNic = new HashMap<>();
         for (VdsNetworkInterface nic : nics) {
-            if (nic.getLabels() != null) {
+            if (NetworkUtils.isLabeled(nic)) {
                 for (String label : nic.getLabels()) {
                     labelToNic.put(label, nic);
                 }
