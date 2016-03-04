@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -431,8 +430,8 @@ public class UpdateClusterCommandTest {
         cpuFlagsNotMissing();
         allQueriesForVms();
         clusterHasVds();
-        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
-        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
+        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.emptySet());
+        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.emptySet());
         validateFailedWithReason(EngineMessage.CLUSTER_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
     }
 
@@ -445,8 +444,8 @@ public class UpdateClusterCommandTest {
         cpuFlagsNotMissing();
         allQueriesForVms();
         clusterHasVds();
-        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.EMPTY_SET);
-        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(new HashSet(Arrays.asList("TEST_FEATURE")));
+        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.emptySet());
+        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.singleton("TEST_FEATURE"));
         assertTrue(cmd.validate());
     }
 
