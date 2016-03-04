@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 public enum FutureVDSCommandType {
-    // Replaced by HostSetupNetworks
-    @Deprecated
-    SetupNetworks,
     Poll,
     TimeBoundPoll,
     HostSetupNetworks;
