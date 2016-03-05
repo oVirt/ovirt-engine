@@ -15,7 +15,7 @@ public class InstanceTypeMapper extends VmBaseMapper {
             org.ovirt.engine.core.common.businessentities.InstanceType incoming) {
 
         VmTemplate entity = incoming != null ? (VmTemplate) incoming : new VmTemplate();
-        mapCommonModelToEntity((VmTemplate) incoming, model);
+        mapCommonModelToEntity(entity, model);
         return entity;
     }
 
