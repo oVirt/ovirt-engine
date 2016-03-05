@@ -167,11 +167,20 @@ public class RsdlManager {
     }
 
     private static MetaData loadMetaData() throws IOException {
-        // Load the metadata file:
-        InputStream stream = RsdlManager.class.getResourceAsStream(METADATA_FILE_NAME);
+        try (InputStream in = RsdlManager.class.getResourceAsStream(METADATA_FILE_NAME)) {
+            if (in == null) {
+                throw new IOException("Can't find metadata from resource \"" + METADATA_FILE_NAME + "\"");
+            }
+            return loadMetaData(in);
+        }
+    }
+
+    private static MetaData loadMetaData(InputStream in) throws IOException {
         Constructor constructor = new CustomClassLoaderConstructor(Thread.currentThread().getContextClassLoader());
-        MetaData metaData = (MetaData) new Yaml(constructor).load(stream);
-        stream.close();
+        MetaData metaData = (MetaData) new Yaml(constructor).load(in);
+        if (metaData == null) {
+            throw new IOException("Can't load metadata from input stream");
+        }
 
         // Make sure that the loaded metadata contains default values:
         assignDefaults(metaData);
