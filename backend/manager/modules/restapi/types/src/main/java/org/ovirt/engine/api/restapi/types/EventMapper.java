@@ -89,7 +89,10 @@ public class EventMapper {
     @Mapping(from = Event.class, to = AuditLog.class)
     public static AuditLog map(Event event, AuditLog entity) {
         AuditLog auditLog = (entity != null) ? entity : new AuditLog();
-        auditLog.setSeverity(map(event.getSeverity(), null));
+        AuditLogSeverity severity = map(event.getSeverity(), null);
+        if (severity != null) {
+            auditLog.setSeverity(severity);
+        }
         auditLog.setLogTime(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
                 : new Date(Calendar.getInstance().getTimeInMillis()));
         auditLog.setMessage(event.getDescription());
