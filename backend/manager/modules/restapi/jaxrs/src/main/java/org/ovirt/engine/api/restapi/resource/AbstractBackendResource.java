@@ -255,8 +255,11 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     }
 
     protected R linkSubResource(R model, String subResource, String oid) {
-        String href = String.join("/", LinkHelper.getPath(model), oid, subResource);
-        addOrUpdateLink(model, subResource, href);
+        String path = LinkHelper.getPath(model);
+        if (path != null) {
+            String href = String.join("/", path, oid, subResource);
+            addOrUpdateLink(model, subResource, href);
+        }
         return model;
     }
 
@@ -264,10 +267,13 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         if (subCollections != null) {
             for (String relation : subCollections) {
                 if(!shouldExclude(relation, subCollectionMembersToExclude)) {
-                    String href = String.join("/", LinkHelper.getPath(model, suggestedParent), relation);
-                    addOrUpdateLink(model, relation, href);
+                    String path = LinkHelper.getPath(model, suggestedParent);
+                    if (path != null) {
+                        String href = String.join("/", path, relation);
+                        addOrUpdateLink(model, relation, href);
+                    }
                 }
-                else{
+                else {
                     removeIfExist(model, relation);
                 }
             }

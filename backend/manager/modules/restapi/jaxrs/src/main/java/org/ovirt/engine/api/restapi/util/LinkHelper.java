@@ -857,7 +857,7 @@ public class LinkHelper {
      * {@code /ovirt-engine/api/vms/{vm:id}/tags/{tag:id}}.
      *
      * @param object the object
-     * @return the path for the object
+     * @return the path for the object, or {@code null} if the path can't be determined
      */
     public static String getPath(BaseResource object) {
         return getPath(object, null);
@@ -868,7 +868,7 @@ public class LinkHelper {
      *
      * @param object the object
      * @param suggestedParentType the suggested parent type
-     * @return the path for the object
+     * @return the path for the object, or {@code null} if the path can't be determined
      */
     public static String getPath(BaseResource object, Class<? extends BaseResource> suggestedParentType) {
         Collection collection = getCollection(object, suggestedParentType);
@@ -878,8 +878,17 @@ public class LinkHelper {
 
         if (collection.getParentType() != NO_PARENT) {
             BaseResource parent = getParentModel(object, collection.getParentType());
+            if (parent == null) {
+                return null;
+            }
             Collection parentCollection = getCollection(parent, suggestedParentType);
+            if (parentCollection == null) {
+                return null;
+            }
             String parentPath = getPath(parent);
+            if (parentPath == null) {
+                return null;
+            }
             String relativePath = getRelativePath(collection.getCollectionType(), parentCollection.getResourceType());
             return String.join("/", parentPath, relativePath, object.getId());
         }
@@ -932,10 +941,12 @@ public class LinkHelper {
      */
     private static void setActions(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
         Collection collection = getCollection(model);
-        String path = getPath(model, suggestedParentType);
-        if (path != null) {
-            ActionsBuilder actionsBuilder = new ActionsBuilder(path, collection.getResourceType());
-            model.setActions(actionsBuilder.build());
+        if (collection != null) {
+            String path = getPath(model, suggestedParentType);
+            if (path != null) {
+                ActionsBuilder actionsBuilder = new ActionsBuilder(path, collection.getResourceType());
+                model.setActions(actionsBuilder.build());
+            }
         }
     }
 
