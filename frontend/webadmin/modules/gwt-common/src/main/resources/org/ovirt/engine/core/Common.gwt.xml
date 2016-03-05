@@ -79,6 +79,7 @@
         <include name="common/businessentities/network/VmInterfaceType.java" />
         <include name="common/businessentities/network/VdsInterfaceType.java" />
         <include name="common/businessentities/network/VmNetworkInterface.java" />
+        <include name="common/vdscommands/UserOverriddenNicValues.java" />
         <include name="common/businessentities/network/VmNetworkStatistics.java" />
         <include name="common/businessentities/network/VdsNetworkStatistics.java" />
         <include name="common/businessentities/network/VnicProfileView.java" />

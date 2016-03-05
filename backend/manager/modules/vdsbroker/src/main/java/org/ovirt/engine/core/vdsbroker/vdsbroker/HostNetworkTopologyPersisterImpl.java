@@ -262,8 +262,11 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
             List<Network> clusterNetworks,
             UserConfiguredNetworkData userConfiguredData) {
 
-        final HostNetworkInterfacesPersister networkInterfacesPersister =
-                new HostNetworkInterfacesPersisterImpl(interfaceDao, host.getInterfaces(), dbNics, userConfiguredData);
+        final HostNetworkInterfacesPersister networkInterfacesPersister = new HostNetworkInterfacesPersisterImpl(
+                interfaceDao,
+                host.getInterfaces(),
+                dbNics,
+                userConfiguredData.getUserOverriddenNicValuesByNicName());
 
         networkInterfacesPersister.persistTopology();
 

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.validation.annotation.Mask;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameOfVdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelFormat;
+import org.ovirt.engine.core.common.vdscommands.UserOverriddenNicValues;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -398,6 +399,12 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      */
     public void overrideEngineManagedAttributes(VdsNetworkInterface sourceNic) {
         setLabels(sourceNic.getLabels());
+    }
+
+    public void overrideEngineManagedAttributes(UserOverriddenNicValues userOverriddenNicValues) {
+        if (userOverriddenNicValues != null) {
+            setLabels(userOverriddenNicValues.getLabels());
+        }
     }
 
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {

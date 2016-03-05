@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +9,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
+import org.ovirt.engine.core.common.vdscommands.UserOverriddenNicValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
@@ -18,17 +20,17 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
     private final Map<String, VdsNetworkInterface> reportedNicsByNames;
     private final List<VdsNetworkInterface> dbNics;
     private List<VdsNetworkInterface> nicsForUpdate;
-    private final Map<String, VdsNetworkInterface> userConfiguredNicsByName;
+    private final Map<String, UserOverriddenNicValues> userOverriddenNicValuesByNicName;
 
     public HostNetworkInterfacesPersisterImpl(InterfaceDao interfaceDao,
             List<VdsNetworkInterface> reportedNics,
             List<VdsNetworkInterface> dbNics,
-            UserConfiguredNetworkData userConfiguredData) {
+            Map<String, UserOverriddenNicValues> userOverriddenNicValuesByNicName) {
         this.interfaceDao = interfaceDao;
         this.reportedNics = reportedNics;
         this.reportedNicsByNames = Entities.entitiesByName(reportedNics);
         this.dbNics = dbNics;
-        this.userConfiguredNicsByName = Entities.entitiesByName(userConfiguredData.getNics());
+        this.userOverriddenNicValuesByNicName = userOverriddenNicValuesByNicName;
     }
 
     @Override
@@ -71,10 +73,14 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
 
     private List<VdsNetworkInterface> prepareNicsForCreate() {
         List<VdsNetworkInterface> nicsForCreate = new ArrayList<>();
-        Set<String> nicsNamesForUpdate = Entities.objectNames(getNicsForUpdate());
+        // nics for update contains (altered) subset of reportedNics, those related to existing dbNics, so if some
+        // reported nic is not present there, it must be reported nic to create.
+        List<VdsNetworkInterface> nicsForUpdate = getNicsForUpdate();
+
+        Set<String> nicsNamesForUpdate = Entities.objectNames(nicsForUpdate);
         for (VdsNetworkInterface reportedNic : reportedNics) {
             if (!nicsNamesForUpdate.contains(reportedNic.getName())) {
-                overrideNicWithUserConfiguration(reportedNic, userConfiguredNicsByName);
+                overrideNicWithUserConfiguration(reportedNic);
                 nicsForCreate.add(reportedNic);
             }
         }
@@ -82,33 +88,47 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
         return nicsForCreate;
     }
 
+    /**
+     * @return subset of reportedNics, only nics with corresponding db record(dbNic) are returned. Each such reported
+     * nic is altered: id is overridden to one of corresponding db record
+     */
     private List<VdsNetworkInterface> prepareNicsForUpdate() {
-        List<VdsNetworkInterface> nicsForUpdate = new ArrayList<>();
-
-        for (VdsNetworkInterface dbNic : dbNics) {
-            if (reportedNicsByNames.containsKey(dbNic.getName())) {
-                VdsNetworkInterface reportedNic = reportedNicsByNames.get(dbNic.getName());
-                reportedNic.setId(dbNic.getId());
-                if (!overrideNicWithUserConfiguration(reportedNic, userConfiguredNicsByName)) {
-                    reportedNic.overrideEngineManagedAttributes(dbNic);
-                }
-
-                nicsForUpdate.add(reportedNic);
-            }
-        }
-
-        return nicsForUpdate;
+        return dbNics.stream()
+                .filter(dbNic -> reportedNicsByNames.containsKey(dbNic.getName()))
+                .map(this::mapDbNicToNicForUpdate)
+                .filter(e -> e != null)
+                .collect(toList());
     }
 
-    private boolean overrideNicWithUserConfiguration(VdsNetworkInterface nicForOverride,
-            Map<String, VdsNetworkInterface> userConfiguredNicsByName) {
-        if (userConfiguredNicsByName.containsKey(nicForOverride.getName())) {
-            VdsNetworkInterface nic = userConfiguredNicsByName.get(nicForOverride.getName());
-            nicForOverride.overrideEngineManagedAttributes(nic);
-            return true;
+    /**
+     * @param dbNic dbNic used to find reportedNic.
+     * @return reportedNic of same name as dbNic has, with id taken from dbNic, and with user configuration taken
+     * from userOverriddenNicValuesByNicName if it exist or from db nic.
+     */
+    private VdsNetworkInterface mapDbNicToNicForUpdate(VdsNetworkInterface dbNic) {
+        String nicName = dbNic.getName();
+
+        if (!reportedNicsByNames.containsKey(nicName)) {
+            return null;
         }
 
-        return false;
+        VdsNetworkInterface reportedNic = reportedNicsByNames.get(nicName);
+        boolean hasUserOverridingValues = userOverriddenNicValuesByNicName.containsKey(nicName);
+
+        reportedNic.setId(dbNic.getId());
+
+        if (hasUserOverridingValues) {
+            overrideNicWithUserConfiguration(reportedNic);
+        } else {
+            reportedNic.overrideEngineManagedAttributes(dbNic);
+        }
+
+        return reportedNic;
+    }
+
+    private void overrideNicWithUserConfiguration(VdsNetworkInterface nicWithValuesToBeOverridden) {
+        String nicName = nicWithValuesToBeOverridden.getName();
+        nicWithValuesToBeOverridden.overrideEngineManagedAttributes(userOverriddenNicValuesByNicName.get(nicName));
     }
 
     private List<VdsNetworkInterface> getNicsForUpdate() {

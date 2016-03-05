@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.groups.Default;
@@ -68,6 +69,7 @@ import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
+import org.ovirt.engine.core.common.vdscommands.UserOverriddenNicValues;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -615,12 +617,14 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return Boolean.TRUE.equals(attachedNic.getBonded());
     }
 
-    private List<VdsNetworkInterface> applyUserConfiguredNics() {
+    private Map<String, UserOverriddenNicValues> applyUserConfiguredNics() {
         List<VdsNetworkInterface> nicsToConfigure = getNicsToConfigureWithoutLabelsUpdates();
 
         updateLabelsOnNicsToConfigure(nicsToConfigure);
 
-        return nicsToConfigure;
+        return nicsToConfigure.stream()
+                .collect(Collectors.toMap(VdsNetworkInterface::getName,
+                        nic -> new UserOverriddenNicValues(nic.getLabels())));
     }
 
     private void updateLabelsOnNicsToConfigure(List<VdsNetworkInterface> nicsToConfigure) {
