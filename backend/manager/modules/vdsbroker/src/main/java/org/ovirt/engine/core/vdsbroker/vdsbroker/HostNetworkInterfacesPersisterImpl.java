@@ -79,8 +79,9 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
 
         Set<String> nicsNamesForUpdate = Entities.objectNames(nicsForUpdate);
         for (VdsNetworkInterface reportedNic : reportedNics) {
-            if (!nicsNamesForUpdate.contains(reportedNic.getName())) {
-                overrideNicWithUserConfiguration(reportedNic);
+            String nicName = reportedNic.getName();
+            if (!nicsNamesForUpdate.contains(nicName)) {
+                reportedNic.overrideEngineManagedAttributes(userOverriddenNicValuesByNicName.get(nicName));
                 nicsForCreate.add(reportedNic);
             }
         }
@@ -96,7 +97,6 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
         return dbNics.stream()
                 .filter(dbNic -> reportedNicsByNames.containsKey(dbNic.getName()))
                 .map(this::mapDbNicToNicForUpdate)
-                .filter(e -> e != null)
                 .collect(toList());
     }
 
@@ -108,27 +108,18 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
     private VdsNetworkInterface mapDbNicToNicForUpdate(VdsNetworkInterface dbNic) {
         String nicName = dbNic.getName();
 
-        if (!reportedNicsByNames.containsKey(nicName)) {
-            return null;
-        }
-
         VdsNetworkInterface reportedNic = reportedNicsByNames.get(nicName);
         boolean hasUserOverridingValues = userOverriddenNicValuesByNicName.containsKey(nicName);
 
         reportedNic.setId(dbNic.getId());
 
         if (hasUserOverridingValues) {
-            overrideNicWithUserConfiguration(reportedNic);
+            reportedNic.overrideEngineManagedAttributes(userOverriddenNicValuesByNicName.get(nicName));
         } else {
             reportedNic.overrideEngineManagedAttributes(dbNic);
         }
 
         return reportedNic;
-    }
-
-    private void overrideNicWithUserConfiguration(VdsNetworkInterface nicWithValuesToBeOverridden) {
-        String nicName = nicWithValuesToBeOverridden.getName();
-        nicWithValuesToBeOverridden.overrideEngineManagedAttributes(userOverriddenNicValuesByNicName.get(nicName));
     }
 
     private List<VdsNetworkInterface> getNicsForUpdate() {
