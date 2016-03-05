@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -125,7 +126,18 @@ public class VersionFilter implements Filter {
             buffer.append("/v");
             buffer.append(version);
             buffer.append(uri, prefix.length(), uri.length());
-            request.getRequestDispatcher(buffer.toString()).forward(request, response);
+            path = buffer.toString();
+            RequestDispatcher dispatcher = request.getRequestDispatcher(path);
+            if (dispatcher == null) {
+                log.error(
+                    "Can't find dispatcher for path \"{}\", as requested by client \"{}\", will send a 404 error code.",
+                    path, request.getRemoteAddr()
+                );
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+            else {
+                dispatcher.forward(request, response);
+            }
         }
     }
 }
