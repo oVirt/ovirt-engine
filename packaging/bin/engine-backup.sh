@@ -1036,7 +1036,7 @@ dorestore() {
 		restoreDB "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${ORIG_REPORTS_DB_USER}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}" "${REPORTS_DB_RESTORE_JOBS}"
 	fi
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
-	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeDwhDBConf
+	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${DWH_DB_USER}" ] && changeDwhDBConf
 	[ -n "${CHANGE_REPORTS_DB_CREDENTIALS}" ] && changeReportsDBConf
 	output "You should now run engine-setup."
 }
