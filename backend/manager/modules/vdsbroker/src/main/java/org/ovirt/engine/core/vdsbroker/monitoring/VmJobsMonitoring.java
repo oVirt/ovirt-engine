@@ -1,15 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,47 +31,37 @@ public class VmJobsMonitoring {
         if (vmIdToJobs.isEmpty()) {
             return;
         }
-        Map<Guid, VmJob> jobsToUpdate = new HashMap<>();
+        List<VmJob> jobsToUpdate = new ArrayList<>();
         List<Guid> jobIdsToRemove = new ArrayList<>();
         vmIdToJobs.entrySet().forEach(entry -> processVmJobs(
                 entry.getKey(), entry.getValue(), jobsToUpdate, jobIdsToRemove));
-        updateJobs(jobsToUpdate.values());
+        updateJobs(jobsToUpdate);
         removeJobs(jobIdsToRemove);
     }
 
-    private void processVmJobs(Guid vmId, List<VmJob> jobs, Map<Guid, VmJob> jobsToUpdate, List<Guid> jobIdsToRemove) {
+    private void processVmJobs(Guid vmId, List<VmJob> jobs, List<VmJob> jobsToUpdate, List<Guid> jobIdsToRemove) {
         if (jobs == null) {
             // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
             log.debug("No vmJob data returned from VDSM, preserving existing jobs");
             return;
         }
 
-        // Only jobs that were in the DB before our update may be updated/removed;
-        // others are completely ignored for the time being
-        List<VmJob> jobsInDb = getExistingJobsForVm(vmId);
-        Map<Guid, VmJob> jobIdToJobInDb = jobsInDb.stream().collect(toMap(VmJob::getId, Function.identity()));
-
-        Set<Guid> vmJobIdsToIgnore = new HashSet<>();
-        jobs.stream()
-        .filter(job -> jobIdToJobInDb.containsKey(job.getId()))
-        .forEach(job -> {
-            if (jobIdToJobInDb.get(job.getId()).equals(job)) {
-                // Same data, no update needed.  It would be nice if a caching
-                // layer would take care of this for us.
-                vmJobIdsToIgnore.add(job.getId());
-                log.info("VM job '{}': In progress (no change)", job.getId());
+        Map<Guid, VmJob> jobIdToReportedJob = jobs.stream().collect(toMap(VmJob::getId, identity()));
+        getExistingJobsForVm(vmId).forEach(job -> {
+            VmJob reportedJob = jobIdToReportedJob.get(job.getId());
+            if (reportedJob != null) {
+                if (reportedJob.equals(job)) {
+                    // Same data, no update needed.  It would be nice if a caching
+                    // layer would take care of this for us.
+                    log.info("VM job '{}': In progress (no change)", job.getId());
+                } else {
+                    jobsToUpdate.add(reportedJob);
+                    log.info("VM job '{}': In progress, updating", job.getId());
+                }
             } else {
-                jobsToUpdate.put(job.getId(), job);
-                log.info("VM job '{}': In progress, updating", job.getId());
+                jobIdsToRemove.add(job.getId());
+                log.info("VM job '{}': Deleting", job.getId());
             }
-        });
-
-        // Any existing jobs not saved need to be removed
-        jobIdToJobInDb.keySet().stream()
-        .filter(jobId -> !jobsToUpdate.containsKey(jobId) && !vmJobIdsToIgnore.contains(jobId))
-        .forEach(jobId -> {
-            jobIdsToRemove.add(jobId);
-            log.info("VM job '{}': Deleting", jobId);
         });
     }
 
