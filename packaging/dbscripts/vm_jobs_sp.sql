@@ -3,24 +3,13 @@
 ---------------------
 -- vm_jobs functions
 ---------------------
-CREATE OR REPLACE FUNCTION GetAllVmJobIds ()
-RETURNS SETOF uuid STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT vm_jobs.vm_job_id
-    FROM vm_jobs;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetVmJobsByVmId (v_vm_id uuid)
+CREATE OR REPLACE FUNCTION GetAllVmJobs ()
 RETURNS SETOF vm_jobs STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT vm_jobs.*
-    FROM vm_jobs
-    WHERE vm_jobs.vm_id = v_vm_id;
+    FROM vm_jobs;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

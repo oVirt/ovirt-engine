@@ -1,17 +1,22 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VmJob;
+import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmJobDao;
@@ -24,8 +29,18 @@ public class VmJobsMonitoring {
 
     @Inject
     private VmJobDao vmJobDao;
+    private final Map<Guid, VmJob> jobsRepository;
 
     private static final Logger log = LoggerFactory.getLogger(VmJobsMonitoring.class);
+
+    private VmJobsMonitoring() {
+        jobsRepository = new ConcurrentHashMap<>();
+    }
+
+    @PostConstruct
+    void init() {
+        jobsRepository.putAll(getVmJobDao().getAll().stream().collect(toMap(VmJob::getId, identity())));
+    }
 
     void process(Map<Guid, List<VmJob>> vmIdToJobs) {
         if (vmIdToJobs.isEmpty()) {
@@ -66,19 +81,42 @@ public class VmJobsMonitoring {
     }
 
     List<VmJob> getExistingJobsForVm(Guid vmId) {
-        return vmJobDao.getAllForVm(vmId);
+        return jobsRepository.values().stream().filter(job -> job.getVmId().equals(vmId)).collect(toList());
     }
 
     void updateJobs(Collection<VmJob> vmJobsToUpdate) {
-        vmJobDao.updateAllInBatch(vmJobsToUpdate);
+        getVmJobDao().updateAllInBatch(vmJobsToUpdate);
+        vmJobsToUpdate.forEach(job -> jobsRepository.put(job.getId(), job));
     }
 
     void removeJobs(List<Guid> vmJobIdsToRemove) {
+        removeJobsFromDb(vmJobIdsToRemove);
+        vmJobIdsToRemove.forEach(jobsRepository::remove);
+    }
+
+    void removeJobsFromDb(List<Guid> vmJobIdsToRemove) {
         if (!vmJobIdsToRemove.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                vmJobDao.removeAll(vmJobIdsToRemove);
+                getVmJobDao().removeAll(vmJobIdsToRemove);
                 return null;
             });
         }
+    }
+
+    public void addJob(VmJob job) {
+        getVmJobDao().save(job);
+        jobsRepository.put(job.getId(), job);
+        log.info("Stored placeholder for job id '{}'", job.getId());
+    }
+
+    void onVmDelete(@Observes @VmDeleted Guid vmId) {
+        jobsRepository.values().stream()
+        .filter(job -> job.getVmId().equals(vmId))
+        .map(VmJob::getId)
+        .forEach(jobsRepository::remove);
+    }
+
+    VmJobDao getVmJobDao() {
+        return vmJobDao;
     }
 }

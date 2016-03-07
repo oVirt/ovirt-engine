@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -33,15 +34,9 @@ public class VmJobDaoTest extends BaseDaoTestCase {
         fail("VmJobDao.get(Guid) isn't implemented yet. If you implement it, don't forget to implement this test too");
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void testGetAllForwardCompatibility() {
-        dao.getAll();
-        fail("VmJobDao.getAll() isn't implemented yet. If you implement it, don't forget to implement this test too");
-    }
-
     @Test
-    public void testGetAllIds() {
-        List<Guid> ids = dao.getAllIds();
+    public void testGetAll() {
+        List<Guid> ids = dao.getAll().stream().map(VmJob::getId).collect(toList());
         assertTrue(ids.remove(FixturesTool.EXISTING_VM_JOB));
         assertTrue(ids.remove(FixturesTool.EXISTING_VM_BLOCK_JOB));
         assertTrue(ids.isEmpty());
@@ -49,14 +44,18 @@ public class VmJobDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllForVmWithJob() {
-        List<VmJob> jobs = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57);
+        List<VmJob> jobs = dao.getAll().stream()
+                .filter(job -> job.getVmId().equals(FixturesTool.VM_RHEL5_POOL_57))
+                .collect(toList());
         assertEquals(1, jobs.size());
         assertEquals(FixturesTool.EXISTING_VM_JOB, jobs.get(0).getId());
     }
 
     @Test
     public void testGetAllForVmWithBlockJob() {
-        List<VmJob> jobs = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_59);
+        List<VmJob> jobs = dao.getAll().stream()
+                .filter(job -> job.getVmId().equals(FixturesTool.VM_RHEL5_POOL_59))
+                .collect(toList());
         assertEquals(1, jobs.size());
         assertEquals(FixturesTool.EXISTING_VM_BLOCK_JOB, jobs.get(0).getId());
         assertTrue(jobs.get(0) instanceof VmBlockJob);
@@ -64,7 +63,9 @@ public class VmJobDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllForVmWithNonExistentVm() {
-        List<VmJob> jobs = dao.getAllForVm(Guid.Empty);
+        List<VmJob> jobs = dao.getAll().stream()
+                .filter(job -> job.getVmId().equals(Guid.Empty))
+                .collect(toList());
         assertTrue(jobs.isEmpty());
     }
 
@@ -91,7 +92,7 @@ public class VmJobDaoTest extends BaseDaoTestCase {
     @Test
     public void testDelete() {
         dao.remove(FixturesTool.EXISTING_VM_JOB);
-        List<Guid> ids = dao.getAllIds();
+        List<Guid> ids = dao.getAll().stream().map(VmJob::getId).collect(toList());
         assertTrue(ids.remove(FixturesTool.EXISTING_VM_BLOCK_JOB));
         assertTrue(ids.isEmpty());
     }
@@ -131,7 +132,9 @@ public class VmJobDaoTest extends BaseDaoTestCase {
         dao.save(job);
 
         // Retrieve it
-        List<VmJob> jobs = dao.getAllForVm(job.getVmId());
+        List<VmJob> jobs = dao.getAll().stream()
+                .filter(job2 -> job2.getVmId().equals(job.getVmId()))
+                .collect(toList());
         assertThat(jobs, hasItem(job));
 
         // Be kind, rewind

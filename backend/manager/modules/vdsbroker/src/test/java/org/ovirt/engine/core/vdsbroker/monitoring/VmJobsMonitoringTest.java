@@ -28,6 +28,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmJobDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmJobsMonitoringTest {
@@ -64,6 +65,8 @@ public class VmJobsMonitoringTest {
     private VmJob job3FromVdsm;
     @Mock
     private VmJob job5FromVdsm;
+    @Mock
+    private VmJobDao vmJobDao;
 
     @Before
     public void before() {
@@ -85,10 +88,13 @@ public class VmJobsMonitoringTest {
         when(job3FromVdsm.getVmId()).thenReturn(VM_ID_2);
         when(job5FromVdsm.getVmId()).thenReturn(VM_ID_2);
 
-        doReturn(Arrays.asList(job1FromDb, job2FromDb)).when(vmJobsMonitoring).getExistingJobsForVm(VM_ID_1);
-        doReturn(Arrays.asList(job3FromDb, job4FromDb)).when(vmJobsMonitoring).getExistingJobsForVm(VM_ID_2);
-        doNothing().when(vmJobsMonitoring).updateJobs(any());
-        doNothing().when(vmJobsMonitoring).removeJobs(any());
+        doNothing().when(vmJobDao).save(any());
+        doNothing().when(vmJobDao).updateAllInBatch(any());
+        when(vmJobDao.getAll()).thenReturn(Arrays.asList(job1FromDb, job4FromDb, job2FromDb, job3FromDb));
+        doReturn(vmJobDao).when(vmJobsMonitoring).getVmJobDao();
+        doNothing().when(vmJobsMonitoring).removeJobsFromDb(any());
+
+        vmJobsMonitoring.init();
     }
 
     @Test
@@ -121,6 +127,30 @@ public class VmJobsMonitoringTest {
         verify(vmJobsMonitoring, times(1)).removeJobs(vmJobIdsToRemoveCaptor.capture());
         assertEquals(1, vmJobIdsToRemoveCaptor.getValue().size());
         assertTrue(vmJobIdsToRemoveCaptor.getValue().contains(JOB_ID_4));
+    }
+
+    @Test
+    public void loadFromDatabase() {
+        assertEquals(2, vmJobsMonitoring.getExistingJobsForVm(VM_ID_1).size());
+        assertEquals(2, vmJobsMonitoring.getExistingJobsForVm(VM_ID_2).size());
+        assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_1).contains(job1FromDb));
+        assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_1).contains(job2FromDb));
+        assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_2).contains(job3FromDb));
+        assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_2).contains(job4FromDb));
+    }
+
+    @Test
+    public void finishedJobsAreRemovedFromMemory() {
+        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Collections.emptyList()));
+        assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_1).isEmpty());
+        assertEquals(2, vmJobsMonitoring.getExistingJobsForVm(VM_ID_2).size());
+    }
+
+    @Test
+    public void jobsAreRemovedFromMemoryOnRemoveVm() {
+        vmJobsMonitoring.onVmDelete(VM_ID_1);
+        assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_1).isEmpty());
+        assertEquals(2, vmJobsMonitoring.getExistingJobsForVm(VM_ID_2).size());
     }
 
     @SuppressWarnings("serial")

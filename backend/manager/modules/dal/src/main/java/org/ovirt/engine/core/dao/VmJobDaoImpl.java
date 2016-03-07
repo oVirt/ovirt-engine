@@ -32,21 +32,9 @@ public class VmJobDaoImpl extends MassOperationsGenericDao<VmJob, Guid> implemen
 
     @Override
     public List<VmJob> getAll() {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public List<Guid> getAllIds() {
-        return getCallsHandler().executeReadList("GetAllVmJobIds",
-                createGuidMapper(),
-                getCustomMapSqlParameterSource());
-    }
-
-    @Override
-    public List<VmJob> getAllForVm(Guid vm) {
-        return getCallsHandler().executeReadList("GetVmJobsByVmId",
+        return getCallsHandler().executeReadList("GetAllVmJobs",
                 VmJobRowMapper.instance,
-                getCustomMapSqlParameterSource().addValue("vm_id", vm));
+                getCustomMapSqlParameterSource());
     }
 
     @Override
