@@ -530,6 +530,10 @@ public enum ConfigValues {
     SpmCommandFailOverRetries,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    HsmCommandFailOverRetries,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     SpmVCpuConsumption,
     @Reloadable

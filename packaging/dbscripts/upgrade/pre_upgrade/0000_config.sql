@@ -434,6 +434,7 @@ select fn_db_add_config_value('WANDisableEffects','animation','general');
 select fn_db_add_config_value('WANColorDepth','16','general');
 select fn_db_add_config_value('SpmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SPMFailOverAttempts','3','general');
+select fn_db_add_config_value('HsmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SpmVCpuConsumption','1','general');
 select fn_db_add_config_value('SSHInactivityTimeoutSeconds','300','general');
 select fn_db_add_config_value('SSHInactivityHardTimeoutSeconds','1800','general');
