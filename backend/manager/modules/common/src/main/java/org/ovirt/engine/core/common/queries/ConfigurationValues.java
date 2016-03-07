@@ -95,6 +95,7 @@ public enum ConfigurationValues {
     MultipleGraphicsSupported(ConfigAuthType.User),
     DisplayUncaughtUIExceptions,
     DisplaySupportedBrowserWarning,
+    MigrationPoliciesSupported(ConfigAuthType.User),
     RefreshLunSupported,
     UploadImageUiInactivityTimeoutInSeconds(ConfigAuthType.User),
     UploadImageChunkSizeKB,

@@ -1940,5 +1940,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     CheckMixedRhelVersions,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MigrationPoliciesSupported,
+
     Invalid
 }
