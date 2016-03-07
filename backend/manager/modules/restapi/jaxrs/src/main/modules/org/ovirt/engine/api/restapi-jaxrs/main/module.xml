@@ -45,6 +45,7 @@ limitations under the License.
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.ovirt.engine.core.utils"/>
+    <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.slf4j"/>
 
     <!-- This dependency is needed to workaround the following WildFly issue:

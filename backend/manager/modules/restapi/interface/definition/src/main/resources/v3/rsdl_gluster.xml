@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <rsdl href="?rsdl" rel="rsdl">
     <description>The oVirt RESTful API description language.</description>
+    <version major="3" minor="6" build="0" revision="0"/>
     <schema href="?schema" rel="schema">
         <name>ovirt-engine-api-schema.xsd</name>
         <description>oVirt API entities schema.</description>

@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
+import java.io.IOException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -23,23 +24,49 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.SystemResource;
+import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Action;
+import org.ovirt.engine.api.v3.types.V3RSDL;
 
 @Path("/")
 @Produces({"application/xml", "application/json"})
 public class V3SystemServer extends V3Server<SystemResource> {
+    // The URI information:
+    @Context
+    private UriInfo ui;
+
     public V3SystemServer(SystemResource delegate) {
         super(delegate);
     }
 
     @GET
     public Response get() {
-        return adaptRemove(getDelegate()::get);
+        if (QueryHelper.hasConstraint(ui, "rsdl")) {
+            try {
+                V3RSDL rsdl = getRSDL();
+                return Response.ok().entity(rsdl).build();
+            }
+            catch (Exception exception) {
+                throw new WebApplicationException(
+                    exception,
+                    Response.status(Response.Status.INTERNAL_SERVER_ERROR).build()
+                );
+            }
+        }
+        return adaptResponse(getDelegate()::get);
+    }
+
+    private V3RSDL getRSDL() throws IOException {
+        return RsdlLoader.loadRsdl(V3RSDL.class);
     }
 
     @HEAD

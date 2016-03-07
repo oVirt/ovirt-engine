@@ -41,7 +41,12 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
-      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>uutils</artifactId>
+      <version>${engine.version}</version>
     </dependency>
 
     <dependency>

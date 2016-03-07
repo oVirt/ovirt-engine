@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2010 Red Hat, Inc.
+* Copyright (c) 2010-2016 Red Hat, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -95,11 +95,11 @@ import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProv
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
+import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.VersionMapper;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
-import org.ovirt.engine.api.rsdl.RsdlManager;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.branding.BrandingManager;
@@ -142,9 +142,6 @@ public class BackendApiResource
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
-
-    // The RSDL object:
-    private Rsdl rsdl;
 
     ApplicationMode appMode = ApplicationMode.AllModes;
 
@@ -355,12 +352,8 @@ public class BackendApiResource
         return VersionMapper.map((org.ovirt.engine.core.compat.Version) result.getReturnValue(), null);
     }
 
-    public synchronized Rsdl getRSDL() throws ClassNotFoundException, IOException {
-        Current current = getCurrent();
-        if (rsdl == null) {
-            rsdl = RsdlManager.loadRsdl("4", current.getApplicationMode(), current.getPrefix(), Rsdl.class);
-        }
-        return rsdl;
+    public Rsdl getRSDL() throws ClassNotFoundException, IOException {
+        return RsdlLoader.loadRsdl(Rsdl.class);
     }
 
     private Api addSystemVersion(Api api) {

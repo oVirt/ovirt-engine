@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014-2015 Red Hat, Inc.
+Copyright (c) 2014-2016 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,21 +25,11 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBElement;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
-import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
@@ -95,47 +85,6 @@ public class RsdlManager {
             throws IOException, ClassNotFoundException {
         Rsdl rsdl = buildRsdl(metadata, rels);
         serializeRsdl(rsdl, outputFileName);
-    }
-
-    public static <RSDL> RSDL loadRsdl(String apiVersion, ApplicationMode applicationMode, String prefix,
-            Class<RSDL> clazz) throws IOException {
-        // Decide what version of the RSDL document to load:
-        String fileName = applicationMode == ApplicationMode.GlusterOnly? "rsdl_gluster.xml": "rsdl.xml";
-        String resourcePath = String.format("/v%s/%s", apiVersion, fileName);
-
-        // During runtime the RSDL document is loaded lazily, and the prefix is extracted from the request URL. As a
-        // result, depending on what URL is requested first, it may contain trailing slashes. So to make sure that the
-        // RSDL document will always be the same we need to explicitly remove the trailing slashes.
-        prefix = prefix.replaceAll("/+$", "");
-
-        // Load the RSDL document into a DOM tree and then modify all the "href" attributes to include the prefix given
-        // as parameter:
-        Document document;
-        try {
-            DocumentBuilder parser = SecureDocumentBuilderFactory.newDocumentBuilderFactory().newDocumentBuilder();
-            try (InputStream in = RsdlIOManager.class.getResourceAsStream(resourcePath)) {
-                document = parser.parse(in);
-            }
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            NodeList nodes = (NodeList) xpath.evaluate("//@href", document, XPathConstants.NODESET);
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Node node = nodes.item(i);
-                String href = node.getNodeValue();
-                if (href.startsWith(QUERY_PARAMETER)) {
-                    href = prefix + href;
-                }
-                else {
-                    href = prefix + "/" + href;
-                }
-                node.setNodeValue(href);
-            }
-        }
-        catch (Exception exception) {
-            throw new IOException(exception);
-        }
-
-        // Create the RSDL object:
-        return JAXB.unmarshal(new DOMSource(document), clazz);
     }
 
     private static void serializeRsdl(Rsdl rsdl, String rsdlLocation) {
