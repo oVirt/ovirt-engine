@@ -31,6 +31,9 @@ public class V3OutAdapters {
         if (object == null) {
             return null;
         }
+        if (object instanceof byte[]) {
+            return (TO) object;
+        }
         if (object instanceof List) {
             List<Object> input = (List<Object>) object;
             List<Object> output = new ArrayList<>(input.size());
