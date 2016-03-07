@@ -116,17 +116,24 @@ public class VmJobsMonitoringTest {
     }
 
     @Test
+    public void noChangeInJobs() {
+        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Arrays.asList(job1FromDb, job2FromDb)));
+        verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToUpdateCaptor.capture());
+        assertTrue(vmJobsToUpdateCaptor.getValue().isEmpty());
+        verify(vmJobsMonitoring, times(1)).removeJobs(vmJobIdsToRemoveCaptor.capture());
+        assertTrue(vmJobIdsToRemoveCaptor.getValue().isEmpty());
+    }
+
+    @Test
     public void vmsWithJobs() {
         vmJobsMonitoring.process(initJobsFromVdsm());
-        verify(vmJobsMonitoring, times(2)).getExistingJobsForVm(any());
-        verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToUpdateCaptor.capture());
-        assertEquals(2, vmJobsToUpdateCaptor.getValue().size());
-        assertTrue(vmJobsToUpdateCaptor.getValue().contains(job2FromVdsm));
-        assertTrue(vmJobsToUpdateCaptor.getValue().contains(job3FromVdsm));
-        assertFalse(vmJobsToUpdateCaptor.getValue().contains(job1FromVdsm));
-        verify(vmJobsMonitoring, times(1)).removeJobs(vmJobIdsToRemoveCaptor.capture());
-        assertEquals(1, vmJobIdsToRemoveCaptor.getValue().size());
-        assertTrue(vmJobIdsToRemoveCaptor.getValue().contains(JOB_ID_4));
+        List<VmJob> vm1Jobs = vmJobsMonitoring.getExistingJobsForVm(VM_ID_1);
+        List<VmJob> vm2Jobs = vmJobsMonitoring.getExistingJobsForVm(VM_ID_2);
+        assertEquals(2, vm1Jobs.size());
+        assertTrue(vm1Jobs.contains(job2FromVdsm));
+        assertFalse(vm1Jobs.contains(job2FromDb));
+        assertEquals(1, vm2Jobs.size());
+        assertTrue(vm2Jobs.contains(job3FromVdsm));
     }
 
     @Test
