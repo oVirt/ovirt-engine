@@ -307,6 +307,7 @@ public enum VdcActionType {
     UploadImage(1023, false, QuotaDependency.NONE),
     UploadDiskImage(1024, false, QuotaDependency.STORAGE),
     UploadImageStatus(1025, false, QuotaDependency.NONE),
+    ScanStorageForUnregisteredDisks(1026, false, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
