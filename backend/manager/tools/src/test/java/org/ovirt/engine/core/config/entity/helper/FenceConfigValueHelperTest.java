@@ -8,7 +8,7 @@ import java.util.Collection;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 @RunWith(Parameterized.class)
 public class FenceConfigValueHelperTest {
@@ -32,22 +32,22 @@ public class FenceConfigValueHelperTest {
 
     @Test
     public void validateFenceAgentMappingConfig() {
-        assertEquals(expectedResult, validator.validate(ConfigurationValues.FenceAgentMapping.name(), fenceAgentMapping).isOk());
+        assertEquals(expectedResult, validator.validate(ConfigValues.FenceAgentMapping.name(), fenceAgentMapping).isOk());
     }
 
     @Test
     public void validateFenceAgentDefaultParamsConfig() {
-        assertEquals(expectedResult, validator.validate(ConfigurationValues.FenceAgentDefaultParams.name(), fenceAgentDefault).isOk());
+        assertEquals(expectedResult, validator.validate(ConfigValues.FenceAgentDefaultParams.name(), fenceAgentDefault).isOk());
     }
 
     @Test
     public void validateVdsFenceOptionMappingConfig() {
-        assertEquals(expectedResult, validator.validate(ConfigurationValues.VdsFenceOptionMapping.name(), vdsFenceOptionMapping).isOk());
+        assertEquals(expectedResult, validator.validate(ConfigValues.VdsFenceOptionMapping.name(), vdsFenceOptionMapping).isOk());
     }
 
     @Test
     public void validateVdsFenceTypeConfig() {
-        assertEquals(expectedResult, validator.validate(ConfigurationValues.VdsFenceType.name(), vdsFenceType).isOk());
+        assertEquals(expectedResult, validator.validate(ConfigValues.VdsFenceType.name(), vdsFenceType).isOk());
     }
 
     @Parameterized.Parameters()
