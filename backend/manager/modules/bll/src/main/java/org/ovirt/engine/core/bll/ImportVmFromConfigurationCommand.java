@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +38,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
     VM vmFromConfiguration;
+
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
 
     protected ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -125,6 +131,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
                 getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
+                unregisteredDisksDao.removeUnregisteredDiskRelatedToVM(ovfEntityData.getEntityId(), null);
                 auditLogDirector.log(this, AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY);
             } else if (!vmDisksToAttach.isEmpty()) {
                 auditLogDirector.log(this, attemptToAttachDisksToImportedVm(vmDisksToAttach));

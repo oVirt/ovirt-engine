@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -30,6 +33,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
+
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
 
     protected ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -111,6 +117,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 findAndSaveDiskCopies();
             }
             getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
+            unregisteredDisksDao.removeUnregisteredDiskRelatedToVM(ovfEntityData.getEntityId(), null);
         }
         setActionReturnValue(getVmTemplate().getId());
         setSucceeded(true);
