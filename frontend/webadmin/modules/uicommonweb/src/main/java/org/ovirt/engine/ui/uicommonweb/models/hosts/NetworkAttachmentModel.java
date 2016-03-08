@@ -2,15 +2,20 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.Ipv4AddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.Ipv6AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -18,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkAttachmentModel extends Model {
+public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
     private Network network;
     private VdsNetworkInterface nic;
@@ -30,13 +35,17 @@ public class NetworkAttachmentModel extends Model {
     private EntityModel<String> ipv4Gateway;
     private Ipv4BootProtocol ipv4BootProtocol = Ipv4BootProtocol.values()[0];
 
-    private EntityModel<String> name;
-    private boolean noneBootProtocolAvailable = true;
+    private EntityModel<String> ipv6Address;
+    private EntityModel<Integer> ipv6Prefix;
+    private EntityModel<String> ipv6Gateway;
+    private Ipv6BootProtocol ipv6BootProtocol = Ipv6BootProtocol.values()[0];
+
     private boolean bootProtocolsAvailable;
     private EntityModel<Boolean> isToSync;
     private HostNetworkQosParametersModel qosModel;
     private KeyValueModel customPropertiesModel;
-    private boolean staticIpChangeAllowed = true;
+    private boolean staticIpv4ChangeAllowed = true;
+    private boolean staticIpv6ChangeAllowed = true;
     private EntityModel<Boolean> qosOverridden;
 
     public NetworkAttachmentModel(Network network,
@@ -50,25 +59,38 @@ public class NetworkAttachmentModel extends Model {
 
         verifyInput(network, nic, networkAttachment);
 
-        setName(new EntityModel<String>());
         setIpv4Address(new EntityModel<String>());
         setIpv4Subnet(new EntityModel<String>());
         setIpv4Gateway(new EntityModel<String>());
+
+        setIpv6Address(new EntityModel<String>());
+        setIpv6Prefix(new EntityModel<Integer>());
+        setIpv6Gateway(new EntityModel<String>());
+
         setQosOverridden(new EntityModel<Boolean>());
         setQosModel(new HostNetworkQosParametersModel());
         setCustomPropertiesModel(new KeyValueModel());
         setIsToSync(new EntityModel<Boolean>());
         setBootProtocolsAvailable(true);
+
         getIpv4Gateway().setIsAvailable(false);
         getIpv4Address().setIsChangeable(false);
         getIpv4Subnet().setIsChangeable(false);
         getIpv4Gateway().setIsChangeable(false);
+
+        getIpv6Gateway().setIsAvailable(false);
+        getIpv6Address().setIsChangeable(false);
+        getIpv6Prefix().setIsChangeable(false);
+        getIpv6Gateway().setIsChangeable(false);
+
         getQosOverridden().setIsAvailable(false);
         getQosModel().setIsAvailable(false);
         getCustomPropertiesModel().setIsAvailable(false);
 
         getQosOverridden().getEntityChangedEvent().addListener(this);
         getIsToSync().getEntityChangedEvent().addListener(this);
+
+        setTitle();
     }
 
     private void verifyInput(Network network, VdsNetworkInterface nic, NetworkAttachment networkAttachment) {
@@ -81,10 +103,16 @@ public class NetworkAttachmentModel extends Model {
     }
 
     public void syncWith(InterfacePropertiesAccessor interfacePropertiesAccessor) {
-        setIpv4BootProtocol(interfacePropertiesAccessor.getBootProtocol());
-        getIpv4Address().setEntity(interfacePropertiesAccessor.getAddress());
-        getIpv4Subnet().setEntity(interfacePropertiesAccessor.getNetmask());
-        getIpv4Gateway().setEntity(interfacePropertiesAccessor.getGateway());
+        setIpv4BootProtocol(interfacePropertiesAccessor.getIpv4BootProtocol());
+        getIpv4Address().setEntity(interfacePropertiesAccessor.getIpv4Address());
+        getIpv4Subnet().setEntity(interfacePropertiesAccessor.getIpv4Netmask());
+        getIpv4Gateway().setEntity(interfacePropertiesAccessor.getIpv4Gateway());
+
+        setIpv6BootProtocol(interfacePropertiesAccessor.getIpv6BootProtocol());
+        getIpv6Address().setEntity(interfacePropertiesAccessor.getIpv6Address());
+        getIpv6Prefix().setEntity(interfacePropertiesAccessor.getIpv6Prefix());
+        getIpv6Gateway().setEntity(interfacePropertiesAccessor.getIpv6Gateway());
+
         getQosModel().init(interfacePropertiesAccessor.getHostNetworkQos());
         getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(interfacePropertiesAccessor.getCustomProperties()));
     }
@@ -113,12 +141,28 @@ public class NetworkAttachmentModel extends Model {
         ipv4Gateway = value;
     }
 
-    public EntityModel<String> getName() {
-        return name;
+    public EntityModel<String> getIpv6Address() {
+        return ipv6Address;
     }
 
-    public void setName(EntityModel<String> value) {
-        name = value;
+    private void setIpv6Address(EntityModel<String> value) {
+        ipv6Address = value;
+    }
+
+    public EntityModel<Integer> getIpv6Prefix() {
+        return ipv6Prefix;
+    }
+
+    private void setIpv6Prefix(EntityModel<Integer> value) {
+        ipv6Prefix = value;
+    }
+
+    public EntityModel<String> getIpv6Gateway() {
+        return ipv6Gateway;
+    }
+
+    private void setIpv6Gateway(EntityModel<String> value) {
+        ipv6Gateway = value;
     }
 
     public Ipv4BootProtocol getIpv4BootProtocol() {
@@ -128,19 +172,18 @@ public class NetworkAttachmentModel extends Model {
     public void setIpv4BootProtocol(Ipv4BootProtocol value) {
         if (ipv4BootProtocol != value) {
             ipv4BootProtocol = value;
-            bootProtocolChanged();
-            onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
+            ipv4BootProtocolChanged();
         }
     }
 
-    public boolean getNoneBootProtocolAvailable() {
-        return noneBootProtocolAvailable;
+    public Ipv6BootProtocol getIpv6BootProtocol() {
+        return ipv6BootProtocol;
     }
 
-    public void setNoneBootProtocolAvailable(boolean value) {
-        if (noneBootProtocolAvailable != value) {
-            noneBootProtocolAvailable = value;
-            onPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
+    public void setIpv6BootProtocol(Ipv6BootProtocol value) {
+        if (ipv6BootProtocol != value) {
+            ipv6BootProtocol = value;
+            ipv6BootProtocolChanged();
         }
     }
 
@@ -151,13 +194,18 @@ public class NetworkAttachmentModel extends Model {
     public void setBootProtocolsAvailable(boolean value) {
         if (bootProtocolsAvailable != value) {
             bootProtocolsAvailable = value;
-            updateCanSpecify();
+            updateCanSpecifyIpv4();
+            updateCanSpecifyIpv6();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
         }
     }
 
-    public boolean getIsStaticAddress() {
+    public boolean getIsStaticIpv4Address() {
         return getIpv4BootProtocol() == Ipv4BootProtocol.STATIC_IP;
+    }
+
+    public boolean getIsStaticIpv6Address() {
+        return getIpv6BootProtocol() == Ipv6BootProtocol.STATIC_IP;
     }
 
     public EntityModel<Boolean> getIsToSync() {
@@ -168,9 +216,14 @@ public class NetworkAttachmentModel extends Model {
         this.isToSync = isToSync;
     }
 
-    public void setStaticIpChangeAllowed(boolean staticIpChangeAllowed) {
-        this.staticIpChangeAllowed = staticIpChangeAllowed;
-        updateCanSpecify();
+    public void setStaticIpv4ChangeAllowed(boolean value) {
+        this.staticIpv4ChangeAllowed = value;
+        updateCanSpecifyIpv4();
+    }
+
+    public void setStaticIpv6ChangeAllowed(boolean value) {
+        this.staticIpv6ChangeAllowed = value;
+        updateCanSpecifyIpv6();
     }
 
     public EntityModel<Boolean> getQosOverridden() {
@@ -236,21 +289,38 @@ public class NetworkAttachmentModel extends Model {
         }
     }
 
-    private void bootProtocolChanged() {
-        updateCanSpecify();
+    private void ipv4BootProtocolChanged() {
+        updateCanSpecifyIpv4();
 
         getIpv4Address().setIsValid(true);
         getIpv4Subnet().setIsValid(true);
         getIpv4Gateway().setIsValid(true);
     }
 
-    private void updateCanSpecify() {
-        boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
-        getIpv4Address().setChangeProhibitionReason(isChangable && !staticIpChangeAllowed
+    private void ipv6BootProtocolChanged() {
+        updateCanSpecifyIpv6();
+
+        getIpv6Address().setIsValid(true);
+        getIpv6Prefix().setIsValid(true);
+        getIpv6Gateway().setIsValid(true);
+    }
+
+    private void updateCanSpecifyIpv4() {
+        boolean isChangeable = bootProtocolsAvailable && getIsStaticIpv4Address();
+        getIpv4Address().setChangeProhibitionReason(isChangeable && !staticIpv4ChangeAllowed
                 ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
-        getIpv4Address().setIsChangeable(isChangable && staticIpChangeAllowed);
-        getIpv4Subnet().setIsChangeable(isChangable);
-        getIpv4Gateway().setIsChangeable(isChangable);
+        getIpv4Address().setIsChangeable(isChangeable && staticIpv4ChangeAllowed);
+        getIpv4Subnet().setIsChangeable(isChangeable);
+        getIpv4Gateway().setIsChangeable(isChangeable);
+    }
+
+    private void updateCanSpecifyIpv6() {
+        boolean isChangeable = bootProtocolsAvailable && getIsStaticIpv6Address();
+        getIpv6Address().setChangeProhibitionReason(isChangeable && !staticIpv6ChangeAllowed
+                ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
+        getIpv6Address().setIsChangeable(isChangeable && staticIpv6ChangeAllowed);
+        getIpv6Prefix().setIsChangeable(isChangeable);
+        getIpv6Gateway().setIsChangeable(isChangeable);
     }
 
     public boolean validate() {
@@ -258,18 +328,40 @@ public class NetworkAttachmentModel extends Model {
         getIpv4Subnet().setIsValid(true);
         getIpv4Gateway().setIsValid(true);
 
-        if (getIsStaticAddress()) {
-            getIpv4Address().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
-            getIpv4Subnet().validateEntity(new IValidation[] { new NotEmptyValidation(),
+        if (getIsStaticIpv4Address()) {
+            getIpv4Address().validateEntity(new IValidation[] {
+                    new NotEmptyValidation(),
+                    new Ipv4AddressValidation() });
+            getIpv4Subnet().validateEntity(new IValidation[] {
+                    new NotEmptyValidation(),
                     new SubnetMaskValidation(true) });
-            getIpv4Gateway().validateEntity(new IValidation[] { new IpAddressValidation(true) });
+            getIpv4Gateway().validateEntity(new IValidation[] { new Ipv4AddressValidation(true) });
+        }
+
+        getIpv6Address().setIsValid(true);
+        getIpv6Prefix().setIsValid(true);
+        getIpv6Gateway().setIsValid(true);
+
+        if (getIsStaticIpv6Address()) {
+            getIpv6Address().validateEntity(new IValidation[] {
+                    new NotEmptyValidation(),
+                    new Ipv6AddressValidation() });
+            getIpv6Prefix()
+                    .validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0, 128) });
+            getIpv6Gateway().validateEntity(new IValidation[] { new Ipv6AddressValidation(true) });
         }
 
         getQosModel().validate();
         getCustomPropertiesModel().validate();
 
-        return getIpv4Address().getIsValid() && getIpv4Subnet().getIsValid() && getIpv4Gateway().getIsValid()
-                && getQosModel().getIsValid() && getCustomPropertiesModel().getIsValid();
+        setValidTab(TabName.IPV4_TAB,
+                getIpv4Address().getIsValid() && getIpv4Gateway().getIsValid() && getIpv4Subnet().getIsValid());
+        setValidTab(TabName.IPV6_TAB,
+                getIpv6Address().getIsValid() && getIpv6Gateway().getIsValid() && getIpv6Prefix().getIsValid());
+        setValidTab(TabName.QOS_TAB, getQosModel().getIsValid());
+        setValidTab(TabName.CUSTOM_PROPERTIES_TAB, getCustomPropertiesModel().getIsValid());
+
+        return allTabsValid();
     }
 
     private void isToSyncChanged() {
@@ -284,5 +376,11 @@ public class NetworkAttachmentModel extends Model {
 
     public Network getNetwork() {
         return network;
+    }
+
+    protected Model setTitle() {
+        return setTitle(ConstantsManager.getInstance()
+                .getMessages()
+                .editNetworkTitle(network.getName()));
     }
 }

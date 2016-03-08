@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -75,10 +76,16 @@ public class LogicalNetworkModelParametersHelper {
     private void applyOnAttachmentParamsFrom(InterfacePropertiesAccessor interfacePropertiesAccessor,
             NetworkAttachment networkAttachment) {
         IPv4Address ipV4address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
-        ipV4address.setBootProtocol(interfacePropertiesAccessor.getBootProtocol());
-        ipV4address.setAddress(interfacePropertiesAccessor.getAddress());
-        ipV4address.setNetmask(interfacePropertiesAccessor.getNetmask());
-        ipV4address.setGateway(interfacePropertiesAccessor.getGateway());
+        ipV4address.setBootProtocol(interfacePropertiesAccessor.getIpv4BootProtocol());
+        ipV4address.setAddress(interfacePropertiesAccessor.getIpv4Address());
+        ipV4address.setNetmask(interfacePropertiesAccessor.getIpv4Netmask());
+        ipV4address.setGateway(interfacePropertiesAccessor.getIpv4Gateway());
+
+        IpV6Address ipv6Address = networkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
+        ipv6Address.setBootProtocol(interfacePropertiesAccessor.getIpv6BootProtocol());
+        ipv6Address.setAddress(interfacePropertiesAccessor.getIpv6Address());
+        ipv6Address.setPrefix(interfacePropertiesAccessor.getIpv6Prefix());
+        ipv6Address.setGateway(interfacePropertiesAccessor.getIpv6Gateway());
 
         if (interfacePropertiesAccessor.isQosOverridden()) {
             networkAttachment.setHostNetworkQos(interfacePropertiesAccessor.getHostNetworkQos());
@@ -104,13 +111,20 @@ public class LogicalNetworkModelParametersHelper {
         }
         NetworkParameters netParams = new NetworkParameters();
 
-        IPv4Address primaryAddress = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
+        IPv4Address ipv4Address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
+        if (ipv4Address != null) {
+            netParams.setIpv4BootProtocol(ipv4Address.getBootProtocol());
+            netParams.setIpv4Address(ipv4Address.getAddress());
+            netParams.setIpv4Netmask(ipv4Address.getNetmask());
+            netParams.setIpv4Gateway(ipv4Address.getGateway());
+        }
 
-        if (primaryAddress != null) {
-            netParams.setBootProtocol(primaryAddress.getBootProtocol());
-            netParams.setAddress(primaryAddress.getAddress());
-            netParams.setNetmask(primaryAddress.getNetmask());
-            netParams.setGateway(primaryAddress.getGateway());
+        IpV6Address ipv6Address = networkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
+        if (ipv6Address != null) {
+            netParams.setIpv6BootProtocol(ipv6Address.getBootProtocol());
+            netParams.setIpv6Address(ipv6Address.getAddress());
+            netParams.setIpv6Prefix(ipv6Address.getPrefix());
+            netParams.setIpv6Gateway(ipv6Address.getGateway());
         }
 
         netParams.setHostNetworkQos(networkAttachment.getHostNetworkQos());

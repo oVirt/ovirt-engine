@@ -26,6 +26,8 @@ public enum TabName {
     TAB_RNG,
     ICON_TAB,
     FOREMAN_TAB,
-    MAC_POOL_TAB;
-
+    MAC_POOL_TAB,
+    IPV4_TAB,
+    IPV6_TAB,
+    QOS_TAB
 }

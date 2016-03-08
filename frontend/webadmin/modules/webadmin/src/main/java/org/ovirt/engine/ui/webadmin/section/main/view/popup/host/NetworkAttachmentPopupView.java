@@ -1,15 +1,21 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EnumRadioEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -27,23 +33,32 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
+public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupView<NetworkAttachmentModel> implements NetworkAttachmentPopupPresenterWidget.ViewDef {
 
-public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<NetworkAttachmentModel> implements NetworkAttachmentPopupPresenterWidget.ViewDef {
-
-    interface Driver extends SimpleBeanEditorDriver<NetworkAttachmentModel, NetworkAttachmentPopupView> {
-    }
-
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, NetworkAttachmentPopupView> {
-        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    }
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private final Driver driver = GWT.create(Driver.class);
 
     @UiField
-    @Path(value = "name.entity")
-    StringEntityModelLabelEditor nameEditor;
+    DialogTabPanel tabPanel;
+
+    @UiField
+    @WithElementId
+    DialogTab ipv4Tab;
+
+    @UiField
+    @WithElementId
+    DialogTab ipv6Tab;
+
+    @UiField
+    @WithElementId
+    DialogTab qosTab;
+
+    @UiField
+    @WithElementId
+    DialogTab customPropertiesTab;
 
     @UiField(provided = true)
     EnumRadioEditor<Ipv4BootProtocol> ipv4BootProtocol;
@@ -51,6 +66,13 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
     @UiField
     @Ignore
     StringEntityModelLabelEditor ipv4BootProtocolLabel;
+
+    @UiField(provided = true)
+    EnumRadioEditor<Ipv6BootProtocol> ipv6BootProtocol;
+
+    @UiField
+    @Ignore
+    StringEntityModelLabelEditor ipv6BootProtocolLabel;
 
     @UiField
     @Path(value = "ipv4Address.entity")
@@ -64,6 +86,18 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
     @Path(value = "ipv4Gateway.entity")
     StringEntityModelTextBoxEditor ipv4Gateway;
 
+    @UiField
+    @Path(value = "ipv6Address.entity")
+    StringEntityModelTextBoxEditor ipv6Address;
+
+    @UiField
+    @Path(value = "ipv6Prefix.entity")
+    IntegerEntityModelTextBoxEditor ipv6Prefix;
+
+    @UiField
+    @Path(value = "ipv6Gateway.entity")
+    StringEntityModelTextBoxEditor ipv6Gateway;
+
     @UiField(provided = true)
     @Path(value = "qosOverridden.entity")
     EntityModelCheckBoxEditor qosOverridden;
@@ -71,9 +105,6 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
     @UiField(provided = true)
     @Ignore
     HostNetworkQosWidget qosWidget;
-
-    @UiField
-    Panel customPropertiesPanel;
 
     @UiField
     @Ignore
@@ -91,16 +122,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
     InfoIcon isToSyncInfo;
 
     @UiField
-    @Ignore
-    VerticalPanel mainPanel;
-
-    @UiField
     Style style;
-
-    private final Driver driver = GWT.create(Driver.class);
-
-    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public NetworkAttachmentPopupView(EventBus eventBus) {
@@ -108,34 +130,62 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
         super(eventBus);
 
         ipv4BootProtocol = new EnumRadioEditor<>(Ipv4BootProtocol.class);
+        ipv6BootProtocol = new EnumRadioEditor<>(Ipv6BootProtocol.class);
         qosWidget = new HostNetworkQosWidget();
         customPropertiesWidget = new KeyValueWidget<>("320px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);
         isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isToSyncInfo = new InfoIcon(templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
+        isToSyncInfo = new InfoIcon(
+                templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        // Set Styles
+        setStyles();
+
+        localize();
+
+        driver.initialize(this);
+    }
+
+    private void setStyles() {
         ipv4BootProtocolLabel.asValueBox().setVisible(false);
+        ipv6BootProtocolLabel.asValueBox().setVisible(false);
         qosOverridden.setContentWidgetContainerStyleName(style.syncInfo());
         customPropertiesLabel.asValueBox().setVisible(false);
         isToSync.setContentWidgetContainerStyleName(style.syncInfo());
-        mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
-        // Localize
-        nameEditor.setLabel(constants.nameHostPopup() + ":"); //$NON-NLS-1$
-        ipv4BootProtocolLabel.setLabel(constants.bootProtocolHostPopup() +":"); //$NON-NLS-1$
+    private void localize() {
+        ipv4Tab.setLabel(constants.ipv4TabLabel());
+        ipv4BootProtocolLabel.setLabel(constants.bootProtocolHostPopup() + ":"); //$NON-NLS-1$
         ipv4BootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
         ipv4Address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
         ipv4Subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
         ipv4Gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
-        qosOverridden.setLabel(constants.qosOverrideLabel());
-        customPropertiesLabel.setLabel(constants.customPropertiesHostPopup());
-        isToSync.setLabel(constants.syncNetwork());
 
-        driver.initialize(this);
+        ipv6Tab.setLabel(constants.ipv6TabLabel());
+        ipv6BootProtocolLabel.setLabel(constants.bootProtocolHostPopup() + ":"); //$NON-NLS-1$
+        ipv6BootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
+        ipv6Address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
+        ipv6Prefix.setLabel(constants.subnetPrefixHostPopup() + ":"); //$NON-NLS-1$
+        ipv6Gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
+
+        qosTab.setLabel(constants.qosTabLabel());
+        qosOverridden.setLabel(constants.qosOverrideLabel());
+
+        customPropertiesTab.setLabel(constants.customPropertiesTabLabel());
+        customPropertiesLabel.setLabel(constants.customPropertiesHostPopup());
+
+        isToSync.setLabel(constants.syncNetwork());
+    }
+
+    @Override
+    protected void populateTabMap() {
+        getTabNameMapping().put(TabName.IPV4_TAB, this.ipv4Tab);
+        getTabNameMapping().put(TabName.IPV6_TAB, this.ipv6Tab);
+        getTabNameMapping().put(TabName.QOS_TAB, this.qosTab);
+        getTabNameMapping().put(TabName.CUSTOM_PROPERTIES_TAB, this.customPropertiesTab);
     }
 
     @Override
@@ -151,7 +201,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
                     PropertyChangedEventArgs args) {
                 NetworkAttachmentModel model = (NetworkAttachmentModel) sender;
                 String propertyName = args.propertyName;
-                if ("BootProtocolsAvailable".equals(propertyName) || "NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$ //$NON-NLS-2$
+                if ("BootProtocolsAvailable".equals(propertyName)) { //$NON-NLS-1$
                     enableDisableByBootProtocol(model);
                 }
             }
@@ -161,16 +211,19 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
             isToSyncInfo.setVisible(true);
         }
 
-        customPropertiesPanel.setVisible(object.getCustomPropertiesModel().getIsAvailable());
+        customPropertiesTab.setVisible(object.getCustomPropertiesModel().getIsAvailable());
         customPropertiesWidget.edit(object.getCustomPropertiesModel());
         customPropertiesLabel.setEnabled(object.getCustomPropertiesModel().getIsChangable());
     }
 
-    protected void enableDisableByBootProtocol(NetworkAttachmentModel model) {
+    private void enableDisableByBootProtocol(NetworkAttachmentModel model) {
         boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
+
         ipv4BootProtocolLabel.setEnabled(bootProtocolsAvailable);
         ipv4BootProtocol.setEnabled(bootProtocolsAvailable);
-        ipv4BootProtocol.setEnabled(Ipv4BootProtocol.NONE, model.getNoneBootProtocolAvailable());
+
+        ipv6BootProtocolLabel.setEnabled(bootProtocolsAvailable);
+        ipv6BootProtocol.setEnabled(bootProtocolsAvailable);
     }
 
     @Override
@@ -184,9 +237,20 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
         ipv4BootProtocol.setFocus(true);
     }
 
+    @Override
+    public DialogTabPanel getTabPanel() {
+        return tabPanel;
+    }
+
+    interface Driver extends SimpleBeanEditorDriver<NetworkAttachmentModel, NetworkAttachmentPopupView> {
+    }
+
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, NetworkAttachmentPopupView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
     interface Style extends CssResource {
 
         String syncInfo();
     }
-
 }

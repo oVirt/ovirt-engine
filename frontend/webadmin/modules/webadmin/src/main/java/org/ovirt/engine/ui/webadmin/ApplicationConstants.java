@@ -2874,6 +2874,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Netmask / Routing Prefix")
     String subnetMaskHostPopup();
 
+    @DefaultStringValue("Routing Prefix")
+    String subnetPrefixHostPopup();
+
     @DefaultStringValue("Gateway")
     String gwHostPopup();
 
@@ -4777,4 +4780,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Physical Function")
     String physicalFunction();
+
+    @DefaultStringValue("IPv4")
+    String ipv4TabLabel();
+
+    @DefaultStringValue("IPv6")
+    String ipv6TabLabel();
+
+    @DefaultStringValue("QoS")
+    String qosTabLabel();
+
+    @DefaultStringValue("Custom Properties")
+    String customPropertiesTabLabel();
 }

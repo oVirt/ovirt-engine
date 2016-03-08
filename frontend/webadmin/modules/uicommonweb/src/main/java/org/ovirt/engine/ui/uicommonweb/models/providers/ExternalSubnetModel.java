@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.Ipv4AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
@@ -123,14 +123,14 @@ public class ExternalSubnetModel extends Model {
         getIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getGateway().setIsValid(true);
         if (StringUtils.isNotEmpty(getGateway().getEntity()) && ipv4) {
-            getGateway().validateEntity(new IValidation[] { new IpAddressValidation() });
+            getGateway().validateEntity(new IValidation[] { new Ipv4AddressValidation() });
         }
 
         boolean dnsServersValid = true;
         for (EntityModel<String> dnsServer : getDnsServers().getItems()) {
             dnsServer.setIsValid(true);
             if (StringUtils.isNotEmpty(dnsServer.getEntity()) && ipv4) {
-                dnsServer.validateEntity(new IValidation[] { new IpAddressValidation() });
+                dnsServer.validateEntity(new IValidation[] { new Ipv4AddressValidation() });
             }
             dnsServersValid &= dnsServer.getIsValid();
         }

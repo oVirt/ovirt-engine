@@ -9,7 +9,9 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class NetworkCommonUtils {
@@ -76,16 +78,24 @@ public class NetworkCommonUtils {
     }
 
     public static IpConfiguration createDefaultIpConfiguration() {
-        IpConfiguration output = new IpConfiguration();
-        IPv4Address iPv4Address = createDefaultIpAddress();
-        output.getIPv4Addresses().add(iPv4Address);
-        return output;
+        IpConfiguration ipConfiguration = new IpConfiguration();
+        IPv4Address iPv4Address = createDefaultIpv4Address();
+        ipConfiguration.getIPv4Addresses().add(iPv4Address);
+        IpV6Address ipv6Address = createDefaultIpv6Address();
+        ipConfiguration.getIpV6Addresses().add(ipv6Address);
+        return ipConfiguration;
     }
 
-    private static IPv4Address createDefaultIpAddress() {
-        IPv4Address output = new IPv4Address();
-        output.setBootProtocol(Ipv4BootProtocol.NONE);
-        return output;
+    private static IPv4Address createDefaultIpv4Address() {
+        IPv4Address ipv4Address = new IPv4Address();
+        ipv4Address.setBootProtocol(Ipv4BootProtocol.NONE);
+        return ipv4Address;
+    }
+
+    private static IpV6Address createDefaultIpv6Address() {
+        IpV6Address ipv6Address = new IpV6Address();
+        ipv6Address.setBootProtocol(Ipv6BootProtocol.NONE);
+        return ipv6Address;
     }
 
     /**

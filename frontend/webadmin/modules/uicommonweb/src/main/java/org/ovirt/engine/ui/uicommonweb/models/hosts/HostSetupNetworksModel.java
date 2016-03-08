@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
@@ -344,18 +345,20 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
             HostNetworkQos networkQos = qosById.get(network.getQosId());
             if (logicalNetworkModel.isManagement()) {
-                networkDialogModel = new ManagementNetworkAttachmentModel(network, nic, networkAttachment, networkQos);
+                networkDialogModel = new ManagementNetworkAttachmentModel(network,
+                        nic,
+                        networkAttachment,
+                        networkQos
+                );
             } else {
                 networkDialogModel = new NetworkAttachmentModel(network, nic, networkAttachment, networkQos);
-                networkDialogModel.setTitle(ConstantsManager.getInstance()
-                        .getMessages()
-                        .editNetworkTitle(logicalNetworkModelName));
-                networkDialogModel.getName().setIsAvailable(false);
                 networkDialogModel.getIpv4Gateway().setIsAvailable(true);
+                networkDialogModel.getIpv6Gateway().setIsAvailable(false);
             }
 
             if (nic != null && nic.getId() != null) {
-                networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getIpv4Address()));
+                networkDialogModel.setStaticIpv4ChangeAllowed(!getEntity().getHostName().equals(nic.getIpv4Address()));
+                networkDialogModel.setStaticIpv6ChangeAllowed(!getEntity().getHostName().equals(nic.getIpv6Address()));
             }
 
             networkDialogModel.getQosOverridden().setIsAvailable(true);
@@ -364,7 +367,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
             customPropertiesModel.setIsAvailable(true);
             Map<String, String> validProperties =
-                    KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PreDefinedNetworkCustomProperties,
+                    KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                            ConfigurationValues.PreDefinedNetworkCustomProperties,
                             version));
             // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
             // to backend and frontend (lvernia)
@@ -393,10 +397,17 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     }
                     IPv4Address iPv4Address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
                     iPv4Address.setBootProtocol(networkDialogModel.getIpv4BootProtocol());
-                    if (networkDialogModel.getIsStaticAddress()) {
+                    if (networkDialogModel.getIsStaticIpv4Address()) {
                         iPv4Address.setAddress(networkDialogModel.getIpv4Address().getEntity());
                         iPv4Address.setNetmask(networkDialogModel.getIpv4Subnet().getEntity());
                         iPv4Address.setGateway(networkDialogModel.getIpv4Gateway().getEntity());
+                    }
+                    IpV6Address iPv6Address = networkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
+                    iPv6Address.setBootProtocol(networkDialogModel.getIpv6BootProtocol());
+                    if (networkDialogModel.getIsStaticIpv6Address()) {
+                        iPv6Address.setAddress(networkDialogModel.getIpv6Address().getEntity());
+                        iPv6Address.setPrefix(networkDialogModel.getIpv6Prefix().getEntity());
+                        iPv6Address.setGateway(networkDialogModel.getIpv6Gateway().getEntity());
                     }
 
                     if (networkDialogModel.getQosModel().getIsAvailable()) {

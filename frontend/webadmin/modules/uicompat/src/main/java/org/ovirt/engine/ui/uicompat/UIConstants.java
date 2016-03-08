@@ -536,9 +536,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Bricks")
     String hostBricksTitle();
 
-    @DefaultStringValue("Edit Management Network")
-    String editManagementNetworkTitle();
-
     @DefaultStringValue("The network's IP address cannot be statically modified if it's the same address supplied as the hostname.")
     String staticIpAddressSameAsHostname();
 
@@ -1057,10 +1054,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg();
 
     @DefaultStringValue("This field must contain an IP address in format xxx.xxx.xxx.xxx")
-    String thisFieldMustContainIPaddressInFormatMsg();
+    String thisFieldMustContainIpv4AddressInFormatMsg();
+
+    @DefaultStringValue("This field must contain a valid IPv6 address")
+    String thisFieldMustContainIpv6AddressMsg();
 
     @DefaultStringValue("This field can be empty or contain an IP address in format xxx.xxx.xxx.xxx")
-    String emptyOrValidIPaddressInFormatMsg();
+    String emptyOrValidIpv4AddressInFormatMsg();
+
+    @DefaultStringValue("This field can be empty or contain a valid IPv6 address")
+    String emptyOrValidIpv6AddressInFormatMsg();
 
     @DefaultStringValue("This field must contain a subnet in either of the following formats:\n\txxx.xxx.xxx.xxx where xxx is between 0 and 255.\n\txx where xx is between 0-32")
     String thisFieldMustContainValidPrefixOrNetmask();

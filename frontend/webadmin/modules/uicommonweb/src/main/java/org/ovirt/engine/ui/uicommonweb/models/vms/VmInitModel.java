@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.Ipv4AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MatchFieldsValidator;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -766,11 +766,11 @@ public class VmInitModel extends Model {
                     if (!validateHidden(getNetworkList(), name, null,
                                     new IValidation[] { new VmInitNetworkNameValidation(), new NotEmptyValidation()})
                             || !validateHidden(getNetworkIpAddress(), params.getIp(), null,
-                                    new IValidation[] { new IpAddressValidation() })
+                                    new IValidation[] { new Ipv4AddressValidation() })
                             || !validateHidden(getNetworkNetmask(), params.getNetmask(), null,
                                     new IValidation[] { new SubnetMaskValidation() })
                             || !validateHidden(getNetworkGateway(), params.getGateway(), null,
-                                    new IValidation[] { new IpAddressValidation(true) })) {
+                                    new IValidation[] { new Ipv4AddressValidation(true) })) {
                         getNetworkList().setSelectedItem(name);
                         networkIsValid = false;
                         break;
@@ -782,7 +782,7 @@ public class VmInitModel extends Model {
                 if (getDnsServers().getEntity() != null) {
                     for (String server : tokenizeString(getDnsServers().getEntity())) {
                         if (!validateHidden(getDnsServers(), server, dnsServerListMessage,
-                                new IValidation[] { new IpAddressValidation() })) {
+                                new IValidation[] { new Ipv4AddressValidation() })) {
                             dnsIsValid = false;
                             break;
                         }

@@ -183,6 +183,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Edit Virtual Functions (SR-IOV) configuration of {0}")
     String editHostNicVfsConfigTitle(String name);
 
+    @DefaultMessage("Edit Management Network: {0}")
+    String editManagementNetworkTitle(String networkName);
+
     @DefaultMessage("Edit Network {0}")
     String editNetworkTitle(String name);
 

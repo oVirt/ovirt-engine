@@ -252,6 +252,14 @@ public interface Enums extends LocalizedEnums {
 
     String Ipv4BootProtocol___STATIC_IP();
 
+    String Ipv6BootProtocol___NONE();
+
+    String Ipv6BootProtocol___DHCP();
+
+    String Ipv6BootProtocol___STATIC_IP();
+
+    String Ipv6BootProtocol___AUTOCONF();
+
     String VmEntityType___VM();
 
     String VmEntityType___TEMPLATE();
