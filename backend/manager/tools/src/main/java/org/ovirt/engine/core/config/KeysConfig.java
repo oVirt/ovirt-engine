@@ -14,10 +14,10 @@ import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 
 public class KeysConfig<T extends HierarchicalConfiguration> extends ConfigFile<T> {
 
-    private static final String RHEV_CONFIG_PROPERTIES = "engine-config.properties";
+    private static final String OVIRT_CONFIG_PROPERTIES = "engine-config.properties";
     private T configFile;
     private final String[] defaultFileLocations = {
-            new File(DEFAULT_CONFIG_PATH, RHEV_CONFIG_PROPERTIES).getAbsolutePath(),
+            new File(DEFAULT_CONFIG_PATH, OVIRT_CONFIG_PROPERTIES).getAbsolutePath(),
             new File(DEFAULT_CONFIG_PATH, "engine-config_" + Locale.getDefault() + ".properties").getAbsolutePath()
     };
 
