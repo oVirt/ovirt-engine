@@ -13,6 +13,7 @@ public enum VdcQueryType implements Serializable {
     GetAllPoolVms,
     GetUnregisteredVms,
     GetUnregisteredVmTemplates,
+    GetUnregisteredDisksFromDB,
     GetVmsRunningOnOrMigratingToVds,
     GetVmsByStorageDomain,
     GetVmsByInstanceTypeId,
