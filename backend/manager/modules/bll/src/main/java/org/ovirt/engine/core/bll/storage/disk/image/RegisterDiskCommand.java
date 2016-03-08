@@ -82,6 +82,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             storageIds.add(getParameters().getStorageDomainId());
             newDiskImage.setStorageIds(storageIds);
             addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
+            unregisteredDisksDao.removeUnregisteredDisk(newDiskImage.getId(), null);
             getReturnValue().setActionReturnValue(newDiskImage.getId());
             getReturnValue().setSucceeded(true);
         } else if (getParameters().getDiskImage().getDiskStorageType() == DiskStorageType.CINDER) {
