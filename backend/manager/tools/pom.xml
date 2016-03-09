@@ -76,6 +76,7 @@
         <configuration>
           <systemPropertyVariables>
             <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
+            <engine-config.properties.production.file>../../../packaging/etc/engine-config/engine-config.properties</engine-config.properties.production.file>
           </systemPropertyVariables>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/**/src/test/java</additionalClasspathElement>
