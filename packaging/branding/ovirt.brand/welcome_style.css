@@ -75,3 +75,22 @@
     display: block;
     margin-bottom: 75px;
 }
+
+.ovirt-container .container {
+    background-color: rgba(0, 0, 0, 0.25);
+    padding-left: 80px;
+    width: 100%;
+    clear: right;
+    color: #fff;
+    padding-bottom: 40px;
+}
+
+.ovirt-container select {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+    color: black;
+}
+
+.ovirt-container #brand {
+    position: relative;
+    top: -70px;
+}

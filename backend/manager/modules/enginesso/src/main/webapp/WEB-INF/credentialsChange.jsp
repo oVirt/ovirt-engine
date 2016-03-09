@@ -17,7 +17,7 @@
         <a href="${applicationScope['ovirt-ssoContext'].engineUrl}" class="obrand_loginPageLogoImageLink">
              <span class="obrand_loginPageLogoImage"></span>
         </a>
-        <div class="login-pf">
+        <div class="ovirt-container">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
