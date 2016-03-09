@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
@@ -215,16 +213,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private void handleCinderSnapshotDisks(List<CinderDisk> cinderDisks) {
         for (CinderDisk cinderDisk : cinderDisks) {
-            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+            VdcReturnValueBase vdcReturnValueBase = runInternalAction(
                     VdcActionType.RemoveCinderSnapshotDisk,
                     buildRemoveCinderSnapshotDiskParameters(cinderDisk),
                     cloneContextAndDetachFromParent());
-            try {
-                VdcReturnValueBase vdcReturnValueBase = future.get();
-                if (!vdcReturnValueBase.getSucceeded()) {
-                    log.error("Error removing snapshots for Cinder disk");
-                }
-            } catch (InterruptedException | ExecutionException e) {
+            if (!vdcReturnValueBase.getSucceeded()) {
                 log.error("Error removing snapshots for Cinder disk");
             }
         }
