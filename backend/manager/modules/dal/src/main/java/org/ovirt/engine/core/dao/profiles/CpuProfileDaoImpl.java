@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,16 +24,17 @@ public class CpuProfileDaoImpl extends ProfileBaseDaoImpl<CpuProfile> implements
 
     @Override
     public List<CpuProfile> getAllForCluster(Guid clusterId) {
-        return getAllForCluster(clusterId, null, false);
+        return getAllForCluster(clusterId, null, false, ActionGroup.ASSIGN_CPU_PROFILE);
     }
 
     @Override
-    public List<CpuProfile> getAllForCluster(Guid clusterId, Guid userId, boolean isFiltered) {
+    public List<CpuProfile> getAllForCluster(Guid clusterId, Guid userId, boolean isFiltered, ActionGroup actionGroup) {
         return getCallsHandler().executeReadList("GetCpuProfilesByClusterId",
                 createEntityRowMapper(),
                 getCustomMapSqlParameterSource().addValue("cluster_id", clusterId)
                         .addValue("user_id", userId)
-                        .addValue("is_filtered", isFiltered));
+                        .addValue("is_filtered", isFiltered)
+                        .addValue("action_group_id", actionGroup.getId()));
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -33,7 +34,7 @@ public class CpuProfileHelper {
         }
 
         /* Getting the entire list inorder to get all the cpu profiles that the user has permissions for. */
-        List<CpuProfile> authorizedCpuProfiles = getCpuProfileDao().getAllForCluster(vmBase.getVdsGroupId(), userId, true);
+        List<CpuProfile> authorizedCpuProfiles = getCpuProfileDao().getAllForCluster(vmBase.getVdsGroupId(), userId, true, ActionGroup.ASSIGN_CPU_PROFILE);
 
         for(CpuProfile cp : authorizedCpuProfiles) {
             if(cp.getId().equals(vmBase.getCpuProfileId())) {
