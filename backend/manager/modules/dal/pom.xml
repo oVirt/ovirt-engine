@@ -94,12 +94,6 @@
       <version>${spring.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
-      <version>${hamcrest.version}</version>
-      <scope>test</scope>
-    </dependency>
     <!-- JUL is used as logging backend for tests -->
     <dependency>
       <groupId>org.slf4j</groupId>
