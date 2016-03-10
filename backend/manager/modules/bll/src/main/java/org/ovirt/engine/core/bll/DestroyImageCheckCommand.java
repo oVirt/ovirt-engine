@@ -52,7 +52,7 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
     }
 
     private boolean volumeExists(Guid volumeId) {
-        log.debug("Checking for the existence of volume '{0}' using GetVolumeInfo", volumeId);
+        log.debug("Checking for the existence of volume '{}' using GetVolumeInfo", volumeId);
         SPMGetVolumeInfoVDSCommandParameters params = new SPMGetVolumeInfoVDSCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getStorageDomainId(),
@@ -67,7 +67,7 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
                 return false;
             }
             // We can't assume the volume is gone; return true so that Live Merge fails
-            log.error("Failed to determine volume '{0}' existence using GetVolumeInfo", volumeId, e);
+            log.error("Failed to determine volume '{}' existence using GetVolumeInfo", volumeId, e);
         }
         return true;
     }
