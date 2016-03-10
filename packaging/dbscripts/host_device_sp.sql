@@ -246,4 +246,16 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVmDevicesAttachedToHost (v_host_id UUID)
+RETURNS SETOF vm_device AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
 
+    SELECT vm_device.*
+    FROM vm_device
+    INNER JOIN vm_host_pinning_map
+        ON vm_device.vm_id = vm_host_pinning_map.vm_id
+            AND vm_host_pinning_map.vds_id = v_host_id
+    WHERE vm_device.type = 'hostdev';
+END;$PROCEDURE$
+LANGUAGE plpgsql;
