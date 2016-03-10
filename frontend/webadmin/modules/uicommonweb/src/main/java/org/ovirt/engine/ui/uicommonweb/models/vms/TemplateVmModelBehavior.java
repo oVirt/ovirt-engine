@@ -151,6 +151,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void postDataCenterWithClusterSelectedItemChanged() {
+        updateGraphics(template.getId());
         updateDefaultHost();
         updateNumOfSockets();
         updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
