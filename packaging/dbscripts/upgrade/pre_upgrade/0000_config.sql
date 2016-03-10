@@ -818,6 +818,8 @@ select fn_db_update_config_value('IPTablesConfig','
 -A INPUT -p tcp --dport @SSH_PORT@ -j ACCEPT
 # snmp
 -A INPUT -p udp --dport 161 -j ACCEPT
+# Cockpit
+-A INPUT -p tcp --dport 9090 -j ACCEPT
 
 @CUSTOM_RULES@
 
