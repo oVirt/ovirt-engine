@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.hostdev;
 
+import static org.ovirt.engine.core.utils.collections.MultiValueMapUtils.addToMap;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +19,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -60,6 +62,8 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     private Map<String, HostDevice> fetchedMap;
 
+    private Map<String, List<VmDevice>> attachedVmDevicesMap;
+
     public RefreshHostDevicesCommand(T parameters) {
         super(parameters);
     }
@@ -84,11 +88,9 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
         List<HostDevice> fetchedDevices = (List<HostDevice>) vdsReturnValue.getReturnValue();
         List<HostDevice> oldDevices = hostDeviceDao.getHostDevicesByHostId(getVdsId());
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
 
         fetchedMap = Entities.entitiesByName(fetchedDevices);
         oldMap = Entities.entitiesByName(oldDevices);
-        Map<String, VmDevice> vmDeviceMap = Entities.vmDevicesByDevice(vmDevices);
 
         final List<HostDevice> newDevices = new ArrayList<>();
         final List<HostDevice> changedDevices = new ArrayList<>();
@@ -111,11 +113,13 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
             if (!fetchedMap.containsKey(deviceName)) {
                 removedDevices.add(entry.getValue());
 
-                if (vmDeviceMap.containsKey(deviceName)) {
-                    VmDevice vmDevice = vmDeviceMap.get(deviceName);
-                    log.warn("Removing VM[{}]'s hostDevice[{}] because it no longer exists on host {}",
-                            vmDevice.getVmId(), deviceName, getVds());
-                    removedVmDevices.add(vmDevice);
+                if (getAttachedVmDevicesMap().containsKey(deviceName)) {
+                    List<VmDevice> vmDevices = getAttachedVmDevicesMap().get(deviceName);
+                    for (VmDevice vmDevice : vmDevices) {
+                        log.warn("Removing VM[{}]'s hostDevice[{}] because it no longer exists on host {}",
+                                vmDevice.getVmId(), deviceName, getVds());
+                        removedVmDevices.add(vmDevice);
+                    }
                 }
             }
         }
@@ -142,6 +146,22 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         }
 
         setSucceeded(true);
+    }
+
+    /**
+     * Returns lazily computed map of device names -> list of vm devices representing device attachments for this host.
+     */
+    private Map<String, List<VmDevice>> getAttachedVmDevicesMap() {
+        if (attachedVmDevicesMap == null) {
+            attachedVmDevicesMap = new HashMap<>();
+
+            List<VmDevice> vmDevices = hostDeviceDao.getVmDevicesAttachedToHost(getVdsId());
+            for (VmDevice vmDevice : vmDevices) {
+                addToMap(vmDevice.getDevice(), vmDevice, attachedVmDevicesMap);
+            }
+        }
+
+        return attachedVmDevicesMap;
     }
 
     private void handleHostNicVfsConfigUpdate() {

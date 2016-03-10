@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface HostDeviceDao extends GenericDao<HostDevice, HostDeviceId>, MassOperationsDao<HostDevice, HostDeviceId> {
@@ -14,6 +15,8 @@ public interface HostDeviceDao extends GenericDao<HostDevice, HostDeviceId>, Mas
     List<HostDevice> getHostDevicesByHostIdAndIommuGroup(Guid hostId, int iommuGroup);
 
     List<HostDeviceView> getVmExtendedHostDevicesByVmId(Guid vmId);
+
+    List<VmDevice> getVmDevicesAttachedToHost(Guid hostId);
 
     List<HostDeviceView> getExtendedHostDevicesByHostId(Guid hostId);
 

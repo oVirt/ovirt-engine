@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -105,6 +106,13 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
         return getCallsHandler().executeReadList("GetVmExtendedHostDevicesByVmId",
                 ExtendedHostDeviceRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
+
+    @Override
+    public List<VmDevice> getVmDevicesAttachedToHost(Guid hostId) {
+        return getCallsHandler().executeReadList("GetVmDevicesAttachedToHost",
+                VmDeviceDaoImpl.VmDeviceRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("host_id", hostId));
     }
 
     @Override
