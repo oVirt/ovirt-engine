@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -1542,6 +1544,36 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             vm.getvNumaNodeList().add(vmNumaNode);
         }
         return vm;
+    }
+
+    protected void updateGraphics(Guid id) {
+        AsyncQuery callback = new AsyncQuery();
+        callback.setModel(getModel());
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VdcQueryReturnValue retVal = (VdcQueryReturnValue) returnValue;
+                List<VmDevice> graphicsVmDevs = retVal.getReturnValue();
+
+                List<GraphicsType> graphicsTypes = new ArrayList<>();
+                for (VmDevice graphicsVmDev : graphicsVmDevs) {
+                    graphicsTypes.add(GraphicsType.fromString(graphicsVmDev.getDevice()));
+                }
+
+                boolean hasSpiceAndVnc = graphicsTypes.size() == 2
+                        && graphicsTypes.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC));
+                boolean canBeSelected = getModel().getGraphicsType().getItems().contains(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
+
+                if (hasSpiceAndVnc && canBeSelected) {
+                    getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
+                } else if (graphicsVmDevs.size() == 1) {
+                    GraphicsType type = GraphicsType.fromString(graphicsVmDevs.get(0).getDevice());
+                    getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsType(type));
+                }
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(id), callback);
     }
 
     /**
