@@ -40,7 +40,6 @@ import org.ovirt.engine.api.model.ApiSummary;
 import org.ovirt.engine.api.model.ApiSummaryItem;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DetailedLink;
-import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.ProductInfo;
 import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.SpecialObjects;
@@ -253,12 +252,11 @@ public class BackendApiResource
         // Concatenate links in a single header with a comma-separated value, which is the canonical form according
         // to http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2.
         String root = getCurrent().getRoot();
-        String header = response.getLinks().stream()
-            .map(Link::getHref)
+        String links = response.getLinks().stream()
+            .map(link -> String.format("<%s>; rel=%s", root + link.getHref(), link.getRel()))
             .sorted()
-            .map(href -> root + href)
             .collect(joining(","));
-        responseBuilder.header("Link", header);
+        responseBuilder.header("Link", links);
     }
 
     private Response.ResponseBuilder getResponseBuilder(BaseResource response) {
