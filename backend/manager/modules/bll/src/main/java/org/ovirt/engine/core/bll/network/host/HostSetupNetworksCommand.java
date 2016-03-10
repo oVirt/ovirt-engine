@@ -383,7 +383,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         getParameters().getNetworkAttachments()
                 .stream()
                 .filter(attachment -> attachment.getIpConfiguration() == null)
-                .forEach(attachment -> attachment.setIpConfiguration(NetworkUtils.createDefaultIpConfiguration()));
+                .forEach(attachment -> attachment.setIpConfiguration(NetworkCommonUtils.createDefaultIpConfiguration()));
     }
 
     private ValidationResult checkForOutOfSyncNetworks() {

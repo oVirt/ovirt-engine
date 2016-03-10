@@ -36,9 +36,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HostNetworkAttachmentsPersisterTest {
@@ -165,7 +165,7 @@ public class HostNetworkAttachmentsPersisterTest {
         networkAttachmentForClusterNetworkA.setProperties(
                 customPropertiesForNics.getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
         networkAttachmentForClusterNetworkA.setIpConfiguration(
-                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
+                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
 
         NetworkAttachment networkAttachmentForClusterNetworkB = createNetworkAttachment(clusterNetworkB);
         NetworkAttachment networkAttachmentWithoutNetworkAssigned = createNetworkAttachment(null);
@@ -196,7 +196,7 @@ public class HostNetworkAttachmentsPersisterTest {
         networkAttachmentForClusterNetworkA.setNicName("nonsense");
 
         IpConfiguration ipConfiguration =
-                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
         networkAttachmentForClusterNetworkA.setIpConfiguration(ipConfiguration);
         networkAttachmentForClusterNetworkA.setProperties(customPropertiesForNics
                 .getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
@@ -213,7 +213,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
         //make network attachment out of sync, by changing ip configuration
         IpConfiguration ipConfiguration =
-                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
         ipConfiguration.getPrimaryAddress().setAddress("192.168.1.11");
         networkAttachmentForClusterNetworkA.setIpConfiguration(ipConfiguration);
         networkAttachmentForClusterNetworkA.setProperties(customPropertiesForNics
@@ -228,7 +228,7 @@ public class HostNetworkAttachmentsPersisterTest {
         NetworkAttachment networkAttachmentForClusterNetworkA = createNetworkAttachment(clusterNetworkA);
 
         IpConfiguration ipConfiguration =
-                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
         networkAttachmentForClusterNetworkA.setIpConfiguration(ipConfiguration);
 
         //make network attachment out of sync, by changing custom properties
@@ -244,7 +244,7 @@ public class HostNetworkAttachmentsPersisterTest {
         upToDateNetworkAttachment.setNicId(interfaceWithAttachedClusterNetworkA.getId());
 
         IpConfiguration ipConfiguration =
-                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
         upToDateNetworkAttachment.setIpConfiguration(ipConfiguration);
         upToDateNetworkAttachment.setProperties(customPropertiesForNics
                 .getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
@@ -271,7 +271,7 @@ public class HostNetworkAttachmentsPersisterTest {
                 }
 
                 IpConfiguration ipConfiguration =
-                        NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                        NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
 
                 NetworkAttachment networkAttachment = (NetworkAttachment) o;
                 return networkAttachment.getId() != null
@@ -325,7 +325,7 @@ public class HostNetworkAttachmentsPersisterTest {
         userNetworkAttachment.setNicId(userNetworkAttachmentNicId);
 
         userNetworkAttachment.setProperties(customPropertiesForNics.getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
-        userNetworkAttachment.setIpConfiguration(NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
+        userNetworkAttachment.setIpConfiguration(NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
 
         // when persisting new record user provided will be replaced.
         Guid userProvidedNetworkAttachmentId = userNetworkAttachment.getId();

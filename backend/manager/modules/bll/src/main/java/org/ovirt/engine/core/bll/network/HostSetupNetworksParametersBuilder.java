@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -74,7 +75,7 @@ public abstract class HostSetupNetworksParametersBuilder {
             attachmentToConfigure =
                     new NetworkAttachment(baseNic,
                             network,
-                            NetworkUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(baseNic,
+                            NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(baseNic,
                                     network.getVlanId())));
         } else if (!attachmentToConfigure.getNicId().equals(baseNic.getId())) {
             // Move the attachment to the nic with the label

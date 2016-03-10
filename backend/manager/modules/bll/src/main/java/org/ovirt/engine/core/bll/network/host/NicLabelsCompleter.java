@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -162,7 +163,7 @@ public class NicLabelsCompleter {
         networkAttachment.setNicName(nicName);
         networkAttachment.setNetworkId(networkId);
         networkAttachment.setNetworkName(networkName);
-        IpConfiguration ipConfiguration = NetworkUtils.createDefaultIpConfiguration();
+        IpConfiguration ipConfiguration = NetworkCommonUtils.createDefaultIpConfiguration();
         networkAttachment.setIpConfiguration(ipConfiguration);
 
         return networkAttachment;

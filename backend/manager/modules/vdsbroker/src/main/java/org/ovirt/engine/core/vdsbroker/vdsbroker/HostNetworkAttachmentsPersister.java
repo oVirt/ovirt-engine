@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -188,7 +189,7 @@ public class HostNetworkAttachmentsPersister {
             return false;
         }
 
-        IpConfiguration nicIpConfiguration = NetworkUtils.createIpConfigurationFromVdsNetworkInterface(nic);
+        IpConfiguration nicIpConfiguration = NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(nic);
         boolean doUpdate = !Objects.equals(nicIpConfiguration, networkAttachment.getIpConfiguration());
         if (doUpdate) {
             networkAttachment.setIpConfiguration(nicIpConfiguration);
@@ -200,7 +201,7 @@ public class HostNetworkAttachmentsPersister {
         NetworkAttachment networkAttachment =
                 new NetworkAttachment(getBaseInterfaceNicOrThis(nic),
                         clusterNetworks.get(networkName),
-                        NetworkUtils.createIpConfigurationFromVdsNetworkInterface(nic));
+                        NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(nic));
         networkAttachment.setId(Guid.newGuid());
 
         if (legacyMode && customPropertiesForNics != null) {

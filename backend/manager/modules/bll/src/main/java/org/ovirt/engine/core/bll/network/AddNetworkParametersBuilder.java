@@ -12,11 +12,11 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AddNetworkParametersBuilder extends HostSetupNetworksParametersBuilder {
 
@@ -43,7 +43,7 @@ public class AddNetworkParametersBuilder extends HostSetupNetworksParametersBuil
             NetworkAttachment networkAttachment =
                     new NetworkAttachment(nicToConfigure,
                             network,
-                            NetworkUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(nicToConfigure,
+                            NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(nicToConfigure,
                                     network.getVlanId())));
 
             setupNetworkParams.getNetworkAttachments().add(networkAttachment);
