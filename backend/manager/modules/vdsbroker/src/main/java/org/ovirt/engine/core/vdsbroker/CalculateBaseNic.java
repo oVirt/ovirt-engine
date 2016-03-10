@@ -7,9 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 @Singleton
 public class CalculateBaseNic {
@@ -29,7 +29,7 @@ public class CalculateBaseNic {
     public VdsNetworkInterface getBaseNic(VdsNetworkInterface nic, Map<String, VdsNetworkInterface> interfacesByName) {
         Objects.requireNonNull(nic, "nic cannot be null");
 
-        String baseNicName = NetworkUtils.stripVlan(nic);
+        String baseNicName = NetworkCommonUtils.stripVlan(nic);
         if (nic.getName().equals(baseNicName)) {
             return nic;
         } else {

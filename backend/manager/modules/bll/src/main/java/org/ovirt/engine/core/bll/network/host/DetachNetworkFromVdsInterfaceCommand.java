@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -45,7 +46,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     protected void executeCommand() {
         String bond = null;
         List<String> nics = new ArrayList<>();
-        String baseNicName = NetworkUtils.stripVlan(iface);
+        String baseNicName = NetworkCommonUtils.stripVlan(iface);
         nics.add(baseNicName);
         Integer vlanId = iface.getVlanId();
         List<VdsNetworkInterface> interfaces = getDbFacade()
@@ -63,7 +64,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
             for (VdsNetworkInterface i : interfaces) {
                 if (StringUtils.equals(i.getBondName(), bond)) {
-                    nics.add(NetworkUtils.stripVlan(i));
+                    nics.add(NetworkCommonUtils.stripVlan(i));
                 }
             }
         }

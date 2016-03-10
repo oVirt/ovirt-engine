@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class HostNetworkAttachmentsPersister {
 
@@ -263,7 +262,7 @@ public class HostNetworkAttachmentsPersister {
     }
 
     private VdsNetworkInterface baseInterfaceOfNic(VdsNetworkInterface nic) {
-        return nicsByName.get(NetworkUtils.stripVlan(nic));
+        return nicsByName.get(NetworkCommonUtils.stripVlan(nic));
     }
 
     /**

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
@@ -133,7 +133,7 @@ public class UnmanagedNetworkValidator {
         for(VdsNetworkInterface nic : existingInterfaces){
             if(nic.getNetworkImplementationDetails() != null && !nic.getNetworkImplementationDetails().isManaged()) {
                 if (!removedUnmanagedNetworks.contains(nic.getNetworkName())) {
-                    nicsWithUnmanagedNetworks.add(NetworkUtils.stripVlan(nic));
+                    nicsWithUnmanagedNetworks.add(NetworkCommonUtils.stripVlan(nic));
                 }
             }
         }

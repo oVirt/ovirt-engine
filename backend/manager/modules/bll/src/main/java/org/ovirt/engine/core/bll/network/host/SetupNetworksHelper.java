@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -168,10 +169,10 @@ public class SetupNetworksHelper {
 
         for (String network : removedNetworks) {
             VdsNetworkInterface nic = hostInterfacesByNetworkName.get(network);
-            final String baseInterfaceName = NetworkUtils.stripVlan(nic);
+            final String baseInterfaceName = NetworkCommonUtils.stripVlan(nic);
 
             if (!removedBonds.containsKey(baseInterfaceName)) {
-                if (NetworkUtils.isVlan(nic)) {
+                if (NetworkCommonUtils.isVlan(nic)) {
                     final VdsNetworkInterface baseInterface = existingIfaces.get(baseInterfaceName);
                     validateNicForNotRemovingLabeledNetworks(network, baseInterface);
                 } else {
@@ -227,7 +228,7 @@ public class SetupNetworksHelper {
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             updateBaseInterface(iface);
 
-            String nameWithoutVlanId = NetworkUtils.stripVlan(iface);
+            String nameWithoutVlanId = NetworkCommonUtils.stripVlan(iface);
 
             if (!getExistingIfaces().containsKey(nameWithoutVlanId) && !bonds.containsKey(nameWithoutVlanId)) {
                 addViolation(EngineMessage.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
@@ -240,7 +241,7 @@ public class SetupNetworksHelper {
             return;
         }
 
-        if (NetworkUtils.isVlan(nic)) {
+        if (NetworkCommonUtils.isVlan(nic)) {
             String[] tokens = nic.getName().split("[.]", -1);
             if (tokens.length == 1) {
                 nic.setBaseInterface(nic.getName());
@@ -307,7 +308,7 @@ public class SetupNetworksHelper {
             if (network != null) {
                 NetworkAttachment networkAttachment = getNetworkAttachment(iface, network);
 
-                String baseIfaceName = NetworkUtils.stripVlan(iface);
+                String baseIfaceName = NetworkCommonUtils.stripVlan(iface);
 
                 if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
                     someSubInterfacesHaveQos.add(baseIfaceName);
@@ -374,10 +375,10 @@ public class SetupNetworksHelper {
      * @return a list of attached networks to the given underlying interface
      */
     private List<Network> findNetworksOnInterface(VdsNetworkInterface iface) {
-        String nameWithoutVlanId = NetworkUtils.stripVlan(iface);
+        String nameWithoutVlanId = NetworkCommonUtils.stripVlan(iface);
         List<Network> networks = new ArrayList<>();
         for (VdsNetworkInterface tmp : params.getInterfaces()) {
-            if (NetworkUtils.stripVlan(tmp).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
+            if (NetworkCommonUtils.stripVlan(tmp).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
                 if (getExistingClusterNetworks().containsKey(tmp.getNetworkName())) {
                     networks.add(getExistingClusterNetworks().get(tmp.getNetworkName()));
                 }
@@ -648,7 +649,7 @@ public class SetupNetworksHelper {
      *            The type of the network.
      */
     private void validateNetworkExclusiveOnIface(VdsNetworkInterface iface, NetworkType networkType) {
-        String ifaceName = NetworkUtils.stripVlan(iface);
+        String ifaceName = NetworkCommonUtils.stripVlan(iface);
         List<NetworkType> networksOnIface = ifacesWithExclusiveNetwork.get(ifaceName);
 
         if (networksOnIface == null) {

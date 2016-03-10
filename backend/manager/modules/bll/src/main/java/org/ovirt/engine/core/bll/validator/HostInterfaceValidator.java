@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -99,7 +100,7 @@ public class HostInterfaceValidator {
         return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
             ReplacementUtils.createSetVariableString(VAR_NIC_NAME, iface.getName()))
 
-            .when(NetworkUtils.isVlan(iface) || iface.isBond());
+            .when(NetworkCommonUtils.isVlan(iface) || iface.isBond());
     }
 
     public ValidationResult anotherInterfaceAlreadyLabeledWithThisLabel(String label,
@@ -151,7 +152,7 @@ public class HostInterfaceValidator {
             boolean networkIsAssignedToHostInterface = networkNameToNicMap.containsKey(network.getName());
             if (networkIsAssignedToHostInterface) {
                 VdsNetworkInterface assignedHostInterface = networkNameToNicMap.get(network.getName());
-                if (!StringUtils.equals(iface.getName(), NetworkUtils.stripVlan(assignedHostInterface))) {
+                if (!StringUtils.equals(iface.getName(), NetworkCommonUtils.stripVlan(assignedHostInterface))) {
                     badlyAssignedNetworks.add(network.getName());
                 }
             }

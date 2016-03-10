@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -628,7 +629,7 @@ public class HostMonitoring {
                 slaves.add(iface);
             }
 
-            String baseIfaceName = NetworkUtils.stripVlan(iface);
+            String baseIfaceName = NetworkCommonUtils.stripVlan(iface);
 
             // If the parent interface already marked as monitored- no need to check it again
             if (monitoredInterfaces.containsKey(baseIfaceName)) {

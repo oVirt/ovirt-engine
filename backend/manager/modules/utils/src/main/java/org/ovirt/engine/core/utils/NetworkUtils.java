@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,18 +33,8 @@ public final class NetworkUtils {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
 
-    /**
-    * Returns the underlying interface name of a given nic
-    *
-    * @return Base interface name if the nic is a vlan device.
-    *         Otherwise, the name of the nic
-    */
-    public static String stripVlan(VdsNetworkInterface nic) {
-        return NetworkUtils.isVlan(nic) ? nic.getBaseInterface() : nic.getName();
-    }
-
     public static boolean isBondVlan(List<VdsNetworkInterface> interfaces, VdsNetworkInterface iface) {
-        if (isVlan(iface)) {
+        if (NetworkCommonUtils.isVlan(iface)) {
             for (VdsNetworkInterface i : interfaces) {
                 if (Boolean.TRUE.equals(i.getBonded()) && i.getName().equals(iface.getBaseInterface())) {
                     return true;
@@ -67,12 +58,12 @@ public final class NetworkUtils {
      *         <code>false</code> otherwise.
      */
     public static boolean interfaceBasedOn(VdsNetworkInterface proposedIface, String iface) {
-        return iface != null && proposedIface != null && iface.equals(stripVlan(proposedIface));
+        return iface != null && proposedIface != null && iface.equals(NetworkCommonUtils.stripVlan(proposedIface));
     }
 
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {
         for (VdsNetworkInterface i : allIfaces) {
-            if (isVlan(i) && interfaceBasedOn(i, iface.getName())) {
+            if (NetworkCommonUtils.isVlan(i) && interfaceBasedOn(i, iface.getName())) {
                 return true;
             }
         }
@@ -144,17 +135,6 @@ public final class NetworkUtils {
      */
     public static boolean isVlan(Network network) {
         return network.getVlanId() != null;
-    }
-
-    /**
-     * Determine if a given network interface is a vlan device
-     *
-     * @param nic
-     *            the nic to check.
-     * @return <code>true</code> iff the nic is a vlan.
-     */
-    public static boolean isVlan(VdsNetworkInterface nic) {
-        return nic.getVlanId() != null;
     }
 
     /**

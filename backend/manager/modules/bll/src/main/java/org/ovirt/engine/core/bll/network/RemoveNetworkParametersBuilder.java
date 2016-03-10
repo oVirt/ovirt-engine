@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.Validate;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -64,7 +66,7 @@ public class RemoveNetworkParametersBuilder extends HostSetupNetworksParametersB
             } else {
                 VdsNetworkInterface nicWithNetwork = nicByNetworkName.get(network.getName());
 
-                if (nicWithNetwork != null && NetworkUtils.stripVlan(nicWithNetwork).equals(nic.getName())) {
+                if (nicWithNetwork != null && NetworkCommonUtils.stripVlan(nicWithNetwork).equals(nic.getName())) {
                     setupNetworkParams.getRemovedUnmanagedNetworks().add(network.getName());
                 }
             }

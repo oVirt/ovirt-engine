@@ -80,6 +80,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
@@ -1106,7 +1107,7 @@ public class VdsBrokerObjectsBuilder {
                     existingIface.getStatistics()
                             .setStatus(assignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
-                    if (!NetworkUtils.isVlan(existingIface) && !existingIface.isPartOfBond()) {
+                    if (!NetworkCommonUtils.isVlan(existingIface) && !existingIface.isPartOfBond()) {
                         Double ifaceUsage = computeInterfaceUsage(existingIface, statsBuilder.isTotalStatsReported());
                         if (ifaceUsage != null) {
                             networkUsage = (int) Math.max(networkUsage, ifaceUsage);

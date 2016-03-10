@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -164,7 +165,7 @@ public class NicLabelValidator {
         String interfaceName = nicLabel.getNicName();
         boolean isBondSlave = shouldBeConfigureAsBondSlave(interfaceName);
         VdsNetworkInterface existingNic = existingInterfacesMap.get(interfaceName);
-        boolean isVlanDevice = existingNic == null ? false : NetworkUtils.isVlan(existingNic);
+        boolean isVlanDevice = existingNic == null ? false : NetworkCommonUtils.isVlan(existingNic);
 
         return ValidationResult.failWith(EngineMessage.LABEL_ATTACH_TO_IMPROPER_INTERFACE,
                 ReplacementUtils.createSetVariableString(

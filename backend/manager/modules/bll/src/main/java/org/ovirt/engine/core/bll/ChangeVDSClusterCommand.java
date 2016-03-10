@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -566,7 +567,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 Map<String, VdsNetworkInterface> nicsByNetwork) {
             VdsNetworkInterface nicToWhichNetworkIsAssigned = nicsByNetwork.get(networkName);
             String baseNicNameToWhichNetworkIsAssigned =
-                    nicToWhichNetworkIsAssigned == null ? null : NetworkUtils.stripVlan(nicToWhichNetworkIsAssigned);
+                    nicToWhichNetworkIsAssigned == null ? null : NetworkCommonUtils.stripVlan(nicToWhichNetworkIsAssigned);
             return nic.getName().equals(baseNicNameToWhichNetworkIsAssigned);
 
         }

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 
 public class GetInterfacesByLabelForNetworkQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetInterfacesByLabelForNetworkQuery(P parameters) {
@@ -52,7 +52,7 @@ public class GetInterfacesByLabelForNetworkQuery<P extends IdQueryParameters> ex
         Map<String, VdsNetworkInterface> labeledNicsByName = Entities.entitiesByName(labeledNics);
 
         for (VdsNetworkInterface networkNic : networkNics) {
-            if (labeledNicsByName.containsKey(NetworkUtils.stripVlan(networkNic))) {
+            if (labeledNicsByName.containsKey(NetworkCommonUtils.stripVlan(networkNic))) {
                 interfacesByLabelForNetwork.add(networkNic);
             }
         }

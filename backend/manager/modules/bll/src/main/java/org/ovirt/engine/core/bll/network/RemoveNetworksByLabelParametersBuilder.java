@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -41,7 +42,7 @@ public class RemoveNetworksByLabelParametersBuilder extends HostSetupNetworksPar
             VdsNetworkInterface nicWithNetwork = nicByNetwork.get(networkToRemove.getName());
 
             if (nicWithNetwork != null) {
-                VdsNetworkInterface baseNicWithNetwork = nicByName.get(NetworkUtils.stripVlan(nicWithNetwork));
+                VdsNetworkInterface baseNicWithNetwork = nicByName.get(NetworkCommonUtils.stripVlan(nicWithNetwork));
                 if (NetworkUtils.isLabeled(networkToRemove) && NetworkUtils.isLabeled(baseNicWithNetwork)
                         && baseNicWithNetwork.getLabels().contains(networkToRemove.getLabel())) {
                     NetworkAttachment networkAttachment =

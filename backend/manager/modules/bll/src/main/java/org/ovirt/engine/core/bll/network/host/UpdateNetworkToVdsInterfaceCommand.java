@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -59,14 +60,14 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         for (VdsNetworkInterface i : getParameters().getInterfaces()) {
             VdsNetworkInterface existingIface = interfaceByName.get(i.getName());
             if (Boolean.TRUE.equals(existingIface.getBonded()) || NetworkUtils.isBondVlan(interfaces, existingIface)) {
-                getParameters().setBondName(NetworkUtils.stripVlan(existingIface));
+                getParameters().setBondName(NetworkCommonUtils.stripVlan(existingIface));
                 for (VdsNetworkInterface ix : interfaces) {
                     if (NetworkUtils.interfaceBasedOn(existingIface, ix.getBondName())) {
-                        interfaceNames.add(NetworkUtils.stripVlan(ix));
+                        interfaceNames.add(NetworkCommonUtils.stripVlan(ix));
                     }
                 }
             } else {
-                interfaceNames.add(NetworkUtils.stripVlan(existingIface));
+                interfaceNames.add(NetworkCommonUtils.stripVlan(existingIface));
             }
         }
 

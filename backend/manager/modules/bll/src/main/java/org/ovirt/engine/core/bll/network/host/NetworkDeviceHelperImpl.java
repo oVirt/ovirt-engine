@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -352,7 +353,7 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
         @Override
         public boolean test(VdsNetworkInterface nic) {
-            if (nic.isBond() || NetworkUtils.isVlan(nic)) {
+            if (nic.isBond() || NetworkCommonUtils.isVlan(nic)) {
                 return false;
             }
             try {

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class NetworkMonitoringHelper {
@@ -32,7 +33,7 @@ public class NetworkMonitoringHelper {
 
         for (VdsNetworkInterface iface : interfaces) {
             if (isRequiredInterfaceDown(networksByName, interfaces, iface)) {
-                String baseNicName = NetworkUtils.stripVlan(iface);
+                String baseNicName = NetworkCommonUtils.stripVlan(iface);
                 Set<String> networks = brokenNicsToNetworks.get(baseNicName);
 
                 if (networks == null) {
@@ -66,7 +67,7 @@ public class NetworkMonitoringHelper {
     }
 
     private static boolean isBaseInterfaceDown(VdsNetworkInterface iface, List<VdsNetworkInterface> interfaces) {
-        if (!NetworkUtils.isVlan(iface)) {
+        if (!NetworkCommonUtils.isVlan(iface)) {
             return iface.getStatistics().getStatus() != InterfaceStatus.UP;
         }
 

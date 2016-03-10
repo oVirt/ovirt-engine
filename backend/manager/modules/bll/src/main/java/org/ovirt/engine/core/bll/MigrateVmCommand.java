@@ -37,12 +37,12 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 @NonTransactiveCommandAttribute
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
@@ -313,7 +313,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected boolean migrationInterfaceUp(VdsNetworkInterface nic, List<VdsNetworkInterface> nics) {
-        if (NetworkUtils.isVlan(nic)) {
+        if (NetworkCommonUtils.isVlan(nic)) {
             String physicalNic = nic.getBaseInterface();
             for (VdsNetworkInterface iface : nics) {
                 if (iface.getName().equals(physicalNic)) {

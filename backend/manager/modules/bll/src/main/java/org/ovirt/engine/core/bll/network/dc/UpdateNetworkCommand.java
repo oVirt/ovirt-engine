@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -223,7 +224,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                     getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(network.getId());
             for (VdsNetworkInterface nic : nics) {
                 VdsNetworkInterface labeledNic = nic;
-                if (NetworkUtils.isVlan(nic)) {
+                if (NetworkCommonUtils.isVlan(nic)) {
                     labeledNic = getBaseInterface(nic);
                 }
 

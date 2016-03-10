@@ -108,4 +108,24 @@ public class NetworkCommonUtils {
         return output;
     }
 
+    /**
+     * Returns the underlying interface name of a given nic
+     *
+     * @return Base interface name if the nic is a vlan device.
+     *         Otherwise, the name of the nic
+     */
+     public static String stripVlan(VdsNetworkInterface nic) {
+         return isVlan(nic) ? nic.getBaseInterface() : nic.getName();
+     }
+
+     /**
+      * Determine if a given network interface is a vlan device
+      *
+      * @param nic
+      *            the nic to check.
+      * @return <code>true</code> iff the nic is a vlan.
+      */
+     public static boolean isVlan(VdsNetworkInterface nic) {
+         return nic.getVlanId() != null;
+     }
 }

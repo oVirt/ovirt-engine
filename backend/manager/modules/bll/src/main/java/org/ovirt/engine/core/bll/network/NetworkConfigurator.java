@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -135,7 +136,7 @@ public class NetworkConfigurator {
         managementAttachment.setNetworkId(managementNetwork.getId());
 
         Map<String, VdsNetworkInterface> nicNameToNic = Entities.entitiesByName(host.getInterfaces());
-        Guid baseNicId = nicNameToNic.get(NetworkUtils.stripVlan(nic)).getId();
+        Guid baseNicId = nicNameToNic.get(NetworkCommonUtils.stripVlan(nic)).getId();
         managementAttachment.setNicId(baseNicId);
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.getIPv4Addresses().add(createIPv4Address(nic));

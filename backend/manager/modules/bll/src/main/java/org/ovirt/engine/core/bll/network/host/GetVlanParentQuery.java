@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 /**
@@ -17,7 +18,7 @@ public class GetVlanParentQuery<P extends InterfaceAndIdQueryParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        if (NetworkUtils.isVlan(getParameters().getInterface())) {
+        if (NetworkCommonUtils.isVlan(getParameters().getInterface())) {
             List<VdsNetworkInterface> vdsInterfaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {

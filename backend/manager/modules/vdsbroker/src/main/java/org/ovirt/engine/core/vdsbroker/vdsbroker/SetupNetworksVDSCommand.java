@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -70,7 +71,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             Map<String, Object> opts = new HashMap<>();
             VdsNetworkInterface iface =
                     findNetworkInterface(network.getName(), getParameters().getInterfaces(), getParameters().getBonds());
-            String ifaceNameWithoutVlan = NetworkUtils.stripVlan(iface);
+            String ifaceNameWithoutVlan = NetworkCommonUtils.stripVlan(iface);
             Boolean bonded = findInterfaceByName(ifaceNameWithoutVlan).getBonded();
             String type = (bonded != null && bonded) ? "bonding" : "nic";
             opts.put(type, ifaceNameWithoutVlan);

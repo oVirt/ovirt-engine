@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -49,7 +50,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                     new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
                             network,
                             bond.getVlanId(),
-                            NetworkUtils.stripVlan(bond),
+                            NetworkCommonUtils.stripVlan(bond),
                             interfaces.toArray(new String[] {}),
                             null,
                             null,

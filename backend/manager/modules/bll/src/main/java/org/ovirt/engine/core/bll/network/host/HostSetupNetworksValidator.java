@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
@@ -603,7 +604,7 @@ public class HostSetupNetworksValidator {
         }
 
         for (VdsNetworkInterface iface : existingInterfaces) {
-            if (slaveName.equals(NetworkUtils.stripVlan(iface))) {
+            if (slaveName.equals(NetworkCommonUtils.stripVlan(iface))) {
                 if (iface.getNetworkImplementationDetails() != null &&
                     !iface.getNetworkImplementationDetails().isManaged()) {
                     return new ValidationResult(EngineMessage.NETWORK_INTERFACE_WITH_UNMANAGED_NETWORK_CANNOT_BE_SLAVE,
@@ -986,7 +987,7 @@ public class HostSetupNetworksValidator {
         return ValidationResult.failWith(engineMessage,
                 ReplacementUtils.getVariableAssignmentString(engineMessage, attachment.getNetworkName()),
                 ReplacementUtils.createSetVariableString(VAR_NIC_NAME, attachment.getNicName()))
-            .when(nic != null && NetworkUtils.isVlan(nic));
+            .when(nic != null && NetworkCommonUtils.isVlan(nic));
     }
 
     private Network existingNetworkRelatedToAttachment(NetworkAttachment attachment) {
