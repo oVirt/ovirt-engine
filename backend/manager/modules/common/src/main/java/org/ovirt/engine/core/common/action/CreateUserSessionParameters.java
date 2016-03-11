@@ -12,7 +12,7 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
     private String principalId;
     private String email;
     private String sourceIp;
-    private Collection<Map> groupIds;
+    private Collection<? extends Map> groupIds;
     private boolean adminRequired;
 
     public CreateUserSessionParameters() {
@@ -24,7 +24,7 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
                                        String principalId,
                                        String email,
                                        String sourceIp,
-                                       Collection<Map> groupIds,
+                                       Collection<? extends Map> groupIds,
                                        boolean adminRequired) {
         setSsoToken(ssoToken);
         setProfileName(profileName);
@@ -76,11 +76,11 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
         this.email = email;
     }
 
-    public Collection<Map> getGroupIds() {
+    public Collection<? extends Map> getGroupIds() {
         return groupIds;
     }
 
-    public void setGroupIds(Collection<Map> groupIds) {
+    public void setGroupIds(Collection<? extends Map> groupIds) {
         this.groupIds = groupIds;
     }
 

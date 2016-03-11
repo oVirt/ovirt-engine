@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -63,7 +62,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         user.setLoginName(params.getPrincipalName());
         List<Guid> groupIds = new ArrayList<>();
         List<ExtMap> groupExtMapIds = new ArrayList<>();
-        flatGroups(params.getGroupIds(), groupExtMapIds);
+        flatGroups((Collection<ExtMap>) params.getGroupIds(), groupExtMapIds);
         for (ExtMap group : groupExtMapIds) {
             DbGroup dbGroup = dbGroupDao.getByExternalId(authzName, group.<String>get(Authz.GroupRecord.ID));
             if (dbGroup != null) {
@@ -109,16 +108,16 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         }
     }
 
-    private static List<ExtMap> flatGroups(Collection<Map> groupIds, List<ExtMap> accumulator) {
-        for (Map group : groupIds) {
-            accumulator.add((ExtMap) group);
-            flatGroups((ExtMap) group, Authz.GroupRecord.GROUPS, accumulator);
+    private static List<ExtMap> flatGroups(Collection<ExtMap> groupIds, List<ExtMap> accumulator) {
+        for (ExtMap group : groupIds) {
+            accumulator.add(group);
+            flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
         }
         return accumulator;
     }
 
     private static List<ExtMap> flatGroups(ExtMap entity, ExtKey key, List<ExtMap> accumulator) {
-        for (ExtMap group : entity.<List<ExtMap>>get(key, Collections.<ExtMap>emptyList())) {
+        for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap>emptyList())) {
             accumulator.add(group);
             flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
         }

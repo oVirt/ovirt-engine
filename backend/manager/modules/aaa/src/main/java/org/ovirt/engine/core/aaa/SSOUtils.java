@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -42,7 +43,7 @@ public class SSOUtils {
                             (String) payload.get("principal_id"),
                             (String) payload.get("email"),
                             req == null ? "" : req.getRemoteAddr(),
-                            (Collection<Map>) payload.get("group_ids"),
+                            (Collection<ExtMap>) payload.get("group_ids"),
                             loginAsAdmin));
             if (!queryRetVal.getSucceeded()) {
                 throw new RuntimeException(String.format("The user %s is not authorized to perform login", username));

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -87,7 +88,7 @@ public class SSOPostLoginServlet extends HttpServlet {
                                 (String) payload.get("principal_id"),
                                 (String) payload.get("email"),
                                 request.getRemoteAddr(),
-                                (Collection<Map>) payload.get("group_ids"),
+                                (Collection<ExtMap>) payload.get("group_ids"),
                                 loginAsAdmin));
                 if (!queryRetVal.getSucceeded() ) {
                     throw new RuntimeException(String.format("The user %s@%s is not authorized to perform login", username, profile));
