@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -178,7 +179,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()),
                 getParamsMap(data));
         if (response.containsKey("result")) {
-            List<ExtMap> users = (List<ExtMap>) response.get("result");
+            Collection<ExtMap> users = (Collection<ExtMap>) response.get("result");
             results = users.stream()
                     .map((ExtMap u) -> DirectoryUtils.mapPrincipalRecordToDirectoryUser(data.getAuthz(), u))
                     .collect(Collectors.toList());
@@ -206,7 +207,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()),
                 getParamsMap(data));
         if (response.containsKey("result")) {
-            List<ExtMap> groups = (List<ExtMap>) response.get("result");
+            Collection<ExtMap> groups = (Collection<ExtMap>) response.get("result");
             results = groups.stream()
                     .map((ExtMap g) -> DirectoryUtils.mapGroupRecordToDirectoryGroup(data.getAuthz(), g))
                     .collect(Collectors.toList());

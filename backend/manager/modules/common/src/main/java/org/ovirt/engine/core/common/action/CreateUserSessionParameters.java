@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 public class CreateUserSessionParameters extends VdcActionParametersBase {
@@ -12,7 +12,7 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
     private String principalId;
     private String email;
     private String sourceIp;
-    private List<Map> groupIds;
+    private Collection<Map> groupIds;
     private boolean adminRequired;
 
     public CreateUserSessionParameters() {
@@ -24,7 +24,7 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
                                        String principalId,
                                        String email,
                                        String sourceIp,
-                                       List<Map> groupIds,
+                                       Collection<Map> groupIds,
                                        boolean adminRequired) {
         setSsoToken(ssoToken);
         setProfileName(profileName);
@@ -76,11 +76,11 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
         this.email = email;
     }
 
-    public List<Map> getGroupIds() {
+    public Collection<Map> getGroupIds() {
         return groupIds;
     }
 
-    public void setGroupIds(List<Map> groupIds) {
+    public void setGroupIds(Collection<Map> groupIds) {
         this.groupIds = groupIds;
     }
 

@@ -95,9 +95,9 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
         );
         ExtMap principalRecord = null;
         if (response.containsKey("result")) {
-            List<ExtMap> records = (List<ExtMap>) response.get("result");
+            Collection<ExtMap> records = (Collection<ExtMap>) response.get("result");
             if (!records.isEmpty()) {
-                principalRecord = records.get(0);
+                principalRecord = records.iterator().next();
             }
         }
         if (principalRecord == null) {

@@ -2,9 +2,8 @@ package org.ovirt.engine.core.aaa.servlet;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -88,7 +87,7 @@ public class SSOPostLoginServlet extends HttpServlet {
                                 (String) payload.get("principal_id"),
                                 (String) payload.get("email"),
                                 request.getRemoteAddr(),
-                                (List<Map>) payload.get("group_ids"),
+                                (Collection<Map>) payload.get("group_ids"),
                                 loginAsAdmin));
                 if (!queryRetVal.getSucceeded() ) {
                     throw new RuntimeException(String.format("The user %s@%s is not authorized to perform login", username, profile));

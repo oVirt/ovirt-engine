@@ -366,7 +366,7 @@ public class AAAServiceImpl implements ModuleService {
                                     module.argMap.get("page-size")
                                 )
                             );
-                            List<ExtMap> results = outMap.get(Authz.InvokeKeys.QUERY_RESULT);
+                            Collection<ExtMap> results = outMap.get(Authz.InvokeKeys.QUERY_RESULT);
                             log.info("API: <--Authz.InvokeCommands.QUERY_EXECUTE count={}", results == null ? "END" : results.size());
 
                             if (results == null) {

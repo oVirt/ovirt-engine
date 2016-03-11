@@ -62,7 +62,7 @@ public class DirectoryUtils {
             directoryUser.setTitle(principalRecord.<String> get(Authz.PrincipalRecord.TITLE));
             directoryUser.setPrincipal(principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL));
             List<DirectoryGroup> directoryGroups = new ArrayList<>();
-            List<ExtMap> groups = principalRecord.<List<ExtMap>> get(Authz.PrincipalRecord.GROUPS);
+            Collection<ExtMap> groups = principalRecord.<Collection<ExtMap>> get(Authz.PrincipalRecord.GROUPS);
             if (groups != null) {
                 for (ExtMap group : groups) {
                     directoryGroups.add(mapGroupRecordToDirectoryGroup(authzName, group));
@@ -83,7 +83,9 @@ public class DirectoryUtils {
                     group.<String> get(Authz.GroupRecord.NAME),
                     group.<String> get(Authz.GroupRecord.DISPLAY_NAME)
                     );
-            for (ExtMap memberOf : group.<List<ExtMap>> get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+            for (ExtMap memberOf : group.<Collection<ExtMap>> get(
+                    Authz.GroupRecord.GROUPS,
+                    Collections.<ExtMap>emptyList())) {
                 directoryGroup.getGroups().add(mapGroupRecordToDirectoryGroup(authzName, memberOf));
             }
         }

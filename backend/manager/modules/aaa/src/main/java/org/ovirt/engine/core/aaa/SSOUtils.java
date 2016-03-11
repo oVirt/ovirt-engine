@@ -1,8 +1,7 @@
 package org.ovirt.engine.core.aaa;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +42,7 @@ public class SSOUtils {
                             (String) payload.get("principal_id"),
                             (String) payload.get("email"),
                             req == null ? "" : req.getRemoteAddr(),
-                            (List<Map>) payload.get("group_ids"),
+                            (Collection<Map>) payload.get("group_ids"),
                             loginAsAdmin));
             if (!queryRetVal.getSucceeded()) {
                 throw new RuntimeException(String.format("The user %s is not authorized to perform login", username));

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +109,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         }
     }
 
-    private static List<ExtMap> flatGroups(List<Map> groupIds, List<ExtMap> accumulator) {
+    private static List<ExtMap> flatGroups(Collection<Map> groupIds, List<ExtMap> accumulator) {
         for (Map group : groupIds) {
             accumulator.add((ExtMap) group);
             flatGroups((ExtMap) group, Authz.GroupRecord.GROUPS, accumulator);

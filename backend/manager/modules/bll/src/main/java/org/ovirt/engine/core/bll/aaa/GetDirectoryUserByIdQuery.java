@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.aaa;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -24,7 +23,7 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
         } else {
             Collection<DirectoryUser> users = DirectoryUtils.mapPrincipalRecordsToDirectoryUsers(
                     getParameters().getDomain(),
-                    (List<ExtMap>) response.get("result"));
+                    (Collection<ExtMap>) response.get("result"));
             if (!users.isEmpty()) {
                 getQueryReturnValue().setReturnValue(users.iterator().next());
             }

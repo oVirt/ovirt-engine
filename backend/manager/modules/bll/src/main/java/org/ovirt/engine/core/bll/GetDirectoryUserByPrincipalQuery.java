@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -30,9 +30,9 @@ public class GetDirectoryUserByPrincipalQuery<P extends GetDirectoryUserByPrinci
         );
         ExtMap principalRecord = null;
         if (response.containsKey("result")) {
-            List<ExtMap> records = (List<ExtMap>) response.get("result");
+            Collection<ExtMap> records = (Collection<ExtMap>) response.get("result");
             if (!records.isEmpty()) {
-                principalRecord = records.get(0);
+                principalRecord = records.iterator().next();
             }
         }
         getQueryReturnValue().setReturnValue(

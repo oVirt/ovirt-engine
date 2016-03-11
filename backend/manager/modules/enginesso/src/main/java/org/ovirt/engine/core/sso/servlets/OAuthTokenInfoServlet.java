@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.sso.servlets;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -139,7 +138,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         ovirt.put("version", SSOConstants.OVIRT_SSO_VERSION);
         ovirt.put("principal_id", ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID));
         ovirt.put("email", ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.EMAIL));
-        ovirt.put("group_ids", ssoSession.getPrincipalRecord().<List>get(Authz.PrincipalRecord.GROUPS,
+        ovirt.put("group_ids", ssoSession.getPrincipalRecord().<Collection>get(Authz.PrincipalRecord.GROUPS,
                 Collections.<ExtMap>emptyList()));
         if (password != null) {
             ovirt.put("password", password);
