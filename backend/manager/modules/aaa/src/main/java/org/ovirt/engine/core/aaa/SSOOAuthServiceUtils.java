@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.aaa;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,23 +15,29 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
+import java.util.function.Function;
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SSOOAuthServiceUtils {
+    private static final Logger log = LoggerFactory.getLogger(SSOOAuthServiceUtils.class);
 
     private static final String authzSearchScope = "ovirt-ext=token-info:authz-search";
     private static final String publicAuthzSearchScope = "ovirt-ext=token-info:public-authz-search";
@@ -149,7 +158,15 @@ public class SSOOAuthServiceUtils {
                         .buildURL().getQuery();
             }
             postData(connection, data);
-            return getData(connection);
+            Map<String, Object> jsonData = getData(connection);
+            Map<String, Object> ovirtData = (Map<String, Object>) jsonData.get("ovirt");
+            if (ovirtData != null) {
+                Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
+                if (groupIds != null) {
+                    ovirtData.put("group_ids", SSOOAuthServiceUtils.processGroupMembershipsFromJson(groupIds));
+                }
+            }
+            return jsonData;
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
         }
@@ -374,5 +391,25 @@ public class SSOOAuthServiceUtils {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Currently jackson doesn't provide a way how to serialize graphs with cyclic references between nodes, which
+     * may happen if those cyclic dependencies exists among nested groups which is a user member of. So in order to
+     * deserialize from JSON successfully we have to revert changes done in
+     * {@code org.ovirt.engine.core.sso.utils.SSOUtils.prepareGroupMembershipsForJson()}
+     */
+    public static List<ExtMap> processGroupMembershipsFromJson(Collection<ExtMap> jsonGroupMemberships) {
+        Map<String, ExtMap> groupsCache = jsonGroupMemberships.stream()
+                .collect(toMap(item -> item.get(Authz.GroupRecord.ID), Function.identity()));
+        jsonGroupMemberships.forEach(groupRecord -> groupRecord.put(
+                Authz.GroupRecord.GROUPS,
+                groupRecord.<Collection<String>>get(Authz.GroupRecord.GROUPS, Collections.emptyList()).stream()
+                        .map(memberOfId -> groupsCache.get(memberOfId))
+                        .collect(toList())));
+        return groupsCache.values().stream()
+                .filter(group -> group.containsKey(Authz.PrincipalRecord.PRINCIPAL))
+                .peek(group -> group.remove(Authz.PrincipalRecord.PRINCIPAL))
+                .collect(toList());
     }
 }

@@ -16,9 +16,11 @@ import java.security.cert.CertificateFactory;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -506,6 +508,13 @@ public class SSOUtils {
 
     public static void sendJsonData(HttpServletResponse response, Map<String, Object> payload) throws IOException {
         try (OutputStream os = response.getOutputStream()) {
+            Map<String, Object> ovirtData = (Map<String, Object>) payload.get("ovirt");
+            if (ovirtData != null) {
+                Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
+                if (groupIds != null) {
+                    ovirtData.put("group_ids", SSOUtils.prepareGroupMembershipsForJson(groupIds));
+                }
+            }
             String jsonPayload = getJson(payload);
             response.setContentType("application/json");
             byte[] jsonPayloadBytes = jsonPayload.getBytes(StandardCharsets.UTF_8.name());
@@ -614,5 +623,59 @@ public class SSOUtils {
         connection.setRequestProperty(HttpHeaders.ACCEPT, "application/json");
         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
         return connection;
+    }
+
+    /**
+     * Currently jackson doesn't provide a way how to serialize graphs with cyclic references between nodes, which
+     * may happen if those cyclic dependencies exists among nested groups which is a user member of. So in order to
+     * serialize to JSON successfully we do the following:
+     *   1. If a principal is a direct member of a group, than put into group record key
+     *      {@code Authz.PrincipalRecord.PRINCIPAL}
+     *   2. Change group memberships to contain only IDs of groups and not full group records by changing list in
+     *      {@code Authz.GroupRecord.GROUPS} from {@code Collection<ExtMap>} to {@code Collection<String>}
+     *   3. Return all referenced group records as a set
+     * The whole process needs to be reversed on engine side, see
+     * {@code org.ovirt.engine.core.aaa.SSOOAuthServiceUtils.processGroupMembershipsFromJson()}
+     */
+    public static Collection<ExtMap> prepareGroupMembershipsForJson(Collection<ExtMap> groupRecords) {
+        Map<String, ExtMap> resolvedGroups = new HashMap<>();
+        for (ExtMap origRecord : groupRecords) {
+            if (!resolvedGroups.containsKey(origRecord.<String>get(Authz.GroupRecord.ID))) {
+                ExtMap groupRecord = new ExtMap(origRecord);
+                groupRecord.put(Authz.PrincipalRecord.PRINCIPAL, "");
+                resolvedGroups.put(groupRecord.<String>get(Authz.GroupRecord.ID), groupRecord);
+                groupRecord.put(
+                        Authz.GroupRecord.GROUPS,
+                        processGroupMemberships(
+                                groupRecord.<Collection<ExtMap>>get(
+                                        Authz.GroupRecord.GROUPS,
+                                        Collections.<ExtMap>emptyList()),
+                                resolvedGroups
+                        ));
+            }
+        }
+        return new ArrayList<>(resolvedGroups.values());
+    }
+
+    private static Set<String> processGroupMemberships(
+            Collection<ExtMap> memberships,
+            Map<String, ExtMap> resolvedGroups) {
+        Set<String> membershipIds = new HashSet<>();
+        for (ExtMap origRecord : memberships) {
+            ExtMap groupRecord = new ExtMap(origRecord);
+            membershipIds.add(groupRecord.<String>get(Authz.GroupRecord.ID));
+            if (!resolvedGroups.containsKey(groupRecord.<String>get(Authz.GroupRecord.ID))) {
+                resolvedGroups.put(groupRecord.<String>get(Authz.GroupRecord.ID), groupRecord);
+                groupRecord.put(
+                        Authz.GroupRecord.GROUPS,
+                        processGroupMemberships(
+                                groupRecord.<Collection<ExtMap>>get(
+                                        Authz.GroupRecord.GROUPS,
+                                        Collections.<ExtMap>emptyList()),
+                                resolvedGroups
+                        ));
+            }
+        }
+        return membershipIds;
     }
 }
