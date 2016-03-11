@@ -197,6 +197,7 @@ BUILD_TARGET=install
 GENERATED = \
 	build/python-check.sh \
 	ovirt-engine.spec \
+	packaging/bin/engine-backup.sh \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/pki-common.sh \
 	packaging/conf/notifier-logging.properties \
@@ -245,6 +246,7 @@ all: \
 
 generated-files:	$(GENERATED)
 	chmod a+x build/python-check.sh
+	chmod a+x packaging/bin/engine-backup.sh
 	chmod a+x packaging/services/ovirt-engine/ovirt-engine.sysv
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv
 	chmod a+x packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv

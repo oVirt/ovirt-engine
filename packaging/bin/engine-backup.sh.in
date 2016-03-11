@@ -19,8 +19,31 @@
 # Clean the environment, see bz 1172191
 [ -z "${BACKUP_ENV_CLEAN}" ] && exec -c env -i PATH="${PATH}" BACKUP_ENV_CLEAN=1 "$0" "$@"
 
-# Load the prolog:
-. "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
+# Instead of loading prolog here, like the other scripts, we included its
+# content here, slightly modified, to allow it to work without engine
+# config file.
+export ENGINE_DEFAULTS="${ENGINE_DEFAULTS:-@ENGINE_DEFAULTS@}"
+export ENGINE_VARS="${ENGINE_VARS:-@ENGINE_VARS@}"
+PACKAGE_NAME="@PACKAGE_NAME@"
+PACKAGE_VERSION="@PACKAGE_VERSION@"
+DISPLAY_VERSION="@DISPLAY_VERSION@"
+
+die() {
+	local m="$1"
+	echo "FATAL: ${m}" >&2
+	exit 1
+}
+
+load_config() {
+	for f in \
+		"${ENGINE_DEFAULTS}" \
+		"${ENGINE_VARS}" \
+		$([ -d "${ENGINE_VARS}.d" ] && find "${ENGINE_VARS}.d" -name '*.conf' | sort) \
+		; do
+
+		[ -r "${f}" ] && . "${f}"
+	done
+}
 
 my_load_config() {
 	load_config
@@ -89,6 +112,51 @@ for i in range(1, len(params)-1, 2):
     except configparser.NoOptionError:
         pass
 " "$@"
+}
+
+engine_setup_service_enabled() {
+	local enabled=0;
+	for f in /etc/ovirt-engine-setup.conf.d/*.conf; do
+		python -c "
+
+import sys
+
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+
+from otopi import common, constants
+
+config = configparser.ConfigParser()
+config.optionxform = str
+
+with open(sys.argv[1]) as f:
+    config.readfp(f)
+
+try:
+    v = config.get(constants.Const.CONFIG_SECTION_DEFAULT, sys.argv[2])
+    if common.parseTypedValue(v):
+        sys.exit(0)
+except configparser.NoOptionError:
+    pass
+
+sys.exit(1)
+" "$f" "$1" && enabled=1
+	done
+	test $enabled -eq 1
+}
+
+engine_enabled() {
+	engine_setup_service_enabled "OVESETUP_ENGINE_CORE/enable"
+}
+
+dwh_enabled() {
+	engine_setup_service_enabled "OVESETUP_DWH_CORE/enable"
+}
+
+reports_enabled() {
+	engine_setup_service_enabled "OVESETUP_REPORTS_CORE/enable"
 }
 
 load_jasper_reports_db_creds() {
@@ -826,17 +894,17 @@ dobackup() {
 		backupFiles "${BACKUP_PATHS}" "${tardir}/files"
 	fi
 
-	if [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
+	if engine_enabled && [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
 		output "- Engine database '"${ENGINE_DB_DATABASE}"'"
 		log "Backing up database to ${tardir}/db/${DB_BACKUP_FILE_NAME}"
 		backupDB "${tardir}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${DB_DUMP_COMPRESSOR}" "${DB_DUMP_FORMAT}"
 	fi
-	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
+	if dwh_enabled && [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
 		output "- DWH database '"${DWH_DB_DATABASE}"'"
 		log "Backing up dwh database to ${tardir}/db/${DWHDB_BACKUP_FILE_NAME}"
 		backupDB "${tardir}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${DWH_DB_DUMP_COMPRESSOR}" "${DWH_DB_DUMP_FORMAT}"
 	fi
-	if [ -n "${SCOPE_REPORTS_DB}" -a -n "${REPORTS_DB_USER}" ]; then
+	if reports_enabled && [ -n "${SCOPE_REPORTS_DB}" -a -n "${REPORTS_DB_USER}" ]; then
 		output "- Reports database '"${REPORTS_DB_DATABASE}"'"
 		log "Backing up reports database to ${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}"
 		backupDB "${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}"
