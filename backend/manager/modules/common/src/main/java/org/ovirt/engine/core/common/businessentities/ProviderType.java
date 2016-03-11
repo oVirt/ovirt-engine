@@ -9,18 +9,26 @@ import org.ovirt.engine.core.common.VdcObjectType;
  * The provider type determines what external provider is used.
  */
 public enum ProviderType implements Identifiable {
-    OPENSTACK_NETWORK(0, VdcObjectType.Network),
-    FOREMAN(1, VdcObjectType.VDS),
-    OPENSTACK_IMAGE(2, VdcObjectType.Storage),
-    OPENSTACK_VOLUME(3, VdcObjectType.Storage),
-    VMWARE(4, VdcObjectType.VM),
-    EXTERNAL_NETWORK(5, VdcObjectType.Network);
+    OPENSTACK_NETWORK(0, true, true, VdcObjectType.Network),
+    FOREMAN(1, false, false, VdcObjectType.VDS),
+    OPENSTACK_IMAGE(2, true, true, VdcObjectType.Storage),
+    OPENSTACK_VOLUME(3, true, true, VdcObjectType.Storage),
+    VMWARE(4, false, false, VdcObjectType.VM),
+    EXTERNAL_NETWORK(5, false, true, VdcObjectType.Network);
 
     private int value;
     private Set<VdcObjectType> providedTypes;
+    private boolean isTenantAware;
+    private boolean isAuthUrlAware;
 
-    private ProviderType(int value, VdcObjectType... providedTypes) {
+    private ProviderType(int value,
+            boolean isTenantAware,
+            boolean isAuthUrlAware,
+            VdcObjectType... providedTypes) {
+
         this.value = value;
+        this.isTenantAware = isTenantAware;
+        this.isAuthUrlAware = isAuthUrlAware;
         this.providedTypes = new HashSet<>();
         for (VdcObjectType providedType : providedTypes) {
             this.providedTypes.add(providedType);
@@ -34,5 +42,13 @@ public enum ProviderType implements Identifiable {
 
     public Set<VdcObjectType> getProvidedTypes() {
         return providedTypes;
+    }
+
+    public boolean isTenantAware(){
+        return isTenantAware;
+    }
+
+    public boolean isAuthUrlAware(){
+        return isAuthUrlAware;
     }
 }

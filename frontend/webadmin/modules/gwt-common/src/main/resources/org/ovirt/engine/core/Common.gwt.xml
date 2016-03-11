@@ -46,6 +46,7 @@
         <include name="common/businessentities/ProviderType.java" />
         <include name="common/businessentities/TenantProviderProperties.java" />
         <include name="common/businessentities/OpenstackNetworkProviderProperties.java" />
+        <include name="common/businessentities/ExternalNetworkProviderProperties.java" />
         <include name="common/businessentities/OpenstackNetworkPluginType.java" />
         <include name="common/businessentities/OpenStackImageProviderProperties.java" />
         <include name="common/businessentities/storage/OpenStackVolumeProviderProperties.java" />

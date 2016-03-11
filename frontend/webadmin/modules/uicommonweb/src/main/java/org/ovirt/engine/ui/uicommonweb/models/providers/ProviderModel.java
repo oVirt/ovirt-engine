@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
+import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -134,6 +135,10 @@ public class ProviderModel extends Model {
         return vmwarePropertiesModel;
     }
 
+    protected boolean isExternalNetwork() {
+        return getType().getSelectedItem() == ProviderType.EXTERNAL_NETWORK;
+    }
+
     protected boolean isTypeOpenStackNetwork() {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
     }
@@ -158,12 +163,6 @@ public class ProviderModel extends Model {
         this.dataCenter = dataCenter;
     }
 
-    private boolean isTypeTenantOrAuthUrlAware() {
-        ProviderType type = getType().getSelectedItem();
-        return type == ProviderType.OPENSTACK_NETWORK || type == ProviderType.OPENSTACK_IMAGE ||
-                type == ProviderType.OPENSTACK_VOLUME;
-    }
-
     public EntityModel<String> getAuthUrl() {
         return authUrl;
     }
@@ -177,6 +176,7 @@ public class ProviderModel extends Model {
             return ""; //$NON-NLS-1$
         }
         switch (type) {
+            case EXTERNAL_NETWORK:
             case OPENSTACK_NETWORK:
                 return "http://localhost:9696"; //$NON-NLS-1$
             case OPENSTACK_IMAGE:
@@ -223,10 +223,12 @@ public class ProviderModel extends Model {
         getType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isTenantOrAuthUrlAware = isTypeTenantOrAuthUrlAware();
-                getTenantName().setIsAvailable(isTenantOrAuthUrlAware);
-                getAuthUrl().setIsAvailable(isTenantOrAuthUrlAware);
-                if (isTenantOrAuthUrlAware) {
+                boolean isTenantAware = getType().getSelectedItem().isTenantAware();
+                boolean isAuthUrlAware = getType().getSelectedItem().isAuthUrlAware();
+
+                getTenantName().setIsAvailable(isTenantAware);
+                getAuthUrl().setIsAvailable(isAuthUrlAware);
+                if (isTenantAware) {
                     TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
                     getTenantName().setEntity(properties == null ? null : properties.getTenantName());
                 }
@@ -378,6 +380,8 @@ public class ProviderModel extends Model {
 
         if (isTypeOpenStackNetwork()) {
             getNeutronAgentModel().flush(provider);
+        } else if (isExternalNetwork()){
+            provider.setAdditionalProperties(new ExternalNetworkProviderProperties());
         } else if (isTypeOpenStackImage()) {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         } else if (isTypeOpenStackVolume()) {

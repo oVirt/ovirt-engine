@@ -80,6 +80,7 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
             break;
         case Provider:
             switch (((Provider) value.getEntity()).getType()) {
+            case EXTERNAL_NETWORK:
             case OPENSTACK_NETWORK:
             case OPENSTACK_IMAGE:
             case OPENSTACK_VOLUME:
