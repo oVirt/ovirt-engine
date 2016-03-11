@@ -1,7 +1,6 @@
 /*
 Copyright (c) 2016 Red Hat, Inc.
 
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -73,19 +72,24 @@ public class V3CapabilitiesServer {
         // Create an XPath engine, we will use it for several things later:
         XPath xpath = XPathFactory.newInstance().newXPath();
 
-        // Find the 3.6 capabilities and duplicate them for 4.0, as from the point of view of the user of version 3 of
-        // the API version 4.0 should be identical to version 3.6:
         try {
-            Element version = (Element) xpath.evaluate("/capabilities/version[@major='3' and @minor='6']", document,
-                XPathConstants.NODE);
-            version = (Element) version.cloneNode(true);
-            String id = "332e4033-2e40-332e-4033-2e40332e4033";
-            version.setAttribute("id", id);
-            version.setAttribute("href", "/capabilities/" + id);
-            version.setAttribute("current", "true");
-            version.setAttribute("major", "4");
-            version.setAttribute("minor", "0");
-            document.getDocumentElement().appendChild(version);
+            // Find the 3.6 capabilities and duplicate them for 4.0, as from the point of view of the user of version 3
+            // of the API version 4.0 should be identical to version 3.6:
+            Element versionElement = (Element) xpath.evaluate("/capabilities/version[@major='3' and @minor='6']",
+                document, XPathConstants.NODE);
+            versionElement = (Element) versionElement.cloneNode(true);
+            String versionId = "332e4033-2e40-332e-4033-2e40332e4033";
+            versionElement.setAttribute("id", versionId);
+            versionElement.setAttribute("href", "/capabilities/" + versionId);
+            versionElement.setAttribute("major", "4");
+            versionElement.setAttribute("minor", "0");
+
+            // Set the "current" flag of the 4.0 capabilities to "true":
+            Element currentElement = (Element) xpath.evaluate("current", versionElement, XPathConstants.NODE);
+            currentElement.setTextContent("true");
+
+            // Add the 4.0 capabilities to the end of the document:
+            document.getDocumentElement().appendChild(versionElement);
         }
         catch (XPathExpressionException exception) {
             throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
