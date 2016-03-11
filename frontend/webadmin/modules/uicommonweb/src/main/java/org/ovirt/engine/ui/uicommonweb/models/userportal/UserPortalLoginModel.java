@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.cpuProfileOperator;
 import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.diskProfileUser;
 import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.engineUser;
 import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.everyone;
@@ -191,11 +192,13 @@ public class UserPortalLoginModel extends LoginModel {
                             // ALL Everyone/QuotaConsumer persmissions
                             // ALL Everyone/NetworkUser persmissions
                             // ALL Everyone/DiskProfileUser permissions
+                            // ALL Everyone/CpuProfileOperator permissions
                             if (isPermissionOf(everyone, userTemplateBasedVM, permission)
                                     || isPermissionOf(everyone, quotaConsumer, permission)
                                     || isPermissionOf(everyone, vnicProfileUser, permission)
                                     || isPermissionOf(everyone, diskProfileUser, permission)
-                                    || isPermissionOf(everyone, userProfileEditor, permission)) {
+                                    || isPermissionOf(everyone, userProfileEditor, permission)
+                                    || isPermissionOf(everyone, cpuProfileOperator, permission)) {
                                 continue;
                             }
                             if (!roleIdList.contains(permission.getRoleId())) {

@@ -16,6 +16,7 @@ public enum ApplicationGuids {
     vnicProfileUser(new Guid("DEF0000A-0000-0000-0000-DEF000000010")), //$NON-NLS-1$
     diskProfileUser(new Guid("DEF00020-0000-0000-0000-ABC000000010")), //$NON-NLS-1$
     userProfileEditor(new Guid("DEF00021-0000-0000-0000-DEF000000015")), //$NON-NLS-1$
+    cpuProfileOperator(new Guid("DEF00017-0000-0000-0000-DEF000000017")), //$NON-NLS-1$
 
     // ad_groups
     everyone(new Guid("eee00000-0000-0000-0000-123456789eee")); //$NON-NLS-1$
