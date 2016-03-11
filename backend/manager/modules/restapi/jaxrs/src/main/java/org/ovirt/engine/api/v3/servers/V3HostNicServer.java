@@ -17,10 +17,8 @@ limitations under the License.
 package org.ovirt.engine.api.v3.servers;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -38,36 +36,9 @@ public class V3HostNicServer extends V3Server<HostNicResource> {
         super(delegate);
     }
 
-    @POST
-    @Consumes({"application/xml", "application/json"})
-    @Actionable
-    @Path("attach")
-    public Response attach(V3Action action) {
-        return adaptAction(getDelegate()::attach, action);
-    }
-
-    @POST
-    @Consumes({"application/xml", "application/json"})
-    @Actionable
-    @Path("detach")
-    public Response detach(V3Action action) {
-        return adaptAction(getDelegate()::detach, action);
-    }
-
     @GET
     public V3HostNIC get() {
         return adaptGet(getDelegate()::get);
-    }
-
-    @PUT
-    @Consumes({"application/xml", "application/json"})
-    public V3HostNIC update(V3HostNIC nic) {
-        return adaptUpdate(getDelegate()::update, nic);
-    }
-
-    @DELETE
-    public Response remove() {
-        return adaptRemove(getDelegate()::remove);
     }
 
     @POST

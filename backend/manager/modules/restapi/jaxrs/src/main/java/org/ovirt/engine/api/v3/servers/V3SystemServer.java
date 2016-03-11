@@ -167,9 +167,9 @@ public class V3SystemServer extends V3Server<SystemResource> {
         return new V3NetworksServer(getDelegate().getNetworksResource());
     }
 
-    @Path("openstackimageproviers")
+    @Path("openstackimageproviders")
     public V3OpenstackImageProvidersServer getOpenstackImageProviersResource() {
-        return new V3OpenstackImageProvidersServer(getDelegate().getOpenstackImageProviersResource());
+        return new V3OpenstackImageProvidersServer(getDelegate().getOpenstackImageProvidersResource());
     }
 
     @Path("openstacknetworkproviders")
