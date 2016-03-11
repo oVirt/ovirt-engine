@@ -535,10 +535,10 @@ Summary:	%{ovirt_product_name_short} Tools
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	%{name}-tools-backup = %{version}-%{release}
 Requires:	java
 Requires:	logrotate
 Requires:	python-psycopg2
-Requires:	bzip2
 Requires(pre):		shadow-utils
 
 %if %{ovirt_install_systemd}
@@ -583,6 +583,19 @@ if [ $1 -eq 0 ]; then
 	chkconfig --del ovirt-fence-kdump-listener
 fi
 %endif
+
+%package tools-backup
+Summary:	%{ovirt_product_name_short} Tools (engine-backup)
+Group:		%{ovirt_product_group}
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+Requires:	tar
+Requires:	bzip2
+Requires:	xz
+Requires:	otopi >= 1.4.1
+Requires:	postgresql >= 8.4.7
+
+%description tools-backup
+%{ovirt_product_name_short} Tools (engine-backup)
 
 %package websocket-proxy
 Summary:	%{ovirt_product_name_short} Websocket Proxy
@@ -1267,14 +1280,11 @@ fi
 %dir %{engine_etc}/engine-manage-domains
 %dir %{engine_etc}/notifier
 %ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
-%{_bindir}/engine-backup
 %{_bindir}/engine-config
 %{_bindir}/engine-manage-domains
 %{_bindir}/ovirt-engine-extensions-tool
-%{_mandir}/man8/engine-backup.*
 %{_mandir}/man8/engine-config.*
 %{_mandir}/man8/engine-manage-domains.*
-%{engine_data}/bin/engine-backup.sh
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-manage-domains.sh
 %{engine_data}/bin/engine-prolog.sh
@@ -1299,6 +1309,12 @@ fi
 %{_initddir}/ovirt-engine-notifier
 %{_initddir}/ovirt-fence-kdump-listener
 %endif
+
+%files tools-backup
+%license LICENSE
+%{_bindir}/engine-backup
+%{_mandir}/man8/engine-backup.*
+%{engine_data}/bin/engine-backup.sh
 
 %changelog
 * Mon Feb 22 2016 Rafael Martins <rmartins@redhat.com> - 3.6.3.3-1

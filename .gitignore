@@ -47,6 +47,7 @@ __pycache__
 ###########################
 build/python-check.sh
 ovirt-engine.spec
+packaging/bin/engine-backup.sh
 packaging/bin/engine-prolog.sh
 packaging/bin/pki-common.sh
 packaging/conf/notifier-logging.properties
