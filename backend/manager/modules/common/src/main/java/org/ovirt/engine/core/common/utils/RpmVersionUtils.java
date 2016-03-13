@@ -68,10 +68,7 @@ public class RpmVersionUtils {
         }
 
         // 1st part is numeric - it should "win"
-        if (longVal2 == null) {
-            return 1;
-        }
-        return 0;
+        return 1;
     }
 
     protected static Long parseLong(String str) {
