@@ -57,7 +57,6 @@ public enum ConfigurationValues {
     MaxPeakNetworkQoSValue,
     MaxBurstNetworkQoSValue,
     MaxHostNetworkQosShares,
-    UserMessageOfTheDay(ConfigAuthType.User),
     QoSInboundAverageDefaultValue,
     QoSInboundPeakDefaultValue,
     QoSInboundBurstDefaultValue,

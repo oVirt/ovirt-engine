@@ -1837,19 +1837,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
     }
 
-    public void getUserMessageOfTheDayViaPublic(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? (String) source : ""; //$NON-NLS-1$
-            }
-        };
-        Frontend.getInstance().runPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.UserMessageOfTheDay,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public void getSearchResultsLimit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

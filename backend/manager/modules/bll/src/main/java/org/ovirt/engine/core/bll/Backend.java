@@ -646,7 +646,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             case VdcVersion:
             case ProductRPMVersion:
             case ApplicationMode:
-            case UserMessageOfTheDay:
             case UserSessionTimeOutInterval:
             case CORSSupport:
             case CORSAllowedOrigins:

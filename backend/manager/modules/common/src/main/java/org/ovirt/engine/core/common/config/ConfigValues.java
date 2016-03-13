@@ -1520,10 +1520,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     QoSInboundBurstDefaultValue,
 
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    UserMessageOfTheDay,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     IterationsWithBalloonProblem,
