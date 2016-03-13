@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -92,7 +91,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     @Override
     protected BackendInternal getBackend() {
-        return Backend.getInstance();
+        return super.getBackend();
     }
 
 }
