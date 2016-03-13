@@ -124,7 +124,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 
     @Override

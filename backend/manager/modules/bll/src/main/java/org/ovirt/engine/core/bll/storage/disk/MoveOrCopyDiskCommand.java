@@ -93,7 +93,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         addValidationMessage(getParameters().getOperation() == ImageOperation.Copy ?
                         EngineMessage.VAR__ACTION__COPY
                         : EngineMessage.VAR__ACTION__MOVE);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 
     @Override

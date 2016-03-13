@@ -44,7 +44,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__HOT_PLUG);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 
     @Override

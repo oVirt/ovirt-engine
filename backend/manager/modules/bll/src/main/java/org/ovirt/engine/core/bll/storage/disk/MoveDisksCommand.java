@@ -94,7 +94,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__MOVE);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 
     private void addDisksDeactivatedMessage(List<MoveDiskParameters> moveDiskParamsList) {

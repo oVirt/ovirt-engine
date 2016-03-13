@@ -79,7 +79,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 
     @Override

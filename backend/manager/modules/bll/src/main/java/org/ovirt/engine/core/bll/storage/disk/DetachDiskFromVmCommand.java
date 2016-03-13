@@ -72,7 +72,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__DETACH_ACTION_TO);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 
     @Override

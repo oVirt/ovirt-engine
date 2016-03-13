@@ -778,8 +778,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Interface")
     String VAR__TYPE__INTERFACE();
 
-    @DefaultStringValue("$type Virtual Machine Disk")
-    String VAR__TYPE__VM_DISK();
+    @DefaultStringValue("$type Virtual Disk")
+    String VAR__TYPE__DISK();
 
     @DefaultStringValue("$type Bookmark")
     String VAR__TYPE__BOOKMARK();
