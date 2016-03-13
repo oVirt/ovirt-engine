@@ -607,7 +607,6 @@ public class AddVmCommandTest extends BaseCommandTest {
     }
 
     private void mockConfig() {
-        mcr.mockConfigValue(ConfigValues.InitStorageSparseSizeInGB, 1);
         mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")));
         mcr.mockConfigValue(ConfigValues.IsMigrationSupported, Version.v4_0, migrationMap);
         mcr.mockConfigValue(ConfigValues.MaxIoThreadsPerVm, 127);

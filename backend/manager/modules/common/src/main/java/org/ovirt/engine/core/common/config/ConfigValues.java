@@ -925,11 +925,6 @@ public enum ConfigValues {
     DefaultMaxThreadWaitQueueSize,
 
     @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("1")
-    InitStorageSparseSizeInGB,
-
-    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirtmgmt")
     DefaultManagementNetwork,

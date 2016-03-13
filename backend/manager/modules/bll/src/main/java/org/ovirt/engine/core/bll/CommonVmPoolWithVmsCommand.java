@@ -474,10 +474,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 && validate(storageDomainsValidator.allDomainsHaveSpaceForNewDisks(disks));
     }
 
-    private int getBlockSparseInitSizeInGB() {
-        return Config.<Integer> getValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
-    }
-
     protected boolean isAddVmsSucceded() {
         return addVmsSucceeded;
     }
@@ -510,8 +506,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     disk.getStorageIds().get(0),
-                    (double)(disk.getSizeInGigabytes() * getParameters().getVmsCount()
-                            * getBlockSparseInitSizeInGB())));
+                    (double)(disk.getSizeInGigabytes() * getParameters().getVmsCount())));
         }
 
         return list;

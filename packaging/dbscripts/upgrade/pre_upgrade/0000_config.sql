@@ -187,7 +187,6 @@ select fn_db_add_config_value('IsMemorySnapshotSupported','{"undefined": "true",
 -- suspend support per architecture
 select fn_db_add_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 select fn_db_add_config_value('DisconnectPoolOnReconstruct','0,2','general');
-select fn_db_add_config_value('InitStorageSparseSizeInGB','1','general');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value_for_versions_up_to('HostNetworkQosSupported', 'false', '3.5');
