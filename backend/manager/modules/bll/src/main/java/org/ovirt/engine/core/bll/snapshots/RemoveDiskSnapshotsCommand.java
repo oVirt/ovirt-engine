@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -77,8 +78,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         // Images must be specified in parameters and belong to a single Disk;
         // Otherwise, we'll fail on validate.
-        DiskImage representativeImage = getRepresentativeImage();
-        if (representativeImage != null) {
+        if (getRepresentativeImage().isPresent()) {
+            DiskImage representativeImage = getRepresentativeImage().get();
             setImage(representativeImage);
             getParameters().setStorageDomainId(representativeImage.getStorageIds().get(0));
             getParameters().setDiskAlias(representativeImage.getDiskAlias());
@@ -496,19 +497,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         return new VmValidator(vm);
     }
 
-    protected DiskImage getRepresentativeImage() {
-        if (!getImages().isEmpty()) {
-            return getImages().get(0);
-        }
-        return null;
+    private Optional<DiskImage> getRepresentativeImage() {
+        return getImages().stream().findFirst();
     }
 
     @Override
     protected Guid getImageGroupId() {
-        if (!getImages().isEmpty()) {
-            return getRepresentativeImage().getId();
-        }
-        return Guid.Empty;
+        return getRepresentativeImage().map(DiskImage::getId).orElse(Guid.Empty);
     }
 
     protected boolean isDiskPlugged() {
