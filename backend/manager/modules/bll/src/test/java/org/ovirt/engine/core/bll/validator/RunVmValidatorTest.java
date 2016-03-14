@@ -49,7 +49,6 @@ public class RunVmValidatorTest {
     public static final int MEMORY_LIMIT_64_BIT = 640000;
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.VdsSelectionAlgorithm, "General", "0"),
             mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, "0"),
             mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, "0"),
             mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, "general", MEMORY_LIMIT_32_BIT),

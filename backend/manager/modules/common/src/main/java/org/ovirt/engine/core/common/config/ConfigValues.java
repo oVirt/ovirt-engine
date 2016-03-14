@@ -190,9 +190,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     VdsCertificateValidityInYears,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("USERID")
-    UserId,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
@@ -206,38 +203,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     TimeoutToResetVdsInSeconds,
     @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKey2003,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKey2003x64,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKey2008,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKey2008x64,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKey2008R2,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKeyWindow7,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKeyWindow7x64,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKey,
-    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     //This value is in percents
@@ -247,9 +212,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("5")
     //This value is in GB
     CriticalSpaceActionBlocker,
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    HasCluster,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("1.0.0.0")
@@ -287,15 +249,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
     MaxVmsInPool,
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("5")
-    VmPoolLeaseDays,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("12:00")
-    VmPoolLeaseStartTime,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("12:00")
-    VmPoolLeaseEndTime,
     @Reloadable
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("1,2,4")
@@ -433,19 +386,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     VcpuConsumptionPercentage,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("/images/import/")
-    ImportDefaultPath,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("None")
-    VdsSelectionAlgorithm,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableVdsLoadBalancing,
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    EnableVdsHaReservation,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     VdsLoadBalancingIntervalInMinutes,
@@ -455,14 +398,8 @@ public enum ConfigValues {
     @DefaultValueAttribute("1")
     AffinityRulesEnforcementManagerRegularInterval,
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("15")
-    AffinityRulesEnforcementManagerStandbyInterval,
-    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     AffinityRulesEnforcementManagerInitialDelay,
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("5")
-    AffinityRulesEnforcementManagerMaximumMigrationTries,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     AffinityRulesEnforcementManagerEnabled,
@@ -559,9 +496,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     StorageDomainFailureTimeoutInMinutes,
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ComputerADPaths,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
@@ -599,21 +533,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("1")
     SpmVCpuConsumption,
     @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    RedirectServletReportsPage,
-    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableSpiceRootCertificateValidation,
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("10")
-    NumberOfVmsForTopSizeVms,
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("256")
-    VMMinMemorySizeInMB,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20480")
@@ -701,10 +623,6 @@ public enum ConfigValues {
     SANWipeAfterDelete,
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("/etc/ovirt-engine")
-    ConfigDir,
-
-    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/ovirt-engine")
     DataDir,
 
@@ -783,10 +701,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1024")
     LogSwapMemoryThresholdInMB,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("auth-conf")
-    SASL_QOP,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -875,10 +789,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     SignCertTimeoutInSeconds,
-
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("600")
-    OtpExpirationInSeconds,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -1250,18 +1160,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     MinimalETLVersion,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKeyWindows8,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKeyWindows8x64,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ProductKeyWindows2012x64,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("^ovirt.*$")
@@ -1650,10 +1548,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     VirtioSerialConsoleSupported,
 
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ChangePasswordMsg,
-
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"undefined\":\"true\",\"x86\":\"true\",\"ppc\":\"true\"}")
     IsMigrationSupported,
@@ -2032,5 +1926,4 @@ public enum ConfigValues {
     DisplaySupportedBrowserWarning,
 
     Invalid
-
 }

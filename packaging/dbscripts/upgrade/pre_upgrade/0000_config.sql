@@ -75,7 +75,6 @@ select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE
-select fn_db_add_config_value('ConfigDir','/etc/engine','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
 select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','rhel6.5.0,pc-1.0,pseries','3.5');
 select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.2.0,pc-i440fx-2.1,pseries-rhel7.2.0','4.0');
@@ -417,7 +416,6 @@ select fn_db_add_config_value('QuotaThresholdCluster','80','general');
 select fn_db_add_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_add_config_value('SANWipeAfterDelete','false','general');
 --Handling SASL QOP
-select fn_db_add_config_value('SASL_QOP','auth-conf','general');
 select fn_db_add_config_value('SearchResultsLimit','100','general');
 select fn_db_add_config_value('SendSMPOnRunVm','true','general');
 select fn_db_add_config_value_for_versions_up_to('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; 3:IBM POWER8:powernv,model_power8:power8:ppc64;','3.6');
@@ -499,8 +497,6 @@ select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('vdsRetries','0','general');
 select fn_db_add_config_value('ProtocolFallbackRetries','3','general');
 select fn_db_add_config_value('ProtocolFallbackTimeoutInMilliSeconds','5000','general');
---Handling Host Selection Algorithm default for cluster
-select fn_db_add_config_value('VdsSelectionAlgorithm','None','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
@@ -510,7 +506,6 @@ select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB','
 select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB','1048576','4.0');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
-select fn_db_add_config_value('VMMinMemorySizeInMB','256','general');
 --Number of subsequent failures in VM creation in a pool before giving up and stop creating new VMs
 select fn_db_add_config_value('VmPoolMaxSubsequentFailures','3','general');
 select fn_db_add_config_value('VmPoolMonitorBatchSize','5','general');
@@ -604,12 +599,9 @@ select fn_db_add_config_value_for_versions_up_to('GlusterVolumeInfoSupported', '
 -- Cluster HA Reservation
 select fn_db_add_config_value('OverUtilizationForHaReservation','200','general');
 select fn_db_add_config_value('ScaleDownForHaReservation','1','general');
-select fn_db_add_config_value('EnableVdsHaReservation','true','general');
 select fn_db_add_config_value('VdsHaReservationIntervalInMinutes','5','general');
 
 select fn_db_add_config_value('DefaultMaximumMigrationDowntime','0','general');
---URL or custom message to be presented upon login when the password of a user has expired.
-select fn_db_add_config_value('ChangePasswordMsg','','general');
 
 select fn_db_add_config_value('DefaultSerialNumberPolicy','HOST_ID','general');
 select fn_db_add_config_value('DefaultCustomSerialNumber','Dummy serial number.','general');

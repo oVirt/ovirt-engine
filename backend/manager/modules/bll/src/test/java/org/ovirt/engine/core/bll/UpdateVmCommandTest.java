@@ -124,7 +124,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.MaxVmNameLength, 64),
             mockConfig(ConfigValues.SupportedClusterLevels,
                     new HashSet<>(Arrays.asList(Version.v3_6, Version.v4_0))),
-            mockConfig(ConfigValues.VMMinMemorySizeInMB, 256),
             mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
             mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, ""),
             mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, ""),
