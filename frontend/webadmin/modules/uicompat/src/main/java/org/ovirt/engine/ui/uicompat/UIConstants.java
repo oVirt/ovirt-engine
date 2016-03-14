@@ -2240,9 +2240,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Not Running")
     String notRunningVm();
 
-    @DefaultStringValue("Remove VM Disk(s)")
-    String removeVmDisksMsg();
-
     @DefaultStringValue("VM is created from template thus disks must be removed")
     String removeVmDisksTemplateMsg();
 
