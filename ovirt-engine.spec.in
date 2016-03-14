@@ -456,10 +456,10 @@ Setup and upgrade scripts for %{ovirt_product_name_short}
 Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
-Requires:	%{name} >= 3.5.0
+Requires:	%{name} >= 3.5.6
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	ovirt-engine-extension-aaa-jdbc
-Conflicts:	%{name} < 3.5.0
+Conflicts:	%{name} < 3.5.6
 
 %description setup-plugin-ovirt-engine
 Setup and upgrade specific plugins for %{ovirt_product_name_short}
