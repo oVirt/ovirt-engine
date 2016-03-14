@@ -3,12 +3,14 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.compat.Guid;
 
 public class PermissionsOperationsParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = 8854712438369127152L;
 
     private DbUser user;
     private DbGroup group;
+    private Guid targetId;
     private Permission permission;
 
     public PermissionsOperationsParameters() {
@@ -16,6 +18,11 @@ public class PermissionsOperationsParameters extends VdcActionParametersBase {
 
     public PermissionsOperationsParameters(Permission permission) {
         setPermission(permission);
+    }
+
+    public PermissionsOperationsParameters(Permission permission, Guid targetId) {
+        this(permission);
+        this.targetId = targetId;
     }
 
     public PermissionsOperationsParameters(Permission permission, DbUser user) {
@@ -50,5 +57,13 @@ public class PermissionsOperationsParameters extends VdcActionParametersBase {
 
     public void setPermission(Permission value) {
         permission = value;
+    }
+
+    public Guid getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Guid targetId) {
+        this.targetId = targetId;
     }
 }

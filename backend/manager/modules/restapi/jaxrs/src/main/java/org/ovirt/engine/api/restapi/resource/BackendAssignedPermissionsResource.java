@@ -113,7 +113,7 @@ public class BackendAssignedPermissionsResource
 
     @Override
     public PermissionResource getPermissionResource(String id) {
-        return inject(new BackendPermissionResource(id, this, suggestedParentType));
+        return inject(new BackendPermissionResource(id, targetId, this, suggestedParentType));
     }
 
     protected Permissions mapCollection(Set<org.ovirt.engine.core.common.businessentities.Permission> entities) {
