@@ -190,7 +190,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         updateVmNumaNodes();
         if (isHotSetEnabled()) {
             hotSetCpus(cpuPerSocket, numOfSockets, threadsPerCpu);
-            hotSetMemory(memSizeMb);
+            updateCurrentMemory(memSizeMb);
         }
         final List<Guid> oldIconIds = IconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
@@ -322,24 +322,45 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
     }
 
-    private void hotSetMemory(int newAmountOfMemory) {
+    private void updateCurrentMemory(int newAmountOfMemory) {
         int currentMemory = getVm().getMemSizeMb();
 
-        if (getVm().getStatus() == VMStatus.Up && currentMemory != newAmountOfMemory) {
-            HotSetAmountOfMemoryParameters params =
-                    new HotSetAmountOfMemoryParameters(
-                            newVmStatic,
-                            currentMemory < newAmountOfMemory ? PlugAction.PLUG : PlugAction.UNPLUG,
-                            // We always use node 0, auto-numa should handle the allocation
-                            0);
-
-            VdcReturnValueBase setAmountOfMemoryResult =
-                    runInternalAction(
-                            VdcActionType.HotSetAmountOfMemory,
-                            params, cloneContextAndDetachFromParent());
-            newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemory : currentMemory);
-            hotSetMemlog(params, setAmountOfMemoryResult);
+        if (getVm().getStatus().isNotRunning()) {
+            newVmStatic.setMemSizeMb(newAmountOfMemory);
+            return;
         }
+
+        if (getVm().getStatus() != VMStatus.Up) {
+            newVmStatic.setMemSizeMb(currentMemory);
+            log.warn("Memory update {}MB -> {}MB of VM {} ({}) left out. Memory can't be updated in current VM state ({}).",
+                    currentMemory,
+                    newAmountOfMemory,
+                    getVm().getName(),
+                    getVm().getId(),
+                    getVm().getStatus());
+            return;
+        }
+
+        if (currentMemory != newAmountOfMemory) {
+            hotSetMemory(newAmountOfMemory);
+        }
+    }
+
+    private void hotSetMemory(int newAmountOfMemory) {
+        int currentMemory = getVm().getMemSizeMb();
+        HotSetAmountOfMemoryParameters params =
+                new HotSetAmountOfMemoryParameters(
+                        newVmStatic,
+                        currentMemory < newAmountOfMemory ? PlugAction.PLUG : PlugAction.UNPLUG,
+                        // We always use node 0, auto-numa should handle the allocation
+                        0);
+
+        VdcReturnValueBase setAmountOfMemoryResult =
+                runInternalAction(
+                        VdcActionType.HotSetAmountOfMemory,
+                        params, cloneContextAndDetachFromParent());
+        newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemory : currentMemory);
+        hotSetMemlog(params, setAmountOfMemoryResult);
     }
 
     /**
