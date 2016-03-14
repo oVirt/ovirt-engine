@@ -61,7 +61,7 @@ public class SSOConstants {
             "invalid value.";
     public static final String ERR_CODE_NOT_AUTHENTICATED_MSG = "The user is not authenticated.";
     public static final String ERR_CODE_UNAUTHORIZED_CLIENT_MSG = "The client is not authorized to request an " +
-            "authorization.";
+            "authorization. It's required to access the system using FQDN.";
     public static final String ERR_CODE_ACCESS_DENIED_MSG = "The resource owner or authorization server denied the " +
             "request.";
     public static final String ERR_CODE_INVALID_SCOPE_MSG = "The requested scope '%s' is invalid, unknown, " +
