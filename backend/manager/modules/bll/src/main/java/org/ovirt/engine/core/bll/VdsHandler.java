@@ -2,11 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
-import org.ovirt.engine.core.common.businessentities.EditableField;
-import org.ovirt.engine.core.common.businessentities.EditableOnVdsStatus;
+import org.ovirt.engine.core.common.businessentities.EditableVdsField;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -35,13 +35,15 @@ public class VdsHandler extends BaseHandler {
         updateVdsStatic =
                 new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses));
 
+        for (Pair<EditableVdsField, Field> pair : extractAnnotatedFields(EditableVdsField.class, inspectedClasses)) {
+            List<VDSStatus> statusList = Arrays.asList(pair.getFirst().onStatuses());
+            String fieldName = pair.getSecond().getName();
 
-        for (Pair<EditableField, Field> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
-            updateVdsStatic.addPermittedFields(pair.getSecond().getName());
-        }
-
-        for (Pair<EditableOnVdsStatus, Field> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
-            updateVdsStatic.addField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+            if (statusList.isEmpty()) {
+                updateVdsStatic.addPermittedFields(fieldName);
+            } else {
+                updateVdsStatic.addField(statusList, fieldName);
+            }
         }
     }
 

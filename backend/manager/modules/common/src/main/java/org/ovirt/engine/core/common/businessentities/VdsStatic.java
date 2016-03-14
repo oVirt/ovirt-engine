@@ -27,15 +27,15 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private Guid id;
 
-    @EditableField
+    @EditableVdsField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @ValidNameWithDot(message = "VALIDATION_VDS_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 
-    @EditableField
+    @EditableVdsField
     private String comment;
 
-    @EditableField
+    @EditableVdsField
     @HostnameOrIp(message = "VALIDATION_VDS_CONSOLEADDRESSS_HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
@@ -44,35 +44,39 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @Size(max = BusinessEntitiesDefinitions.HOST_UNIQUE_ID_SIZE)
     private String uniqueId;
 
-    @EditableOnVdsStatus
+    @EditableVdsField(
+            onStatuses = { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
+                    VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS })
     @HostnameOrIp(message = "VALIDATION_VDS_HOSTNAME_HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     private String hostName;
 
-    @EditableField
+    @EditableVdsField
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION_VDS_PORT_RANGE")
     private int port;
 
-    @EditableField
+    @EditableVdsField
     private VdsProtocol protocol;
 
-    @EditableOnVdsStatus
+    @EditableVdsField(
+            onStatuses = { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
+                    VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS })
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.SSH_PORT.RANGE")
     private int sshPort;
 
-    @EditableField
+    @EditableVdsField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @ValidNameWithDot(message = "VALIDATION_VDS_SSH_USERNAME_INVALID", groups = { CreateEntity.class,
             UpdateEntity.class })
     private String sshUsername;
 
-    @EditableOnVdsStatus
+    @EditableVdsField(onStatuses = { VDSStatus.Maintenance })
     private Guid clusterId;
 
     private Boolean serverSslEnabled;
@@ -81,40 +85,40 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private Integer vdsStrength;
 
-    @EditableField
+    @EditableVdsField
     private boolean pmEnabled;
 
-    @EditableField
+    @EditableVdsField
     private List<FenceProxySourceType> fenceProxySources;
 
-    @EditableField
+    @EditableVdsField
     private boolean pmKdumpDetection;
 
     /**
      * When this flag is true, the automatic power management
      * is not allowed to touch this host.
      */
-    @EditableField
+    @EditableVdsField
     private boolean disablePowerManagementPolicy;
 
-    @EditableField
+    @EditableVdsField
     private long otpValidity;
 
-    @EditableField
+    @EditableVdsField
     @Min(BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY)
     @Max(BusinessEntitiesDefinitions.HOST_MAX_SPM_PRIORITY)
     private int vdsSpmPriority;
 
     private boolean autoRecoverable;
 
-    @EditableField
+    @EditableVdsField
     @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
     private String sshKeyFingerprint;
 
-    @EditableField
+    @EditableVdsField
     private Guid hostProviderId;
 
-    @EditableField
+    @EditableVdsField
     private Guid openstackNetworkProviderId;
 
     private String certificateSubject;
@@ -124,14 +128,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
      *
      * <p>`null` ~ ""</p>
      */
-    @EditableField
+    @EditableVdsField
     private String currentKernelCmdline;
 
     /**
      * True iff current {@link #currentKernelCmdline} can be build purely based on kernleCmdline*
      * options.
      */
-    @EditableField
+    @EditableVdsField
     private boolean kernelCmdlineParsable;
 
     /**
@@ -142,16 +146,16 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
      */
     private String lastStoredKernelCmdline;
 
-    @EditableField
+    @EditableVdsField
     private boolean kernelCmdlineIommu;
 
-    @EditableField
+    @EditableVdsField
     private boolean kernelCmdlineKvmNested;
 
-    @EditableField
+    @EditableVdsField
     private boolean kernelCmdlineUnsafeInterrupts;
 
-    @EditableField
+    @EditableVdsField
     private boolean kernelCmdlinePciRealloc;
 
     public boolean isAutoRecoverable() {

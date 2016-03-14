@@ -33,10 +33,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
-import org.ovirt.engine.core.common.businessentities.EditableField;
-import org.ovirt.engine.core.common.businessentities.EditableHostedEngineField;
-import org.ovirt.engine.core.common.businessentities.EditableOnVm;
-import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
+import org.ovirt.engine.core.common.businessentities.EditableVmField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
@@ -127,23 +124,6 @@ public class VmHandler {
         updateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));
 
-        for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
-                inspectedClassNames)) {
-            updateVmsStatic.addPermittedFields(pair.getSecond().getName());
-        }
-
-        for (Pair<EditableOnVm, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnVm.class, inspectedClassNames)) {
-            updateVmsStatic.addPermittedFields(pair.getSecond().getName());
-        }
-
-        for (Pair<EditableOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnVmStatusField.class,
-                inspectedClassNames)) {
-            updateVmsStatic.addField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
-            if (pair.getFirst().isHotsetAllowed()) {
-                updateVmsStatic.addHotsetFields(pair.getSecond().getName());
-            }
-        }
-
         for (Pair<EditableDeviceOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableDeviceOnVmStatusField.class,
                 inspectedClassNames)) {
             updateVmsStatic.addField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
@@ -154,9 +134,24 @@ public class VmHandler {
             updateVmsStatic.addTransientFields(pair.getSecond().getName());
         }
 
-        for (Pair<EditableHostedEngineField, Field> pair : BaseHandler.extractAnnotatedFields(EditableHostedEngineField.class,
-                inspectedClassNames)) {
-            updateVmsStatic.addHostedEngineFields(pair.getSecond().getName());
+        for (Pair<EditableVmField, Field> pair : BaseHandler.extractAnnotatedFields(EditableVmField.class, inspectedClassNames)) {
+            EditableVmField annotation = pair.getFirst();
+            List<VMStatus> statusList = Arrays.asList(annotation.onStatuses());
+            String fieldName = pair.getSecond().getName();
+
+            if (statusList.isEmpty()) {
+                updateVmsStatic.addPermittedFields(fieldName);
+            } else {
+                updateVmsStatic.addField(statusList, fieldName);
+
+                if (annotation.hotsetAllowed()) {
+                    updateVmsStatic.addHotsetFields(fieldName);
+                }
+            }
+
+            if (annotation.onHostedEngine()) {
+                updateVmsStatic.addHostedEngineFields(fieldName);
+            }
         }
     }
 

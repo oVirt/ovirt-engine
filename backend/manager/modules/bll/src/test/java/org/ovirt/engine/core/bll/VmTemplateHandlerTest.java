@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link VmTemplateHandler} class. */
@@ -50,5 +51,20 @@ public class VmTemplateHandlerTest {
 
         assertTrue("Update should be valid for different quota default statuses",
                 VmTemplateHandler.isUpdateValid(src, dest));
+    }
+
+    @Test
+    public void testValidUpdateOfEditableFieldOnTemplateVm() {
+        // Given
+        VmTemplate src = new VmTemplate();
+        src.setClusterId(Guid.newGuid());
+        VmTemplate dest = new VmTemplate();
+        dest.setClusterId(Guid.newGuid());
+
+        // When
+        boolean updateIsValid = VmTemplateHandler.isUpdateValid(src, dest);
+
+        // Then
+        assertTrue("Update should be valid for different cluster IDs", updateIsValid);
     }
 }

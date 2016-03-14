@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.bll;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
-import org.ovirt.engine.core.common.businessentities.EditableField;
-import org.ovirt.engine.core.common.businessentities.EditableOnTemplate;
+import org.ovirt.engine.core.common.businessentities.EditableVmField;
+import org.ovirt.engine.core.common.businessentities.EditableVmTemplateField;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -37,15 +39,22 @@ public class VmTemplateHandler {
      * @see Backend#initHandlers()
      */
     public static void init() {
-        final Class<?>[] inspectedClassNames = new Class<?>[] { VmBase.class, VmTemplate.class };
+        final Class<?>[] inspectedClassNames = new Class<?>[]{VmBase.class, VmTemplate.class};
         updateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
 
-        for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class, inspectedClassNames)) {
-            updateVmTemplate.addPermittedFields(pair.getSecond().getName());
+        for (Pair<EditableVmTemplateField, Field> pair : BaseHandler.extractAnnotatedFields(EditableVmTemplateField.class, inspectedClassNames)) {
+            String fieldName = pair.getSecond().getName();
+            updateVmTemplate.addPermittedFields(fieldName);
         }
 
-        for (Pair<EditableOnTemplate, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnTemplate.class, inspectedClassNames)) {
-            updateVmTemplate.addPermittedFields(pair.getSecond().getName());
+        for (Pair<EditableVmField, Field> pair : BaseHandler.extractAnnotatedFields(EditableVmField.class, inspectedClassNames)) {
+            EditableVmField annotation = pair.getFirst();
+            List<VMStatus> statusList = Arrays.asList(annotation.onStatuses());
+            String fieldName = pair.getSecond().getName();
+
+            if (statusList.isEmpty()) {
+                updateVmTemplate.addPermittedFields(fieldName);
+            }
         }
     }
 
@@ -121,3 +130,4 @@ public class VmTemplateHandler {
         }
     }
 }
+

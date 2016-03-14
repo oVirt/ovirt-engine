@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.EditableField;
+import org.ovirt.engine.core.common.businessentities.EditableVdsField;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
@@ -25,37 +25,37 @@ public class FenceAgent implements BusinessEntity<Guid> {
     private Guid hostId;
     private int order;
 
-    @EditableField
+    @EditableVdsField
     private HashMap<String, String> optionsMap;
 
-    @EditableField
+    @EditableVdsField
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
     @HostnameOrIp(message = "VALIDATION_VDS_POWER_MGMT.ADDRESS_HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
     private String ip;
 
-    @EditableField
+    @EditableVdsField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_TYPE_SIZE)
     private String type;
 
-    @EditableField
+    @EditableVdsField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_USER_SIZE)
     private String user;
 
-    @EditableField
+    @EditableVdsField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_PASSWD_SIZE)
     private String password;
 
-    @EditableField
+    @EditableVdsField
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION_VDS_PORT_RANGE")
     private Integer port;
 
-    @EditableField
+    @EditableVdsField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String options;
 
-    @EditableField
+    @EditableVdsField
     private boolean encryptOptions;
 
     public FenceAgent() {

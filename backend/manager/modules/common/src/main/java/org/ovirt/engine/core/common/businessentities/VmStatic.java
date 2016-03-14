@@ -23,22 +23,22 @@ public class VmStatic extends VmBase {
 
     private Guid originalTemplateGuid;
 
-    @EditableField
+    @EditableVmField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String cpuPinning;
 
-    @EditableOnVmStatusField
+    @EditableVmField(onStatuses = { VMStatus.Down })
     private boolean useHostCpuFlags;
 
-    @EditableField
+    @EditableVmField
     private Guid instanceTypeId;
     private Guid imageTypeId;
 
-    @EditableField
+    @EditableVmField
     private boolean useLatestVersion;
 
-    @EditableField
+    @EditableVmField
     private Guid providerId;
 
     public VmStatic() {

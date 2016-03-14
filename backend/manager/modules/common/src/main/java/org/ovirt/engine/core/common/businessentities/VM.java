@@ -27,7 +27,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     private VmDynamic vmDynamic;
     private VmStatistics vmStatistics;
-    @EditableField
+    @EditableVmField
     private VmPayload vmPayload;
 
     private boolean balloonEnabled;

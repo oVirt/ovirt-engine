@@ -12,7 +12,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -120,4 +122,102 @@ public class VmHandlerTest {
         di.setImageStatus(ImageStatus.OK);
         return di;
     }
+
+    @Test
+    public void testInvalidUpdateOfNonEditableFieldOnRunningVm() {
+        // Given
+        VmStatic src = new VmStatic();
+        src.setId(Guid.newGuid());
+        VmStatic dest = new VmStatic();
+        dest.setId(Guid.newGuid());
+
+        // When
+        boolean updateIsValid = VmHandler.isUpdateValid(src, dest);
+
+        // Then
+        assertFalse("Update should be invalid for different IDs",
+                updateIsValid);
+    }
+
+    @Test
+    public void testValidUpdateOfEditableFieldOnDownVm() {
+        // Given
+        VmStatic src = new VmStatic();
+        src.setClusterId(Guid.newGuid());
+        VmStatic dest = new VmStatic();
+        dest.setClusterId(Guid.newGuid());
+
+        // When
+        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Down, false);
+
+        // Then
+        assertTrue("Update should be valid for different cluster IDs in the down state", updateIsValid);
+    }
+
+    @Test
+    public void testInValidUpdateOfStatusRestrictedEditableFieldOnRunningVm() {
+        // Given
+        VmStatic src = new VmStatic();
+        src.setSingleQxlPci(true);
+        VmStatic dest = new VmStatic();
+        dest.setSingleQxlPci(false);
+
+        // When
+        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
+
+        // Then
+        assertFalse("Update should be invalid for different single QXL PCI statuses on a running VM", updateIsValid);
+    }
+
+    @Test
+    public void testValidUpdateOfHostedEngineEditableFieldOnRunningVm() {
+        // Given
+        VmStatic src = new VmStatic();
+        src.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        src.setDescription(RandomUtils.instance().nextString(10));
+        VmStatic dest = new VmStatic();
+        dest.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        dest.setDescription(RandomUtils.instance().nextString(10));
+
+        // When
+        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
+
+        // Then
+        assertTrue("Update should be valid for different descriptions on a running, hosted engine VM", updateIsValid);
+    }
+
+    @Test
+    public void testInvalidUpdateOfHostedEngineNonEditableFieldOnRunningVm() {
+        // Given
+        VmStatic src = new VmStatic();
+        src.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        src.setName(RandomUtils.instance().nextString(10));
+        VmStatic dest = new VmStatic();
+        dest.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        dest.setName(RandomUtils.instance().nextString(10));
+
+        // When
+        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
+
+        // Then
+        assertFalse("Update should be invalid for different names on a running, hosted engine VM", updateIsValid);
+    }
+
+    @Test
+    public void testValidUpdateOfHotSetEditableFieldOnRunningVm() {
+        // Given
+        int srcNumOfSockets = 2;
+        int destNumOfSockets = 4;
+        VmStatic src = new VmStatic();
+        src.setNumOfSockets(srcNumOfSockets);
+        VmStatic dest = new VmStatic();
+        dest.setNumOfSockets(destNumOfSockets);
+
+        // When
+        boolean updateIsValid = VmHandler.isUpdateValid(src, dest, VMStatus.Up, true);
+
+        // Then
+        assertTrue("Update should be valid for different number of sockets on a running VM", updateIsValid);
+    }
+
 }
