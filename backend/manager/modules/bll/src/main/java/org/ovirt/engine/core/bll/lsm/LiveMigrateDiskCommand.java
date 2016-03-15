@@ -223,4 +223,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return null;
     }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return null;
+    }
 }
