@@ -4,19 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
 import org.ovirt.engine.api.restapi.resource.validation.Validator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
@@ -160,28 +158,14 @@ public class BackendResource extends BaseBackendResource {
                     backendFailure(result.getExceptionString());
                 }
                 results = asCollection(clz, result.getReturnValue());
-                if (getMaxResults() != NO_LIMIT && getMaxResults() < results.size()) {
-                    results = results.subList(0, getMaxResults());
+                int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, MAX, NO_LIMIT, NO_LIMIT);
+                if (max != NO_LIMIT && max < results.size()) {
+                    results = results.subList(0, max);
                 }
             }
             return results;
         } catch (Exception e) {
             return handleError(e, false);
-        }
-    }
-
-    protected int getMaxResults() throws MalformedNumberException {
-        if (getUriInfo()!=null && QueryHelper.hasMatrixParam(getUriInfo(), MAX)) {
-            HashMap<String, String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(), MAX);
-            String maxString = matrixConstraints.get(MAX);
-            try {
-                return Integer.parseInt(maxString);
-            } catch (NumberFormatException e) {
-                log.error("Max number of results is not a valid number: '{}'", maxString);
-                throw new MalformedNumberException("Max number of results is not a valid number: " + maxString);
-            }
-        } else {
-            return NO_LIMIT;
         }
     }
 
@@ -223,35 +207,12 @@ public class BackendResource extends BaseBackendResource {
         action.setJob(job);
     }
 
-    private boolean getBooleanMatrixConstraint(String marixConsraint) {
-        String value = QueryHelper.getMatrixConstraint(getUriInfo(), marixConsraint);
-        if (value == null) {
-            return false; // matrix param does not exist in URL, go with the default value, which is 'false'.
-        } else {
-            if (value.equalsIgnoreCase(TRUE) || value.isEmpty()) {
-                return true;
-            } else if (value.equalsIgnoreCase(FALSE)) {
-                return false;
-            } else {
-                // param exists but has illegal value (not 'false' or 'true') - throw exception.
-                throw new UrlParamException(this,
-                        null,
-                        "Illegal value '" + value
-                                + "' for matrix param: '" + marixConsraint
-                                + "'. Acceptable values are 'true' or 'false'");
-            }
-        }
-    }
-
     protected boolean isAsync() {
-        return getBooleanMatrixConstraint(ASYNC_CONSTRAINT);
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, ASYNC_CONSTRAINT, true, false);
     }
 
-    /**
-     * Checks if ;force matrix parameter specified in the URI
-     */
     protected boolean isForce() {
-        return getBooleanMatrixConstraint(FORCE_CONSTRAINT);
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE_CONSTRAINT, true, false);
     }
 
     protected void badRequest(String message) {
@@ -316,14 +277,14 @@ public class BackendResource extends BaseBackendResource {
     }
 
     private void setJobOrStepId(VdcActionParametersBase params) {
-        if (QueryHelper.hasMatrixParam(uriInfo, JOB_ID_CONSTRAINT)) {
-            String value = QueryHelper.getMatrixConstraint(uriInfo, JOB_ID_CONSTRAINT);
-            params.setJobId(asGuid(value));
+        String jobId = ParametersHelper.getParameter(httpHeaders, uriInfo, JOB_ID_CONSTRAINT);
+        if (jobId != null) {
+            params.setJobId(asGuid(jobId));
         }
 
-        if (QueryHelper.hasMatrixParam(uriInfo, STEP_ID_CONSTRAINT)) {
-            String value = QueryHelper.getMatrixConstraint(uriInfo, STEP_ID_CONSTRAINT);
-            params.setJobId(asGuid(value));
+        String stepId = ParametersHelper.getParameter(httpHeaders, uriInfo, STEP_ID_CONSTRAINT);
+        if (stepId != null) {
+            params.setJobId(asGuid(stepId));
         }
     }
     private void setCorrelationId(VdcActionParametersBase params) {

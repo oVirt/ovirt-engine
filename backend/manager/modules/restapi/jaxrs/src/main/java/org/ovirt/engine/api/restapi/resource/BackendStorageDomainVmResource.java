@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
@@ -79,7 +79,7 @@ public class BackendStorageDomainVmResource
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
         params.setForceOverride(action.isSetExclusive() ? action.isExclusive() : false);
 
-        boolean collapseSnapshots = QueryHelper.getBooleanMatrixParameter(uriInfo, COLLAPSE_SNAPSHOTS, true, false);
+        boolean collapseSnapshots = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, COLLAPSE_SNAPSHOTS, true, false);
         if (collapseSnapshots) {
             params.setCopyCollapse(collapseSnapshots);
         }

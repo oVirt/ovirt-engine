@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -16,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.CompletenessAssertor;
 import org.ovirt.engine.api.common.util.EnumValidator;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BaseBackendResource {
-    private static final String USER_FILTER_HEADER = "Filter";
+    private static final String FILTER = "filter";
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendResource.class);
 
@@ -369,11 +369,6 @@ public class BaseBackendResource {
      * @return true if data should be filtered, otherwise queries are executed as admin.
      */
     protected boolean isFiltered() {
-        List<String> filterVar = getHttpHeaders().getRequestHeader(USER_FILTER_HEADER);
-        if (filterVar != null && filterVar.size() > 0) {
-            return Boolean.valueOf(filterVar.iterator().next());
-        } else {
-            return false;
-        }
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FILTER, true, false);
     }
 }

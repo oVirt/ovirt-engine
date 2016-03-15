@@ -1,10 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.HashMap;
-
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
@@ -57,15 +55,9 @@ public abstract class AbstractBackendNetworkAttachmentResource<T extends Abstrac
         @Override
         public VdcActionParametersBase getParameters(NetworkAttachment incoming,
                 org.ovirt.engine.core.common.businessentities.network.NetworkAttachment entity) {
-            HashMap<String, String> actionConstraints =
-                    QueryHelper.getMatrixConstraints(getUriInfo(), OVERRIDE_CONFIGURATION);
-            boolean syncAttachment = false;
-            if (actionConstraints.containsKey(OVERRIDE_CONFIGURATION)) {
-                syncAttachment = Boolean.parseBoolean(actionConstraints.get(OVERRIDE_CONFIGURATION));
-            }
-
+            boolean overrideConfiguration = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, OVERRIDE_CONFIGURATION, true, false);
             org.ovirt.engine.core.common.businessentities.network.NetworkAttachment attachment = map(incoming, entity);
-            attachment.setOverrideConfiguration(syncAttachment);
+            attachment.setOverrideConfiguration(overrideConfiguration);
             NetworkAttachmentParameters params = new NetworkAttachmentParameters(parent.getHostId(), attachment);
             return params;
         }

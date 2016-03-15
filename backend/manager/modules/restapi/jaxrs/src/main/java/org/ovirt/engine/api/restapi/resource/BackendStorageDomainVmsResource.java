@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.StorageDomainVmResource;
@@ -27,7 +27,8 @@ public class BackendStorageDomainVmsResource
     @Override
     public Vms list() {
         Vms vms = new Vms();
-        if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
+        boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
+        if (unregistered) {
             List<org.ovirt.engine.core.common.businessentities.VM> unregisteredVms =
                     getBackendCollection(VdcQueryType.GetUnregisteredVms,
                             new IdQueryParameters(storageDomainId));

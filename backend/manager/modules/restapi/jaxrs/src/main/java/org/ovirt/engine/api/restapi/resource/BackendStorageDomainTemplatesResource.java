@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
@@ -31,7 +31,8 @@ public class BackendStorageDomainTemplatesResource
     @Override
     public Templates list() {
         Templates templates = new Templates();
-        if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
+        boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
+        if (unregistered) {
             List<org.ovirt.engine.core.common.businessentities.VmTemplate> unregisteredTemplates =
                     getBackendCollection(VdcQueryType.GetUnregisteredVmTemplates,
                             new IdQueryParameters(storageDomainId));

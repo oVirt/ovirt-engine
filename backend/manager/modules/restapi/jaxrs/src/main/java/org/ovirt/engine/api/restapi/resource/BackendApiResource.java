@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ApiSummary;
@@ -285,16 +285,18 @@ public class BackendApiResource
     @Override
     public Response get() {
         appMode = getCurrent().getApplicationMode();
-        if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
+        if (ParametersHelper.getParameter(httpHeaders, uriInfo, RSDL_CONSTRAINT_PARAMETER) != null) {
             try {
                 Rsdl rsdl = addSystemVersion(getRSDL());
                 return Response.ok().entity(rsdl).build();
             } catch (Exception e) {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
             }
-        } else if (QueryHelper.hasConstraint(getUriInfo(), SCHEMA_CONSTRAINT_PARAMETER)) {
+        }
+        else if (ParametersHelper.getParameter(httpHeaders, uriInfo, SCHEMA_CONSTRAINT_PARAMETER) != null) {
             return getSchema();
-        } else {
+        }
+        else {
             BaseResource response;
             if (appMode == ApplicationMode.GlusterOnly) {
                 response = addGlusterSummary(addSystemVersion(getGlusterApi()));

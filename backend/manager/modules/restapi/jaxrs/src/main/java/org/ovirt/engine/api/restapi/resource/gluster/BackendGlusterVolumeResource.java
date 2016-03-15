@@ -1,10 +1,8 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-import java.util.HashMap;
-
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumeProfileDetails;
@@ -180,13 +178,7 @@ public class BackendGlusterVolumeResource
     }
 
     private Boolean isNfsStatistics() {
-        if (getUriInfo() != null && QueryHelper.hasMatrixParam(getUriInfo(), NFS_CONSTRAINT_PARAMETER)) {
-            HashMap<String, String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(), NFS_CONSTRAINT_PARAMETER);
-            String maxString = matrixConstraints.get(NFS_CONSTRAINT_PARAMETER);
-                return Boolean.valueOf(maxString);
-        } else {
-            return false;
-        }
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, NFS_CONSTRAINT_PARAMETER, true, false);
     }
 
     @Override

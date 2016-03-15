@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Snapshot;
@@ -198,7 +198,7 @@ public class BackendVmDiskResource
     @Override
     public Response remove() {
         get();
-        boolean detach = QueryHelper.getBooleanMatrixParameter(uriInfo, DETACH_ONLY, true, false);
+        boolean detach = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, DETACH_ONLY, true, false);
         if (detach) {
             return performAction(VdcActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(vmId, guid));
         }

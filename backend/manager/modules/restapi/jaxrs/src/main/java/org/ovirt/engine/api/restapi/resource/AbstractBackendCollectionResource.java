@@ -1,14 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.ActionableResource;
@@ -39,7 +37,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     }
 
     protected List<Q> getBackendCollection(SearchType searchType) {
-        return getBackendCollection(searchType, QueryHelper.getConstraint(getUriInfo(), "", modelType));
+        return getBackendCollection(searchType, QueryHelper.getConstraint(httpHeaders, uriInfo, "", modelType));
     }
 
     protected List<Q> getBackendCollection(SearchType searchType, String constraint) {
@@ -50,52 +48,18 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     private SearchParameters getSearchParameters(SearchType searchType, String constraint) {
         SearchParameters searchParams = new SearchParameters(constraint, searchType);
-        HashMap<String, String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(),
-                                                                                     CASE_SENSITIVE_CONSTRAINT_PARAMETER,
-                                                                                     FROM_CONSTRAINT_PARAMETER);
+        boolean caseSensitive = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CASE_SENSITIVE_CONSTRAINT_PARAMETER, true, false);
+        int from = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, FROM_CONSTRAINT_PARAMETER, -1, -1);
+        int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, MAX, -1, -1);
 
-        //preserved in sake if backward compatibility until 4.0
-        HashMap<String, String> queryConstraints = QueryHelper.getQueryConstraints(getUriInfo(),
-                                                                                   FROM_CONSTRAINT_PARAMETER);
-
-        String fromParameter = matrixConstraints.get(FROM_CONSTRAINT_PARAMETER);
-        if (StringUtils.isNotBlank(fromParameter)) {
-            try {
-                searchParams.setSearchFrom(Long.parseLong(fromParameter));
-            } catch (Exception ex) {
-                log.error("Unwrapping of '{}' matrix search parameter failed: {}",
-                        FROM_CONSTRAINT_PARAMETER, ex.getMessage());
-                log.error("Exception", ex);
-            }
-        } else {
-            //preserved in sake if backward compatibility until 4.0
-            fromParameter = queryConstraints.get(FROM_CONSTRAINT_PARAMETER);
-            if (StringUtils.isNotBlank(fromParameter)) {
-                try {
-                    searchParams.setSearchFrom(Long.parseLong(fromParameter));
-                } catch (Exception ex) {
-                    log.error("Unwrapping of '{}' query search parameter failed: {}",
-                            FROM_CONSTRAINT_PARAMETER, ex.getMessage());
-                    log.error("Exception", ex);
-                }
-            }
+        if (from != -1) {
+            searchParams.setSearchFrom(from);
         }
-        if (matrixConstraints.containsKey(CASE_SENSITIVE_CONSTRAINT_PARAMETER)) {
-            try {
-                searchParams.setCaseSensitive(Boolean.parseBoolean(matrixConstraints.get(CASE_SENSITIVE_CONSTRAINT_PARAMETER)));
-            } catch (Exception ex) {
-                log.error("Unwrapping of '{}' search parameter failed: {}",
-                        CASE_SENSITIVE_CONSTRAINT_PARAMETER, ex.getMessage());
-                log.error("Exception", ex);
-            }
+        if (caseSensitive) {
+            searchParams.setCaseSensitive(caseSensitive);
         }
-
-        try {
-            if (QueryHelper.hasMatrixParam(getUriInfo(), MAX) && getMaxResults()!=NO_LIMIT) {
-                searchParams.setMaxCount(getMaxResults());
-            }
-        } catch (MalformedNumberException ex) {
-            handleError(ex, false);
+        if (max != -1) {
+            searchParams.setMaxCount(max);
         }
         return searchParams;
     }
@@ -110,7 +74,8 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     protected List<Q> getBackendCollection(VdcQueryType query, VdcQueryParametersBase queryParams, SearchType searchType) {
         List<Q> filteredList = getBackendCollection(entityType, query, queryParams);
         // check if we got search expression in the URI
-        if (QueryHelper.hasConstraint(getUriInfo(), QueryHelper.CONSTRAINT_PARAMETER)) {
+        String search = ParametersHelper.getParameter(httpHeaders, uriInfo, QueryHelper.CONSTRAINT_PARAMETER);
+        if (search != null) {
             List<Q> searchList = getBackendCollection(searchType);
             return (List<Q>) CollectionUtils.intersection(filteredList, searchList);
         }

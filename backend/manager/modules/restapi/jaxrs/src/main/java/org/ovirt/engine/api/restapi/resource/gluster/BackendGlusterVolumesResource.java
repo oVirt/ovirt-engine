@@ -60,7 +60,7 @@ public class BackendGlusterVolumesResource
 
     @Override
     public GlusterVolumes list() {
-        String constraint = QueryHelper.getConstraint(getUriInfo(), "cluster = "
+        String constraint = QueryHelper.getConstraint(httpHeaders, uriInfo, "cluster = "
                 + parent.get().getName(), GlusterVolume.class);
         return mapCollection(getBackendCollection(SearchType.GlusterVolume, constraint));
     }

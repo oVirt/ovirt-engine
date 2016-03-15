@@ -12,7 +12,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -109,7 +109,7 @@ public class BackendStorageDomainResource
 
     @Override
     public Response remove() {
-        String host = QueryHelper.getMatrixConstraint(uriInfo, HOST);
+        String host = ParametersHelper.getParameter(httpHeaders, uriInfo, HOST);
         if (host == null) {
             Fault fault = new Fault();
             fault.setReason("host parameter is missing");
@@ -117,8 +117,8 @@ public class BackendStorageDomainResource
         }
         get();
         Guid hostId = getHostId(host);
-        boolean destroy = QueryHelper.getBooleanMatrixParameter(uriInfo, DESTROY, true, false);
-        boolean format = QueryHelper.getBooleanMatrixParameter(uriInfo, FORMAT, true, false);
+        boolean destroy = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, DESTROY, true, false);
+        boolean format = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORMAT, true, false);
         if (destroy) {
             StorageDomainParametersBase parameters = new StorageDomainParametersBase(guid);
             parameters.setVdsId(hostId);

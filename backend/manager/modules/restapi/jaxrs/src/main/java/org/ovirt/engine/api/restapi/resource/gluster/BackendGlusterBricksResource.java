@@ -3,11 +3,10 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Fault;
@@ -99,8 +98,8 @@ public class BackendGlusterBricksResource
         }
 
         List<GlusterBrickEntity> brickEntities = mapBricks(asGuid(getVolumeId()), bricks);
-        int replicaCount = QueryHelper.getIntegerMatrixParameter(uriInfo, REPLICA_COUNT, 0, 0);
-        int stripeCount = QueryHelper.getIntegerMatrixParameter(uriInfo, STRIPE_COUNT, 0, 0);
+        int replicaCount = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, REPLICA_COUNT, 0, 0);
+        int stripeCount = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, STRIPE_COUNT, 0, 0);
 
         return performCreationMultiple(VdcActionType.AddBricksToGlusterVolume,
                 new GlusterVolumeBricksActionParameters(asGuid(getVolumeId()),
@@ -163,7 +162,7 @@ public class BackendGlusterBricksResource
             }
         }
 
-        int replicaCount = QueryHelper.getIntegerMatrixParameter(uriInfo, REPLICA_COUNT, 0, 0);
+        int replicaCount = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, REPLICA_COUNT, 0, 0);
 
         GlusterVolumeRemoveBricksParameters params = toParameters(bricks);
         params.setReplicaCount(replicaCount);

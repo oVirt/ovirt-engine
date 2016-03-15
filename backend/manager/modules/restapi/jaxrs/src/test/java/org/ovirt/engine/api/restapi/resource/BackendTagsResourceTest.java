@@ -287,14 +287,8 @@ public class BackendTagsResourceTest
         MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
 
         expect(matrixParams.isEmpty()).andReturn(false).anyTimes();
-        expect(matrixParams.containsKey("max")).andReturn(true).anyTimes();
-
-        List<String> matrixParamsList = control.createMock(List.class);
-        expect(matrixParams.get("max")).andReturn(matrixParamsList).anyTimes();
-
+        expect(matrixParams.getFirst("max")).andReturn(badFormat ? "bla3" : "2").anyTimes();
         expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
-        expect(matrixParamsList.size()).andReturn(1).anyTimes();
-        expect(matrixParamsList.get(0)).andReturn(badFormat ? "bla3" : "2").anyTimes();
 
         psl.add(ps);
 

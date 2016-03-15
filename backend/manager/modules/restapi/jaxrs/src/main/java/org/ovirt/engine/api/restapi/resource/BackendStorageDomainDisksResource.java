@@ -1,10 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -36,7 +35,8 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
 
     @Override
     public Disks list() {
-        if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
+        boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
+        if (unregistered) {
             return mapCollection(getBackendCollection(VdcQueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId, getStoragePoolIdForDomain(storageDomainId))));
 
@@ -48,7 +48,8 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
 
     @Override
     public Response add(Disk disk) {
-        if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
+        boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
+        if (unregistered) {
             // First we need to query the backend to fill in all the information about the disk from the VDSM.
             // We don't just use the information from the Disk object because it's missing a few things like creation
             // date and last modified date.

@@ -4,11 +4,10 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
@@ -25,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class BackendGraphicsConsolesResource<T>
         extends AbstractBackendCollectionResource<GraphicsConsole, T>
         implements GraphicsConsolesResource {
+    private static final String CURRENT = "current";
 
     private final Guid guid;
 
@@ -40,7 +40,8 @@ public abstract class BackendGraphicsConsolesResource<T>
         Map<GraphicsType, GraphicsInfo> graphicsTypeToGraphicsInfo;
         T entity = loadEntity();
 
-        if (QueryHelper.hasCurrentConstraint(getUriInfo())) {
+        boolean current = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CURRENT, true, false);
+        if (current) {
             // from entity dynamic (e.g. what is now present on the VM
             graphicsTypeToGraphicsInfo = extractGraphicsInofs(entity);
         } else {

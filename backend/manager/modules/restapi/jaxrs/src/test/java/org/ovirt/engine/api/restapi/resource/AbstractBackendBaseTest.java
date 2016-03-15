@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -99,7 +98,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected static final String INCOMPLETE_PARAMS_DETAIL_SERVER_LOCALE = " erforderlich fur ";
     protected static final Locale CLIENT_LOCALE = new Locale("ga", "IE");
 
-    protected static String USER_FILTER_HEADER = "Filter";
+    protected static String USER_FILTER_HEADER = "filter";
 
     protected static int SERVER_ERROR = 500;
     protected static int BAD_REQUEST = 400;
@@ -642,14 +641,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
         if (matrixConstraintExist) {
             expect(matrixParams.containsKey(matrixConstraint)).andReturn(matrixConstraintExist).anyTimes();
-
-            List<String> matrixParamsList = control.createMock(List.class);
-            expect(matrixParams.get(matrixConstraint)).andReturn(matrixParamsList).anyTimes();
-
-            expect(matrixParamsList.size()).andReturn(1);
-            expect(matrixParamsList.get(0)).andReturn(matrixConstraintValue);
-
-
+            expect(matrixParams.getFirst(matrixConstraint)).andReturn(matrixConstraintValue).anyTimes();
         }
 
         psl.add(ps);
@@ -661,16 +653,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
 
         return uriInfo;
-    }
-
-    protected UriInfo setUpGetMatrixConstraintsExpectations(String matrixConstraint,
-            boolean matrixConstraintExist,
-            String matrixConstraintValue) {
-        return setUpGetMatrixConstraintsExpectations(matrixConstraint,
-                matrixConstraintExist,
-                matrixConstraintValue,
-                control.createMock(UriInfo.class),
-                true);
     }
 
     protected void initBackendResource(BackendResource resource) {

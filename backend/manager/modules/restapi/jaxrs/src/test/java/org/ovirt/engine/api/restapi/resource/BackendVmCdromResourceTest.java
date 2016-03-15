@@ -108,18 +108,6 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testGetCurrentWithGarbledMatrixReturnsCurrent() throws Exception {
-        UriInfo uriInfo = setUpBasicUriExpectations();
-        uriInfo = addMatrixParameterExpectations(uriInfo, "current", "faSLe");
-        setUriInfo(uriInfo);
-        setUpEntityQueryExpectations(getVm());
-        control.replay();
-
-        Cdrom cdrom = resource.get();
-        verifyModelWithCurrentCd(cdrom);
-    }
-
-    @Test
     public void testChangeCdNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
@@ -191,7 +179,7 @@ public class BackendVmCdromResourceTest
     protected UriInfo setUpChangeCdUriQueryExpectations() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         MultivaluedMap<String, String> queries = control.createMock(MultivaluedMap.class);
-        expect(queries.containsKey("current")).andReturn(true).anyTimes();
+        expect(queries.getFirst("current")).andReturn("true").anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
         return uriInfo;
     }

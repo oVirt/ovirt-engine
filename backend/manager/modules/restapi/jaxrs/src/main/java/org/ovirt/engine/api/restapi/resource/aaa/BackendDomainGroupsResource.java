@@ -50,11 +50,7 @@ public class BackendDomainGroupsResource
     }
 
     private String getSearchPattern() {
-        String constraint = QueryHelper.getConstraint(
-            getUriInfo(),
-                DirectoryGroup.class,
-            false
-        );
+        String constraint = QueryHelper.getConstraint(httpHeaders, uriInfo, DirectoryGroup.class, false);
         StringBuilder sb = new StringBuilder(128);
         sb.append(MessageFormat.format(ResourceConstants.AAA_GROUPS_SEARCH_TEMPLATE, parent.getDirectory().getName(), ""));
         sb.append(StringUtils.isEmpty(constraint)? "allnames=*": constraint);

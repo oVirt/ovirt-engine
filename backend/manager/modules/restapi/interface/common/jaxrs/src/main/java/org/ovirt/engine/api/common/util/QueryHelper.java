@@ -18,11 +18,8 @@ package org.ovirt.engine.api.common.util;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Cluster;
@@ -40,18 +37,12 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.core.common.utils.CommonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A container of static methods related to query resolution.
  */
 public class QueryHelper {
-    private static final Logger log = LoggerFactory.getLogger(QueryHelper.class);
-
     public static final String CONSTRAINT_PARAMETER = "search";
-
-    public static final String CURRENT_CONSTRAINT_PARAMETER = "current";
 
     private QueryHelper() {}
 
@@ -92,191 +83,59 @@ public class QueryHelper {
     /**
      * Extract constraint from query parameters.
      *
-     * @param uriInfo  contains query parameters if set
-     * @param clz      the individual return type expected from the query
-     * @return         constraint in correct format
+     * @param headers the HTTP headers to extract the query from
+     * @param ui the URI to extract the query from
+     * @param clz the individual return type expected from the query
+     * @return constraint in correct format
      */
-    public static String getConstraint(UriInfo uriInfo, Class<?> clz) {
-        return getConstraint(uriInfo, null, clz);
+    public static String getConstraint(HttpHeaders headers, UriInfo ui, Class<?> clz) {
+        return getConstraint(headers, ui, null, clz);
     }
 
     /**
      * Extract constraint from query parameters.
      *
-     * @param uriInfo  contains query parameters if set
-     * @param clz      the individual return type expected from the query
-     * @param typePrefix    true if return type prefix is to be included
-     * @return         constraint in correct format
+     * @param ui the URI to extract the parameters from
+     * @param clz the individual return type expected from the query
+     * @param typePrefix true if return type prefix is to be included
+     * @return constraint in correct format
      */
-    public static String getConstraint(UriInfo uriInfo, Class<?> clz, boolean typePrefix) {
-        return getConstraint(uriInfo, null, clz, typePrefix);
+    public static String getConstraint(HttpHeaders headers, UriInfo ui, Class<?> clz, boolean typePrefix) {
+        return getConstraint(headers, ui, null, clz, typePrefix);
     }
 
     /**
      * Extract constraint from query parameters.
      *
-     * @param uriInfo       contains query parameters if set
-     * @param defaultQuery  raw query to use if not present in URI parameters
-     * @param clz           the individual return type expected from the query
-     * @return              constraint in correct format
+     * @param headers the HTTP headers to extract the search query from
+     * @param ui the URI to extract the search query from
+     * @param defaultQuery raw query to use if not present in URI parameters
+     * @param clz the individual return type expected from the query
+     * @return constraint in correct format
      */
-    public static String getConstraint(UriInfo uriInfo, String defaultQuery, Class<?> clz) {
-        return getConstraint(uriInfo, defaultQuery, clz, true);
+    public static String getConstraint(HttpHeaders headers, UriInfo ui, String defaultQuery, Class<?> clz) {
+        return getConstraint(headers, ui, defaultQuery, clz, true);
     }
 
     /**
      * Extract constraint from query parameters.
      *
-     * @param uriInfo       contains query parameters if set
-     * @param defaultQuery  raw query to use if not present in URI parameters
-     * @param clz           the individual return type expected from the query
-     * @param typePrefix    true if return type prefix is to be included
-     * @return              constraint in correct format
+     * @param headers the HTTP headers to extract the search query from
+     * @param ui the URI to extract the search query from
+     * @param defaultQuery raw query to use if not present in URI parameters
+     * @param clz the individual return type expected from the query
+     * @param typePrefix true if return type prefix is to be included
+     * @return constraint in correct format
      */
-    public static String getConstraint(UriInfo uriInfo, String defaultQuery, Class<?> clz, boolean typePrefix) {
-        String prefix = typePrefix ? RETURN_TYPES.get(clz) : "";
-        HashMap<String, String> constraints = getQueryConstraints(uriInfo, CONSTRAINT_PARAMETER);
-
-        return constraints != null && constraints.containsKey(CONSTRAINT_PARAMETER)
-               ? prefix + constraints.get(CONSTRAINT_PARAMETER)
-               : defaultQuery != null
-                 ? prefix + defaultQuery
-                 : null;
-    }
-
-    public static String getConstraint(MultivaluedMap<String, String> queries, String constraint) {
-        return queries != null
-               && queries.get(constraint) != null
-               && queries.get(constraint).size() > 0 ? queries.get(constraint).get(0)
-                                                       :
-                                                       null;
-    }
-
-    public static boolean hasConstraint(MultivaluedMap<String, String> queries, String constraint) {
-        return queries != null && queries.containsKey(constraint) ? true : false;
-    }
-
-    public static boolean hasConstraint(UriInfo uriInfo, String constraint) {
-            return hasConstraint(uriInfo.getQueryParameters(), constraint);
-    }
-
-    public static boolean hasMatrixParam(UriInfo uriInfo, String param) {
-        return hasMatrixParam(uriInfo.getPathSegments(), param);
-    }
-
-    private static boolean hasMatrixParam(List<PathSegment> pathSegments, String param) {
-        if (pathSegments != null) {
-            for (PathSegment segement : pathSegments) {
-                MultivaluedMap<String, String> matrixParams = segement.getMatrixParameters();
-                if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(param)) {
-                    return true;
-                }
-            }
+    public static String getConstraint(HttpHeaders headers, UriInfo ui, String defaultQuery, Class<?> clz, boolean typePrefix) {
+        String prefix = typePrefix? RETURN_TYPES.get(clz) : "";
+        String search = ParametersHelper.getParameter(headers, ui, CONSTRAINT_PARAMETER);
+        if (search != null) {
+            return prefix + search;
         }
-        return false;
-    }
-
-    public static HashMap<String, String> getQueryConstraints(UriInfo uriInfo, String... constraints) {
-        HashMap<String, String> params = new HashMap<>();
-        if (constraints != null && constraints.length > 0) {
-            for (String key : constraints) {
-                String value = getConstraint(uriInfo.getQueryParameters(), key);
-                if (value != null && !value.isEmpty()) {
-                    params.put(key, value);
-                }
-            }
+        if (defaultQuery != null) {
+            return prefix + defaultQuery;
         }
-        return params;
-    }
-
-    public static HashMap<String, String> getMatrixConstraints(UriInfo uriInfo, String... constraints) {
-        HashMap<String, String> params = new HashMap<>();
-        if (uriInfo.getPathSegments() != null && constraints != null && constraints.length > 0) {
-            for (String key : constraints) {
-                for (PathSegment segement : uriInfo.getPathSegments()) {
-                    MultivaluedMap<String, String> matrixParams = segement.getMatrixParameters();
-                    if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(key)) {
-                        params.put(key, getConstraint(matrixParams, key));
-                    }
-                }
-            }
-        }
-        return params;
-    }
-
-    public static String getMatrixConstraint(UriInfo uriInfo, String constraint) {
-        HashMap<String, String> constraints = getMatrixConstraints(uriInfo, constraint);
-        return constraints.containsKey(constraint) ? constraints.get(constraint) : null;
-    }
-
-    /**
-     * Returns the boolean value of the given matrix parameter. If the matrix parameter is present in the request but it
-     * doesn't have a value then the value of the {@code empty} parameter will be returned. If the matrix parameter
-     * isn't present, or has an invalid boolean value then the value of the {@code missing} parameter will be returned.
-     *
-     * @param uri the URL to extract the parameter from
-     * @param name the name of the parameter
-     * @param empty the value that will be returned if the parameter is present but has no value
-     * @param missing the value that will be returned if the parameter isn't present or has an invalid boolean value
-     */
-    public static boolean getBooleanMatrixParameter(UriInfo uri, String name, boolean empty, boolean missing) {
-        String text = getMatrixConstraint(uri, name);
-        if (text == null) {
-            return missing;
-        }
-        if (text.isEmpty()) {
-            return empty;
-        }
-        switch (text) {
-        case "true":
-            return true;
-        case "false":
-            return false;
-        default:
-            log.error(
-                "The value \"{}\" of matrix parameter \"{}\" isn't a valid boolean, it will be ignored.",
-                text, name
-            );
-            return missing;
-        }
-    }
-
-    /**
-     * Returns the integer value of the given matrix parameter. If the matrix parameter is present in the request but it
-     * doesn't have a value then the value of the {@code empty} parameter will be returned. If the matrix parameter
-     * isn't present, or has an invalid integer value then the value of the {@code missing} parameter will be returned.
-     *
-     * @param uri the URL to extract the parameter from
-     * @param name the name of the parameter
-     * @param empty the value that will be returned if the parameter is present but has no value
-     * @param missing the value that will be returned if the parameter isn't present or has in invalid integer value
-     */
-    public static int getIntegerMatrixParameter(UriInfo uri, String name, int empty, int missing) {
-        String text = getMatrixConstraint(uri, name);
-        if (text == null) {
-            return missing;
-        }
-        if (text.isEmpty()) {
-            return empty;
-        }
-        try {
-            return Integer.parseInt(text);
-        }
-        catch (NumberFormatException exception) {
-            log.error(
-                "The value \"{}\" of matrix parameter \"{}\" isn't a valid integer, it will be ignored.",
-                text, name
-            );
-            log.error("Exception", exception);
-            return missing;
-        }
-    }
-
-    public static boolean hasCurrentConstraint(UriInfo uriInfo) {
-        // TODO: CURRENT_CONSTRAINT_PARAMETER as query parameter is depreciated and supported
-        // for backward compatibility only - should be dropped at 4.0.
-        return QueryHelper.hasConstraint(uriInfo.getQueryParameters(), CURRENT_CONSTRAINT_PARAMETER) ||
-                (hasMatrixParam(uriInfo, CURRENT_CONSTRAINT_PARAMETER) &&
-                 !"false".equalsIgnoreCase(QueryHelper.getMatrixConstraint(uriInfo, CURRENT_CONSTRAINT_PARAMETER)));
+        return null;
     }
 }

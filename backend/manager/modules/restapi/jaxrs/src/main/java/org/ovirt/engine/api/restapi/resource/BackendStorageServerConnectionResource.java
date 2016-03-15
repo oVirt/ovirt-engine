@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
@@ -49,7 +49,7 @@ public class BackendStorageServerConnectionResource extends
         StorageServerConnections connection = new StorageServerConnections();
         connection.setId(id);
 
-        String host = QueryHelper.getMatrixConstraint(uriInfo, HOST);
+        String host = ParametersHelper.getParameter(httpHeaders, uriInfo, HOST);
         Guid hostId = Guid.Empty;
         if (host != null) {
             hostId = getHostId(host);

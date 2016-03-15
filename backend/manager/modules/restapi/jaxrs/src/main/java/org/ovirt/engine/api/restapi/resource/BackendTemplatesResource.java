@@ -10,7 +10,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
@@ -155,7 +155,7 @@ public class BackendTemplatesResource
     }
 
     void setupCloneVmPermissions(AddVmTemplateParameters params) {
-        boolean clonePermissions = QueryHelper.getBooleanMatrixParameter(uriInfo, CLONE_PERMISSIONS, true, false);
+        boolean clonePermissions = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CLONE_PERMISSIONS, true, false);
         if (clonePermissions) {
             params.setCopyVmPermissions(clonePermissions);
         }

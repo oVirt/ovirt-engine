@@ -85,7 +85,7 @@ public class BackendOpenStackVolumeProvidersResource
         StringBuilder buffer = new StringBuilder();
         buffer.append("Providers: type=");
         buffer.append(ProviderType.OPENSTACK_VOLUME.name());
-        String query = QueryHelper.getConstraint(getUriInfo(), null, modelType, false);
+        String query = QueryHelper.getConstraint(httpHeaders, uriInfo, null, modelType, false);
         if (StringUtils.isNotBlank(query)) {
             buffer.append(" AND (");
             buffer.append(query);

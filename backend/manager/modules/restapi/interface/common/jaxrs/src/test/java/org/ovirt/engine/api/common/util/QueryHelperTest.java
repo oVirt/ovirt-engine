@@ -21,12 +21,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import java.util.Collections;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.easymock.EasyMock;
@@ -46,8 +42,6 @@ import org.ovirt.engine.api.model.Vm;
 public class QueryHelperTest extends Assert {
 
     private static final String QUERY = "name=zibert AND id=0*";
-    private static final String MATRIX_CONSTRAINT = "cons";
-    protected static final String[] PARAMS = {"00000000-0000-0000-0000-000000000000"};
 
     protected IMocksControl control;
 
@@ -92,20 +86,19 @@ public class QueryHelperTest extends Assert {
     }
 
     private void doTestGetConstraint(Class<?> clz, String expectedPrefix) throws Exception {
-
         UriInfo uriInfo = createMock(UriInfo.class);
+        expect(uriInfo.getPathSegments()).andReturn(Collections.emptyList()).anyTimes();
         MultivaluedMap<String, String> queries = createMock(MultivaluedMap.class);
-        List<String> queryParam = new ArrayList<>();
-        queryParam.add(QUERY);
-        expect(queries.get("search")).andReturn(queryParam).anyTimes();
+        expect(queries.getFirst("search")).andReturn(QUERY).anyTimes();
+        expect(queries.isEmpty()).andReturn(false).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
 
         replay(uriInfo, queries);
 
         if ("".equals(expectedPrefix)) {
-            assertEquals(QUERY, QueryHelper.getConstraint(uriInfo, clz, false));
+            assertEquals(QUERY, QueryHelper.getConstraint(null, uriInfo, clz, false));
         } else {
-            assertEquals(expectedPrefix + QUERY, QueryHelper.getConstraint(uriInfo, clz));
+            assertEquals(expectedPrefix + QUERY, QueryHelper.getConstraint(null, uriInfo, clz));
         }
 
         verify(uriInfo, queries);
@@ -178,77 +171,15 @@ public class QueryHelperTest extends Assert {
 
     private void doTestGetDefaultConstraint(Class<?> clz, String expectedConstraint) throws Exception {
         UriInfo uriInfo = createMock(UriInfo.class);
+        expect(uriInfo.getPathSegments()).andReturn(Collections.emptyList()).anyTimes();
         MultivaluedMap<String, String> queries = createMock(MultivaluedMap.class);
-        List<String> queryParam = new ArrayList<>();
-        expect(queries.get("search")).andReturn(queryParam).anyTimes();
+        expect(queries.isEmpty()).andReturn(true).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
 
         replay(uriInfo, queries);
 
-        assertEquals(expectedConstraint, QueryHelper.getConstraint(uriInfo, "", clz));
+        assertEquals(expectedConstraint, QueryHelper.getConstraint(null, uriInfo, "", clz));
 
         verify(uriInfo, queries);
-    }
-
-    @Test
-    public void testHasMatrixParam() throws Exception {
-        UriInfo uriInfo = setUpMatrixParamExpectations();
-        assertEquals(QueryHelper.hasMatrixParam(uriInfo, MATRIX_CONSTRAINT), true);
-    }
-
-    private UriInfo setUpMatrixParamExpectations() {
-
-        UriInfo uriInfo = control.createMock(UriInfo.class);
-
-        List<PathSegment> psl = new ArrayList<>();
-
-        PathSegment ps = control.createMock(PathSegment.class);
-        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
-        expect(matrixParams.isEmpty()).andReturn(false);
-        expect(matrixParams.containsKey(MATRIX_CONSTRAINT)).andReturn(true);
-        expect(ps.getMatrixParameters()).andReturn(matrixParams);
-
-        psl.add(ps);
-
-        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
-
-        control.replay();
-
-        return uriInfo;
-    }
-
-    @Test
-    public void testGetMatrixConstraints() throws Exception {
-        UriInfo uriInfo = setUpGetMatrixConstraintsExpectations();
-        HashMap<String, String> results = QueryHelper.getMatrixConstraints(uriInfo, MATRIX_CONSTRAINT);
-
-        assertEquals(results.size(), 1);
-        assertEquals(results.get(MATRIX_CONSTRAINT), PARAMS[0]);
-    }
-
-    private UriInfo setUpGetMatrixConstraintsExpectations() {
-        UriInfo uriInfo = control.createMock(UriInfo.class);
-        List<PathSegment> psl = new ArrayList<>();
-
-        PathSegment ps = control.createMock(PathSegment.class);
-        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
-
-        expect(matrixParams.isEmpty()).andReturn(false);
-        expect(matrixParams.containsKey(MATRIX_CONSTRAINT)).andReturn(true);
-
-        List<String> matrixParamsList = control.createMock(List.class);
-        expect(matrixParams.get(MATRIX_CONSTRAINT)).andReturn(matrixParamsList).anyTimes();
-
-        expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
-        expect(matrixParamsList.size()).andReturn(1);
-        expect(matrixParamsList.get(0)).andReturn(PARAMS[0]);
-
-        psl.add(ps);
-
-        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
-
-        control.replay();
-
-        return uriInfo;
     }
 }

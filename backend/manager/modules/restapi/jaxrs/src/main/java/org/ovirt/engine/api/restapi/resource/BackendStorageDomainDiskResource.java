@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -30,7 +30,8 @@ public class BackendStorageDomainDiskResource extends BackendDiskResource {
     @Override
     protected Disk performGet(VdcQueryType query, VdcQueryParametersBase params) {
         Disk disk;
-        if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
+        boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
+        if (unregistered) {
             VdcQueryReturnValue result = runQuery(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
             if (!result.getSucceeded() || result.getReturnValue() == null) {
                 Guid storageDomainGuid = asGuid(storageDomainId);

@@ -29,7 +29,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -184,7 +184,7 @@ public class BackendVmsResource extends
                                 .getId())
                                 : Guid.Empty;
 
-                boolean clone = QueryHelper.getBooleanMatrixParameter(uriInfo, CLONE, true, false);
+                boolean clone = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CLONE, true, false);
                 if (clone) {
                     response = cloneVmFromTemplate(staticVm, vm, template, instanceTypeEntity, cluster);
                 } else if (Guid.Empty.equals(template.getId())) {
@@ -494,7 +494,7 @@ public class BackendVmsResource extends
     }
 
     void setupCloneTemplatePermissions(VmManagementParametersBase params) {
-        boolean clonePermissions = QueryHelper.getBooleanMatrixParameter(uriInfo, CLONE_PERMISSIONS, true, false);
+        boolean clonePermissions = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CLONE_PERMISSIONS, true, false);
         if (clonePermissions) {
             params.setCopyTemplatePermissions(clonePermissions);
         }

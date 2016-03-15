@@ -18,7 +18,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.CreationResource;
@@ -34,6 +34,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVmCdromResource
         extends AbstractBackendSubResource<Cdrom, VM>
         implements VmCdromResource {
+    private static final String CURRENT = "current";
 
     private Guid vmId;
 
@@ -45,7 +46,8 @@ public class BackendVmCdromResource
     @Override
     public Cdrom get() {
         VM vm = getVm();
-        if (QueryHelper.hasCurrentConstraint(getUriInfo())) {
+        boolean current = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CURRENT, true, false);
+        if (current) {
             // change the iso path so the result of 'map' will contain current cd instead of the
             // persistent configuration
             vm.setIsoPath(vm.getCurrentCd());
@@ -56,7 +58,8 @@ public class BackendVmCdromResource
     @Override
     public Cdrom update(Cdrom cdrom) {
         validateParameters(cdrom, "file");
-        if (QueryHelper.hasCurrentConstraint(getUriInfo())) {
+        boolean current = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CURRENT, true, false);
+        if (current) {
             ChangeDiskCommandParameters parameters = new ChangeDiskCommandParameters(vmId, cdrom.getFile().getId());
             performAction(VdcActionType.ChangeDisk, parameters);
         }

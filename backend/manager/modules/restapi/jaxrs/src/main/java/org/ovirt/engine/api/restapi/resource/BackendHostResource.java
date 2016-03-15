@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -379,7 +379,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response deactivate(Action action) {
-        boolean stopGlusterService = QueryHelper.getBooleanMatrixParameter(uriInfo, STOP_GLUSTER_SERVICE, true, false);
+        boolean stopGlusterService = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, STOP_GLUSTER_SERVICE, true, false);
         return doAction(VdcActionType.MaintenanceNumberOfVdss,
                 new MaintenanceNumberOfVdssParameters(asList(guid), false, action.isSetReason() ? action.getReason()
                         : null, stopGlusterService),
@@ -705,7 +705,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Response remove() {
         get();
-        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
+        boolean force = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE, true, false);
         return performAction(VdcActionType.RemoveVds, new RemoveVdsParameters(guid, force));
     }
 

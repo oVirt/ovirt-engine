@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -53,7 +52,7 @@ public class BackendGroupsResource
      * execution of the {@code list} operation.
      */
     private String getSearchPattern() {
-        String userProvidedPattern = QueryHelper.getConstraint(getUriInfo(), "",  modelType);
+        String userProvidedPattern = QueryHelper.getConstraint(httpHeaders, uriInfo, "",  modelType);
         return userProvidedPattern.equals("Groups : ") ?
                userProvidedPattern + GROUPS_SEARCH_PATTERN
                :
@@ -98,7 +97,7 @@ public class BackendGroupsResource
      *     performed
      */
     private String getDirectoryGroupSearchPattern(String groupname, String domain) {
-        String constraint = QueryHelper.getConstraint(getUriInfo(), DbGroup.class, false);
+        String constraint = QueryHelper.getConstraint(httpHeaders, uriInfo, DbGroup.class, false);
         final StringBuilder sb = new StringBuilder(128);
 
         sb.append(MessageFormat.format(ResourceConstants.AAA_GROUPS_SEARCH_TEMPLATE, domain, ""));

@@ -51,7 +51,7 @@ public class BackendDomainUsersResource
     }
 
     private String getSearchPattern() {
-        String constraint = QueryHelper.getConstraint(getUriInfo(), DirectoryUser.class, false);
+        String constraint = QueryHelper.getConstraint(httpHeaders, uriInfo, DirectoryUser.class, false);
         StringBuilder sb = new StringBuilder(128);
         sb.append(MessageFormat.format(ResourceConstants.AAA_PRINCIPALS_SEARCH_TEMPLATE, parent.getDirectory().getName(), ""));
         sb.append(StringUtils.isEmpty(constraint)? "allnames=*": constraint);

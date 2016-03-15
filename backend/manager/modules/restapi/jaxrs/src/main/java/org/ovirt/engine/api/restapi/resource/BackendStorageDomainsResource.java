@@ -4,7 +4,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;

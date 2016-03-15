@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -69,7 +68,7 @@ public class BackendUsersResource
      * operation.
      */
     private String getSearchPattern() {
-        String user_defined_pattern = QueryHelper.getConstraint(getUriInfo(), "",  modelType);
+        String user_defined_pattern = QueryHelper.getConstraint(httpHeaders, uriInfo, "",  modelType);
         return user_defined_pattern.equals("Users : ") ?
                user_defined_pattern + USERS_SEARCH_PATTERN
                :
@@ -103,7 +102,7 @@ public class BackendUsersResource
      *     performed
      */
     private String getDirectoryUserSearchPattern(String username, String namespace, String domain) {
-        String constraint = QueryHelper.getConstraint(getUriInfo(), DbUser.class, false);
+        String constraint = QueryHelper.getConstraint(httpHeaders, uriInfo, DbUser.class, false);
         final StringBuilder sb = new StringBuilder(128);
 
         sb.append(MessageFormat.format(ResourceConstants.AAA_PRINCIPALS_SEARCH_TEMPLATE,
@@ -178,10 +177,8 @@ public class BackendUsersResource
     /**
      * Find the directory user that corresponds to the given model.
      *
-     * @param directoryName
-     *            the name of the directory where to perform the search
-     * @param groupModel
-     *            the group model
+     * @param directoryName the name of the directory where to perform the search
+     * @param user the user model
      * @return the requested directory group or {@code null} if no such group exists
      */
     private DirectoryUser findDirectoryUser(String directoryName, User user) {

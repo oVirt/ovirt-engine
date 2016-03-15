@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
@@ -88,11 +88,11 @@ public class BackendTemplateDiskResource
     public Response remove() {
         get(); // will throw 404 if entity not found.
         RemoveDiskParameters params = new RemoveDiskParameters(asGuid(id));
-        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
+        boolean force = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE, true, false);
         if (force) {
             params.setForceDelete(force);
         }
-        String storageDomain = QueryHelper.getMatrixConstraint(uriInfo, STORAGE_DOMAIN);
+        String storageDomain = ParametersHelper.getParameter(httpHeaders, uriInfo, STORAGE_DOMAIN);
         if (storageDomain != null) {
             params.setStorageDomainId(asGuid(storageDomain));
         }

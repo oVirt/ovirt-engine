@@ -5,7 +5,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.S
 import java.util.List;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
@@ -159,7 +159,7 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     public Response remove() {
         get();
         StoragePoolParametersBase params = new StoragePoolParametersBase(asGuid(id));
-        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
+        boolean force = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE, true, false);
         if (force) {
             params.setForceDelete(force);
         }

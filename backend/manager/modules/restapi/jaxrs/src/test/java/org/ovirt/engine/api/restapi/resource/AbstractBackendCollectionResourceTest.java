@@ -9,7 +9,6 @@ import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -161,11 +160,10 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     protected UriInfo setUpUriExpectations(String query) {
         UriInfo uriInfo = setUpBasicUriExpectations();
         MultivaluedMap<String, String> queries = control.createMock(MultivaluedMap.class);
-        List<String> queryParam = new ArrayList<>();
         if (!(query == null || "".equals(query))) {
-            queryParam.add(QUERY);
+            query = QUERY;
         }
-        expect(queries.get("search")).andReturn(queryParam).anyTimes();
+        expect(queries.getFirst("search")).andReturn(query).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
         return uriInfo;
     }

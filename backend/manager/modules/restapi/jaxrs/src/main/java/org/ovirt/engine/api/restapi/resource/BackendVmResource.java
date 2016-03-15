@@ -25,7 +25,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -116,7 +116,7 @@ public class BackendVmResource
     }
 
     private boolean isNextRunRequested() {
-        return QueryHelper.getBooleanMatrixParameter(uriInfo, NEXT_RUN, true, false);
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, NEXT_RUN, true, false);
     }
 
     @Override
@@ -185,10 +185,10 @@ public class BackendVmResource
     @Override
     public Response remove() {
         get();
-        boolean force = QueryHelper.getBooleanMatrixParameter(uriInfo, FORCE, true, false);
+        boolean force = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE, true, false);
         RemoveVmParameters params = new RemoveVmParameters(guid, force);
         // If detach only is set we do not remove the VM disks
-        boolean detachOnly = QueryHelper.getBooleanMatrixParameter(uriInfo, DETACH_ONLY, true, false);
+        boolean detachOnly = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, DETACH_ONLY, true, false);
         if (detachOnly) {
             params.setRemoveDisks(false);
         }
