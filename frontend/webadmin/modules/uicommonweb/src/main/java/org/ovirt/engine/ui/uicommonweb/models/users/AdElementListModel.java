@@ -409,11 +409,13 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         for (IVdcQueryable item : (Collection<IVdcQueryable>) returnValue.getReturnValue()) {
             DirectoryGroup a = (DirectoryGroup) item;
             if (!excludeUsers.contains(a.getId())) {
+                // TODO: This is a hack, we should either use DbGroup or reimplement user/group representation in GWT
                 DbUser group = new DbUser();
                 group.setExternalId(a.getId());
                 group.setFirstName(a.getName());
                 group.setLastName(""); //$NON-NLS-1$
-                group.setLoginName(a.getDisplayName());
+                // TODO: Due to group -> DbUser mapping hack we have to use note to represent display name of group
+                group.setNote(a.getDisplayName());
                 group.setDomain(a.getDirectoryName());
                 group.setNamespace(a.getNamespace());
 

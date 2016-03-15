@@ -178,7 +178,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         displayNameColumn = new AbstractEntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
-                return user.getLoginName();
+                return user.getNote();
             }
         };
         searchItems.addColumn(displayNameColumn, constants.displayNamePermissionsPopup(), MAX_COL_WIDTH);
