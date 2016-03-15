@@ -207,7 +207,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
         List<VdsNetworkInterface> existingBonds = existingBondsResponse.getReturnValue();
 
-        removeUnchangedAttachments(networkAttachmentDao.getAllForHost(getVdsId()));
+        removeUnchangedAttachments();
         removeUnchangedBonds(existingBonds);
 
         ValidationResult hostSetupNetworkValidatorResult = validateWithHostSetupNetworksValidator(host);
@@ -351,8 +351,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 && Objects.equals(networkAttachmentFromRequest.getProperties(), existingNetworkAttachment.getProperties());
     }
 
-    private void removeUnchangedAttachments(List<NetworkAttachment> existingAttachments) {
-        Map<Guid, NetworkAttachment> existingAttachmentsById = Entities.businessEntitiesById(existingAttachments);
+    private void removeUnchangedAttachments() {
+        Map<Guid, NetworkAttachment> existingAttachmentsById = Entities.businessEntitiesById(getExistingAttachments());
 
         for (Iterator<NetworkAttachment> iterator = getParameters().getNetworkAttachments().iterator(); iterator.hasNext();) {
             NetworkAttachment attachmentFromRequest =  iterator.next();
@@ -518,7 +518,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private List<NetworkAttachment> getExistingAttachments() {
         if (existingAttachments == null) {
-            existingAttachments = getDbFacade().getNetworkAttachmentDao().getAllForHost(getVdsId());
+            existingAttachments = networkAttachmentDao.getAllForHost(getVdsId());
         }
 
         return existingAttachments;
