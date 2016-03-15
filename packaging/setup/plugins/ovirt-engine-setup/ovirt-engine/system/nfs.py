@@ -206,7 +206,7 @@ class Plugin(plugin.PluginBase):
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
-                    default=True,
+                    default=False,
                 )
             else:
                 self._enabled = enabled
