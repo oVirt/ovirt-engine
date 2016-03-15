@@ -73,6 +73,7 @@ public class ProviderModel extends Model {
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
     private VmwarePropertiesModel vmwarePropertiesModel = new VmwarePropertiesModel();
     private String certificate;
+    private EntityModel<Boolean> readOnly = new EntityModel<>();
 
 
     public EntityModel<String> getName() {
@@ -101,6 +102,10 @@ public class ProviderModel extends Model {
 
     public EntityModel<Boolean> getRequiresAuthentication() {
         return requiresAuthentication;
+    }
+
+    public EntityModel<Boolean> getReadOnly() {
+        return readOnly;
     }
 
     public EntityModel<String> getUsername() {
@@ -225,6 +230,7 @@ public class ProviderModel extends Model {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean isTenantAware = getType().getSelectedItem().isTenantAware();
                 boolean isAuthUrlAware = getType().getSelectedItem().isAuthUrlAware();
+                boolean isReadOnlyAware = getType().getSelectedItem().isReadOnlyAware();
 
                 getTenantName().setIsAvailable(isTenantAware);
                 getAuthUrl().setIsAvailable(isAuthUrlAware);
@@ -235,6 +241,12 @@ public class ProviderModel extends Model {
 
                 boolean isNeutron = isTypeOpenStackNetwork();
                 getNeutronAgentModel().setIsAvailable(isNeutron);
+
+                getReadOnly().setIsAvailable(isReadOnlyAware);
+                if (isReadOnlyAware){
+                    ExternalNetworkProviderProperties properties = (ExternalNetworkProviderProperties) provider.getAdditionalProperties();
+                        getReadOnly().setEntity(properties != null ? properties.getReadOnly() : false);
+                }
 
                 boolean isVmware = isTypeVmware();
                 boolean requiresAuth = isTypeRequiresAuthentication();
@@ -381,7 +393,10 @@ public class ProviderModel extends Model {
         if (isTypeOpenStackNetwork()) {
             getNeutronAgentModel().flush(provider);
         } else if (isExternalNetwork()){
-            provider.setAdditionalProperties(new ExternalNetworkProviderProperties());
+            ExternalNetworkProviderProperties properties = new ExternalNetworkProviderProperties();
+            boolean isReadOnly = readOnly.getEntity();
+            properties.setReadOnly(isReadOnly);
+            provider.setAdditionalProperties(properties);
         } else if (isTypeOpenStackImage()) {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         } else if (isTypeOpenStackVolume()) {

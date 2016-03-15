@@ -130,6 +130,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Ignore
     VmwarePropertiesWidget vmwarePropertiesWidget;
 
+    @UiField(provided = true)
+    @Path(value = "readOnly.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor readOnlyEditor;
+
     @UiField
     Style style;
 
@@ -150,6 +155,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
             }
         });
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        readOnlyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -173,6 +179,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         pluginTypeEditor.setLabel(constants.pluginType());
         datacenterEditor.setLabel(constants.dataCenter());
         authUrlEditor.setLabel(constants.authUrlProvider());
+        readOnlyEditor.setLabel(constants.readOnly());
 
         // Agent configuration tab
         agentConfigurationTab.setLabel(constants.providerPopupAgentConfigurationTabLabel());
@@ -232,6 +239,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         datacenterEditor.setTabIndex(nextTabIndex++);
         pluginTypeEditor.setTabIndex(nextTabIndex++);
         urlEditor.setTabIndex(nextTabIndex++);
+        readOnlyEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = vmwarePropertiesWidget.setTabIndexes(nextTabIndex);
         requiresAuthenticationEditor.setTabIndex(nextTabIndex++);
         usernameEditor.setTabIndex(nextTabIndex++);
