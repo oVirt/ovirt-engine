@@ -71,7 +71,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getClusterCompatibilityVersion());
 
         Set<Version> supportedClusterVersionsSet = host.getSupportedClusterVersionsSet();
-        boolean supportedClusterVersionsAvailable = supportedClusterVersionsSet.isEmpty();
+        boolean supportedClusterVersionsAvailable = !supportedClusterVersionsSet.isEmpty();
         if (!supportedClusterVersionsAvailable) {
             log.warn("Host '{}' ('{}') doesn't contain Supported Cluster Versions, therefore 'defaultRoute'"
                     + " will not be sent via the SetupNetworks", host.getName(), host.getId());
