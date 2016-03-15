@@ -271,8 +271,13 @@ BEGIN
                 FROM user_vm_permissions_view
                 WHERE user_id = v_user_id
                     AND entity_id = v_vm_id
-                )
+                UNION
+                SELECT 1
+                FROM user_vm_template_permissions_view
+                WHERE user_id = v_user_id
+                    AND entity_id = v_vm_id
             )
+        )
     ORDER BY NULLIF(alias, '') NULLS LAST;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
