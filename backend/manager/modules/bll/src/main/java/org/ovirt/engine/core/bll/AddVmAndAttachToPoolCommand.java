@@ -68,12 +68,10 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
     @Override
     protected void executeCommand() {
         VmStatic vmStatic = getParameters().getVmStaticData();
-        VdcActionType action = VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(vmStatic.getVmtGuid()) ?
-                VdcActionType.AddVmFromScratch : VdcActionType.AddVm;
 
         VdcReturnValueBase returnValueFromAddVm = runInternalActionWithTasksContext(
-                action,
-                buildAddVmParameters(action));
+                VdcActionType.AddVm,
+                buildAddVmParameters());
 
         if (returnValueFromAddVm.getSucceeded()) {
             getTaskIdList().addAll(returnValueFromAddVm.getInternalVdsmTaskIdList());
@@ -81,34 +79,27 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         }
     }
 
-    private AddVmParameters buildAddVmParameters(VdcActionType action) {
+    private AddVmParameters buildAddVmParameters() {
         AddVmParameters parameters = new AddVmParameters(getParameters().getVmStaticData());
         parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
         parameters.getGraphicsDevices().putAll(getParameters().getGraphicsDevices());
         parameters.setPoolId(getParameters().getPoolId());
 
-        if (action == VdcActionType.AddVmFromScratch) {
-            parameters.setDiskInfoList(getParameters().getDiskInfoList());
-            parameters.setStorageDomainId(getParameters().getStorageDomainId());
-            parameters.setSessionId(getParameters().getSessionId());
-            parameters.setDontAttachToDefaultTag(true);
+        if (StringUtils.isEmpty(getParameters().getSessionId())) {
+            parameters.setParametersCurrentUser(getCurrentUser());
         } else {
-            if (StringUtils.isEmpty(getParameters().getSessionId())) {
-                parameters.setParametersCurrentUser(getCurrentUser());
-            } else {
-                parameters.setSessionId(getParameters().getSessionId());
-            }
-            parameters.setDontAttachToDefaultTag(true);
-            parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
-            parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
-            parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
-            parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
-            parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
+            parameters.setSessionId(getParameters().getSessionId());
+        }
+        parameters.setDontAttachToDefaultTag(true);
+        parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
+        parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
+        parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
+        parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
+        parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
 
-            if (getParameters().isUpdateRngDevice()) {
-                parameters.setUpdateRngDevice(true);
-                parameters.setRngDevice(getParameters().getRngDevice());
-            }
+        if (getParameters().isUpdateRngDevice()) {
+            parameters.setUpdateRngDevice(true);
+            parameters.setRngDevice(getParameters().getRngDevice());
         }
 
         return parameters;
