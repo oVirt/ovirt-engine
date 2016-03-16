@@ -2,19 +2,24 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import java.util.Comparator;
 
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
+import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IdentifiableComparator;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VmStatusCell;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
@@ -24,6 +29,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+
 
     public VmStatusColumn() {
         super(new VmStatusCell());
@@ -57,20 +63,34 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
     public SafeHtml getTooltip(T object) {
 
         String tooltip = null;
+        EnumTranslator translator = EnumTranslator.getInstance();
 
         VM vm = getValue(object);
         if (vm == null) {
             return null;
         }
 
-        boolean updateNeeded = vm.getStatus() == VMStatus.Up && vm.getGuestAgentStatus() == GuestAgentStatus.UpdateNeeded;
+        // the tooltip always has at least the vm status
+        tooltip = getStatusTooltipText(vm.getStatus());
 
+        // optionally, the vm status icon gets an alert exclamation. Indicate why.
+        if (needsAlert(vm)) {
 
-        if (!updateNeeded && (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR)) {
-            tooltip = getTooltipText(vm.getStatus());
-        }
-        else {
-            tooltip = updateNeeded ? constants.newtools() : EnumTranslator.getInstance().translate(vm.getVmPauseStatus());
+            if (isUpdateNeeded(vm)) {
+                tooltip += "<br/><br/>" + constants.newtools(); //$NON-NLS-1$
+            }
+
+            if (hasPauseError(vm)) {
+                tooltip += "<br/><br/>" + translator.translate(vm.getVmPauseStatus()); //$NON-NLS-1$
+            }
+
+            if (hasDifferentTimezone(vm)) {
+                tooltip += "<br/><br/>" + constants.guestTimezoneDiffers(); //$NON-NLS-1$
+            }
+
+            if (hasDifferentOSType(vm)) {
+                tooltip += "<br/><br/>" + constants.guestOSDiffers(); //$NON-NLS-1$
+            }
         }
 
         if (tooltip != null) {
@@ -80,7 +100,45 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
         return null;
     }
 
-    private String getTooltipText(VMStatus status) {
+    public static boolean needsAlert(VM vm) {
+        return hasDifferentTimezone(vm) || hasDifferentOSType(vm) || isUpdateNeeded(vm) ||
+            hasPauseError(vm);
+    }
+
+    private static boolean hasDifferentOSType(VM vm) {
+        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()) != (vm.getGuestOsType() == OsType.Windows);
+    }
+
+    private static boolean hasDifferentTimezone(VM vm) {
+        if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
+            String timeZone = vm.getTimeZone();
+            if (timeZone != null && !timeZone.isEmpty()) {
+                int offset = 0;
+                String javaZoneId = null;
+                // convert to java & calculate offset
+                javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
+
+                if (javaZoneId != null) {
+                    offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
+                }
+
+                if (vm.getGuestOsTimezoneOffset() != offset) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isUpdateNeeded(VM vm) {
+        return vm.getStatus() == VMStatus.Up && vm.getGuestAgentStatus() == GuestAgentStatus.UpdateNeeded;
+    }
+
+    private static boolean hasPauseError(VM vm) {
+        return vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR;
+    }
+
+    private String getStatusTooltipText(VMStatus status) {
 
         switch (status) {
             case Up:

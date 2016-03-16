@@ -1,17 +1,12 @@
 package org.ovirt.engine.ui.webadmin.widget.table.cell;
 
-import org.ovirt.engine.core.common.TimeZoneType;
-import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
-import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
-import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -99,63 +94,19 @@ public class VmStatusCell extends AbstractCell<VM> {
             statusImageHtml = templates.lockedStatusTemplate(lockImageHtml, statusImageHtml);
         }
 
-        // Find the image corresponding to the alert
-        SafeHtml alertImageHtml = getResourceImage(vm);
-
-        if (alertImageHtml != null) {
-            sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id, status.toString()));
+        if (VmStatusColumn.needsAlert(vm)) {
+            sb.append(templates.statusWithAlertTemplate(statusImageHtml, getAlertImageResource(vm), id, status.toString()));
         } else {
             sb.append(templates.statusTemplate(statusImageHtml, id, status.toString()));
         }
 
     }
 
-    SafeHtml getResourceImage(VM vm) {
-        boolean updateNeeded = vm.getStatus() == VMStatus.Up && vm.getGuestAgentStatus() == GuestAgentStatus.UpdateNeeded;
-        boolean timezoneDiffers = hasDifferentTimezone(vm);
-        boolean osTypeDiffers = hasDifferentOSType(vm);
-        if (!timezoneDiffers && !osTypeDiffers && !updateNeeded
-            && (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR)) {
-            return null;
-        }
-        else {
-            // Create Image from the alert resource
-            ImageResource alertImageResource = resources.alertImage();
-
-            // Get the image html
-            AbstractImagePrototype imagePrototype = AbstractImagePrototype.create(alertImageResource);
-            String html = imagePrototype.getHTML();
-            return SafeHtmlUtils.fromTrustedString(html);
-        }
-    }
-
-    private boolean hasDifferentOSType(VM vm) {
-        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()) != (vm.getGuestOsType() == OsType.Windows);
-    }
-
-    private boolean hasDifferentTimezone(VM vm) {
-        if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
-            String timeZone = vm.getTimeZone();
-            if (timeZone != null && !timeZone.isEmpty()) {
-                int offset = 0;
-                String javaZoneId = null;
-                if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
-                    // convert to java & calculate offset
-                    javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
-                } else {
-                    javaZoneId = timeZone;
-                }
-
-                if (javaZoneId != null) {
-                    offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
-                }
-
-                if (vm.getGuestOsTimezoneOffset() != offset) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    private static SafeHtml getAlertImageResource(VM vm) {
+        ImageResource alertImageResource = resources.alertImage();
+        AbstractImagePrototype imagePrototype = AbstractImagePrototype.create(alertImageResource);
+        String html = imagePrototype.getHTML();
+        return SafeHtmlUtils.fromTrustedString(html);
     }
 
 }
