@@ -454,6 +454,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Template Import")
     String templateImportTitle();
 
+    @DefaultStringValue("Disk Import")
+    String disksImportTitle();
+
     @DefaultStringValue("Invalid Import Configuration")
     String invalidImportTitle();
 
@@ -847,6 +850,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Import Template(s)")
     String importTemplatesTitle();
+
+    @DefaultStringValue("Import Disk(s)")
+    String importDisksTitle();
 
     @DefaultStringValue("Clone VM from Snapshot")
     String cloneVmFromSnapshotTitle();

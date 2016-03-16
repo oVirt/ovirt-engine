@@ -139,6 +139,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskImageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel;
@@ -177,6 +178,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigPopupView;
+
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 
 /**
@@ -270,6 +272,8 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> getSubTabStorageRegisterVmModelProvider();
 
     SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel> getSubTabStorageRegisterTemplateModelProvider();
+
+    SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel> getSubTabStorageRegisterDiskImageModelProvider();
 
     SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> getSubTabStorageVmModelProvider();
 

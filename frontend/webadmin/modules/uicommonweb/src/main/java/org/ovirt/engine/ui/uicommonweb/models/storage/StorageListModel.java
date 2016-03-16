@@ -132,6 +132,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             final VmBackupModel storageVmBackupModel, final TemplateBackupModel storageTemplateBackupModel,
             final StorageRegisterVmListModel storageRegisterVmListModel,
             final StorageRegisterTemplateListModel storageRegisterTemplateListModel,
+            final StorageRegisterDiskImageListModel storageRegisterDiskImageListModel,
             final StorageVmListModel storageVmListModel, final StorageTemplateListModel storageTemplateListModel,
             final StorageIsoListModel storageIsoListModel, final StorageDiskListModel storageDiskListModel,
             final StorageRegisterDiskListModel storageRegisterDiskListModel,
@@ -144,6 +145,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         templateBackupModel = storageTemplateBackupModel;
         vmRegisterListModel = storageRegisterVmListModel;
         templateRegisterListModel = storageRegisterTemplateListModel;
+        diskImageRegisterListModel = storageRegisterDiskImageListModel;
         vmListModel = storageVmListModel;
         templateListModel = storageTemplateListModel;
         isoListModel = storageIsoListModel;
@@ -181,6 +183,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         this.templateBackupModel.setIsAvailable(false);
         vmRegisterListModel.setIsAvailable(false);
         templateRegisterListModel.setIsAvailable(false);
+        diskImageRegisterListModel.setIsAvailable(false);
         vmListModel.setIsAvailable(false);
         templateListModel.setIsAvailable(false);
         isoListModel.setIsAvailable(false);
@@ -196,6 +199,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         list.add(templateBackupModel);
         list.add(vmRegisterListModel);
         list.add(templateRegisterListModel);
+        list.add(diskImageRegisterListModel);
         list.add(vmListModel);
         list.add(templateListModel);
         list.add(isoListModel);
@@ -214,6 +218,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     private final StorageDataCenterListModel dcListModel;
     private final StorageRegisterVmListModel vmRegisterListModel;
     private final StorageRegisterTemplateListModel templateRegisterListModel;
+    private final StorageRegisterDiskImageListModel diskImageRegisterListModel;
     private final StorageVmListModel vmListModel;
     private final StorageTemplateListModel templateListModel;
     private final StorageIsoListModel isoListModel;
@@ -848,7 +853,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             boolean isCinderStorage = storage.getStorageType().isCinderDomain();
 
             boolean isRegsiterEntityListModelSelected =
-                    getActiveDetailModel() == vmRegisterListModel || getActiveDetailModel() == templateRegisterListModel;
+                    getActiveDetailModel() == vmRegisterListModel
+                            || getActiveDetailModel() == templateRegisterListModel
+                            || getActiveDetailModel() == diskImageRegisterListModel;
             boolean isRegisterSubtabsAvailable = isDataStorage &&
                     (storage.isContainsUnregisteredEntities() || isRegsiterEntityListModelSelected);
 
@@ -862,6 +869,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             templateListModel.setIsAvailable(isDataStorage);
             vmRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
+            diskImageRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage || isCinderStorage);
             registerDiskListModel.setIsAvailable(isCinderStorage);
             snapshotListModel.setIsAvailable(isDataStorage || isCinderStorage);

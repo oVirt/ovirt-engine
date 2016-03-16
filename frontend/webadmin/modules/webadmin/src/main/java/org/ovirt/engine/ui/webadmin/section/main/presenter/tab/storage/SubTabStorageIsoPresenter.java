@@ -36,7 +36,7 @@ public class SubTabStorageIsoPresenter
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider) {
-        return new ModelBoundTabData(constants.storageImagesSubTabLabel(), 6, modelProvider);
+        return new ModelBoundTabData(constants.storageImagesSubTabLabel(), 7, modelProvider);
     }
 
     @Inject

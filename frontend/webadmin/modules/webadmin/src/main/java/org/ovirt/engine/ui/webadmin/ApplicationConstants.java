@@ -491,6 +491,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Template Import")
     String storageTemplateBackupSubTabLabel();
 
+    @DefaultStringValue("Disk Import")
+    String storageDiskBackupSubTabLabel();
+
     @DefaultStringValue("Virtual Machines")
     String storageVmSubTabLabel();
 

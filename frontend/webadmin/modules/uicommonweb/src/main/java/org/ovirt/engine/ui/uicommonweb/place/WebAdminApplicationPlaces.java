@@ -107,6 +107,9 @@ public class WebAdminApplicationPlaces {
     public static final String storageTemplateRegisterSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "template_register"; //$NON-NLS-1$
 
+    public static final String storageDisksImageRegisterSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
+            + "disk_image_register"; //$NON-NLS-1$
+
     public static final String storageVmSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "virtual_machines"; //$NON-NLS-1$
 

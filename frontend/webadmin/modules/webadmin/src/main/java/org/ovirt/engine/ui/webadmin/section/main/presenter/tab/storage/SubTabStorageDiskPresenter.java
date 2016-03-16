@@ -36,7 +36,7 @@ public class SubTabStorageDiskPresenter
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> modelProvider) {
-        return new ModelBoundTabData(constants.disksLabel(), 7, modelProvider);
+        return new ModelBoundTabData(constants.disksLabel(), 8, modelProvider);
     }
 
     @Inject

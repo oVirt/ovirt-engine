@@ -37,7 +37,7 @@ public class SubTabStoragePermissionPresenter
     static TabData getTabData(
             SearchableDetailModelProvider<Permission, StorageListModel,
             PermissionListModel<StorageDomain>> modelProvider) {
-        return new ModelBoundTabData(constants.storagePermissionSubTabLabel(), 10, modelProvider);
+        return new ModelBoundTabData(constants.storagePermissionSubTabLabel(), 11, modelProvider);
     }
 
     @Inject

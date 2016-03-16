@@ -36,7 +36,7 @@ public class SubTabStorageTemplatePresenter
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel> modelProvider) {
-        return new ModelBoundTabData(constants.storageTemplateSubTabLabel(), 5, modelProvider);
+        return new ModelBoundTabData(constants.storageTemplateSubTabLabel(), 6, modelProvider);
     }
 
     @Inject

@@ -184,6 +184,7 @@
         <include name="common/businessentities/TagsVmMapId.java" />
         <include name="common/businessentities/comparators/BusinessEntityComparator.java" />
         <include name="common/businessentities/comparators/DiskByDiskAliasComparator.java" />
+        <include name="common/businessentities/comparators/UnregisteredDiskByDiskAliasComparator.java" />
         <include name="common/businessentities/comparators/LexoNumericComparator.java" />
         <include name="common/businessentities/comparators/LexoNumericNameableComparator.java" />
         <include name="common/businessentities/comparators/NameableComparator.java" />
@@ -234,6 +235,7 @@
         <include name="common/businessentities/storage/BaseDisk.java" />
         <include name="common/businessentities/storage/CopyVolumeType.java" />
         <include name="common/businessentities/storage/Disk.java" />
+        <include name="common/businessentities/storage/UnregisteredDisk.java" />
         <include name="common/businessentities/storage/DiskAlignment.java" />
         <include name="common/businessentities/storage/DiskContentType.java" />
         <include name="common/businessentities/storage/DiskImage.java" />

@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskImageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel;
@@ -59,6 +60,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -247,6 +249,27 @@ public class StorageModule extends AbstractGinModule {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(
                             StorageRegisterDiskListModel source, UICommand lastExecutedCommand) {
+                        return super.getConfirmModelPopup(source, lastExecutedCommand);
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel> getStorageRegisterDiskImageListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageRegisterDiskImageListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel> result =
+                new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(
+                            StorageRegisterDiskImageListModel source, UICommand lastExecutedCommand) {
                         return super.getConfirmModelPopup(source, lastExecutedCommand);
                     }
                 };
@@ -489,6 +512,7 @@ public class StorageModule extends AbstractGinModule {
         bind(StorageIsoListModel.class).in(Singleton.class);
         bind(StorageDiskListModel.class).in(Singleton.class);
         bind(StorageRegisterDiskListModel.class).in(Singleton.class);
+        bind(StorageRegisterDiskImageListModel.class).in(Singleton.class);
         bind(StorageSnapshotListModel.class).in(Singleton.class);
         bind(StorageTemplateListModel.class).in(Singleton.class);
         bind(StorageVmListModel.class).in(Singleton.class);
