@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class DecoratedImageResourceCell extends AbstractCell<ImageWithDecorator> {
 
     interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<div id=\"{4}\" style=\"position: relative; left: 0; top: 0;\"><span style=\"position: relative; left: 0px; top: 0px;\">{0}</span><span style=\"position: absolute; left: {2}px; top: {3}px;\">{1}</span></div>")
-        SafeHtml doubleImageContainer(SafeHtml imageHtml, SafeHtml decoratorHtml, int left, int top, String id);
+        @Template("<div data-status=\"{5}\" id=\"{4}\" style=\"position: relative; left: 0; top: 0;\"><span style=\"position: relative; left: 0px; top: 0px;\">{0}</span><span style=\"position: absolute; left: {2}px; top: {3}px;\">{1}</span></div>")
+        SafeHtml doubleImageContainer(SafeHtml imageHtml, SafeHtml decoratorHtml, int left, int top, String id, String status);
     }
 
     private static final CellTemplate template = GWT.create(CellTemplate.class);
@@ -37,7 +37,8 @@ public class DecoratedImageResourceCell extends AbstractCell<ImageWithDecorator>
                     decorateImageHtml,
                     value.getDecoratorPositionLeft(),
                     value.getDecoratorPositionTop(),
-                    id));
+                    id,
+                    value.getStatus()));
         }
     }
 }

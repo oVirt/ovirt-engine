@@ -29,7 +29,8 @@ public class VmStatusColumn extends AbstractDecoratedImageColumn<UserPortalItemM
         if (vm != null && vm.isNextRunConfigurationExists()) {
             changesImage = resources.vmDelta();
         }
-        return new ImageWithDecorator(getMainImage(item), changesImage, DECORATOR_POSITION_LEFT, DECORATOR_POSITION_TOP);
+        return new ImageWithDecorator(getMainImage(item), changesImage, DECORATOR_POSITION_LEFT,
+                DECORATOR_POSITION_TOP, vm.getStatus().toString());
     }
 
     @Override
