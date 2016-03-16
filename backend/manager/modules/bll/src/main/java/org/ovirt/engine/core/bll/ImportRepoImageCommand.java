@@ -34,7 +34,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @SuppressWarnings("unused")
 @NonTransactiveCommandAttribute
-public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T>
+public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends BaseImagesCommand<T>
         implements TaskHandlerCommand<ImportRepoImageParameters>, QuotaStorageDependent {
 
     private OpenStackImageProviderProxy providerProxy;
@@ -110,7 +110,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     @Override
     public void taskEndSuccessfully() {
-        // Not implemented
+        super.endSuccessfully();
     }
 
     @Override

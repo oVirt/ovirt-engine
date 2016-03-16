@@ -100,6 +100,7 @@ public class ImportRepoImageCopyTaskHandler
         getEnclosingCommand().getParameters().getDiskImage().setImageStatus(ImageStatus.OK);
         ImagesHandler.updateImageStatus(
                 getEnclosingCommand().getParameters().getDestinationImageId(), ImageStatus.OK);
+        getEnclosingCommand().taskEndSuccessfully();
         getEnclosingCommand().getReturnValue().setSucceeded(true);
     }
 
