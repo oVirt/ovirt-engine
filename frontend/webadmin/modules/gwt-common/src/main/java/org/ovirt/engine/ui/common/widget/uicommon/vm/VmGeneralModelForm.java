@@ -133,9 +133,6 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
 
         // Required because of type conversion
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
-
-        // Add a tooltip to display long named/many hosts
-        defaultHost.setTitle(getModel().getDefaultHost());
     }
 
 }

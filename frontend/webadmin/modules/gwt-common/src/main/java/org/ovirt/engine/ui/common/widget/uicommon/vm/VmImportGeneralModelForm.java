@@ -72,9 +72,6 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
 
         // Required because of type conversion
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
-
-        // Add a tooltip to display long named/many hosts
-        defaultHost.setTitle(getModel().getDefaultHost());
     }
 
     private Widget getOperatingSystemWidget() {
