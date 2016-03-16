@@ -157,6 +157,9 @@ public class HostedEngineImporter {
         vm.setVmOs(osRepository.getLinuxOss().stream()
                 .sorted()
                 .findFirst().get());
+        vm.setPriority(1);
+
+        VmHandler.updateDefaultTimeZone(vm.getStaticData());
 
         return parameters;
     }
