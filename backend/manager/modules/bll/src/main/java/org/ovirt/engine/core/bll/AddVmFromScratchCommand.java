@@ -8,18 +8,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -73,50 +68,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
 
     @Override
     protected boolean addVmImages() {
-        List<Disk> disks = getDiskDao().getAllForVm(getParameters().getVmStaticData().getVmtGuid());
-        if (disks.isEmpty() && !getParameters().getVmStaticData().getVmtGuid().equals(Guid.Empty)) {
-            throw new EngineException(EngineError.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
-        }
-
-        Disk defBootDisk = getVmDisks().stream().filter(Disk::isBoot).findFirst().orElse(null);
-
-        if (defBootDisk != null) {
-            getVmDisks().stream().filter(disk -> !disk.equals(defBootDisk)).forEach(disk -> disk.setBoot(false));
-        }
-
-        return !disks.isEmpty() ? concreteAddVmImages(((DiskImage) disks.get(0)).getImageId()) : true;
-    }
-
-    protected boolean concreteAddVmImages(Guid itGuid) {
-        boolean ret = true;
-
-        if (getVmDisks().size() > 0) {
-            for (Disk diskInfo : getVmDisks()) {
-                VdcReturnValueBase tmpRetValue = null;
-                AddImageFromScratchParameters tempVar = new AddImageFromScratchParameters(itGuid, getParameters()
-                            .getVmStaticData().getId(), (DiskImage) diskInfo);
-                tempVar.setStorageDomainId(this.getStorageDomainId());
-                tempVar.setVmSnapshotId(getVmSnapshotId());
-                tempVar.setParentCommand(VdcActionType.AddVmFromScratch);
-                tempVar.setEntityInfo(getParameters().getEntityInfo());
-                tempVar.setParentParameters(getParameters());
-                tmpRetValue = runInternalActionWithTasksContext(VdcActionType.AddImageFromScratch, tempVar);
-                if (!tmpRetValue.getSucceeded()) {
-                    log.error("concreteAddVmImages: AddImageFromScratch Command failed.");
-                    ret = false;
-                } else {
-                    // the AddImageFromScratch task created ended successfully:
-                    getReturnValue().getVdsmTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
-                }
-            }
-
-            VmHandler.lockVm(getParameters().getVmStaticData().getId());
-        } else {
-            // if no disks send update vm here
-            getVmStaticDao().incrementDbGeneration(getVm().getId());
-        }
-
-        return ret;
+        return true;
     }
 
     @Override
