@@ -5,8 +5,11 @@
 -- ----------------------------------------------------------------------
 CREATE OR REPLACE VIEW domains_with_unregistered_entities_view AS
 
-SELECT DISTINCT storage_domain_id
-FROM unregistered_ovf_of_entities;
+SELECT storage_domain_id
+FROM unregistered_ovf_of_entities
+UNION
+SELECT storage_domain_id
+FROM unregistered_disks;
 
 CREATE OR REPLACE VIEW storage_domain_shared_status AS
 
