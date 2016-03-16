@@ -653,7 +653,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!areUpdatedFieldsLegal()) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
+            return failCanDoAction(vmFromDB.isHostedEngine() ? EngineMessage.VM_CANNOT_UPDATE_HOSTED_ENGINE_FIELD : EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
         }
 
         if (!vmFromDB.getVdsGroupId().equals(vmFromParams.getVdsGroupId())) {
