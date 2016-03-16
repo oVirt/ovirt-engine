@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -14,6 +13,7 @@ import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -36,7 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @SuppressWarnings("unused")
 @NonTransactiveCommandAttribute
-public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T>
+public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends BaseImagesCommand<T>
         implements TaskHandlerCommand<ImportRepoImageParameters>, QuotaStorageDependent {
 
     private OpenStackImageProviderProxy providerProxy;
@@ -102,7 +102,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     @Override
     public void taskEndSuccessfully() {
-        // Not implemented
+        super.endSuccessfully();
     }
 
     @Override
