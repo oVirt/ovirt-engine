@@ -7,15 +7,18 @@ public class ImageWithDecorator {
     private ImageResource decorator;
     private int decoratorPositionLeft;
     private int decoratorPositionTop;
+    private String status;
 
     public ImageWithDecorator(ImageResource image,
             ImageResource decorator,
             int decoratorPositionLeft,
-            int decoratorPositionTop) {
+            int decoratorPositionTop,
+            String status) {
         this.image = image;
         this.decorator = decorator;
         this.decoratorPositionLeft = decoratorPositionLeft;
         this.decoratorPositionTop = decoratorPositionTop;
+        this.status = status;
     }
 
     public ImageResource getImage() {
@@ -49,4 +52,13 @@ public class ImageWithDecorator {
     public void setDecoratorPositionTop(int decoratorPositionTop) {
         this.decoratorPositionTop = decoratorPositionTop;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 }
