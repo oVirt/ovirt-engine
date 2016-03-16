@@ -938,6 +938,7 @@ select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4096000','3.4');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4096000','3.5');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','3.6');
 select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
+select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
