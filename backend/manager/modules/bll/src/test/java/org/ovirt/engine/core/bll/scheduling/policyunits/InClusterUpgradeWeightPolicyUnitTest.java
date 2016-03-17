@@ -96,12 +96,42 @@ public class InClusterUpgradeWeightPolicyUnitTest extends TestCase {
     }
 
     @Test
-    public void shouldDetectNeverStartedVM() {
+    public void shouldWeightNewestHostsBetterOnVmStarts() {
         final VM newVM = new VM();
-        assertThat(filter(newVM, tooOldHost, newEnoughHost)).containsExactly(
+        assertThat(filter(newVM, tooOldHost, newEnoughHost)).contains(
+                        weight(tooOldHost, BAD_WEIGHT),
+                        weight(newEnoughHost, BEST_WEIGHT));
+    }
+
+    @Test
+    public void shouldWeightNothingOnVmStartWithDifferenOsFamilies() {
+        VDS fedoraHost = newHost("Fedora - 23 - 1.fc23");
+        final VM newVM = new VM();
+        assertThat(filter(newVM, tooOldHost, newEnoughHost, fedoraHost)).contains(
                 weight(tooOldHost, BEST_WEIGHT),
-                weight(newEnoughHost, BEST_WEIGHT)
-        );
+                weight(newEnoughHost, BEST_WEIGHT),
+                weight(fedoraHost, BEST_WEIGHT));
+        assertThat(filter(newVM, tooOldHost, newEnoughHost, fedoraHost)).hasSize(3);
+    }
+
+    @Test
+    public void shouldWeightNothingWithAllHostsInvalidOnVmStart() {
+        VDS invalidHost = newHost("RHEL - - 1.fc23");
+        final VM newVM = new VM();
+        assertThat(filter(newVM, invalidHost, invalidHost)).contains(
+                weight(invalidHost, BEST_WEIGHT),
+                weight(invalidHost, BEST_WEIGHT));
+        assertThat(filter(newVM, invalidHost, invalidHost)).hasSize(2);
+    }
+
+    @Test
+    public void shouldWeightOnlyValidHostsOnVmStart() {
+        VDS invalidHost = newHost("RHEL - - 1.fc23");
+        final VM newVM = new VM();
+        assertThat(filter(newVM, invalidHost, newEnoughHost)).contains(
+                weight(invalidHost, BAD_WEIGHT),
+                weight(newEnoughHost, BEST_WEIGHT));
+        assertThat(filter(newVM, invalidHost, newEnoughHost)).hasSize(2);
     }
 
     @Test
