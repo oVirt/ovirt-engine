@@ -247,7 +247,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("is_migrate_compressed", group.getMigrateCompressed())
                 .addValue("gluster_tuned_profile", group.getGlusterTunedProfile())
                 .addValue("ksm_merge_across_nodes", group.isKsmMergeAcrossNumaNodes())
-                .addValue("migration_bandwidth_limit_type", group.getMigrationBandwidthLimitType())
+                .addValue("migration_bandwidth_limit_type", group.getMigrationBandwidthLimitType().name())
                 .addValue("custom_migration_bandwidth_limit", group.getCustomMigrationNetworkBandwidth());
 
         return parameterSource;
