@@ -160,6 +160,7 @@ public class V3VmServer extends V3Server<VmResource> {
     }
 
     @DELETE
+    @Consumes({"application/xml", "application/json"})
     public Response remove(@Context UriInfo ui, V3Action action) {
         // V3 version of the API used the action "force" element and the disks "detach_disks" elements as parameters,
         // but in V4 this has been replaced with equivalent matrix parameters:

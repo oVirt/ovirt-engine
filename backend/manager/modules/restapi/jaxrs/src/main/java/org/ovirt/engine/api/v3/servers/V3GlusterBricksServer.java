@@ -68,6 +68,7 @@ public class V3GlusterBricksServer extends V3Server<GlusterBricksResource> {
     }
 
     @DELETE
+    @Consumes({"application/xml", "application/json"})
     public Response remove(V3Action action) {
         try {
             return adaptResponse(getDelegate().remove(adaptIn(action)));
