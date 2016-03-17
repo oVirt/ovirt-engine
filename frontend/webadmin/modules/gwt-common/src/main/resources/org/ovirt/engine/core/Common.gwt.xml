@@ -342,6 +342,7 @@
         <include name="common/utils/IPv4AddressConverter.java"/>
         <include name="common/validation/CidrValidator.java"/>
         <include name="common/validation/MaskValidator.java"/>
+        <include name="common/validation/VmActionByVmOriginTypeValidator.java"/>
 
         <!-- Host-deploy -->
         <include name="common/action/hostdeploy/*.java"/>
