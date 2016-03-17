@@ -7,8 +7,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -112,7 +114,14 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
     public void executeDiskModifications(VM vm) {
         // this is done on the background - the window is not visible anymore
         disableLineModels();
-        executeDeleteAndCallNew(vm);
+
+        if (isDiskUpdateAllowed(vm)) {
+            executeDeleteAndCallNew(vm);
+        }
+    }
+
+    private boolean isDiskUpdateAllowed(VM vm) {
+        return VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk);
     }
 
     private void disableLineModels() {
