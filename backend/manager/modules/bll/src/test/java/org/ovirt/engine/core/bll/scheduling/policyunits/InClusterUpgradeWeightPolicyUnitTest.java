@@ -99,13 +99,47 @@ public class InClusterUpgradeWeightPolicyUnitTest extends AbstractPolicyUnitTest
     }
 
     @Test
-    public void shouldDetectNeverStartedVM() {
+    public void shouldWeightNewestHostsBetterOnVmStarts() {
         final VM newVM = new VM();
         assertThat(filter(newVM, tooOldHost, newEnoughHost), hasItems(
-                        weight(tooOldHost, BEST_WEIGHT),
+                        weight(tooOldHost, BAD_WEIGHT),
                         weight(newEnoughHost, BEST_WEIGHT))
         );
         assertThat(filter(newVM, tooOldHost, newEnoughHost), hasSize(2));
+    }
+
+    @Test
+    public void shouldWeightNothingOnVmStartWithDifferenOsFamilies() {
+        VDS fedoraHost = newHost("Fedora - 23 - 1.fc23");
+        final VM newVM = new VM();
+        assertThat(filter(newVM, tooOldHost, newEnoughHost, fedoraHost), hasItems(
+                weight(tooOldHost, BEST_WEIGHT),
+                weight(newEnoughHost, BEST_WEIGHT),
+                weight(fedoraHost, BEST_WEIGHT))
+        );
+        assertThat(filter(newVM, tooOldHost, newEnoughHost, fedoraHost), hasSize(3));
+    }
+
+    @Test
+    public void shouldWeightNothingWithAllHostsInvalidOnVmStart() {
+        VDS invalidHost = newHost("RHEL - - 1.fc23");
+        final VM newVM = new VM();
+        assertThat(filter(newVM, invalidHost, invalidHost), hasItems(
+                weight(invalidHost, BEST_WEIGHT),
+                weight(invalidHost, BEST_WEIGHT))
+        );
+        assertThat(filter(newVM, invalidHost, invalidHost), hasSize(2));
+    }
+
+    @Test
+    public void shouldWeightOnlyValidHostsOnVmStart() {
+        VDS invalidHost = newHost("RHEL - - 1.fc23");
+        final VM newVM = new VM();
+        assertThat(filter(newVM, invalidHost, newEnoughHost), hasItems(
+                weight(invalidHost, BAD_WEIGHT),
+                weight(newEnoughHost, BEST_WEIGHT))
+        );
+        assertThat(filter(newVM, invalidHost, newEnoughHost), hasSize(2));
     }
 
     @Test
