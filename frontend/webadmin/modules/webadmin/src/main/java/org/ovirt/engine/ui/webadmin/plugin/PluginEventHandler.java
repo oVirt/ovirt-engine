@@ -187,9 +187,11 @@ public class PluginEventHandler {
         eventBus.addHandler(SystemTreeSelectionChangeEvent.getType(), new SystemTreeSelectionChangeHandler() {
             @Override
             public void onSystemTreeSelectionChange(SystemTreeSelectionChangeEvent event) {
-                manager.invokePluginsNow("SystemTreeSelectionChange", //$NON-NLS-1$
-                        JsArrayHelper.createMixedArray(
-                                SystemTreeItemObject.from(event.getSelectedItem())));
+                if (event.getSelectedItem() != null) {
+                    manager.invokePluginsNow("SystemTreeSelectionChange", //$NON-NLS-1$
+                            JsArrayHelper.createMixedArray(
+                                    SystemTreeItemObject.from(event.getSelectedItem())));
+                }
             }
         });
 
