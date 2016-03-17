@@ -67,8 +67,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setEmulatedMachine("rhel6.4.0");
         newGroup.setArchitecture(ArchitectureType.x86_64);
         newGroup.setGlusterCliBasedSchedulingOn(true);
-        newGroup.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.AUTO);
-
+        newGroup.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.CUSTOM);
+        newGroup.setCustomMigrationNetworkBandwidth(1000);
     }
 
     /**
@@ -328,6 +328,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         existingCluster.setName("This is the new name");
         existingCluster.setVirtService(false);
         existingCluster.setGlusterService(true);
+        existingCluster.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.CUSTOM);
+        existingCluster.setCustomMigrationNetworkBandwidth(20);
 
         dao.update(existingCluster);
 

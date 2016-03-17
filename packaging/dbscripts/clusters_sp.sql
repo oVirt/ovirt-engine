@@ -41,7 +41,9 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_is_auto_converge BOOLEAN,
     v_is_migrate_compressed BOOLEAN,
     v_gluster_tuned_profile VARCHAR(50),
-    v_ksm_merge_across_nodes BOOLEAN
+    v_ksm_merge_across_nodes BOOLEAN,
+    v_migration_bandwidth_limit_type VARCHAR(16),
+    v_custom_migration_bandwidth_limit INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -83,7 +85,9 @@ BEGIN
         is_auto_converge,
         is_migrate_compressed,
         gluster_tuned_profile,
-        ksm_merge_across_nodes
+        ksm_merge_across_nodes,
+        migration_bandwidth_limit_type,
+        custom_migration_bandwidth_limit
         )
     VALUES (
         v_cluster_id,
@@ -123,7 +127,9 @@ BEGIN
         v_is_auto_converge,
         v_is_migrate_compressed,
         v_gluster_tuned_profile,
-        v_ksm_merge_across_nodes
+        v_ksm_merge_across_nodes,
+        v_migration_bandwidth_limit_type,
+        v_custom_migration_bandwidth_limit
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -167,7 +173,9 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_is_auto_converge BOOLEAN,
     v_is_migrate_compressed BOOLEAN,
     v_gluster_tuned_profile VARCHAR(50),
-    v_ksm_merge_across_nodes BOOLEAN
+    v_ksm_merge_across_nodes BOOLEAN,
+    v_migration_bandwidth_limit_type VARCHAR(16),
+    v_custom_migration_bandwidth_limit INT
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -212,7 +220,9 @@ BEGIN
         is_auto_converge = v_is_auto_converge,
         is_migrate_compressed = v_is_migrate_compressed,
         gluster_tuned_profile = v_gluster_tuned_profile,
-        ksm_merge_across_nodes = v_ksm_merge_across_nodes
+        ksm_merge_across_nodes = v_ksm_merge_across_nodes,
+        migration_bandwidth_limit_type = v_migration_bandwidth_limit_type,
+        custom_migration_bandwidth_limit = v_custom_migration_bandwidth_limit
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
