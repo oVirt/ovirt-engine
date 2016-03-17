@@ -760,7 +760,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
-        if (!setAndValidateCpuProfile()) {
+        if (!Objects.equals(vmFromDB.getCpuProfileId(), vmFromParams.getCpuProfileId()) && !setAndValidateCpuProfile()) {
             return false;
         }
 
