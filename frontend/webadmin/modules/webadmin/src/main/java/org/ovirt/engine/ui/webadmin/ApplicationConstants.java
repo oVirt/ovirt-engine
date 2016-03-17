@@ -2044,9 +2044,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Create Snapshot")
     String createSnapshotVM();
 
-    @DefaultStringValue("Move")
-    String moveVm();
-
     @DefaultStringValue("Change CD")
     String changeCdVm();
 

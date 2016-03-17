@@ -124,8 +124,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___DELETE_VM();
 
-    String ActionGroup___MOVE_VM();
-
     String ActionGroup___EDIT_VM_PROPERTIES();
 
     String ActionGroup___MIGRATE_VM();
@@ -744,8 +742,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VdcActionType___AttachDiskToVm();
 
     String VdcActionType___DetachDiskFromVm();
-
-    String VdcActionType___MoveVm();
 
     String VdcActionType___AddVmAndAttachToUser();
 

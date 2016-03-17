@@ -512,14 +512,6 @@ actions:
           action.force: xs:boolean
           action.cluster.id: xs:string
         description: migrate a virtual machine in the system identified by the given id to another host with options specified in the request body
-- name: /vms/{vm:id}/move|rel=move #deprecated, replaced by '/vms/{vm:id}/disks/{disk:id}/move|rel=move'
-  description: This action is deprecated. Move a virtual machine's disk
-  request:
-    body:
-      parameterType: Action
-      signatures:
-      - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
-        description: This action is deprecated. Move a virtual machine's disk to the target storage domain
 - name: /vms/{vm:id}/ticket|rel=ticket
   description: Create a ticket for connecting to the VM using the display protocol.
   request:

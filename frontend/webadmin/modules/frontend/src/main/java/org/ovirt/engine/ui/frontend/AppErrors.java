@@ -361,9 +361,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM's Image might be corrupted.")
     String ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM has no disks.")
-    String ACTION_TYPE_FAILED_VM_HAS_NO_DISKS();
-
     @DefaultStringValue("Cannot ${action} ${type}: Storage Domain cannot be accessed.\n-Please check that at least one Host is operational and Data Center state is up.")
     String ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND();
 

@@ -1476,4 +1476,9 @@ added to snapshot entity: `snapshot.snapshot_type`.
   <snapshot_type>regualr|active|stateless|preview</snapshot_type>
   ...
 </scheduling_policy>
-----
+---
+
+=== Removed `move` action from `VM`
+
+The deprecated `move` action of the `VM` entity has been removed.
+Instead, you can move inidividual disks.

@@ -206,11 +206,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     @Override
     protected void setActionMessageParameters() {
-        if (getMoveOrCopyImageOperation() == ImageOperation.Move) {
-            addValidationMessage(EngineMessage.VAR__ACTION__MOVE);
-        } else {
-            addValidationMessage(EngineMessage.VAR__ACTION__COPY);
-        }
+        addValidationMessage(EngineMessage.VAR__ACTION__COPY);
         addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
@@ -248,7 +244,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                         getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
                 params.setParentCommand(getActionType());
                 params.setEntityInfo(getParameters().getEntityInfo());
-                params.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
+                params.setAddImageDomainMapping(true);
                 params.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
                 params.setParentParameters(getParameters());
                 return params;
@@ -260,20 +256,14 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? (getMoveOrCopyImageOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_TEMPLATE
-                    : AuditLogType.USER_COPIED_TEMPLATE
-                    : (getMoveOrCopyImageOperation() == ImageOperation.Move) ? AuditLogType.USER_FAILED_MOVE_TEMPLATE
-                            : AuditLogType.USER_FAILED_COPY_TEMPLATE;
+            return getSucceeded() ? AuditLogType.USER_COPIED_TEMPLATE : AuditLogType.USER_FAILED_COPY_TEMPLATE;
 
         case END_SUCCESS:
-            return getSucceeded() ? (getMoveOrCopyImageOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_TEMPLATE_FINISHED_SUCCESS
-                    : AuditLogType.USER_COPIED_TEMPLATE_FINISHED_SUCCESS
-                    : (getMoveOrCopyImageOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_TEMPLATE_FINISHED_FAILURE
-                            : AuditLogType.USER_COPIED_TEMPLATE_FINISHED_FAILURE;
+            return getSucceeded() ? AuditLogType.USER_COPIED_TEMPLATE_FINISHED_SUCCESS
+                    : AuditLogType.USER_COPIED_TEMPLATE_FINISHED_FAILURE;
 
         default:
-            return (getMoveOrCopyImageOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_TEMPLATE_FINISHED_FAILURE
-                    : AuditLogType.USER_COPIED_TEMPLATE_FINISHED_FAILURE;
+            return AuditLogType.USER_COPIED_TEMPLATE_FINISHED_FAILURE;
         }
     }
 
