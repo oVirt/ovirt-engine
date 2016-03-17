@@ -45,6 +45,18 @@ load_config() {
 	done
 }
 
+source_d() {
+	local stage="$1"
+	local my_cfg_dir="/etc/ovirt-engine-backup/engine-backup-${stage}.d"
+	for f in \
+		$([ -d "${my_cfg_dir}" ] && find "${my_cfg_dir}" -name '*.sh' | sort) \
+		; do
+		[ -r "${f}" ] && . "${f}"
+	done
+}
+
+source_d init
+
 my_load_config() {
 	load_config
 
@@ -61,6 +73,7 @@ my_load_config() {
 	fi
 
 	load_branding
+	source_d config
 }
 
 get_java_props() {
@@ -229,6 +242,7 @@ FAILURE_NOTIFIED=
 
 cleanup() {
 	ec="$?"
+	source_d cleanup
 	if [ -n "${ENGINE_DB_USER}" -a "${ec}" = '1' -a "${MODE}" = "backup" -a -z "${FAILURE_NOTIFIED}" ] && [ -n "${LOG}" ]; then
 		FAILURE_NOTIFIED=1
 		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "Failed"
@@ -467,6 +481,8 @@ MY_REPORTS_DB_SECURED=False
 MY_REPORTS_DB_SECURED_VALIDATION=False
 MY_REPORTS_DB_CREDS=
 RESTORE_PERMISSIONS=
+
+source_d defaults
 
 compressor_to_tar_option() {
 	local res
@@ -910,6 +926,7 @@ dobackup() {
 		backupDB "${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}"
 	fi
 	echo "${PACKAGE_VERSION}" > "${tardir}/version" || logdie "Can't create ${tardir}/version"
+	source_d dobackup
 	dump_config_for_restore > "${tardir}/config" || logdie "Can't create ${tardir}/config"
 	log "Creating md5sum at ${tardir}/md5sum"
 	createmd5 "${tardir}" "${tardir}/md5sum"
@@ -1106,6 +1123,7 @@ dorestore() {
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
 	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${DWH_DB_USER}" ] && changeDwhDBConf
 	[ -n "${CHANGE_REPORTS_DB_CREDENTIALS}" ] && changeReportsDBConf
+	source_d dorestore
 	output "You should now run engine-setup."
 }
 
