@@ -291,11 +291,10 @@ public final class VdcActionUtils {
                 VmTemplateStatus.Locked,
                 EnumSet.of(VdcActionType.RemoveVmTemplate,
                         VdcActionType.ExportVmTemplate,
-                        VdcActionType.MoveOrCopyTemplate, VdcActionType.ImportVmTemplate));
+                        VdcActionType.ImportVmTemplate));
         vmTemplateMatrix.put(
                 VmTemplateStatus.Illegal,
-                EnumSet.of(VdcActionType.ExportVmTemplate,
-                        VdcActionType.MoveOrCopyTemplate, VdcActionType.ImportVmTemplate));
+                EnumSet.of(VdcActionType.ExportVmTemplate, VdcActionType.ImportVmTemplate));
         _matrix.put(VmTemplate.class, vmTemplateMatrix);
 
         Map<Enum<?>, Set<VdcActionType>> storageDomainMatrix = new HashMap<>();

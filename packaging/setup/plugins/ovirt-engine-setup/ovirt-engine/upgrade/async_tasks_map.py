@@ -115,10 +115,6 @@ ASYNC_TASKS_MAP = {
         'RemoveAllVmTemplateImageTemplatesCommand',
         'Removing all images of a template',
     ],
-    '226': [
-        'MoveOrCopyTemplateCommand',
-        'Moving or Copying a template image',
-    ],
     '228': [
         'MoveMultipleImageGroupCommand',
         'Moving multiple disks',

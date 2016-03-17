@@ -725,8 +725,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___UpdateVmTemplate();
 
-    String VdcActionType___MoveOrCopyTemplate();
-
     String VdcActionType___UpdateVmTemplateInterface();
 
     String VdcActionType___AttachVmsToTag();
