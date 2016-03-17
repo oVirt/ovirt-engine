@@ -76,8 +76,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
     @Override
     protected void executeCommand() {
         getStorageDomain().setStorageFormat(
-                VersionStorageFormatUtil.getPreferredForVersion(
-                        getStoragePool().getCompatibilityVersion(), getStorageDomain().getStorageType()));
+                VersionStorageFormatUtil.getForVersion(getStoragePool().getCompatibilityVersion()));
         super.executeCommand();
         if (getSucceeded()) {
             VdcReturnValueBase returnValue = Backend.getInstance()

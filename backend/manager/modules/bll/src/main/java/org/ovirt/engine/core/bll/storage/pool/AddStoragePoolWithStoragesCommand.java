@@ -158,8 +158,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     final StorageDomainStatic staticDomain = storageDomain.getStorageStaticData();
                     boolean staticDomainChanged = false;
                     StorageFormatType requiredFormatType =
-                            VersionStorageFormatUtil.getRequiredForVersion
-                                    (getStoragePool().getCompatibilityVersion(), storageDomain.getStorageType());
+                            VersionStorageFormatUtil.getForVersion(getStoragePool().getCompatibilityVersion());
                     if (staticDomain.getStorageFormat().compareTo(requiredFormatType) < 0) {
                         if (!staticDomainChanged) {
                             getCompensationContext().snapshotEntity(staticDomain);

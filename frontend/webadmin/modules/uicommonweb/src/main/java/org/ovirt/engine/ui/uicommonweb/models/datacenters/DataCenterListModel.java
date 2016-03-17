@@ -633,10 +633,8 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                     StorageFormatType newFormat = null;
                     StorageFormatType oldFormat = null;
                     if (storage != null) {
-                        newFormat = VersionStorageFormatUtil.getPreferredForVersion(
-                            dcModel.getVersion().getSelectedItem(), storage.getStorageType());
-                        oldFormat = VersionStorageFormatUtil.getPreferredForVersion(
-                            sp.getCompatibilityVersion(), storage.getStorageType());
+                        newFormat = VersionStorageFormatUtil.getForVersion(dcModel.getVersion().getSelectedItem());
+                        oldFormat = VersionStorageFormatUtil.getForVersion(sp.getCompatibilityVersion());
                     }
 
                     if (newFormat == oldFormat) {

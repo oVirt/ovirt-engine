@@ -74,8 +74,8 @@ public class StorageDomainToPoolRelationValidator {
         }
 
         if (storagePool != null) {
-            if (VersionStorageFormatUtil.getPreferredForVersion(storagePool.getCompatibilityVersion(),
-                    storageDomainStatic.getStorageType()).compareTo(storageDomainStatic.getStorageFormat()) < 0) {
+            if (VersionStorageFormatUtil.getForVersion(storagePool.getCompatibilityVersion())
+                    .compareTo(storageDomainStatic.getStorageFormat()) < 0) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL, String.format("$storageFormat %1$s", storageDomainStatic
                         .getStorageFormat().toString()));
             }

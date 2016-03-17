@@ -144,8 +144,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private StorageFormatType updatePoolAndDomainsFormat(final Version spVersion) {
         final StoragePool storagePool = getStoragePool();
 
-        final StorageFormatType targetFormat =
-                VersionStorageFormatUtil.getPreferredForVersion(spVersion, getMasterDomain() == null ? null : getMasterDomain().getStorageType());
+        final StorageFormatType targetFormat = VersionStorageFormatUtil.getForVersion(spVersion);
 
         storagePool.setCompatibilityVersion(spVersion);
         storagePool.setStoragePoolFormatType(targetFormat);
