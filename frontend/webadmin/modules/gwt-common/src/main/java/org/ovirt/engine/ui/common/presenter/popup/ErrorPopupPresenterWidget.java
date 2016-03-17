@@ -24,12 +24,14 @@ public class ErrorPopupPresenterWidget extends AbstractPopupPresenterWidget<Erro
         getView().setErrorMessage(errorMessage);
     }
 
-    public void hide() {
-        getView().hide();
-    }
-
     @Override
     protected void handleEnterKey() {
         onClose();
     }
+
+    @Override
+    protected boolean shouldDestroyOnClose() {
+        return true;
+    }
+
 }

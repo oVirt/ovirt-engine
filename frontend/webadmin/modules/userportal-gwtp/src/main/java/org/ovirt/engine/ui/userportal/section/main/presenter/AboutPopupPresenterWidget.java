@@ -30,4 +30,9 @@ public class AboutPopupPresenterWidget extends AbstractPopupPresenterWidget<Abou
         getView().setVersion(version);
     }
 
+    @Override
+    protected boolean shouldDestroyOnClose() {
+        return true;
+    }
+
 }

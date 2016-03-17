@@ -2,10 +2,12 @@ package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.ui.common.presenter.popup.ErrorPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 /**
@@ -14,12 +16,12 @@ import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 public class ErrorPopupManagerImpl implements HasHandlers, ErrorPopupManager {
 
     private final EventBus eventBus;
-    private final ErrorPopupPresenterWidget errorPopup;
+    private final Provider<ErrorPopupPresenterWidget> errorPopupProvider;
 
     @Inject
-    public ErrorPopupManagerImpl(EventBus eventBus, ErrorPopupPresenterWidget errorPopup) {
+    public ErrorPopupManagerImpl(EventBus eventBus, Provider<ErrorPopupPresenterWidget> errorPopupProvider) {
         this.eventBus = eventBus;
-        this.errorPopup = errorPopup;
+        this.errorPopupProvider = errorPopupProvider;
     }
 
     @Override
@@ -29,13 +31,9 @@ public class ErrorPopupManagerImpl implements HasHandlers, ErrorPopupManager {
 
     @Override
     public void show(String errorMessage) {
+        ErrorPopupPresenterWidget errorPopup = errorPopupProvider.get();
         errorPopup.prepare(errorMessage);
         RevealRootPopupContentEvent.fire(this, errorPopup);
-    }
-
-    @Override
-    public void hide() {
-        errorPopup.hide();
     }
 
 }

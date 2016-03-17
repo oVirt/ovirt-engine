@@ -29,7 +29,7 @@ public abstract class BasePresenterModule extends AbstractPresenterModule {
 
     protected void bindCommonPresenters() {
         // Error popup
-        bindSingletonPresenterWidget(ErrorPopupPresenterWidget.class,
+        bindPresenterWidget(ErrorPopupPresenterWidget.class,
                 ErrorPopupPresenterWidget.ViewDef.class,
                 ErrorPopupView.class);
 

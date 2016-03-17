@@ -18,6 +18,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
@@ -44,8 +45,8 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
     private final SearchPanelPresenterWidget searchPanel;
     private final ScrollableTabBarPresenterWidget tabBar;
-    private final AboutPopupPresenterWidget aboutPopup;
-    private final ConfigurePopupPresenterWidget configurePopup;
+    private final Provider<AboutPopupPresenterWidget> aboutPopupProvider;
+    private final Provider<ConfigurePopupPresenterWidget> configurePopupProvider;
     private String feedbackUrl;
     private final String feedbackLinkLabel;
     private final ApplicationDynamicMessages dynamicMessages;
@@ -55,14 +56,14 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
             SearchPanelPresenterWidget searchPanel,
             ScrollableTabBarPresenterWidget tabBar,
             OptionsProvider optionsProvider,
-            AboutPopupPresenterWidget aboutPopup,
-            ConfigurePopupPresenterWidget configurePopup,
+            Provider<AboutPopupPresenterWidget> aboutPopupProvider,
+            Provider<ConfigurePopupPresenterWidget> configurePopupProvider,
             ApplicationDynamicMessages dynamicMessages) {
         super(eventBus, view, user, optionsProvider, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.searchPanel = searchPanel;
         this.tabBar = tabBar;
-        this.aboutPopup = aboutPopup;
-        this.configurePopup = configurePopup;
+        this.aboutPopupProvider = aboutPopupProvider;
+        this.configurePopupProvider = configurePopupProvider;
         this.feedbackLinkLabel = dynamicMessages.feedbackLinkLabel();
         this.dynamicMessages = dynamicMessages;
     }
@@ -89,14 +90,14 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         registerHandler(getView().getConfigureLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, configurePopup);
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, configurePopupProvider.get());
             }
         }));
 
         registerHandler(getView().getAboutLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopup);
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopupProvider.get());
             }
         }));
     }

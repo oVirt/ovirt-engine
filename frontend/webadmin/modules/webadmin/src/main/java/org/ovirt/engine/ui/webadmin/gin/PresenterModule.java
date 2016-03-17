@@ -581,10 +581,10 @@ public class PresenterModule extends BasePresenterModule {
         bindSingletonPresenterWidget(SearchPanelPresenterWidget.class,
                 SearchPanelPresenterWidget.ViewDef.class,
                 SearchPanelView.class);
-        bindSingletonPresenterWidget(AboutPopupPresenterWidget.class,
+        bindPresenterWidget(AboutPopupPresenterWidget.class,
                 AboutPopupPresenterWidget.ViewDef.class,
                 AboutPopupView.class);
-        bindSingletonPresenterWidget(ConfigurePopupPresenterWidget.class,
+        bindPresenterWidget(ConfigurePopupPresenterWidget.class,
                 ConfigurePopupPresenterWidget.ViewDef.class,
                 ConfigurePopupView.class);
         bindPresenterWidget(RolePopupPresenterWidget.class,

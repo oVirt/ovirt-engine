@@ -39,7 +39,7 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
 
     }
 
-    // Indicates whether the popup has been disposed (non-singleton presenter widgets only)
+    // Indicates whether the handlers registered by the popup have been released
     private boolean destroyed = false;
 
     public AbstractPopupPresenterWidget(EventBus eventBus, V view) {
@@ -88,10 +88,25 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
     }
 
     /**
+     * By default, closing the popup doesn't release its registered handlers.
+     * <p>
+     * Non-singleton popup presenter widgets <em>should</em> override this method
+     * and return {@code true} to ensure proper handler disposal. Alternatively,
+     * use {@link #hideAndUnbind} to manually hide and dispose of the popup.
+     */
+    protected boolean shouldDestroyOnClose() {
+        return false;
+    }
+
+    /**
      * Close action callback, hides the popup view by default.
      */
     protected void onClose() {
-        getView().hide();
+        if (shouldDestroyOnClose()) {
+            hideAndUnbind();
+        } else {
+            getView().hide();
+        }
     }
 
     /**

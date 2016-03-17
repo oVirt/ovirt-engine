@@ -59,8 +59,8 @@ public class DynamicUrlContentPopupPresenterWidget extends AbstractPopupPresente
     }
 
     @Override
-    protected void onClose() {
-        hideAndUnbind();
+    protected boolean shouldDestroyOnClose() {
+        return true;
     }
 
     @Override

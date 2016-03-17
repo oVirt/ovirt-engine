@@ -120,7 +120,7 @@ public class PresenterModule extends BasePresenterModule {
         bindSingletonPresenterWidget(HeaderPresenterWidget.class,
                 HeaderPresenterWidget.ViewDef.class,
                 HeaderView.class);
-        bindSingletonPresenterWidget(AboutPopupPresenterWidget.class,
+        bindPresenterWidget(AboutPopupPresenterWidget.class,
                 AboutPopupPresenterWidget.ViewDef.class,
                 AboutPopupView.class);
 

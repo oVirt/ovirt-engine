@@ -7,12 +7,14 @@ import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderPresenterWidget.ViewDef> implements TabWidgetHandler {
@@ -26,15 +28,15 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     }
 
     private final UserPortalCurrentUserRole userRole;
-    private final AboutPopupPresenterWidget aboutPopup;
+    private final Provider<AboutPopupPresenterWidget> aboutPopupProvider;
 
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
-            CurrentUserRole userRole, AboutPopupPresenterWidget aboutPopup,
+            CurrentUserRole userRole, Provider<AboutPopupPresenterWidget> aboutPopupProvider,
             OptionsProvider optionsProvider, ApplicationDynamicMessages dynamicMessages) {
         super(eventBus, view, user, optionsProvider, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.userRole = (UserPortalCurrentUserRole) userRole;
-        this.aboutPopup = aboutPopup;
+        this.aboutPopupProvider = aboutPopupProvider;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         registerHandler(getView().getAboutLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopup);
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopupProvider.get());
             }
         }));
     }
