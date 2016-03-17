@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,16 +42,38 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        final VdsDynamic sourceHost = getLastHost(vm);
-        if (sourceHost == null) {
-            return noWeights(hosts);
+        VdsDynamic referenceHost = getLastHost(vm);
+        boolean isVmStartup = false;
+
+        // Check if the VM is starting
+        if (referenceHost == null) {
+            isVmStartup = true;
+            final Map<String, Version> highestVersions = new HashMap<>();
+            for (VDS host : hosts) {
+                OS os = OS.fromPackageVersionString(host.getHostOs());
+                if (!os.isValid()) {
+                    continue;
+                }
+                Version version = highestVersions.get(os.getOsFamily());
+                if (version == null || version.getMajor() < os.getVersion().getMajor()) {
+                    highestVersions.put(os.getOsFamily(), version);
+                    referenceHost = host.getDynamicData();
+                }
+            }
+            if (highestVersions.isEmpty()) {
+                log.debug("No valid OS descriptors detected. Will not weight hosts on VM startup.");
+                return noWeights(hosts);
+            } else if (highestVersions.size() > 1) {
+                log.debug("More than one OS family detected. Will not weight hosts on VM startup.");
+                return noWeights(hosts);
+            }
         }
 
-        final OS lastHostOs = OS.fromPackageVersionString(sourceHost.getHostOs());
+        final OS lastHostOs = OS.fromPackageVersionString(referenceHost.getHostOs());
         if (!lastHostOs.isValid()) {
-            log.debug("Source host {} does not provide a valid OS identifier. Found {}.",
-                    sourceHost.getId(),
-                    sourceHost.getHostOs());
+            log.debug("Reference host {} does not provide a valid OS identifier. Found {}.",
+                    referenceHost.getId(),
+                    referenceHost.getHostOs());
             return noWeights(hosts);
         }
 
@@ -69,7 +93,7 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
                 weights.add(toWeight(host, BAD_WEIGHT));
             } else if (hostOs.isOlderThan(lastHostOs) && !hostOs.isSameMajorVersion(lastHostOs)) {
                 weights.add(toWeight(host, BAD_WEIGHT));
-            } else if (hostOs.isSameMajorVersion(lastHostOs)) {
+            } else if (hostOs.isSameMajorVersion(lastHostOs) && !isVmStartup) {
                 weights.add(toWeight(host, BETTER_WEIGHT));
             } else {
                 weights.add(toWeight(host, BEST_WEIGHT));
