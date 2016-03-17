@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +111,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
 
         for (CreateOrUpdateBond bond : getParameters().getCreateOrUpdateBonds()) {
             Map<String, Object> attributes = new HashMap<>();
-            attributes.put(SLAVES, bond.getSlaves());
+            attributes.put(SLAVES, new ArrayList<>(bond.getSlaves()));
             putIfNotEmpty(attributes, BONDING_OPTIONS, bond.getBondOptions());
             bonds.put(bond.getName(), attributes);
         }

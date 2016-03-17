@@ -15,9 +15,12 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateOrUpdateBond implements BusinessEntity<Guid>, Nameable {
+    private static final long serialVersionUID = 7535719902326461903L;
+
     private Guid id;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
@@ -134,5 +137,17 @@ public class CreateOrUpdateBond implements BusinessEntity<Guid>, Nameable {
 
     public void setSlaves(Set<String> slaves) {
         this.slaves = slaves;
+    }
+
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return tsb.append("id", getId())
+                .append("name", getName())
+                .append("bondingOptions", getBondOptions())
+                .append("slaves", getSlaves());
+    }
+
+    @Override
+    public String toString() {
+        return appendAttributes(ToStringBuilder.forInstance(this)).build();
     }
 }
