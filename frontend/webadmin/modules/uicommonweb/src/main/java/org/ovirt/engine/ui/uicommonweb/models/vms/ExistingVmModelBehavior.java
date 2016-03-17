@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
+import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -282,13 +284,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
+                boolean isChangeable = vm == null || VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk);
 
                 for (Disk disk : (ArrayList<Disk>) returnValue) {
                     InstanceImageLineModel lineModel = new InstanceImageLineModel(getModel().getInstanceImages());
                     lineModel.initialize(disk, getVm());
+                    lineModel.setEnabled(isChangeable);
                     imageLineModels.add(lineModel);
                 }
 
+                getModel().getInstanceImages().setIsChangeable(isChangeable);
                 getModel().getInstanceImages().setItems(imageLineModels);
                 getModel().getInstanceImages().setVm(getVm());
             }

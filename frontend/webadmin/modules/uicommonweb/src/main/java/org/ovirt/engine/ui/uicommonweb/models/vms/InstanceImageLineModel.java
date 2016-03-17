@@ -4,11 +4,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -96,13 +98,19 @@ public class InstanceImageLineModel extends EntityModel {
         name.setEntity(messages.vmDialogDisk(diskName, size, type, boot));
     }
 
+    private void toggleActive() {
+        if (vm != null && !VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk)) {
+            active = false;
+        }
+    }
 
     public void initialize(Disk disk, VM vm) {
         this.vm = vm;
         active = true;
         diskExists = disk != null;
 
-        attachCommand.setIsAvailable(!diskExists);
+        toggleActive();
+        attachCommand.setIsAvailable(!diskExists && active);
 
         if (disk == null) {
             return;
