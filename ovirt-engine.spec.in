@@ -1300,6 +1300,9 @@ fi
 %endif
 
 %changelog
+* Fri Mar 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.4.1-1
+- Bump version to 3.6.4.1
+
 * Mon Mar 14 2016 Rafael Martins <rmartins@redhat.com> - 3.6.4-1
 - Bump version to 3.6.4
 
