@@ -485,6 +485,7 @@ class Plugin(plugin.PluginBase):
         before=(
             oenginecons.Stages.CA_AVAILABLE,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _miscUpgrade(self):
         #
