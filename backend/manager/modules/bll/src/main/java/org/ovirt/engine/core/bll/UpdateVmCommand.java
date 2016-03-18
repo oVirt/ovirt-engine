@@ -853,8 +853,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      *          or runningConfiguration already exist
      */
     private boolean isRunningConfigurationNeeded() {
-        return !getVm().isHostedEngine()
-                && getVm().isNextRunConfigurationExists()
+        if (getVm().isHostedEngine()) {
+            // Hosted Engine never uses the next run configuration
+            return false;
+        }
+
+        return getVm().isNextRunConfigurationExists()
                 || !VmHandler.isUpdateValid(
                         getVm().getStaticData(),
                         getParameters().getVmStaticData(),
