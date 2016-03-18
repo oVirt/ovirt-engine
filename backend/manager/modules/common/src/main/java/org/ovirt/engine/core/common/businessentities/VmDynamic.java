@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -86,6 +87,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String guestOsKernelVersion;
     private String guestOsTimezoneName;
     private int guestOsTimezoneOffset;
+    private List<GuestContainer> guestContainers;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
@@ -142,7 +144,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 guestOsDistribution,
                 guestOsKernelVersion,
                 guestOsVersion,
-                guestOsType
+                guestOsType,
+                guestContainers
         );
     }
 
@@ -204,7 +207,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(guestOsCodename, other.guestOsCodename)
                 && Objects.equals(guestOsKernelVersion, other.guestOsKernelVersion)
                 && Objects.equals(guestOsArch, other.guestOsArch)
-                && Objects.equals(guestOsType, other.guestOsType);
+                && Objects.equals(guestOsType, other.guestOsType)
+                && Objects.equals(guestContainers, other.guestContainers);
     }
 
     public String getExitMessage() {
@@ -277,6 +281,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestOsArch = ArchitectureType.undefined;
         guestOsType = OsType.Other;
         disks = new ArrayList<>();
+        guestContainers = new ArrayList<>();
     }
 
     public VmDynamic(VmDynamic template) {
@@ -333,6 +338,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestOsKernelVersion = template.getGuestOsKernelVersion();
         guestOsTimezoneName = template.getGuestOsTimezoneName();
         guestOsTimezoneOffset = template.getGuestOsTimezoneOffset();
+        guestContainers = template.getGuestContainers();
     }
 
     public String getAppList() {
@@ -736,6 +742,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         this.guestOsKernelVersion = guestOsKernelVersion;
     }
 
+    public List<GuestContainer> getGuestContainers() {
+        return guestContainers;
+    }
+
+    public void setGuestContainers(List<GuestContainer> guestContainers) {
+        this.guestContainers = guestContainers;
+    }
+
     /**
      * Update data that was received from VDSM
      * @param vm - the reported VM from VDSM
@@ -782,6 +796,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setGuestOsVersion(vm.getGuestOsVersion());
         setGuestOsTimezoneName(vm.getGuestOsTimezoneName());
         setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
+        setGuestContainers(vm.getGuestContainers());
         // TODO: check what to do with update disk data
         // updateDisksData(vm);
 

@@ -320,7 +320,8 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_guestos_distribution VARCHAR(255),
     v_guestos_kernel_version VARCHAR(255),
     v_guestos_type VARCHAR(255),
-    v_guestos_version VARCHAR(255)
+    v_guestos_version VARCHAR(255),
+    v_guest_containers TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -376,7 +377,8 @@ BEGIN
         guestos_distribution,
         guestos_kernel_version,
         guestos_type,
-        guestos_version
+        guestos_version,
+        guest_containers
         )
     VALUES (
         v_app_list,
@@ -430,7 +432,8 @@ BEGIN
         v_guestos_distribution,
         v_guestos_kernel_version,
         v_guestos_type,
-        v_guestos_version
+        v_guestos_version,
+        v_guest_containers
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -488,7 +491,8 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_guestos_distribution VARCHAR(255),
     v_guestos_kernel_version VARCHAR(255),
     v_guestos_type VARCHAR(255),
-    v_guestos_version VARCHAR(255)
+    v_guestos_version VARCHAR(255),
+    v_guest_containers TEXT
     )
 RETURNS VOID
     --The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -546,7 +550,8 @@ BEGIN
         guestos_distribution = v_guestos_distribution,
         guestos_kernel_version = v_guestos_kernel_version,
         guestos_type = v_guestos_type,
-        guestos_version = v_guestos_version
+        guestos_version = v_guestos_version,
+        guest_containers = v_guest_containers
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

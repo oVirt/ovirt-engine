@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
@@ -463,6 +464,8 @@ public class VdsBrokerObjectsBuilder {
         }
 
         initAppsList(xmlRpcStruct, vm);
+        initGuestContainers(xmlRpcStruct, vm);
+
         if (xmlRpcStruct.containsKey(VdsProperties.guest_os)) {
             vm.setGuestOs(assignStringValue(xmlRpcStruct, VdsProperties.guest_os));
         }
@@ -1641,6 +1644,32 @@ public class VdsBrokerObjectsBuilder {
             } else {
                 vm.setAppList("");
             }
+        }
+    }
+
+    private static void initGuestContainers(Map<String, Object> vmStruct, VmDynamic vm) {
+        if (vmStruct.containsKey(VdsProperties.guest_containers)) {
+            vm.setGuestContainers(new ArrayList<>());
+            Object obj = vmStruct.get(VdsProperties.guest_containers);
+            if (obj instanceof Object[]) {
+                Object[] containers = (Object[])obj;
+                for (Object containerObj : containers) {
+                    Map<String, Object> container = (Map<String, Object>) containerObj;
+                    ArrayList<String> names = new ArrayList<>();
+                    for(Object o : (Object[]) container.get(VdsProperties.guest_container_names)) {
+                        names.add((String)o);
+                    }
+                    vm.getGuestContainers().add(new GuestContainer(
+                            (String)container.get(VdsProperties.guest_container_id),
+                            names,
+                            (String)container.get(VdsProperties.guest_container_image),
+                            (String)container.get(VdsProperties.guest_container_command),
+                            (String)container.get(VdsProperties.guest_container_status)
+                    ));
+                }
+            }
+        } else {
+            vm.setGuestContainers(Collections.emptyList());
         }
     }
 

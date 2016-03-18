@@ -244,6 +244,14 @@ public final class VdsProperties {
     public static final String vm_balloon_min = "balloon_min";
     public static final String vm_balloon_target = "balloon_target";
 
+    // guest Containers
+    public static final String guest_containers = "guestContainers";
+    public static final String guest_container_id = "id";
+    public static final String guest_container_names = "names";
+    public static final String guest_container_image = "image";
+    public static final String guest_container_command = "command";
+    public static final String guest_container_status = "status";
+
     // v2v
     public static final String DISK_ALLOCATION = "allocation";
     public static final String DISK_VIRTUAL_SIZE = "capacity";

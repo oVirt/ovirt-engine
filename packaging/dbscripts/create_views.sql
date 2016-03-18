@@ -1337,7 +1337,8 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.guestos_kernel_version AS guestos_kernel_version,
     vm_dynamic.guestos_type AS guestos_type,
     vm_dynamic.guestos_version AS guestos_version,
-    vm_static.custom_compatibility_version as custom_compatibility_version
+    vm_static.custom_compatibility_version as custom_compatibility_version,
+    vm_dynamic.guest_containers AS guest_containers
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1521,7 +1522,8 @@ SELECT vms.vm_name,
     vms.guestos_kernel_version AS guestos_kernel_version,
     vms.guestos_type AS guestos_type,
     vms.guestos_version AS guestos_version,
-    vms.custom_compatibility_version as custom_compatibility_version
+    vms.custom_compatibility_version as custom_compatibility_version,
+    vms.guest_containers as guest_containers
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id

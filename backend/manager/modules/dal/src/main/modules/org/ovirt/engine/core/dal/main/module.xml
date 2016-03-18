@@ -14,6 +14,8 @@
     <module name="javax.transaction.api"/>
     <module name="org.apache.commons.collections"/>
     <module name="org.apache.commons.lang"/>
+    <module name="org.codehaus.jackson.jackson-core-asl"/>
+    <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.infinispan"/>
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.compat"/>

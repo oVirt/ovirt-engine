@@ -2,16 +2,20 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
+import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -176,7 +180,26 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("guestos_distribution", vm.getGuestOsDistribution())
                 .addValue("guestos_kernel_version", vm.getGuestOsKernelVersion())
                 .addValue("guestos_type", vm.getGuestOsType().name())
-                .addValue("guestos_version", vm.getGuestOsVersion());
+                .addValue("guestos_version", vm.getGuestOsVersion())
+                .addValue("guest_containers", toGuestContainersString(vm));
+    }
+
+    private static ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static String toGuestContainersString(VmDynamic vm) {
+        try {
+            return JSON_MAPPER.writeValueAsString(vm.getGuestContainers());
+        } catch(Exception e) {
+            return "[]";
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<GuestContainer> fromContainersString(String s) {
+        try {
+            return (List<GuestContainer>) JSON_MAPPER.readValue(s, new TypeReference<List<GuestContainer>>() {});
+        } catch(Exception e) {
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -242,6 +265,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
             entity.setGuestOsKernelVersion(rs.getString("guestos_kernel_version"));
             entity.setGuestOsType(rs.getString("guestos_type"));
             entity.setGuestOsVersion(rs.getString("guestos_version"));
+            entity.setGuestContainers(fromContainersString(rs.getString("guest_containers")));
             return entity;
         }
     }

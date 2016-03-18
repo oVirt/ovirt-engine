@@ -1990,4 +1990,12 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setPreviewSnapshot(boolean previewSnapshot) {
         this.previewSnapshot = previewSnapshot;
     }
+
+    public void setGuestContainers(List<GuestContainer> containers) {
+        vmDynamic.setGuestContainers(containers);
+    }
+
+    public List<GuestContainer> getGuestContainers() {
+        return vmDynamic.getGuestContainers();
+    }
 }
