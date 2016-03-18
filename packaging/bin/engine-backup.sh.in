@@ -128,36 +128,10 @@ for i in range(1, len(params)-1, 2):
 }
 
 engine_setup_service_enabled() {
-	local enabled=0;
-	for f in /etc/ovirt-engine-setup.conf.d/*.conf; do
-		python -c "
-
-import sys
-
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
-from otopi import common, constants
-
-config = configparser.ConfigParser()
-config.optionxform = str
-
-with open(sys.argv[1]) as f:
-    config.readfp(f)
-
-try:
-    v = config.get(constants.Const.CONFIG_SECTION_DEFAULT, sys.argv[2])
-    if common.parseTypedValue(v):
-        sys.exit(0)
-except configparser.NoOptionError:
-    pass
-
-sys.exit(1)
-" "$f" "$1" && enabled=1
-	done
-	test $enabled -eq 1
+	otopi-config-query match \
+		--key "$1" \
+		--value bool:True \
+		--file /etc/ovirt-engine-setup.conf
 }
 
 engine_enabled() {

@@ -346,7 +346,7 @@ Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python
 Requires:	logrotate
-Requires:	otopi >= 1.4.1
+Requires:	otopi >= 1.5.0
 Requires:	python-paramiko
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 3.5.0
@@ -486,7 +486,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	tar
 Requires:	bzip2
 Requires:	xz
-Requires:	otopi >= 1.4.1
+Requires:	otopi >= 1.5.0
 Requires:	postgresql >= 8.4.7
 
 %description tools-backup
