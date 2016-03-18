@@ -197,6 +197,14 @@ class DWHConst(object):
 @util.export
 @util.codegen
 @osetupattrsclass
+class EngineConst(object):
+    # Sync with engine
+    ENGINE_ENABLE = 'OVESETUP_ENGINE_CORE/enable'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
 class DBEnvKeysConst(object):
     HOST = 'host'
     PORT = 'port'

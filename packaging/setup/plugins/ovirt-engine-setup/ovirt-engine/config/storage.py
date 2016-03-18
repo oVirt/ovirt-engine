@@ -55,7 +55,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
         ),
-        condition=lambda self: self._newDatabaseCondition(),
+        condition=lambda self: self._enableCondition(),
     )
     def _configureSANWipeAfterDelete(self):
         if self.environment[SAN_WIPE_AFTER_DELETE] is None:
@@ -77,7 +77,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
-        condition=lambda self: self._newDatabaseCondition(),
+        condition=lambda self: self._enableCondition(),
     )
     def _updateSANWipeAfterDelete(self):
         option = vdcoption.VdcOption(
@@ -91,10 +91,14 @@ class Plugin(plugin.PluginBase):
         )
         option.updateVdcOptions(options=options,)
 
-    def _newDatabaseCondition(self):
+    def _enableCondition(self):
         # Returns a condition that validates
-        # we are running the setup on a new database.
-        return self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
+        # we are installing the engine and we are running the setup
+        # on a new database.
+        return (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

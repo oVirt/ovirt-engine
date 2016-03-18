@@ -100,25 +100,32 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
+            ovmpcons.Stages.ENGINE_CORE_ENABLE,
         ),
     )
     def _customization(self):
-        if self.environment[
-            ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-        ] is None:
-            self.environment[
+        if self.environment[oengcommcons.EngineConst.ENGINE_ENABLE]:
+            if self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ] = dialog.queryBoolean(
-                dialog=self.dialog,
-                name='OVESETUP_CONFIG_VMCONSOLE_PROXY',
-                note=_(
-                    'Configure VM Console Proxy on this host '
-                    '(@VALUES@) [@DEFAULT@]: '
-                ),
-                prompt=True,
-                default=True,
-            )
+            ] is None:
+                self.environment[
+                    ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
+                ] = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_CONFIG_VMCONSOLE_PROXY',
+                    note=_(
+                        'Configure VM Console Proxy on this host '
+                        '(@VALUES@) [@DEFAULT@]: '
+                    ),
+                    prompt=True,
+                    default=True,
+                )
+        else:
+            self.logger.info(_(
+                'Deploying VM Console Proxy on a separate '
+                'host is not supported'
+            ))
+            self.environment[ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
