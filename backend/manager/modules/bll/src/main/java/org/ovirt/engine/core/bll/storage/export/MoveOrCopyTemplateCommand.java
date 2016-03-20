@@ -126,11 +126,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     @Override
     protected boolean validate() {
-        boolean retValue = true;
         if (getVmTemplate() == null) {
-            retValue = false;
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-        } else if (getTemplateDisks() != null && !getTemplateDisks().isEmpty()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+        }
+
+        if (getTemplateDisks() != null && !getTemplateDisks().isEmpty()) {
             ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
             // check that images are ok
             ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
@@ -139,30 +139,28 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             if (getVmTemplate().getDiskTemplateMap().values().size() != imageFromSourceDomainMap.size()) {
                 log.error("Can not found any default active domain for one of the disks of template with id '{}'",
                         getVmTemplate().getId());
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
-                retValue = false;
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             }
-            retValue = retValue
-                    && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), null,
-                            getReturnValue().getValidationMessages(), true, true, true, false, getTemplateDisks());
-            if (retValue) {
+
+            if (VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), null,
+                            getReturnValue().getValidationMessages(), true, true, true, false, getTemplateDisks())) {
                 setStoragePoolId(getVmTemplate().getStoragePoolId());
                 StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
-                retValue = validate(sdValidator.isDomainExistAndActive())
-                        && validate(sdValidator.isDomainWithinThresholds())
-                        && (getParameters().getForceOverride() || (!isImagesAlreadyOnTarget() && checkIfDisksExist(getTemplateDisks())))
-                        && validateFreeSpaceOnDestinationDomain(sdValidator, getTemplateDisks());
+                if (!validate(sdValidator.isDomainExistAndActive())
+                        || !validate(sdValidator.isDomainWithinThresholds())
+                        || !(getParameters().getForceOverride() || (!isImagesAlreadyOnTarget() && checkIfDisksExist(getTemplateDisks())))
+                        || !validateFreeSpaceOnDestinationDomain(sdValidator, getTemplateDisks())) {
+                    return false;
+                }
             }
-            if (retValue
-                    && DbFacade.getInstance()
+            if (DbFacade.getInstance()
                             .getStoragePoolIsoMapDao()
                             .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                     getVmTemplate().getStoragePoolId())) == null) {
-                retValue = false;
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }
         }
-        return retValue;
+        return true;
     }
 
     private StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
