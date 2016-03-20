@@ -19,7 +19,11 @@ public class FeatureSupported {
 
     public static boolean supportedInConfig(ConfigValues feature, Version version, ArchitectureType arch) {
         Map<String, String> archOptions = Config.<Map>getValue(feature, version.getValue());
-        return Boolean.parseBoolean(archOptions.getOrDefault(arch.name(), archOptions.get(arch.getFamily().name())));
+        String value = archOptions.get(arch.name());
+        if (value == null) {
+            value = archOptions.get(arch.getFamily().name());
+        }
+        return Boolean.parseBoolean(value);
     }
 
     /**
