@@ -224,7 +224,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());
         }
         if (nic.isVf()) {
-            addRow(constants.physicalFunction(), nic.getPhysicalFunction().getName());
+            addRow(constants.physicalFunction(), nic.getPhysicalFunction());
         }
     }
 

@@ -20,7 +20,7 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     private List<NetworkLabelModel> labels;
     private VdsNetworkInterface iface;
     private boolean sriovEnabled = false;
-    private VdsNetworkInterface physicalFunction;
+    private String physicalFunction;
 
     public NetworkInterfaceModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
@@ -33,7 +33,7 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
             Collection<LogicalNetworkModel> nicNetworks,
             Collection<NetworkLabelModel> nicLabels,
             boolean sriovEnabled,
-            VdsNetworkInterface physicalFunction,
+            String physicalFunction,
             HostSetupNetworksModel setupModel) {
         this(nic, sriovEnabled, physicalFunction, setupModel);
 
@@ -52,7 +52,7 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
 
     public NetworkInterfaceModel(VdsNetworkInterface nic,
             boolean sriovEnabled,
-            VdsNetworkInterface physicalFunction,
+            String physicalFunction,
             HostSetupNetworksModel setupModel) {
         this(setupModel);
         setIface(nic);
@@ -148,7 +148,7 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
         return physicalFunction != null;
     }
 
-    public VdsNetworkInterface getPhysicalFunction() {
+    public String getPhysicalFunction() {
         return physicalFunction;
     }
 }

@@ -887,7 +887,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, bonded.getId());
                     NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded,
                             nicToVfsConfig.containsKey(bonded.getId()),
-                            physicalFunction,
+                            physicalFunction.getName(),
                             this);
                     bondedModel.setBonded(true);
                     bondedModels.add(bondedModel);
@@ -905,7 +905,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         nicNetworks,
                         nicLabels,
                         nicToVfsConfig.containsKey(nic.getId()),
-                        physicalFunction,
+                        physicalFunction.getName(),
                         this);
 
                 nicModels.put(nicName, nicModel);
