@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -10,7 +9,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 public class VDSParametersBase {
 
     private boolean runAsync;
-    private Optional<Set<EngineError>> expectedEngineErrors = Optional.ofNullable(null);
+    private Set<EngineError> expectedEngineErrors = Collections.<EngineError>emptySet();
 
     public VDSParametersBase() {
         runAsync = true;
@@ -25,11 +24,11 @@ public class VDSParametersBase {
     }
 
     public Set<EngineError> getExpectedEngineErrors() {
-        return expectedEngineErrors.orElse(Collections.<EngineError>emptySet());
+        return expectedEngineErrors;
     }
 
     public void setExpectedEngineErrors(Set<EngineError> errors) {
-        expectedEngineErrors = Optional.ofNullable(errors);
+        expectedEngineErrors = errors;
     }
 
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
