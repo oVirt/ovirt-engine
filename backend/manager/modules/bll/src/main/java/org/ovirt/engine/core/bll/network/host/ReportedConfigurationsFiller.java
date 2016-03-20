@@ -41,17 +41,22 @@ public class ReportedConfigurationsFiller {
         this.effectiveHostNetworkQos = effectiveHostNetworkQos;
     }
 
-    public void fillReportedConfigurations(List<NetworkAttachment> networkAttachments, Guid hostId) {
-
-        List<VdsNetworkInterface> allInterfacesForHost = interfaceDao.getAllInterfacesForVds(hostId);
+    public void fillReportedConfigurations(List<VdsNetworkInterface> allInterfacesForHost,
+            BusinessEntityMap<Network> networkMap,
+            List<NetworkAttachment> networkAttachments) {
         Map<String, VdsNetworkInterface> networkNameToNicMap = nicsByNetworkId(allInterfacesForHost);
-
-        BusinessEntityMap<Network> networkMap =
-            new BusinessEntityMap<>(networkDao.getAllForCluster(vdsDao.get(hostId).getClusterId()));
 
         for (NetworkAttachment networkAttachment : networkAttachments) {
             fillReportedConfigurations(networkNameToNicMap, networkMap, networkAttachment);
         }
+    }
+
+    public void fillReportedConfigurations(List<NetworkAttachment> networkAttachments, Guid hostId) {
+        List<VdsNetworkInterface> allInterfacesForHost = interfaceDao.getAllInterfacesForVds(hostId);
+        BusinessEntityMap<Network> networkMap =
+                new BusinessEntityMap<>(networkDao.getAllForCluster(vdsDao.get(hostId).getClusterId()));
+
+        fillReportedConfigurations(allInterfacesForHost, networkMap, networkAttachments);
     }
 
     private void fillReportedConfigurations(Map<String, VdsNetworkInterface> networkNameToNicMap,
