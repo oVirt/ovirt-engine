@@ -176,10 +176,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
     }
 
-    private boolean isContainImages() {
-        return !ImagesHandler.filterImageDisks(getSourceImages(), true, false, true).isEmpty();
-    }
-
     private void removeImages() {
         List<CinderDisk> cinderDisks = new ArrayList<>();
         for (final DiskImage source : getSourceImages()) {
