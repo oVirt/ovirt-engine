@@ -488,10 +488,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         case END_SUCCESS:
             return getSucceeded() ? AuditLogType.IMPORTEXPORT_EXPORT_VM : AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
 
-        case END_FAILURE:
+        default:
             return AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
         }
-        return super.getAuditLogTypeValue();
     }
 
     protected boolean updateVmInSpm() {
