@@ -406,10 +406,4 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         }
         return true;
     }
-
-    protected void setImagesWithStoragePoolId(Guid storagePoolId, List<DiskImage> diskImages) {
-        for (DiskImage diskImage : diskImages) {
-            diskImage.setStoragePoolId(storagePoolId);
-        }
-    }
 }

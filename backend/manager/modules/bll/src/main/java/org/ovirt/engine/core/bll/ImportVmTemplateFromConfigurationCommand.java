@@ -70,6 +70,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         return super.validate();
     }
 
+    private void setImagesWithStoragePoolId(Guid storagePoolId, List<DiskImage> diskImages) {
+        for (DiskImage diskImage : diskImages) {
+            diskImage.setStoragePoolId(storagePoolId);
+        }
+    }
+
     private void initVmTemplate() {
         OvfHelper ovfHelper = new OvfHelper();
         List<OvfEntityData> ovfEntityList =
