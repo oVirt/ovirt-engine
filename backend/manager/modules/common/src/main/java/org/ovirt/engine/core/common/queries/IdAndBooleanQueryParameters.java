@@ -10,7 +10,7 @@ public class IdAndBooleanQueryParameters extends IdQueryParameters {
 
     public IdAndBooleanQueryParameters(Guid id, boolean filterResult) {
         super(id);
-        filterResult = filterResult;
+        this.filterResult = filterResult;
     }
 
     public boolean isFilterResult() {
