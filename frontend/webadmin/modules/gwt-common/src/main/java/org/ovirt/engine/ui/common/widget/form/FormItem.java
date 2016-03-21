@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -55,30 +56,30 @@ public class FormItem {
         this("", new StringValueLabel(), row, column); //$NON-NLS-1$
     }
 
-    public FormItem(String name, Widget valueWidget, int column) {
+    public FormItem(String name, IsWidget valueWidget, int column) {
         this(name, valueWidget, 0 , column, null, true);
         withAutoPlacement();
     }
 
-    public FormItem(String name, Widget valueWidget, int column, boolean isAvailable) {
+    public FormItem(String name, IsWidget valueWidget, int column, boolean isAvailable) {
         this(name, valueWidget, 0 , column, null, isAvailable);
         withAutoPlacement();
     }
 
-    public FormItem(String name, Widget valueWidget, int row, int column) {
+    public FormItem(String name, IsWidget valueWidget, int row, int column) {
         this(name, valueWidget, row, column, null);
     }
 
-    public FormItem(String name, Widget valueWidget, int row, int column, boolean isAvailable) {
+    public FormItem(String name, IsWidget valueWidget, int row, int column, boolean isAvailable) {
         this(name, valueWidget, row, column, null, isAvailable);
     }
 
-    public FormItem(String name, Widget valueWidget, int row, int column, String isAvailablePropertyName) {
+    public FormItem(String name, IsWidget valueWidget, int row, int column, String isAvailablePropertyName) {
         this(name, valueWidget, row, column, isAvailablePropertyName, true);
     }
 
     public FormItem(String name,
-            Widget valueWidget,
+            IsWidget valueWidget,
             int row,
             int column,
             String isAvailablePropertyName,
@@ -86,7 +87,7 @@ public class FormItem {
         this.row = row;
         this.column = column;
         this.isAvailablePropertyName = isAvailablePropertyName;
-        this.valueWidget = valueWidget;
+        this.valueWidget = valueWidget.asWidget();
         this.isAvailable = isAvailable;
 
         // Add trailing ':' to the item name, if necessary

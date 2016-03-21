@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.common.widget.uicommon.template;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import com.google.gwt.core.client.GWT;
@@ -41,6 +43,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     StringValueLabel isStateless = new StringValueLabel();
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -66,7 +69,10 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemTemplateGeneral(), definedMemory, 0, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresTemplateGeneral(), cpuInfo, 1, 1));
+
+        WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
+        cpuInfoWithTooltip.setHtml(templates.numOfCpuCoresTooltip());
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresTemplateGeneral(), cpuInfoWithTooltip, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsTemplateGeneral(), monitorCount, 2, 1));
         formBuilder.addFormItem(new FormItem(constants.highlyAvailTemplateGeneral(), isHighlyAvailable, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.priorityTemplateGeneral(), priority, 4, 1));

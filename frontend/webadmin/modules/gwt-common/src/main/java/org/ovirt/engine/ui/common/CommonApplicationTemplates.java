@@ -139,4 +139,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("Specify public key for SSH authentication. Used to access guest serial console.")
     SafeHtml consolePublicKeyMessage();
+
+    @Template("Total number of vCPUs.<br/>Stands for number of<ul><li>sockets</li><li>cores per socket</li><li>threads per core</li></ul>")
+    SafeHtml numOfCpuCoresTooltip();
 }

@@ -4,7 +4,8 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.userportal.widget.basic"
     xmlns:r="urn:import:org.ovirt.engine.ui.userportal.widget"
-    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
 
 
     <ui:with field='resources'
@@ -211,7 +212,9 @@
                         <g:Image resource='{resources.basicCpuIcon}'
                             addStyleNames="{style.rowIcon}" />
                         <g:Label text="{constants.numOfCoresBasicDetails} : " addStyleNames="{style.rowLabel}" />
-                        <r:ToStringEntityModelLabel ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
+                        <t:WidgetTooltip ui:field="numberOfCoresTooltip">
+                            <r:ToStringEntityModelLabel ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
+                        </t:WidgetTooltip>
                     </g:FlowPanel>
                 </g:layer>
                 <g:layer top='120px' height='100%'>

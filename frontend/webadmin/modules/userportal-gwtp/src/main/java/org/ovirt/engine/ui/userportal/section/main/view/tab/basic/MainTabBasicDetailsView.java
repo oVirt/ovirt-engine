@@ -4,9 +4,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
+import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.basic.DisksImageWidget;
@@ -45,6 +48,8 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
         String basicInfoDetailsLink();
     }
 
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+
     @UiField
     @Path("selectedItem.smallIconId")
     IconImage smallIconImage;
@@ -77,6 +82,9 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @Path("selectedItemNumOfCpuCores.entity")
     @WithElementId
     ToStringEntityModelLabel numberOfCores;
+
+    @UiField
+    WidgetTooltip numberOfCoresTooltip;
 
     @UiField
     @Ignore
@@ -121,6 +129,12 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
+
+        initToolTips();
+    }
+
+    private void initToolTips() {
+        numberOfCoresTooltip.setHtml(templates.numOfCpuCoresTooltip());
     }
 
     @Override

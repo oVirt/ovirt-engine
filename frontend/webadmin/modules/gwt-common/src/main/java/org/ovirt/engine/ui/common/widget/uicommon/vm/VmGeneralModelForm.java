@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import com.google.gwt.core.client.GWT;
@@ -47,6 +49,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     StringValueLabel monitorCount = new StringValueLabel();
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -81,7 +84,9 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
                     return getModel().getGuestFreeCachedBufferedMemInfo() == null;
                 }
             }));
-        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 3, 1));
+        WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
+        cpuInfoWithTooltip.setHtml(templates.numOfCpuCoresTooltip());
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 4, 1));
         formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 5, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 6, 1));
