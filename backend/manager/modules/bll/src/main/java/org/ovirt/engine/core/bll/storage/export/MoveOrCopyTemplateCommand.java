@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -51,7 +50,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Deprecated
-public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
+public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
 
     @Inject
     private MacPoolPerDc poolPerDc;
@@ -208,10 +207,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
 
-    @Override
-    protected void executeCommand() {
-    }
-
     protected void moveOrCopyAllImageGroups() {
         moveOrCopyAllImageGroups(getVmTemplateId(), getTemplateDisks());
     }
@@ -244,21 +239,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 return params;
             }
         });
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_COPIED_TEMPLATE : AuditLogType.USER_FAILED_COPY_TEMPLATE;
-
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_COPIED_TEMPLATE_FINISHED_SUCCESS
-                    : AuditLogType.USER_COPIED_TEMPLATE_FINISHED_FAILURE;
-
-        default:
-            return AuditLogType.USER_COPIED_TEMPLATE_FINISHED_FAILURE;
-        }
     }
 
     protected boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
