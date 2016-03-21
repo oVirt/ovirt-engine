@@ -283,6 +283,16 @@ class Plugin(plugin.PluginBase):
         self.logger.info(_('Restarting nfs services'))
 
         try:
+            # Fedora 23 adds nfs-config, which *is* a dependency, but
+            # systemd does not know it needs to be restarted after nfs
+            # config is changed. It's enough to only stop it, starting
+            # nfs will start it as a dependency.
+            if self.services.exists(name='nfs-config'):
+                self.services.state(
+                    name='nfs-config',
+                    state=False,
+                )
+
             if not self.services.supportsDependency:
                 self.services.startup(
                     name='rpcbind',
