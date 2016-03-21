@@ -21,6 +21,7 @@ public class ArchCapabilitiesParameters extends VdcQueryParametersBase {
     public enum ArchCapabilitiesVerb {
         GetMigrationSupport,
         GetMemorySnapshotSupport,
-        GetSuspendSupport
+        GetSuspendSupport,
+        GetMemoryHotUnplugSupport
     }
 }

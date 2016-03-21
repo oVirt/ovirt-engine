@@ -61,6 +61,8 @@ public class GetArchitectureCapabilitiesQuery<P extends ArchCapabilitiesParamete
             return FeatureSupported.isMemorySnapshotSupportedByArchitecture(architecture, version);
         case GetSuspendSupport:
             return FeatureSupported.isSuspendSupportedByArchitecture(architecture, version);
+        case GetMemoryHotUnplugSupport:
+            return FeatureSupported.hotUnplugMemory(version, architecture);
         }
         return false;
     }

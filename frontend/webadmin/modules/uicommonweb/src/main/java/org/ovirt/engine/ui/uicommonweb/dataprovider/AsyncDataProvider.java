@@ -270,6 +270,9 @@ public class AsyncDataProvider {
     // cached architecture support for VM suspend
     private Map<ArchitectureType, Map<Version, Boolean>> suspendSupport;
 
+    // cached architecture support for memory hot unplug
+    private Map<ArchitectureType, Map<Version, Boolean>> memoryHotUnplugSupport;
+
     // cached custom properties
     private Map<Version, Map<String, String>> customPropertiesList;
 
@@ -319,6 +322,7 @@ public class AsyncDataProvider {
         initMigrationSupportMap();
         initMemorySnapshotSupportMap();
         initSuspendSupportMap();
+        initMemoryHotUnplugSupportMap();
         initCustomPropertiesList();
         initSoundDeviceSupportMap();
     }
@@ -412,6 +416,10 @@ public class AsyncDataProvider {
         return suspendSupport.get(architecture).get(version);
     }
 
+    public Boolean isMemoryHotUnplugSupportedByArchitecture(ArchitectureType architecture, Version version) {
+        return memoryHotUnplugSupport.get(architecture).get(version);
+    }
+
     private void initMigrationSupportMap() {
         AsyncQuery callback = new AsyncQuery();
         callback.asyncCallback = new INewAsyncCallback() {
@@ -451,6 +459,19 @@ public class AsyncDataProvider {
                 callback);
     }
 
+    private void initMemoryHotUnplugSupportMap() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                memoryHotUnplugSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
+                new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemoryHotUnplugSupport),
+                callback);
+    }
+
     /**
      * Check if memory snapshot is supported
      */
@@ -460,6 +481,16 @@ public class AsyncDataProvider {
         }
 
         return isMemorySnapshotSupportedByArchitecture(
+                vm.getClusterArch(),
+                vm.getCompatibilityVersion());
+    }
+
+    public boolean isMemoryHotUnplugSupported(VM vm) {
+        if (vm == null) {
+            return false;
+        }
+
+        return isMemoryHotUnplugSupportedByArchitecture(
                 vm.getClusterArch(),
                 vm.getCompatibilityVersion());
     }

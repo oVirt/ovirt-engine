@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -993,10 +994,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
                             confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
                             confirmModel.setChangedFields(changedFields);
-                            confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == gettempVm().getCpuPerSocket() &&
-                                    selectedItem.getNumOfSockets() != gettempVm().getNumOfSockets());
-                            // currentl only hot plug memory is supported here (no hot unplug)
-                            confirmModel.setMemoryPluggable(selectedItem.getMemSizeMb() < gettempVm().getMemSizeMb());
+                            confirmModel.setCpuPluggable(VmCommonUtils.isCpusToBeHotplugged(selectedItem, gettempVm()));
+                            boolean isMemoryHotUnplugSupported =
+                                    AsyncDataProvider.getInstance().isMemoryHotUnplugSupported(gettempVm());
+                            confirmModel.setMemoryPluggable(VmCommonUtils.isMemoryToBeHotplugged(
+                                    selectedItem, gettempVm(), isMemoryHotUnplugSupported));
                             confirmModel.getCommands().add(new UICommand("updateExistingVm", UserPortalListModel.this) //$NON-NLS-1$
                             .setTitle(ConstantsManager.getInstance().getConstants().ok())
                             .setIsDefault(true));

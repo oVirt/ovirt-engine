@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 
@@ -40,12 +42,12 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
 
         // Hot plug CPU & memory are displayed separately in the confirmation dialog,
         // so it is not needed to include them into changed fields list.
-        if (srcStatic.getCpuPerSocket() == dstStatic.getCpuPerSocket()
-                && srcStatic.getNumOfSockets() != dstStatic.getNumOfSockets()) {
+        if (VmCommonUtils.isCpusToBeHotplugged(srcVm, dstVm)) {
             dstStatic.setNumOfSockets(srcStatic.getNumOfSockets());
         }
-        // currently only hot plug memory is supported here (no hot unplug)
-        if (srcStatic.getMemSizeMb() < dstStatic.getMemSizeMb()) {
+        boolean isMemoryHotUnplugSupported =
+                FeatureSupported.hotUnplugMemory(srcVm.getCompatibilityVersion(), srcVm.getClusterArch());
+        if (VmCommonUtils.isMemoryToBeHotplugged(srcVm, dstVm, isMemoryHotUnplugSupported)) {
             dstStatic.setMemSizeMb(srcStatic.getMemSizeMb());
         }
 

@@ -78,6 +78,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
@@ -171,10 +172,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
 
         // save user selected value for hotplug before overriding with db values (when updating running vm)
-        int cpuPerSocket = newVmStatic.getCpuPerSocket();
-        int numOfSockets = newVmStatic.getNumOfSockets();
-        int threadsPerCpu = newVmStatic.getThreadsPerCpu();
-        int memSizeMb = newVmStatic.getMemSizeMb();
+        VM userVm = new VM();
+        userVm.setStaticData(new VmStatic(newVmStatic));
 
         if (newVmStatic.getCreationDate().equals(DateTime.getMinValue())) {
             newVmStatic.setCreationDate(new Date());
@@ -191,8 +190,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         updateVmNetworks();
         updateVmNumaNodes();
         if (isHotSetEnabled()) {
-            hotSetCpus(cpuPerSocket, numOfSockets, threadsPerCpu);
-            updateCurrentMemory(memSizeMb);
+            hotSetCpus(userVm);
+            updateCurrentMemory(userVm);
         }
         final List<Guid> oldIconIds = IconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
@@ -303,14 +302,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getCompensationContext());
     }
 
-    private void hotSetCpus(int cpuPerSocket, int newNumOfSockets, int newThreadsPerCpu) {
+    private void hotSetCpus(VM newVm) {
         int currentSockets = getVm().getNumOfSockets();
-        int currentCpuPerSocket = getVm().getCpuPerSocket();
-        int currentThreadsPerCpu = getVm().getThreadsPerCpu();
+        int newNumOfSockets = newVm.getNumOfSockets();
 
         // try hotplug only if topology (cpuPerSocket, threadsPerCpu) hasn't changed
-        if (getVm().getStatus() == VMStatus.Up && currentSockets != newNumOfSockets
-                && currentCpuPerSocket == cpuPerSocket && currentThreadsPerCpu == newThreadsPerCpu) {
+        if (getVm().getStatus() == VMStatus.Up
+                && VmCommonUtils.isCpusToBeHotplugged(getVm(), newVm)) {
             HotSetNumberOfCpusParameters params =
                     new HotSetNumberOfCpusParameters(
                             newVmStatic,
@@ -328,8 +326,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
     }
 
-    private void updateCurrentMemory(int newAmountOfMemory) {
+    private void updateCurrentMemory(VM newVm) {
         int currentMemory = getVm().getMemSizeMb();
+        int newAmountOfMemory = newVm.getMemSizeMb();
 
         if (getVm().getStatus().isNotRunning()) {
             newVmStatic.setMemSizeMb(newAmountOfMemory);
@@ -347,13 +346,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return;
         }
 
-        if (currentMemory != newAmountOfMemory) {
-            hotSetMemory(newAmountOfMemory);
+        boolean isMemoryHotUnplugSupported =
+                FeatureSupported.hotUnplugMemory(getVm().getCompatibilityVersion(), getVm().getClusterArch());
+        if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm, isMemoryHotUnplugSupported)) {
+            hotSetMemory(currentMemory, newAmountOfMemory);
         }
     }
 
-    private void hotSetMemory(int newAmountOfMemory) {
-        int currentMemory = getVm().getMemSizeMb();
+    private void hotSetMemory(int currentMemory, int newAmountOfMemory) {
         HotSetAmountOfMemoryParameters params =
                 new HotSetAmountOfMemoryParameters(
                         newVmStatic,
