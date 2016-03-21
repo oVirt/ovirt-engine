@@ -1,10 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
+import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -16,6 +24,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
 
     private UICommand newCommand;
     private UICommand removeCommand;
+    private boolean isExecutionAllowed;
 
     public NetworkExternalSubnetListModel() {
         setHelpTag(HelpTag.external_subnets);
@@ -69,6 +78,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
 
         if (getEntity() != null) {
             getSearchCommand().execute();
+            adjustActionButtonsForNetworkReadOnlyProperty();
         }
     }
 
@@ -77,8 +87,46 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
         if (getEntity() == null) {
             return;
         }
-
         super.syncSearch(VdcQueryType.GetExternalSubnetsOnProviderByNetwork, new IdQueryParameters(getEntity().getId()));
+    }
+
+    private void adjustActionButtonsForNetworkReadOnlyProperty(){
+        NetworkView networkView = getEntity();
+
+        if (!networkView.isExternal()) {
+            setCommandExecutionAllowed(true);
+            return;
+        }
+        Guid providerGuid = networkView.getProvidedBy().getProviderId();
+        Frontend.getInstance().runQuery(VdcQueryType.GetProviderById, new IdQueryParameters(providerGuid),
+                createProviderReadOnlyCallback());
+    }
+
+    private AsyncQuery createProviderReadOnlyCallback(){
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                setCommandExecutionAllowedForProvider((Provider) ( ((VdcQueryReturnValue)returnValue).getReturnValue()));
+            }
+        };
+        return asyncQuery;
+    }
+
+    private void setCommandExecutionAllowedForProvider(Provider provider){
+        if (provider.getType() == ProviderType.EXTERNAL_NETWORK){
+            ExternalNetworkProviderProperties properties = (ExternalNetworkProviderProperties) provider.getAdditionalProperties();
+            if (properties != null && properties.getReadOnly()){
+                setCommandExecutionAllowed(false);
+                return;
+            }
+        }
+        setCommandExecutionAllowed(true);
+    }
+
+    private void setCommandExecutionAllowed(boolean isAllowed){
+        isExecutionAllowed = isAllowed;
+        updateActionAvailability();
     }
 
     @Override
@@ -91,7 +139,9 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
     }
 
     private void updateActionAvailability() {
-        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
+        newCommand.setIsExecutionAllowed(isExecutionAllowed);
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
+                && isExecutionAllowed);
     }
 
     @Override
