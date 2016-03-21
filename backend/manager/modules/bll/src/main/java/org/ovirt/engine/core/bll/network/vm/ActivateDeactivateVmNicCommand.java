@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -10,6 +12,7 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
@@ -34,6 +37,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
+
 /**
  * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
  * update the device, if it is Up - HotPlug / HotUnPlug the virtual network interface
@@ -53,6 +57,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         this(parameters, null);
     }
 
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmId(parameters.getVmId());
@@ -67,6 +74,18 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
 
         if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
+        if (getVm().isHostedEngine() && !getVm().isManagedHostedEngine()) {
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE);
+            return false;
+        }
+
+        if (getNetwork() != null
+                && managementNetworkUtil.isManagementNetwork(getNetwork().getId(), getVm().getVdsGroupId())
+                && getVm().isManagedHostedEngine()) {
+            addCanDoActionMessage(EngineMessage.DEACTIVATE_MANAGEMENT_NETWORK_FOR_HOSTED_ENGINE);
             return false;
         }
 

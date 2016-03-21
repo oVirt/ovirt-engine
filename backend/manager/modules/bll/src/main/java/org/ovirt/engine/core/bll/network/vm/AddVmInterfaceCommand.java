@@ -103,6 +103,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
+        if (getVm().isHostedEngine() && !getVm().isManagedHostedEngine()) {
+            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE);
+        }
+
         if (!updateVnicForBackwardCompatibility()) {
             return false;
         }
