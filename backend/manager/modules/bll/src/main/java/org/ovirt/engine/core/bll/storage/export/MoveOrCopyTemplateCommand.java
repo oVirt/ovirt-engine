@@ -8,17 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -36,11 +30,9 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -51,12 +43,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Deprecated
 public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
-
-    @Inject
-    private MacPoolPerDc poolPerDc;
-
-    private static final Pattern VALIDATE_MAC_ADDRESS =
-            Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
     /**
      * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
@@ -69,7 +55,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     private List<DiskImage> templateDisks;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
-    private MacPoolManagerStrategy macPool;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -90,18 +75,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         imageFromSourceDomainMap = new HashMap<>();
-    }
-
-    /*
-       this method exist not to do caching, but to deal with init being called from constructor in class hierarchy.
-       init method is not called via Postconstruct, but from constructor, meaning, that in tests
-       we're unable pro inject 'poolPerDc' soon enough.
-    * */
-    protected MacPoolManagerStrategy getMacPool() {
-        if (macPool == null) {
-            macPool = poolPerDc.poolForDataCenter(getStoragePoolId());
-        }
-        return macPool;
     }
 
     protected StorageDomain getSourceDomain() {
@@ -385,25 +358,5 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
         }
         return permissionCheckSubject;
-    }
-
-    protected boolean validateMacAddress(List<VmNic> ifaces) {
-        int freeMacs = 0;
-        for (VmNic iface : ifaces) {
-            if (!StringUtils.isEmpty(iface.getMacAddress())) {
-                if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID,
-                            String.format("$IfaceName %1$s", iface.getName()),
-                            String.format("$MacAddress %1$s", iface.getMacAddress()));
-                }
-            }
-            else {
-                freeMacs++;
-            }
-        }
-        if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
-            return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
-        }
-        return true;
     }
 }
