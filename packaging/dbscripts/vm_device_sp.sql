@@ -223,7 +223,14 @@ BEGIN
     WHERE  vm_id = v_vm_id and type = v_type and device = v_device
     AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                       FROM   user_vm_permissions_view
-                                      WHERE  user_id = v_user_id AND entity_id = v_vm_id))
+                                      WHERE  user_id = v_user_id
+                                      AND entity_id = v_vm_id
+                                      UNION
+                                      SELECT 1
+                                      FROM   user_vm_template_permissions_view
+                                      WHERE  user_id = v_user_id
+                                      AND entity_id = v_vm_id
+                                      ))
     ORDER BY NULLIF(alias,'') NULLS LAST;
 
 END; $procedure$
