@@ -126,3 +126,8 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 .cellTableSelectedRow.cellTableDisabledRow {
     color: white;
 }
+
+.ovirt-documentation-link {
+  color: #0099d3 !important;
+  text-decoration: none;
+}
