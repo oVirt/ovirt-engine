@@ -366,7 +366,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             List<String> validationMessages = getBackend().getErrorsTranslator().
                     translateErrorText(setAmountOfMemoryResult.getValidationMessages());
             logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
-            auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
+            auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_MEMORY);
         }
     }
 
