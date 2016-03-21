@@ -2682,6 +2682,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A disk configured with the \"Activate\" setting cannot be created as a floating disk.")
     String CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET();
 
+    @DefaultStringValue("Cannot deactivate the management interface of the Hosted Engine VM.")
+    String DEACTIVATE_MANAGEMENT_NETWORK_FOR_HOSTED_ENGINE();
+
     @DefaultStringValue("Cannot activate/deactivate interface due to VM status. The VM status must be Down or Up.")
     String ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL();
 

@@ -30,6 +30,11 @@ public class VmActionByVmOriginTypeValidator {
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.VmLogon);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.UpdateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.RemoveVm);
+
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.AddVmInterface);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.RemoveVmInterface);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.UpdateVmInterface);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.ActivateDeactivateVmNic);
     }
 
     public static boolean isCommandAllowed(VM vm, VdcActionType actionType) {

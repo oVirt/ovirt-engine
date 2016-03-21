@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
@@ -63,6 +64,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private NetworkProviderProxy providerProxy;
 
     @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
+    @Inject
     private VfScheduler vfScheduler;
 
     @Inject
@@ -85,6 +89,18 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
 
         if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
+        if (getVm().isHostedEngine() && !getVm().isManagedHostedEngine()) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE);
+            return false;
+        }
+
+        if (getNetwork() != null
+                && managementNetworkUtil.isManagementNetwork(getNetwork().getId(), getVm().getClusterId())
+                && getVm().isManagedHostedEngine()) {
+            addValidationMessage(EngineMessage.DEACTIVATE_MANAGEMENT_NETWORK_FOR_HOSTED_ENGINE);
             return false;
         }
 
