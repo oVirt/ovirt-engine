@@ -116,6 +116,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
         getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());
         getModel().getCpuSharesAmount().setEntity(entity.getCpuShares());
+        getModel().getIsHighlyAvailable().setEntity(entity.isAutoStartup());
         updateCpuSharesSelection();
     }
 
