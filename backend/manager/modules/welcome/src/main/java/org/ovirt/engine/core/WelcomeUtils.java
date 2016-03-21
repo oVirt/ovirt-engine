@@ -17,6 +17,7 @@ public class WelcomeUtils {
     public static final String ENGINE_URI = "ENGINE_URI";
     public static final String ENGINE_SSO_AUTH_URL = "ENGINE_SSO_AUTH_URL";
     public static final String ENGINE_SSO_CLIENT_ID = "ENGINE_SSO_CLIENT_ID";
+    public static final String LOCALE = "locale";
     public static final String REAUTHENTICATE = "reauthenticate";
     public static final String SCOPE = "scope";
     public static final String SSO_USER = "sso_user";
@@ -33,6 +34,7 @@ public class WelcomeUtils {
     public static final String SWITCH_USER_URI = "/switch-user";
     public static final String WELCOME_PAGE_JSP_URI = "/WEB-INF/ovirt-engine.jsp";
 
+    public static final String HTTP_PARAM_LOCALE = "locale";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";
     public static final String HTTP_PARAM_STATE = "state";

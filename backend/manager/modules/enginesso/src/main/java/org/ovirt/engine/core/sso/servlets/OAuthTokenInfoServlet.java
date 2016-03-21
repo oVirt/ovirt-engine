@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -91,8 +92,12 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         String queryType = SSOUtils.getRequestParameter(request, SSOConstants.HTTP_PARAM_SEARCH_QUERY_TYPE);
         if (!directoryQueries.containsKey(queryType) && !directoryPublicQueries.containsKey(queryType)) {
             throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
-                    String.format("The request contains unsupported parameter value '%s' for parameter '%s'.",
-                            queryType, SSOConstants.HTTP_PARAM_SEARCH_QUERY_TYPE));
+                    String.format(
+                            ssoContext.getLocalizationUtils().localize(
+                                    SSOConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
+                                    (Locale) request.getAttribute(SSOConstants.LOCALE)),
+                            queryType,
+                            SSOConstants.HTTP_PARAM_SEARCH_QUERY_TYPE));
         }
     }
 

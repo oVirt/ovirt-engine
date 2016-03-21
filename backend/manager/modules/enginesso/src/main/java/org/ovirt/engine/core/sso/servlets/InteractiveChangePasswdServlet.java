@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.sso.servlets;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -46,14 +47,23 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
             log.debug("User is not authenticated extracting credentials from request.");
             userCredentials = getUserCredentials(request);
             if (userCredentials == null) {
-                throw new AuthenticationException("Unable to extract user credentials from request");
+                throw new AuthenticationException(
+                        ssoContext.getLocalizationUtils().localize(
+                                SSOConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
+                                (Locale) request.getAttribute(SSOConstants.LOCALE)));
             }
             if (!userCredentials.getNewCredentials().equals(userCredentials.getConfirmedNewCredentials())) {
-                throw new AuthenticationException("The passwords don't match.");
+                throw new AuthenticationException(
+                        ssoContext.getLocalizationUtils().localize(
+                                SSOConstants.APP_ERROR_PASSWORDS_DONT_MATCH,
+                                (Locale) request.getAttribute(SSOConstants.LOCALE)));
             }
             redirectUrl = changeUserPasswd(request, userCredentials);
         } catch (Exception ex) {
-            String msg = String.format("Change Password for user '%s' failed : %s",
+            String msg = String.format(
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_ERROR_CHANGE_PASSWORD_FAILED,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)),
                     userCredentials == null ? "" : userCredentials.getUsername() + "@" + userCredentials.getProfile(),
                     ex.getMessage());
             log.error(msg);
@@ -80,7 +90,9 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
         } else {
             log.debug("User password change succeeded, redirecting to login page.");
             SSOUtils.getSsoSession(request).setLoginMessage(
-                    "Change password succeeded, enter new credentials to login.");
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_MSG_CHANGE_PASSWORD_SUCCEEDED,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
         }
         return request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_URI;
     }
@@ -100,7 +112,11 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
                     new Credentials(username, credentials, credentialsNew1, credentialsNew2, profile) :
                     null;
         } catch (Exception ex) {
-            throw new AuthenticationException("Unable to extract user credentials from request", ex);
+            throw new AuthenticationException(
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)),
+                    ex);
         }
     }
 

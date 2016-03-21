@@ -43,12 +43,19 @@ public class SSOLoginFilter implements Filter {
                 requestURL.append("?").append(req.getQueryString());
             }
             if (!FiltersHelper.isAuthenticated(req) || !FiltersHelper.isSessionValid((HttpServletRequest) request)) {
-                log.debug("Redirecting to {}{}&app_url={}", req.getServletContext().getContextPath(), loginUrl, URLEncoder.encode(requestURL.toString(), "UTF-8"));
-                res.sendRedirect(String.format("%s%s&app_url=%s", req.getServletContext().getContextPath(), loginUrl, URLEncoder.encode(requestURL.toString(), "UTF-8")));
+                String url = String.format("%s%s&app_url=%s&locale=%s",
+                        req.getServletContext().getContextPath(),
+                        loginUrl,
+                        URLEncoder.encode(requestURL.toString(), "UTF-8"),
+                        request.getAttribute("locale").toString());
+                log.debug("Redirecting to {}", url);
+                res.sendRedirect(url);
             } else {
                 log.debug("Already logged in, executing next filter in chain.");
                 res.addHeader("OVIRT-SSO-TOKEN",
-                        URLEncoder.encode((String) ((HttpServletRequest) request).getSession(true).getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY), "UTF-8"));
+                        URLEncoder.encode((String) ((HttpServletRequest) request)
+                                .getSession(true)
+                                .getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY), "UTF-8"));
                 chain.doFilter(request, response);
             }
         }

@@ -3,13 +3,14 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
+<fmt:setBundle basename="messages" var="loginpage" />
 <fmt:setLocale value="${locale}" />
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <obrand:favicon />
-    <title><fmt:message key="product" /> Login</title>
+    <title><fmt:message key="product" /> <fmt:message key="loginpage.title" bundle="${loginpage}" /></title>
     <obrand:stylesheets />
 </head>
 <body>
@@ -56,19 +57,25 @@
                         <span style="vertical-align:top;display:table-cell;width:630px;">
                             <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/interactive-login" enctype="application/x-www-form-urlencoded">
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="username">User Name</label>
+                                    <label class="col-md-2 control-label" for="username">
+                                        <fmt:message key="loginpage.username" bundle="${loginpage}" />
+                                    </label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="username" name="username" placeholder="User Name" class="form-control" autofocus tabIndex="1">
+                                        <input type="text" id="username" name="username" placeholder='<fmt:message key="loginpage.usernameplaceholder" bundle="${loginpage}" />' class="form-control" autofocus tabIndex="1">
                                      </div>
                                 </div>
                                 <div class="form-group">
-                                     <label class="col-md-2 control-label" for="password">Password</label>
+                                     <label class="col-md-2 control-label" for="password">
+                                         <fmt:message key="loginpage.password" bundle="${loginpage}" />
+                                     </label>
                                      <div class="col-sm-10">
-                                         <input type="password" class="form-control" id="password" placeholder="Password" name="password" tabIndex="2">
+                                         <input type="password" class="form-control" id="password" placeholder='<fmt:message key="loginpage.passwordplaceholder" bundle="${loginpage}" />' name="password" tabIndex="2">
                                      </div>
                                  </div>
                                  <div class="form-group">
-                                     <label class="col-md-2 control-label" for="profile">Profile</label>
+                                     <label class="col-md-2 control-label" for="profile">
+                                         <fmt:message key="loginpage.profile" bundle="${loginpage}" />
+                                     </label>
                                      <div class="col-sm-10">
                                          <select class="form-control" id="profile" name="profile" tabIndex="3">
                                              <c:forEach items="${applicationScope['ovirt-ssoContext'].ssoProfilesSupportingPasswd}" var="profile" >
@@ -85,13 +92,17 @@
                                      </div>
                                  </div>
                                  <div class="pull-right">
-                                     <button type="submit" class="btn btn-primary" tabIndex="4">Login</button>
+                                     <button type="submit" class="btn btn-primary" tabIndex="4">
+                                         <fmt:message key="loginpage.login" bundle="${loginpage}" />
+                                     </button>
                                  </div>
                             </form>
                             <c:if test="${fn:length(ssoSession.authStack) gt 0}">
                                 <div class="pull-right">
                                     <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/interactive-login-next-auth" enctype="application/x-www-form-urlencoded">
-                                        <button type="submit" class="btn btn-primary" tabIndex="5">Next Auth</button>
+                                        <button type="submit" class="btn btn-primary" tabIndex="5">
+                                            <fmt:message key="loginpage.nextauth" bundle="${loginpage}" />
+                                        </button>
                                         <span>&nbsp;</span>
                                     </form>
                                 </div>

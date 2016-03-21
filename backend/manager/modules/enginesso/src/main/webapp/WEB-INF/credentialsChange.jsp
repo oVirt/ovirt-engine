@@ -3,13 +3,14 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
+<fmt:setBundle basename="messages" var="changepasswordpage" />
 <fmt:setLocale value="${locale}" />
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <obrand:favicon />
-    <title><fmt:message key="product" /> Change Password</title>
+    <title><fmt:message key="product" /> <fmt:message key="changepasswordpage.title" bundle="${changepasswordpage}" /></title>
     <obrand:stylesheets />
 </head>
 <body>
@@ -56,7 +57,7 @@
                             </c:when>
                             <c:otherwise>
                                 <span style="vertical-align:top;display:table-cell;">
-                                Change password for user <b> ${ssoUserName}@${ssoUserProfile} </b>
+                                <fmt:message key="changepasswordpage.usermessage" bundle="${changepasswordpage}" /> <b> ${ssoUserName}@${ssoUserProfile} </b>
                                 </span>
                             </c:otherwise>
                         </c:choose>
@@ -70,25 +71,33 @@
                                 <input type="hidden" class="form-control" id="username" placeholder="username" name="username" value="${ssoUserName}">
                                 <input type="hidden" class="form-control" id="profile" placeholder="profile" name="profile" value="${ssoUserProfile}">
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label" for="oldPassword">Old Password</label>
+                                    <label class="col-md-3 control-label" for="oldPassword">
+                                    <fmt:message key="changepasswordpage.oldpassword" bundle="${changepasswordpage}" />
+                                    </label>
                                     <div class="col-sm-9">
-                                        <input type="password" class="form-control" id="credentials" placeholder="PASSWORD" name="credentials" tabIndex="1">
+                                        <input type="password" class="form-control" id="credentials" placeholder='<fmt:message key="changepasswordpage.oldpasswordplaceholder" bundle="${changepasswordpage}" />' name="credentials" tabIndex="1">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label" for="newPassword1">New Password</label>
+                                    <label class="col-md-3 control-label" for="newPassword1">
+                                    <fmt:message key="changepasswordpage.newpassword" bundle="${changepasswordpage}" />
+                                    </label>
                                     <div class="col-sm-9">
-                                        <input type="password" class="form-control" id="credentialsNew1" placeholder="NEW PASSWORD" name="credentialsNew1" tabIndex="2">
+                                        <input type="password" class="form-control" id="credentialsNew1" placeholder='<fmt:message key="changepasswordpage.newpasswordplaceholder" bundle="${changepasswordpage}" />' name="credentialsNew1" tabIndex="2">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label" for="newPassword2">Retype Password</label>
+                                    <label class="col-md-3 control-label" for="newPassword2">
+                                        <fmt:message key="changepasswordpage.retypepassword" bundle="${changepasswordpage}" />
+                                    </label>
                                     <div class="col-sm-9">
-                                        <input type="password" class="form-control" id="credentialsNew2" placeholder="NEW PASSWORD" name="credentialsNew2" tabIndex="3">
+                                        <input type="password" class="form-control" id="credentialsNew2" placeholder='<fmt:message key="changepasswordpage.newpasswordplaceholder" bundle="${changepasswordpage}" />' name="credentialsNew2" tabIndex="3">
                                     </div>
                                 </div>
                                 <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary" tabIndex="4">Change Password</button>
+                                    <button type="submit" class="btn btn-primary" tabIndex="4">
+                                        <fmt:message key="changepasswordpage.changepassword" bundle="${changepasswordpage}" />
+                                    </button>
                                 </div>
                             </form>
                         </span>

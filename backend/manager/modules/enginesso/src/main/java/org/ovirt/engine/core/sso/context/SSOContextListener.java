@@ -6,6 +6,7 @@ import javax.servlet.ServletContextListener;
 
 import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
 import org.ovirt.engine.core.sso.utils.DBUtils;
+import org.ovirt.engine.core.sso.utils.LocalizationUtils;
 import org.ovirt.engine.core.sso.utils.NegotiateAuthUtils;
 import org.ovirt.engine.core.sso.utils.SSOConstants;
 import org.ovirt.engine.core.sso.utils.SSOContext;
@@ -30,6 +31,7 @@ public class SSOContextListener implements ServletContextListener {
         ssoContext.setSsoProfilesSupportingPasswdChange(
                 AuthenticationUtils.getAvailableProfilesSupportingPasswdChange(ssoContext.getSsoExtensionsManager()));
         ssoContext.setNegotiateAuthUtils(new NegotiateAuthUtils(ssoContext.getProfiles()));
+        ssoContext.setLocalizationUtils(new LocalizationUtils(SSOConstants.APP_MESSAGE_FILENAME));
         ctx.setAttribute(SSOConstants.OVIRT_SSO_CONTEXT, ssoContext);
     }
 

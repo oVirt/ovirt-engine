@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -38,7 +39,10 @@ public class AuthenticationUtils {
             username = username.substring(0, index);
         }
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(profile)) {
-            throw new AuthenticationException("Please provide username and profile.");
+            throw new AuthenticationException(
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_ERROR_PROVIDE_USERNAME_AND_PROFILE,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
         }
 
         ObjectMapper mapper = new ObjectMapper()
@@ -72,7 +76,10 @@ public class AuthenticationUtils {
             Credentials credentials) throws Exception {
         log.debug("Entered AuthenticationUtils.handleCredentials");
         if (StringUtils.isEmpty(credentials.getUsername()) || StringUtils.isEmpty(credentials.getProfile())) {
-            throw new AuthenticationException("Please provide username, password and profile.");
+            throw new AuthenticationException(
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_ERROR_PROVIDE_USERNAME_PASSWORD_AND_PROFILE,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
         }
         SSOSession ssoSession = login(ssoContext, request, credentials, null);
         log.info("User {}@{} successfully logged in with scopes: {}",
@@ -105,9 +112,12 @@ public class AuthenticationUtils {
                     outputMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
                 SSOUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
                 log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn failed");
-                throw new AuthenticationException(AuthnMessageMapper.mapMessageErrorCode(request,
-                        credentials.getProfile(),
-                        outputMap));
+                throw new AuthenticationException(
+                        AuthnMessageMapper.mapMessageErrorCode(
+                                ssoContext,
+                                request,
+                                credentials.getProfile(),
+                                outputMap));
             }
             log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn succeeded");
             authRecord = outputMap.get(Authn.InvokeKeys.AUTH_RECORD);
@@ -173,9 +183,12 @@ public class AuthenticationUtils {
                 outputMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
             SSOUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
             log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn failed");
-            throw new AuthenticationException(AuthnMessageMapper.mapMessageErrorCode(request,
-                    credentials.getProfile(),
-                    outputMap));
+            throw new AuthenticationException(
+                    AuthnMessageMapper.mapMessageErrorCode(
+                            context,
+                            request,
+                            credentials.getProfile(),
+                            outputMap));
         }
         log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn succeeded");
     }

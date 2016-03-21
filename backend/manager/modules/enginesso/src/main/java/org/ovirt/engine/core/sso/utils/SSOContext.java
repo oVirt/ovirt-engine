@@ -22,6 +22,7 @@ public class SSOContext implements Serializable{
     private SSOLocalConfig ssoLocalConfig;
     private SSOExtensionsManager ssoExtensionsManager;
     private NegotiateAuthUtils negotiateAuthUtils;
+    private LocalizationUtils localizationUtils;
     private List<String> ssoProfiles;
     private List<String> ssoProfilesSupportingPasswd;
     private List<String> ssoProfilesSupportingPasswdChange;
@@ -172,5 +173,13 @@ public class SSOContext implements Serializable{
             return Collections.emptyList();
         }
         return scopeDependenciesMap.get(scope);
+    }
+
+    public LocalizationUtils getLocalizationUtils() {
+        return localizationUtils;
+    }
+
+    public void setLocalizationUtils(LocalizationUtils localizationUtils) {
+        this.localizationUtils = localizationUtils;
     }
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.sso.servlets;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -80,7 +81,10 @@ public class InteractiveAuthServlet extends HttpServlet {
             HttpServletResponse response,
             Credentials userCredentials) throws ServletException, IOException, AuthenticationException {
         if (userCredentials == null || !userCredentials.isValid()) {
-            throw new AuthenticationException("Invalid credentials");
+            throw new AuthenticationException(
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_ERROR_INVALID_CREDENTIALS,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
         }
         try {
             log.debug("Authenticating user using credentials");

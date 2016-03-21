@@ -29,6 +29,13 @@
         <param-value>ENGINE_SSO_AUTH_SEQUENCE_userportal</param-value>
     </context-param>
 
+    <filter-mapping>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
     <filter>
         <filter-name>SSOLoginFilter</filter-name>
         <filter-class>org.ovirt.engine.core.aaa.filters.SSOLoginFilter</filter-class>
@@ -41,13 +48,6 @@
     <filter-mapping>
         <filter-name>SSOLoginFilter</filter-name>
         <url-pattern>/UserPortal.html</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>LocaleFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
     <filter-mapping>

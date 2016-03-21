@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -125,7 +126,9 @@ public class OAuthTokenServlet extends HttpServlet {
         SSOSession ssoSession = SSOUtils.getSsoSession(request, token, true);
         if (ssoSession == null) {
             throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT,
-                    "The provided authorization grant for the username and password has expired");
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
         }
         log.debug("Sending json response");
         SSOUtils.sendJsonData(response, buildResponse(ssoSession));
@@ -150,7 +153,9 @@ public class OAuthTokenServlet extends HttpServlet {
             SSOSession ssoSession = SSOUtils.getSsoSessionFromRequest(request, token);
             if (ssoSession == null) {
                 throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT,
-                        "The provided authorization grant for the username and password has expired");
+                        ssoContext.getLocalizationUtils().localize(
+                                SSOConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
+                                (Locale) request.getAttribute(SSOConstants.LOCALE)));
             }
             SSOUtils.validateRequestScope(request, token, scope);
             log.debug("Sending json response");
@@ -160,7 +165,10 @@ public class OAuthTokenServlet extends HttpServlet {
             if (credentials != null) {
                 profile = credentials.getProfile() == null ? "N/A" : credentials.getProfile();
             }
-            throw new AuthenticationException(String.format("Cannot authenticate user '%s@%s': %s",
+            throw new AuthenticationException(String.format(
+                    ssoContext.getLocalizationUtils().localize(
+                            SSOConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
+                            (Locale) request.getAttribute(SSOConstants.LOCALE)),
                     credentials == null ? "N/A" : credentials.getUsername(),
                     profile,
                     ex.getMessage()));
@@ -189,15 +197,25 @@ public class OAuthTokenServlet extends HttpServlet {
                 SSOSession ssoSession = SSOUtils.getSsoSessionFromRequest(request, authResult.getToken());
                 if (ssoSession == null) {
                     throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT,
-                            "The provided authorization grant has expired");
+                            ssoContext.getLocalizationUtils().localize(
+                                    SSOConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED,
+                                    (Locale) request.getAttribute(SSOConstants.LOCALE)));
                 }
                 log.debug("Sending json response");
                 SSOUtils.sendJsonData(response, buildResponse(ssoSession));
             } else {
-                throw new AuthenticationException("Authentication failed.");
+                throw new AuthenticationException(
+                        ssoContext.getLocalizationUtils().localize(
+                                SSOConstants.APP_ERROR_AUTHENTICATION_FAILED,
+                                (Locale) request.getAttribute(SSOConstants.LOCALE)));
             }
         } catch (Exception ex) {
-            throw new AuthenticationException(String.format("Cannot authenticate user : %s", ex.getMessage()));
+            throw new AuthenticationException(
+                    String.format(
+                            ssoContext.getLocalizationUtils().localize(
+                                    SSOConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
+                                    (Locale) request.getAttribute(SSOConstants.LOCALE)),
+                            ex.getMessage()));
         }
     }
 

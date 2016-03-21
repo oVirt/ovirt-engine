@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
 import javax.servlet.ServletConfig;
@@ -50,8 +51,12 @@ public class OAuthAuthorizeServlet extends HttpServlet {
 
             if (!responseType.equals("code")) {
                 throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
-                        String.format("The request contains unsupported parameter value '%s' for parameter '%s'.",
-                                responseType, SSOConstants.JSON_RESPONSE_TYPE));
+                        String.format(
+                                ssoContext.getLocalizationUtils().localize(
+                                        SSOConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
+                                        (Locale) request.getAttribute(SSOConstants.LOCALE)),
+                                responseType,
+                                SSOConstants.JSON_RESPONSE_TYPE));
             }
 
             login(request, response, clientId, scope, state, redirectUri);
@@ -91,7 +96,9 @@ public class OAuthAuthorizeServlet extends HttpServlet {
             ssoSession.setAuthStack(getAuthSeq(scope));
             if (ssoSession.getAuthStack().isEmpty()) {
                 throw new OAuthException(SSOConstants.ERR_CODE_ACCESS_DENIED,
-                        "No valid authentication mechanism found.");
+                        ssoContext.getLocalizationUtils().localize(
+                                SSOConstants.APP_ERROR_NO_VALID_AUTHENTICATION_MECHANISM_FOUND,
+                                (Locale) request.getAttribute(SSOConstants.LOCALE)));
             }
             redirectUrl = request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI;
         }
