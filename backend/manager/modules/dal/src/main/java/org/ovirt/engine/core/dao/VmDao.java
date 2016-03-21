@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -333,22 +334,22 @@ public interface VmDao extends Dao {
     List<VM> getAllForStoragePool(Guid storagePoolId);
 
     /**
-     * Retrieves all VMS that are attached to provided profile
+     * Retrieves all VMS that are attached to provided profiles
      *
-     * @param cpuProfileId
-     *            CPU profile id
+     * @param cpuProfileIds
+     *            List of CPU profile ids
      * @return the list of VMs
      */
-    List<VM> getAllForCpuProfile(Guid cpuProfileId);
+    List<VM> getAllForCpuProfiles(Collection<Guid> cpuProfileIds);
 
     /**
-     * Retrieves all VMS that have disks attached to provided profile
+     * Retrieves all VMS that have disks attached to provided profiles
      *
-     * @param diskProfileId
-     *            disk profile id
+     * @param diskProfileIds
+     *            List of disk profile ids
      * @return the list of VMs
      */
-    List<VM> getAllForDiskProfile(Guid diskProfileId);
+    List<VM> getAllForDiskProfiles(Collection<Guid> diskProfileIds);
 
     /**
      * Get all vms with given origins

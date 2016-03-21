@@ -3343,4 +3343,25 @@ WHERE vm_device.type = 'hostdev';
 CREATE OR REPLACE VIEW user_profiles_view AS
 SELECT user_profiles.*, users.username || '@' || users.domain AS login_name
 FROM user_profiles
-INNER JOIN users ON user_profiles.user_id = users.user_id;
+INNER JOIN users
+    ON user_profiles.user_id = users.user_id;
+
+CREATE OR REPLACE VIEW qos_for_vm_view AS
+
+SELECT qos.*,
+    vm_static.vm_guid AS vm_id
+
+FROM qos
+    INNER JOIN cpu_profiles
+        ON qos.id = cpu_profiles.qos_id
+    INNER JOIN vm_static
+        ON vm_static.cpu_profile_id = cpu_profiles.id;
+
+CREATE OR REPLACE VIEW qos_for_disk_profile_view AS
+
+SELECT qos.*,
+    disk_profiles.id AS disk_profile_id
+
+FROM qos
+    INNER JOIN disk_profiles
+        ON qos.id = disk_profiles.qos_id

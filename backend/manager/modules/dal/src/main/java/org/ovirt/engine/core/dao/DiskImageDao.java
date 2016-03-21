@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -134,9 +135,9 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
     /**
      * Return all images that attached to disk profile.
      *
-     * @param diskProfileId
-     *            The Disk Profile Id attached to disks.
+     * @param diskProfileIds
+     *            List of Disk Profile Id attached to disks.
      * @return List of DiskImages
      */
-    List<DiskImage> getAllForDiskProfile(Guid diskProfileId);
+    List<DiskImage> getAllForDiskProfiles(Collection<Guid> diskProfileIds);
 }

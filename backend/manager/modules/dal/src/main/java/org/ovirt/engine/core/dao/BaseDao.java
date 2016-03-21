@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -53,8 +55,17 @@ public abstract class BaseDao {
         }
     }
 
+     protected Array createArrayOfUUIDs(Collection<Guid> guids) {
+         Iterator<Guid> iter = guids.iterator();
+         UUID[] uuids = new UUID[guids.size()];
+         for (int x = 0; x < uuids.length; x++) {
+             uuids[x] = iter.next().getUuid();
+         }
+         return createArrayOf("uuid", uuids);
+    }
+
     /**
-     * @return A generic boolean result mapper which always takes the boolean result, regardless of how it's column is
+     *  @return A generic boolean result mapper which always takes the boolean result, regardless of how it's column is
      *         called.
      */
     protected RowMapper<Boolean> createBooleanMapper() {

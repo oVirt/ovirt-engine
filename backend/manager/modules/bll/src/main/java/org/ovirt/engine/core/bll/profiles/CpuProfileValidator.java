@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -94,6 +95,6 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
 
     @Override
     public List<VM> getVmsUsingProfile() {
-        return getDbFacade().getVmDao().getAllForCpuProfile(getProfile().getId());
+        return getDbFacade().getVmDao().getAllForCpuProfiles(Collections.singletonList(getProfile().getId()));
     }
 }

@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.dao.qos;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
-import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
@@ -90,14 +92,15 @@ public class CpuQosDaoTest extends BaseDaoTestCase {
 
     @Test
     public void getQosByVmId() {
-        CpuQos cpuQos = dao.getCpuQosByVmId(FixturesTool.VM_RHEL5_POOL_50);
-        assertNotNull(cpuQos);
-        assertEquals(FixturesTool.QOS_ID_4, cpuQos.getId());
+        Map<Guid, CpuQos> cpuQosMap = dao.getCpuQosByVmIds(Collections.singleton(FixturesTool.VM_RHEL5_POOL_50));
+        assertNotNull(cpuQosMap);
+        assertEquals(FixturesTool.QOS_ID_4, cpuQosMap.get(FixturesTool.VM_RHEL5_POOL_50).getId());
     }
 
     @Test
     public void getNoQosByVmId() {
-        CpuQos cpuQos = dao.getCpuQosByVmId(FixturesTool.VM_RHEL5_POOL_57);
-        assertNull(cpuQos);
+        Map<Guid, CpuQos> cpuQosMap = dao.getCpuQosByVmIds(Collections.singleton(FixturesTool.VM_RHEL5_POOL_57));
+        assertNotNull(cpuQosMap);
+        assertNull(cpuQosMap.get(FixturesTool.VM_RHEL5_POOL_57));
     }
 }

@@ -2,12 +2,18 @@ package org.ovirt.engine.core.dao.qos;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -21,11 +27,24 @@ public class StorageQosDaoImpl extends QosBaseDaoImpl<StorageQos> implements Sto
 
     @Override
     public StorageQos getQosByDiskProfileId(Guid diskProfileId) {
+        return getQosByDiskProfileIds(Collections.singleton(diskProfileId)).get(diskProfileId);
+    }
+
+    @Override
+    public Map<Guid, StorageQos> getQosByDiskProfileIds(Collection<Guid> diskProfileIds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("disk_profile_id", diskProfileId);
-        return getCallsHandler().executeRead("GetQosByDiskProfile",
-                createEntityRowMapper(),
+                .addValue("disk_profile_ids", createArrayOfUUIDs(diskProfileIds));
+
+        List<Pair<Guid, StorageQos>> pairs = getCallsHandler().executeReadList("GetQosByDiskProfiles",
+                StorageQosMultipleProfilesMapper.MAPPER,
                 parameterSource);
+
+        Map<Guid, StorageQos> resMap = new HashMap<>();
+        for ( Pair<Guid, StorageQos> pair : pairs) {
+            resMap.put(pair.getFirst(), pair.getSecond());
+
+        }
+        return resMap;
     }
 
     @Override
@@ -62,4 +81,18 @@ public class StorageQosDaoImpl extends QosBaseDaoImpl<StorageQos> implements Sto
         }
     }
 
+    private static class StorageQosMultipleProfilesMapper implements RowMapper<Pair<Guid, StorageQos>> {
+
+        public static final StorageQosMultipleProfilesMapper MAPPER = new StorageQosMultipleProfilesMapper();
+
+        private StorageQosMultipleProfilesMapper() {
+        }
+
+        @Override
+        public Pair<Guid, StorageQos> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            StorageQos qos = StorageDaoDbFacadaeImplMapper.MAPPER.mapRow(rs, rowNum);
+            Guid guid = new Guid(rs.getString("disk_profile_id"));
+            return new Pair<>(guid, qos);
+        }
+    }
 }

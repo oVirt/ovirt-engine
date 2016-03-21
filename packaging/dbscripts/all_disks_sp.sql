@@ -51,6 +51,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetDisksVmGuids (
+  v_vm_guids UUID[]
+)
+  RETURNS SETOF all_disks_for_vms STABLE AS $PROCEDURE$
+BEGIN
+  RETURN QUERY
+  SELECT *
+  FROM all_disks_for_vms
+  WHERE vm_id = ANY(v_vm_guids);
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 DROP TYPE IF EXISTS disks_basic_rs CASCADE;
 CREATE TYPE disks_basic_rs AS (disk_id UUID,disk_alias varchar(255),size BIGINT);
 

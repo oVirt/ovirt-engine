@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -16,6 +18,15 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
      * @return the list of disks
      */
     List<Disk> getAllForVm(Guid id);
+
+    /**
+     * Retrieves all disks for each vm passed
+     *
+     * @param vmIds
+     *              list of VM ids
+     * @return map storing disks for each VM
+     */
+    Map<Guid, List<Disk>> getAllForVms(Collection<Guid> vmIds);
 
     /**
      * Retrieves all disks for the specified virtual machine id.

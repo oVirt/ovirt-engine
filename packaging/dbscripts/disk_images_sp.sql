@@ -207,13 +207,13 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION GetAllForDiskProfile(v_disk_profile_id UUID)
+CREATE OR REPLACE FUNCTION GetAllForDiskProfiles(v_disk_profile_ids UUID[])
 RETURNS SETOF images_storage_domain_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT images_storage_domain_view.*
         FROM images_storage_domain_view
-        WHERE images_storage_domain_view.disk_profile_id = v_disk_profile_id;
+        WHERE images_storage_domain_view.disk_profile_id = ANY(v_disk_profile_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 

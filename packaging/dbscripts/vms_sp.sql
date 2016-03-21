@@ -1741,17 +1741,17 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVmsByCpuProfileId(v_cpu_profile_id UUID)
+CREATE OR REPLACE FUNCTION GetVmsByCpuProfileIds(v_cpu_profile_ids UUID[])
 RETURNS SETOF vms STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT vms.*
         FROM vms
-        WHERE cpu_profile_id = v_cpu_profile_id;
+        WHERE cpu_profile_id = ANY(v_cpu_profile_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetAllVmsRelatedToDiskProfile(v_disk_profile_id UUID)
+CREATE OR REPLACE FUNCTION GetAllVmsRelatedToDiskProfiles(v_disk_profile_ids UUID[])
 RETURNS SETOF vms STABLE
 AS $procedure$
 BEGIN
@@ -1761,7 +1761,7 @@ BEGIN
           INNER JOIN images ON images.image_group_id = vd.device_id
               AND images.active = TRUE
           INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
-          WHERE image_storage_domain_map.disk_profile_id = v_disk_profile_id;
+          WHERE image_storage_domain_map.disk_profile_id = ANY(v_disk_profile_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 

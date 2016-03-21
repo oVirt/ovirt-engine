@@ -3,9 +3,11 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -301,17 +303,17 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VM> getAllForCpuProfile(Guid cpuProfileId) {
-        return getCallsHandler().executeReadList("GetVmsByCpuProfileId",
+    public List<VM> getAllForCpuProfiles(Collection<Guid> cpuProfileIds) {
+        return getCallsHandler().executeReadList("GetVmsByCpuProfileIds",
                 VMRowMapper.instance, getCustomMapSqlParameterSource()
-                        .addValue("cpu_profile_id", cpuProfileId));
+                        .addValue("cpu_profile_ids", createArrayOfUUIDs(cpuProfileIds)));
     }
 
     @Override
-    public List<VM> getAllForDiskProfile(Guid diskProfileId) {
-        return getCallsHandler().executeReadList("GetAllVmsRelatedToDiskProfile",
+    public List<VM> getAllForDiskProfiles(Collection<Guid> diskProfileIds) {
+        return getCallsHandler().executeReadList("GetAllVmsRelatedToDiskProfiles",
                 VMRowMapper.instance, getCustomMapSqlParameterSource()
-                        .addValue("disk_profile_id", diskProfileId));
+                        .addValue("disk_profile_ids", createArrayOfUUIDs(diskProfileIds)));
     }
 
     static final class VMRowMapper implements RowMapper<VM> {

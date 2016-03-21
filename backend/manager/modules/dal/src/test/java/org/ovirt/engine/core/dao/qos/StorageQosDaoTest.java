@@ -5,7 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -112,4 +114,10 @@ public class StorageQosDaoTest extends BaseDaoTestCase {
         assertEquals(FixturesTool.QOS_ID_1, qos.getId());
     }
 
+    @Test
+    public void getQosByDiskProfileIds() {
+        Map<Guid, StorageQos> qosMap = dao.getQosByDiskProfileIds(Collections.singleton(FixturesTool.DISK_PROFILE_1));
+        assertNotNull(qosMap);
+        assertEquals(FixturesTool.QOS_ID_1, qosMap.get(FixturesTool.DISK_PROFILE_1).getId());
+    }
 }

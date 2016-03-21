@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -550,32 +551,32 @@ public class VmDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testEmptyGetAllForCpuProfile() {
-        List<VM> result = dao.getAllForCpuProfile(Guid.newGuid());
+    public void testEmptyGetAllForCpuProfiles() {
+        List<VM> result = dao.getAllForCpuProfiles(Collections.singletonList(Guid.newGuid()));
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testGetAllForCpuProfile() {
-        List<VM> result = dao.getAllForCpuProfile(FixturesTool.CPU_PROFILE_1);
+    public void testGetAllForCpuProfiles() {
+        List<VM> result = dao.getAllForCpuProfiles(Collections.singleton(FixturesTool.CPU_PROFILE_1));
 
         assertNotNull(result);
         assertEquals(1, result.size());
     }
 
     @Test
-    public void testEmptyGetAllForDiskProfile() {
-        List<VM> result = dao.getAllForDiskProfile(Guid.newGuid());
+    public void testEmptyGetAllForDiskProfiles() {
+        List<VM> result = dao.getAllForDiskProfiles(Collections.singletonList(Guid.newGuid()));
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testGetAllForDiskProfile() {
-        List<VM> result = dao.getAllForDiskProfile(FixturesTool.DISK_PROFILE_1);
+    public void testGetAllForDiskProfiles() {
+        List<VM> result = dao.getAllForDiskProfiles(Collections.singleton(FixturesTool.DISK_PROFILE_1));
 
         assertNotNull(result);
         assertEquals(2, result.size());
