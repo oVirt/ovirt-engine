@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Named;
@@ -157,11 +158,11 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
     }
 
     @Override
-    public List<DiskImage> getAllForDiskProfile(Guid diskProfileId) {
+    public List<DiskImage> getAllForDiskProfiles(Collection<Guid> diskProfileIds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("disk_profile_id", diskProfileId);
+                .addValue("disk_profile_ids", createArrayOfUUIDs(diskProfileIds));
 
-        return getCallsHandler().executeReadList("GetAllForDiskProfile",
+        return getCallsHandler().executeReadList("GetAllForDiskProfiles",
                 DiskImageRowMapper.instance,
                 parameterSource);
     }

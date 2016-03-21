@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -51,6 +52,11 @@ public abstract class BaseDao {
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    protected Array createArrayOfUUIDs(Collection<Guid> guids) {
+        UUID[] uuids = guids.stream().map(Guid::getUuid).toArray(size -> new UUID[size]);
+        return createArrayOf("uuid", uuids);
     }
 
     /**

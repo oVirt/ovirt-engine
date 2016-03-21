@@ -2,7 +2,11 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -11,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDaoImpl.CinderDiskRowMapper;
 import org.ovirt.engine.core.dao.DiskImageDaoImpl.DiskImageRowMapper;
@@ -70,6 +75,25 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
         return getCallsHandler().executeReadList("GetDisksVmGuidBasicView",
                 DiskBasicViewRowMapper.instance,
                 parameterSource);
+    }
+
+    @Override
+    public Map<Guid, List<Disk>> getAllForVms(Collection<Guid> vmIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guids", createArrayOfUUIDs(vmIds));
+
+        List<Pair<Guid, Disk>> pairs = getCallsHandler().executeReadList(
+                "GetDisksVmGuids",
+                DisksForVmsRowMapper.instance,
+                parameterSource);
+
+        Map<Guid, List<Disk>> resultMap = new HashMap<>();
+        for (Pair<Guid, Disk> pair : pairs) {
+            resultMap.putIfAbsent(pair.getFirst(), new ArrayList<>());
+            resultMap.get(pair.getFirst()).add(pair.getSecond());
+        }
+
+        return resultMap;
     }
 
     @Override
@@ -186,6 +210,21 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
             disk.setId(getGuid(rs, "disk_id"));
 
             return disk;
+        }
+    }
+
+    private static class DisksForVmsRowMapper implements RowMapper<Pair<Guid, Disk>> {
+
+        static final DisksForVmsRowMapper instance = new DisksForVmsRowMapper();
+
+        private DisksForVmsRowMapper() {
+        }
+
+        @Override
+        public Pair<Guid, Disk> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Disk disk = DiskForVmRowMapper.instance.mapRow(rs, rowNum);
+            Guid vmId = new Guid(rs.getString("vm_id"));
+            return new Pair<>(vmId, disk);
         }
     }
 

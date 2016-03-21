@@ -9,6 +9,8 @@ import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.dao.FixturesTool.IMAGE_ID;
 import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -165,16 +167,17 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Test
-    public void testEmptyGetAllDisksByDiskProfile() {
-        List<DiskImage> diskImages = dao.getAllForDiskProfile(Guid.newGuid());
+    public void testEmptyGetAllDisksByDiskProfiles() {
+        List<DiskImage> diskImages = dao.getAllForDiskProfiles(Collections.singletonList(Guid.newGuid()));
 
         assertNotNull(diskImages);
         assertTrue(diskImages.isEmpty());
     }
 
     @Test
-    public void testGetAllDisksByDiskProfile() {
-        List<DiskImage> diskImages = dao.getAllForDiskProfile(FixturesTool.DISK_PROFILE_1);
+    public void testGetAllDisksByDiskProfiles() {
+        List<DiskImage> diskImages = dao.getAllForDiskProfiles(
+                Arrays.asList(FixturesTool.DISK_PROFILE_1, FixturesTool.DISK_PROFILE_2));
 
         assertNotNull(diskImages);
         assertEquals(6, diskImages.size());

@@ -484,7 +484,11 @@ public class VdsEventListener implements IVdsEventListener {
         }
         ThreadPoolUtil.execute(() -> {
             for (Guid vmId : vmIds) {
-                CpuQos qos = DbFacade.getInstance().getCpuQosDao().getCpuQosByVmId(vmId);
+
+                // This will be changed in next commit
+                CpuQos qos = DbFacade.getInstance().getCpuQosDao()
+                        .getCpuQosByVmIds(Collections.singleton(vmId)).get(vmId);
+
                 if (qos != null && qos.getCpuLimit() != null) {
                     resourceManagerProvider.get().runVdsCommand(VDSCommandType.UpdateVmPolicy,
                             new UpdateVmPolicyVDSParams(vdsId, vmId, qos.getCpuLimit().intValue()));

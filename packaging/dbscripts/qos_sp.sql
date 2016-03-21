@@ -320,34 +320,26 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetQosByDiskProfile (v_disk_profile_id UUID)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+CREATE OR REPLACE FUNCTION GetQosByDiskProfiles (v_disk_profile_ids UUID[])
+RETURNS SETOF qos_for_disk_profile_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT qos.*
-    FROM qos
-    INNER JOIN disk_profiles
-        ON qos.id = disk_profiles.qos_id
-    WHERE disk_profiles.id = v_disk_profile_id;
+    SELECT *
+    FROM qos_for_disk_profile_view
+    WHERE disk_profile_id = ANY(v_disk_profile_ids);
+
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetQosByVmId (v_vm_id UUID)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+CREATE OR REPLACE FUNCTION GetQosByVmIds (v_vm_ids UUID[])
+RETURNS SETOF qos_for_vm_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT qos.*
-    FROM qos
-    INNER JOIN cpu_profiles
-        ON qos.id = cpu_profiles.qos_id
-    INNER JOIN cluster
-        ON cluster.cluster_id = cpu_profiles.cluster_id
-    INNER JOIN vm_static
-        ON vm_static.vm_guid = v_vm_id
-    WHERE vm_static.cluster_id = cluster.cluster_id
-        AND vm_static.cpu_profile_id = cpu_profiles.id;
+    SELECT *
+    FROM qos_for_vm_view
+    WHERE vm_id = ANY(v_vm_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

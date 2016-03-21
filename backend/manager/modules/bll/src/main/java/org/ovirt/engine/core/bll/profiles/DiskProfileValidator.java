@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.profiles;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -100,7 +101,7 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
     }
 
     private ValidationResult validateUnattachedDisks() {
-        List<DiskImage> entities = getDbFacade().getDiskImageDao().getAllForDiskProfile(getProfile().getId());
+        List<DiskImage> entities = getDbFacade().getDiskImageDao().getAllForDiskProfiles(Collections.singletonList(getProfile().getId()));
         if (entities.isEmpty()) {
             return ValidationResult.VALID;
         }
@@ -131,6 +132,6 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
 
     @Override
     protected List<VM> getVmsUsingProfile() {
-        return getDbFacade().getVmDao().getAllForDiskProfile(getProfile().getId());
+        return getDbFacade().getVmDao().getAllForDiskProfiles(Collections.singletonList(getProfile().getId()));
     }
 }
