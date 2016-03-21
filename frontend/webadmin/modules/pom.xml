@@ -21,6 +21,7 @@
     <module>frontend-symbols</module>
   </modules>
   <properties>
+    <animal.sniffer.gwt.skip>false</animal.sniffer.gwt.skip>
     <!-- Directory where JSR-269 annotation processors generate their sources -->
     <generatedSourcesDirectory>generated-sources/annotations</generatedSourcesDirectory>
     <!-- Directory where GWT compiler generates normally-transient types for review (-gen compiler option) -->
@@ -111,16 +112,6 @@
             <encoding>${project.build.sourceEncoding}</encoding>
             <!-- We use maven-processor-plugin to invoke annotation processors -->
             <compilerArgument>-proc:none</compilerArgument>
-          </configuration>
-        </plugin>
-
-        <!-- Enable the check of the Java 7 signature that is disabled
-             by default: -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>animal-sniffer-maven-plugin</artifactId>
-          <configuration>
-            <skip>false</skip>
           </configuration>
         </plugin>
 

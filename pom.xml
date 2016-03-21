@@ -107,6 +107,9 @@
     <hamcrest.version>1.3</hamcrest.version>
     <reflections.version>0.9.9</reflections.version>
     <checkstyle.version>6.8</checkstyle.version>
+
+    <!-- Plugin configuration -->
+    <animal.sniffer.gwt.skip>true</animal.sniffer.gwt.skip>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -611,24 +614,6 @@
           </configuration>
         </plugin>
 
-        <!-- This plugin is used to check that the code doesn't use
-             classes or methods that aren't available in Java 7, as
-             Java 8 isn't supported by GWT. Note that by default
-             the check is disabled, it will be enabled in the specific
-             projects that require it: -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>animal-sniffer-maven-plugin</artifactId>
-          <version>1.14</version>
-          <configuration>
-            <signature>
-              <groupId>org.codehaus.mojo.signature</groupId>
-              <artifactId>java17</artifactId>
-              <version>1.0</version>
-            </signature>
-            <skip>true</skip>
-          </configuration>
-        </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -690,6 +675,33 @@
         </dependencies>
       </plugin>
 
+      <!-- This plugin is used to check that the code doesn't use
+           classes or methods that aren't available in Java 7, as
+           Java 8 isn't supported by GWT. Note that by default
+           the check is disabled, it will be enabled in the specific
+           projects that require it: -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.14</version>
+        <configuration>
+          <signature>
+            <groupId>org.codehaus.mojo.signature</groupId>
+            <artifactId>java17</artifactId>
+            <version>1.0</version>
+          </signature>
+          <skip>${animal.sniffer.gwt.skip}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>animal-sniffer</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
 
   </build>

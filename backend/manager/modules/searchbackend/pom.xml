@@ -12,6 +12,10 @@
 
   <name>Search Backend</name>
 
+  <properties>
+    <animal.sniffer.gwt.skip>false</animal.sniffer.gwt.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -49,17 +53,6 @@
             <source>1.7</source>
           </configuration>
         </plugin>
-
-        <!-- Enable the check of the Java 7 signature that is disabled
-             by default: -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>animal-sniffer-maven-plugin</artifactId>
-          <configuration>
-            <skip>false</skip>
-          </configuration>
-        </plugin>
-
       </plugins>
     </pluginManagement>
 

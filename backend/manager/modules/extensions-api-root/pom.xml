@@ -32,7 +32,7 @@
   </parent>
 
   <properties>
-    <animal.sniffer.signature>java17</animal.sniffer.signature>
+    <animal.sniffer.gwt.skip>false</animal.sniffer.gwt.skip>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
@@ -61,18 +61,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>animal-sniffer-maven-plugin</artifactId>
-          <version>1.9</version>
-          <configuration>
-            <signature>
-              <groupId>org.codehaus.mojo.signature</groupId>
-              <artifactId>${animal.sniffer.signature}</artifactId>
-              <version>1.0</version>
-            </signature>
-          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
