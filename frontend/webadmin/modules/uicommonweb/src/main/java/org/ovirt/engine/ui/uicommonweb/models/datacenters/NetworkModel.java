@@ -9,7 +9,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -236,12 +238,34 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         AsyncQuery getProvidersQuery = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result) {
-                List<Provider> providers = (List<Provider>) result;
+                List<Provider> providers = getNonReadOnlyExternalNetworkProviders(result);
                 getExternalProviders().setItems(providers);
                 selectExternalProvider();
             }
         });
         AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
+    }
+
+    private List<Provider> getNonReadOnlyExternalNetworkProviders(Object result) {
+        List<Provider> providers = new LinkedList();
+        for (Provider provider : (List<Provider>) result){
+            if (isExternalNetworkProviderReadOnly(provider)){
+                continue;
+            }
+            providers.add(provider);
+        }
+        return providers;
+    }
+
+    private boolean isExternalNetworkProviderReadOnly(Provider provider) {
+        if (provider.getType()==ProviderType.EXTERNAL_NETWORK){
+            ExternalNetworkProviderProperties properties =
+                    (ExternalNetworkProviderProperties) provider.getAdditionalProperties();
+            if (properties.getReadOnly()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public EntityModel<String> getName() {
