@@ -120,143 +120,131 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     protected boolean validate() {
-        boolean retVal = true;
         if (getVmTemplate() == null) {
-            retVal = false;
-        } else {
-            setDescription(getVmTemplateName());
+            return false;
         }
+        setDescription(getVmTemplateName());
+
         // check that the storage pool is valid
-        retVal = retVal && checkStoragePool();
-
-        if(retVal) {
-            retVal = validateTemplateArchitecture();
+        if (!checkStoragePool() || !validateTemplateArchitecture() || !isClusterCompatible()) {
+            return false;
         }
 
-        if (retVal) {
-            retVal = isClusterCompatible();
+        // set the source domain and check that it is ImportExport type and active
+        setSourceDomainId(getParameters().getSourceDomainId());
+        StorageDomainValidator sourceDomainValidator = new StorageDomainValidator(getSourceDomain());
+        if (!validate(sourceDomainValidator.isDomainExistAndActive())) {
+            return false;
         }
 
-        if (retVal) {
-            // set the source domain and check that it is ImportExport type and active
-            setSourceDomainId(getParameters().getSourceDomainId());
-            StorageDomainValidator sourceDomainValidator = new StorageDomainValidator(getSourceDomain());
-            retVal = validate(sourceDomainValidator.isDomainExistAndActive());
-        }
-
-        if (retVal && (getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport)
+        if ((getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport)
                 && !isImagesAlreadyOnTarget()) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            retVal = false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
-        if (retVal && !isImagesAlreadyOnTarget()) {
+        if (!isImagesAlreadyOnTarget()) {
             // Set the template images from the Export domain and change each image id storage is to the import domain
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
             VdcQueryReturnValue qretVal = runInternalQuery(
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
-            retVal = qretVal.getSucceeded();
-            if (retVal) {
-                Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
-                ArrayList<DiskImage> images = new ArrayList<>();
-                for (Map.Entry<VmTemplate, List<DiskImage>> entry : templates.entrySet()) {
-                    if (entry.getKey().getId().equals(getVmTemplate().getId())) {
-                        images = new ArrayList<>(entry.getValue());
-                        getVmTemplate().setInterfaces(entry.getKey().getInterfaces());
-                        getVmTemplate().setOvfVersion(entry.getKey().getOvfVersion());
-                        break;
-                    }
-                }
-                getParameters().setImages(images);
-                getVmTemplate().setImages(images);
-                ensureDomainMap(getImages(), getParameters().getDestDomainId());
-                HashMap<Guid, DiskImage> imageMap = new HashMap<>();
-                for (DiskImage image : images) {
-                    if (Guid.Empty.equals(image.getVmSnapshotId())) {
-                        retVal = failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
-                        break;
-                    }
-
-                    StorageDomain storageDomain =
-                            getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
-                    StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-                    retVal = validate(validator.isDomainExistAndActive()) &&
-                            validate(validator.domainIsValidDestination());
-                    if (!retVal) {
-                        break;
-                    }
-                    StorageDomainStatic targetDomain = storageDomain.getStorageStaticData();
-                    changeRawToCowIfSparseOnBlockDevice(targetDomain.getStorageType(), image);
-                    retVal = ImagesHandler.checkImageConfiguration(targetDomain, image,
-                            getReturnValue().getValidationMessages());
-                    if (!retVal) {
-                        break;
-                    } else {
-                        image.setStoragePoolId(getParameters().getStoragePoolId());
-                        image.setStorageIds(new ArrayList<>(Arrays.asList(storageDomain.getId())));
-                        imageMap.put(image.getImageId(), image);
-                    }
-                }
-                getVmTemplate().setDiskImageMap(imageMap);
+            if (!qretVal.getSucceeded()) {
+                return false;
             }
+
+            Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
+            ArrayList<DiskImage> images = new ArrayList<>();
+            for (Map.Entry<VmTemplate, List<DiskImage>> entry : templates.entrySet()) {
+                if (entry.getKey().getId().equals(getVmTemplate().getId())) {
+                    images = new ArrayList<>(entry.getValue());
+                    getVmTemplate().setInterfaces(entry.getKey().getInterfaces());
+                    getVmTemplate().setOvfVersion(entry.getKey().getOvfVersion());
+                    break;
+                }
+            }
+            getParameters().setImages(images);
+            getVmTemplate().setImages(images);
+            ensureDomainMap(getImages(), getParameters().getDestDomainId());
+            HashMap<Guid, DiskImage> imageMap = new HashMap<>();
+            for (DiskImage image : images) {
+                if (Guid.Empty.equals(image.getVmSnapshotId())) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                }
+
+                StorageDomain storageDomain =
+                        getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
+                StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+                if (!validate(validator.isDomainExistAndActive()) ||
+                        !validate(validator.domainIsValidDestination())) {
+                    return false;
+                }
+
+                StorageDomainStatic targetDomain = storageDomain.getStorageStaticData();
+                changeRawToCowIfSparseOnBlockDevice(targetDomain.getStorageType(), image);
+                if (!ImagesHandler.checkImageConfiguration(targetDomain, image,
+                        getReturnValue().getValidationMessages())) {
+                    return false;
+                }
+
+                image.setStoragePoolId(getParameters().getStoragePoolId());
+                image.setStorageIds(new ArrayList<>(Arrays.asList(storageDomain.getId())));
+                imageMap.put(image.getImageId(), image);
+            }
+            getVmTemplate().setDiskImageMap(imageMap);
         }
 
-        if (retVal && getParameters().isImportAsNewEntity()) {
+        if (getParameters().isImportAsNewEntity()) {
             initImportClonedTemplate();
         }
 
-        if (retVal) {
-            VmTemplate duplicateTemplate = getVmTemplateDao()
-                    .get(getParameters().getVmTemplate().getId());
-            // check that the template does not exists in the target domain
-            if (duplicateTemplate != null) {
-                addValidationMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS);
-                getReturnValue().getValidationMessages().add(
-                        String.format("$TemplateName %1$s", duplicateTemplate.getName()));
-                retVal = false;
-            } else if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
-                addValidationMessage(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
-                retVal = false;
-            }
+        VmTemplate duplicateTemplate = getVmTemplateDao()
+                .get(getParameters().getVmTemplate().getId());
+        // check that the template does not exists in the target domain
+        if (duplicateTemplate != null) {
+            return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS,
+                    String.format("$TemplateName %1$s", duplicateTemplate.getName()));
+        }
+        if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
+            return failValidation(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
         }
 
-        if (retVal) {
-            retVal = validateNoDuplicateDiskImages(getImages());
+        if (!validateNoDuplicateDiskImages(getImages())) {
+            return false;
         }
 
-        if (retVal && getImages() != null && !getImages().isEmpty() && !isImagesAlreadyOnTarget()) {
+        if (getImages() != null && !getImages().isEmpty() && !isImagesAlreadyOnTarget()) {
             if (!validateSpaceRequirements(getImages())) {
                 return false;
             }
         }
 
-        if (retVal) {
-            retVal = validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVmTemplate().getInterfaces()));
+        if (!validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVmTemplate().getInterfaces()))) {
+            return false;
         }
 
         // if this is a template version, check base template exist
-        if (retVal && !getVmTemplate().isBaseTemplate()) {
+        if (!getVmTemplate().isBaseTemplate()) {
             VmTemplate baseTemplate = getVmTemplateDao().get(getVmTemplate().getBaseTemplateId());
             if (baseTemplate == null) {
-                retVal = false;
-                addValidationMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
+                return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
             }
         }
 
-        if (retVal && !setAndValidateDiskProfiles()) {
+        if (!setAndValidateDiskProfiles()) {
             return false;
         }
 
-        if(retVal && !setAndValidateCpuProfile()) {
+        if (!setAndValidateCpuProfile()) {
             return false;
         }
 
-        if (!retVal) {
-            addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
-            addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
-        }
-        return retVal;
+        return true;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     protected boolean isClusterCompatible () {
