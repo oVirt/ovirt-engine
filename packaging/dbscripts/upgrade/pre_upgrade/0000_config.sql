@@ -589,7 +589,7 @@ select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
 select fn_db_add_config_value('VdcVersion','3.0.0.0','general');
 select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
 select fn_db_add_config_value('VdsCertificateValidityInYears','5','general');
-select fn_db_add_config_value('vdsConnectionTimeout','2','general');
+select fn_db_add_config_value('vdsConnectionTimeout','20','general');
 select fn_db_add_config_value('VdsMaxConnectionsPerHost','2','general');
 select fn_db_add_config_value('IrsMaxConnectionsPerHost','2','general');
 select fn_db_add_config_value('MaxTotalConnections','20','general');
@@ -987,6 +987,9 @@ select fn_db_update_default_config_value('vdsHeartbeatInSeconds','10','30','gene
 -- Update VM name length
 select fn_db_rename_config_key('MaxVmNameLengthNonWindows', 'MaxVmNameLength', 'general');
 select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep', 'general');
+
+-- Increase connection timeout from 2 to 20 seconds
+select fn_db_update_default_config_value('vdsConnectionTimeout','2','20','general',false);
 
 ------------------------------------------------------------------------------------
 --                  SCALE
