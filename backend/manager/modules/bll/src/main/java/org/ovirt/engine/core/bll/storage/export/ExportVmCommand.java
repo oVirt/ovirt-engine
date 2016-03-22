@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -345,7 +346,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
             Guid containerID, Guid storageDomainId, Guid imageId, Guid volumeId) {
         MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, imageId,
-                volumeId, getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+                volumeId, getParameters().getStorageDomainId(), ImageOperation.Copy);
         params.setParentCommand(getActionType());
         params.setCopyVolumeType(CopyVolumeType.LeafVol);
         params.setForceOverride(getParameters().getForceOverride());
@@ -369,7 +370,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryConfImage(
             Guid containerID, Guid storageDomainId, Guid imageId, Guid volumeId) {
         MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, imageId,
-                volumeId, getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+                volumeId, getParameters().getStorageDomainId(), ImageOperation.Copy);
         params.setParentCommand(getActionType());
         // This volume is always of type 'sparse' and format 'cow' so no need to convert,
         // and there're no snapshots for it so no reason to use copy collapse
@@ -398,7 +399,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForDisk(Guid containerID, DiskImage disk) {
         MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, disk.getId(),
-                disk.getImageId(), getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+                disk.getImageId(), getParameters().getStorageDomainId(), ImageOperation.Copy);
         params.setParentCommand(getActionType());
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setUseCopyCollapse(getParameters().getCopyCollapse());

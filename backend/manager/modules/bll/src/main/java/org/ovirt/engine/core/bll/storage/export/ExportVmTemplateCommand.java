@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
+import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -64,7 +65,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 // will set the original format
                 MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
                         .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
-                        getMoveOrCopyImageOperation());
+                        ImageOperation.Copy);
                 p.setParentCommand(getActionType());
                 p.setParentParameters(getParameters());
                 p.setEntityInfo(getParameters().getEntityInfo());

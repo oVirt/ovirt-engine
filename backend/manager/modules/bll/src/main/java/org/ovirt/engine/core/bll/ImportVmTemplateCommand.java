@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
+import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -379,7 +380,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                                 disk.getId(),
                                 disk.getImageId(),
                                 destinationDomain,
-                                getMoveOrCopyImageOperation());
+                                ImageOperation.Copy);
 
                 tempVar.setParentCommand(getActionType());
                 tempVar.setUseCopyCollapse(true);

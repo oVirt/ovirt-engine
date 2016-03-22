@@ -116,10 +116,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         sourceDomainId = storageId;
     }
 
-    protected ImageOperation getMoveOrCopyImageOperation() {
-        return ImageOperation.Copy;
-    }
-
     protected List<DiskImage> getTemplateDisks() {
         if (templateDisks == null && getVmTemplate() != null) {
             VmTemplateHandler.updateDisksFromDb(getVmTemplate());
@@ -241,7 +237,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     final Guid containerID, DiskImage disk) {
                 MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(
                         containerID, disk.getId(), disk.getImageId(),
-                        getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+                        getParameters().getStorageDomainId(), ImageOperation.Copy);
                 params.setParentCommand(getActionType());
                 params.setEntityInfo(getParameters().getEntityInfo());
                 params.setAddImageDomainMapping(true);
