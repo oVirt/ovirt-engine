@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -61,9 +63,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
@@ -86,11 +86,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     WidgetStyle style;
 
     @UiField
-    @WithElementId
-    DialogTab generalTab;
+    Row dataCenterRow;
 
     @UiField
-    FlowPanel dataCenterPanel;
+    @WithElementId
+    DialogTab generalTab;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
@@ -132,23 +132,15 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     ListModelListBoxEditor<ArchitectureType> architectureEditor;
 
-    @UiField
-    @Ignore
-    VerticalPanel servicesCheckboxPanel;
-
-    @UiField
+    @UiField(provided = true)
     @Path(value = "enableOvirtService.entity")
     @WithElementId("enableOvirtService")
     EntityModelCheckBoxEditor enableOvirtServiceEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "enableGlusterService.entity")
     @WithElementId("enableGlusterService")
     EntityModelCheckBoxEditor enableGlusterServiceEditor;
-
-    @UiField
-    @Ignore
-    VerticalPanel servicesRadioPanel;
 
     @UiField(provided = true)
     @Path(value = "enableOvirtService.entity")
@@ -265,7 +257,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     EntityModelRadioButtonEditor optimizationCustomEditor;
 
     @UiField
-    FlowPanel cpuThreadsPanel;
+    Row cpuThreadsRow;
 
     @UiField
     @Ignore
@@ -354,7 +346,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     EntityModelRadioButtonEditor optimizeForSpeedEditor;
 
     @UiField
-    HorizontalPanel allowOverbookingPanel;
+    Row allowOverbookingRow;
 
     @UiField(provided = true)
     @Path(value = "guarantyResources.entity")
@@ -486,14 +478,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         migrateOnErrorOption_YESEditor.addContentWidgetContainerStyleName(style.label());
         migrateOnErrorOption_HA_ONLYEditor.addContentWidgetContainerStyleName(style.label());
 
-        countThreadsAsCoresEditor.setContentWidgetContainerStyleName(style.fullWidth());
-        enableTrustedServiceEditor.setContentWidgetContainerStyleName(style.fullWidth());
-        enableHaReservationEditor.setContentWidgetContainerStyleName(style.fullWidth());
-        enableOptionalReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
-        enableHostMaintenanceReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
         additionalFeaturesExpanderContent.setStyleName(style.additionalFeaturesExpanderContent());
-        ksmPolicyForNumaEditor.addContentWidgetContainerStyleName(style.overrideRadioButtonPanelWidth());
-        ksmPolicyForNumaEditor.addLabelStyleName(style.overideRadioButtonLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -576,6 +561,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     private void initCheckBoxEditors() {
+        enableOvirtServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        enableGlusterServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
         importGlusterConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -621,8 +609,18 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.clusterSpiceProxyEnable());
-        spiceProxyOverrideEnabled = new EntityModelCheckBoxOnlyEditor();
-        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabled);
+        spiceProxyOverrideEnabled = new EntityModelCheckBoxOnlyEditor() {
+            @Override
+            public void setUsePatternFly(final boolean use) {
+                if (use) {
+                    // checkboxes don't use form-control
+                    getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
+                    removeContentWidgetStyleName(Styles.FORM_CONTROL);
+                }
+            }
+        };
+        spiceProxyOverrideEnabled.setUsePatternFly(true);
+        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabled, Align.LEFT);
 
         fencingEnabledInfo = new InfoIcon(
                 templates.italicText(constants.fencingEnabledInfo()));
@@ -645,7 +643,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             clusterPolicyTab.setVisible(false);
             consoleTab.setVisible(false);
             fencingPolicyTab.setVisible(false);
-            dataCenterPanel.addStyleName(style.generalTabTopDecoratorEmpty());
+            dataCenterRow.removeStyleName(style.generalTabTopDecorator());
         }
     }
 
@@ -659,8 +657,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         driver.edit(object);
         customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
 
-        servicesCheckboxPanel.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
-        servicesRadioPanel.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
+        enableOvirtServiceEditor.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
+        enableGlusterServiceEditor.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
+
+        enableOvirtServiceOptionEditor.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
+        enableGlusterServiceOptionEditor.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
 
         serialNumberPolicyEditor.edit(object.getSerialNumberPolicy());
 
@@ -713,7 +714,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                cpuThreadsPanel.setVisible(object.getVersionSupportsCpuThreads().getEntity());
+                cpuThreadsRow.setVisible(object.getVersionSupportsCpuThreads().getEntity());
             }
         });
 
@@ -723,7 +724,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         allowOverbookingInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
                 templates.italicText(object.getAllowOverbookingInfoMessage()).asString()
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
-        allowOverbookingPanel.setVisible(allowOverbookingEditor.isVisible());
+        allowOverbookingRow.setVisible(allowOverbookingEditor.isVisible());
 
         serialNumberPolicyEditor.setVisible(true);
 
@@ -778,29 +779,24 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     @Override
     public void allowClusterWithVirtGlusterEnabled(boolean value) {
-        servicesCheckboxPanel.setVisible(value);
-        servicesRadioPanel.setVisible(!value);
+        enableOvirtServiceEditor.setVisible(value);
+        enableGlusterServiceEditor.setVisible(value);
+        enableOvirtServiceOptionEditor.setVisible(!value);
+        enableGlusterServiceOptionEditor.setVisible(!value);
     }
 
     interface WidgetStyle extends CssResource {
         String label();
 
-        String generalTabTopDecoratorEmpty();
-
         String editorContentWidget();
-
-        String fullWidth();
 
         String timeTextBoxEditorWidget();
 
         String optimizationTabPanel();
 
+        String generalTabTopDecorator();
 
         String additionalFeaturesExpanderContent();
-
-        String overrideRadioButtonPanelWidth();
-
-        String overideRadioButtonLabel();
     }
 
     @Override

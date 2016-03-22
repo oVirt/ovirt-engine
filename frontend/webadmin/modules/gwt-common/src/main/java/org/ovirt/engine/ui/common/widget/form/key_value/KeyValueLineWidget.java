@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -81,6 +82,17 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
         keyField.hideLabel();
         valueField.hideLabel();
         valuesField.hideLabel();
+    }
+
+    public void setUsePatternFly(boolean use) {
+        keyField.setUsePatternFly(use);
+        valueField.setUsePatternFly(use);
+        valuesField.setUsePatternFly(use);
+        if (use) {
+            keyField.getElement().getStyle().setPaddingRight(5, Unit.PX);
+            valueField.getElement().getStyle().setPaddingRight(5, Unit.PX);
+            valuesField.getElement().getStyle().setPaddingRight(5, Unit.PX);
+        }
     }
 
     @Override

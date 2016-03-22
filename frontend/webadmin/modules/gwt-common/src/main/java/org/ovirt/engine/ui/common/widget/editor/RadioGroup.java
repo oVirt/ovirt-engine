@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.LabelElement;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -35,6 +38,7 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
     private K selectedValue;
     private K oldSelectedValue;
     private final String groupString;
+    private boolean usePatternfly = false;
 
     int tabIndex;
     char accessKey = 0;
@@ -58,6 +62,14 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
         if (selectedButton != null) {
             selectedButton.setFocus(focused);
         }
+    }
+
+    protected LabelElement getRadioButtonWidgetLabel(RadioButton radioButton) {
+        return LabelElement.as(Element.as(radioButton.getElement().getChild(1)));
+    }
+
+    public void setUsePatternFly(boolean use) {
+        usePatternfly = use;
     }
 
     @Override
@@ -124,6 +136,12 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
     private void updateButtons() {
         for (Map.Entry<K, RadioButton> entry : buttons.entrySet()) {
             RadioButton radioButton = entry.getValue();
+            if (usePatternfly) {
+                // patternfly hacks
+                Element.as(radioButton.getElement().getChild(0)).addClassName("cbe_checkbox_pfly_fix"); //$NON-NLS-1$
+                getRadioButtonWidgetLabel(radioButton).getStyle().setPaddingLeft(10, Unit.PX);
+                getRadioButtonWidgetLabel(radioButton).getStyle().setPosition(Position.RELATIVE);
+            }
             if (entry.getKey().equals(selectedValue)) {
                 radioButton.setValue(true);
 

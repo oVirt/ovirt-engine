@@ -51,9 +51,18 @@ public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveR
     }
 
     @Override
+    public void setUsePatternFly(boolean use) {
+        super.setUsePatternFly(use);
+        if (use) {
+            contentPanel.removeStyleName(contentPanel.getStyleName());
+        }
+    }
+
+    @Override
     protected KeyValueLineWidget createWidget(KeyValueLineModel value) {
         KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget(rowWidth, fieldWidth);
         keyValueLineWidget.edit(value);
+        keyValueLineWidget.setUsePatternFly(usePatternFly);
         widgets.add(keyValueLineWidget);
         return keyValueLineWidget;
     }

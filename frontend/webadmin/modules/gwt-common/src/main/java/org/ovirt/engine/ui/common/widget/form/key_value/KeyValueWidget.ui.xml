@@ -4,23 +4,23 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.AddRemoveRowWidget.WidgetStyle">
-	.margin {
-		margin-left: 10px;
-		margin-top: 10px;
-	}
-	 .buttonStyle {
-		margin-top: 6px;
-	 	margin-right: 7px;
-	 	width: 9px;
-	 	height: 10px;
-	 	padding-left: 2px;
-	 	padding-top: 2px;
-	 }
-	</ui:style>
+    <ui:style type="org.ovirt.engine.ui.common.widget.AddRemoveRowWidget.WidgetStyle">
+    .margin {
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+     .buttonStyle {
+        margin-top: 6px;
+        margin-right: 7px;
+        width: 9px;
+        height: 10px;
+        padding-left: 2px;
+        padding-top: 2px;
+    }
+    </ui:style>
 
-	<g:ScrollPanel ui:field="scrollPanel">
-		<g:FlowPanel ui:field="contentPanel" addStyleNames="{style.margin}"/>
-	</g:ScrollPanel>
+    <g:ScrollPanel ui:field="scrollPanel">
+        <g:FlowPanel ui:field="contentPanel" addStyleNames="{style.margin}"/>
+    </g:ScrollPanel>
 
 </ui:UiBinder>

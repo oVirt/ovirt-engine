@@ -102,6 +102,8 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     protected String contentWidgetContainerConfiguredTooltip = null;
 
+    protected boolean removeFormGroup = false;
+
     // width in PX -- only used in legacy mode
     public static final int CONTENT_WIDTH_LEGACY = 230;
 
@@ -145,6 +147,10 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         label.setFor(elementId);
     }
 
+    public void setRemoveFormGroup(final boolean removeFormGroup) {
+        this.removeFormGroup = removeFormGroup;
+    }
+
     public void setUsePatternFly(final boolean usePatternfly) {
         this.usePatternfly = usePatternfly;
         // toggle styles -- remove both PatternFly and non-PatternFly styles
@@ -160,7 +166,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         // add the proper styles
         if (usePatternfly) {
             addContentWidgetStyleName(Styles.FORM_CONTROL);
-            addWrapperStyleName(Styles.FORM_GROUP);
+            if (!removeFormGroup) {
+                addWrapperStyleName(Styles.FORM_GROUP);
+            }
         }
         else {
             addLabelStyleName(style.label_legacy());

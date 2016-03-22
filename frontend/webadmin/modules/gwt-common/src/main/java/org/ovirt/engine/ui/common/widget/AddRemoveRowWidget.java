@@ -68,6 +68,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     private boolean enabled;
     protected boolean showGhost = true;
     protected boolean showAddButton = true;
+    protected boolean usePatternFly = false;
 
     public AddRemoveRowWidget() {
         items = new LinkedList<>();
@@ -121,6 +122,10 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         }
     }
 
+    public void setUsePatternFly(boolean use) {
+        usePatternFly = use;
+    }
+
     private void updateEnabled() {
         for (Pair<T, V> item : items) {
             toggleEnabled(item.getFirst(), item.getSecond());
@@ -168,8 +173,8 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
         PushButton removeButton = createButton(item, false);
         AddRemoveRowPanel entry =
-                (lastItem && showAddButton) ? new AddRemoveRowPanel(widget, showAddButton, removeButton, createButton(item, true))
-                        : new AddRemoveRowPanel(widget, showAddButton, removeButton);
+                (lastItem && showAddButton) ? new AddRemoveRowPanel(widget, !usePatternFly, removeButton, createButton(item, true))
+                        : new AddRemoveRowPanel(widget, !usePatternFly, removeButton);
         contentPanel.add(entry);
 
         toggleEnabled(value, widget);

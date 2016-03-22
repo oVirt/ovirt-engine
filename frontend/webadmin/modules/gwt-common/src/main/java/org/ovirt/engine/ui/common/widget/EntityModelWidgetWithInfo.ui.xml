@@ -3,28 +3,35 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style>
-        .labelStyle {
-            padding: 0 5px;
+        .floatLeft {
+            float: left;
         }
 
         .infoIcon {
             display: inline-block;
+            margin-left: 5px;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        .floatRight {
+            float: right;
         }
     </ui:style>
 
-    <g:HorizontalPanel width="100%" height="30px">
-        <g:cell verticalAlignment="ALIGN_MIDDLE">
-            <g:FlowPanel width="100%">
-                <l:EnableableFormLabel ui:field="label" addStyleNames="{style.labelStyle}" />
+    <b:Container addStyleNames="{style.container}">
+        <b:Row>
+            <b:Column size="LG12" ui:field="contentColumn">
+                <l:EnableableFormLabel ui:field="label" addStyleNames="{style.floatLeft}" />
                 <d:InfoIcon ui:field="infoIcon" addStyleNames="{style.infoIcon}" />
-            </g:FlowPanel>
-        </g:cell>
-        <g:cell width="230px">
-            <g:Widget ui:field="contentWidget" />
-        </g:cell>
-    </g:HorizontalPanel>
+            </b:Column>
+        </b:Row>
+    </b:Container>
 
 </ui:UiBinder>
