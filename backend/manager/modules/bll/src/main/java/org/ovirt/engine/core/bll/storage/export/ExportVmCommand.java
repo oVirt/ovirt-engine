@@ -192,6 +192,21 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return validateSpaceRequirements(dummiesDisksList);
     }
 
+    /**
+     * Space Validations are done using data extracted from the disks. The disks in question in this command
+     * don't have all the needed data, and in order not to contaminate the command's data structures, an alter
+     * one is created specifically fo this validation - hence dummy.
+     */
+    protected List<DiskImage> createDiskDummiesForSpaceValidations(List<DiskImage> disksList) {
+        List<DiskImage> dummies = new ArrayList<>(disksList.size());
+        for (DiskImage image : disksList) {
+            Guid targetSdId = imageToDestinationDomainMap.get(image.getId());
+            DiskImage dummy = ImagesHandler.createDiskImageWithExcessData(image, targetSdId);
+            dummies.add(dummy);
+        }
+        return dummies;
+    }
+
     private List<DiskImage> getMemoryVolumes() {
         int numOfSnapshots = snapshotsWithMemory.size();
         long memorySize = numOfSnapshots * getVm().getTotalMemorySizeInBytes();
