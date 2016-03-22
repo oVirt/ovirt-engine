@@ -9,14 +9,17 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -68,6 +71,29 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             return false;
         }
         return super.validate();
+    }
+
+    private boolean validateUnregisteredEntity(VmTemplate entityFromConfiguration, OvfEntityData ovfEntityData) {
+        if (ovfEntityData == null && !getParameters().isImportAsNewEntity()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
+        }
+        if (entityFromConfiguration == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
+        }
+
+        for (DiskImage image : getImages()) {
+            StorageDomain sd = getStorageDomainDao().getForStoragePool(
+                    image.getStorageIds().get(0), getStoragePool().getId());
+            if (!validate(new StorageDomainValidator(sd).isDomainExistAndActive())) {
+                return false;
+            }
+        }
+        if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
+                    String.format("$domainId %1$s", getParameters().getStorageDomainId()),
+                    String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
+        }
+        return true;
     }
 
     private void setImagesWithStoragePoolId(Guid storagePoolId, List<DiskImage> diskImages) {

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -25,8 +24,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
@@ -78,29 +75,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
             templateDisks = getVmTemplate().getDiskList();
         }
         return templateDisks;
-    }
-
-    protected boolean validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData) {
-        if (ovfEntityData == null && !getParameters().isImportAsNewEntity()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
-        }
-        if (entityFromConfiguration == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
-        }
-
-        for (DiskImage image : getImages()) {
-            StorageDomain sd = getStorageDomainDao().getForStoragePool(
-                    image.getStorageIds().get(0), getStoragePool().getId());
-            if (!validate(new StorageDomainValidator(sd).isDomainExistAndActive())) {
-                return false;
-            }
-        }
-        if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
-                    String.format("$domainId %1$s", getParameters().getStorageDomainId()),
-                    String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
-        }
-        return true;
     }
 
     protected List<DiskImage> getImages() {
