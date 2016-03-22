@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.VmHandler;
-import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -29,7 +28,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -37,7 +35,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -96,49 +93,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         return templateDisks;
     }
 
-    @Override
-    protected boolean validate() {
-        if (getVmTemplate() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-        }
-
-        if (getTemplateDisks() != null && !getTemplateDisks().isEmpty()) {
-            ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
-            // check that images are ok
-            ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
-                    imageFromSourceDomainMap,
-                    null);
-            if (getVmTemplate().getDiskTemplateMap().values().size() != imageFromSourceDomainMap.size()) {
-                log.error("Can not found any default active domain for one of the disks of template with id '{}'",
-                        getVmTemplate().getId());
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
-            }
-
-            if (VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), null,
-                            getReturnValue().getValidationMessages(), true, true, true, false, getTemplateDisks())) {
-                setStoragePoolId(getVmTemplate().getStoragePoolId());
-                StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
-                if (!validate(sdValidator.isDomainExistAndActive())
-                        || !validate(sdValidator.isDomainWithinThresholds())
-                        || !(getParameters().getForceOverride() || (!isImagesAlreadyOnTarget() && checkIfDisksExist(getTemplateDisks())))
-                        || !validateFreeSpaceOnDestinationDomain(sdValidator, getTemplateDisks())) {
-                    return false;
-                }
-            }
-            if (DbFacade.getInstance()
-                            .getStoragePoolIsoMapDao()
-                            .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                                    getVmTemplate().getStoragePoolId())) == null) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
-            }
-        }
-        return true;
-    }
-
-    private StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
-        return new StorageDomainValidator(storageDomain);
-    }
-
     protected boolean validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData) {
         if (ovfEntityData == null && !getParameters().isImportAsNewEntity()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
@@ -168,10 +122,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
     protected boolean isImagesAlreadyOnTarget() {
         return getParameters().isImagesExistOnTargetStorageDomain();
-    }
-
-    private boolean validateFreeSpaceOnDestinationDomain(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
-        return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
 
     protected void moveOrCopyAllImageGroups() {
