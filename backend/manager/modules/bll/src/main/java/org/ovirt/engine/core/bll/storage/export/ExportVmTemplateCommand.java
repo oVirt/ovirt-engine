@@ -131,28 +131,28 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
-        boolean retVal = validate(storageDomainValidator.isDomainExistAndActive());
-
-        if (retVal) {
-            // export must be to export domain
-            if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
-                retVal = false;
-            }
+        if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+            return false;
         }
 
-        retVal = retVal && super.validate();
+        // export must be to export domain
+        if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
+        }
+
+        if (!super.validate()) {
+            return false;
+        }
 
         // check if template (with no override option)
-        if (retVal && !getParameters().getForceOverride()) {
-            retVal = !ExportVmCommand.checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
-                    getParameters().getStorageDomainId(), getVmTemplateId(), getContext().getEngineContext());
-            if (!retVal) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        if (!getParameters().getForceOverride()) {
+            if (!ExportVmCommand.checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
+                    getParameters().getStorageDomainId(), getVmTemplateId(), getContext().getEngineContext())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
 
-        return retVal;
+        return true;
     }
 
     @Override
