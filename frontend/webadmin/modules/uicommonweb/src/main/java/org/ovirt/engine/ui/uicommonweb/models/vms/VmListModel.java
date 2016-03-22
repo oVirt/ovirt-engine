@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
-import org.ovirt.engine.core.common.action.MoveVmParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
@@ -1011,7 +1011,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         for (Object a : getSelectedItems()) {
             VM vm = (VM) a;
-            MoveVmParameters parameter = new MoveVmParameters(vm.getId(), storageDomainId);
+            MoveOrCopyParameters parameter = new MoveOrCopyParameters(vm.getId(), storageDomainId);
             parameter.setForceOverride(model.getForceOverride().getEntity());
             parameter.setCopyCollapse(model.getCollapseSnapshots().getEntity());
             parameter.setTemplateMustExists(true);
@@ -1066,7 +1066,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             }
 
             for (VdcActionParametersBase item : parameters) {
-                MoveVmParameters parameter = (MoveVmParameters) item;
+                MoveOrCopyParameters parameter = (MoveOrCopyParameters) item;
                 parameter.setTemplateMustExists(false);
             }
 
@@ -1114,7 +1114,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
-            MoveVmParameters parameters = new MoveVmParameters(a.getId(), storageDomainId);
+            MoveOrCopyParameters parameters = new MoveOrCopyParameters(a.getId(), storageDomainId);
             parameters.setForceOverride(model.getForceOverride().getEntity());
             parameters.setCopyCollapse(model.getCollapseSnapshots().getEntity());
             parameters.setTemplateMustExists(false);

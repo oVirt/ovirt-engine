@@ -24,7 +24,7 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.MoveVmParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -90,7 +90,7 @@ public class BackendTemplateResource
     public Response export(Action action) {
         validateParameters(action, "storageDomain.id|name");
 
-        MoveVmParameters params = new MoveVmParameters(guid, getStorageDomainId(action));
+        MoveOrCopyParameters params = new MoveOrCopyParameters(guid, getStorageDomainId(action));
 
         if (action.isSetExclusive() && action.isExclusive()) {
             params.setForceOverride(true);

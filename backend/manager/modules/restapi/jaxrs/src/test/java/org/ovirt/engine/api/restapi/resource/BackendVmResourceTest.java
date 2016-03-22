@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
-import org.ovirt.engine.core.common.action.MoveVmParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -1017,7 +1017,7 @@ public class BackendVmResourceTest
                                 boolean exclusive,
                                 boolean discardSnapshots) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.ExportVm,
-                                           MoveVmParameters.class,
+                                           MoveOrCopyParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "ForceOverride", "CopyCollapse" },
                                            new Object[] { GUIDS[0], GUIDS[2], exclusive, discardSnapshots }));
 

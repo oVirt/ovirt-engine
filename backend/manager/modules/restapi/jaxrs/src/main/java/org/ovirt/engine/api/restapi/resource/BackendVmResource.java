@@ -67,7 +67,7 @@ import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
-import org.ovirt.engine.core.common.action.MoveVmParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -466,7 +466,7 @@ public class BackendVmResource
     public Response export(Action action) {
         validateParameters(action, "storageDomain.id|name");
 
-        MoveVmParameters params = new MoveVmParameters(guid, getStorageDomainId(action));
+        MoveOrCopyParameters params = new MoveOrCopyParameters(guid, getStorageDomainId(action));
 
         if (action.isSetExclusive() && action.isExclusive()) {
             params.setForceOverride(true);

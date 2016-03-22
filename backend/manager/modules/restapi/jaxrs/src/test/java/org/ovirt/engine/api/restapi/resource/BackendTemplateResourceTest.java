@@ -17,7 +17,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.core.common.action.MoveVmParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -342,7 +342,7 @@ public class BackendTemplateResourceTest
 
     protected void doTestExport(StorageDomain storageDomain, boolean exclusive) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.ExportVmTemplate,
-                MoveVmParameters.class,
+                MoveOrCopyParameters.class,
                 new String[]{"ContainerId", "StorageDomainId", "ForceOverride"},
                 new Object[]{GUIDS[0], GUIDS[2], exclusive}));
 
@@ -434,7 +434,7 @@ public class BackendTemplateResourceTest
 
     private void doTestExportAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.ExportVmTemplate,
-                                           MoveVmParameters.class,
+                                           MoveOrCopyParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "ForceOverride" },
                                            new Object[] { GUIDS[0], GUIDS[2], false },
                                            asList(GUIDS[1]),
