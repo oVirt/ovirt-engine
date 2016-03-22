@@ -80,6 +80,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private static final Pattern VALIDATE_MAC_ADDRESS =
             Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
+    /**
+     * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
+     * domain.
+     */
+    private final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
+
     @Inject
     private MacPoolPerDc poolPerDc;
 
