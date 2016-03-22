@@ -345,7 +345,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         return macPool;
     }
 
-    @Override
     protected List<DiskImage> getImages() {
         return getParameters().getImages();
     }

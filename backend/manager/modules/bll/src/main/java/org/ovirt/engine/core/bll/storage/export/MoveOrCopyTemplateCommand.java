@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.export;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,10 +70,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
             templateDisks = getVmTemplate().getDiskList();
         }
         return templateDisks;
-    }
-
-    protected List<DiskImage> getImages() {
-        return Collections.<DiskImage>emptyList();
     }
 
     protected boolean isImagesAlreadyOnTarget() {
