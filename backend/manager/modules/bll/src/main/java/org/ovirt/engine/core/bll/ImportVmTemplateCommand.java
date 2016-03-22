@@ -88,6 +88,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     private Version effectiveCompatibilityVersion;
     private MacPoolManagerStrategy macPool;
+    private StorageDomain sourceDomain;
+    private Guid sourceDomainId = Guid.Empty;
 
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -239,6 +241,17 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         return true;
+    }
+
+    protected StorageDomain getSourceDomain() {
+        if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
+            sourceDomain = getStorageDomainDao().getForStoragePool(sourceDomainId, getStoragePool().getId());
+        }
+        return sourceDomain;
+    }
+
+    protected void setSourceDomainId(Guid storageId) {
+        sourceDomainId = storageId;
     }
 
     @Override

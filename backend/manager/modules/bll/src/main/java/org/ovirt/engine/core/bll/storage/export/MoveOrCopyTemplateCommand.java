@@ -50,8 +50,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
     private List<PermissionSubject> permissionCheckSubject;
     private List<DiskImage> templateDisks;
-    private StorageDomain sourceDomain;
-    private Guid sourceDomainId = Guid.Empty;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -72,17 +70,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         imageFromSourceDomainMap = new HashMap<>();
-    }
-
-    protected StorageDomain getSourceDomain() {
-        if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
-            sourceDomain = getStorageDomainDao().getForStoragePool(sourceDomainId, getStoragePool().getId());
-        }
-        return sourceDomain;
-    }
-
-    protected void setSourceDomainId(Guid storageId) {
-        sourceDomainId = storageId;
     }
 
     protected List<DiskImage> getTemplateDisks() {
