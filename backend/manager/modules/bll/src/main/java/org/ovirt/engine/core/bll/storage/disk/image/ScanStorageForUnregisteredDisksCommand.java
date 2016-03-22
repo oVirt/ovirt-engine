@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -148,5 +149,16 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
 
     public DiskImageDao getDiskImageDao() {
         return diskImageDao;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__SCAN);
+    }
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_SCAN_STORAGE_DOMAIN_FOR_UNREGISTERED_DISKS
+                : AuditLogType.USER_SCAN_STORAGE_DOMAIN_FOR_UNREGISTERED_DISKS_FAILED;
     }
 }

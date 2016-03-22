@@ -979,6 +979,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action deactivate")
     String VAR__ACTION__DEACTIVATE();
 
+    @DefaultStringValue("$action scan")
+    String VAR__ACTION__SCAN();
+
     @DefaultStringValue("$action reconstruct master")
     String VAR__ACTION__RECONSTRUCT_MASTER();
 
