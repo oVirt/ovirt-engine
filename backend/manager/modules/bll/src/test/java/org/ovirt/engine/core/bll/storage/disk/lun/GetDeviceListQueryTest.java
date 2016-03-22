@@ -8,14 +8,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
@@ -28,9 +26,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     private LunDao lunDaoMock;
     private VDSBrokerFrontend vdsBrokerFrontendMock;
 
-    private Guid vdsId;
-    private StorageType storageType;
-
     // LUNs list retrieved from DB
     private List<LUNs> lunsFromDb;
 
@@ -41,12 +36,12 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     private List<LUNs> lunsExpected;
 
     /**
-     * Test query execution when LUNs filtering is enabled
+     * Test query execution when LUNs filtering is disabled
      */
     @Test
-    public void testExecuteQueryWithFilteringLUNsEnabled() {
+    public void testExecuteQueryWithFilteringLUNsDisabled() {
         // Create expected result
-        lunsExpected = Collections.emptyList();
+        lunsExpected = lunsInput;
 
         internalExecuteQuery();
     }
@@ -86,18 +81,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     }
 
     /**
-     * Prepare query parameters
-     */
-    private void prepareParameters() {
-
-        vdsId = Guid.newGuid();
-        when(getQueryParameters().getId()).thenReturn(vdsId);
-
-        storageType = StorageType.UNKNOWN;
-        when(getQueryParameters().getStorageType()).thenReturn(storageType);
-    }
-
-    /**
      * Create the input list of LUNs
      */
     private void createInputLUNs() {
@@ -122,7 +105,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         super.setUp();
 
         prepareMocks();
-        prepareParameters();
         createInputLUNs();
     }
 }

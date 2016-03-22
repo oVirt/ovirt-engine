@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
@@ -37,15 +36,15 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         }
 
         for (LUNs lun : luns) {
-            if (StringUtils.isNotEmpty(lun.getVolumeGroupId())) {
-                log.debug("LUN with GUID {} already has VG ID {}, so not returning it.",
-                        lun.getLUNId(), lun.getVolumeGroupId());
-            } else if (lunsFromDbById.containsKey(lun.getLUNId())) {
-                log.debug("LUN with GUID {} already exists in the DB, so not returning it.",
-                        lun.getLUNId());
-            } else {
-                returnValue.add(lun);
+            if (lunsFromDbById.containsKey(lun.getLUNId())) {
+                LUNs lunFromDb = lunsFromDbById.get(lun.getLUNId());
+                lun.setDiskId(lunFromDb.getDiskId());
+                lun.setDiskAlias(lunFromDb.getDiskAlias());
+                lun.setStorageDomainId(lunFromDb.getStorageDomainId());
+                lun.setStorageDomainName(lunFromDb.getStorageDomainName());
             }
+
+            returnValue.add(lun);
         }
 
         getQueryReturnValue().setReturnValue(returnValue);
