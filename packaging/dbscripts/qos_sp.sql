@@ -343,4 +343,15 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetHostNetworkQosOfMigrationNetworkByClusterId (v_cluster_id UUID)
+RETURNS SETOF host_network_qos_of_migration_network_by_cluster STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM host_network_qos_of_migration_network_by_cluster
+    WHERE cluster_id = v_cluster_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 

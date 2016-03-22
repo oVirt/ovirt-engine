@@ -206,4 +206,15 @@ public interface InterfaceDao extends Dao {
      *             the iscsi target id
      */
     List<VdsNetworkInterface> getIscsiIfacesByHostIdAndStorageTargetId(Guid hostId, String storageTargetId);
+
+    /**
+     * Retrieves all network interfaces such that they are
+     * <ul>
+     *     <li>part of a host in given cluster</li>
+     *     <li>and connected to a network that is marked as 'migrational' for given cluster</li>
+     * </ul>
+     * @param clusterId cluster id
+     * @return list of host network interfaces
+     */
+    List<VdsNetworkInterface> getAllMigrationNetworkInterfacesInCluster(Guid clusterId);
 }

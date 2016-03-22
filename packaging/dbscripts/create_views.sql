@@ -3590,6 +3590,27 @@ SELECT host_device.*,
         ) AS running_vm_name
 FROM host_device;
 
+CREATE OR REPLACE VIEW host_network_qos_of_migration_network_by_cluster AS
+
+SELECT network_cluster.cluster_id, qos.*
+FROM qos, network_cluster, network
+WHERE network_cluster.network_id = network.id
+      AND network_cluster.migration
+      AND network.qos_id = qos.id;
+
+CREATE OR REPLACE VIEW migration_network_interfaces AS
+
+SELECT vds_interface_view.*
+FROM vds_interface_view,
+    network_attachments,
+    network,
+    network_cluster
+WHERE vds_interface_view.id = network_attachments.nic_id
+      AND network_attachments.network_id = network.id
+      AND network.id = network_cluster.network_id
+      AND network_cluster.migration
+      AND network_cluster.cluster_id = vds_interface_view.cluster_id;
+
 CREATE OR REPLACE VIEW vm_host_device_view AS
 
 SELECT host_device.*,

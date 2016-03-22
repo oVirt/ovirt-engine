@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.qos.QosBaseDaoImpl;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -36,6 +37,15 @@ public class HostNetworkQosDaoImpl extends QosBaseDaoImpl<HostNetworkQos> implem
     @Override
     protected RowMapper<HostNetworkQos> createEntityRowMapper() {
         return HostNetworkQosDaoDbFacadaeImplMapper.MAPPER;
+    }
+
+    @Override
+    public HostNetworkQos getHostNetworkQosOfMigrationNetworkByClusterId(Guid clusterId) {
+        final MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId);
+        return getCallsHandler().executeRead("GetHostNetworkQosOfMigrationNetworkByClusterId",
+                createEntityRowMapper(),
+                parameterSource);
     }
 
     public static class HostNetworkQosDaoDbFacadaeImplMapper extends QosBaseDaoFacadaeImplMapper<HostNetworkQos> {

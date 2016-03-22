@@ -8,18 +8,30 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
+/**
+ * <a href="http://www.ovirt.org/develop/release-management/features/network/detailed-host-network-qos/">wiki doc</a>
+ */
 public class HostNetworkQos extends QosBase {
 
     private static final long serialVersionUID = -5062624700835301848L;
 
+    /**
+     * Unit: Mbps
+     */
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.MaxHostNetworkQosShares,
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
     private Integer outAverageLinkshare;
 
+    /**
+     * Unit: Mbps
+     */
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
     private Integer outAverageUpperlimit;
 
+    /**
+     * Unit: Mbps
+     */
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
     private Integer outAverageRealtime;

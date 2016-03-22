@@ -319,6 +319,13 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 getCustomMapSqlParameterSource().addValue("host_id", hostId).addValue("target_id", storageTargetId));
     }
 
+    @Override
+    public List<VdsNetworkInterface> getAllMigrationNetworkInterfacesInCluster(Guid clusterId) {
+        return getCallsHandler().executeReadList("GetAllMigrationNetworkInterfacesInCluster",
+                vdsNetworkInterfaceRowMapper,
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+    }
+
     private final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
             new RowMapper<VdsNetworkInterface>() {
                 @SuppressWarnings("unchecked")
