@@ -43,7 +43,7 @@ public enum ConfigValues {
      * be very quick in most networks.
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("2")
+    @DefaultValueAttribute("20")
     vdsConnectionTimeout,
 
     /**
