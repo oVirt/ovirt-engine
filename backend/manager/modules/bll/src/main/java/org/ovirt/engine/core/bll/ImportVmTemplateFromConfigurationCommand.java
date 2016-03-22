@@ -55,7 +55,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     public Guid getVmTemplateId() {
-        if (isImagesAlreadyOnTarget()) {
+        if (getParameters().isImagesExistOnTargetStorageDomain()) {
             return getParameters().getContainerId();
         }
         return super.getVmTemplateId();
@@ -67,7 +67,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         ArrayList<DiskImage> disks = new ArrayList(getVmTemplate().getDiskTemplateMap().values());
         setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
         getVmTemplate().setImages(disks);
-        if (isImagesAlreadyOnTarget() && !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
+        if (getParameters().isImagesExistOnTargetStorageDomain() &&
+                !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
             return false;
         }
         return super.validate();
@@ -144,7 +145,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     @Override
     public void executeCommand() {
         super.executeCommand();
-        if (isImagesAlreadyOnTarget()) {
+        if (getParameters().isImagesExistOnTargetStorageDomain()) {
             if (!getImages().isEmpty()) {
                 findAndSaveDiskCopies();
             }

@@ -165,7 +165,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
                 if (!validate(sdValidator.isDomainExistAndActive())
                         || !validate(sdValidator.isDomainWithinThresholds())
-                        || !(getParameters().getForceOverride() || (!isImagesAlreadyOnTarget() && checkIfDisksExist(getTemplateDisks())))
+                        || !(getParameters().getForceOverride()
+                        || (!getParameters().isImagesExistOnTargetStorageDomain() && checkIfDisksExist(getTemplateDisks())))
                         || !validateFreeSpaceOnDestinationDomain(sdValidator, getTemplateDisks())) {
                     return false;
                 }

@@ -72,10 +72,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         return templateDisks;
     }
 
-    protected boolean isImagesAlreadyOnTarget() {
-        return getParameters().isImagesExistOnTargetStorageDomain();
-    }
-
     protected void moveOrCopyAllImageGroups() {
         moveOrCopyAllImageGroups(getVmTemplateId(), getTemplateDisks());
     }
@@ -180,7 +176,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         }
         if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null) {
             for (DiskImage image : images) {
-                if (isImagesAlreadyOnTarget()) {
+                if (getParameters().isImagesExistOnTargetStorageDomain()) {
                     imageToDestinationDomainMap.put(image.getId(), image.getStorageIds().get(0));
                 } else if (!Guid.Empty.equals(defaultDomainId)) {
                     imageToDestinationDomainMap.put(image.getId(), defaultDomainId);
