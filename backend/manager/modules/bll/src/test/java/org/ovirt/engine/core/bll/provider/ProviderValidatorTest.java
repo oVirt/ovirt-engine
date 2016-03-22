@@ -13,10 +13,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProviderValidatorTest {
@@ -57,6 +60,28 @@ public class ProviderValidatorTest {
         Provider<AdditionalProperties> otherProvider = createProvider(provider.getName());
         when((Provider<AdditionalProperties>) providerDao.getByName(provider.getName())).thenReturn(otherProvider);
         assertThat(validator.nameAvailable(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+    }
+
+    @Test
+    public void testValidateReadOnlyActions() {
+
+        String providerName = "providerName";
+        ExternalNetworkProviderProperties additionalProperties = new ExternalNetworkProviderProperties();
+        additionalProperties.setReadOnly(true);
+        Provider<AdditionalProperties> provider = new Provider<> ();
+        provider.setAdditionalProperties(additionalProperties);
+        provider.setType(ProviderType.EXTERNAL_NETWORK);
+        provider.setName(providerName);
+        ProviderValidator validator = new ProviderValidator(provider);
+
+        EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_PROVIDER_IS_READ_ONLY;
+        assertThat(validator.validateReadOnlyActions(), failsWith(engineMessage,
+                ReplacementUtils.getVariableAssignmentString(engineMessage, providerName)));
+
+        additionalProperties.setReadOnly(false);
+        assertThat(validator.validateReadOnlyActions(), isValid());
+        provider.setType(ProviderType.OPENSTACK_NETWORK);
+        assertThat(validator.validateReadOnlyActions(), isValid());
     }
 
     @SuppressWarnings("unchecked")

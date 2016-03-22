@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll.provider;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class ProviderValidator {
 
@@ -40,5 +43,21 @@ public class ProviderValidator {
      */
     public ValidationResult validateRemoveProvider() {
         return ValidationResult.VALID;
+    }
+
+    /**
+     * Validate that this action can be performed for read only providers
+     */
+    public ValidationResult validateReadOnlyActions() {
+        if (provider.getType() != ProviderType.EXTERNAL_NETWORK){
+            return ValidationResult.VALID;
+        }
+        boolean isReadOnly = ((ExternalNetworkProviderProperties) provider.getAdditionalProperties()).getReadOnly();
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_PROVIDER_IS_READ_ONLY,
+                getProviderNameReplacement()).when(isReadOnly);
+    }
+
+    private String getProviderNameReplacement() {
+        return ReplacementUtils.getVariableAssignmentString(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_PROVIDER_IS_READ_ONLY, provider.getName());
     }
 }

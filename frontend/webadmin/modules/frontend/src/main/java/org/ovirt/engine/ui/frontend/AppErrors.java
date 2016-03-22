@@ -3884,5 +3884,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM is a hosted engine and editing is not allowed. See configuration value AllowEditingHostedEngine.")
     String ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED();
+
+    @DefaultStringValue("External network provider ${ACTION_TYPE_FAILED_EXTERNAL_PROVIDER_IS_READ_ONLY_ENTITY} is read only.")
+    String ACTION_TYPE_FAILED_EXTERNAL_PROVIDER_IS_READ_ONLY();
+
 }
 

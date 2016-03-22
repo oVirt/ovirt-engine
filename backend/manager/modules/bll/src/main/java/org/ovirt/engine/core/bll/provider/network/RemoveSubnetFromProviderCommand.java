@@ -52,7 +52,7 @@ public class RemoveSubnetFromProviderCommand<T extends ExternalSubnetParameters>
     protected boolean validate() {
         ProviderValidator validator = new ProviderValidator(getProvider());
 
-        return validate(validator.providerIsSet());
+        return validate(validator.providerIsSet()) && validate(validator.validateReadOnlyActions());
     }
 
     @Override

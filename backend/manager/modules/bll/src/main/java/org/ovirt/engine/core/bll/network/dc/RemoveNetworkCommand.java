@@ -3,10 +3,12 @@ package org.ovirt.engine.core.bll.network.dc;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
@@ -107,11 +110,22 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     protected boolean validate() {
         NetworkValidator validator = new NetworkValidator(vmDao, getNetworkDao().get(getNetwork().getId()));
+
         return validate(validator.networkIsSet(getParameters().getId()))
                 && validate(validator.notRemovingManagementNetwork())
                 && validate(validator.notIscsiBondNetwork())
                 && validate(validator.networkNotUsedByVms())
-                && validate(validator.networkNotUsedByTemplates());
+                && validate(validator.networkNotUsedByTemplates())
+                && validate(getRemoveExternalNetworkValidationResult());
+    }
+
+    private ValidationResult getRemoveExternalNetworkValidationResult() {
+        ProviderNetwork providerNetwork = getNetwork().getProvidedBy();
+        if (providerNetwork == null || !getParameters().isRemoveFromNetworkProvider()){
+            return ValidationResult.VALID;
+        }
+        ProviderValidator providerValidator = new ProviderValidator(getProvider());
+        return providerValidator.validateReadOnlyActions();
     }
 
     @Override

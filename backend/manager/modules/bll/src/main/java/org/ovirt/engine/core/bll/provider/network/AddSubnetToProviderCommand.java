@@ -46,7 +46,7 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
     protected boolean validate() {
         ProviderValidator validator = new ProviderValidator(getProvider());
 
-        return validate(validator.providerIsSet());
+        return validate(validator.providerIsSet()) && validate(validator.validateReadOnlyActions());
     }
 
     @Override

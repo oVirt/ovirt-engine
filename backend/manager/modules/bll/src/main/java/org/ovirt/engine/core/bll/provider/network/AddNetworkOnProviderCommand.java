@@ -45,7 +45,7 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
     protected boolean validate() {
         ProviderValidator validator = new ProviderValidator(getProvider());
 
-        return validate(validator.providerIsSet()) && super.validate();
+        return validate(validator.providerIsSet()) && validate(validator.validateReadOnlyActions()) && super.validate();
     }
 
     @Override
