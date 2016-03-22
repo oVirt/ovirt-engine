@@ -112,6 +112,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     protected void castDiskImagesToUnregisteredDisks(List<DiskImage> disksFromStorage) {
         if (disksFromStorage != null) {
             for (DiskImage disk : disksFromStorage) {
+                disk.getStorageIds().set(0, getStorageDomainId());
                 UnregisteredDisk unregisteredDisk = new UnregisteredDisk(disk, new ArrayList<>());
                 unregisteredDisks.add(unregisteredDisk);
             }

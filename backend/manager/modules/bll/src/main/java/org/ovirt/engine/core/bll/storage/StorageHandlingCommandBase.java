@@ -337,8 +337,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
     }
 
-    protected void castDiskImagesToUnregisteredDisks(List<DiskImage> disksFromStorage) {
+    protected void castDiskImagesToUnregisteredDisks(List<DiskImage> disksFromStorage, Guid storageDomainId) {
         for (DiskImage disk : disksFromStorage) {
+            disk.getStorageIds().set(0, storageDomainId);
             UnregisteredDisk unregisteredDisk = new UnregisteredDisk(disk);
             unregisteredDisks.add(unregisteredDisk);
         }
@@ -418,7 +419,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                         storageDomainId);
                 return ovfDisks;
             } else {
-                castDiskImagesToUnregisteredDisks(disksFromStorage);
+                castDiskImagesToUnregisteredDisks(disksFromStorage, storageDomainId);
             }
             for (Disk disk : disksFromStorage) {
                 DiskImage ovfStoreDisk = (DiskImage) disk;
