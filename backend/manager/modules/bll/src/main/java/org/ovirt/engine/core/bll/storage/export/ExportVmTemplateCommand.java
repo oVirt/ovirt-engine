@@ -268,7 +268,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(getImagesActionType(),
+            getBackend().endAction(VdcActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }

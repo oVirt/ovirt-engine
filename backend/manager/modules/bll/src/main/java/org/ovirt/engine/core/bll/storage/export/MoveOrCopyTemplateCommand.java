@@ -87,7 +87,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
                     VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                            getImagesActionType(),
+                            VdcActionType.CopyImageGroup,
                             buildModeOrCopyImageGroupParameters(containerID, disk));
 
                     getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
@@ -145,14 +145,10 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            getBackend().endAction(getImagesActionType(),
+            getBackend().endAction(VdcActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
-    }
-
-    protected VdcActionType getImagesActionType() {
-        return VdcActionType.CopyImageGroup;
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {
