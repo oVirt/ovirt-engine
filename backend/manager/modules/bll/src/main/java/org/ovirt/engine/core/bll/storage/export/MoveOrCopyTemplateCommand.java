@@ -170,12 +170,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         return getParameters().isImagesExistOnTargetStorageDomain();
     }
 
-    @Override
-    protected void setActionMessageParameters() {
-        addValidationMessage(EngineMessage.VAR__ACTION__COPY);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
-    }
-
     private boolean validateFreeSpaceOnDestinationDomain(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
         return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
