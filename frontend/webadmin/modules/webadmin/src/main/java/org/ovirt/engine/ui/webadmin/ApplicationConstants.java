@@ -1844,6 +1844,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Destroy")
     String destroyStorage();
 
+    @DefaultStringValue("Scan Disks")
+    String scanDisksStorage();
+
     @DefaultStringValue("Show Report")
     String showReportStorage();
 

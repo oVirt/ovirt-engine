@@ -126,6 +126,16 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         destroyCommand = value;
     }
 
+    private UICommand scanDisksCommand;
+
+    public UICommand getScanDisksCommand() {
+        return scanDisksCommand;
+    }
+
+    private void setScanDisksCommand(UICommand value) {
+        scanDisksCommand = value;
+    }
+
     @Inject
     public StorageListModel(final StorageGeneralModel storageGeneralModel,
             final StorageDataCenterListModel storageDataCenterListModel,
@@ -168,6 +178,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setDestroyCommand(new UICommand("Destroy", this)); //$NON-NLS-1$
+        setScanDisksCommand(new UICommand("ScanDisks", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -652,6 +663,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 model);
     }
 
+    private void scanDisks() {
+        StorageDomain storageDomain = getSelectedItem();
+        if (storageDomain != null) {
+            Frontend.getInstance().runAction(VdcActionType.ScanStorageForUnregisteredDisks,
+                    new StorageDomainParametersBase(storageDomain.getStoragePoolId(), storageDomain.getId()));
+        }
+    }
+
     private void onSave() {
         storageNameValidation();
     }
@@ -913,6 +932,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 && !items.get(0).getStorageType().isOpenStackDomain()
                 && item.getStatus() != StorageDomainStatus.Active);
 
+        getScanDisksCommand().setIsExecutionAllowed(item != null && items.size() == 1
+                && !items.get(0).getStorageType().isOpenStackDomain()
+                && item.getStatus() == StorageDomainStatus.Active);
+
         // System tree dependent actions.
         boolean isAvailable =
                 !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage);
@@ -920,6 +943,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         getNewDomainCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
         getDestroyCommand().setIsAvailable(isAvailable);
+        getScanDisksCommand().setIsAvailable(isAvailable);
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
@@ -959,6 +983,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
         else if (command == getDestroyCommand()) {
             destroy();
+        }
+        else if (command == getScanDisksCommand()) {
+            scanDisks();
         }
         else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();

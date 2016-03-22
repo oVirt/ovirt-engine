@@ -174,6 +174,13 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return getMainModel().getDestroyCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.scanDisksStorage(),
+                CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getScanDisksCommand();
+            }
+        });
         if (ReportInit.getInstance().isReportsEnabled()) {
             updateReportsAvailability();
         } else {
