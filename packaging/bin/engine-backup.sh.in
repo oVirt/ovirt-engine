@@ -1140,18 +1140,6 @@ verifyVersion() {
 		|| logdie "Backup version '${backup_version}' doesn't match installed version"
 }
 
-bz_cat() {
-	file="$1"
-
-	if [ -f "${file}" ]; then
-		cat < "${file}"
-	elif [ -f "${file}.bz2" ]; then
-		bzcat < "${file}.bz2"
-	else
-		logdie "${file} and ${file}.bz2 not found"
-	fi
-}
-
 provisionDB() {
 	local user="$1"
 	local host="$2"
