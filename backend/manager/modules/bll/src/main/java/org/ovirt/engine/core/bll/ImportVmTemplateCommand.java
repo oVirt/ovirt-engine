@@ -531,8 +531,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         case END_SUCCESS:
             return getSucceeded() ? AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE
                     : AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
+
+        default:
+            return AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
         }
-        return super.getAuditLogTypeValue();
     }
 
     @Override
