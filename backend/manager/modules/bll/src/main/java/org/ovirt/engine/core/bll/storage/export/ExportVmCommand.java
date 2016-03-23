@@ -120,8 +120,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         ImagesHandler.fillImagesBySnapshots(getVm());
 
         // check that the target and source domain are in the same storage_pool
-        if (getDbFacade().getStoragePoolIsoMapDao()
-                .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
+        if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getStoragePoolId())) == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             return false;
@@ -279,7 +278,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         if (interfaces != null) {
             // TODO remove this when the API changes
             interfaces.clear();
-            interfaces.addAll(getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
+            interfaces.addAll(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
 
         List<Guid> imageGroupIds = new ArrayList<>();
@@ -304,7 +303,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
 
         if (StringUtils.isEmpty(vm.getVmtName())) {
-            VmTemplate t = getDbFacade().getVmTemplateDao().get(vm.getVmtGuid());
+            VmTemplate t = getVmTemplateDao().get(vm.getVmtGuid());
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
@@ -542,8 +541,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private void endCopyCollapseOperations(VM vm) {
         vm.setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         vm.setVmtName(null);
-        Snapshot activeSnapshot = getDbFacade().getSnapshotDao().get(
-                getDbFacade().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
+        Snapshot activeSnapshot = getSnapshotDao().get(getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
         vm.setSnapshots(Arrays.asList(activeSnapshot));
 
         try {
@@ -558,7 +556,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     }
 
     private void updateSnapshotOvf(VM vm) {
-        vm.setSnapshots(getDbFacade().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
+        vm.setSnapshots(getSnapshotDao().getAllWithConfiguration(getVm().getId()));
         updateVmInSpm();
     }
 
