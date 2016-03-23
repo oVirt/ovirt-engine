@@ -389,6 +389,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                                                     .nameMustBeUniqueInvalidReason());
                                     model.getName().setIsValid(false);
                                     model.setValidTab(TabName.GENERAL_TAB, false);
+                                    model.fireValidationCompleteEvent();
                                     return;
                                 }
                                 String selectedCpu = model.getCustomCpu().getSelectedItem();

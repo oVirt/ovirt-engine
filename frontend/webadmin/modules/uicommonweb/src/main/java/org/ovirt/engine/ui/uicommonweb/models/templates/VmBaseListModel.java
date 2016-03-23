@@ -312,6 +312,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
                                             .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                                     model.getName().setIsValid(false);
                                     model.setValidTab(TabName.GENERAL_TAB, false);
+                                    model.fireValidationCompleteEvent();
                                 } else {
                                     model.getName()
                                             .getInvalidityReasons().clear();
