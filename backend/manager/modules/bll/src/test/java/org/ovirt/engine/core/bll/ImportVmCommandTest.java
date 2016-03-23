@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -99,7 +100,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void insufficientDiskSpaceWithCollapse() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(true).when(command).validateImages(any(Map.class));
+        doReturn(true).when(command).validateImages(anyMap());
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -109,7 +110,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void insufficientDiskSpaceWithSnapshots() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(true).when(command).validateImages(any(Map.class));
+        doReturn(true).when(command).validateImages(anyMap());
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -145,7 +146,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(cmd).getCluster();
-        doReturn(true).when(cmd).validateImages(any(Map.class));
+        doReturn(true).when(cmd).validateImages(anyMap());
 
         return cmd;
     }
@@ -200,7 +201,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void lowThresholdStorageSpace() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(true).when(command).validateImages(any(Map.class));
+        doReturn(true).when(command).validateImages(anyMap());
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(command,
