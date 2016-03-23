@@ -92,7 +92,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<>());
-        displayTypeMap.get(osId).put(null, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        displayTypeMap.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
@@ -191,7 +191,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         c.setClusterId(cluster.getId());
         c.getParameters().setClusterId(cluster.getId());
         osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
-                Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+                Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
         c.initEffectiveCompatibilityVersion();
         assertTrue(c.validateBallonDevice());
