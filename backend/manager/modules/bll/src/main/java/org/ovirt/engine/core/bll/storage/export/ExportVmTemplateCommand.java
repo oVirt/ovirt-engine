@@ -171,8 +171,10 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         case END_SUCCESS:
             return getSucceeded() ? AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE
                     : AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_FAILED;
+
+        default:
+            return AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_FAILED;
         }
-        return super.getAuditLogTypeValue();
     }
 
     @Override
