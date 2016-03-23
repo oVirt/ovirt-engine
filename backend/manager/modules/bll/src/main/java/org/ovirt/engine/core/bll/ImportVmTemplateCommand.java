@@ -67,7 +67,6 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -478,7 +477,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setStatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
         VmHandler.updateImportedVmUsbPolicy(getVmTemplate());
-        DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
+        getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;
         for (DiskImage image : getImages()) {
@@ -486,17 +485,17 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             ImageStorageDomainMap map = BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());
             getCompensationContext().snapshotNewEntity(map);
-            if (!DbFacade.getInstance().getBaseDiskDao().exists(image.getId())) {
+            if (!getBaseDiskDao().exists(image.getId())) {
                 image.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(image, getVmTemplateName(), count));
                 count++;
-                DbFacade.getInstance().getBaseDiskDao().save(image);
+                getBaseDiskDao().save(image);
                 getCompensationContext().snapshotNewEntity(image);
             }
 
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(image.getImageId());
             diskDynamic.setActualSize(image.getActualSizeInBytes());
-            DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
+            getDiskImageDynamicDao().save(diskDynamic);
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }
     }
@@ -567,7 +566,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected void endWithFailure() {
         removeNetwork();
         endActionOnAllImageGroups();
-        DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
+        getVmTemplateDao().remove(getVmTemplateId());
         setSucceeded(true);
     }
 
