@@ -233,7 +233,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
             }
         });
         cmd.poolPerDc = this.macPoolPerDc;
-        cmd.postConstruct();
+        cmd.init();
         validator = spy(new ImportValidator(parameters));
         doReturn(validator).when(cmd).getImportValidator();
         mockStoragePool();

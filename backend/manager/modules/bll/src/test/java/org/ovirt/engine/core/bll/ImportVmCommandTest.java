@@ -211,7 +211,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
         final ImportValidator validator = spy(new ImportValidator(parameters));
         ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(parameters, validator));
-        cmd.postConstruct();
+        cmd.init();
         parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
@@ -347,7 +347,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         parameters.getVm().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
         ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
-        command.postConstruct();
+        command.init();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -366,7 +366,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(true);
         ImportVmCommand<ImportVmParameters> command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
-        command.postConstruct();
+        command.init();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -374,7 +374,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
         command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
-        command.postConstruct();
+        command.init();
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -388,7 +388,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmParameters parameters = createParameters();
         ImportVmCommand<ImportVmParameters> command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
-        command.postConstruct();
+        command.init();
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
         diskImage.setStorageIds(new ArrayList<>());
@@ -419,7 +419,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
         ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
-        cmd.postConstruct();
+        cmd.init();
 
         DiskImage collapsedDisk = params.getVm().getImages().get(1);
 
@@ -441,7 +441,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         diskImage.setVmSnapshotId(Guid.Empty);
         ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
         cmd.poolPerDc = macPoolPerDc;
-        cmd.postConstruct();
+        cmd.init();
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -471,7 +471,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         params.setCopyCollapse(false);
         ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(
                 params));
-        cmd.postConstruct();
+        cmd.init();
 
         for (DiskImage image : params.getVm().getImages()) {
             doNothing().when(cmd).saveImage(image);
@@ -497,7 +497,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         params.setCopyCollapse(false);
         ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
-        cmd.postConstruct();
+        cmd.init();
 
         DiskImage activeDisk = params.getVm().getImages().get(0);
         doNothing().when(cmd).saveImage(activeDisk);
