@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -232,8 +233,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                 return Collections.emptyList();
             }
         });
-        cmd.poolPerDc = this.macPoolPerDc;
         cmd.init();
+        doReturn(mock(MacPoolManagerStrategy.class)).when(cmd).getMacPool();
         validator = spy(new ImportValidator(parameters));
         doReturn(validator).when(cmd).getImportValidator();
         mockStoragePool();

@@ -233,8 +233,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(cluster).when(cmd).getCluster();
         doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
 
-        when(macPoolPerDc.poolForDataCenter(any(Guid.class))).thenReturn(macPoolManagerStrategy);
-
         ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
         for (DiskImage image : parameters.getVm().getImages()) {
             image.setStorageIds(sdIds);
@@ -440,7 +438,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
         ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
-        cmd.poolPerDc = macPoolPerDc;
+        doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
         cmd.init();
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
