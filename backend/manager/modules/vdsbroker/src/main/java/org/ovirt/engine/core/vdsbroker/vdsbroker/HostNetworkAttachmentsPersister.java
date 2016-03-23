@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -20,6 +22,7 @@ public class HostNetworkAttachmentsPersister {
     private final NetworkAttachmentDao networkAttachmentDao;
     private final Guid hostId;
     private final List<NetworkAttachment> userNetworkAttachments;
+    private final Set<Guid> userRemovedNetworkAttachments;
     private final Map<String, VdsNetworkInterface> nicsByName;
 
     /**
@@ -37,17 +40,31 @@ public class HostNetworkAttachmentsPersister {
             Guid hostId,
             List<VdsNetworkInterface> nics,
             List<NetworkAttachment> userNetworkAttachments,
+            Set<Guid> userRemovedNetworkAttachments,
             List<Network> clusterNetworks) {
-
         this.networkAttachmentDao = networkAttachmentDao;
         this.hostId = hostId;
         this.userNetworkAttachments = userNetworkAttachments;
+        this.userRemovedNetworkAttachments = userRemovedNetworkAttachments;
         this.clusterNetworks = new BusinessEntityMap<>(clusterNetworks);
         nicsByName = Entities.entitiesByName(nics);
 
         reportedNetworksById = new HashMap<>();
         reportedNicsByNetworkId = new HashMap<>();
         initReportedNetworksAndNics(nics);
+    }
+
+    public HostNetworkAttachmentsPersister(NetworkAttachmentDao networkAttachmentDao,
+            Guid hostId,
+            List<VdsNetworkInterface> nics,
+            List<NetworkAttachment> userNetworkAttachments,
+            List<Network> clusterNetworks) {
+        this(networkAttachmentDao,
+                hostId,
+                nics,
+                userNetworkAttachments,
+                Collections.emptySet(),
+                clusterNetworks);
     }
 
     private void initReportedNetworksAndNics(List<VdsNetworkInterface> nics) {
@@ -65,9 +82,16 @@ public class HostNetworkAttachmentsPersister {
     public void persistNetworkAttachments() {
         List<NetworkAttachment> networkAttachments = networkAttachmentDao.getAllForHost(hostId);
         removeInvalidNetworkAttachmentsFromDb(networkAttachments);
+        removeUserRemovedNetworkAttachments();
 
         persistOrUpdateUserNetworkAttachments(networkAttachments);
         updateReportedNetworkAttachmentsNotMentionedInRequest(networkAttachments);
+    }
+
+    private void removeUserRemovedNetworkAttachments() {
+        for (Guid attachmentId : userRemovedNetworkAttachments) {
+            networkAttachmentDao.remove(attachmentId);
+        }
     }
 
     /**

@@ -660,6 +660,11 @@ public enum NetworkOperation {
         }
 
         @Override
+        public boolean isUnary() {
+            return true;
+        }
+
+        @Override
         public boolean isNullOperation() {
             return true;
         }

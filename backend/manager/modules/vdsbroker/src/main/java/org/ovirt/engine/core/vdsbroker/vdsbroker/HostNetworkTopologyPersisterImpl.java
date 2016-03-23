@@ -281,6 +281,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                 host.getId(),
                 host.getInterfaces(),
                 userConfiguredData.getNetworkAttachments(),
+                userConfiguredData.getRemovedNetworkAttachments(),
                 clusterNetworks);
     }
 

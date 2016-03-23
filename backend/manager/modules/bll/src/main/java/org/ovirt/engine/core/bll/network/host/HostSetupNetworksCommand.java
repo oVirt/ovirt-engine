@@ -735,7 +735,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private void persistNetworkChanges(final VDS updatedHost) {
         TransactionSupport.executeInNewTransaction(() -> {
             UserConfiguredNetworkData userConfiguredNetworkData =
-                new UserConfiguredNetworkData(getParameters().getNetworkAttachments(), applyUserConfiguredNics());
+                    new UserConfiguredNetworkData(getParameters().getNetworkAttachments(),
+                            getParameters().getRemovedNetworkAttachments(),
+                            applyUserConfiguredNics());
 
             // save the new network topology to DB
             hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
