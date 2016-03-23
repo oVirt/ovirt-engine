@@ -681,6 +681,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                                                 .nameMustBeUniqueInvalidReason());
                                 model.getName().setIsValid(false);
                                 model.setIsValid(false);
+                                model.fireValidationCompleteEvent();
                             }
                             else {
                                 postNameUniqueCheck(vm);

@@ -542,6 +542,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                                                 .nameMustBeUniqueInvalidReason());
                                 vmModel.getName().setIsValid(false);
                                 vmModel.setIsValid(false);
+                                vmModel.fireValidationCompleteEvent();
                                 stopProgress(target);
                             }
                             else {
@@ -927,6 +928,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             unitModel.getName().setIsValid(false);
                             unitModel.setIsValid(false);
                             unitModel.setValidTab(TabName.GENERAL_TAB, false);
+                            unitModel.fireValidationCompleteEvent();
                             stopProgress(target);
                         } else {
                             String selectedCpu = model.getCustomCpu().getSelectedItem();

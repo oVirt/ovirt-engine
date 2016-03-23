@@ -2769,8 +2769,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         boolean isValid = hwPartValid && vmInitIsValid && allTabsValid();
         getValid().setEntity(isValid);
-        ValidationCompleteEvent.fire(getEventBus(), this);
+        fireValidationCompleteEvent();
         return isValid;
+    }
+
+    public void fireValidationCompleteEvent() {
+        ValidationCompleteEvent.fire(getEventBus(), this);
     }
 
     private boolean validateNaming() {

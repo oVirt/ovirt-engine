@@ -590,6 +590,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                                                 .nameMustBeUniqueInvalidReason());
                                 model.getName().setIsValid(false);
                                 model.setValidTab(TabName.GENERAL_TAB, false);
+                                model.fireValidationCompleteEvent();
                                 return;
                             }
 

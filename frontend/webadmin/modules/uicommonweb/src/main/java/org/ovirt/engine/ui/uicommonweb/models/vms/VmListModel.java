@@ -1241,6 +1241,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                                                 .nameMustBeUniqueInvalidReason());
                                 VmModel.getName().setIsValid(false);
                                 VmModel.setIsValid(false);
+                                VmModel.fireValidationCompleteEvent();
                             }
                             else {
                                 vmListModel.postNameUniqueCheck();
