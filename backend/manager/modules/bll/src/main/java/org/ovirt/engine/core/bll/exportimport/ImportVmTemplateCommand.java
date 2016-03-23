@@ -1,8 +1,7 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +11,10 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
@@ -23,7 +26,6 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.export.MoveOrCopyTemplateCommand;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -108,7 +110,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         ImportUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
     }
 
-    protected ImportVmTemplateCommand(Guid commandId) {
+    public ImportVmTemplateCommand(Guid commandId) {
         super(commandId);
     }
 
@@ -118,11 +120,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     public void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
         this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
-    }
-
-    @Override
-    protected boolean validateSpaceRequirements(Collection<DiskImage> diskImages) {
-        return super.validateSpaceRequirements(diskImages);
     }
 
     @Override

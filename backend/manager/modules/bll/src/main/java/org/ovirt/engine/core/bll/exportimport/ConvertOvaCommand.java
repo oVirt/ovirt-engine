@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.exportimport;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ConvertOvaCommand<T extends ConvertOvaParameters> extends ConvertVmCommand<T> {
 
-    protected ConvertOvaCommand(Guid commandId) {
+    public ConvertOvaCommand(Guid commandId) {
         super(commandId);
     }
 

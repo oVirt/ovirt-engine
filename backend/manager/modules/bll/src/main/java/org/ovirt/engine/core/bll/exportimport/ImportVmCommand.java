@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
@@ -120,7 +125,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         getVmIsBeingImportedMessage()));
     }
 
-    protected ImportVmCommand(Guid commandId) {
+    public ImportVmCommand(Guid commandId) {
         super(commandId);
     }
 

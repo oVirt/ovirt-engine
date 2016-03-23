@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.exportimport;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,6 +8,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -54,7 +58,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private ConvertVmCallback cachedCallback;
 
-    protected ConvertVmCommand(Guid commandId) {
+    public ConvertVmCommand(Guid commandId) {
         super(commandId);
     }
 

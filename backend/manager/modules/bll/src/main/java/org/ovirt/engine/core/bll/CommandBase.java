@@ -724,7 +724,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
     }
 
-    void auditLog(AuditLogableBase logable, AuditLogType logType) {
+    protected void auditLog(AuditLogableBase logable, AuditLogType logType) {
         auditLogDirector.log(logable, logType);
     }
 

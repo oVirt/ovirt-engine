@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.exportimport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,6 +29,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.InjectorRule;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
@@ -363,7 +367,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 RandomUtils.instance().nextPropertyString(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE + 1);
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(true);
-        ImportVmCommand<ImportVmParameters> command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
         command.init();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
@@ -371,7 +375,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
-        command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
+        command = new ImportVmCommandStub(parameters);
         command.init();
         validate =
                 ValidationUtils.getValidator().validate(parameters,
@@ -385,7 +389,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmParameters parameters = createParameters();
-        ImportVmCommand<ImportVmParameters> command = new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(parameters);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommandStub(parameters);
         command.init();
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
@@ -416,7 +420,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
         cmd.init();
 
         DiskImage collapsedDisk = params.getVm().getImages().get(1);
@@ -437,7 +441,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         params.setCopyCollapse(Boolean.TRUE);
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
         doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
         cmd.init();
         doReturn(true).when(cmd).validateNoDuplicateVm();
@@ -467,7 +471,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandTest.ImportVmCommandStub(
                 params));
         cmd.init();
 
@@ -494,7 +498,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
 
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new org.ovirt.engine.core.bll.ImportVmCommandTest.ImportVmCommandStub(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommandStub(params));
         cmd.init();
 
         DiskImage activeDisk = params.getVm().getImages().get(0);
