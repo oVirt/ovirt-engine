@@ -14,7 +14,7 @@ API.
 Version 4 of the engine supports versions 3 and 4 of the API. Version 3
 of the API will be identical to the API currently provided by version
 3.6 of the engine. Version 4 will be different, as described in the
-<<Backwards compatibility breaking changes in oVirt 4.0, below>>.
+<<Backwards compatibility breaking changes in version 4 of the API, below>>.
 
 Users of the API can select the version using the HTTP `Version` header.
 The value of the header should be the version number. For example, to
@@ -78,10 +78,15 @@ POST /storagedomains/{storagedomain:id}/vms/{vm:id}/import;collapse_snapshots=tr
 </action>
 ----
 
-== Backwards compatibility breaking changes in oVirt 4.0
+== Backwards compatibility breaking changes in version 3 of the API
 
 This section enumerates the backwards compatibility breaking changes
-that have been done to the API in version 4.0 of the engine.
+that have been done in version 3 of the API.
+
+== Backwards compatibility breaking changes in version 4 of the API
+
+This section enumerates the backwards compatibility breaking changes
+that have been done to version 4 of the API.
 
 === Removed YAML support
 
