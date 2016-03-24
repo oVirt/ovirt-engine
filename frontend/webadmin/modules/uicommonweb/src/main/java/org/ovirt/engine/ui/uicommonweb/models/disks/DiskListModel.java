@@ -25,6 +25,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -35,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ExportRepoImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
@@ -128,6 +131,48 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     private void setCopyCommand(UICommand value) {
         privateCopyCommand = value;
     }
+    
+    
+    private UICommand privateUploadCommand;
+
+public UICommand getUploadCommand() {
+    return privateUploadCommand;
+}
+
+private void setUploadCommand(UICommand value) {
+    privateUploadCommand= value;
+}
+
+private UICommand privateCancelUploadCommand;
+
+public UICommand getCancelUploadCommand() {
+    return privateCancelUploadCommand;
+}
+
+private void setCancelUploadCommand(UICommand value) {
+    privateCancelUploadCommand = value;
+}
+
+private UICommand privatePauseUploadCommand;
+
+public UICommand getPauseUploadCommand() {
+    return privatePauseUploadCommand;
+}
+
+private void setPauseUploadCommand(UICommand value) {
+    privatePauseUploadCommand = value;
+}
+
+private UICommand privateResumeUploadCommand;
+
+public UICommand getResumeUploadCommand() {
+    return privateResumeUploadCommand;
+}
+
+private void setResumeUploadCommand(UICommand value) {
+    privateResumeUploadCommand = value;
+}
+
 
     private EntityModel<DiskStorageType> diskViewType;
 
@@ -181,6 +226,10 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
         setScanAlignmentCommand(new UICommand("Check Alignment", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
+        setUploadCommand(new UICommand("Upload", this)); //$NON-NLS-1$
+        setCancelUploadCommand(new UICommand("CancelUpload", this)); //$NON-NLS-1$
+        setPauseUploadCommand(new UICommand("PauseUpload", this)); //$NON-NLS-1$
+        setResumeUploadCommand(new UICommand("ResumeUpload", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -433,6 +482,53 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 },
                 this);
     }
+    
+    
+    private void upload() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        UploadImageModel.showUploadDialog(
+                this,
+                HelpTag.upload_disk_image,
+                null,
+                null);
+    }
+
+    private void resumeUpload() {
+        if (getSelectedItem() == null || getWindow() != null) {
+            return;
+        }
+
+        UploadImageModel.showUploadDialog(
+                this,
+                HelpTag.resume_upload_image,
+                null,
+                (DiskImage) getSelectedItem());
+    }
+
+    private void cancelUpload() {
+        UploadImageModel.showCancelUploadDialog(
+                this,
+                HelpTag.cancel_upload_image,
+                Linq.<DiskImage>cast(getSelectedItems()));
+    }
+
+    private void onCancelUpload() {
+        UploadImageModel.onCancelUpload(
+                (ConfirmationModel) getWindow(),
+                Linq.<DiskImage>cast(getSelectedItems()));
+    }
+
+    private void pauseUpload() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        UploadImageModel.pauseUploads(Linq.<DiskImage>cast(getSelectedItems()));
+    }
+
 
     private void updateActionAvailability() {
         Disk disk = getSelectedItem();
@@ -454,6 +550,12 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 getSelectedItems() != null ? (List) getSelectedItems() : null,
                 getSystemTreeSelectedItem(),
                 getChangeQuotaCommand());
+        
+
+        getCancelUploadCommand().setIsExecutionAllowed(UploadImageModel.isCancelAllowed(disks));
+        getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
+        getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
+
     }
 
     private boolean isDiskLocked(Disk disk) {
@@ -627,6 +729,22 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();
+        }
+        
+        else if (command == getUploadCommand()) {
+            upload();
+        }
+        else if (command == getCancelUploadCommand()) {
+            cancelUpload();
+        }
+        else if ("OnCancelUpload".equals(command.getName())) { //$NON-NLS-1$
+            onCancelUpload();
+        }
+        else if (command == getPauseUploadCommand()) {
+            pauseUpload();
+        }
+        else if (command == getResumeUploadCommand()) {
+            resumeUpload();
         }
     }
 

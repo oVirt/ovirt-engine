@@ -4272,6 +4272,28 @@ public class AsyncDataProvider {
                 ConfigurationValues.NetworkExclusivenessPermissiveValidation,
                 version);
     }
+    
+    
+    public int getUploadImageUiInactivityTimeoutInSeconds() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageUiInactivityTimeoutInSeconds);
+    }
+
+    public int getUploadImageChunkSizeKB() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageChunkSizeKB);
+    }
+
+    public int getUploadImageXhrTimeoutInSeconds() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrTimeoutInSeconds);
+    }
+
+    public int getUploadImageXhrRetryIntervalInSeconds() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrRetryIntervalInSeconds);
+    }
+
+    public int getUploadImageXhrMaxRetries() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrMaxRetries);
+    }
+
 
     private static final class QuotaConverter implements IAsyncConverter<List<Quota>> {
         private final Guid topId;

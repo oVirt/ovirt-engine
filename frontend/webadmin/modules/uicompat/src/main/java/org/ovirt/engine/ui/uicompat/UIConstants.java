@@ -724,6 +724,21 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Export Image(s)")
     String exportImagesTitle();
+    
+    @DefaultStringValue("Upload Image")
+    String uploadImageTitle();
+
+    @DefaultStringValue("Resume Uploading Image")
+    String uploadImageResumeTitle();
+
+    @DefaultStringValue("Cancel Upload(s)")
+    String uploadImageCancelTitle();
+
+    @DefaultStringValue("Are you sure you want to cancel uploading to the following disks?")
+    String uploadImageCancelConfirmationMessage();
+
+    @DefaultStringValue("There are image uploads in progress. Leaving the application will pause the uploads. Continue?")
+    String uploadImageLeaveWindowPopupWarning();
 
     @DefaultStringValue("Snapshots")
     String snapshotsTitle();

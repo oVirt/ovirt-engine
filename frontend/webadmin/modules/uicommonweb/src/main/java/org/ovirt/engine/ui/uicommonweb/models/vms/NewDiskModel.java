@@ -235,6 +235,10 @@ public class NewDiskModel extends AbstractDiskModel {
 
         return super.validate() && getSize().getIsValid() && getStorageDomain().getIsValid();
     }
+    
+    protected int getMinimumDiskSize() {
+        return 1;
+    }
 
     @Override
     protected void updateVolumeType(StorageType storageType) {

@@ -52,6 +52,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Storage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadImagePopupPresenterWidget;
+
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
@@ -200,12 +202,24 @@ public class StorageModule extends AbstractGinModule {
     public SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getStorageDiskListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<UploadImagePopupPresenterWidget> uploadImagePopupProvider,
+
             final Provider<StorageListModel> mainModelProvider,
             final Provider<StorageDiskListModel> modelProvider) {
 
         SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel> result =
                 new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel>(
                         eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageDiskListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getUploadCommand() || lastExecutedCommand == getModel().getResumeUploadCommand()) {
+                            return uploadImagePopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDiskListModel source,
                             UICommand lastExecutedCommand) {

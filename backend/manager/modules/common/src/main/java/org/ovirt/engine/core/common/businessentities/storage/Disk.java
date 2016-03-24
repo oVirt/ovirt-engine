@@ -34,6 +34,11 @@ public abstract class Disk extends BaseDisk {
     private Boolean plugged;
     private Boolean readOnly;
     private String logicalName;
+    
+    private ImageTransferPhase imageTransferPhase;
+    private Long imageTransferBytesSent;
+    private Long imageTransferBytesTotal;
+
 
     public Disk() {
         contentType = DiskContentType.DATA;
@@ -77,6 +82,29 @@ public abstract class Disk extends BaseDisk {
     }
 
     public abstract long getSize();
+    
+    public ImageTransferPhase getImageTransferPhase() {
+        return imageTransferPhase;
+    }
+    public void setImageTransferPhase(ImageTransferPhase imageTransferPhase) {
+        this.imageTransferPhase = imageTransferPhase;
+    }
+
+    public Long getImageTransferBytesSent() {
+        return imageTransferBytesSent;
+    }
+
+    public void setImageTransferBytesSent(Long imageTransferBytesSent) {
+        this.imageTransferBytesSent = imageTransferBytesSent;
+    }
+
+    public Long getImageTransferBytesTotal() {
+        return imageTransferBytesTotal;
+    }
+
+    public void setImageTransferBytesTotal(Long imageTransferBytesTotal) {
+        this.imageTransferBytesTotal = imageTransferBytesTotal;
+    }
 
     @Override
     public int hashCode() {
