@@ -1107,7 +1107,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         final int totalCpuCores = getTotalCpuCores();
         Collection<Integer> possCoresPerSocket = getModel().getCoresPerSocket().getItems();
 
-        if (threadsPerCore == 0 || totalCpuCores == 0 || possCoresPerSocket.isEmpty()) {
+        if (threadsPerCore == 0 || totalCpuCores == 0 || possCoresPerSocket == null || possCoresPerSocket.isEmpty()) {
             return;
         }
 
