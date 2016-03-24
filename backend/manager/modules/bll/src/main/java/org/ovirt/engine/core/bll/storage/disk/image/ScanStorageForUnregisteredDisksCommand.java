@@ -1,13 +1,17 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -15,9 +19,11 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
@@ -25,6 +31,11 @@ import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 
 public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
 
     @Inject
     private UnregisteredDisksDao unregisteredDisksDao;
@@ -161,5 +172,16 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_SCAN_STORAGE_DOMAIN_FOR_UNREGISTERED_DISKS
                 : AuditLogType.USER_SCAN_STORAGE_DOMAIN_FOR_UNREGISTERED_DISKS_FAILED;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        if (getParameters().getStorageDomainId() != null) {
+            return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        } else {
+            return Collections.EMPTY_MAP;
+        }
     }
 }
