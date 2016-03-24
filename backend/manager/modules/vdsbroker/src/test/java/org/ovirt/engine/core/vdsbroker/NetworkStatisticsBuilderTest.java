@@ -6,7 +6,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(Parameterized.class)
 public class NetworkStatisticsBuilderTest {
@@ -222,15 +222,15 @@ public class NetworkStatisticsBuilderTest {
     }
 
     private static double anyDouble() {
-        return 100 * RandomUtils.nextDouble();
+        return 100 * RandomUtils.instance().nextDouble();
     }
 
     private static int anyInt() {
-        return RandomUtils.nextInt();
+        return RandomUtils.instance().nextInt();
     }
 
     private static long anyLong() {
-        return RandomUtils.nextLong();
+        return RandomUtils.instance().nextLong();
     }
 
     private static NetworkInterface<NetworkStatistics> constructInterface(Double rxDrops,
