@@ -40,21 +40,21 @@ public class Regex {
 
     public static String replace(String searchString, String pageStringRegex, String format) {
         // TODO Auto-generated method stub
-        throw new NotImplementedException(); // juicommon
+        throw new UnsupportedOperationException(); // juicommon
     }
 
     public String replace(String searchClause, String string) {
         // TODO Auto-generated method stub
-        throw new NotImplementedException(); // juicommon
+        throw new UnsupportedOperationException(); // juicommon
     }
 
     public static boolean isMatch(String string, String expression, RegexOptions options) {
         // TODO Auto-generated method stub
-        throw new NotImplementedException(); // juicommon
+        throw new UnsupportedOperationException(); // juicommon
     }
 
     public static boolean isMatch(String searchString, String pageStringRegex, int ignorecase) {
         // TODO Auto-generated method stub
-        throw new NotImplementedException(); // juicommon
+        throw new UnsupportedOperationException(); // juicommon
     }
 }

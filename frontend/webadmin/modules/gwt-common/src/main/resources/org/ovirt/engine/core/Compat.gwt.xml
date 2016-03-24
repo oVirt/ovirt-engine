@@ -17,7 +17,6 @@
 		<include name="compat/IntegerCompat.java" />
 		<include name="compat/RefObject.java" />
 		<include name="compat/KeyValuePairCompat.java" />
-		<include name="compat/NotImplementedException.java" />
 		<include name="compat/TimeSpan.java" />
 		<include name="compat/WindowsJavaTimezoneMapping.java" />
 

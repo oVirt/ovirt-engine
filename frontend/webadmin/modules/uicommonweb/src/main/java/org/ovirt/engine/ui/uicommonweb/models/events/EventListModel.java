@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -288,7 +287,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         try {
             oldValueQueriable = ((IVdcQueryable) oldValue).getQueryableId();
             newValueQueriable = ((IVdcQueryable) newValue).getQueryableId();
-        } catch (NotImplementedException e) {
+        } catch (UnsupportedOperationException e) {
             return true;
         }
 

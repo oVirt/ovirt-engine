@@ -201,7 +201,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
     @Override
     public int compareTo(TimeSpan o) {
         // TODO Auto-generated method stub
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 }

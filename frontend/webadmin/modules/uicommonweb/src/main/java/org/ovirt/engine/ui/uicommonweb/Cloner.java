@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.Version;
 
 public final class Cloner {
@@ -68,7 +67,7 @@ public final class Cloner {
             return cloneClusterPolicy((ClusterPolicy) instance);
         }
         // Throw exception to determine development needs.
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     private static Object cloneVM(VM instance) {
