@@ -184,12 +184,13 @@ public class VdsBrokerObjectsBuilder {
      */
     public static ArrayList<VmNetworkInterface> buildVmNetworkInterfacesFromDevices(Map<String, Object> vmStruct) {
         ArrayList<VmNetworkInterface> nics = new ArrayList<>();
-        Object[] devices = (Object[]) vmStruct.get("devices");
+        Object[] devices = (Object[]) vmStruct.get(VdsProperties.Devices);
         if (devices != null) {
             for (Object device : devices) {
                 Map<String, Object> deviceMap = (Map<String, Object>) device;
                 if (VdsProperties.VM_INTERFACE_DEVICE_TYPE.equals(deviceMap.get(VdsProperties.Type))) {
                     VmNetworkInterface nic = new VmNetworkInterface();
+                    nic.setId(Guid.createGuidFromString((String)deviceMap.get(VdsProperties.DeviceId)));
                     nic.setMacAddress((String) deviceMap.get(VdsProperties.MAC_ADDR));
                     nic.setName((String) deviceMap.get(VdsProperties.Name));
                     // FIXME we can't deduce the network profile by the network name. its many to many.
@@ -206,7 +207,6 @@ public class VdsBrokerObjectsBuilder {
                     }
                     nics.add(nic);
                 }
-
             }
         }
         return nics;

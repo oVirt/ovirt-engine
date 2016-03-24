@@ -7,12 +7,15 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
@@ -198,6 +201,43 @@ public class VdsBrokerObjectBuilderTest {
         Map<String, Object> xml = setDisksStatsInXmlRpc(disksStats);
 
         validateDisksStatsList(getVds(), xml, true);
+    }
+
+    @Test
+    public void testAddNicWithId(){
+        String nicId = Guid.newGuid().toString();
+        Map<String, Object> vmStruct = createNicDeviceStruct(nicId);
+        validateVmNetworkInterfaceId(nicId, vmStruct);
+    }
+
+    @Test
+    public void testAddNicWithNullId(){
+        String nicId = null;
+        Map<String, Object> vmStruct = createNicDeviceStruct(nicId);
+        validateVmNetworkInterfaceId(nicId, vmStruct);
+    }
+
+    private Map<String, Object> createNicDeviceStruct(String nicId) {
+        Map<String, Object> device = new HashMap<>();
+        device.put(VdsProperties.DeviceId, nicId);
+        device.put(VdsProperties.Type, VdsProperties.VM_INTERFACE_DEVICE_TYPE);
+        device.put(VdsProperties.NIC_TYPE, VmInterfaceType.e1000.getInternalName());
+
+        Object[] devices = new Object[1];
+        devices[0] = device;
+
+        Map<String, Object> vmStruct = new HashMap<>();
+        vmStruct.put(VdsProperties.Devices, devices);
+        return vmStruct;
+    }
+
+    private void validateVmNetworkInterfaceId(String nicId, Map<String, Object> vmStruct) {
+        List<VmNetworkInterface> vmNetworkInterfaceList = VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct);
+        assertNotNull(vmNetworkInterfaceList);
+        assertEquals(1, vmNetworkInterfaceList.size());
+
+        VmNetworkInterface vmNetworkInterface = vmNetworkInterfaceList.get(0);
+        assertEquals(Guid.createGuidFromString(nicId), vmNetworkInterface.getId());
     }
 
     private static void validateDisksUsagesList(VmStatistics vmStatistics, Object[] disksUsages, Map<String, Object> xml) {
