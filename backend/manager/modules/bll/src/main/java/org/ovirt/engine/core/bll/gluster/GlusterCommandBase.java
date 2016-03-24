@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -123,7 +122,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected void propagateFailure(AuditLogType errType, List<String> errors) {
         errorType = errType;
         getReturnValue().getExecuteFailedMessages().addAll(errors);
-        getReturnValue().getFault().setMessage(StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
+        getReturnValue().getFault().setMessage(StringUtils.join(errors, System.lineSeparator()));
     }
 
     protected void handleVdsError(AuditLogType errType, String error) {

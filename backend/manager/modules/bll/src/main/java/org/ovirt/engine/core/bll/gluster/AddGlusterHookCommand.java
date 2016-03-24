@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -133,7 +132,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
             setSucceeded(false);
             errorType = AuditLogType.GLUSTER_HOOK_ADD_FAILED;
             handleVdsErrors(getAuditLogTypeValue(), errors);
-            addCustomValue(GlusterConstants.FAILURE_MESSAGE , StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
+            addCustomValue(GlusterConstants.FAILURE_MESSAGE , StringUtils.join(errors, System.lineSeparator()));
         } else {
             setSucceeded(true);
         }

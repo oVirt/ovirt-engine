@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -103,7 +102,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
             // conflict in status
             entity.addStatusConflict();
             handleVdsErrors(getAuditLogTypeValue(), errors);
-            addCustomValue(GlusterConstants.FAILURE_MESSAGE , StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
+            addCustomValue(GlusterConstants.FAILURE_MESSAGE , StringUtils.join(errors, System.lineSeparator()));
         }
 
         //The intention was to enable/disable hook. So we update the entity with new status if command succeeded
