@@ -30,6 +30,10 @@ public class ManageDomainsExecutor {
     public static void main(String... args) {
         setupLogger();
 
+        System.out.println("Legacy kerberos/ldap directory integration is obsoleted and will be removed in 4.0 "
+                + "version along with the engine-manage-domains utility. Please migrate to "
+                + "ovirt-engine-extension-aaa-ldap provider or contact support for assistance.\n");
+
         ArgumentsParser parser;
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(args));
         try {
