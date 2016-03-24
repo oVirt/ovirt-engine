@@ -200,6 +200,9 @@
 					</g:HorizontalPanel>
 				</g:VerticalPanel>
 
+				<ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" />
+				<ge:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
+
 				<g:AbsolutePanel ui:field="bootSequencePanel" addStyleNames="{style.bootSequencePanel}">
 					<g:Label ui:field="bootSequenceLabel" />
 
@@ -213,10 +216,7 @@
 						</g:PushButton>
 					</g:VerticalPanel>
 				</g:AbsolutePanel>
-
-        <ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" />
 				<ge:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
-				<ge:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 

@@ -163,7 +163,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Verify Password")
     String runOncePopupSysPrepPasswordVerificationLabel();
 
-    @DefaultStringValue("Boot Sequence:")
+    @DefaultStringValue("Predefined Boot Sequence:")
     String runOncePopupBootSequenceLabel();
 
     @DefaultStringValue("Use Cloud-Init")
@@ -2045,7 +2045,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Connect")
     String connect();
 
-    @DefaultStringValue("Enable boot menu")
+    @DefaultStringValue("Enable menu to select boot device")
     String bootMenuEnabled();
 
     @DefaultStringValue("This option sets the time zone offset of the guest hardware clock. " +
