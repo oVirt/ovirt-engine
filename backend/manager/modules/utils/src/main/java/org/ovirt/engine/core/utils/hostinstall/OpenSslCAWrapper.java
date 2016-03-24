@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,10 +61,9 @@ public class OpenSslCAWrapper {
             throw new RuntimeException("Certificate enrollment failed");
         }
 
-        return FileUtil.readAllText(
-            new File(new File(config.getPKIDir(), "certs"),
-            String.format("%s.cer", name)
-        ).getPath());
+        return new String(Files.readAllBytes(
+                Paths.get(config.getPKIDir().getPath(), "certs",
+                        String.format("%s.cer", name))));
     }
 
     public static String signOpenSSHCertificate(
@@ -84,10 +84,9 @@ public class OpenSslCAWrapper {
             throw new RuntimeException("OpenSSH certificate enrollment failed");
         }
 
-        return FileUtil.readAllText(
-            new File(new File(config.getPKIDir(), "certs"),
-            String.format("%s-cert.pub", name)
-        ).getPath());
+        return new String(Files.readAllBytes(
+                Paths.get(config.getPKIDir().getPath(), "certs",
+                        String.format("%s-cert.pub", name))));
     }
 
     public final boolean signCertificateRequest(

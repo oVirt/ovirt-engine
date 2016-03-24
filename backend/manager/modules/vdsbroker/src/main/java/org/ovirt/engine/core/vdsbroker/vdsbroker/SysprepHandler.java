@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -14,7 +17,6 @@ import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
-import org.ovirt.engine.core.utils.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,9 +170,10 @@ public final class SysprepHandler {
     private static String loadFile(String fileName) {
         String content = "";
         fileName = ConfigUtil.resolvePath(getSysprepDir(), fileName);
-        if (new File(fileName).exists()) {
+        Path path = Paths.get(fileName);
+        if (Files.exists(path)) {
             try {
-                content = FileUtil.readAllText(fileName);
+                content = new String(Files.readAllBytes(path));
             } catch (Exception e) {
                 log.error("Failed to read sysprep template '{}': {}", fileName, e.getMessage());
                 log.debug("Exception", e);
