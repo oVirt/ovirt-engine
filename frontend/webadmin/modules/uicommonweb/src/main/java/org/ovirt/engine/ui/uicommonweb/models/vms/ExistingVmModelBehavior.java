@@ -356,6 +356,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateCdImage();
     }
 
+    private void addCpuListeners() {
+        getModel().getTotalCPUCores().getEntityChangedEvent().addListener(getModel());
+        getModel().getNumOfSockets().getSelectedItemChangedEvent().addListener(getModel());
+    }
+
+    private void removeCpuListeners() {// remove if exists
+        getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());
+        getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
+    }
+
     @Override
     public void numOfSocketChanged() {
         if (isHotSetCpuSupported()) {
@@ -363,7 +373,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             int coresPerSocket = vm.getCpuPerSocket();
             int threadsPerCore = vm.getThreadsPerCpu();
 
+            removeCpuListeners();
             getModel().getTotalCPUCores().setEntity(Integer.toString(numOfSockets * coresPerSocket * threadsPerCore));
+            addCpuListeners();
         } else {
             super.numOfSocketChanged();
         }
@@ -375,20 +387,34 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             if (runningOnHost == null) {
                 return; //async call didn't return with the host yet
             }
-            // must not change the num of cpu per socket so the list has only 1 item
+
+            int totalCpuCores = getTotalCpuCores();
+            if (totalCpuCores == 0) {
+                return;
+            }
+
+            removeCpuListeners();
+
+            if ((totalCpuCores / vm.getThreadsPerCpu()) > getHostCpu()) {
+                totalCpuCores = getHostCpu() * vm.getThreadsPerCpu();
+                getModel().getTotalCPUCores().setEntity(Integer.toString(totalCpuCores));
+            }
+
+            // Do not change threads/cores
             List<Integer> coresPerSockets = Arrays.asList(new Integer[]{vm.getCpuPerSocket()});
             List<Integer> threadsPerCore = Arrays.asList(new Integer[]{vm.getThreadsPerCpu()});
 
             getModel().getThreadsPerCore().setItems(threadsPerCore);
             getModel().getCoresPerSocket().setItems(coresPerSockets);
-            getModel().getNumOfSockets().setItems(createSocketsRange());
-
             getModel().getThreadsPerCore().setSelectedItem(vm.getThreadsPerCpu());
             getModel().getCoresPerSocket().setSelectedItem(vm.getCpuPerSocket());
-            getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
 
-            getModel().getNumOfSockets().getSelectedItemChangedEvent().addListener(getModel());
-            numOfSocketChanged();
+            // change num of sockets
+            getModel().getNumOfSockets().setItems(createSocketsRange());
+            int sockets = totalCpuCores / (vm.getCpuPerSocket() * vm.getThreadsPerCpu());
+            getModel().getNumOfSockets().setSelectedItem(sockets);
+
+            addCpuListeners();
         } else {
             super.totalCpuCoresChanged();
         }
