@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
@@ -55,11 +54,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     protected VmTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmTemplateId(parameters.getVmTemplateId());
-    }
-
-    @Override
-    protected void executeCommand() {
-        throw new NotImplementedException();
     }
 
     public boolean isVmTemlateWithSameNameExist(String name, Guid datacenterId) {
