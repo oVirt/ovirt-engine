@@ -10,6 +10,16 @@
        <Bug code="RV"/>
      </Match>
 
+       <!--
+        findbugs complain that we are mapping to null value,
+        all places that work with the mapped value check that it is not null.
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.AddVmTemplateCommand" />
+       <Method name="endDefaultOperations"/>
+       <Bug code="NP"/>
+     </Match>
+
      <Match>
        <!--
         findbugs complain that we are not using the getBlockingQueue() return value,
