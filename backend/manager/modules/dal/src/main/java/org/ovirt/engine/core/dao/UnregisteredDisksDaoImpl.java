@@ -60,6 +60,7 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
         getCallsHandler().executeModification("InsertUnregisteredDisk",
                 getCustomMapSqlParameterSource()
                         .addValue("disk_id", disk.getDiskImage().getId())
+                        .addValue("image_id", disk.getDiskImage().getImageId())
                         .addValue("disk_alias", disk.getDiskImage().getDiskAlias())
                         .addValue("disk_description", disk.getDiskImage().getDiskDescription())
                         .addValue("creation_date", disk.getDiskImage().getCreationDate())
@@ -87,6 +88,7 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
             UnregisteredDisk entity = new UnregisteredDisk();
             DiskImage diskImage = new DiskImage();
             diskImage.setId(getGuid(rs, "disk_id"));
+            diskImage.setImageId(getGuid(rs, "image_id"));
             diskImage.setDiskAlias(rs.getString("disk_alias"));
             diskImage.setDiskDescription(rs.getString("disk_description"));
             diskImage.setActualSizeInBytes(rs.getLong("actual_size"));

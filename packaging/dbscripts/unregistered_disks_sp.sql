@@ -2,6 +2,7 @@
 -- [unregistered_ovf_of_entities] Table
 CREATE OR REPLACE FUNCTION InsertUnregisteredDisk (
     v_disk_id UUID,
+    v_image_id UUID,
     v_disk_alias VARCHAR(255),
     v_disk_description VARCHAR(255),
     v_storage_domain_id UUID,
@@ -17,6 +18,7 @@ AS $PROCEDURE$
 BEGIN
     INSERT INTO unregistered_disks (
         disk_id,
+        image_id,
         disk_alias,
         disk_description,
         storage_domain_id,
@@ -29,6 +31,7 @@ BEGIN
         )
     VALUES (
         v_disk_id,
+        v_image_id,
         v_disk_alias,
         v_disk_description,
         v_storage_domain_id,

@@ -4911,6 +4911,7 @@
 
     <table name="unregistered_disks">
         <column>disk_id</column>
+        <column>image_id</column>
         <column>disk_alias</column>
         <column>disk_description</column>
         <column>storage_domain_id</column>
@@ -4922,6 +4923,7 @@
         <column>size</column>
         <row>
             <value>88296e11-0cad-4e5a-9299-008a7b6f4388</value>
+            <value>88296e11-0cad-4e5a-9299-008a7b6f4599</value>
             <value>UnregisteredDisk</value>
             <value>This is an unregistered disk</value>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
@@ -4934,6 +4936,7 @@
         </row>
         <row>
             <value>98296e11-0cad-4e5a-9299-008a7b6f4389</value>
+            <value>88296e11-0cad-4e5a-9299-008a7b6f4699</value>
             <value>UnregisteredDisk2</value>
             <value>This is an unregistered disk number 2</value>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
@@ -4946,6 +4949,7 @@
         </row>
         <row>
             <value>10296e11-0cad-4e5a-9299-008a7b6f4310</value>
+            <value>88296e11-0cad-4e5a-9299-008a7b6f4799</value>
             <value>UnregisteredDisk3</value>
             <value>This is an unregistered disk number 3</value>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
@@ -4958,6 +4962,7 @@
         </row>
         <row>
             <value>10296e11-0cad-4e5a-9299-008a7b6f4311</value>
+            <value>88296e11-0cad-4e5a-9299-008a7b6f4899</value>
             <value>Disk without description</value>
             <value></value>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
@@ -4970,6 +4975,7 @@
         </row>
         <row>
             <value>10296e11-0cad-4e5a-9299-008a7b6f4312</value>
+            <value>88296e11-0cad-4e5a-9299-008a7b6f4999</value>
             <value></value>
             <value></value>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
