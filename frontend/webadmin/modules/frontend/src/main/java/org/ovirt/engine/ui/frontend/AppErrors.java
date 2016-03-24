@@ -2100,7 +2100,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Import Template failed - Template Name already exist in the system. Please rename the Template in the system first")
     String VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS();
 
-    @DefaultStringValue("Import VM failed - VM Id already exist in the system. Please remove the VM (${VmName}) from the system first")
+    @DefaultStringValue("Import VM failed - VM ID already exist in the system. Please remove the VM (${VmName}) from the system first")
     String VM_CANNOT_IMPORT_VM_EXISTS();
 
     @DefaultStringValue("Import VM failed - VM Name already exist in the system. Please rename the VM in the system first")

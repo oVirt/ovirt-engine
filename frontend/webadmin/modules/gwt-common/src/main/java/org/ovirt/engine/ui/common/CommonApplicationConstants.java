@@ -575,7 +575,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Name")
     String nameVmPopup();
 
-    @DefaultStringValue("VM Id")
+    @DefaultStringValue("VM ID")
     String vmIdPopup();
 
     @DefaultStringValue("Description")
@@ -1925,7 +1925,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("IO Threads Enabled")
     String ioThreadsEnabled();
 
-    @DefaultStringValue("VM Id")
+    @DefaultStringValue("VM ID")
     String vmId();
 
     @DefaultStringValue("CPU Shares")
