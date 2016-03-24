@@ -32,8 +32,12 @@ public class V3Application extends Application {
     private final Set<Object> singletons = new HashSet<>();
 
     public V3Application() throws Exception {
+        // Add the root server:
         V3SystemServer server = new V3SystemServer(BackendApiResource.getInstance());
         singletons.add(server);
+
+        // Add exception mappers:
+        singletons.add(new V3InvalidValueExceptionMapper());
     }
 
     @Override
