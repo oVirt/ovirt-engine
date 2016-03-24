@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 import org.springframework.jdbc.core.RowMapper;
@@ -76,11 +75,11 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
 
     @Override
     public void update(LUNStorageServerConnectionMap entity) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void remove(LUNStorageServerConnectionMapId id) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

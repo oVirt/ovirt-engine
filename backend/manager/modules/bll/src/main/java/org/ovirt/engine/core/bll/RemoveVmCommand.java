@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
@@ -451,7 +450,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     public void preventRollback() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

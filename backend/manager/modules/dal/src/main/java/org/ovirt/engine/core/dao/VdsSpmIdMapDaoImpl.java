@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -74,12 +73,12 @@ public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao{
 
     @Override
     public List<VdsSpmIdMap> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void update(VdsSpmIdMap entity) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     private static final class VdsSpmIdMapRowMapper implements RowMapper<VdsSpmIdMap> {

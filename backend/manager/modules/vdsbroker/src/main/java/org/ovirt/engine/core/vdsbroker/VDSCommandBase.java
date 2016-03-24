@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -122,6 +121,6 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
      * be overridden.
      */
     protected void executeCommandAsynchronously() {
-        throw new NotImplementedException(this.getClass().getName() + " does not provide setAsyncResult implementation");
+        throw new UnsupportedOperationException(this.getClass().getName() + " does not provide setAsyncResult implementation");
     }
 }

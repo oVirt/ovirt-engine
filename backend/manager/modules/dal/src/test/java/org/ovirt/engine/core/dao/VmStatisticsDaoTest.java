@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -99,7 +98,7 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
         assertNull(after);
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testGetAll() {
         dao.getAll();
     }

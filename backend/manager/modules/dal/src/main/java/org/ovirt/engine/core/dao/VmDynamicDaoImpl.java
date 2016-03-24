@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -76,7 +75,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
 
     @Override
     public List<VmDynamic> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

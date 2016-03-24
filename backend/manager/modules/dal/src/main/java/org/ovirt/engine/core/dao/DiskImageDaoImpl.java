@@ -9,7 +9,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -119,7 +118,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
 
     @Override
     public List<DiskImage> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

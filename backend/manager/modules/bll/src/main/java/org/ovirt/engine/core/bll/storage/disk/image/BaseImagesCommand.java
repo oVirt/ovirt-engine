@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -107,7 +106,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected VDSReturnValue performImageVdsmOperation() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     protected DiskImage getDestinationDiskImage() {

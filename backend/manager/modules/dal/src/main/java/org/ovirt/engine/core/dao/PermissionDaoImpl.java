@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -250,12 +249,12 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
 
     @Override
     public List<Permission> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void update(Permission entity) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     private static class PermissionRowMapper implements RowMapper<Permission> {

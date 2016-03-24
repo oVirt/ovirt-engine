@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VmBlockJob;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.VmJob;
@@ -27,7 +26,7 @@ public class VmJobDaoImpl extends MassOperationsGenericDao<VmJob, Guid> implemen
 
     @Override
     public VmJob get(Guid id) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

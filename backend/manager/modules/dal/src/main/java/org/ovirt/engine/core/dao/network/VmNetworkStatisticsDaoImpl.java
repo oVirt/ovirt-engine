@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -22,7 +21,7 @@ public class VmNetworkStatisticsDaoImpl extends NetworkStatisticsDaoImpl<VmNetwo
 
     @Override
     public List<VmNetworkStatistics> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,7 +29,7 @@ public class ImageStorageDomainMapDaoImpl extends BaseDao implements ImageStorag
 
     @Override
     public void update(ImageStorageDomainMap entity) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

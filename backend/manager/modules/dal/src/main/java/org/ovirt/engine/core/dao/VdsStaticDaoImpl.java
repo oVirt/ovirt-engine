@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -109,7 +108,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
 
     @Override
     public List<VdsStatic> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     private static final class VdsStaticRowMapper implements RowMapper<VdsStatic> {

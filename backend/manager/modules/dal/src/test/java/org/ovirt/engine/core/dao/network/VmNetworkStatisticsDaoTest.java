@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -110,7 +109,7 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
         assertNull(dao.get(INTERFACE_ID));
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testGetAll() throws Exception {
         dao.getAll();
     }

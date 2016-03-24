@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,7 +29,7 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
 
     @Override
     public List<VmInit> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

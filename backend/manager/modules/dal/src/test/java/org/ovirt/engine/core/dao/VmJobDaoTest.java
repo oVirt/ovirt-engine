@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmBlockJob;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
@@ -28,7 +27,7 @@ public class VmJobDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getVmJobDao();
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testGetForwardCompatibility() {
         dao.get(Guid.newGuid());
         fail("VmJobDao.get(Guid) isn't implemented yet. If you implement it, don't forget to implement this test too");

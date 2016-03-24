@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -160,7 +159,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         }
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testGetAll() {
         dao.getAll();
     }

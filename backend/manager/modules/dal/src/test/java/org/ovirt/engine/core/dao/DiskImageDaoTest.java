@@ -11,7 +11,6 @@ import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
 
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -66,7 +65,7 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Override
-    @Test(expected = NotImplementedException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testGetAll() {
         super.testGetAll();
     }

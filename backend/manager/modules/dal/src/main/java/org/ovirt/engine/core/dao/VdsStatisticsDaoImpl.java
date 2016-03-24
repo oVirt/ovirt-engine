@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -148,6 +147,6 @@ public class VdsStatisticsDaoImpl extends BaseDao implements VdsStatisticsDao {
 
     @Override
     public List<VdsStatistics> getAll() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }
