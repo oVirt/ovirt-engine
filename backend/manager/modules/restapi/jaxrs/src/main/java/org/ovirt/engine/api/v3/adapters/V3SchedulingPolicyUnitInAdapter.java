@@ -60,7 +60,7 @@ public class V3SchedulingPolicyUnitInAdapter implements V3Adapter<V3SchedulingPo
             to.getProperties().getProperties().addAll(adaptIn(from.getPropertiesMetaData().getProperties()));
         }
         if (from.isSetType()) {
-            to.setType(PolicyUnitType.valueOf(from.getType()));
+            to.setType(PolicyUnitType.fromValue(from.getType()));
         }
         return to;
     }

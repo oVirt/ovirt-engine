@@ -65,7 +65,7 @@ public class V3StorageConnectionInAdapter implements V3Adapter<V3StorageConnecti
             to.setNfsTimeo(from.getNfsTimeo());
         }
         if (from.isSetNfsVersion()) {
-            to.setNfsVersion(NfsVersion.valueOf(from.getNfsVersion()));
+            to.setNfsVersion(NfsVersion.fromValue(from.getNfsVersion()));
         }
         if (from.isSetPassword()) {
             to.setPassword(from.getPassword());
@@ -83,7 +83,7 @@ public class V3StorageConnectionInAdapter implements V3Adapter<V3StorageConnecti
             to.setTarget(from.getTarget());
         }
         if (from.isSetType()) {
-            to.setType(StorageType.valueOf(from.getType()));
+            to.setType(StorageType.fromValue(from.getType()));
         }
         if (from.isSetUsername()) {
             to.setUsername(from.getUsername());

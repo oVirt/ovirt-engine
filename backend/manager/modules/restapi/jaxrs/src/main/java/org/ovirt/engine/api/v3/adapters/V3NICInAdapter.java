@@ -38,7 +38,7 @@ public class V3NICInAdapter implements V3Adapter<V3NIC, Nic> {
             to.setActions(adaptIn(from.getActions()));
         }
         if (from.isSetBootProtocol()) {
-            to.setBootProtocol(BootProtocol.valueOf(from.getBootProtocol()));
+            to.setBootProtocol(BootProtocol.fromValue(from.getBootProtocol()));
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
@@ -56,7 +56,7 @@ public class V3NICInAdapter implements V3Adapter<V3NIC, Nic> {
             to.setInstanceType(adaptIn(from.getInstanceType()));
         }
         if (from.isSetInterface()) {
-            to.setInterface(NicInterface.valueOf(from.getInterface()));
+            to.setInterface(NicInterface.fromValue(from.getInterface()));
         }
         if (from.isSetLinked()) {
             to.setLinked(from.isLinked());

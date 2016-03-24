@@ -29,7 +29,7 @@ public class V3ConfigurationInAdapter implements V3Adapter<V3Configuration, Conf
             to.setData(from.getData());
         }
         if (from.isSetType()) {
-            to.setType(ConfigurationType.valueOf(from.getType()));
+            to.setType(ConfigurationType.fromValue(from.getType()));
         }
         return to;
     }

@@ -43,7 +43,7 @@ public class V3HostNICInAdapter implements V3Adapter<V3HostNIC, HostNic> {
             to.setBonding(adaptIn(from.getBonding()));
         }
         if (from.isSetBootProtocol()) {
-            to.setBootProtocol(BootProtocol.valueOf(from.getBootProtocol()));
+            to.setBootProtocol(BootProtocol.fromValue(from.getBootProtocol()));
         }
         if (from.isSetBridged()) {
             to.setBridged(from.isBridged());

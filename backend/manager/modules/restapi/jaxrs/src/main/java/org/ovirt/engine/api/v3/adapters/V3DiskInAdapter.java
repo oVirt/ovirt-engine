@@ -61,7 +61,7 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
             to.setDiskProfile(adaptIn(from.getDiskProfile()));
         }
         if (from.isSetFormat()) {
-            to.setFormat(DiskFormat.valueOf(from.getFormat()));
+            to.setFormat(DiskFormat.fromValue(from.getFormat()));
         }
         if (from.isSetId()) {
             to.setId(from.getId());
@@ -76,7 +76,7 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
             to.setInstanceType(adaptIn(from.getInstanceType()));
         }
         if (from.isSetInterface()) {
-            to.setInterface(DiskInterface.valueOf(from.getInterface()));
+            to.setInterface(DiskInterface.fromValue(from.getInterface()));
         }
         if (from.isSetLogicalName()) {
             to.setLogicalName(from.getLogicalName());
@@ -103,7 +103,7 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
             to.setReadOnly(from.isReadOnly());
         }
         if (from.isSetSgio()) {
-            to.setSgio(ScsiGenericIO.valueOf(from.getSgio()));
+            to.setSgio(ScsiGenericIO.fromValue(from.getSgio()));
         }
         if (from.isSetShareable()) {
             to.setShareable(from.isShareable());
@@ -129,7 +129,7 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
             to.getStorageDomains().getStorageDomains().addAll(adaptIn(from.getStorageDomains().getStorageDomains()));
         }
         if (from.isSetStorageType()) {
-            to.setStorageType(DiskStorageType.valueOf(from.getStorageType()));
+            to.setStorageType(DiskStorageType.fromValue(from.getStorageType()));
         }
         if (from.isSetTemplate()) {
             to.setTemplate(adaptIn(from.getTemplate()));

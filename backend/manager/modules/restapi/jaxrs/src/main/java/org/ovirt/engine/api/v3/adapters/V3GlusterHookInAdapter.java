@@ -54,7 +54,7 @@ public class V3GlusterHookInAdapter implements V3Adapter<V3GlusterHook, GlusterH
             to.setContent(from.getContent());
         }
         if (from.isSetContentType()) {
-            to.setContentType(HookContentType.valueOf(from.getContentType()));
+            to.setContentType(HookContentType.fromValue(from.getContentType()));
         }
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());
@@ -76,7 +76,7 @@ public class V3GlusterHookInAdapter implements V3Adapter<V3GlusterHook, GlusterH
             to.getServerHooks().getGlusterServerHooks().addAll(adaptIn(from.getServerHooks().getGlusterServerHooks()));
         }
         if (from.isSetStage()) {
-            to.setStage(HookStage.valueOf(from.getStage()));
+            to.setStage(HookStage.fromValue(from.getStage()));
         }
         if (from.isSetStatus()) {
             to.setStatus(adaptIn(from.getStatus()));

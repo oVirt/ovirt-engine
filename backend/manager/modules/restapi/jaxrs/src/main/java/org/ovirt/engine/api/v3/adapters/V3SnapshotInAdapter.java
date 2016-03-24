@@ -169,7 +169,7 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.getNics().getNics().addAll(adaptIn(from.getNics().getNics()));
         }
         if (from.isSetNumaTuneMode()) {
-            to.setNumaTuneMode(NumaTuneMode.valueOf(from.getNumaTuneMode()));
+            to.setNumaTuneMode(NumaTuneMode.fromValue(from.getNumaTuneMode()));
         }
         if (from.isSetOrigin()) {
             to.setOrigin(from.getOrigin());
@@ -262,7 +262,7 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(VmType.valueOf(from.getType()));
+            to.setType(VmType.fromValue(from.getType()));
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptIn(from.getUsb()));

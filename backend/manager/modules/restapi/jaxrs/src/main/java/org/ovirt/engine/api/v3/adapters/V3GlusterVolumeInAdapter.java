@@ -85,7 +85,7 @@ public class V3GlusterVolumeInAdapter implements V3Adapter<V3GlusterVolume, Glus
             to.getTransportTypes().getTransportTypes().addAll(adaptTransportTypes(from));
         }
         if (from.isSetVolumeType()) {
-            to.setVolumeType(GlusterVolumeType.valueOf(from.getVolumeType()));
+            to.setVolumeType(GlusterVolumeType.fromValue(from.getVolumeType()));
         }
         return to;
     }
@@ -93,7 +93,7 @@ public class V3GlusterVolumeInAdapter implements V3Adapter<V3GlusterVolume, Glus
     private List<TransportType> adaptTransportTypes(V3GlusterVolume from) {
         List<TransportType> results = new LinkedList<>();
         for (String s : from.getTransportTypes().getTransportTypes()) {
-            results.add(TransportType.valueOf(s));
+            results.add(TransportType.fromValue(s));
             }
         return results;
     }

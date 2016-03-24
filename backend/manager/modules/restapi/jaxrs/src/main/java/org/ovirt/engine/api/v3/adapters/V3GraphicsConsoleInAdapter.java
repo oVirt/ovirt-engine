@@ -58,7 +58,7 @@ public class V3GraphicsConsoleInAdapter implements V3Adapter<V3GraphicsConsole, 
             to.setPort(from.getPort());
         }
         if (from.isSetProtocol()) {
-            to.setProtocol(GraphicsType.valueOf(from.getProtocol()));
+            to.setProtocol(GraphicsType.fromValue(from.getProtocol()));
         }
         if (from.isSetTemplate()) {
             to.setTemplate(adaptIn(from.getTemplate()));

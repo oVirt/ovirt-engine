@@ -26,7 +26,7 @@ public class V3MethodInAdapter implements V3Adapter<V3Method, Method> {
     public Method adapt(V3Method from) {
         Method to = new Method();
         if (from.isSetId()) {
-            to.setId(SsoMethod.valueOf(from.getId()));
+            to.setId(SsoMethod.fromValue(from.getId()));
         }
         return to;
     }

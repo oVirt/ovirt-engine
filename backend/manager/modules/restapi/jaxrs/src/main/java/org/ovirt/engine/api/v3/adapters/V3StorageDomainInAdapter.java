@@ -85,10 +85,10 @@ public class V3StorageDomainInAdapter implements V3Adapter<V3StorageDomain, Stor
             to.setStorage(adaptIn(from.getStorage()));
         }
         if (from.isSetStorageFormat()) {
-            to.setStorageFormat(StorageFormat.valueOf(from.getStorageFormat()));
+            to.setStorageFormat(StorageFormat.fromValue(from.getStorageFormat()));
         }
         if (from.isSetType()) {
-            to.setType(StorageDomainType.valueOf(from.getType()));
+            to.setType(StorageDomainType.fromValue(from.getType()));
         }
         if (from.isSetUsed()) {
             to.setUsed(from.getUsed());

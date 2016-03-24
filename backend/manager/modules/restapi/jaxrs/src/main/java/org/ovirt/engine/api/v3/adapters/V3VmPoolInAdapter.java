@@ -73,7 +73,7 @@ public class V3VmPoolInAdapter implements V3Adapter<V3VmPool, VmPool> {
             to.setTemplate(adaptIn(from.getTemplate()));
         }
         if (from.isSetType()) {
-            to.setType(VmPoolType.valueOf(from.getType()));
+            to.setType(VmPoolType.fromValue(from.getType()));
         }
         if (from.isSetUseLatestTemplateVersion()) {
             to.setUseLatestTemplateVersion(from.isUseLatestTemplateVersion());

@@ -76,7 +76,7 @@ public class V3EventInAdapter implements V3Adapter<V3Event, Event> {
             to.setOrigin(from.getOrigin());
         }
         if (from.isSetSeverity()) {
-            to.setSeverity(LogSeverity.valueOf(from.getSeverity()));
+            to.setSeverity(LogSeverity.fromValue(from.getSeverity()));
         }
         if (from.isSetStorageDomain()) {
             to.setStorageDomain(adaptIn(from.getStorageDomain()));

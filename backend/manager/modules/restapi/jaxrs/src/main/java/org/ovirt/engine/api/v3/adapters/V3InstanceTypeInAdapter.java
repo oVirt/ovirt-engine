@@ -151,7 +151,7 @@ public class V3InstanceTypeInAdapter implements V3Adapter<V3InstanceType, Instan
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(VmType.valueOf(from.getType()));
+            to.setType(VmType.fromValue(from.getType()));
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptIn(from.getUsb()));

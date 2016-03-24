@@ -29,7 +29,7 @@ public class V3AgentConfigurationInAdapter implements V3Adapter<V3AgentConfigura
             to.setAddress(from.getAddress());
         }
         if (from.isSetBrokerType()) {
-            to.setBrokerType(MessageBrokerType.valueOf(from.getBrokerType()));
+            to.setBrokerType(MessageBrokerType.fromValue(from.getBrokerType()));
         }
         if (from.isSetNetworkMappings()) {
             to.setNetworkMappings(from.getNetworkMappings());

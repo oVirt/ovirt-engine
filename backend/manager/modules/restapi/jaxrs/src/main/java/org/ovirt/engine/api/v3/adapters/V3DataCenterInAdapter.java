@@ -57,13 +57,13 @@ public class V3DataCenterInAdapter implements V3Adapter<V3DataCenter, DataCenter
             to.setName(from.getName());
         }
         if (from.isSetQuotaMode()) {
-            to.setQuotaMode(QuotaModeType.valueOf(from.getQuotaMode()));
+            to.setQuotaMode(QuotaModeType.fromValue(from.getQuotaMode()));
         }
         if (from.isSetStatus()) {
             to.setStatus(adaptIn(from.getStatus()));
         }
         if (from.isSetStorageFormat()) {
-            to.setStorageFormat(StorageFormat.valueOf(from.getStorageFormat()));
+            to.setStorageFormat(StorageFormat.fromValue(from.getStorageFormat()));
         }
         if (from.isSetSupportedVersions()) {
             to.setSupportedVersions(new Versions());

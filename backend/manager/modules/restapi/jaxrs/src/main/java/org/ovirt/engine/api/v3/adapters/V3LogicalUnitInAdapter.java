@@ -59,7 +59,7 @@ public class V3LogicalUnitInAdapter implements V3Adapter<V3LogicalUnit, LogicalU
             to.setSize(from.getSize());
         }
         if (from.isSetStatus()) {
-            to.setStatus(LunStatus.valueOf(from.getStatus()));
+            to.setStatus(LunStatus.fromValue(from.getStatus()));
         }
         if (from.isSetStorageDomainId()) {
             to.setStorageDomainId(from.getStorageDomainId());

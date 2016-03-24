@@ -57,7 +57,7 @@ public class V3ReportedDeviceInAdapter implements V3Adapter<V3ReportedDevice, Re
             to.setName(from.getName());
         }
         if (from.isSetType()) {
-            to.setType(ReportedDeviceType.valueOf(from.getType()));
+            to.setType(ReportedDeviceType.fromValue(from.getType()));
         }
         if (from.isSetVm()) {
             to.setVm(adaptIn(from.getVm()));

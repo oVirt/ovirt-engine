@@ -59,7 +59,7 @@ public class V3OpenStackNetworkProviderInAdapter implements V3Adapter<V3OpenStac
             to.setPassword(from.getPassword());
         }
         if (from.isSetPluginType()) {
-            to.setPluginType(NetworkPluginType.valueOf(from.getPluginType()));
+            to.setPluginType(NetworkPluginType.fromValue(from.getPluginType()));
         }
         if (from.isSetProperties()) {
             to.setProperties(new Properties());

@@ -70,7 +70,7 @@ public class V3StorageInAdapter implements V3Adapter<V3Storage, HostStorage> {
             to.setNfsTimeo(from.getNfsTimeo());
         }
         if (from.isSetNfsVersion()) {
-            to.setNfsVersion(NfsVersion.valueOf(from.getNfsVersion()));
+            to.setNfsVersion(NfsVersion.fromValue(from.getNfsVersion()));
         }
         if (from.isSetOverrideLuns()) {
             to.setOverrideLuns(from.isOverrideLuns());
@@ -91,7 +91,7 @@ public class V3StorageInAdapter implements V3Adapter<V3Storage, HostStorage> {
             to.setTarget(from.getTarget());
         }
         if (from.isSetType()) {
-            to.setType(StorageType.valueOf(from.getType()));
+            to.setType(StorageType.fromValue(from.getType()));
         }
         if (from.isSetUsername()) {
             to.setUsername(from.getUsername());

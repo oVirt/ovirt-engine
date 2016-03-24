@@ -36,7 +36,7 @@ public class V3WatchDogInAdapter implements V3Adapter<V3WatchDog, Watchdog> {
             to.setActions(adaptIn(from.getActions()));
         }
         if (from.isSetAction()) {
-            to.setAction(WatchdogAction.valueOf(from.getAction()));
+            to.setAction(WatchdogAction.fromValue(from.getAction()));
         }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
@@ -54,7 +54,7 @@ public class V3WatchDogInAdapter implements V3Adapter<V3WatchDog, Watchdog> {
             to.setInstanceType(adaptIn(from.getInstanceType()));
         }
         if (from.isSetModel()) {
-            to.setModel(WatchdogModel.valueOf(from.getModel()));
+            to.setModel(WatchdogModel.fromValue(from.getModel()));
         }
         if (from.isSetName()) {
             to.setName(from.getName());

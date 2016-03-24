@@ -43,7 +43,7 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
             to.setAddress(from.getAddress());
         }
         if (from.isSetAutoNumaStatus()) {
-            to.setAutoNumaStatus(AutoNumaStatus.valueOf(from.getAutoNumaStatus()));
+            to.setAutoNumaStatus(AutoNumaStatus.fromValue(from.getAutoNumaStatus()));
         }
         if (from.isSetCertificate()) {
             to.setCertificate(adaptIn(from.getCertificate()));
@@ -96,7 +96,7 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
             to.getKatelloErrata().getKatelloErrata().addAll(adaptIn(from.getKatelloErrata().getKatelloErrata()));
         }
         if (from.isSetKdumpStatus()) {
-            to.setKdumpStatus(KdumpStatus.valueOf(from.getKdumpStatus()));
+            to.setKdumpStatus(KdumpStatus.fromValue(from.getKdumpStatus()));
         }
         if (from.isSetKsm()) {
             to.setKsm(adaptIn(from.getKsm()));
@@ -132,7 +132,7 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
             to.setPowerManagement(adaptIn(from.getPowerManagement()));
         }
         if (from.isSetProtocol()) {
-            to.setProtocol(HostProtocol.valueOf(from.getProtocol()));
+            to.setProtocol(HostProtocol.fromValue(from.getProtocol()));
         }
         if (from.isSetRootPassword()) {
             to.setRootPassword(from.getRootPassword());

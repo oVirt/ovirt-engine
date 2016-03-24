@@ -56,7 +56,7 @@ public class V3HardwareInformationInAdapter implements V3Adapter<V3HardwareInfor
     private List<RngSource> adaptRngSources(V3HardwareInformation from) {
         List<RngSource> results = new LinkedList<>();
         for (String s : from.getSupportedRngSources().getRngSources()) {
-            results.add(RngSource.valueOf(s));
+            results.add(RngSource.fromValue(s));
         }
         return results;
     }

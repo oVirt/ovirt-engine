@@ -40,7 +40,7 @@ public class V3GlusterServerHookInAdapter implements V3Adapter<V3GlusterServerHo
             to.setComment(from.getComment());
         }
         if (from.isSetContentType()) {
-            to.setContentType(HookContentType.valueOf(from.getContentType()));
+            to.setContentType(HookContentType.fromValue(from.getContentType()));
         }
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());

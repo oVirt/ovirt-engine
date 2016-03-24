@@ -26,7 +26,7 @@ public class V3VnicPassThroughInAdapter implements V3Adapter<V3VnicPassThrough, 
     public VnicPassThrough adapt(V3VnicPassThrough from) {
         VnicPassThrough to = new VnicPassThrough();
         if (from.isSetMode()) {
-            to.setMode(VnicPassThroughMode.valueOf(from.getMode()));
+            to.setMode(VnicPassThroughMode.fromValue(from.getMode()));
         }
         return to;
     }

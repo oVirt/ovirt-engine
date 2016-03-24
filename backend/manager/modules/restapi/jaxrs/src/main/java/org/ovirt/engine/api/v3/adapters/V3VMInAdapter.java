@@ -149,7 +149,7 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
             to.setNics(adaptIn(from.getNics()));
         }
         if (from.isSetNumaTuneMode()) {
-            to.setNumaTuneMode(NumaTuneMode.valueOf(from.getNumaTuneMode()));
+            to.setNumaTuneMode(NumaTuneMode.fromValue(from.getNumaTuneMode()));
         }
         if (from.isSetOrigin()) {
             to.setOrigin(from.getOrigin());
@@ -230,7 +230,7 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(VmType.valueOf(from.getType()));
+            to.setType(VmType.fromValue(from.getType()));
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptIn(from.getUsb()));

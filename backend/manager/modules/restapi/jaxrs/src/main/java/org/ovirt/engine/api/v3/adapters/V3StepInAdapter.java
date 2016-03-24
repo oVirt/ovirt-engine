@@ -47,7 +47,7 @@ public class V3StepInAdapter implements V3Adapter<V3Step, Step> {
             to.setExternal(from.isExternal());
         }
         if (from.isSetExternalType()) {
-            to.setExternalType(ExternalSystemType.valueOf(from.getExternalType()));
+            to.setExternalType(ExternalSystemType.fromValue(from.getExternalType()));
         }
         if (from.isSetId()) {
             to.setId(from.getId());
@@ -74,7 +74,7 @@ public class V3StepInAdapter implements V3Adapter<V3Step, Step> {
             to.setStatus(adaptIn(from.getStatus()));
         }
         if (from.isSetType()) {
-            to.setType(StepEnum.valueOf(from.getType()));
+            to.setType(StepEnum.fromValue(from.getType()));
         }
         return to;
     }

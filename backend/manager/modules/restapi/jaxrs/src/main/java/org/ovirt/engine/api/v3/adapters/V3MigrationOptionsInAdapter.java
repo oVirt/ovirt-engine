@@ -26,10 +26,10 @@ public class V3MigrationOptionsInAdapter implements V3Adapter<V3MigrationOptions
     public MigrationOptions adapt(V3MigrationOptions from) {
         MigrationOptions to = new MigrationOptions();
         if (from.isSetAutoConverge()) {
-            to.setAutoConverge(InheritableBoolean.valueOf(from.getAutoConverge()));
+            to.setAutoConverge(InheritableBoolean.fromValue(from.getAutoConverge()));
         }
         if (from.isSetCompressed()) {
-            to.setCompressed(InheritableBoolean.valueOf(from.getCompressed()));
+            to.setCompressed(InheritableBoolean.fromValue(from.getCompressed()));
         }
         return to;
     }
