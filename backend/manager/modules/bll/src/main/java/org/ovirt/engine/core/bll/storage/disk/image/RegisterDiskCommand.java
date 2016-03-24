@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -12,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
@@ -61,6 +66,15 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             addValidationMessageVariable("domainId", getParameters().getStorageDomainId());
             addValidationMessageVariable("domainType", getStorageDomain().getStorageDomainType());
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
+            return false;
+        }
+
+        if (getDiskDao().get(getParameters().getDiskImage().getId()) != null) {
+            String diskAlias =
+                    ImagesHandler.getDiskAliasWithDefault(getParameters().getDiskImage(),
+                            generateDefaultAliasForRegiteredDisk(Calendar.getInstance()));
+            addValidationMessageVariable("diskAliases", diskAlias);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
             return false;
         }
 
@@ -120,5 +134,16 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 getParameters().getDiskImage().getActualSize()));
 
         return list;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getDiskImage().getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }
