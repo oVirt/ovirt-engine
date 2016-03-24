@@ -4,14 +4,14 @@ import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 
-public class CreateVolumeContainerVDSCommand<P extends CreateVolumeVDSCommandParameters> extends StorageDomainMetadataCommand<P> {
+public class CreateVolumeContainerVDSCommand<P extends CreateVolumeVDSCommandParameters> extends StorageJobVDSCommand<P> {
 
     public CreateVolumeContainerVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected void executeDomainCommand() {
+    protected void executeVdsBrokerCommand() {
         StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
         setReturnValue(Guid.Empty);
 

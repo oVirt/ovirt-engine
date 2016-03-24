@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class IsolateVolumeVDSCommandParameters extends StorageDomainVdsCommandParameters {
+public class IsolateVolumeVDSCommandParameters extends StorageJobVdsCommandParameters {
     private Guid image;
     private Guid sourceImageGroupId;
     private Guid destImageGroupId;
@@ -10,8 +10,8 @@ public class IsolateVolumeVDSCommandParameters extends StorageDomainVdsCommandPa
     public IsolateVolumeVDSCommandParameters() {
     }
 
-    public IsolateVolumeVDSCommandParameters(Guid storageDomainId, Guid vdsId, Guid image, Guid sourceImageGroupId, Guid destImageGroupId) {
-        super(storageDomainId, vdsId);
+    public IsolateVolumeVDSCommandParameters(Guid storageDomainId, Guid image, Guid sourceImageGroupId, Guid destImageGroupId) {
+        super(storageDomainId);
         this.image = image;
         this.sourceImageGroupId = sourceImageGroupId;
         this.destImageGroupId = destImageGroupId;

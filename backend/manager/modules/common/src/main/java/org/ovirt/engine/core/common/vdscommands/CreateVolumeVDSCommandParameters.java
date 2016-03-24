@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateVolumeVDSCommandParameters extends StorageDomainVdsCommandParameters {
+public class CreateVolumeVDSCommandParameters extends StorageJobVdsCommandParameters {
 
     private long imageSizeInBytes;
     private Guid newImageID;

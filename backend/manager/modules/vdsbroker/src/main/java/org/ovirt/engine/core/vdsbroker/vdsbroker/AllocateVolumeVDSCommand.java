@@ -8,14 +8,14 @@ import java.util.Map;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.AllocateVolumeVDSCommandParameters;
 
-public class AllocateVolumeVDSCommand<P extends AllocateVolumeVDSCommandParameters> extends VdsBrokerCommand<P> {
+public class AllocateVolumeVDSCommand<P extends AllocateVolumeVDSCommandParameters> extends StorageJobVDSCommand<P> {
     public AllocateVolumeVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-//        log.info("-- executeDomainCommand: calling 'allocateVolume'");
+//        log.info("-- executeJobCommand: calling 'allocateVolume'");
 //        status = getBroker().allocateVolume(
 //                getParameters().getStoragePoolId().toString(),
 //                getParameters().getStorageDomainId().toString(),

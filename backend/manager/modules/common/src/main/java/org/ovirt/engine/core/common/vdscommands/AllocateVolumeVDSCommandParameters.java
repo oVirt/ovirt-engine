@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class AllocateVolumeVDSCommandParameters extends StorageDomainVdsCommandParameters {
+public class AllocateVolumeVDSCommandParameters extends StorageJobVdsCommandParameters {
     private Guid imageGroupId;
     private Guid volumeId;
     private long sizeInBytes;
