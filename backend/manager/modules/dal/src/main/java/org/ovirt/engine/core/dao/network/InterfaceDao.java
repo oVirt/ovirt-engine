@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao.network;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -208,13 +209,9 @@ public interface InterfaceDao extends Dao {
     List<VdsNetworkInterface> getIscsiIfacesByHostIdAndStorageTargetId(Guid hostId, String storageTargetId);
 
     /**
-     * Retrieves all network interfaces such that they are
-     * <ul>
-     *     <li>part of a host in given cluster</li>
-     *     <li>and connected to a network that is marked as 'migrational' for given cluster</li>
-     * </ul>
-     * @param clusterId cluster id
-     * @return list of host network interfaces
+     * @param hostId id of host
+     * @return host network interface of the host that is in state "Up" and is attached
+     *         to a migration network
      */
-    List<VdsNetworkInterface> getAllMigrationNetworkInterfacesInCluster(Guid clusterId);
+    Optional<VdsNetworkInterface> getActiveMigrationNetworkInterfaceForHost(Guid hostId);
 }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -325,10 +326,10 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
     }
 
     @Override
-    public List<VdsNetworkInterface> getAllMigrationNetworkInterfacesInCluster(Guid clusterId) {
-        return getCallsHandler().executeReadList("GetAllMigrationNetworkInterfacesInCluster",
+    public Optional<VdsNetworkInterface> getActiveMigrationNetworkInterfaceForHost(Guid hostId) {
+        return Optional.ofNullable(getCallsHandler().executeRead("getActiveMigrationNetworkInterfaceForHost",
                 vdsNetworkInterfaceRowMapper,
-                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+                getCustomMapSqlParameterSource().addValue("host_id", hostId)));
     }
 
     private final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =

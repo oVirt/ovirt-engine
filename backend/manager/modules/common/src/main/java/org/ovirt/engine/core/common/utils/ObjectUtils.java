@@ -21,4 +21,11 @@ public class ObjectUtils {
         }
         return c1.containsAll(c2);
     }
+
+    /**
+     * @return min(a, b) if both a and b are non-null, `null` otherwise
+     */
+    public static Integer minIfExists(Integer a, Integer b) {
+        return a != null && b != null ? Math.min(a, b) : null;
+    }
 }

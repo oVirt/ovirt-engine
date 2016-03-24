@@ -6,7 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +31,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -37,8 +38,10 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -47,6 +50,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -199,10 +203,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             MigrationPolicy migrationPolicy = convergenceConfigProvider.getMigrationPolicy(getCluster().getMigrationPolicyId());
             convergenceSchedule = ConvergenceSchedule.from(migrationPolicy.getConfig()).asMap();
 
-            MigrationBandwidthLimitType migrationBandwidthLimitType = getCluster().getMigrationBandwidthLimitType();
-            if (migrationBandwidthLimitType == MigrationBandwidthLimitType.CUSTOM) {
-                maxBandwidth = getCluster().getCustomMigrationNetworkBandwidth() / migrationPolicy.getMaxMigrations();
-            }
+            maxBandwidth = getMaxBandwidth(migrationPolicy);
         }
 
         return new MigrateVDSCommandParameters(getVdsId(),
@@ -220,6 +221,80 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getConsoleAddress(),
                 maxBandwidth,
                 convergenceSchedule);
+    }
+
+    /**
+     * @return Maximum bandwidth of each migration in cluster in Mbps, `null` indicates that value in VDSM configuration
+     * on source host should be used.
+     *
+     * @see org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType
+     */
+    private Integer getMaxBandwidth(MigrationPolicy migrationPolicy) {
+        switch (getCluster().getMigrationBandwidthLimitType()) {
+            case AUTO:
+                return Optional.ofNullable(getAutoMaxBandwidth())
+                        .map(bandwidth -> bandwidth / migrationPolicy.getMaxMigrations())
+                        .orElse(null);
+            case VDSM_CONFIG:
+                return null;
+            case CUSTOM:
+                return getCluster().getCustomMigrationNetworkBandwidth() / migrationPolicy.getMaxMigrations();
+            default:
+                throw new IllegalStateException(
+                        "Unexpected enum item: " + getCluster().getMigrationBandwidthLimitType());
+        }
+    }
+
+    private Integer getAutoMaxBandwidth() {
+        final Guid sourceClusterId = getVm().getClusterId();
+        final Guid destinationClusterId = getClusterId();
+
+        final Guid sourceHostId = getVm().getRunOnVds();
+        final Guid destinationHostId = getDestinationVdsId();
+
+        return ObjectUtils.minIfExists(
+                getAutoMaxBandwidth(sourceClusterId, sourceHostId),
+                getAutoMaxBandwidth(destinationClusterId, destinationHostId));
+    }
+
+    /**
+     * @return `null` if it can't be computed, value in Mbps otherwise
+     */
+    private Integer getAutoMaxBandwidth(Guid clusterId, Guid hostId) {
+        Integer qosBandwidth = getQosBandwidth(clusterId);
+        if (qosBandwidth != null) {
+            return qosBandwidth;
+        }
+        return getLinkSpeedBandwidth(hostId);
+    }
+
+    /**
+     * Note: Even if there is a QoS associated with migrational network, it may not contain neither
+     * {@link HostNetworkQos#outAverageRealtime} nor {@link HostNetworkQos#outAverageUpperlimit} property.
+     * @return `null` if it can't be obtained, value in Mbps otherwise
+     */
+    private Integer getQosBandwidth(Guid clusterId) {
+        final HostNetworkQos migrationHostNetworkQos = getDbFacade().getHostNetworkQosDao()
+                .getHostNetworkQosOfMigrationNetworkByClusterId(clusterId);
+        if (migrationHostNetworkQos == null) {
+            return null;
+        }
+        if (migrationHostNetworkQos.getOutAverageRealtime() != null) {
+            return migrationHostNetworkQos.getOutAverageRealtime();
+        }
+        return migrationHostNetworkQos.getOutAverageUpperlimit();
+    }
+
+    /**
+     * Link speed of host network interface that is connected to migration network.
+     * @return value in Mbps otherwise, `null` if it can't be computed (e.g. virtio NIC can't
+     *         report its speed)
+     */
+    private Integer getLinkSpeedBandwidth(Guid hostId) {
+        return getInterfaceDao().getActiveMigrationNetworkInterfaceForHost(hostId)
+                .map(NetworkInterface::getSpeed)
+                .map(speed -> speed > 0 ? speed : null)
+                .orElse(null);
     }
 
     @Override
