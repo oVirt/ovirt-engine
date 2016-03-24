@@ -806,31 +806,6 @@ OVESETUP_RPMDISTRO/jbossPackages=str:${OVIRT_JBOSS_PACKAGES}
 __EOF__
 %endif
 
-#
-# bakcward compatibility
-# keep ovirt-engine-setup package to pull ovirt-engine-setup-plugin-ovirt-engine
-#
-touch "%{buildroot}%{engine_data}/setup/ovirt-engine-setup-ghost"
-
-#
-# backward compatibly (pre-3.3.0)
-# force rpm not to remove config files
-# as these used to be %%config
-# these files are created empty in order to mark
-# them as %%ghost
-#
-touch "%{buildroot}%{engine_etc}/engine.conf"
-touch "%{buildroot}%{engine_etc}/notifier/notifier.conf"
-touch "%{buildroot}%{engine_pki}/cacert.template"
-touch "%{buildroot}%{engine_pki}/cert.template"
-touch "%{buildroot}%{engine_pki}/database.txt"
-touch "%{buildroot}%{engine_pki}/serial.txt"
-install -d "%{buildroot}%{engine_etc}/sysprep"
-for f in 2k12x64 2k3 2k8 2k8x86 2k8x64 w7 w7x64 w8 w8x64 xp; do
-	touch "%{buildroot}%{engine_etc}/sysprep/sysprep.${f}"
-done
-install -d "%{buildroot}%{_sysconfdir}/firewalld/services"
-touch "%{buildroot}%{_sysconfdir}/firewalld/services/ovirt.xml"
 
 %preun
 if [ "$1" -eq 0 ]; then
@@ -858,7 +833,6 @@ fi
 %ovirt_create_user_engine
 
 %files -f .mfiles-base
-
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/dump
@@ -874,7 +848,6 @@ fi
 %dir %{engine_etc}/extensions.d
 %dir %{engine_java}
 %license LICENSE
-%ghost %config(noreplace) %{engine_etc}/engine.conf
 %{engine_data}/branding/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
@@ -954,13 +927,6 @@ fi
 %{engine_data}/bin/pki-enroll-request.sh
 %{engine_data}/bin/pki-pkcs12-extract.sh
 
-# backward compatibly (pre-3.3.0)
-# force rpm not to remove pki files
-# as these used to be %%config
-%ghost %config(noreplace) %{engine_pki}/cacert.template
-%ghost %config(noreplace) %{engine_pki}/cert.template
-%ghost %config(noreplace) %{engine_pki}/database.txt
-%ghost %config(noreplace) %{engine_pki}/serial.txt
 
 %files setup-base
 %license LICENSE
@@ -992,8 +958,6 @@ fi
 %files setup
 %license LICENSE
 
-# package cannot be empty
-%ghost %{engine_data}/setup/ovirt-engine-setup-ghost
 
 %files setup-plugin-ovirt-engine
 %license LICENSE
@@ -1006,10 +970,6 @@ fi
 %{engine_data}/setup/dbutils/
 %{engine_data}/setup/ovirt_engine_setup/engine/
 %{engine_data}/setup/plugins/*/ovirt-engine/
-
-# backward compatibility (pre-3.4)
-%ghost %config(noreplace) %{engine_etc}/sysprep/
-%ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
 %files setup-plugin-ovirt-engine-common
 %license LICENSE
@@ -1094,7 +1054,6 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_run}/notifier
 %dir %{engine_etc}/engine-config
 %dir %{engine_etc}/notifier
-%ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
 %{_bindir}/engine-config
 %{_bindir}/ovirt-engine-extensions-tool
 %{_mandir}/man8/engine-config.*
