@@ -254,8 +254,8 @@ public class V3VmServer extends V3Server<VmResource> {
     }
 
     @Path("graphicsconsoles")
-    public V3GraphicsConsolesServer getGraphicsConsolesResource() {
-        return new V3GraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
+    public V3VmGraphicsConsolesServer getGraphicsConsolesResource() {
+        return new V3VmGraphicsConsolesServer(getDelegate().getGraphicsConsolesResource());
     }
 
     @Path("katelloerrata")
