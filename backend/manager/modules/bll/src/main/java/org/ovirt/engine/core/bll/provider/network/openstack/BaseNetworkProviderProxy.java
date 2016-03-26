@@ -54,7 +54,7 @@ public abstract class BaseNetworkProviderProxy<P extends AdditionalProperties> i
 
     private static final String VLAN_NETWORK = "vlan";
 
-    protected Provider<P> provider;
+    protected final Provider<P> provider;
 
     private Quantum client;
 
