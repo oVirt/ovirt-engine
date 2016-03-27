@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import static org.ovirt.engine.core.utils.ObjectIdentityChecker.getChangedFields;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +53,6 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NumaUtils;
-import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -165,7 +166,7 @@ public class VmAnalyzer {
             return;
         }
 
-        proceedDownVms();
+        proceedDownVm();
         proceedWatchdogEvents();
         proceedBalloonCheck();
         proceedGuaranteedMemoryCheck();
@@ -184,10 +185,7 @@ public class VmAnalyzer {
         saveDynamic(vdsmVm.getVmDynamic());
     }
 
-    /**
-     * Delete all vms with status Down
-     */
-    void proceedDownVms() {
+    void proceedDownVm() {
         if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
             VMStatus prevStatus = VMStatus.Unassigned;
             if (dbVm != null) {
@@ -581,8 +579,7 @@ public class VmAnalyzer {
         }
 
         // check if dynamic data changed - update cache and DB
-        List<String> changedFields = ObjectIdentityChecker.getChangedFields(
-                dbVm.getDynamicData(), vdsmVm.getVmDynamic());
+        List<String> changedFields = getChangedFields(dbVm.getDynamicData(), vdsmVm.getVmDynamic());
         // remove all fields that should not be checked:
         changedFields.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
 
@@ -756,16 +753,17 @@ public class VmAnalyzer {
     }
 
     private void updateVmStatistics() {
-        // check if time for vm statistics refresh - update cache and DB
-        if (updateStatistics) {
-            dbVm.getStatisticsData().updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
-            saveStatistics();
-            saveVmInterfaces();
-            updateInterfaceStatistics();
-            updateVmNumaNodeRuntimeInfo();
-            updateDiskImageDynamics();
-            updateVmJobs();
+        if (!updateStatistics) {
+            return;
         }
+
+        dbVm.getStatisticsData().updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
+        saveStatistics();
+        saveVmInterfaces();
+        updateInterfaceStatistics();
+        updateVmNumaNodeRuntimeInfo();
+        updateDiskImageDynamics();
+        updateVmJobs();
     }
 
     private void updateDiskImageDynamics() {
