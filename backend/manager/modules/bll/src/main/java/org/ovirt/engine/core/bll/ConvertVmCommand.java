@@ -206,7 +206,9 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     protected void endSuccessfully() {
         getReturnValue().setEndActionTryAgain(false);
         try {
-            addImportedDevices(readVmFromOvf(getOvfOfConvertedVm()));
+            VM vm = readVmFromOvf(getOvfOfConvertedVm());
+            updateBootDiskFlag(vm);
+            addImportedDevices(vm);
             setSucceeded(true);
         } catch (EngineException e) {
             log.info("failed to add devices to converted vm");
@@ -251,6 +253,14 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         runVdsCommand(
                 VDSCommandType.DeleteV2VJob,
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
+    }
+
+    private void updateBootDiskFlag(VM vm) {
+        for (DiskImage diskImage : vm.getStaticData().getImages()) {
+            if (diskImage.isBoot()) {
+                getBaseDiskDao().updateDiskBootFlag(diskImage.getId(), true);
+            }
+        }
     }
 
     private void addImportedDevices(VM vm) {
