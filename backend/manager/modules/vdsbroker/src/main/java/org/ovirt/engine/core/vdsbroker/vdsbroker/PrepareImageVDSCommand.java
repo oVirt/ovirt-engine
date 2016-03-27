@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
 
-public class PrepareImageVDSCommand<P extends ImageActionsVDSCommandParameters> extends ImageActionsVDSCommandBase<P> {
+public class PrepareImageVDSCommand<P extends PrepareImageVDSCommandParameters> extends ImageActionsVDSCommandBase<P> {
     public PrepareImageVDSCommand(P parameters) {
         super(parameters);
     }
@@ -12,6 +12,6 @@ public class PrepareImageVDSCommand<P extends ImageActionsVDSCommandParameters> 
             String sdId,
             String imgGroupId,
             String imgId) {
-        return getBroker().prepareImage(spId, sdId, imgGroupId, imgId);
+        return getBroker().prepareImage(spId, sdId, imgGroupId, imgId, getParameters().getAllowIllegal());
     }
 }

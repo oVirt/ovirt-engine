@@ -1695,9 +1695,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID) {
+    public PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID,
+            String volumeID, boolean allowIllegal) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.prepareImage(sdID, spID, imageID, volumeID);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.prepareImage(sdID, spID, imageID, volumeID, allowIllegal);
             PrepareImageReturnForXmlRpc wrapper = new PrepareImageReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

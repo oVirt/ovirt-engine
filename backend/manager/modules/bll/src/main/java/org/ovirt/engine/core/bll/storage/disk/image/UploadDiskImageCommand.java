@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -48,14 +49,22 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
     @Override
     protected String prepareImage(Guid vdsId) {
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
-                    getPrepareTeardownParameters(vdsId));
+                    getPrepareParameters(vdsId));
         return ((PrepareImageReturnForXmlRpc) vdsRetVal.getReturnValue()).getImagePath();
+    }
+
+    private PrepareImageVDSCommandParameters getPrepareParameters(Guid vdsId) {
+        return new PrepareImageVDSCommandParameters(vdsId,
+                getStoragePool().getId(),
+                getStorageDomainId(),
+                getImage().getImage().getDiskId(),
+                getImage().getImageId(), true);
     }
 
     @Override
     protected void tearDownImage(Guid vdsId) {
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
-                    getPrepareTeardownParameters(vdsId));
+                getImageActionsParameters(vdsId));
         if (!vdsRetVal.getSucceeded()) {
             DiskImage image = (DiskImage) getDiskDao().get(getParameters().getImageId());
             log.warn("Failed to tear down image '{}' for image transfer session: {}",
@@ -77,7 +86,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
         return diskParameters;
     }
 
-    private ImageActionsVDSCommandParameters getPrepareTeardownParameters(Guid vdsId) {
+    protected ImageActionsVDSCommandParameters getImageActionsParameters(Guid vdsId) {
         return new ImageActionsVDSCommandParameters(vdsId,
                 getStoragePool().getId(),
                 getStorageDomainId(),

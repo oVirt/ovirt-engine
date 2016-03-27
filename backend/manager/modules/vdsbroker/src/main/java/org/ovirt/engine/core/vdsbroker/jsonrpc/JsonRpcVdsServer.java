@@ -1796,13 +1796,15 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID) {
+    public PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID,
+            String volumeID, boolean allowIllegal) {
         JsonRpcRequest request =
                 new RequestBuilder("Image.prepare")
                         .withParameter("storagepoolID", spID)
                         .withParameter("storagedomainID", sdID)
                         .withParameter("imageID", imageID)
                         .withParameter("volumeID", volumeID)
+                        .withParameter("allowIllegal", allowIllegal)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);

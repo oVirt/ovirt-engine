@@ -441,7 +441,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterProcessesStop();
 
-    public Map<String, Object> prepareImage(String sdID, String spID, String imageID, String volumeID);
+    public Map<String, Object> prepareImage(String sdID, String spID, String imageID,
+            String volumeID, boolean allowIllegal);
 
     public Map<String, Object> teardownImage(String sdID, String spID, String imageID, String volumeID);
 }

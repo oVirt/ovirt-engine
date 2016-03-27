@@ -100,7 +100,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc migrateCancel(String vmId);
 
-    PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID);
+    PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID, boolean allowIllegal);
 
     StatusReturnForXmlRpc teardownImage(String spId, String sdId, String imgGroupId, String imgId);
 
