@@ -482,7 +482,7 @@ Requires(postun):	systemd
 %package tools-backup
 Summary:	%{ovirt_product_name_short} Tools (engine-backup)
 Group:		%{ovirt_product_group}
-Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
 Requires:	tar
 Requires:	bzip2
 Requires:	xz
