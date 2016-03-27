@@ -203,10 +203,7 @@ public class VmAnalyzer {
                         vdsmVm.getVmDynamic().getExitMessage(),
                         vdsmVm.getVmDynamic().getExitReason());
             } else {
-                VmDynamic dynamicFromDb = vmDynamicDao.get(vdsmVm.getVmDynamic().getId());
-                if (dynamicFromDb != null) {
-                    prevStatus = dynamicFromDb.getStatus();
-                }
+                prevStatus = vmDynamicDao.get(vdsmVm.getVmDynamic().getId()).getStatus();
             }
             if (prevStatus != VMStatus.Unassigned) {
                 destroyVm();
@@ -525,8 +522,7 @@ public class VmAnalyzer {
                 stable = true;
             }
 
-            VmDynamic vmDynamic = vmDynamicDao.get(vdsmVmDynamic.getId());
-            if (vmDynamic == null || vmDynamic.getStatus() != VMStatus.Unknown) {
+            if (vmDynamicDao.get(vdsmVmDynamic.getId()).getStatus() != VMStatus.Unknown) {
                 saveDynamic(null);
             }
         }
