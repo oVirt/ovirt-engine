@@ -2,9 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -38,8 +36,10 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
         this(nic, sriovEnabled, physicalFunction, setupModel);
 
         // attach all networks
-        for (LogicalNetworkModel network : nicNetworks) {
-            network.attach(this, false);
+        if (nicNetworks != null) {
+            for (LogicalNetworkModel logicalNetworkModel : nicNetworks) {
+                logicalNetworkModel.attach(this);
+            }
         }
 
         // add all labels
@@ -50,12 +50,12 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
         }
     }
 
-    public NetworkInterfaceModel(VdsNetworkInterface nic,
+    public NetworkInterfaceModel(VdsNetworkInterface iface,
             boolean sriovEnabled,
             String physicalFunction,
             HostSetupNetworksModel setupModel) {
         this(setupModel);
-        setIface(nic);
+        this.iface = iface;
         this.sriovEnabled = sriovEnabled;
         this.physicalFunction = physicalFunction;
     }
@@ -76,46 +76,29 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     public void label(NetworkLabelModel labelModel) {
         labelModel.setInterface(this);
         getLabels().add(labelModel);
-
-        Set<String> labels = getIface().getLabels();
-        if (labels == null) {
-            labels = new HashSet<>();
-            getIface().setLabels(labels);
-        }
-        labels.add(labelModel.getName());
     }
 
     public void unlabel(NetworkLabelModel labelModel) {
         labelModel.setInterface(null);
         getLabels().remove(labelModel);
-
-        Set<String> labels = getIface().getLabels();
-        labels.remove(labelModel.getName());
-        if (labels.isEmpty()) {
-            getIface().setLabels(null);
-        }
     }
 
     public int getTotalItemSize() {
         return getItems().size() + labels.size();
     }
 
-    public VdsNetworkInterface getIface() {
+    public VdsNetworkInterface getOriginalIface() {
         return iface;
-    }
-
-    public void setIface(VdsNetworkInterface iface) {
-        this.iface = iface;
     }
 
     @Override
     public String getName() {
-        return getIface().getName();
+        return getOriginalIface().getName();
     }
 
     @Override
     public InterfaceStatus getStatus() {
-        return getIface().getStatistics().getStatus();
+        return getOriginalIface().getStatistics().getStatus();
     }
 
     public boolean isBonded() {

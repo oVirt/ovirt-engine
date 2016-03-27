@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -14,9 +18,75 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class HostInterfaceModel extends EntityModel<Network> {
+public class NetworkAttachmentModel extends Model {
+
+    private Network network;
+    private VdsNetworkInterface nic;
+    private NetworkAttachment networkAttachment;
+    private HostNetworkQos networkQos;
 
     private EntityModel<String> address;
+    private EntityModel<String> subnet;
+    private EntityModel<String> gateway;
+    private EntityModel<String> name;
+    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.values()[0];
+    private boolean noneBootProtocolAvailable = true;
+    private boolean bootProtocolsAvailable;
+    private EntityModel<Boolean> isToSync;
+    private HostNetworkQosParametersModel qosModel;
+    private KeyValueModel customPropertiesModel;
+    private boolean staticIpChangeAllowed = true;
+    private EntityModel<Boolean> qosOverridden;
+
+    public NetworkAttachmentModel(Network network,
+            VdsNetworkInterface nic,
+            NetworkAttachment networkAttachment,
+            HostNetworkQos networkQos) {
+        this.network = network;
+        this.nic = nic;
+        this.networkAttachment = networkAttachment;
+        this.networkQos = networkQos;
+
+        verifyInput(network, nic, networkAttachment);
+
+        setName(new EntityModel<String>());
+        setAddress(new EntityModel<String>());
+        setSubnet(new EntityModel<String>());
+        setGateway(new EntityModel<String>());
+        setQosOverridden(new EntityModel<Boolean>());
+        setQosModel(new HostNetworkQosParametersModel());
+        setCustomPropertiesModel(new KeyValueModel());
+        setIsToSync(new EntityModel<Boolean>());
+        setBootProtocolsAvailable(true);
+        getGateway().setIsAvailable(false);
+        getAddress().setIsChangeable(false);
+        getSubnet().setIsChangeable(false);
+        getGateway().setIsChangeable(false);
+        getQosOverridden().setIsAvailable(false);
+        getQosModel().setIsAvailable(false);
+        getCustomPropertiesModel().setIsAvailable(false);
+
+        getQosOverridden().getEntityChangedEvent().addListener(this);
+        getIsToSync().getEntityChangedEvent().addListener(this);
+    }
+
+    private void verifyInput(Network network, VdsNetworkInterface nic, NetworkAttachment networkAttachment) {
+        boolean unmanaged = networkAttachment == null && nic != null;
+        boolean newAttachment = networkAttachment != null && networkAttachment.getId() == null && network != null;
+        boolean existingAttachment =
+                networkAttachment != null && networkAttachment.getId() != null && network != null && nic != null;
+
+        assert unmanaged || newAttachment || existingAttachment : "the input of the ctor is wrong"; //$NON-NLS-1$
+    }
+
+    public void syncWith(InterfacePropertiesAccessor interfacePropertiesAccessor) {
+        setBootProtocol(interfacePropertiesAccessor.getBootProtocol());
+        getAddress().setEntity(interfacePropertiesAccessor.getAddress());
+        getSubnet().setEntity(interfacePropertiesAccessor.getNetmask());
+        getGateway().setEntity(interfacePropertiesAccessor.getGateway());
+        getQosModel().init(interfacePropertiesAccessor.getHostNetworkQos());
+        getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(interfacePropertiesAccessor.getCustomProperties()));
+    }
 
     public EntityModel<String> getAddress() {
         return address;
@@ -26,8 +96,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
         address = value;
     }
 
-    private EntityModel<String> subnet;
-
     public EntityModel<String> getSubnet() {
         return subnet;
     }
@@ -35,8 +103,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
     private void setSubnet(EntityModel<String> value) {
         subnet = value;
     }
-
-    private EntityModel<String> gateway;
 
     public EntityModel<String> getGateway() {
         return gateway;
@@ -46,8 +112,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
         gateway = value;
     }
 
-    private EntityModel<String> name;
-
     public EntityModel<String> getName() {
         return name;
     }
@@ -55,8 +119,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
     public void setName(EntityModel<String> value) {
         name = value;
     }
-
-    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.values()[0];
 
     public NetworkBootProtocol getBootProtocol() {
         return bootProtocol;
@@ -70,8 +132,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
         }
     }
 
-    private boolean noneBootProtocolAvailable = true;
-
     public boolean getNoneBootProtocolAvailable() {
         return noneBootProtocolAvailable;
     }
@@ -82,8 +142,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
             onPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
         }
     }
-
-    private boolean bootProtocolsAvailable;
 
     public boolean getBootProtocolsAvailable() {
         return bootProtocolsAvailable;
@@ -101,19 +159,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
         return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
-    private boolean bondingOptionsOverrideNotification;
-
-    public boolean getBondingOptionsOverrideNotification() {
-        return bondingOptionsOverrideNotification;
-    }
-
-    public void setBondingOptionsOverrideNotification(boolean value) {
-        bondingOptionsOverrideNotification = value;
-        onPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
-    }
-
-    private EntityModel<Boolean> isToSync;
-
     public EntityModel<Boolean> getIsToSync() {
         return isToSync;
     }
@@ -122,20 +167,10 @@ public class HostInterfaceModel extends EntityModel<Network> {
         this.isToSync = isToSync;
     }
 
-    private NetworkParameters originalNetParams = null;
-
-    public void setOriginalNetParams(NetworkParameters originalNetParams) {
-        this.originalNetParams = originalNetParams;
-    }
-
-    private boolean staticIpChangeAllowed = true;
-
     public void setStaticIpChangeAllowed(boolean staticIpChangeAllowed) {
         this.staticIpChangeAllowed = staticIpChangeAllowed;
         updateCanSpecify();
     }
-
-    private EntityModel<Boolean> qosOverridden;
 
     public EntityModel<Boolean> getQosOverridden() {
         return qosOverridden;
@@ -145,8 +180,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
         this.qosOverridden = qosOverridden;
     }
 
-    private HostNetworkQosParametersModel qosModel;
-
     public HostNetworkQosParametersModel getQosModel() {
         return qosModel;
     }
@@ -154,8 +187,6 @@ public class HostInterfaceModel extends EntityModel<Network> {
     private void setQosModel(HostNetworkQosParametersModel qosModel) {
         this.qosModel = qosModel;
     }
-
-    private KeyValueModel customPropertiesModel;
 
     public KeyValueModel getCustomPropertiesModel() {
         return customPropertiesModel;
@@ -165,68 +196,43 @@ public class HostInterfaceModel extends EntityModel<Network> {
         this.customPropertiesModel = customProperties;
     }
 
-    public HostInterfaceModel() {
-        setName(new EntityModel<String>());
-        setAddress(new EntityModel<String>());
-        setSubnet(new EntityModel<String>());
-        setGateway(new EntityModel<String>());
-        setQosOverridden(new EntityModel<Boolean>());
-        setQosModel(new HostNetworkQosParametersModel());
-        setCustomPropertiesModel(new KeyValueModel());
-
-        setIsToSync(new EntityModel<Boolean>() {
-            @Override
-            public void setEntity(Boolean value) {
-                super.setEntity(value);
-                if (getIsToSync().getIsChangable()) {
-                    if (!value) {
-                        revertChanges();
-                    }
-                    setBootProtocolsAvailable(value);
-                    getQosOverridden().setIsChangeable(value);
-                    updateQosChangeability();
-                    getCustomPropertiesModel().setIsChangeable(value);
-                }
-            }
-
-        });
-
-        setBootProtocolsAvailable(true);
-        getGateway().setIsAvailable(false);
-        getAddress().setIsChangeable(false);
-        getSubnet().setIsChangeable(false);
-        getGateway().setIsChangeable(false);
-        getQosOverridden().setIsAvailable(false);
-        getQosModel().setIsAvailable(false);
-        getCustomPropertiesModel().setIsAvailable(false);
-
-        getQosOverridden().getEntityChangedEvent().addListener(this);
-    }
-
-    private void revertChanges() {
-        if (originalNetParams != null) {
-            setBootProtocol(originalNetParams.getBootProtocol());
-            getAddress().setEntity(originalNetParams.getAddress());
-            getSubnet().setEntity(originalNetParams.getSubnet());
-            getGateway().setEntity(originalNetParams.getGateway());
-            getQosOverridden().setEntity(originalNetParams.isQosOverridden());
-            getQosModel().init(originalNetParams.getQos());
-            getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(originalNetParams.getCustomProperties()));
-        }
-    }
-
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
         if (sender == getQosOverridden()) {
+            qosOverriddenChanged();
+        }
+
+        if (sender == getIsToSync()) {
+            isToSyncChanged();
+        }
+    }
+
+    private void qosOverriddenChanged() {
+        if (getQosOverridden().getIsChangable()) {
             updateQosChangeability();
+            if (!getQosOverridden().getEntity()) {
+                getQosModel().init(networkQos);
+            }
         }
     }
 
     private void updateQosChangeability() {
         getQosModel().setIsChangeable(getQosOverridden().getIsAvailable() && getQosOverridden().getIsChangable()
-                && getQosOverridden().getEntity());
+                && Boolean.TRUE.equals(getQosOverridden().getEntity()));
+    }
+
+    private void initValues() {
+        boolean newAttachment = networkAttachment != null && networkAttachment.getId() == null;
+        boolean syncedNetwork = networkAttachment != null && networkAttachment.getReportedConfigurations() != null
+                && networkAttachment.getReportedConfigurations().isNetworkInSync();
+        boolean shouldBeSyncedNetwork = !syncedNetwork && Boolean.TRUE.equals(getIsToSync().getEntity());
+        if (newAttachment || syncedNetwork || shouldBeSyncedNetwork) {
+            syncWith(new InterfacePropertiesAccessor.FromNetworkAttachment(networkAttachment, networkQos));
+        } else {
+            syncWith(new InterfacePropertiesAccessor.FromNic(nic));
+        }
     }
 
     private void bootProtocolChanged() {
@@ -263,5 +269,19 @@ public class HostInterfaceModel extends EntityModel<Network> {
 
         return getAddress().getIsValid() && getSubnet().getIsValid()
                 && getGateway().getIsValid() && getQosModel().getIsValid() && getCustomPropertiesModel().getIsValid();
+    }
+
+    private void isToSyncChanged() {
+        initValues();
+
+        Boolean isEditingEnabled = !getIsToSync().getIsChangable() || getIsToSync().getEntity();
+        setBootProtocolsAvailable(isEditingEnabled);
+        getQosOverridden().setIsChangeable(isEditingEnabled);
+        updateQosChangeability();
+        getCustomPropertiesModel().setIsChangeable(isEditingEnabled);
+    }
+
+    public Network getNetwork() {
+        return network;
     }
 }

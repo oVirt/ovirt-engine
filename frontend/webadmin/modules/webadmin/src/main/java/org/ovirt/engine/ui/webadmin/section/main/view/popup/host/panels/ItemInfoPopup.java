@@ -211,7 +211,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private void showNic(NetworkInterfaceModel nic) {
         contents.removeAllRows();
-        VdsNetworkInterface entity = nic.getIface();
+        VdsNetworkInterface entity = nic.getOriginalIface();
         NetworkBootProtocol bootProtocol = entity.getBootProtocol();
         addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
         addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));

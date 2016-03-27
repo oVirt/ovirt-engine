@@ -185,9 +185,9 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                     initStatusPanel();
                 }
                 keepStatusText = false;
-                updateNetworks(model.getNetworks());
-                updateLabels(model.getNewNetworkLabelModel(), model.getLabels());
-                updateNics(model.getNics());
+                updateNetworks(model.getNetworkModels());
+                updateLabels(model.getNewNetworkLabelModel(), model.getLabelModels());
+                updateNics(model.getNicModels());
                 // mark as rendered
                 rendered = true;
             }

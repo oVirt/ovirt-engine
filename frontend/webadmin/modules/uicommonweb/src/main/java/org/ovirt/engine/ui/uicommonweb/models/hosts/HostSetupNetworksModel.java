@@ -23,14 +23,17 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -115,48 +118,38 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private Event<EventArgs> nicsChangedEvent;
 
-    private List<VdsNetworkInterface> allNics;
+    private List<VdsNetworkInterface> allExistingNics;
 
     private Map<Guid, Guid> vfMap;
 
-    private Map<String, NetworkInterfaceModel> nicMap;
+    private Map<String, NetworkInterfaceModel> nicModelByName;
 
-    private Map<String, LogicalNetworkModel> networkMap;
+    private Map<String, LogicalNetworkModel> networkModelByName;
 
-    private Map<String, NetworkLabelModel> networkLabelMap = new HashMap<>();
+    private Map<String, NetworkLabelModel> networkLabelModelByLabel = new HashMap<>();
 
     private final NewNetworkLabelModel newLabelModel;
 
-    public List<NetworkAttachment> getExistingNetworkAttachments() {
-        return existingNetworkAttachments;
-    }
-
-    private List<NetworkAttachment> existingNetworkAttachments;
-
-
     private DataFromHostSetupNetworksModel hostSetupNetworksParametersData = new DataFromHostSetupNetworksModel();
 
-    private Map<String, String> labelToIface = new HashMap<>();
-
-    private final Set<String> networksToSync = new HashSet<>();
-
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
-    private final Map<String, NetworkParameters> networkToLastDetachParams;
+    private final Map<String, NetworkParameters> networkToLastDetachParams = new HashMap<>();
 
     private Set<HostNicVfsConfig> originalVfsConfigs = new HashSet<>();
     private Map<Guid, HostNicVfsConfig> nicToVfsConfig = new HashMap<>();
 
     private NetworkOperationFactory operationFactory;
     private List<Network> allNetworks;
-    private final Map<String, DcNetworkParams> netTodcParams;
-    private final Map<String, NetworkParameters> netToBeforeSyncParams;
-    private final SearchableListModel sourceListModel;
+    private Map<Guid, HostNetworkQos> qosById;
+    private final SearchableListModel<VDS, HostInterfaceLineModel> sourceListModel;
     private List<VdsNetworkInterface> allBonds;
     private SortedSet<String> dcLabels;
     private NetworkOperation currentCandidate;
     private NetworkItemModel<?> currentOp1;
     private NetworkItemModel<?> currentOp2;
     private String nextBondName;
+
+    private Map<Integer, VdsNetworkInterface> existingVlanDevicesByVlanId;
 
     private final UICommand okCommand;
     public static final String NIC = "nic"; //$NON-NLS-1$
@@ -171,9 +164,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         setHelpTag(HelpTag.host_setup_networks);
         setHashName("host_setup_networks"); //$NON-NLS-1$
 
-        networkToLastDetachParams = new HashMap<>();
-        netTodcParams = new HashMap<>();
-        netToBeforeSyncParams = new HashMap<>();
         setNicsChangedEvent(new Event<>(NICS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event<OperationCandidateEventArgs>(OPERATION_CANDIDATE_EVENT_DEFINITION));
         setCheckConnectivity(new EntityModel<Boolean>());
@@ -190,8 +180,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
         newLabelModel = new NewNetworkLabelModel(this);
-
-        hostSetupNetworksParametersData.networksToSync = networksToSync;
     }
 
     public NetworkLabelModel getNewNetworkLabelModel() {
@@ -202,11 +190,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         if (type != null) {
             switch(type) {
             case NIC:
-                return nicMap.get(key);
+                return nicModelByName.get(key);
             case NETWORK:
-                return networkMap.get(key);
+                return networkModelByName.get(key);
             case LABEL:
-                NetworkLabelModel labelModel = networkLabelMap.get(key);
+                NetworkLabelModel labelModel = networkLabelModelByLabel.get(key);
                 return labelModel == null ? newLabelModel : labelModel;
             }
         }
@@ -242,16 +230,16 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return operationFactory.commandsFor(item, hostSetupNetworksParametersData);
     }
 
-    public List<LogicalNetworkModel> getNetworks() {
-        return new ArrayList<>(networkMap.values());
+    public List<LogicalNetworkModel> getNetworkModels() {
+        return new ArrayList<>(networkModelByName.values());
     }
 
-    public List<NetworkInterfaceModel> getNics() {
-        return new ArrayList<>(nicMap.values());
+    public List<NetworkInterfaceModel> getNicModels() {
+        return new ArrayList<>(nicModelByName.values());
     }
 
-    public List<NetworkLabelModel> getLabels() {
-        return new ArrayList<>(networkLabelMap.values());
+    public List<NetworkLabelModel> getLabelModels() {
+        return new ArrayList<>(networkLabelModelByLabel.values());
     }
 
     public Event<EventArgs> getNicsChangedEvent() {
@@ -292,8 +280,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
              * Bond Dialog
              *****************/
             boolean doesBondHaveVmNetworkAttached = doesBondHaveVmNetworkAttached((NetworkInterfaceModel) item);
-            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
-            editPopup = new SetupNetworksEditBondModel(entity, doesBondHaveVmNetworkAttached);
+            BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel)item;
+            final CreateOrUpdateBond createOrUpdateBondParameter = bondModel.getCreateOrUpdateBond();
+            editPopup = new SetupNetworksEditBondModel(createOrUpdateBondParameter, doesBondHaveVmNetworkAttached);
             final SetupNetworksBondModel bondDialogModel = (SetupNetworksBondModel) editPopup;
 
             // OK Target
@@ -304,17 +293,14 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         return;
                     }
                     sourceListModel.setConfirmWindow(null);
-                    setBondOptions(entity, bondDialogModel);
-
-                    Bond bond = (Bond) entity;
-                    onBondEditUpdateParams(bond);
+                    setBondOptions(createOrUpdateBondParameter, bondDialogModel);
                 }
             };
         } else if (item instanceof NetworkInterfaceModel) {
             /*******************
              * VFs Config Dialog
              *******************/
-            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
+            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getOriginalIface();
             final HostNicVfsConfig hostNicVfsConfig = nicToVfsConfig.get(entity.getId());
             if (hostNicVfsConfig != null) {
                 final VfsConfigModel vfsConfigPopupModel = new VfsConfigModel(hostNicVfsConfig, allNetworks, dcLabels);
@@ -338,22 +324,29 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
              * Network Dialog
              *****************/
             final LogicalNetworkModel logicalNetworkModel = (LogicalNetworkModel) item;
-            final VdsNetworkInterface nic =
-                    logicalNetworkModel.hasVlan() ? logicalNetworkModel.getVlanNicModel().getIface()
-                            : logicalNetworkModel.getAttachedToNic().getIface();
+            final VdsNetworkInterface nic;
 
-            final HostInterfaceModel networkDialogModel;
+            if (logicalNetworkModel.isInSync()) {
+                nic = logicalNetworkModel.hasVlan() ? logicalNetworkModel.getVlanDevice()
+                        : logicalNetworkModel.getAttachedToNic().getOriginalIface();
+            } else {
+                nic = logicalNetworkModel.getVlanDevice() != null ? logicalNetworkModel.getVlanDevice()
+                        : logicalNetworkModel.getAttachedToNic().getOriginalIface();
+            }
+
+            final NetworkAttachmentModel networkDialogModel;
             String version = getEntity().getClusterCompatibilityVersion().getValue();
             final Network network = logicalNetworkModel.getNetwork();
             final String logicalNetworkModelName = network.getName();
 
+            final NetworkAttachment networkAttachment =
+                    logicalNetworkModel.getNetworkAttachment();
+
+            HostNetworkQos networkQos = qosById.get(network.getQosId());
             if (logicalNetworkModel.isManagement()) {
-                networkDialogModel = new HostManagementNetworkModel();
-                networkDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
-                networkDialogModel.setEntity(network);
-                networkDialogModel.setNoneBootProtocolAvailable(false);
+                networkDialogModel = new ManagementNetworkAttachmentModel(network, nic, networkAttachment, networkQos);
             } else {
-                networkDialogModel = new HostInterfaceModel();
+                networkDialogModel = new NetworkAttachmentModel(network, nic, networkAttachment, networkQos);
                 networkDialogModel.setTitle(ConstantsManager.getInstance()
                         .getMessages()
                         .editNetworkTitle(logicalNetworkModelName));
@@ -361,25 +354,14 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 networkDialogModel.getGateway().setIsAvailable(true);
             }
 
-            networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetworkModelName));
-            networkDialogModel.getAddress().setEntity(nic.getAddress());
-            networkDialogModel.getSubnet().setEntity(nic.getSubnet());
-            networkDialogModel.getGateway().setEntity(nic.getGateway());
-            networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getAddress()));
-            networkDialogModel.setBootProtocol(nic.getBootProtocol());
-
-            NetworkAttachment networkAttachment =
-                getNetworkAttachmentForNetwork(network.getId());
+            if (nic != null && nic.getId() != null) {
+                networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getAddress()));
+            }
 
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
                     version)) {
                 networkDialogModel.getQosOverridden().setIsAvailable(true);
                 networkDialogModel.getQosModel().setIsAvailable(true);
-
-                networkDialogModel.getQosOverridden().setEntity(networkAttachment != null && networkAttachment.isQosOverridden());
-
-                networkDialogModel.getQosModel().init(nic.getQos());
-
             }
 
             KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
@@ -399,7 +381,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
             networkDialogModel.getIsToSync().setIsChangeable(!logicalNetworkModel.isInSync());
             networkDialogModel.getIsToSync()
-                    .setEntity(networksToSync.contains(logicalNetworkModelName));
+                    .setEntity(shouldSyncNetwork(logicalNetworkModelName));
+
+            networkDialogModel.getQosOverridden().setEntity(networkAttachment.isQosOverridden());
 
             editPopup = networkDialogModel;
 
@@ -410,63 +394,38 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     if (!networkDialogModel.validate()) {
                         return;
                     }
-                    nic.setBootProtocol(networkDialogModel.getBootProtocol());
+                    IPv4Address iPv4Address = networkAttachment.getIpConfiguration().getPrimaryAddress();
+                    iPv4Address.setBootProtocol(networkDialogModel.getBootProtocol());
                     if (networkDialogModel.getIsStaticAddress()) {
-                        nic.setAddress(networkDialogModel.getAddress().getEntity());
-                        nic.setSubnet(networkDialogModel.getSubnet().getEntity());
-                        nic.setGateway(networkDialogModel.getGateway().getEntity());
+                        iPv4Address.setAddress(networkDialogModel.getAddress().getEntity());
+                        iPv4Address.setNetmask(networkDialogModel.getSubnet().getEntity());
+                        iPv4Address.setGateway(networkDialogModel.getGateway().getEntity());
                     }
 
-                    HostNetworkQos displayedQos = getDisplayedQos();
-
-                    if (displayedQos != null) {
-                        nic.setQos(displayedQos);
+                    if (networkDialogModel.getQosModel().getIsAvailable()) {
+                        if (networkDialogModel.getQosOverridden().getEntity()) {
+                            HostNetworkQos overriddenQos = new HostNetworkQos();
+                            networkDialogModel.getQosModel().flush(overriddenQos);
+                            networkAttachment.setHostNetworkQos(overriddenQos);
+                        } else {
+                            networkAttachment.setHostNetworkQos(null);
+                        }
                     }
 
                     if (networkDialogModel.getIsToSync().getEntity()) {
-                        networksToSync.add(logicalNetworkModelName);
+                        hostSetupNetworksParametersData.getNetworksToSync().add(logicalNetworkModelName);
                     } else {
-                        networksToSync.remove(logicalNetworkModelName);
+                        hostSetupNetworksParametersData.getNetworksToSync().remove(logicalNetworkModelName);
                     }
 
                     boolean customPropertiesAvailable = networkDialogModel.getCustomPropertiesModel().getIsAvailable();
                     Map<String, String> customProperties = customPropertiesAvailable
-                        ? KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel().serialize())
-                        : null;
-
-                    removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(logicalNetworkModel,
-                        getOverridingHostNetworkQos(displayedQos),
-                        customProperties);
+                            ? KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel().serialize())
+                            : null;
+                    networkAttachment.setProperties(customProperties);
 
                     sourceListModel.setConfirmWindow(null);
                 }
-
-                private HostNetworkQos getDisplayedQos() {
-                    HostNetworkQos displayedQos = null;
-
-                    if (networkDialogModel.getQosModel().getIsAvailable()) {
-                        displayedQos = new HostNetworkQos();
-                        networkDialogModel.getQosModel().flush(displayedQos);
-                    }
-
-                    return displayedQos;
-                }
-
-                private HostNetworkQos getOverridingHostNetworkQos(HostNetworkQos displayedQos) {
-                    boolean qosAvailableAndSet = displayedQos != null
-                            && networkDialogModel.getQosOverridden().getEntity();
-
-                    if (qosAvailableAndSet) {
-                        if (networkDialogModel.getQosModel().getIsChangable()) {
-                            return displayedQos;
-                        } else {
-                            return getNetworkAttachmentForNetwork(network.getId()).getHostNetworkQos();
-                        }
-                    } else {
-                        return null;
-                    }
-                }
-
             };
         }
 
@@ -490,79 +449,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         sourceListModel.setConfirmWindow(editPopup);
     }
 
-    public NetworkAttachment getNetworkAttachmentForNetwork(Guid networkId) {
-        //unset networkId may mean a bug, but also it can be unmanaged network, which does not have ids.
-        if (networkId == null) {
-            return null;
-        }
-
-        NetworkAttachment updatedAttachment =
-                new MapNetworkAttachments(hostSetupNetworksParametersData.newOrModifiedNetworkAttachments).byNetworkId()
-                        .get(networkId);
-
-        if (updatedAttachment != null) {
-            return updatedAttachment;
-        }
-
-        NetworkAttachment existingAttachment = getExistingAttachmentByNetworkId(networkId);
-
-        if (existingAttachment != null && !shouldBeRemoved(existingAttachment.getId())) {
-            return existingAttachment;
-        }
-
-        return null;
-    }
-
-    private boolean shouldBeRemoved(Guid attachmentId) {
-        Set<Guid> removedAttachmentIds =
-                new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedNetworkAttachments));
-        return removedAttachmentIds.contains(attachmentId);
-    }
-
-    private void onBondEditUpdateParams(Bond bond) {
-        for (Iterator<Bond> iter = hostSetupNetworksParametersData.newOrModifiedBonds.iterator(); iter.hasNext();) {
-            Bond oldModifiedBond = iter.next();
-            if (oldModifiedBond.getName().equals(bond.getName())) {
-                iter.remove();
-                break;
-            }
-        }
-
-        hostSetupNetworksParametersData.newOrModifiedBonds.add(bond);
-    }
-
-    public void removePreviousNetworkAttachmentInstanceFromRequestAndAddNewOne(
-        LogicalNetworkModel logicalNetwork,
-        HostNetworkQos overridingQos,
-        Map<String, String> customProperties) {
-
-        Network updatedNetwork = logicalNetwork.getNetwork();
-        Guid updatedNetworkId = updatedNetwork.getId();
-
-        Map<Guid, NetworkAttachment> networkIdToPreexistingNetworkAttachment =
-                new MapNetworkAttachments(existingNetworkAttachments).byNetworkId();
-
-        Map<Guid, NetworkAttachment> networkIdToNewOrUpdatedNetworkAttachments =
-                new MapNetworkAttachments(hostSetupNetworksParametersData.newOrModifiedNetworkAttachments).byNetworkId();
-
-        NetworkAttachment preexistingNetworkAttachment =
-                networkIdToPreexistingNetworkAttachment.get(updatedNetworkId);
-
-        Guid networkAttachmentId =
-                preexistingNetworkAttachment == null ? null : preexistingNetworkAttachment.getId();
-
-        NetworkAttachment previousUpdate = networkIdToNewOrUpdatedNetworkAttachments.get(updatedNetworkId);
-        hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.remove(previousUpdate);
-
-        NetworkAttachment updatedNetworkAttachment =
-            NetworkOperation.newNetworkAttachment(updatedNetwork,
-                logicalNetwork.getAttachedToNic().getIface(),
-                logicalNetwork.getVlanNicModel() == null ? null : logicalNetwork.getVlanNicModel().getIface(),
-                networkAttachmentId,
-                hostSetupNetworksParametersData.networksToSync,
-                overridingQos,
-                customProperties);
-        hostSetupNetworksParametersData.newOrModifiedNetworkAttachments.add(updatedNetworkAttachment);
+    private boolean shouldSyncNetwork(final String networkName) {
+        return hostSetupNetworksParametersData.getNetworksToSync().contains(networkName);
     }
 
     public void onOperation(NetworkOperation operation, final NetworkCommand networkCommand) {
@@ -581,9 +469,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             return;
         } else if (operation == NetworkOperation.BOND_WITH || operation == NetworkOperation.JOIN_BONDS) {
             final SetupNetworksBondModel bondPopup;
-            final List<VdsNetworkInterface> srcIfaces = new ArrayList<>();
-            srcIfaces.add(((NetworkInterfaceModel) networkCommand.getOp1()).getIface());
-            srcIfaces.add(((NetworkInterfaceModel) networkCommand.getOp2()).getIface());
             boolean doesBondHaveVmNetworkAttached = doesBondHaveVmNetworkAttached((NetworkInterfaceModel) networkCommand.getOp1(),
                     (NetworkInterfaceModel) networkCommand.getOp2());
             if (operation == NetworkOperation.BOND_WITH) {
@@ -598,31 +483,52 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             }
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
-                        @Override
-                        public void executeCommand(UICommand command) {
-                            if (!bondPopup.validate()) {
-                                return;
-                            }
-                            sourceListModel.setConfirmWindow(null);
-                            VdsNetworkInterface bond = new Bond(bondPopup.getBond().getSelectedItem());
-                            setBondOptions(bond, bondPopup);
-                            NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
-                            NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
-                            List<LogicalNetworkModel> networks = new ArrayList<>();
-                            networks.addAll(nic1.getItems());
-                            networks.addAll(nic2.getItems());
+                @Override
+                public void executeCommand(UICommand command) {
+                    if (!bondPopup.validate()) {
+                        return;
+                    }
 
-                            networkCommand.execute(bond);
-                            redraw();
+                    sourceListModel.setConfirmWindow(null);
 
-                            // Attach the previous networks
-                            commitNetworkChanges(bond, networks);
+                    CreateOrUpdateBond bond = new CreateOrUpdateBond();
+                    bond.setName(bondPopup.getBond().getSelectedItem());
+                    setBondOptions(bond, bondPopup);
 
-                            // Attach previous labels
-                            commitLabelChanges(srcIfaces, bond);
-                            redraw();
-                        }
-                    }));
+                    NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
+                    NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
+
+                    // Store networks
+                    List<LogicalNetworkModel> networks = new ArrayList<>();
+                    networks.addAll(nic1.getItems());
+                    networks.addAll(nic2.getItems());
+
+                    // Store labels
+                    List<NetworkLabelModel> labels = new ArrayList<>();
+                    labels.addAll(nic1.getLabels());
+                    labels.addAll(nic2.getLabels());
+
+                    networkCommand.execute(bond);
+
+                    /*
+                     * We are calling the <code>redraw()</code> to create the BondModel which is needed by the following
+                     * operations (attaching the networks and the labels to the bond).
+                     *
+                     * For more details @see #redraw. After executing the <code>networkCommand</code> which creates the
+                     * bond, the bondModel still not exist (only the <code>hostSetupNetworksParametersData.bonds</code>
+                     * are updated). <code>redraw()</code> has to be called to create it.
+                     */
+                    redraw();
+
+                    // Attach the previous networks
+                    attachNetworks(bond.getName(), networks);
+
+                    // Attach previous labels
+                    attachLabels(bond.getName(), labels);
+
+                    redraw();
+                }
+            }));
 
             popupWindow = bondPopup;
         } else if (networkCommand.getOp1() == getNewNetworkLabelModel()) {
@@ -660,16 +566,21 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         sourceListModel.setConfirmWindow(popupWindow);
     }
 
-    private void commitLabelChanges(List<VdsNetworkInterface> srcIfaces,
-            VdsNetworkInterface dstIface) {
-        NetworkOperation.moveLabels(srcIfaces, dstIface, hostSetupNetworksParametersData);
+    private void attachLabels(String bondName, List<NetworkLabelModel> labels) {
+        NetworkInterfaceModel bondModel = nicModelByName.get(bondName);
+        NetworkOperation.attachLabels(bondModel, new ArrayList<>(labels), hostSetupNetworksParametersData);
     }
 
-    private void commitNetworkChanges(VdsNetworkInterface iface, List<LogicalNetworkModel> networks) {
-        NetworkInterfaceModel bondModel = nicMap.get(iface.getName());
+    private void attachNetworks(String bondName, List<LogicalNetworkModel> networks) {
+        NetworkInterfaceModel bondModel = nicModelByName.get(bondName);
         NetworkOperation.attachNetworks(bondModel, new ArrayList<>(networks), hostSetupNetworksParametersData);
     }
 
+    /**
+     ** Executing <code>NetworkOperation</code> affects the <code>hostSetupNetworksParametersData</code> only. The
+     * <code>redraw()</code> method should be called to recreate all the models (networkModels, nicModels, labelModels,
+     * etc.) according to the data in the <code>hostSetupNetworksParametersData</code>.
+     **/
     public void redraw() {
         initAllModels(false);
     }
@@ -681,7 +592,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void onNicsChanged() {
-        operationFactory = new NetworkOperationFactory(getNetworks(), getNics());
+        operationFactory = new NetworkOperationFactory(getNetworkModels(), getNicModels());
         validate();
     }
 
@@ -691,8 +602,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         unmanagedNetwork.setVlanId(nic.getVlanId());
         unmanagedNetwork.setMtu(nic.getMtu());
         unmanagedNetwork.setVmNetwork(nic.isBridged());
-        LogicalNetworkModel networkModel = new LogicalNetworkModel(unmanagedNetwork, this);
-        networkMap.put(networkName, networkModel);
+        LogicalNetworkModel networkModel = new LogicalNetworkModel(unmanagedNetwork, null, this);
         return networkModel;
     }
 
@@ -703,7 +613,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private List<String> getFreeBonds() {
         List<String> freeBonds = new ArrayList<>();
         for (VdsNetworkInterface bond : allBonds) {
-            if (!nicMap.containsKey(bond.getName())) {
+            if (!nicModelByName.containsKey(bond.getName())) {
                 freeBonds.add(bond.getName());
             }
         }
@@ -723,16 +633,18 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void initLabelModels() {
-        networkLabelMap.clear();
+        networkLabelModelByLabel.clear();
         for (String label : dcLabels) {
-            networkLabelMap.put(label, new NetworkLabelModel(label, this));
+            networkLabelModelByLabel.put(label, new NetworkLabelModel(label, this));
         }
     }
 
     private void initNetworkModels() {
         Map<String, LogicalNetworkModel> networkModels = new HashMap<>();
+        Map<Guid, NetworkAttachment> networkAttachmentByNetworkId = mapNetworkAttachmentsByNetworkId();
         for (Network network : allNetworks) {
-            LogicalNetworkModel networkModel = new LogicalNetworkModel(network, this);
+            NetworkAttachment attachment = networkAttachmentByNetworkId.get(network.getId());
+            LogicalNetworkModel networkModel = new LogicalNetworkModel(network, attachment, this);
             networkModels.put(network.getName(), networkModel);
 
             if (networkModel.isManagement()) {
@@ -744,175 +656,289 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 if (label != null) {
                     // The network model is candidate to be drawn as part of the label.
                     // This doesn't yet consider whether it actually exists on the interface.
-                    networkLabelMap.get(label).getNetworks().add(networkModel);
+                    networkLabelModelByLabel.get(label).getNetworks().add(networkModel);
                 }
             }
         }
         setNetworks(networkModels);
     }
 
+    private Map<Guid, NetworkAttachment> mapNetworkAttachmentsByNetworkId() {
+        return new MapNetworkAttachments(hostSetupNetworksParametersData.getNetworkAttachments()).byNetworkId();
+    }
+
     private void initNicModels() {
+        Map<String, Set<LogicalNetworkModel>> nicNameToNetworkModels = createNicNameToNetworkModels();
+
+        Map<String, String> labelToDesiredNicName = new HashMap<>();
+        List<LogicalNetworkModel> networkModelsWithLabelError = new ArrayList<>();
+        Map<String, List<NetworkLabelModel>> nicNameToLabelModels =
+                createNicToLabelModels(nicNameToNetworkModels, networkModelsWithLabelError, labelToDesiredNicName);
+
+        Map<String, List<VdsNetworkInterface>> bondNameToSlaves = getBondNameToSlaves();
+        initNextBondName(new ArrayList<>(bondNameToSlaves.keySet()));
+
+        Map<String, NetworkInterfaceModel> nicModels =
+                createAllNicModelsByName(nicNameToNetworkModels, nicNameToLabelModels, bondNameToSlaves);
+
+        setLabelErrorsOnNicModels(nicModels, networkModelsWithLabelError, labelToDesiredNicName);
+        setNics(nicModels);
+    }
+
+    private Map<String, NetworkInterfaceModel> createAllNicModelsByName(
+            Map<String, Set<LogicalNetworkModel>> nicNameToNetworkModels,
+            Map<String, List<NetworkLabelModel>> nicNameToLabelModels,
+            Map<String, List<VdsNetworkInterface>> bondNameToSlaves) {
+        Map<Guid, VdsNetworkInterface> nicsById = Entities.businessEntitiesById(allExistingNics);
         Map<String, NetworkInterfaceModel> nicModels = new HashMap<>();
-        List<VdsNetworkInterface> physicalNics = new ArrayList<>();
-        Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<>();
-        Map<String, Set<LogicalNetworkModel>> nicToNetwork = new HashMap<>();
-        List<LogicalNetworkModel> errorLabelNetworks = new ArrayList<>();
-        labelToIface.clear();
+        nicModels.putAll(createBondModels(nicNameToNetworkModels, bondNameToSlaves, nicNameToLabelModels, nicsById));
+        nicModels.putAll(
+                createRegularNicModels(nicNameToNetworkModels, bondNameToSlaves, nicNameToLabelModels, nicsById));
+        return nicModels;
+    }
 
-        // map all nics
-        final Map<Guid, VdsNetworkInterface> nicsById =  Entities.businessEntitiesById(allNics);
-        final Map<String, VdsNetworkInterface> nicMap = Entities.entitiesByName(allNics);
-
-        // pass over all nics
-        for (VdsNetworkInterface nic : allNics) {
-            final String nicName = nic.getName();
-            final String networkName = nic.getNetworkName();
-            final String bondName = nic.getBondName();
-            final boolean isVlan = nic.getVlanId() != null;
-
-            if (!isVlan) { // physical interface (rather than virtual VLAN interface)
-                physicalNics.add(nic);
+    private Map<String, NetworkInterfaceModel> createRegularNicModels(
+            Map<String, Set<LogicalNetworkModel>> nicNameToNetworkModels,
+            Map<String, List<VdsNetworkInterface>> bondNameToSlaves,
+            Map<String, List<NetworkLabelModel>> nicNameToLabelModels,
+            final Map<Guid, VdsNetworkInterface> nicsById) {
+        Map<String, NetworkInterfaceModel> regularNicModels = new HashMap<>();
+        for (VdsNetworkInterface nic : allExistingNics) {
+            if (!isPhysicalNic(nic, bondNameToSlaves.keySet(), getAllSlaveNames())) {
+                continue;
             }
 
-            // is the nic bonded?
-            if (bondName != null) {
-                if (bondToNic.containsKey(bondName)) {
-                    bondToNic.get(bondName).add(nicMap.get(nicName));
-                } else {
-                    List<VdsNetworkInterface> bondedNics = new ArrayList<>();
-                    bondedNics.add(nicMap.get(nicName));
-                    bondToNic.put(bondName, bondedNics);
-                }
-            }
+            final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, nic.getId());
+            String nicName = nic.getName();
+            Collection<LogicalNetworkModel> nicNetworks = nicNameToNetworkModels.get(nicName);
+            NetworkInterfaceModel nicModel = new NetworkInterfaceModel(nic,
+                    nicNetworks,
+                    nicNameToLabelModels.get(nicName),
+                    nicToVfsConfig.containsKey(nic.getId()),
+                    physicalFunction == null ? null : physicalFunction.getName(),
+                    this);
 
-            // bridge name is either <nic>, <nic.vlanid> or <bond.vlanid>
-            String ifName;
-            if (isVlan) {
-                ifName = nic.getBaseInterface();
+            regularNicModels.put(nicName, nicModel);
+        }
+        return regularNicModels;
+    }
+
+    private Set<String> getAllSlaveNames() {
+        Set<String> slaveNames = new HashSet<>();
+        for (CreateOrUpdateBond bond : hostSetupNetworksParametersData.getBonds()) {
+            slaveNames.addAll(bond.getSlaves());
+        }
+        return slaveNames;
+    }
+
+    private boolean isPhysicalNic(VdsNetworkInterface nic,
+            Set<String> bondNames,
+            Set<String> slaveNames) {
+        boolean isBond = bondNames.contains(nic.getName());
+        boolean isRemovedBond = hostSetupNetworksParametersData.getRemovedBonds().contains(nic.getId());
+        boolean isSlave = slaveNames.contains(nic.getName());
+        boolean isVlanDevice = NetworkCommonUtils.isVlan(nic);
+
+        return !(isBond || isRemovedBond || isSlave || isVlanDevice);
+    }
+
+    private Map<String, NetworkInterfaceModel> createBondModels(
+            Map<String, Set<LogicalNetworkModel>> nicNameToNetworkModels,
+            Map<String, List<VdsNetworkInterface>> bondNameToSlaves,
+            Map<String, List<NetworkLabelModel>> nicNameToLabelModels,
+            final Map<Guid, VdsNetworkInterface> nicsById) {
+        Map<String, NetworkInterfaceModel> bondModels = new HashMap<>();
+        for (CreateOrUpdateBond createOrUpdateBond : hostSetupNetworksParametersData.getBonds()) {
+            String bondName = createOrUpdateBond.getName();
+            List<NetworkInterfaceModel> slavesModels = createSlaveModels(bondNameToSlaves, nicsById, bondName);
+            Collection<LogicalNetworkModel> nicNetworks = nicNameToNetworkModels.get(bondName);
+            Bond originalBond = getOriginalBond(nicsById, createOrUpdateBond);
+
+            BondNetworkInterfaceModel bondNetworkInterfaceModel =
+                    new BondNetworkInterfaceModel(originalBond,
+                            createOrUpdateBond,
+                            nicNetworks,
+                            nicNameToLabelModels.get(createOrUpdateBond.getName()),
+                            slavesModels,
+                            this);
+
+            bondModels.put(bondName, bondNetworkInterfaceModel);
+        }
+        return bondModels;
+    }
+
+    private Bond getOriginalBond(final Map<Guid, VdsNetworkInterface> nicsById, CreateOrUpdateBond createOrUpdateBond) {
+        if (createOrUpdateBond.getId() != null) {
+            assert nicsById.containsKey(
+                    createOrUpdateBond.getId()) : "createOrUpdateBond's id is not part of the nicsById map"; //$NON-NLS-1$
+        }
+        Bond originalBond = createOrUpdateBond.getId() != null
+                ? (Bond) nicsById.get(createOrUpdateBond.getId()) : createOrUpdateBond.toBond();
+        return originalBond;
+    }
+
+    private List<NetworkInterfaceModel> createSlaveModels(Map<String, List<VdsNetworkInterface>> bondNameToSlaves,
+            final Map<Guid, VdsNetworkInterface> nicsById,
+            String bondName) {
+        List<NetworkInterfaceModel> slavesModels = new ArrayList<>();
+        for (VdsNetworkInterface slave : bondNameToSlaves.get(bondName)) {
+            NetworkInterfaceModel slaveModel = createSlaveModel(nicsById, slave);
+            slavesModels.add(slaveModel);
+        }
+        return slavesModels;
+    }
+
+    private NetworkInterfaceModel createSlaveModel(final Map<Guid, VdsNetworkInterface> nicsById,
+            VdsNetworkInterface slave) {
+        final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, slave.getId());
+        NetworkInterfaceModel slaveModel = new NetworkInterfaceModel(slave,
+                nicToVfsConfig.containsKey(slave.getId()),
+                physicalFunction == null ? null : physicalFunction.getName(),
+                this);
+        slaveModel.setBonded(true);
+        return slaveModel;
+    }
+
+    private Map<String, List<NetworkLabelModel>> createNicToLabelModels(
+            Map<String, Set<LogicalNetworkModel>> nicNameToNetworkModels,
+            List<LogicalNetworkModel> errorLabelNetworks,
+            Map<String, String> labelToDesiredNicName) {
+        Map<String, List<NetworkLabelModel>> nicToLabelModels = new HashMap<>();
+
+        for (NicLabel nicLabel : hostSetupNetworksParametersData.getLabels()) {
+            String label = nicLabel.getLabel();
+            String nicName = nicLabel.getNicName();
+            labelToDesiredNicName.put(label, nicName);
+
+            Collection<LogicalNetworkModel> nicNetworks = nicNameToNetworkModels.get(nicName);
+
+            NetworkLabelModel labelModel = networkLabelModelByLabel.get(label);
+            assert labelModel != null : "NicLabel should have a NetworkLabelModel"; //$NON-NLS-1$
+
+            markNetworkModelsAsAttachedViaLabel(errorLabelNetworks, nicNetworks, labelModel);
+
+            if (nicToLabelModels.get(nicName) == null) {
+                nicToLabelModels.put(nicName, new ArrayList<NetworkLabelModel>());
+            }
+            nicToLabelModels.get(nicName).add(labelModel);
+        }
+        return nicToLabelModels;
+    }
+
+    private void markNetworkModelsAsAttachedViaLabel(List<LogicalNetworkModel> errorLabelNetworks,
+            Collection<LogicalNetworkModel> nicNetworks,
+            NetworkLabelModel labelModel) {
+        for (Iterator<LogicalNetworkModel> iter = labelModel.getNetworks().iterator(); iter.hasNext();) {
+            LogicalNetworkModel networkModel = iter.next();
+
+            if (nicNetworks != null && nicNetworks.contains(networkModel)) {
+                networkModel.attachViaLabel();
             } else {
-                ifName = nicName;
-            }
-
-            // initialize this nic's network list if it hadn't been initialized
-            if (!nicToNetwork.containsKey(ifName)) {
-                nicToNetwork.put(ifName, new HashSet<LogicalNetworkModel>());
-            }
-
-            // does this nic have a network?
-            if (networkName != null) {
-                LogicalNetworkModel networkModel = networkMap.get(networkName);
-
-                if (networkModel == null) {
-                    networkModel = createUnmanagedNetworkModel(networkName, nic);
-                } else {
-                    // The real vlanId, isBridged and mtu configured on the host can be not synced with the values
-                    // configured in the networks table (dc networks).
-                    // The real values configured on the host should be displayed.
-                    networkModel.getNetwork().setVlanId(nic.getVlanId());
-                    networkModel.getNetwork().setMtu(nic.getMtu());
-                    networkModel.getNetwork().setVmNetwork(nic.isBridged());
-                }
-
-                Collection<LogicalNetworkModel> nicNetworks = new ArrayList<>();
-                nicNetworks.add(networkModel);
-                // set vlan device on the network
-                if (networkModel.hasVlan()) {
-                    NetworkInterfaceModel existingEridge = networkModel.getVlanNicModel();
-                    assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
-                    networkModel.setVlanNicModel(new NetworkInterfaceModel(nic, nicNetworks, null, false, null, this));
-                }
-                nicToNetwork.get(ifName).add(networkModel);
-
-                if (!networkModel.isInSync() && networkModel.isManaged()) {
-                    NetworkAttachment existingNetworkAttachment = getExistingAttachmentByNetworkId(networkModel.getNetwork().getId());
-                    netToBeforeSyncParams.put(networkName, createBeforeSyncNetParams(nic, existingNetworkAttachment));
-                }
+                // The network has the same label as the nic but not attached to the nic.
+                iter.remove();
+                errorLabelNetworks.add(networkModel);
             }
         }
+    }
 
-        // calculate the next available bond name
-        List<String> bondNames = new ArrayList<>(bondToNic.keySet());
+    private void initNextBondName(List<String> bondNames) {
         Collections.sort(bondNames, new LexoNumericComparator());
         nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + 0;
-        for (int i=0; i<bondNames.size(); ++i) {
+        for (int i = 0; i < bondNames.size(); ++i) {
             if (nextBondName.equals(bondNames.get(i))) {
                 nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + (i + 1);
             } else {
                 break;
             }
         }
+    }
 
-        // build models
-        for (VdsNetworkInterface nic : physicalNics) {
-            // dont show bonded nics
-            if (nic.getBondName() != null) {
-                continue;
+    private Map<String, Set<LogicalNetworkModel>> createNicNameToNetworkModels() {
+        Map<String, Set<LogicalNetworkModel>> nicToNetworks = new HashMap<>();
+
+        for (NetworkAttachment networkAttachment : hostSetupNetworksParametersData.getNetworkAttachments()) {
+            String nicName = networkAttachment.getNicName();
+
+            if (!nicToNetworks.containsKey(nicName)) {
+                nicToNetworks.put(nicName, new HashSet<LogicalNetworkModel>());
             }
 
-            String nicName = nic.getName();
-            Collection<LogicalNetworkModel> nicNetworks = nicToNetwork.get(nicName);
-            List<NetworkLabelModel> nicLabels = new ArrayList<>();
+            LogicalNetworkModel networkModel = networkModelByName.get(networkAttachment.getNetworkName());
 
-            // does this nic have any labels?
-            Set<String> labels = nic.getLabels();
-            if (labels != null) {
-                for (String label : labels) {
-                    labelToIface.put(label, nicName);
-                    NetworkLabelModel labelModel = networkLabelMap.get(label);
-                    if (labelModel != null) {
-                        // attach label networks to nic
-                        for (Iterator<LogicalNetworkModel> iter = labelModel.getNetworks().iterator(); iter.hasNext();) {
-                            LogicalNetworkModel networkModel = iter.next();
+            assert networkModel != null : "network on an attachment should have a logical model"; //$NON-NLS-1$
 
-                            if (nicNetworks.contains(networkModel)) {
-                                networkModel.attachViaLabel();
-                            } else {
-                                // The network has the same label as the nic but not attached to the nic.
-                                iter.remove();
-                                errorLabelNetworks.add(networkModel);
-                            }
-                        }
+            setVlanDeviceOnNetworkModelIfNeeded(nicName, networkModel);
 
-                        // attach label itself to nic
-                        nicLabels.add(labelModel);
-                    }
+            nicToNetworks.get(nicName).add(networkModel);
+        }
+
+        createModelsForUnamangedNetworks(nicToNetworks);
+
+        return nicToNetworks;
+    }
+
+    public void createModelsForUnamangedNetworks(Map<String, Set<LogicalNetworkModel>> nicToNetworks) {
+        for (VdsNetworkInterface nic : allExistingNics) {
+            if (shouldCreateUnmanagedNetworkModel(nic)) {
+                LogicalNetworkModel networkModel = createUnmanagedNetworkModel(nic.getNetworkName(), nic);
+
+                networkModelByName.put(networkModel.getName(), networkModel);
+
+                String baseNicName = NetworkCommonUtils.stripVlan(nic);
+                if (!nicToNetworks.containsKey(baseNicName)) {
+                    nicToNetworks.put(baseNicName, new HashSet<LogicalNetworkModel>());
                 }
-            }
-
-            List<VdsNetworkInterface> bondedNics = bondToNic.get(nicName);
-
-            if (bondedNics != null) {
-                List<NetworkInterfaceModel> bondedModels = new ArrayList<>();
-                for (VdsNetworkInterface bonded : bondedNics) {
-                    final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, bonded.getId());
-                    NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded,
-                            nicToVfsConfig.containsKey(bonded.getId()),
-                            physicalFunction.getName(),
-                            this);
-                    bondedModel.setBonded(true);
-                    bondedModels.add(bondedModel);
-                }
-                BondNetworkInterfaceModel bondNetworkInterfaceModel = new BondNetworkInterfaceModel((Bond)nic,
-                        nicNetworks,
-                        nicLabels,
-                        bondedModels,
-                        this);
-
-                nicModels.put(nicName, bondNetworkInterfaceModel);
-            } else {
-                final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, nic.getId());
-                NetworkInterfaceModel nicModel = new NetworkInterfaceModel(nic,
-                        nicNetworks,
-                        nicLabels,
-                        nicToVfsConfig.containsKey(nic.getId()),
-                        physicalFunction.getName(),
-                        this);
-
-                nicModels.put(nicName, nicModel);
+                nicToNetworks.get(baseNicName).add(networkModel);
             }
         }
-        initLabeledNetworksErrorMessages(errorLabelNetworks, nicModels);
-        setNics(nicModels);
+    }
+
+    private boolean shouldCreateUnmanagedNetworkModel(VdsNetworkInterface nic) {
+        return nic.getNetworkImplementationDetails() != null && !nic.getNetworkImplementationDetails().isManaged()
+                && !hostSetupNetworksParametersData.getRemovedUnmanagedNetworks().contains(nic.getNetworkName());
+    }
+
+    private Map<String, List<VdsNetworkInterface>> getBondNameToSlaves() {
+        final Map<String, VdsNetworkInterface> nicMap = Entities.entitiesByName(allExistingNics);
+        Map<String, List<VdsNetworkInterface>> bondToSlaves = new HashMap<>();
+
+        for (CreateOrUpdateBond createOrUpdateBond : hostSetupNetworksParametersData.getBonds()) {
+            String bondName = createOrUpdateBond.getName();
+            assert !bondToSlaves.containsKey(bondName) : "the same bond shouldn't exist twice in the parameters"; //$NON-NLS-1$
+
+            bondToSlaves.put(bondName, new ArrayList<VdsNetworkInterface>());
+            Set<String> slavesNames = createOrUpdateBond.getSlaves();
+            for (String slaveName : slavesNames) {
+                bondToSlaves.get(bondName).add(nicMap.get(slaveName));
+            }
+        }
+        return bondToSlaves;
+    }
+
+    private void setVlanDeviceOnNetworkModelIfNeeded(String baseNicName,
+            LogicalNetworkModel networkModel) {
+        if (networkModel.hasVlan()) {
+            VdsNetworkInterface existingVlanDevice = networkModel.getVlanDevice();
+            assert existingVlanDevice == null : "should have only one vlan device, but found " + existingVlanDevice; //$NON-NLS-1$
+            VdsNetworkInterface vlanDeviceWithTheSameVlanIdAsTheNetwork = getExistingVlanDeviceByVlanId(networkModel.getVlanId());
+
+            if (vlanDeviceWithTheSameVlanIdAsTheNetwork != null
+                    && baseNicName.equals(vlanDeviceWithTheSameVlanIdAsTheNetwork.getBaseInterface())) {
+                networkModel.setVlanDevice(vlanDeviceWithTheSameVlanIdAsTheNetwork);
+            }
+        }
+    }
+
+    private Map<Integer, VdsNetworkInterface> mapVlanDevicesByVlanId() {
+        Map<Integer, VdsNetworkInterface> vlanDevicesByVlanId = new HashMap<>();
+
+        for (VdsNetworkInterface nic : allExistingNics) {
+            if (nic.getVlanId() != null) {
+                vlanDevicesByVlanId.put(nic.getVlanId(), nic);
+            }
+        }
+
+        return vlanDevicesByVlanId;
     }
 
     private VdsNetworkInterface findPhysicalFunction(Map<Guid, VdsNetworkInterface> nicsById, Guid nicId) {
@@ -927,39 +953,21 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return physicalFunction;
     }
 
-    private NetworkParameters createBeforeSyncNetParams(VdsNetworkInterface nic, NetworkAttachment attachment) {
-        NetworkParameters params = new NetworkParameters();
-        params.setBootProtocol(nic.getBootProtocol());
-        params.setAddress(nic.getAddress());
-        params.setSubnet(nic.getSubnet());
-        params.setGateway(nic.getGateway());
-        params.setQos(nic.getQos());
-
-        params.setQosOverridden(attachment.isQosOverridden());
-        params.setCustomProperties(attachment.getProperties());
-
-        return params;
-    }
-
-    private NetworkAttachment getExistingAttachmentByNetworkId(Guid networkId) {
-        NetworkAttachment existingNetworkAttachment =
-                new MapNetworkAttachments(existingNetworkAttachments).byNetworkId()
-                        .get(networkId);
-        return existingNetworkAttachment;
-    }
-
-    private void initLabeledNetworksErrorMessages(List<LogicalNetworkModel> errorLabelNetworks, Map<String, NetworkInterfaceModel> nicModels){
-        for (LogicalNetworkModel networkModel : errorLabelNetworks){
-            NetworkInterfaceModel desiredNic = nicModels.get(labelToIface.get(networkModel.getNetwork().getLabel()));
-            NetworkOperation operation = NetworkOperationFactory.operationFor(networkModel, desiredNic);
+    private void setLabelErrorsOnNicModels(Map<String, NetworkInterfaceModel> nicModels,
+            List<LogicalNetworkModel> networkModelsWithLabelError,
+            Map<String, String> labelToDesiredNicName) {
+        for (LogicalNetworkModel networkModel : networkModelsWithLabelError) {
+            NetworkInterfaceModel desiredNicModel =
+                    nicModels.get(labelToDesiredNicName.get(networkModel.getNetwork().getLabel()));
+            NetworkOperation operation = NetworkOperationFactory.operationFor(networkModel, desiredNicModel);
             UIMessages messages = ConstantsManager.getInstance().getMessages();
             // Should be attached but can't due to conflict
             if (operation.isNullOperation()) {
-                networkModel.setErrorMessage(messages.networkLabelConflict(desiredNic.getName(),
+                networkModel.setErrorMessage(messages.networkLabelConflict(desiredNicModel.getName(),
                         networkModel.getNetwork().getLabel())
-                        + " " + operation.getMessage(networkModel, desiredNic)); //$NON-NLS-1$
+                        + " " + operation.getMessage(networkModel, desiredNicModel)); //$NON-NLS-1$
             } else {
-                networkModel.setErrorMessage(messages.labeledNetworkNotAttached(desiredNic.getName(),
+                networkModel.setErrorMessage(messages.labeledNetworkNotAttached(desiredNicModel.getName(),
                         networkModel.getNetwork().getLabel()));
             }
         }
@@ -989,11 +997,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 allBonds = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                 initNetworkModels();
-                initDcNetworkParams();
                 initNicModels();
-
-                hostSetupNetworksParametersData.allNics = allNics;
-                hostSetupNetworksParametersData.existingNetworkAttachments = existingNetworkAttachments;
 
                 stopProgress();
             }
@@ -1035,7 +1039,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             @Override
             public void onSuccess(Object model, Object returnValueObj) {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
-                allNics = returnValue.getReturnValue();
+                allExistingNics = returnValue.getReturnValue();
+
+                existingVlanDevicesByVlanId = mapVlanDevicesByVlanId();
+                initCreateOrUpdateBondParameters();
+                initNicLabelsParameters();
 
                 // chain the network attachments query
                 queryNetworkAttachments();
@@ -1057,7 +1065,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             public void onSuccess(Object model, Object returnValueObj) {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
                 Object returnValue2 = returnValue.getReturnValue();
-                HostSetupNetworksModel.this.existingNetworkAttachments = (List<NetworkAttachment>) returnValue2;
+                hostSetupNetworksParametersData.getNetworkAttachments().addAll((List<NetworkAttachment>) returnValue2);
 
                 // chain the vfsConfig query
                 queryVfsConfig();
@@ -1101,8 +1109,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 allNetworks = (List<Network>) returnValue;
-                // chain the nic query
-                queryInterfaces();
+                // chain the qoss query
+                queryQoss();
             }
         };
 
@@ -1110,24 +1118,34 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         AsyncDataProvider.getInstance().getClusterNetworkList(asyncQuery, vds.getClusterId());
     }
 
-    private void initDcNetworkParams() {
-        for (Network network : allNetworks) {
-            netTodcParams.put(network.getName(), new DcNetworkParams(network));
-        }
+    private void queryQoss() {
+        // query for qoss
+        AsyncQuery qossQuery = new AsyncQuery();
+        qossQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                Collection<HostNetworkQos> qoss = (Collection<HostNetworkQos>) returnValue;
+                qosById = Entities.businessEntitiesById(qoss);
+                // chain the nic query
+                queryInterfaces();
+            }
+        };
+
+        AsyncDataProvider.getInstance().getAllHostNetworkQos(getEntity().getStoragePoolId(), qossQuery);
     }
 
-    private void setBondOptions(VdsNetworkInterface entity, SetupNetworksBondModel bondDialogModel) {
+    private void setBondOptions(CreateOrUpdateBond bond, SetupNetworksBondModel bondDialogModel) {
         Map.Entry<String, EntityModel<String>> BondPair = bondDialogModel.getBondingOptions().getSelectedItem();
         String key = BondPair.getKey();
-        entity.setBondOptions("custom".equals(key) ? BondPair.getValue().getEntity() : key); //$NON-NLS-1$
+        bond.setBondOptions("custom".equals(key) ? BondPair.getValue().getEntity() : key); //$NON-NLS-1$
     }
 
     private void setNetworks(Map<String, LogicalNetworkModel> networks) {
-        networkMap = networks;
+        networkModelByName = networks;
     }
 
     private void setNics(Map<String, NetworkInterfaceModel> nics) {
-        nicMap = nics;
+        nicModelByName = nics;
         onNicsChanged();
         getNicsChangedEvent().raise(this, EventArgs.EMPTY);
     }
@@ -1154,14 +1172,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     public Map<String, NetworkParameters> getNetworkToLastDetachParams() {
         return networkToLastDetachParams;
-    }
-
-    public Set<String> getNetworksToSync() {
-        return networksToSync;
-    }
-
-    public DcNetworkParams getNetDcParams(String networkName) {
-        return netTodcParams.get(networkName);
     }
 
     public void onSetupNetworks() {
@@ -1226,27 +1236,21 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     public HostSetupNetworksParameters createHostSetupNetworksParameters() {
         HostSetupNetworksParameters result = new HostSetupNetworksParameters(getEntity().getId());
 
-        result.setNetworkAttachments(hostSetupNetworksParametersData.newOrModifiedNetworkAttachments);
-        result.setRemovedNetworkAttachments(
-            new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedNetworkAttachments)));
-
-        /*when bond is created, bonding is marked on nics, but slaves are not noted in slaves. So nics knows about bond,
-         but they're not sent anywhere, and bond which is sent to bll, does not know about it's slaves.
-         So we have to loop over created bonds and all nics, pairing them here.
-         */
-        for (Bond newOrModifiedBond : hostSetupNetworksParametersData.newOrModifiedBonds) {
-            for (VdsNetworkInterface nic : allNics) {
-                if (nic.isPartOfBond(newOrModifiedBond.getName())) {
-                    newOrModifiedBond.getSlaves().add(nic.getName());
-                }
-            }
+        for (NetworkAttachment attachment : hostSetupNetworksParametersData.getNetworkAttachments()) {
+            attachment.setOverrideConfiguration(shouldSyncNetwork(attachment.getNetworkName()));
         }
 
-        result.setCreateOrUpdateBonds(CreateOrUpdateBond.fromBonds(hostSetupNetworksParametersData.newOrModifiedBonds));
-        result.setRemovedBonds(new HashSet<>(Entities.getIds(hostSetupNetworksParametersData.removedBonds)));
-        result.setRemovedUnmanagedNetworks(hostSetupNetworksParametersData.removedUnmanagedNetworks);
-        result.setLabels(hostSetupNetworksParametersData.addedLabels);
-        result.setRemovedLabels(Entities.objectNames(hostSetupNetworksParametersData.removedLabels));
+        result.setNetworkAttachments(
+                new ArrayList<NetworkAttachment>(hostSetupNetworksParametersData.getNetworkAttachments()));
+        result.setRemovedNetworkAttachments(hostSetupNetworksParametersData.getRemovedNetworkAttachments());
+
+        result.setCreateOrUpdateBonds(new ArrayList<CreateOrUpdateBond>(hostSetupNetworksParametersData.getBonds()));
+        result.setRemovedBonds(new HashSet<>(hostSetupNetworksParametersData.getRemovedBonds()));
+
+        result.setRemovedUnmanagedNetworks(hostSetupNetworksParametersData.getRemovedUnmanagedNetworks());
+
+        result.setLabels(hostSetupNetworksParametersData.getLabels());
+        result.setRemovedLabels(hostSetupNetworksParametersData.getRemovedLabels());
 
         return result;
     }
@@ -1277,5 +1281,35 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             }
         }
         return false;
+    }
+
+    public DataFromHostSetupNetworksModel getHostSetupNetworksParametersData() {
+        return hostSetupNetworksParametersData;
+    }
+
+    private void initCreateOrUpdateBondParameters() {
+        NetworkCommonUtils.fillBondSlaves(allExistingNics);
+        for (VdsNetworkInterface nic : allExistingNics) {
+            if (nic.isBond()) {
+                getHostSetupNetworksParametersData().getBonds()
+                        .add(CreateOrUpdateBond.fromBond((Bond) nic));
+            }
+        }
+    }
+
+    private void initNicLabelsParameters() {
+        for (VdsNetworkInterface nic : allExistingNics) {
+            if (nic.getLabels() != null) {
+                for (String label : nic.getLabels()) {
+                    getHostSetupNetworksParametersData().getLabels()
+                            .add(new NicLabel(nic.getId(), nic.getName(), label));
+                }
+                getHostSetupNetworksParametersData().getOriginalLabels().addAll(nic.getLabels());
+            }
+        }
+    }
+
+    public VdsNetworkInterface getExistingVlanDeviceByVlanId(int vlanId) {
+        return existingVlanDevicesByVlanId.get(vlanId);
     }
 }

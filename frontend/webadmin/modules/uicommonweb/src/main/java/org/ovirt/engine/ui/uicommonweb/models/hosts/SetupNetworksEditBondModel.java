@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
 
-    public SetupNetworksEditBondModel(final VdsNetworkInterface bond, boolean doesBondHaveVmNetworkAttached) {
+    public SetupNetworksEditBondModel(final CreateOrUpdateBond bond, boolean doesBondHaveVmNetworkAttached) {
         super(doesBondHaveVmNetworkAttached);
         setTitle(ConstantsManager.getInstance()
                 .getMessages()

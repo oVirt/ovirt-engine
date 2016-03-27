@@ -51,7 +51,7 @@ public class BondPanel extends NicPanel {
         vPanel.add(titleRow);
 
         getElement().addClassName(style.bondPanel());
-        List<NetworkInterfaceModel> bonded = ((BondNetworkInterfaceModel) item).getBonded();
+        List<NetworkInterfaceModel> bonded = ((BondNetworkInterfaceModel) item).getSlaves();
         Collections.sort(bonded);
 
         for (NetworkInterfaceModel networkInterfaceModel : bonded) {

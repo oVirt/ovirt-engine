@@ -5,41 +5,51 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 
-public class NetworkParameters {
+public class NetworkParameters implements InterfacePropertiesAccessor {
 
     private NetworkBootProtocol bootProtocol;
     private String address;
-    private String subnet;
+    private String netmask;
     private String gateway;
     private boolean qosOverridden;
     private HostNetworkQos qos;
     private Map<String, String> customProperties;
 
-
     public NetworkParameters() {
     }
 
+    @Override
     public NetworkBootProtocol getBootProtocol() {
         return bootProtocol;
     }
+
     public void setBootProtocol(NetworkBootProtocol bootProtocol) {
         this.bootProtocol = bootProtocol;
     }
+
+    @Override
     public String getAddress() {
         return address;
     }
+
     public void setAddress(String address) {
         this.address = address;
     }
-    public String getSubnet() {
-        return subnet;
+
+    @Override
+    public String getNetmask() {
+        return netmask;
     }
-    public void setSubnet(String subnet) {
-        this.subnet = subnet;
+
+    public void setNetmask(String netmask) {
+        this.netmask = netmask;
     }
+
+    @Override
     public String getGateway() {
         return gateway;
     }
+
     public void setGateway(String gateway) {
         this.gateway = gateway;
     }
@@ -52,11 +62,12 @@ public class NetworkParameters {
         this.qosOverridden = qosOverridden;
     }
 
-    public HostNetworkQos getQos() {
+    @Override
+    public HostNetworkQos getHostNetworkQos() {
         return qos;
     }
 
-    public void setQos(HostNetworkQos qos) {
+    public void setHostNetworkQos(HostNetworkQos qos) {
         this.qos = qos;
     }
 

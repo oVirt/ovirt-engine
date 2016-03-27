@@ -7,13 +7,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -22,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -29,6 +27,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -69,28 +69,37 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
 
     private static final Guid existingBondId = Guid.newGuid();
     private static final String existingBondName = "existingBond"; //$NON-NLS-1$
-    private Bond existingBond = createBond(existingBondId, existingBondName, Arrays.asList(nicA, nicB));
-    private Bond newlyCreatedBond = createBond(null, "newlyCreatedBond", Collections.<VdsNetworkInterface>emptyList()); //$NON-NLS-1$
+    private Bond existingBond = createBond(existingBondId, existingBondName, Arrays.asList(nicA, nicB)).toBond();
+    private CreateOrUpdateBond newlyCreatedBond =
+            createBond(null, "newlyCreatedBond", Collections.<VdsNetworkInterface> emptyList()); //$NON-NLS-1$
 
-    private List<VdsNetworkInterface> allNics = new ArrayList<>();
-
-    private List<NetworkAttachment> existingNetworkAttachments = new ArrayList<>();
-
-    private Set<String> networksToSync = new HashSet<>();
+    @Mock
+    private HostSetupNetworksModel setupModel;
 
     private DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel =
-            new DataFromHostSetupNetworksModel(allNics, existingNetworkAttachments, networksToSync);
+            new DataFromHostSetupNetworksModel();
 
     @Before
     public void setUp() throws Exception {
         when(logicalNetworkModelOfNetworkA.getNetwork()).thenReturn(networkA);
         when(logicalNetworkModelOfNetworkC.getNetwork()).thenReturn(networkC);
-        when(networkInterfaceModelOfNicA.getIface()).thenReturn(nicA);
-        when(networkInterfaceModelOfNicB.getIface()).thenReturn(nicB);
-        when(networkInterfaceModelOfNicC.getIface()).thenReturn(nicC);
-        when(networkInterfaceModelOfNicD.getIface()).thenReturn(nicD);
 
-        //mock manager/resolver so it's possible to delegate from one NetworkOperation to another.
+        when(logicalNetworkModelOfNetworkA.getSetupModel()).thenReturn(setupModel);
+        when(logicalNetworkModelOfNetworkC.getSetupModel()).thenReturn(setupModel);
+
+        when(networkInterfaceModelOfNicA.getOriginalIface()).thenReturn(nicA);
+        when(networkInterfaceModelOfNicB.getOriginalIface()).thenReturn(nicB);
+        when(networkInterfaceModelOfNicC.getOriginalIface()).thenReturn(nicC);
+        when(networkInterfaceModelOfNicD.getOriginalIface()).thenReturn(nicD);
+
+        when(networkInterfaceModelOfNicA.getName()).thenReturn(nicA.getName());
+        when(networkInterfaceModelOfNicB.getName()).thenReturn(nicB.getName());
+        when(networkInterfaceModelOfNicC.getName()).thenReturn(nicC.getName());
+        when(networkInterfaceModelOfNicD.getName()).thenReturn(nicD.getName());
+
+        when(setupModel.getHostSetupNetworksParametersData()).thenReturn(dataFromHostSetupNetworksModel);
+
+        // mock manager/resolver so it's possible to delegate from one NetworkOperation to another.
         ConstantsManager constantsManagerMock = Mockito.mock(ConstantsManager.class);
         UIMessages uiMessagesMock = Mockito.mock(UIMessages.class);
         when(constantsManagerMock.getMessages()).thenReturn(uiMessagesMock);
@@ -102,251 +111,216 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
 
     /*
      * At the beginning there was a void, then NetworkAttachment was created attaching given network and nic.
-     * */
+     */
     @Test
     public void testCreatingBrandNewNetworkAttachment() throws Exception {
         when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(false);
+        when(setupModel.getNetworkToLastDetachParams()).thenReturn(new HashMap<String, NetworkParameters>());
 
         NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
                 logicalNetworkModelOfNetworkA,
                 networkInterfaceModelOfNicA,
                 dataFromHostSetupNetworksModel);
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(1));
-        NetworkAttachment networkAttachment = dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator().next();
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(1));
+        NetworkAttachment networkAttachment = dataFromHostSetupNetworksModel.getNetworkAttachments().iterator().next();
         assertNetworkAttachment(networkAttachment, null, networkA.getId(), nicA.getId());
 
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.isEmpty(), is(true));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().isEmpty(), is(true));
     }
 
     /*
      * At the beginning there was a NetworkAttachment. Suddenly network was detached from the nic, but in the end,
      * network was back attached to the nic unchanged.
-     * */
+     */
     @Test
     public void testReattachingPreexistingNetworkAfterItsBeingDetached() throws Exception {
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(false);
-
-        Guid networkAttachmentId = Guid.newGuid();
-        NetworkAttachment networkAttachment =
-            NetworkOperation.newNetworkAttachment(networkA,
-                nicA,
-                null,
-                networkAttachmentId,
-                dataFromHostSetupNetworksModel.networksToSync,
-                null,
-                null);
-        existingNetworkAttachments.add(networkAttachment);
-        dataFromHostSetupNetworksModel.removedNetworkAttachments.add(networkAttachment);
-
-        NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
-            logicalNetworkModelOfNetworkA,
-            networkInterfaceModelOfNicA,
-            dataFromHostSetupNetworksModel);
-
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(1));
-
-        NetworkAttachment updatedNetworkAttachment = dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator().next();
-        assertNetworkAttachment(updatedNetworkAttachment, networkAttachmentId, networkA.getId(), nicA.getId());
-
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
-    }
-
-    /*
-     * At the beginning there was a NetworkAttachment. Suddenly network was detached from the nic, and gets firmly
-     * attached to another nic.
-     * */
-    @Test
-    public void testReattachingPreexistingNetworkToDifferentNicAfterItsBeingDetached() throws Exception {
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(false);
-        when(networkInterfaceModelOfNicA.getIface()).thenReturn(nicB);
-
-        Guid networkAttachmentId = Guid.newGuid();
-        NetworkAttachment formerAttachment =
-            NetworkOperation.newNetworkAttachment(networkA,
-                nicA,
-                null,
-                networkAttachmentId,
-                dataFromHostSetupNetworksModel.networksToSync,
-                null,
-                null);
-        existingNetworkAttachments.add(formerAttachment);
-        dataFromHostSetupNetworksModel.removedNetworkAttachments.add(formerAttachment);
-
-        NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
-            logicalNetworkModelOfNetworkA,
-            networkInterfaceModelOfNicA,
-            dataFromHostSetupNetworksModel);
-
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(1));
-        assertNetworkAttachment(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator().next(),
-                networkAttachmentId,
-                networkA.getId(),
-                nicB.getId());
-    }
-
-    /*
-     * At the beginning there was a NetworkAttachment, and network gets detached from the nic.
-     * */
-    @Test
-    public void testDetachingPreexistingNetworkAttachment() throws Exception {
-        Guid networkAttachmentId = Guid.newGuid();
-        NetworkAttachment networkAttachment =
-            NetworkOperation.newNetworkAttachment(networkA,
-                nicA,
-                null,
-                networkAttachmentId,
-                dataFromHostSetupNetworksModel.networksToSync,
-                null,
-                null);
-        existingNetworkAttachments.add(networkAttachment);
-        when(logicalNetworkModelOfNetworkA.hasVlan()).thenReturn(false);
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(true);
-        when(logicalNetworkModelOfNetworkA.getAttachedToNic()).thenReturn(networkInterfaceModelOfNicA);
-
-
-        NetworkOperation.DETACH_NETWORK.getTarget().executeNetworkCommand(
-            logicalNetworkModelOfNetworkA,
-            null,
-            dataFromHostSetupNetworksModel);
-
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(1));
-        Guid removedNetworkAttachmentId = dataFromHostSetupNetworksModel.removedNetworkAttachments.iterator().next().getId();
-        assertThat("id mismatch", removedNetworkAttachmentId, is(networkAttachmentId)); //$NON-NLS-1$
-    }
-
-    /*
-     * At the beginning there was a void, then NetworkAttachment was created attaching given network with nic,
-     * and then her was immediately detached from him.
-     * */
-    @Test
-    public void testDetachingPreviouslyAddedNetworkAttachment() throws Exception {
-        NetworkAttachment networkAttachment =
-                NetworkOperation.newNetworkAttachment(networkA,
-                        nicA,
-                        null,
-                        dataFromHostSetupNetworksModel.networksToSync);
-        dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.add(networkAttachment);
-        when(logicalNetworkModelOfNetworkA.hasVlan()).thenReturn(false);
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(true);
-        when(logicalNetworkModelOfNetworkA.getAttachedToNic()).thenReturn(networkInterfaceModelOfNicA);
+        createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA, logicalNetworkModelOfNetworkA);
 
         NetworkOperation.DETACH_NETWORK.getTarget().executeNetworkCommand(
                 logicalNetworkModelOfNetworkA,
                 null,
                 dataFromHostSetupNetworksModel);
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
+        NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
+                logicalNetworkModelOfNetworkA,
+                networkInterfaceModelOfNicA,
+                dataFromHostSetupNetworksModel);
+
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(1));
+
+        NetworkAttachment updatedNetworkAttachment =
+                dataFromHostSetupNetworksModel.getNetworkAttachments().iterator().next();
+        assertNetworkAttachment(updatedNetworkAttachment, null, networkA.getId(), nicA.getId());
+
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+    }
+
+    /*
+     * At the beginning there was a NetworkAttachment. Suddenly network was detached from the nic, and gets finally
+     * attached to another nic.
+     */
+    @Test
+    public void testReattachingPreexistingNetworkToDifferentNicAfterItsBeingDetached() throws Exception {
+        createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA, logicalNetworkModelOfNetworkA);
+
+        NetworkOperation.DETACH_NETWORK.getTarget().executeNetworkCommand(
+                logicalNetworkModelOfNetworkA,
+                null,
+                dataFromHostSetupNetworksModel);
+
+        NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
+                logicalNetworkModelOfNetworkA,
+                networkInterfaceModelOfNicB,
+                dataFromHostSetupNetworksModel);
+
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(1));
+        assertNetworkAttachment(dataFromHostSetupNetworksModel.getNetworkAttachments().iterator().next(),
+                null,
+                networkA.getId(),
+                nicB.getId());
+    }
+
+    /*
+     * At the beginning there was a NetworkAttachment, and network gets detached from the nic.
+     */
+    @Test
+    public void testDetachingPreexistingNetworkAttachment() throws Exception {
+        NetworkAttachment attachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA,
+                logicalNetworkModelOfNetworkA);
+        Guid attachmentId = attachment.getId();
+
+        NetworkOperation.DETACH_NETWORK.getTarget().executeNetworkCommand(
+                logicalNetworkModelOfNetworkA,
+                null,
+                dataFromHostSetupNetworksModel);
+
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+        Guid removedNetworkAttachmentId =
+                dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().iterator().next();
+        assertThat("id mismatch", removedNetworkAttachmentId, is(attachmentId)); //$NON-NLS-1$
+    }
+
+    /*
+     * At the beginning there was a void, then NetworkAttachment was created attaching given network with nic, and then
+     * her was immediately detached from him.
+     */
+    @Test
+    public void testDetachingPreviouslyAddedNetworkAttachment() throws Exception {
+        NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
+                logicalNetworkModelOfNetworkA,
+                networkInterfaceModelOfNicB,
+                dataFromHostSetupNetworksModel);
+
+        setAttachmentOnNetworkModel(networkInterfaceModelOfNicB,
+                logicalNetworkModelOfNetworkA,
+                dataFromHostSetupNetworksModel.getNetworkAttachments().iterator().next());
+
+        NetworkOperation.DETACH_NETWORK.getTarget().executeNetworkCommand(
+                logicalNetworkModelOfNetworkA,
+                null,
+                dataFromHostSetupNetworksModel);
+
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(0));
     }
 
     /*
      * At the beginning there was a bond, which was then broken.
-     * */
+     */
     @Test
     public void testBreakingExistingBond() throws Exception {
+        CreateOrUpdateBond createOrUpdateBond = CreateOrUpdateBond.fromBond(existingBond);
+
+        dataFromHostSetupNetworksModel.getBonds().add(createOrUpdateBond);
+
         when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
-        when(bondNetworkInterfaceModelA.getIface()).thenReturn(existingBond);
+        when(bondNetworkInterfaceModelA.getCreateOrUpdateBond()).thenReturn(createOrUpdateBond);
 
         NetworkOperation.BREAK_BOND.getTarget().executeNetworkCommand(
                 bondNetworkInterfaceModelA,
                 null,
                 dataFromHostSetupNetworksModel);
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(0));
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(1));
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(1));
 
-        Guid removedBondId = dataFromHostSetupNetworksModel.removedBonds.iterator().next().getId();
+        Guid removedBondId = dataFromHostSetupNetworksModel.getRemovedBonds().iterator().next();
         assertThat("id mismatch", removedBondId, is(existingBond.getId())); //$NON-NLS-1$
     }
 
     /*
      * At the beginning there was a void, then bond was created and was immediately broken.
-     * */
+     */
     @Test
     public void testBreakingNewlyCreatedBond() throws Exception {
+        NetworkOperation.BOND_WITH.getTarget().executeNetworkCommand(
+                networkInterfaceModelOfNicA,
+                networkInterfaceModelOfNicB,
+                dataFromHostSetupNetworksModel,
+                newlyCreatedBond);
+
         when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
-        when(bondNetworkInterfaceModelA.getIface()).thenReturn(newlyCreatedBond);
+        when(bondNetworkInterfaceModelA.getCreateOrUpdateBond())
+                .thenReturn(dataFromHostSetupNetworksModel.getBonds().iterator().next());
 
         NetworkOperation.BREAK_BOND.getTarget().executeNetworkCommand(
                 bondNetworkInterfaceModelA,
                 null,
                 dataFromHostSetupNetworksModel);
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(0));
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(0));
     }
 
     /*
-     * At the beginning there was a bond, which was then broken.
-     * */
+     * At the beginning there was a bond with one network attachment, which was then broken.
+     */
     @Test
     public void testBreakingExistingBondWithNetworkAttached() throws Exception {
-        NetworkAttachment networkAttachment =
-                NetworkOperation.newNetworkAttachment(networkA,
-                        existingBond,
-                        null,
-                        dataFromHostSetupNetworksModel.networksToSync);
-
-        existingNetworkAttachments.add(networkAttachment);
-        when(logicalNetworkModelOfNetworkA.hasVlan()).thenReturn(false);
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(true);
-        when(logicalNetworkModelOfNetworkA.getAttachedToNic()).thenReturn(networkInterfaceModelOfNicA);
-
-
-        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
-        when(bondNetworkInterfaceModelA.getIface()).thenReturn(existingBond);
+        addBondToParamsAndModel(existingBond,
+                bondNetworkInterfaceModelA,
+                Collections.singletonList(logicalNetworkModelOfNetworkA));
+        NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(bondNetworkInterfaceModelA,
+                logicalNetworkModelOfNetworkA);
 
         NetworkOperation.BREAK_BOND.getTarget().executeNetworkCommand(
                 bondNetworkInterfaceModelA,
                 null,
                 dataFromHostSetupNetworksModel);
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(1));
-        Guid removedNetworkAttachmentId = dataFromHostSetupNetworksModel.removedNetworkAttachments.iterator().next().getId();
-        assertThat("id mismatch", removedNetworkAttachmentId, nullValue()); //$NON-NLS-1$
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+        Guid removedNetworkAttachmentId =
+                dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().iterator().next();
+        assertThat("id mismatch", removedNetworkAttachmentId, is(networkAttachment.getId())); //$NON-NLS-1$
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(1));
-        Guid removedBondId = dataFromHostSetupNetworksModel.removedBonds.iterator().next().getId();
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(1));
+        Guid removedBondId = dataFromHostSetupNetworksModel.getRemovedBonds().iterator().next();
 
         assertThat("id mismatch", removedBondId, is(existingBond.getId())); //$NON-NLS-1$
     }
 
     /*
-     * At the beginning there was two nics (one with NetworkAttachment), which, after being introduced to each other,
+     * At the beginning there were two nics (one with NetworkAttachment), which, after being introduced to each other,
      * formed a firm bond adopting NetworkAttachment as their own.
-     * */
+     */
     @Test
     public void testBondingTwoNicsWithReattachingNetworkAttachmentOnNewlyCreatedBond() throws Exception {
-        Guid networkAttachmentId = Guid.newGuid();
-        NetworkAttachment networkAttachment =
-            NetworkOperation.newNetworkAttachment(networkA,
-                nicA,
-                null,
-                networkAttachmentId,
-                dataFromHostSetupNetworksModel.networksToSync,
-                null,
-                null);
+        createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA,
+                logicalNetworkModelOfNetworkA);
 
-        existingNetworkAttachments.add(networkAttachment);
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(true);
-        when(logicalNetworkModelOfNetworkA.getAttachedToNic()).thenReturn(networkInterfaceModelOfNicA);
-
-        when(networkInterfaceModelOfNicA.getItems()).thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
-
-        when(networkInterfaceModelOfNicC.getIface()).thenReturn(newlyCreatedBond);
-        when(networkInterfaceModelOfNicC.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
-        when(networkInterfaceModelOfNicC.getName()).thenReturn(newlyCreatedBond.getName());
+        when(networkInterfaceModelOfNicA.getItems())
+                .thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
 
         NetworkOperation.BOND_WITH.getTarget().executeNetworkCommand(
                 networkInterfaceModelOfNicA,
@@ -355,172 +329,193 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 newlyCreatedBond);
 
         when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(false);
+        when(bondNetworkInterfaceModelA.getOriginalIface()).thenReturn(newlyCreatedBond.toBond());
 
-        //this is not part of BOND_WITH command, it's simply called after it. BOND_WITH is actually: "detach networks and create bond".
-        //in production code, probably due to some problems with listeners, this is actually called three times, luckily each time overwriting previous call.
-        NetworkOperation.attachNetworks(networkInterfaceModelOfNicC,
+        // this is not part of BOND_WITH command, it's simply called after it. BOND_WITH is actually: "detach networks
+        // and create bond".
+        // in production code, probably due to some problems with listeners, this is actually called three times,
+        // luckily each time overwriting previous call.
+        NetworkOperation.attachNetworks(bondNetworkInterfaceModelA,
                 Collections.singletonList(logicalNetworkModelOfNetworkA),
                 dataFromHostSetupNetworksModel);
 
-        //related network attachment will be updated, not removed and created new one.
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(1));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
-        assertNetworkAttachment(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator().next(),
-                networkAttachmentId,
+        // related network attachment will be updated, not removed and created new one.
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(1));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+        assertNetworkAttachment(dataFromHostSetupNetworksModel.getNetworkAttachments().iterator().next(),
+                null,
                 networkA.getId(),
                 newlyCreatedBond.getId());
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(1));
+        CreateOrUpdateBond newOrModifiedBond = dataFromHostSetupNetworksModel.getBonds().iterator().next();
         assertBond(newOrModifiedBond, null, Arrays.asList(nicA, nicB));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(0));
     }
 
     /*
      * At the beginning there was bond. It was broken into two nics, but they get back together in the end.
-     * */
+     */
     @Test
     public void testReBondingTwoNicsWithReattachingNetworkAttachmentOnNewlyCreatedBond() throws Exception {
+        addBondToParamsAndModel(existingBond,
+                bondNetworkInterfaceModelA,
+                Collections.<LogicalNetworkModel> emptyList());
 
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(false);
-
-        dataFromHostSetupNetworksModel.removedBonds.add(existingBond);
+        NetworkOperation.BREAK_BOND.getTarget().executeNetworkCommand(
+                bondNetworkInterfaceModelA,
+                null,
+                dataFromHostSetupNetworksModel);
 
         NetworkOperation.BOND_WITH.getTarget().executeNetworkCommand(
                 networkInterfaceModelOfNicA,
                 networkInterfaceModelOfNicB,
                 dataFromHostSetupNetworksModel,
-                createBond(existingBondId, existingBondName, Collections.<VdsNetworkInterface> emptyList()));
+                createBond(null, existingBondName, Collections.<VdsNetworkInterface> emptyList()));
 
-        //related network attachment will be updated, not removed and created new one.
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
+        // related network attachment will be updated, not removed and created new one.
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(0));
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
-        assertBond(newOrModifiedBond, existingBondId, Arrays.asList(nicA, nicB));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(1));
+        CreateOrUpdateBond newOrModifiedBond = dataFromHostSetupNetworksModel.getBonds().iterator().next();
+        assertBond(newOrModifiedBond, null, Arrays.asList(nicA, nicB));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(1));
     }
 
     /*
      * At the beginning there was bond without any network attachment. Then another nic showed up joining the family
      * bringing his own network attachment along.
-     * */
+     */
     @Test
     public void testAddingNewNicWithNetworkAttachmentToExistingBondWithoutAnyAttachment() throws Exception {
-        Guid networkAttachmentId = Guid.newGuid();
-        NetworkAttachment networkAttachment =
-            NetworkOperation.newNetworkAttachment(networkC,
-                nicC,
-                null,
-                networkAttachmentId,
-                dataFromHostSetupNetworksModel.networksToSync,
-                null,
-                null);
+        addBondToParamsAndModel(existingBond,
+                bondNetworkInterfaceModelA,
+                Collections.<LogicalNetworkModel> emptyList());
 
-        existingNetworkAttachments.add(networkAttachment);
-
-        //this can be confusing. network *is* attached but it gets detached as a part of ADD_TO_BOND, so consulting this method, it will be detached.
-        when(logicalNetworkModelOfNetworkC.isAttached()).thenReturn(true, false);
-        when(logicalNetworkModelOfNetworkC.getAttachedToNic()).thenReturn(networkInterfaceModelOfNicC, (NetworkInterfaceModel)null);
-
-        when(networkInterfaceModelOfNicC.getItems()).thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkC));
-
-        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
-        when(bondNetworkInterfaceModelA.getIface()).thenReturn(existingBond);
-
+        NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicC,
+                logicalNetworkModelOfNetworkC);
+        when(networkInterfaceModelOfNicC.getItems())
+                .thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkC));
 
         NetworkOperation.ADD_TO_BOND.getTarget().executeNetworkCommand(
                 networkInterfaceModelOfNicC,
                 bondNetworkInterfaceModelA,
                 dataFromHostSetupNetworksModel);
 
-        //related network attachment will be updated, not removed and created new one.
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(1));
-        assertNetworkAttachment(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.iterator().next(),
-                networkAttachmentId,
+        // related network attachment will be updated, not removed and created new one.
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(1));
+        assertNetworkAttachment(dataFromHostSetupNetworksModel.getNetworkAttachments().iterator().next(),
+                null,
                 networkC.getId(),
                 existingBondId);
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+        Guid removedNetworkAttachmentId =
+                dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().iterator().next();
+        assertThat("id mismatch", removedNetworkAttachmentId, is(networkAttachment.getId())); //$NON-NLS-1$
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(1));
+        CreateOrUpdateBond newOrModifiedBond = dataFromHostSetupNetworksModel.getBonds().iterator().next();
         assertBond(newOrModifiedBond, existingBondId, Arrays.asList(nicA, nicB, nicC));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(0));
     }
 
     /*
-    * At the beginning there was a bond with three slaves, the one of them left others.
-    * */
+     * At the beginning there was a bond with three slaves, the one of them left others.
+     */
     @Test
     public void testRemoveSlaveFromBond() throws Exception {
+        existingBond.getSlaves().add(nicC.getName());
+        addBondToParamsAndModel(existingBond,
+                bondNetworkInterfaceModelA,
+                Collections.<LogicalNetworkModel> emptyList());
+        when(bondNetworkInterfaceModelA.getSlaves())
+                .thenReturn(Arrays.asList(networkInterfaceModelOfNicA,
+                        networkInterfaceModelOfNicB,
+                        networkInterfaceModelOfNicC));
 
-        Bond bond = createBond(existingBondId, existingBondName, Arrays.asList(nicA, nicB, nicC));
-
-
-        Guid networkAttachmentId = Guid.newGuid();
-        NetworkAttachment networkAttachment =
-            NetworkOperation.newNetworkAttachment(networkA,
-                bond,
-                null,
-                networkAttachmentId,
-                dataFromHostSetupNetworksModel.networksToSync,
-                null,
-                null);
-
-        existingNetworkAttachments.add(networkAttachment);
-
-        when(bondNetworkInterfaceModelA.getIface()).thenReturn(bond);
+        NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(bondNetworkInterfaceModelA,
+                logicalNetworkModelOfNetworkA);
 
         when(networkInterfaceModelOfNicA.getBond()).thenReturn(bondNetworkInterfaceModelA);
-
-        when(bondNetworkInterfaceModelA.getIface()).thenReturn(bond);
-
 
         NetworkOperation.REMOVE_FROM_BOND.getTarget().executeNetworkCommand(
                 networkInterfaceModelOfNicA,
                 null,
                 dataFromHostSetupNetworksModel);
 
-        //related network attachment will be updated, not removed and created new one.
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(0));
+        // related network attachment will be updated, not removed and created new one.
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(1));
+        Guid networkAttachmentId = dataFromHostSetupNetworksModel.getNetworkAttachments().iterator().next().getId();
+        assertThat("id mismatch", networkAttachmentId, is(networkAttachment.getId())); //$NON-NLS-1$
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(0));
+
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(1));
+        CreateOrUpdateBond newOrModifiedBond = dataFromHostSetupNetworksModel.getBonds().iterator().next();
         assertBond(newOrModifiedBond, existingBondId, Arrays.asList(nicB, nicC));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(0));
     }
 
     /*
-     * At the beginning there was two nics (one with NetworkAttachment), which, after being introduced to each other,
+     * At the beginning there was a bond with two slaves, the one of them left others.
+     */
+    @Test
+    public void testRemoveSlaveFromBondWithTwoSlaves() throws Exception {
+        addBondToParamsAndModel(existingBond,
+                bondNetworkInterfaceModelA,
+                Collections.<LogicalNetworkModel> emptyList());
+        when(bondNetworkInterfaceModelA.getSlaves())
+                .thenReturn(Arrays.asList(networkInterfaceModelOfNicA, networkInterfaceModelOfNicB));
+
+        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Arrays.asList(logicalNetworkModelOfNetworkA));
+        NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(bondNetworkInterfaceModelA,
+                logicalNetworkModelOfNetworkA);
+
+        when(networkInterfaceModelOfNicA.getBond()).thenReturn(bondNetworkInterfaceModelA);
+
+        NetworkOperation.REMOVE_FROM_BOND.getTarget().executeNetworkCommand(
+                networkInterfaceModelOfNicA,
+                null,
+                dataFromHostSetupNetworksModel);
+
+        // related network attachment will be updated, not removed and created new one.
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
+
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+        Guid removedNetworkAttachmentId =
+                dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().iterator().next();
+        assertThat("id mismatch", removedNetworkAttachmentId, is(networkAttachment.getId())); //$NON-NLS-1$
+
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(0));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(1));
+        Guid removedBondId = dataFromHostSetupNetworksModel.getRemovedBonds().iterator().next();
+        assertThat("id mismatch", removedBondId, is(existingBond.getId())); //$NON-NLS-1$
+    }
+
+    /*
+     * At the beginning there was two bonds (one with NetworkAttachment), which, after being introduced to each other,
      * formed a firm bond adopting NetworkAttachment as their own.
-     * */
+     */
     @Test
     public void testJoiningBonds() throws Exception {
-        Guid networkAttachmentId = Guid.newGuid();
-        NetworkAttachment networkAttachment =
-            NetworkOperation.newNetworkAttachment(networkA,
-                existingBond,
-                null,
-                networkAttachmentId, dataFromHostSetupNetworksModel.networksToSync,
-                null,
-                null);
+        addBondToParamsAndModel(existingBond,
+                bondNetworkInterfaceModelA,
+                Collections.<LogicalNetworkModel> emptyList());
+        NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(bondNetworkInterfaceModelA,
+                logicalNetworkModelOfNetworkA);
 
-        Guid bondBId = Guid.newGuid();
-        Bond bondB = createBond(bondBId, "bondB", Arrays.asList(nicC, nicD)); //$NON-NLS-1$
+        Bond bondB = createBond(Guid.newGuid(), "bondB", Arrays.asList(nicC, nicD)).toBond(); //$NON-NLS-1$
+        addBondToParamsAndModel(bondB, bondNetworkInterfaceModelB, Arrays.asList(logicalNetworkModelOfNetworkA));
 
-        existingNetworkAttachments.add(networkAttachment);
-        when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(true);
-        when(logicalNetworkModelOfNetworkA.getAttachedToNic()).thenReturn(networkInterfaceModelOfNicA);
+        when(bondNetworkInterfaceModelA.getItems())
+                .thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
+        when(bondNetworkInterfaceModelA.getSlaves()).thenReturn(Arrays.asList(networkInterfaceModelOfNicA,
+                networkInterfaceModelOfNicB));
 
-        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
-        when(bondNetworkInterfaceModelA.getIface()).thenReturn(existingBond);
-        when(bondNetworkInterfaceModelA.getBonded()).thenReturn(Arrays.asList(networkInterfaceModelOfNicA,
-            networkInterfaceModelOfNicB));
-        when(bondNetworkInterfaceModelB.getItems()).thenReturn(Collections.<LogicalNetworkModel>emptyList());
-        when(bondNetworkInterfaceModelB.getIface()).thenReturn(bondB);
-        when(bondNetworkInterfaceModelB.getBonded()).thenReturn(Arrays.asList(networkInterfaceModelOfNicC, networkInterfaceModelOfNicD));
+        when(bondNetworkInterfaceModelB.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
+        when(bondNetworkInterfaceModelB.getSlaves())
+                .thenReturn(Arrays.asList(networkInterfaceModelOfNicC, networkInterfaceModelOfNicD));
 
         NetworkOperation.JOIN_BONDS.getTarget().executeNetworkCommand(
                 bondNetworkInterfaceModelA,
@@ -528,35 +523,27 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 dataFromHostSetupNetworksModel,
                 newlyCreatedBond);
 
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedNetworkAttachments.size(), is(0));
-        assertThat(dataFromHostSetupNetworksModel.removedNetworkAttachments.size(), is(1));
-        Guid removeNetworkAttachmentId = dataFromHostSetupNetworksModel.removedNetworkAttachments.iterator().next().getId();
-        assertThat("id mismatch", removeNetworkAttachmentId, is(networkAttachmentId)); //$NON-NLS-1$
+        // NetworkOperation.JOIN_BONDS only detaches the attachments, the attachments are being re-attached only in
+        // HostSetupNetworksModel (after clicking ok in the new bond dialog)
+        assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
 
+        assertThat(dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().size(), is(1));
+        Guid removeNetworkAttachmentId =
+                dataFromHostSetupNetworksModel.getRemovedNetworkAttachments().iterator().next();
+        assertThat("id mismatch", removeNetworkAttachmentId, is(networkAttachment.getId())); //$NON-NLS-1$
 
-
-
-        assertThat(dataFromHostSetupNetworksModel.newOrModifiedBonds.size(), is(1));
-        Bond newOrModifiedBond = dataFromHostSetupNetworksModel.newOrModifiedBonds.iterator().next();
+        assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(1));
+        CreateOrUpdateBond newOrModifiedBond = dataFromHostSetupNetworksModel.getBonds().iterator().next();
         assertBond(newOrModifiedBond, null, Arrays.asList(nicA, nicB, nicC, nicD));
-        assertThat(dataFromHostSetupNetworksModel.removedBonds.size(), is(2));
 
-        Iterator<Bond> removedBondsIterator = dataFromHostSetupNetworksModel.removedBonds.iterator();
-        Guid firstRemovedBondId = removedBondsIterator.next().getId();
-        assertThat("id mismatch", firstRemovedBondId, is(existingBondId)); //$NON-NLS-1$
-
-        Guid secondRemovedBondId = removedBondsIterator.next().getId();
-        assertThat("id mismatch", secondRemovedBondId, is(bondBId)); //$NON-NLS-1$
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(2));
+        assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(existingBondId), is(true)); //$NON-NLS-1$
+        assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(bondB.getId()), is(true)); //$NON-NLS-1$
     }
 
-    private void assertBond(Bond bond, Guid bondId, List<VdsNetworkInterface> slaves) {
-        List<VdsNetworkInterface> existingNics = new ArrayList<>();
-        existingNics.add(bond);
-        existingNics.addAll(slaves);
-
-        NetworkCommonUtils.fillBondSlaves(existingNics);
-        Matcher attachmentIdMatcher = bondId == null ? nullValue() : is(bondId);
-        assertThat("id mismatch", bond.getId(), attachmentIdMatcher); //$NON-NLS-1$
+    private void assertBond(CreateOrUpdateBond bond, Guid bondId, List<VdsNetworkInterface> slaves) {
+        Matcher bondIdMatcher = bondId == null ? nullValue() : is(bondId);
+        assertThat("id mismatch", bond.getId(), bondIdMatcher); //$NON-NLS-1$
 
         for (VdsNetworkInterface slave : slaves) {
             assertThat("missing slave", bond.getSlaves().contains(slave.getName()), is(true)); //$NON-NLS-1$
@@ -592,16 +579,53 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         return result;
     }
 
-    private Bond createBond(Guid id, String bondName, List<VdsNetworkInterface> slaves) {
-        Bond result = new Bond();
+    private CreateOrUpdateBond createBond(Guid id, String bondName, List<VdsNetworkInterface> slaves) {
+        CreateOrUpdateBond result = new CreateOrUpdateBond();
 
         result.setId(id);
         result.setName(bondName);
 
         for (VdsNetworkInterface slave : slaves) {
-            slave.setBondName(bondName);
+            result.getSlaves().add(slave.getName());
         }
 
         return result;
+    }
+
+    private NetworkAttachment createNetworkAttachment(Guid id, VdsNetworkInterface baseNic, Network network) {
+        NetworkAttachment networkAttachment =
+                new NetworkAttachment(baseNic, network, NetworkCommonUtils.createDefaultIpConfiguration());
+        networkAttachment.setId(id);
+        return networkAttachment;
+    }
+
+    private NetworkAttachment createAttachmentOnNetworkModelAndUpdateParams(NetworkInterfaceModel nicModel,
+            LogicalNetworkModel networkModel) {
+        NetworkAttachment attachment =
+                createNetworkAttachment(Guid.newGuid(), nicModel.getOriginalIface(), networkModel.getNetwork());
+        dataFromHostSetupNetworksModel.getNetworkAttachments().add(attachment);
+
+        setAttachmentOnNetworkModel(nicModel, networkModel, attachment);
+
+        return attachment;
+    }
+
+    private void setAttachmentOnNetworkModel(NetworkInterfaceModel nicModel,
+            LogicalNetworkModel networkModel,
+            NetworkAttachment attachment) {
+        when(networkModel.getNetworkAttachment()).thenReturn(attachment);
+        when(networkModel.getAttachedToNic()).thenReturn(nicModel);
+        when(networkModel.isAttached()).thenReturn(true);
+    }
+
+    private void addBondToParamsAndModel(Bond bond,
+            BondNetworkInterfaceModel bondModel,
+            List<LogicalNetworkModel> networks) {
+        CreateOrUpdateBond createOrUpdateBond = CreateOrUpdateBond.fromBond(bond);
+        dataFromHostSetupNetworksModel.getBonds().add(createOrUpdateBond);
+
+        when(bondModel.getOriginalIface()).thenReturn(bond);
+        when(bondModel.getCreateOrUpdateBond()).thenReturn(createOrUpdateBond);
+        when(bondModel.getItems()).thenReturn(networks);
     }
 }

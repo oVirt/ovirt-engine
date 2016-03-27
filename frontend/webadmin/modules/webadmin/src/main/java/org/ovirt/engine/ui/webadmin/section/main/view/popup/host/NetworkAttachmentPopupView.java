@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -32,12 +32,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 
-public class SetupNetworksInterfacePopupView extends AbstractModelBoundPopupView<HostInterfaceModel> implements SetupNetworksInterfacePopupPresenterWidget.ViewDef {
+public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<NetworkAttachmentModel> implements NetworkAttachmentPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<HostInterfaceModel, SetupNetworksInterfacePopupView> {
+    interface Driver extends SimpleBeanEditorDriver<NetworkAttachmentModel, NetworkAttachmentPopupView> {
     }
 
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, SetupNetworksInterfacePopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, NetworkAttachmentPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -103,7 +103,7 @@ public class SetupNetworksInterfacePopupView extends AbstractModelBoundPopupView
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SetupNetworksInterfacePopupView(EventBus eventBus) {
+    public NetworkAttachmentPopupView(EventBus eventBus) {
 
         super(eventBus);
 
@@ -139,7 +139,7 @@ public class SetupNetworksInterfacePopupView extends AbstractModelBoundPopupView
     }
 
     @Override
-    public void edit(final HostInterfaceModel object) {
+    public void edit(final NetworkAttachmentModel object) {
         driver.edit(object);
         qosWidget.edit(object.getQosModel());
 
@@ -149,7 +149,7 @@ public class SetupNetworksInterfacePopupView extends AbstractModelBoundPopupView
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
                     Object sender,
                     PropertyChangedEventArgs args) {
-                HostInterfaceModel model = (HostInterfaceModel) sender;
+                NetworkAttachmentModel model = (NetworkAttachmentModel) sender;
                 String propertyName = args.propertyName;
                 if ("BootProtocolsAvailable".equals(propertyName) || "NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$ //$NON-NLS-2$
                     enableDisableByBootProtocol(model);
@@ -166,7 +166,7 @@ public class SetupNetworksInterfacePopupView extends AbstractModelBoundPopupView
         customPropertiesLabel.setEnabled(object.getCustomPropertiesModel().getIsChangable());
     }
 
-    protected void enableDisableByBootProtocol(HostInterfaceModel model) {
+    protected void enableDisableByBootProtocol(NetworkAttachmentModel model) {
         boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
         bootProtocolLabel.setEnabled(bootProtocolsAvailable);
         bootProtocol.setEnabled(bootProtocolsAvailable);
@@ -174,7 +174,7 @@ public class SetupNetworksInterfacePopupView extends AbstractModelBoundPopupView
     }
 
     @Override
-    public HostInterfaceModel flush() {
+    public NetworkAttachmentModel flush() {
         qosWidget.flush();
         return driver.flush();
     }
