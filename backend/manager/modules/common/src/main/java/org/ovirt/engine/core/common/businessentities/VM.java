@@ -1418,10 +1418,9 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     /**
      * update vm dynamic data
      */
-    public void updateRunTimeDynamicData(VmDynamic vm, Guid vdsId, String vdsName) {
+    public void updateRunTimeDynamicData(VmDynamic vm, Guid vdsId) {
         setStatus(vm.getStatus());
         setRunOnVds(vdsId);
-        setRunOnVdsName(vdsName);
         setVmHost(vm.getVmHost());
         setVmIp(vm.getVmIp());
         setVmFQDN(vm.getVmFQDN());
