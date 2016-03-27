@@ -283,4 +283,11 @@ public class IrsServerWrapper implements IIrsServer {
         OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
+
+    @Override
+    public StatusReturnForXmlRpc setVolumeLegality(String spID, String sdID, String imageID, String volumeID, String legality) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.setVolumeLegality(sdID, spID, imageID, volumeID, legality);
+        StatusReturnForXmlRpc wrapper = new StatusReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
 }

@@ -86,4 +86,6 @@ public interface IIrsServer {
 
     OneUuidReturnForXmlRpc extendVolumeSize(String spUUID, String sdUUID, String imageUUID,
                                             String volumeUUID, String newSize);
+
+    StatusReturnForXmlRpc setVolumeLegality(String spID, String sdID, String imageID, String volumeID, String legality);
 }

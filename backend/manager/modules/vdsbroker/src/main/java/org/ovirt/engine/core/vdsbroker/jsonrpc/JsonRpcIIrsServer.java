@@ -11,6 +11,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.ImagesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsStatsAndStatusXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneImageInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturnForXmlRpc;
@@ -541,5 +542,20 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusReturnForXmlRpc setVolumeLegality(String spID, String sdID, String imageID, String volumeID, String legality) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.setLegality")
+                        .withParameter("storagepoolID", spID)
+                        .withParameter("storagedomainID", sdID)
+                        .withParameter("imageID", imageID)
+                        .withParameter("volumeID", volumeID)
+                        .withParameter("legality", legality)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusReturnForXmlRpc(response);
     }
 }

@@ -105,4 +105,6 @@ public interface IrsServerConnector {
 
     public Map<String, Object> extendVolumeSize(String spUUID, String sdUUID, String imageUUID,
                                                 String volumeUUID, String newSize);
+
+    public Map<String, Object> setVolumeLegality(String spID, String sdID, String imageID, String volumeID, String legality);
 }
