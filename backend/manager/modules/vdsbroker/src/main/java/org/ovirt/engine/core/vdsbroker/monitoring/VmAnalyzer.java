@@ -570,21 +570,14 @@ public class VmAnalyzer {
     private boolean updateVmRunTimeInfo() {
         if (dbVm == null) {
             dbVm = vmDao.get(vdsmVm.getVmDynamic().getId());
-            // if vm exists in db update info
-            if (dbVm != null) {
-                // TODO: This is done to keep consistency with VmDao.getById(Guid).
-                // It should probably be removed, but some research is required.
-                dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
+            // TODO: This is done to keep consistency with VmDao.getById(Guid).
+            // It should probably be removed, but some research is required.
+            dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
 
-                if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
-                        || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
-                    succeededToRun = true;
-                }
+            if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
+                    || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
+                succeededToRun = true;
             }
-        }
-
-        if (dbVm == null) {
-            return false;
         }
 
         // check if dynamic data changed - update cache and DB
