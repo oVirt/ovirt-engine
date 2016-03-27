@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -508,6 +509,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected TagDao getTagDao() {
         return getDbFacade().getTagDao();
+    }
+
+    protected BaseDiskDao getBaseDiskDao() {
+        return getDbFacade().getBaseDiskDao();
     }
 
     public DiskDao getDiskDao() {
