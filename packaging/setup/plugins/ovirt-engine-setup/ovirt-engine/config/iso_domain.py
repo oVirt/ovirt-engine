@@ -348,6 +348,8 @@ class Plugin(plugin.PluginBase):
 
             except (ValueError, RuntimeError) as e:
                 if interactive:
+                    if e.message == 'SIG2':
+                        raise
                     self.logger.error(
                         _(
                             'Cannot access mount point '
