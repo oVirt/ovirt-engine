@@ -161,26 +161,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc createVolumeContainer(
-                                               String sdUUID,
-                                               String imgGUID,
-                                               String size,
-                                               int volFormat,
-                                               int diskType,
-                                               String volUUID,
-                                               String descr,
-                                               String srcImgGUID,
-                                               String srcVolUUID) {
+    public StatusOnlyReturnForXmlRpc createVolumeContainer(String jobId, Map<String, Object> createVolumeInfo) {
         JsonRpcRequest request =
-                new RequestBuilder("SDM.createVolumeContainer").withParameter("volumeID", volUUID)
-                        .withParameter("storagedomainID", sdUUID)
-                        .withParameter("imageID", imgGUID)
-                        .withParameter("size", size)
-                        .withParameter("volFormat", volFormat)
-                        .withParameter("diskType", diskType)
-                        .withParameter("desc", descr)
-                        .withParameter("srcImgUUID", srcImgGUID)
-                        .withParameter("srcVolUUID", srcVolUUID)
+                new RequestBuilder("SDM.create_volume")
+                        .withParameter("job_id", jobId)
+                        .withParameter("vol_info", createVolumeInfo)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);

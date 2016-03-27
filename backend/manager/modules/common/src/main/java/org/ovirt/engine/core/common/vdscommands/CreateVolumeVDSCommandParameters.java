@@ -13,6 +13,7 @@ public class CreateVolumeVDSCommandParameters extends StorageJobVdsCommandParame
     private Guid newImageGroupId;
     private VolumeFormat volumeFormat;
     private String description;
+    private Long initialSize;
 
     public CreateVolumeVDSCommandParameters(Guid storageDomainId, Guid newImageGroupId,
             long imageSizeInBytes, VolumeFormat volFormat, Guid newImageId,
@@ -83,6 +84,14 @@ public class CreateVolumeVDSCommandParameters extends StorageJobVdsCommandParame
         this.newImageGroupId = newImageGroupId;
     }
 
+    public Long getInitialSize() {
+        return initialSize;
+    }
+
+    public void setInitialSize(Long initialSize) {
+        this.initialSize = initialSize;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb).append("imageSizeInBytes", getImageSizeInBytes())
@@ -91,7 +100,8 @@ public class CreateVolumeVDSCommandParameters extends StorageJobVdsCommandParame
                 .append("srcImageId", getSrcImageId())
                 .append("newImageGroupId", getNewImageGroupId())
                 .append("newImageId", getNewImageID())
-                .append("description", getDescription());
+                .append("description", getDescription())
+                .append("initialSize", getInitialSize());
     }
 
     public CreateVolumeVDSCommandParameters() {
