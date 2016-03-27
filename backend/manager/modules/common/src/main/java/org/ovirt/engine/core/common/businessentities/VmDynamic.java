@@ -733,4 +733,56 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     public void setGuestOsKernelVersion(String guestOsKernelVersion) {
         this.guestOsKernelVersion = guestOsKernelVersion;
     }
+
+    /**
+     * Update data that was received from VDSM
+     * @param vm - the reported VM from VDSM
+     * @param vdsId - the host that it was reported from
+     */
+    public void updateRuntimeData(VmDynamic vm, Guid vdsId) {
+        setStatus(vm.getStatus());
+        setRunOnVds(vdsId);
+        setVmHost(vm.getVmHost());
+        setVmIp(vm.getVmIp());
+        setVmFQDN(vm.getVmFQDN());
+        // update only if vdsm actually provides some value, otherwise engine has more information
+        if (vm.getCurrentCd() != null) {
+            setCurrentCd(vm.getCurrentCd());
+        }
+
+        // if (!string.IsNullOrEmpty(vm.app_list))
+        // {
+        setAppList(vm.getAppList());
+        // }
+        setGuestOs(vm.getGuestOs());
+        setVncKeyboardLayout(vm.getVncKeyboardLayout());
+        setKvmEnable(vm.getKvmEnable());
+        setAcpiEnable(vm.getAcpiEnable());
+        setGuestCurrentUserName(vm.getGuestCurrentUserName());
+        setWin2kHackEnable(vm.getWin2kHackEnable());
+        setUtcDiff(vm.getUtcDiff());
+        setExitStatus(vm.getExitStatus());
+        setExitMessage(vm.getExitMessage());
+        setExitReason(vm.getExitReason());
+        setClientIp(vm.getClientIp());
+        setPauseStatus(vm.getPauseStatus());
+        setLastWatchdogEvent(vm.getLastWatchdogEvent());
+        setGuestCpuCount(vm.getGuestCpuCount());
+        setGraphicsInfos(new HashMap<>(vm.getGraphicsInfos()));
+        setGuestMemoryBuffered(vm.getGuestMemoryBuffered());
+        setGuestMemoryCached(vm.getGuestMemoryCached());
+        setGuestMemoryFree(vm.getGuestMemoryFree());
+        setGuestOsArch(vm.getGuestOsArch());
+        setGuestOsCodename(vm.getGuestOsCodename());
+        setGuestOsDistribution(vm.getGuestOsDistribution());
+        setGuestOsKernelVersion(vm.getGuestOsKernelVersion());
+        setGuestOsType(vm.getGuestOsType());
+        setGuestOsVersion(vm.getGuestOsVersion());
+        setGuestOsTimezoneName(vm.getGuestOsTimezoneName());
+        setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
+        // TODO: check what to do with update disk data
+        // updateDisksData(vm);
+
+        // updateSession(vm);
+    }
 }

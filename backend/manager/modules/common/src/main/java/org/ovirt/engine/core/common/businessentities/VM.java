@@ -1416,56 +1416,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     /**
-     * update vm dynamic data
-     */
-    public void updateRunTimeDynamicData(VmDynamic vm, Guid vdsId) {
-        setStatus(vm.getStatus());
-        setRunOnVds(vdsId);
-        setVmHost(vm.getVmHost());
-        setVmIp(vm.getVmIp());
-        setVmFQDN(vm.getVmFQDN());
-        // update only if vdsm actually provides some value, otherwise engine has more information
-        if (vm.getCurrentCd() != null) {
-            setCurrentCd(vm.getCurrentCd());
-        }
-
-        // if (!string.IsNullOrEmpty(vm.app_list))
-        // {
-        setAppList(vm.getAppList());
-        // }
-        setGuestOs(vm.getGuestOs());
-        getDynamicData().setVncKeyboardLayout(vm.getVncKeyboardLayout());
-        setKvmEnable(vm.getKvmEnable());
-        setAcpiEnable(vm.getAcpiEnable());
-        setGuestCurrentUserName(vm.getGuestCurrentUserName());
-        setWin2kHackEnable(vm.getWin2kHackEnable());
-        setUtcDiff(vm.getUtcDiff());
-        setExitStatus(vm.getExitStatus());
-        setExitMessage(vm.getExitMessage());
-        setExitReason(vm.getExitReason());
-        setClientIp(vm.getClientIp());
-        setVmPauseStatus(vm.getPauseStatus());
-        setLastWatchdogEvent(vm.getLastWatchdogEvent());
-        setGuestCpuCount(vm.getGuestCpuCount());
-        setGraphicsInfos(new HashMap<>(vm.getGraphicsInfos()));
-        getDynamicData().setGuestMemoryBuffered(vm.getGuestMemoryBuffered());
-        getDynamicData().setGuestMemoryCached(vm.getGuestMemoryCached());
-        getDynamicData().setGuestMemoryFree(vm.getGuestMemoryFree());
-        setGuestOsArch(vm.getGuestOsArch());
-        setGuestOsCodename(vm.getGuestOsCodename());
-        setGuestOsDistribution(vm.getGuestOsDistribution());
-        setGuestOsKernelVersion(vm.getGuestOsKernelVersion());
-        setGuestOsType(vm.getGuestOsType());
-        setGuestOsVersion(vm.getGuestOsVersion());
-        setGuestOsTimezoneName(vm.getGuestOsTimezoneName());
-        setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
-        // TODO: check what to do with update disk data
-        // updateDisksData(vm);
-
-        // updateSession(vm);
-    }
-
-    /**
      * update vm statistics data
      */
     public void updateRunTimeStatisticsData(VmStatistics vmStatistics, VM vm) {

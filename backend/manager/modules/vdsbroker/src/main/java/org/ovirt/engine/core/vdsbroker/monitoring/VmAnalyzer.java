@@ -596,9 +596,7 @@ public class VmAnalyzer {
             return false;
         }
 
-        dbVm.updateRunTimeDynamicData(
-                vdsmVm.getVmDynamic(),
-                vdsManager.getVdsId());
+        dbVm.getDynamicData().updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
 
         return true;
     }
