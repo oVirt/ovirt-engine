@@ -43,6 +43,7 @@ public enum VDSCommandType {
     SpmStart("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SpmStop("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SpmStatus("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetHostJobs("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetAllTasksStatuses("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetTaskStatus("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetAllTasksInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),

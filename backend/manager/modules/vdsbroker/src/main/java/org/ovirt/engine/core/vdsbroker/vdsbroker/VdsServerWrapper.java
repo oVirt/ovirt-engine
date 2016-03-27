@@ -703,6 +703,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public HostJobsReturnForXmlRpc getHostJobs(String jobType, List<String> jobIds) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getHostJobs(jobType, jobIds);
+            HostJobsReturnForXmlRpc wrapper = new HostJobsReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public TaskStatusReturnForXmlRpc getTaskStatus(String taskUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getTaskStatus(taskUUID);

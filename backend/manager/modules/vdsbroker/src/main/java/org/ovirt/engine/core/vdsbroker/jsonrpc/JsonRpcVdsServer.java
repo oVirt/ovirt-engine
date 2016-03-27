@@ -42,6 +42,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FenceStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostJobsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturnForXmlRpc;
@@ -849,6 +850,15 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("spm_st");
         return new SpmStatusReturnForXmlRpc(response);
+    }
+
+    @Override
+    public HostJobsReturnForXmlRpc getHostJobs(String jobType, List<String> jobIds) {
+        JsonRpcRequest request = new RequestBuilder("Host.getJobs").withOptionalParameter("job_type", jobType).
+                withOptionalParameterAsList("job_ids", jobIds).build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("jobs");
+        return new HostJobsReturnForXmlRpc(response);
     }
 
     @Override

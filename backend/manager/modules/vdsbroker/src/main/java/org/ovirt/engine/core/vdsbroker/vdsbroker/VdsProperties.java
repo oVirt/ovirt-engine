@@ -457,6 +457,16 @@ public final class VdsProperties {
     public static final String tlsPort = "tlsPort";
     public static final String ipAddress = "ipAddress";
 
+    // Host jobs
+    public static final String jobId = "id";
+    public static final String jobDescription = "description";
+    public static final String jobType = "job_type";
+    public static final String jobStatus = "status";
+    public static final String jobProgress = "progress";
+    public static final String jobError = "error";
+    public static final String jobErrorCode = "code";
+    public static final String jobErrorMessage = "message";
+
     public static String migrationMethodtoString(MigrationMethod method) {
         switch (method) {
         case OFFLINE:

@@ -186,6 +186,8 @@ public interface IVdsServer {
 
     SpmStatusReturnForXmlRpc spmStatus(String spUUID);
 
+    HostJobsReturnForXmlRpc getHostJobs(String jobType, List<String> jobIds);
+
     TaskStatusReturnForXmlRpc getTaskStatus(String taskUUID);
 
     TaskStatusListReturnForXmlRpc getAllTasksStatuses();

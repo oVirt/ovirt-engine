@@ -152,6 +152,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getSpmStatus(String spUUID);
 
+    public Map<String, Object> getHostJobs(String job_type, List<String> jobIds);
+
     public Map<String, Object> getTaskStatus(String taskUUID);
 
     public Map<String, Object> getAllTasksStatuses();
