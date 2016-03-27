@@ -20,4 +20,13 @@ public interface BaseDiskDao extends GenericDao<BaseDisk, Guid> {
      * Get disks by disk alias
      */
     List<BaseDisk> getDisksByAlias(String alias);
+
+    /**
+     * Update disk's boot flag.
+     *
+     * @param id The disk's id
+     * @param boot The boot flag
+     */
+    void updateDiskBootFlag(Guid id, boolean boot);
+
 }

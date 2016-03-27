@@ -68,4 +68,13 @@ public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implement
             return new BaseDisk();
         }
     }
+
+    @Override
+    public void updateDiskBootFlag(Guid id, boolean boot) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_id", id)
+                .addValue("boot", boot);
+        getCallsHandler().executeModification("UpdateBaseDiskBootFlag", parameterSource);
+    }
+
 }

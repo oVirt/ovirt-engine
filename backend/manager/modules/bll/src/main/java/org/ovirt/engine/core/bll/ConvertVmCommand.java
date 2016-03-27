@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -211,7 +212,9 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     protected void endSuccessfully() {
         getReturnValue().setEndActionTryAgain(false);
         try {
-            addImportedDevices(readVmFromOvf(getOvfOfConvertedVm()));
+            VM vm = readVmFromOvf(getOvfOfConvertedVm());
+            updateBootDiskFlag(vm);
+            addImportedDevices(vm);
             setSucceeded(true);
         } catch (EngineException e) {
             log.info("failed to add devices to converted vm");
@@ -256,6 +259,11 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         runVdsCommand(
                 VDSCommandType.DeleteV2VJob,
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
+    }
+
+    private void updateBootDiskFlag(VM vm) {
+        vm.getStaticData().getImages().stream().filter(DiskImage::isBoot).forEach(
+                diskImage -> getBaseDiskDao().updateDiskBootFlag(diskImage.getId(), true));
     }
 
     private void addImportedDevices(VM vm) {

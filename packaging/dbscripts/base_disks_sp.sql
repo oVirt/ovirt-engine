@@ -87,6 +87,18 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION UpdateBaseDiskBootFlag (
+    v_disk_id UUID,
+    v_boot BOOLEAN
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE base_disks
+    SET boot = v_boot
+    WHERE disk_id = v_disk_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION DeleteBaseDisk (v_disk_id UUID)
 RETURNS VOID AS $PROCEDURE$
 DECLARE v_val UUID;
