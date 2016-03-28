@@ -26,6 +26,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -35,27 +38,43 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     public RegisterDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        setStoragePoolId(parameters.getDiskImage().getStoragePoolId());
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, parameters.getDiskImage().getId()));
+        setStoragePoolId(getParameters().getDiskImage().getStoragePoolId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getDiskImage().getId()));
     }
 
     public RegisterDiskCommand(Guid commandId) {
         super(commandId);
     }
 
+    private void refreshDiskImageIfNecessery() {
+        if (getParameters().isRefreshFromStorage()) {
+            GetUnregisteredDiskQueryParameters unregQueryParams =
+                    new GetUnregisteredDiskQueryParameters(getParameters().getDiskImage().getId(),
+                            getStorageDomainId(),
+                            getStoragePoolId());
+            VdcQueryReturnValue unregQueryReturn = runInternalQuery(VdcQueryType.GetUnregisteredDisk, unregQueryParams);
+            if (unregQueryReturn.getSucceeded()) {
+                setDiskImage(unregQueryReturn.<DiskImage> getReturnValue());
+            }
+        } else {
+            setDiskImage(getParameters().getDiskImage());
+        }
+    }
+
     @Override
     protected boolean validate() {
+        refreshDiskImageIfNecessery();
         // Currently this only supports importing DiskImages or CinderDisks and does not work with LunDisks.
-        if (getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.IMAGE &&
-                getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.CINDER) {
-            addValidationMessageVariable("diskId", getParameters().getDiskImage().getId());
-            addValidationMessageVariable("storageType", getParameters().getDiskImage().getDiskStorageType());
+        if (getDiskImage().getDiskStorageType() != DiskStorageType.IMAGE &&
+                getDiskImage().getDiskStorageType() != DiskStorageType.CINDER) {
+            addValidationMessageVariable("diskId", getDiskImage().getId());
+            addValidationMessageVariable("storageType", getDiskImage().getDiskStorageType());
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
             return false;
         }
 
         if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExist())) {
-            addValidationMessageVariable("diskId", getParameters().getDiskImage().getId());
+            addValidationMessageVariable("diskId", getDiskImage().getId());
             addValidationMessageVariable("domainId", getStorageDomainId());
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
             return false;
@@ -69,16 +88,16 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             return false;
         }
 
-        if (getDiskDao().get(getParameters().getDiskImage().getId()) != null) {
+        if (getDiskDao().get(getDiskImage().getId()) != null) {
             String diskAlias =
-                    ImagesHandler.getDiskAliasWithDefault(getParameters().getDiskImage(),
+                    ImagesHandler.getDiskAliasWithDefault(getDiskImage(),
                             generateDefaultAliasForRegiteredDisk(Calendar.getInstance()));
             addValidationMessageVariable("diskAliases", diskAlias);
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
             return false;
         }
 
-        if (getParameters().getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE &&
+        if (getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE &&
                 !setAndValidateDiskProfiles()) {
             return false;
         }
@@ -88,8 +107,8 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Override
     protected void executeCommand() {
-        if (getParameters().getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE) {
-            final DiskImage newDiskImage = getParameters().getDiskImage();
+        if (getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE) {
+            final DiskImage newDiskImage = getDiskImage();
             newDiskImage.setDiskAlias(ImagesHandler.getDiskAliasWithDefault(newDiskImage,
                     generateDefaultAliasForRegiteredDisk(Calendar.getInstance())));
             ArrayList<Guid> storageIds = new ArrayList<>();
@@ -99,9 +118,9 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             unregisteredDisksDao.removeUnregisteredDisk(newDiskImage.getId(), null);
             getReturnValue().setActionReturnValue(newDiskImage.getId());
             getReturnValue().setSucceeded(true);
-        } else if (getParameters().getDiskImage().getDiskStorageType() == DiskStorageType.CINDER) {
+        } else if (getDiskImage().getDiskStorageType() == DiskStorageType.CINDER) {
             VdcReturnValueBase returnValue = runInternalAction(VdcActionType.RegisterCinderDisk, new RegisterCinderDiskParameters(
-                    (CinderDisk) getParameters().getDiskImage(), getParameters().getStorageDomainId()));
+                    (CinderDisk) getDiskImage(), getParameters().getStorageDomainId()));
             setReturnValue(returnValue);
         }
     }
@@ -117,7 +136,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     }
 
     protected boolean setAndValidateDiskProfiles() {
-        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getParameters().getDiskImage(),
+        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getDiskImage(),
                 getStorageDomainId()),
                 getCurrentUser()));
     }
@@ -131,7 +150,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getStorageDomainId(),
-                getParameters().getDiskImage().getActualSize()));
+                getDiskImage().getActualSize()));
 
         return list;
     }
