@@ -45,10 +45,14 @@ public class SubTabStorageRegisterDiskImageView extends AbstractSubTabTableView<
                 DisksViewColumns.getAliasColumn(null), constants.aliasDisk(), true, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.getSizeColumn(null), constants.provisionedSizeDisk(), true, "150px"); //$NON-NLS-1$
+                DisksViewColumns.getActualSizeColumn(null), constants.sizeDisk(), true, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.getCinderVolumeTypeColumn(null), constants.cinderVolumeTypeDisk(), true, "150px"); //$NON-NLS-1$
+                DisksViewColumns.getSizeColumn(null), constants.provisionedSizeDisk(), true, "150px"); //$NON-NLS-1$
+
+        getTable().ensureColumnVisible(DisksViewColumns.getAllocationColumn(null),
+                constants.allocationDisk(),
+                true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 DisksViewColumns.getDateCreatedColumn(null), constants.creationDateDisk(), true, "150px"); //$NON-NLS-1$
