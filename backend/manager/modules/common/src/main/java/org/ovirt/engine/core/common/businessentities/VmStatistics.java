@@ -8,6 +8,8 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
@@ -297,5 +299,37 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     public void setvNumaNodeStatisticsList(List<VmNumaNode> vNumaNodeStatisticsList) {
         this.vNumaNodeStatisticsList = vNumaNodeStatisticsList;
+    }
+
+    /**
+     * Update data that was received from VDSM
+     * @param vmStatistics - the reported statistics from VDSM
+     * @param vm - the static part of the VM for which the statistics belong
+     */
+    public void updateRuntimeData(VmStatistics vmStatistics, VmStatic vm) {
+        Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
+
+        setElapsedTime(vmStatistics.getElapsedTime());
+
+        setDisksUsage(vmStatistics.getDisksUsage());
+
+        // -------- cpu --------------
+        setCpuSys(vmStatistics.getCpuSys());
+        setCpuUser(vmStatistics.getCpuUser());
+        if ((getCpuSys() != null) && (getCpuUser() != null)) {
+            Double percent = (getCpuSys() + getCpuUser()) / vm.getNumOfCpus();
+            setUsageCpuPercent(percent.intValue());
+            if (getUsageCpuPercent() != null && getUsageCpuPercent() > 100) {
+                setUsageCpuPercent(100);
+            }
+        }
+        addCpuUsageHistory(getUsageCpuPercent(), usageHistoryLimit);
+
+        // -------- memory --------------
+        setUsageMemPercent(vmStatistics.getUsageMemPercent());
+        addMemoryUsageHistory(getUsageMemPercent(), usageHistoryLimit);
+
+        // -------- migration --------------
+        setMigrationProgressPercent(vmStatistics.getMigrationProgressPercent());
     }
 }

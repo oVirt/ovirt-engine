@@ -758,7 +758,7 @@ public class VmAnalyzer {
     private void updateVmStatistics() {
         // check if time for vm statistics refresh - update cache and DB
         if (updateStatistics) {
-            dbVm.updateRunTimeStatisticsData(vdsmVm.getVmStatistics(), dbVm);
+            dbVm.getStatisticsData().updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
             saveStatistics();
             saveVmInterfaces();
             updateInterfaceStatistics();

@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -1413,36 +1411,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public void setWin2kHackEnable(boolean value) {
         getDynamicData().setWin2kHackEnable(value);
-    }
-
-    /**
-     * update vm statistics data
-     */
-    public void updateRunTimeStatisticsData(VmStatistics vmStatistics, VM vm) {
-        Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
-
-        setElapsedTime(vmStatistics.getElapsedTime());
-
-        vm.getStatisticsData().setDisksUsage(vmStatistics.getDisksUsage());
-
-        // -------- cpu --------------
-        setCpuSys(vmStatistics.getCpuSys());
-        setCpuUser(vmStatistics.getCpuUser());
-        if ((getCpuSys() != null) && (getCpuUser() != null)) {
-            Double percent = (getCpuSys() + getCpuUser()) / vm.getNumOfCpus();
-            setUsageCpuPercent(percent.intValue());
-            if (getUsageCpuPercent() != null && getUsageCpuPercent() > 100) {
-                setUsageCpuPercent(100);
-            }
-        }
-        addCpuUsageHistory(getUsageCpuPercent(), usageHistoryLimit);
-
-        // -------- memory --------------
-        setUsageMemPercent(vmStatistics.getUsageMemPercent());
-        addMemoryUsageHistory(getUsageMemPercent(), usageHistoryLimit);
-
-        // -------- migration --------------
-        setMigrationProgressPercent(vmStatistics.getMigrationProgressPercent());
     }
 
     /**
