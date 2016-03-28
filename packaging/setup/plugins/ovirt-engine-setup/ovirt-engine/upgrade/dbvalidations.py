@@ -131,7 +131,6 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_VALIDATION,
         priority=plugin.Stages.PRIORITY_LOW,
         after=(
-            oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
             oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ),
         condition=lambda self: (

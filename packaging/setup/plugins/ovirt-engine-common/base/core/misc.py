@@ -43,9 +43,6 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
-        before=(
-            otopicons.Stages.CORE_CONFIG_INIT,
-        ),
         priority=plugin.Stages.PRIORITY_HIGH - 20,
     )
     def _preinit(self):
