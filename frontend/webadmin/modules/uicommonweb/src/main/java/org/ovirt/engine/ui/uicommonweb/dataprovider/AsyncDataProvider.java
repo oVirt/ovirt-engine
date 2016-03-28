@@ -846,7 +846,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Boolean) source).booleanValue() : true;
+                return source == null || (Boolean) source;
             }
         };
         getConfigFromCache(
@@ -859,7 +859,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? WanColorDepth.fromInt(((Integer) source).intValue()) : WanColorDepth.depth16;
+                return source != null ? WanColorDepth.fromInt((Integer) source) : WanColorDepth.depth16;
             }
         };
         getConfigFromCache(
@@ -904,7 +904,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 1000;
+                return source != null ? (Integer) source : 1000;
             }
         };
         getConfigFromCache(
@@ -916,7 +916,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 1;
+                return source != null ? (Integer) source : 1;
             }
         };
         GetConfigurationValueParameters tempVar =
@@ -929,7 +929,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 1;
+                return source != null ? (Integer) source : 1;
             }
         };
         GetConfigurationValueParameters tempVar =
@@ -942,7 +942,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 1;
+                return source != null ? (Integer) source : 1;
             }
         };
         GetConfigurationValueParameters tempVar =
@@ -955,7 +955,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 1;
+                return source != null ? (Integer) source : 1;
             }
         };
         GetConfigurationValueParameters tempVar =
@@ -1827,7 +1827,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 100;
+                return source != null ? (Integer) source : 100;
             }
         };
         getConfigFromCache(
@@ -1870,7 +1870,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? !((Boolean) source).booleanValue() : false;
+                return source != null && !(Boolean) source;
             }
         };
         NameQueryParameters params = new NameQueryParameters(templateName);
@@ -1884,7 +1884,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? !((Boolean) source).booleanValue() : false;
+                return source != null && !(Boolean) source;
             }
         };
         NameQueryParameters params = new NameQueryParameters(name);
@@ -2004,7 +2004,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 1;
+                return source != null ? (Integer) source : 1;
             }
         };
         getConfigFromCache(
@@ -2017,7 +2017,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 0;
+                return source != null ? (Integer) source : 0;
             }
         };
         getConfigFromCache(
@@ -2030,7 +2030,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 0;
+                return source != null ? (Integer) source : 0;
             }
         };
         getConfigFromCache(
@@ -2212,7 +2212,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 1;
+                return source != null ? (Integer) source : 1;
             }
         };
         getConfigFromCache(
@@ -2241,7 +2241,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 120;
+                return source != null ? (Integer) source : 120;
             }
         };
         getConfigFromCache(
@@ -2254,7 +2254,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 0;
+                return source != null ? (Integer) source : 0;
             }
         };
         aQuery.asyncCallback.onSuccess(aQuery.getModel(), 10);
@@ -2264,7 +2264,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? ((Integer) source).intValue() : 0;
+                return source != null ? (Integer) source : 0;
             }
         };
         aQuery.asyncCallback.onSuccess(aQuery.getModel(), 5);
