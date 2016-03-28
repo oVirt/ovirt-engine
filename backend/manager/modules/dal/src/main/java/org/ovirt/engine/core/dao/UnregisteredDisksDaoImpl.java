@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Named;
@@ -30,12 +29,11 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
                         getCustomMapSqlParameterSource()
                                 .addValue("disk_id", diskId)
                                 .addValue("storage_domain_id", storageDomainId));
-        if (isSingleUnregisteredDisk(diskId, unregisteredDisks)) {
+        for (UnregisteredDisk unregDisk : unregisteredDisks) {
             List<VmBase> vms = getCallsHandler().executeReadList("GetEntitiesByDiskId",
                     VmsForUnregisteredDiskRowMapper.instance,
-                    getCustomMapSqlParameterSource()
-                            .addValue("disk_id", diskId));
-            unregisteredDisks.get(0).setVms(new ArrayList<>(vms));
+                    getCustomMapSqlParameterSource().addValue("disk_id", unregDisk.getId()));
+            unregDisk.getVms().addAll(vms);
         }
         return unregisteredDisks;
     }
@@ -113,9 +111,5 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
             vmBase.setName(rs.getString("entity_name"));
             return vmBase;
         }
-    }
-
-    private boolean isSingleUnregisteredDisk(Guid diskId, List<UnregisteredDisk> unregisteredDisks) {
-        return diskId != null && !unregisteredDisks.isEmpty();
     }
 }
