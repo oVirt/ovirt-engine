@@ -24,10 +24,14 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.KatelloErrata;
 import org.ovirt.engine.api.model.KdumpStatus;
+import org.ovirt.engine.api.model.Spm;
+import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.model.Statistics;
+import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.model.StorageConnectionExtensions;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Host;
+import org.ovirt.engine.api.v3.types.V3StorageManager;
 
 public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
     @Override
@@ -140,9 +144,31 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
         if (from.isSetSelinux()) {
             to.setSelinux(adaptIn(from.getSelinux()));
         }
+
+        // This is for the old and deprecated "storage_manager" element:
+        V3StorageManager storageManager = from .getStorageManager();
+        if (storageManager != null) {
+            Spm spm = new Spm();
+            Boolean value = storageManager.isValue();
+            if (value != null) {
+                SpmState state = value? SpmState.SPM: SpmState.NONE;
+                Status status = new Status();
+                status.setState(state.value());
+                spm.setStatus(status);
+            }
+            Integer priority = spm.getPriority();
+            if (storageManager.getPriority() != null) {
+                spm.setPriority(priority);
+            }
+            to.setSpm(spm);
+        }
+
+        // This is for the new and recommended "spm" element (note that the order is important, as we want the new
+        // element to override the old element when both are provided):
         if (from.isSetSpm()) {
             to.setSpm(adaptIn(from.getSpm()));
         }
+
         if (from.isSetSsh()) {
             to.setSsh(adaptIn(from.getSsh()));
         }

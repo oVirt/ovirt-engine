@@ -19,12 +19,16 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Spm;
+import org.ovirt.engine.api.model.SpmState;
+import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Hooks;
 import org.ovirt.engine.api.v3.types.V3Host;
 import org.ovirt.engine.api.v3.types.V3KatelloErrata;
 import org.ovirt.engine.api.v3.types.V3Statistics;
 import org.ovirt.engine.api.v3.types.V3StorageConnectionExtensions;
+import org.ovirt.engine.api.v3.types.V3StorageManager;
 
 public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
     @Override
@@ -137,9 +141,26 @@ public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
         if (from.isSetSelinux()) {
             to.setSelinux(adaptOut(from.getSelinux()));
         }
-        if (from.isSetSpm()) {
-            to.setSpm(adaptOut(from.getSpm()));
+
+        Spm spm = from.getSpm();
+        if (spm != null) {
+            // This is for the old and deprecated "storage_manager" element:
+            V3StorageManager storageManager = new V3StorageManager();
+            Status status = spm.getStatus();
+            if (status != null && status.isSetState()) {
+                SpmState state = SpmState.fromValue(status.getState());
+                storageManager.setValue(state == SpmState.SPM);
+            }
+            if (spm.isSetPriority()) {
+                storageManager.setPriority(spm.getPriority());
+            }
+            to.setStorageManager(storageManager);
+
+            // This is for the new and recommended "spm" element (the order here isn't relevant, as we are populating
+            // both output elements):
+            to.setSpm(adaptOut(spm));
         }
+
         if (from.isSetSsh()) {
             to.setSsh(adaptOut(from.getSsh()));
         }
