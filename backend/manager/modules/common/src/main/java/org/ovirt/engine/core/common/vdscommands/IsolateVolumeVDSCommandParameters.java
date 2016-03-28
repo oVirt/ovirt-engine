@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class IsolateVolumeVDSCommandParameters extends StorageJobVdsCommandParameters {
@@ -40,5 +41,12 @@ public class IsolateVolumeVDSCommandParameters extends StorageJobVdsCommandParam
 
     public void setImage(Guid image) {
         this.image = image;
+    }
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb).append("image", getImage())
+                .append("sourceImageGroupId", getSourceImageGroupId())
+                .append("destImageGroupId", getDestImageGroupId());
     }
 }
