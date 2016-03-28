@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.MissingResourceException;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
@@ -82,7 +79,6 @@ import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -117,7 +113,6 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetFilteredAttachableDisksParameters;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
@@ -140,7 +135,6 @@ import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParam
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
-import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
@@ -199,12 +193,8 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-import org.ovirt.engine.ui.uicompat.SpiceConstantsManager;
 
 public class AsyncDataProvider {
-
     //TODO MM: fix duplicity with org.ovirt.engine.core.bll.RunVmCommand.ISO_PREFIX  ?
     public static final String ISO_PREFIX = "iso://";    //$NON-NLS-1$
     private static AsyncDataProvider instance;
@@ -1543,10 +1533,6 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getVolumeList(AsyncQuery aQuery, boolean doRefresh) {
-        getVolumeList(aQuery, null, doRefresh);
-    }
-
     public void getVolumeList(AsyncQuery aQuery, String clusterName) {
         getVolumeList(aQuery, clusterName, true);
     }
@@ -2507,17 +2493,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(id).withoutRefresh(), aQuery);
     }
 
-    public void getVmList(AsyncQuery aQuery, String poolName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                ArrayList<VM> vms = Linq.<VM> cast((ArrayList<IVdcQueryable>) source);
-                return vms;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery); //$NON-NLS-1$
-    }
-
     public void getVmListByClusterName(AsyncQuery aQuery, String clusterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -2771,19 +2746,6 @@ public class AsyncDataProvider {
     }
 
     /**
-     * Get configuration value from using a specified converter.
-     */
-    public Object getConfigValue(ConfigurationValues configValue, String version, IAsyncConverter converter) {
-        if (converter == null) {
-            return null;
-        }
-
-        KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
-
-        return converter.convert(cachedConfigValuesPreConvert.get(key), null);
-    }
-
-    /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
      *
      * @param aQuery
@@ -2818,30 +2780,11 @@ public class AsyncDataProvider {
         aQuery.asyncCallback.onSuccess(aQuery.getModel(), returnValue);
     }
 
-    /**
-     * method to get an item from config while caching it (config is not supposed to change during a session)
-     *
-     * @param configValue
-     *            the config value to query
-     * @param version
-     *            the compatibility version to query
-     * @param aQuery
-     *            an async query
-     */
-    public void getConfigFromCache(ConfigurationValues configValue, String version, AsyncQuery aQuery) {
-        GetConfigurationValueParameters parameters = new GetConfigurationValueParameters(configValue, version);
-        getConfigFromCache(parameters, aQuery);
-    }
-
     public ArrayList<QuotaEnforcementTypeEnum> getQuotaEnforcmentTypes() {
         return new ArrayList<>(Arrays.asList(new QuotaEnforcementTypeEnum[]{
                 QuotaEnforcementTypeEnum.DISABLED,
                 QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT,
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
-    }
-
-    public void clearCache() {
-        cachedConfigValues.clear();
     }
 
     private static class TemplateConverter implements IAsyncConverter {
@@ -2867,148 +2810,6 @@ public class AsyncDataProvider {
 
             return list;
         }
-    }
-
-    public void getInterfaceOptionsForEditNetwork(final AsyncQuery asyncQuery,
-            final ArrayList<VdsNetworkInterface> interfaceList,
-            final VdsNetworkInterface originalInterface,
-            Network networkToEdit,
-            final Guid vdsID,
-            final StringBuilder defaultInterfaceName) {
-        final ArrayList<VdsNetworkInterface> ifacesOptions = new ArrayList<>();
-        for (VdsNetworkInterface i : interfaceList) {
-            if (StringHelper.isNullOrEmpty(i.getNetworkName()) && StringHelper.isNullOrEmpty(i.getBondName())) {
-                ifacesOptions.add(i);
-            }
-        }
-
-        if (originalInterface.getVlanId() == null) { // no vlan:
-            // Filter out the Interfaces that have child vlan Interfaces
-            getAllChildVlanInterfaces(vdsID, ifacesOptions, new IFrontendMultipleQueryAsyncCallback() {
-
-                @Override
-                public void executed(FrontendMultipleQueryAsyncResult result) {
-
-                    ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new ArrayList<>();
-                    List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-
-                    for (int i = 0; i < returnValueList.size(); i++) {
-                        VdcQueryReturnValue returnValue = returnValueList.get(i);
-                        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-                            ArrayList<VdsNetworkInterface> childVlanInterfaces =
-                                    returnValue.getReturnValue();
-
-                            if (childVlanInterfaces.size() == 0) {
-                                ifacesOptionsTemp.add(ifacesOptions.get(i));
-                            }
-                        }
-                    }
-
-                    ifacesOptions.clear();
-                    ifacesOptions.addAll(ifacesOptionsTemp);
-
-                    if (originalInterface.getBonded() != null && originalInterface.getBonded()) {
-                        // eth0 -- \
-                        // |---> bond0 -> <networkToEdit>
-                        // eth1 -- /
-                        // ---------------------------------------
-                        // - originalInterface: 'bond0'
-                        // --> We want to add 'eth0' and and 'eth1' as optional Interfaces
-                        // (note that choosing one of them will break the bond):
-                        for (VdsNetworkInterface i : interfaceList) {
-                            if (Objects.equals(i.getBondName(), originalInterface.getName())) {
-                                ifacesOptions.add(i);
-                            }
-                        }
-                    }
-
-                    // add the original interface as an option and set it as the default option:
-                    ifacesOptions.add(originalInterface);
-                    defaultInterfaceName.append(originalInterface.getName());
-
-                    asyncQuery.asyncCallback.onSuccess(asyncQuery.model, ifacesOptions);
-                }
-            });
-
-        }
-
-        else { // vlan:
-            getVlanParentInterface(vdsID, originalInterface, new AsyncQuery(asyncQuery, new INewAsyncCallback() {
-
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    final VdsNetworkInterface vlanParent = (VdsNetworkInterface) returnValue;
-
-                    if (vlanParent != null && vlanParent.getBonded() != null && vlanParent.getBonded()) {
-                        interfaceHasSiblingVlanInterfaces(vdsID, originalInterface, new AsyncQuery(asyncQuery,
-                                new INewAsyncCallback() {
-
-                                    @Override
-                                    public void onSuccess(Object model, Object returnValue) {
-                                        Boolean interfaceHasSiblingVlanInterfaces = (Boolean) returnValue;
-
-                                        if (!interfaceHasSiblingVlanInterfaces) {
-                                            // eth0 -- \
-                                            // |--- bond0 ---> bond0.3 -> <networkToEdit>
-                                            // eth1 -- /
-                                            // ---------------------------------------------------
-                                            // - originalInterface: 'bond0.3'
-                                            // - vlanParent: 'bond0'
-                                            // - 'bond0.3' has no vlan siblings
-                                            // --> We want to add 'eth0' and and 'eth1' as optional Interfaces.
-                                            // (note that choosing one of them will break the bond):
-                                            // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name ==
-                                            // vlanParent.name).ToList());
-                                            for (VdsNetworkInterface i : interfaceList) {
-                                                if (Objects.equals(i.getBondName(), vlanParent.getName())) {
-                                                    ifacesOptions.add(i);
-                                                }
-                                            }
-                                        }
-
-                                        // the vlanParent should already be in ifacesOptions
-                                        // (since it has no network_name or bond_name).
-                                        defaultInterfaceName.append(vlanParent.getName());
-
-                                        asyncQuery.asyncCallback.onSuccess(asyncQuery.model, ifacesOptions);
-
-                                    }
-                                }));
-                    } else {
-                        // the vlanParent should already be in ifacesOptions
-                        // (since it has no network_name or bond_name).
-                        if (vlanParent != null) {
-                            defaultInterfaceName.append(vlanParent.getName());
-                        }
-                        asyncQuery.asyncCallback.onSuccess(asyncQuery.model, ifacesOptions);
-                    }
-                }
-            }));
-        }
-    }
-
-    private void getVlanParentInterface(Guid vdsID, VdsNetworkInterface iface, AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                return source;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVlanParent, new InterfaceAndIdQueryParameters(vdsID,
-                iface), aQuery);
-    }
-
-    private void interfaceHasSiblingVlanInterfaces(Guid vdsID, VdsNetworkInterface iface, AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                ArrayList<VdsNetworkInterface> siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) source;
-                return !siblingVlanInterfaces.isEmpty();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
-                new InterfaceAndIdQueryParameters(vdsID, iface), aQuery);
-
     }
 
     public void getExternalProviderHostList(AsyncQuery aQuery,
@@ -3080,10 +2881,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetComputeResourceFromExternalProvider, params, aQuery);
     }
 
-    public void getAllProviders(AsyncQuery aQuery) {
-        getAllProviders(aQuery, true);
-    }
-
     public void getAllProviders(AsyncQuery aQuery, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -3097,19 +2894,6 @@ public class AsyncDataProvider {
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, doRefresh ? new GetAllProvidersParameters() :
                 new GetAllProvidersParameters().withoutRefresh(), aQuery);
-    }
-
-    public void getAllErrata(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                if (source == null) {
-                    return new ArrayList<Erratum>();
-                }
-                return source;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetErrataForEngine, new GetErrataCountsParameters(), aQuery);
     }
 
     public void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
@@ -3158,18 +2942,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetProviderCertificateChain,
                 new ProviderQueryParameters(provider),
                 aQuery);
-    }
-
-    private void getAllChildVlanInterfaces(Guid vdsID,
-            List<VdsNetworkInterface> ifaces,
-            IFrontendMultipleQueryAsyncCallback callback) {
-        ArrayList<VdcQueryParametersBase> parametersList = new ArrayList<>();
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
-        for (final VdsNetworkInterface iface : ifaces) {
-            queryTypeList.add(VdcQueryType.GetAllChildVlanInterfaces);
-            parametersList.add(new InterfaceAndIdQueryParameters(vdsID, iface));
-        }
-        Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, callback);
     }
 
     public void fillTagsRecursive(Tags tagToFill, List<Tags> children) {
@@ -3318,39 +3090,6 @@ public class AsyncDataProvider {
         }
 
         return "nic" + (maxIfaceNumber + 1); //$NON-NLS-1$
-    }
-
-    /**
-     * Gets a value composed of "[string1]+[string2]+..." and returns "[string1Translated]+[string2Translated]+..."
-     *
-     * @param complexValue
-     *            string in the form of "[string1]+[string2]+..."
-     * @return string in the form of "[string1Translated]+[string2Translated]+..."
-     */
-    public String getComplexValueFromSpiceRedKeysResource(String complexValue) {
-        if (StringHelper.isNullOrEmpty(complexValue)) {
-            return ""; //$NON-NLS-1$
-        }
-        ArrayList<String> values = new ArrayList<>();
-
-        for (String s : complexValue.split("[+]", -1)) { //$NON-NLS-1$
-            try {
-                String value =
-                    SpiceConstantsManager.getInstance()
-                    .getSpiceRedKeys()
-                    .getString(s.replaceAll("-", "_")); //$NON-NLS-1$ //$NON-NLS-2$
-                values.add(value);
-            } catch (MissingResourceException e) {
-                values.add(s);
-            }
-
-        }
-
-        return StringHelper.join("+", values.toArray(new String[]{})); //$NON-NLS-1$
-    }
-
-    public <T extends Guid> T getEntityGuid(BusinessEntity<T> entity) {
-        return entity.getId();
     }
 
     public Guid getEntityGuid(Object entity) {
@@ -3573,20 +3312,10 @@ public class AsyncDataProvider {
         return osIds;
     }
 
-    public void getOsMaxRam(int osId, Version version, AsyncQuery asyncQuery) {
-        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
-                new OsQueryParameters(OsRepositoryVerb.GetMaxOsRam, osId, version),
-                asyncQuery);
-    }
-
     public void getVmWatchdogTypes(int osId, Version version,
             AsyncQuery asyncQuery) {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetVmWatchdogTypes, osId, version), asyncQuery);
-    }
-
-    public ArrayList<Map.Entry<String, EntityModel<String>>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel<String>>> defaultItem) {
-        return getBondingOptionListDependingOnNetwork(defaultItem, false);
     }
 
     public ArrayList<Map.Entry<String, EntityModel<String>>> getBondingOptionListDependingOnNetwork(
@@ -3614,10 +3343,6 @@ public class AsyncDataProvider {
         EntityModel<String> entityModel = new EntityModel<>();
         entityModel.setEntity(mode.getDescription());
         return new KeyValuePairCompat<>(mode.getConfigurationValue(), entityModel);
-    }
-
-    public String getDefaultBondingOption() {
-        return BondMode.BOND4.getConfigurationValue("150"); //$NON-NLS-1$
     }
 
     public int getMaxVmPriority() {
@@ -3686,22 +3411,6 @@ public class AsyncDataProvider {
             };
         }
         Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
-    }
-
-    public void getNumberOfActiveVmsInCluster(AsyncQuery aQuery, Guid clusterId) {
-        // do not replace a converter = just add if none provided
-        if (aQuery.converterCallback == null) {
-            aQuery.converterCallback = new IAsyncConverter() {
-                @Override
-                public Object convert(Object source, AsyncQuery _asyncQuery) {
-                    if (source == null) {
-                        return Integer.valueOf(0);
-                    }
-                    return source;
-                }
-            };
-        }
-        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInClusterByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
     public void getNumberOfVmsInCluster(AsyncQuery aQuery, Guid clusterId) {
