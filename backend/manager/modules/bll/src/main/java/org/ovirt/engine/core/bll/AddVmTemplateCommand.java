@@ -288,7 +288,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             // template version name should be the same as the base template name
             setVmTemplateName(getBaseTemplate().getName());
             String jobId = updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
-            if (jobId != null) {
+            if (!StringUtils.isEmpty(jobId)) {
                 log.info("Cancelling current running update for vms for base template id '{}'", getParameters().getBaseTemplateId());
                 try {
                     getSchedulUtil().deleteJob(jobId);
@@ -892,7 +892,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // in case of new version of a template, update vms marked to use latest
         if (isTemplateVersion()) {
-            updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), null);
+            updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), StringUtils.EMPTY);
             String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "updateVmVersion", new Class[0],
                     new Object[0], 0, TimeUnit.SECONDS);
             updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), jobId);
