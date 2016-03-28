@@ -488,7 +488,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         getAttachCommand().setIsExecutionAllowed(true);
 
         getEditCommand().setIsExecutionAllowed(disk != null && isSingleDiskSelected() && !isDiskLocked(disk) &&
-                (isVmDown() || !disk.getPlugged() || (isExtendImageSizeSupported() && isExtendImageSizeEnabled())));
+                (isVmDown() || !disk.getPlugged() || isExtendImageSizeEnabled()));
 
         getRemoveCommand().setIsExecutionAllowed(atLeastOneDiskSelected() && isRemoveCommandAvailable());
 
@@ -752,20 +752,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         AsyncDataProvider.getInstance().getDataCenterById(query, getEntity().getStoragePoolId());
     }
 
-    protected void updateExtendImageSizeSupported() {
-        VM vm = getEntity();
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmDiskListModel model = (VmDiskListModel) target;
-                model.setExtendImageSizeSupported((Boolean) returnValue);
-            }
-        });
-        AsyncDataProvider.getInstance().isCommandCompatible(query, VdcActionType.ExtendImageSize,
-                vm.getCompatibilityVersion(), dataCenterVersion);
-    }
-
-
     private Version dataCenterVersion;
 
     public Version getDataCenterVersion() {
@@ -775,19 +761,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     public void setDataCenterVersion(Version dataCenterVersion) {
         if (dataCenterVersion != null && !dataCenterVersion.equals(this.dataCenterVersion)) {
             this.dataCenterVersion = dataCenterVersion;
-            updateExtendImageSizeSupported();
-        }
-    }
-
-    private boolean extendImageSizeSupported = true;
-
-    public boolean isExtendImageSizeSupported() {
-        return extendImageSizeSupported;
-    }
-
-    public void setExtendImageSizeSupported(boolean extendImageSizeSupported) {
-        if (this.extendImageSizeSupported != extendImageSizeSupported) {
-            this.extendImageSizeSupported = extendImageSizeSupported;
             updateActionAvailability();
         }
     }
