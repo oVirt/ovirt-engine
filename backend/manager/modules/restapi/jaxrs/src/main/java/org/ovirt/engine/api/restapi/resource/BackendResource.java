@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigCommon;
+import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -78,6 +79,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     public VdcQueryReturnValue runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams) {
+        BackendLocal backend = getBackend();
         queryParams.setFiltered(isFiltered());
         return backend.runQuery(queryType, sessionize(queryParams));
     }
@@ -244,6 +246,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected VdcReturnValueBase doAction(VdcActionType task,
                                           VdcActionParametersBase params) throws BackendFailureException {
+        BackendLocal backend = getBackend();
         setJobOrStepId(params);
         setCorrelationId(params);
         VdcReturnValueBase result = backend.runAction(task, sessionize(params));
@@ -257,6 +260,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     protected void doNonBlockingAction(final VdcActionType task, final VdcActionParametersBase params) {
+        BackendLocal backend = getBackend();
         setCorrelationId(params);
         setJobOrStepId(params);
         ThreadPoolUtil.execute(() -> {

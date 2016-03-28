@@ -142,6 +142,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         current.setPath("");
         current.setVersion("4");
         current.setVersionSource(VersionSource.DEFAULT);
+        current.setBackend(backend);
         CurrentManager.put(current);
 
         httpHeaders = control.createMock(HttpHeaders.class);
@@ -653,7 +654,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected void initBackendResource(BackendResource resource) {
-        resource.setBackend(backend);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
     }

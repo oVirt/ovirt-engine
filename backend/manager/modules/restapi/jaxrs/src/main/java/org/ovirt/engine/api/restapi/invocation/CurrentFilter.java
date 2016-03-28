@@ -77,6 +77,7 @@ public class CurrentFilter implements Filter {
         current.setRoot(getRoot(request));
         current.setPrefix(getPrefix(request));
         current.setPath(getPath(request));
+        current.setBackend(backend);
         CurrentManager.put(current);
 
         try {

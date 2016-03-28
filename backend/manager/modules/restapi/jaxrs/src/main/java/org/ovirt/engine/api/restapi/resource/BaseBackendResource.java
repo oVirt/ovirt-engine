@@ -35,14 +35,12 @@ public class BaseBackendResource {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendResource.class);
 
-    protected BackendLocal backend;
     protected MessageBundle messageBundle;
     protected UriInfo uriInfo;
     protected HttpHeaders httpHeaders;
     protected MappingLocator mappingLocator;
 
     protected <S extends BaseBackendResource> S inject(S resource) {
-        resource.setBackend(backend);
         resource.setMappingLocator(mappingLocator);
         resource.setMessageBundle(messageBundle);
         resource.setUriInfo(uriInfo);
@@ -58,12 +56,8 @@ public class BaseBackendResource {
         return mappingLocator;
     }
 
-    public void setBackend(BackendLocal backend) {
-        this.backend = backend;
-    }
-
     public BackendLocal getBackend() {
-        return backend;
+        return getCurrent().getBackend();
     }
 
     public void setMessageBundle(MessageBundle messageBundle) {
@@ -314,6 +308,7 @@ public class BaseBackendResource {
     }
 
     protected String localize(String error) {
+        BackendLocal backend = getBackend();
         Locale locale = getEffectiveLocale();
         return locale != null
                ? backend.getErrorsTranslator().translateErrorTextSingle(error, locale)
@@ -321,6 +316,7 @@ public class BaseBackendResource {
     }
 
     protected String localize(List<String> errors) {
+        BackendLocal backend = getBackend();
         Locale locale = getEffectiveLocale();
         return locale != null
                ? backend.getErrorsTranslator().translateErrorText(errors, locale).toString()

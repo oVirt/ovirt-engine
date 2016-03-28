@@ -30,7 +30,6 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
 
     @Override
     protected void init() {
-        resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);

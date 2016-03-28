@@ -325,7 +325,6 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
 
     @Override
     protected void init() {
-        parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
         parent.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);

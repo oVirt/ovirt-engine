@@ -223,6 +223,8 @@ public class BackendApiResourceTest extends EasyMockSupport {
 
     @Before
     public void setUp() {
+        backend = createMock(BackendLocal.class);
+
         currentUser = new DbUser();
         currentUser.setLoginName(USER);
         currentUser.setDomain(DOMAIN);
@@ -234,10 +236,8 @@ public class BackendApiResourceTest extends EasyMockSupport {
         current.setPath("");
         current.setVersion("4");
         current.setVersionSource(VersionSource.DEFAULT);
+        current.setBackend(backend);
         CurrentManager.put(current);
-
-        backend = createMock(BackendLocal.class);
-        resource.setBackend(backend);
 
         MessageBundle messageBundle = new MessageBundle();
         messageBundle.setPath(BUNDLE_PATH);

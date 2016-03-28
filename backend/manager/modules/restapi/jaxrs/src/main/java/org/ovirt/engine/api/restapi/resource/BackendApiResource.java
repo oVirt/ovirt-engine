@@ -24,8 +24,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -104,7 +102,6 @@ import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.constants.QueryConstants;
-import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
@@ -148,15 +145,6 @@ public class BackendApiResource
     }
 
     private void init() {
-        // Lookup the backend bean:
-        try {
-            Context initial = new InitialContext();
-            backend = (BackendLocal) initial.lookup("java:global/engine/bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal");
-        }
-        catch (Exception exception) {
-            throw new RuntimeException("Can't find reference to backend bean.", exception);
-        }
-
         // Create and populate the message bundle:
         messageBundle = new MessageBundle();
         messageBundle.setPath(Messages.class.getName());

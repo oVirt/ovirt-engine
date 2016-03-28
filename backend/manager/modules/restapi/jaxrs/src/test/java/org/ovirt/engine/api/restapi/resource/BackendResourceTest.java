@@ -32,7 +32,6 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     }
 
     private void setUpParentMock(BackendHostsResource parent) {
-        parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
         parent.setMessageBundle(messageBundle);
         parent.setHttpHeaders(httpHeaders);
@@ -85,7 +84,6 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     @Override
     protected void init() {
         resource = new BackendHostResource(GUIDS[0].toString(), new BackendHostsResource());
-        resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);

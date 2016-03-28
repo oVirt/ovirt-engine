@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.invocation;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 
 /**
@@ -64,6 +65,11 @@ public class Current {
      * This is a reference to the user that is performing the request.
      */
     private DbUser user;
+
+    /**
+     * Reference to the backend EJB used for this request.
+     */
+    private BackendLocal backend;
 
     /**
      * Returns the request version of the API.
@@ -144,5 +150,13 @@ public class Current {
 
     public void setUser(DbUser user) {
         this.user = user;
+    }
+
+    public void setBackend(BackendLocal backend) {
+        this.backend = backend;
+    }
+
+    public BackendLocal getBackend() {
+        return backend;
     }
 }

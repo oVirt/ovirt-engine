@@ -33,7 +33,6 @@ public class BackendVmPoolResourceTest
     @Override
     protected void init() {
         super.init();
-        resource.getParent().backend = backend;
         resource.getParent().mappingLocator = resource.mappingLocator;
         resource.getParent().httpHeaders = httpHeaders;
     }

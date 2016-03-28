@@ -30,7 +30,6 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
 
     @Override
     protected void init() {
-        resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
