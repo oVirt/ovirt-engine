@@ -26,14 +26,9 @@ import org.ovirt.engine.api.restapi.resource.validation.IOExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MappingExceptionMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationPath("/v4")
 public class BackendApplication extends Application {
-    // The log:
-    private static final Logger log = LoggerFactory.getLogger(BackendApplication.class);
-
     // The set of singletons:
     private final Set<Object> singletons = new HashSet<>();
 
