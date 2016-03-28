@@ -12,6 +12,9 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.UsageMessage;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
+import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 
 public class UsageFinder {
@@ -57,7 +60,9 @@ public class UsageFinder {
     private boolean isMatch(DetailedLink link, UriInfo uriInfo, String httpMethod) {
         int baseUriLength = uriInfo.getBaseUri().getPath().length();
         // e.g: [vms, {vm:id}, start]
-        String[] linkPathSegments = link.getHref().substring(baseUriLength).split("/");
+        Current current = CurrentManager.get();
+        int charsToTruncate = current.getVersionSource() == VersionSource.URL ? 0 : current.getVersion().length() + 2;
+        String[] linkPathSegments = link.getHref().substring(baseUriLength-charsToTruncate).split("/");
         // e.g: [vms, f26b0918-8e16-4915-b1c2-7f39e568de23, start]
         List<PathSegment> uriPathSegments = uriInfo.getPathSegments();
         return isMatchLength(linkPathSegments, uriPathSegments) &&
