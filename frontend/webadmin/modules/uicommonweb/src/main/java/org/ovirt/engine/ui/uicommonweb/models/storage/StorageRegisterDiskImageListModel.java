@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.UnregisteredDis
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
-import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -114,20 +113,10 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
 
         for (Object item : getSelectedItems()) {
             DiskImage disk = (DiskImage) item;
-            GetUnregisteredDiskQueryParameters parameters =
-                    new GetUnregisteredDiskQueryParameters(disk.getId(),
-                            getEntity().getId(),
-                            getEntity().getStoragePoolId());
-            Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredDisk, parameters,
-                    new AsyncQuery(this, new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model, Object ReturnValue) {
-                            DiskImage diskImage = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                            RegisterDiskParameters registerDiskParams =
-                                    new RegisterDiskParameters(diskImage, getEntity().getId());
-                            Frontend.getInstance().runAction(VdcActionType.RegisterDisk, registerDiskParams);
-                        }
-                    }));
+            RegisterDiskParameters registerDiskParams =
+                    new RegisterDiskParameters(disk, getEntity().getId());
+            registerDiskParams.setRefreshFromStorage(true);
+            Frontend.getInstance().runAction(VdcActionType.RegisterDisk, registerDiskParams);
         }
     }
 
