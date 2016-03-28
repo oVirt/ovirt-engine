@@ -159,19 +159,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         }
     }
 
-    private boolean isLiveStorageMigrationEnabled;
-
-    public boolean getIsLiveStorageMigrationEnabled() {
-        return isLiveStorageMigrationEnabled;
-    }
-
-    private void setIsLiveStorageMigrationEnabled(boolean value) {
-        if (isLiveStorageMigrationEnabled != value) {
-            isLiveStorageMigrationEnabled = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsLiveStorageMigrationEnabled")); //$NON-NLS-1$
-        }
-    }
-
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
                 VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
@@ -204,7 +191,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             updateDataCenterVersion();
             getSearchCommand().execute();
             updateIsDiskHotPlugAvailable();
-            updateLiveStorageMigrationEnabled();
         }
 
         updateActionAvailability();
@@ -587,10 +573,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private boolean isLiveMoveCommandAvailable() {
-        if (!getIsLiveStorageMigrationEnabled()) {
-            return false;
-        }
-
         VM vm = getEntity();
         if (vm == null || !vm.getStatus().isUpOrPaused() || vm.isStateless()) {
             return false;
@@ -697,33 +679,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             setIsDiskHotPlugSupported(!AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(
                     getEntity().getOs(), compatibilityVersion).isEmpty());
         }
-    }
-
-    protected void updateLiveStorageMigrationEnabled() {
-        final VM vm = getEntity();
-
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmDiskListModel model = (VmDiskListModel) target;
-
-                StoragePool dataCenter = (StoragePool) returnValue;
-                Version dcCompatibilityVersion = dataCenter.getCompatibilityVersion() != null
-                        ? dataCenter.getCompatibilityVersion() : new Version();
-
-                AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                VmDiskListModel model = (VmDiskListModel) target;
-                                model.setIsLiveStorageMigrationEnabled((Boolean) returnValue);
-                            }
-                        }),
-                        VdcActionType.LiveMigrateVmDisks,
-                        vm.getCompatibilityVersion(),
-                        dcCompatibilityVersion);
-            }
-        }), vm.getStoragePoolId());
     }
 
     private boolean isDiskOnBlockDevice(Disk disk) {
