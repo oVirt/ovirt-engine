@@ -35,8 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BackendResource extends BaseBackendResource {
-    private static final String FALSE = "false";
-    private static final String TRUE = "true";
     protected static final int NO_LIMIT = -1;
     private static final String CORRELATION_ID = "Correlation-Id";
     private static final String ASYNC_CONSTRAINT = "async";
