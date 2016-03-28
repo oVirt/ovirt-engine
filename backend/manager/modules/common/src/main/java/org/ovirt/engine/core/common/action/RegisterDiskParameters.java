@@ -9,6 +9,8 @@ public class RegisterDiskParameters extends ImagesActionsParametersBase {
 
     private DiskImage diskImage;
 
+    private boolean refreshFromStorage;
+
     public RegisterDiskParameters() {
     }
 
@@ -20,5 +22,13 @@ public class RegisterDiskParameters extends ImagesActionsParametersBase {
 
     public DiskImage getDiskImage() {
         return diskImage;
+    }
+
+    public boolean isRefreshFromStorage() {
+        return refreshFromStorage;
+    }
+
+    public void setRefreshFromStorage(boolean refreshFromStorage) {
+        this.refreshFromStorage = refreshFromStorage;
     }
 }
