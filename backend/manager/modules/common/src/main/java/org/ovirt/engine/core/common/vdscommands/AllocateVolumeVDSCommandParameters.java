@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AllocateVolumeVDSCommandParameters extends StorageJobVdsCommandParameters {
@@ -40,5 +41,11 @@ public class AllocateVolumeVDSCommandParameters extends StorageJobVdsCommandPara
 
     public void setSizeInBytes(long sizeInBytes) {
         this.sizeInBytes = sizeInBytes;
+    }
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb).append("imageGroupId", getJobId())
+                .append("volumeId", getVolumeId()).append("sizeInBytes", getSizeInBytes());
     }
 }
