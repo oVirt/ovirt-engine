@@ -15,17 +15,18 @@ public class CreateVolumeVDSCommandParameters extends StorageJobVdsCommandParame
     private String description;
     private Long initialSize;
 
-    public CreateVolumeVDSCommandParameters(Guid storageDomainId, Guid newImageGroupId,
-            long imageSizeInBytes, VolumeFormat volFormat, Guid newImageId,
-            String newImageDescription, Guid srcImageGroupId, Guid srcImageId) {
-        super(storageDomainId);
-        setImageSizeInBytes(imageSizeInBytes);
-        setVolumeFormat(volFormat);
-        setNewImageGroupId(newImageGroupId);
-        setNewImageID(newImageId);
-        setDescription(newImageDescription);
-        setSrcImageGroupId(srcImageGroupId);
-        setSrcImageId(srcImageId);
+    public CreateVolumeVDSCommandParameters(Guid storageDomainId, Guid jobId, long imageSizeInBytes, Guid newImageID,
+                                            Guid srcImageId, Guid srcImageGroupId, Guid newImageGroupId, VolumeFormat
+                                                    volumeFormat, String description, Long initialSize) {
+        super(storageDomainId, jobId);
+        this.imageSizeInBytes = imageSizeInBytes;
+        this.newImageID = newImageID;
+        this.srcImageId = srcImageId;
+        this.srcImageGroupId = srcImageGroupId;
+        this.newImageGroupId = newImageGroupId;
+        this.volumeFormat = volumeFormat;
+        this.description = description;
+        this.initialSize = initialSize;
     }
 
     public long getImageSizeInBytes() {

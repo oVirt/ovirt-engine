@@ -27,6 +27,7 @@ public class AllocateImageGroupVolumeCommand<T extends AllocateImageGroupVolumeC
     protected void executeCommand() {
         VdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.AllocateVolume,
                 new AllocateVolumeVDSCommandParameters(getParameters().getStorageDomainId(),
+                        getParameters().getJobId(),
                         getParameters().getImageGroupID(),
                         getParameters().getImageId(),
                         getParameters().getSize()), getParameters().getStoragePoolId(), this);

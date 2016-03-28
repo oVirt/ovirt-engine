@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageJobCommandParameters extends ImagesActionsParametersBase {
-    private Guid storageJobId;
+    private Guid storageJobId = Guid.newGuid();
 
     public StorageJobCommandParameters() {
     }

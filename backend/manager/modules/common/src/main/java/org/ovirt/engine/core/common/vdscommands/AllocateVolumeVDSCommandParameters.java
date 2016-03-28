@@ -7,8 +7,9 @@ public class AllocateVolumeVDSCommandParameters extends StorageJobVdsCommandPara
     private Guid volumeId;
     private long sizeInBytes;
 
-    public AllocateVolumeVDSCommandParameters(Guid storageDomainId, Guid imageGroupId, Guid volumeId, long sizeInBytes) {
-        super(storageDomainId);
+    public AllocateVolumeVDSCommandParameters(Guid storageDomainId, Guid jobId, Guid imageGroupId, Guid
+            volumeId, long sizeInBytes) {
+        super(storageDomainId, jobId);
         this.imageGroupId = imageGroupId;
         this.volumeId = volumeId;
         this.sizeInBytes = sizeInBytes;

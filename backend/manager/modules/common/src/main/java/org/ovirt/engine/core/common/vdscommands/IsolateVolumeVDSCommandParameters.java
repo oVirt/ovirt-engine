@@ -10,8 +10,9 @@ public class IsolateVolumeVDSCommandParameters extends StorageJobVdsCommandParam
     public IsolateVolumeVDSCommandParameters() {
     }
 
-    public IsolateVolumeVDSCommandParameters(Guid storageDomainId, Guid image, Guid sourceImageGroupId, Guid destImageGroupId) {
-        super(storageDomainId);
+    public IsolateVolumeVDSCommandParameters(Guid storageDomainId, Guid jobId, Guid image, Guid sourceImageGroupId,
+                                             Guid destImageGroupId) {
+        super(storageDomainId, jobId);
         this.image = image;
         this.sourceImageGroupId = sourceImageGroupId;
         this.destImageGroupId = destImageGroupId;

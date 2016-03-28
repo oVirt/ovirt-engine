@@ -11,8 +11,8 @@ public class StorageJobVdsCommandParameters extends StorageDomainVdsCommandParam
         this.jobId = jobId;
     }
 
-    public StorageJobVdsCommandParameters(Guid storageDomainId, Guid vdsId) {
-        this(storageDomainId, vdsId, null);
+    public StorageJobVdsCommandParameters(Guid storageDomainId, Guid jobId) {
+        this(storageDomainId, null, jobId);
     }
 
     public StorageJobVdsCommandParameters(Guid storageDomainId) {
