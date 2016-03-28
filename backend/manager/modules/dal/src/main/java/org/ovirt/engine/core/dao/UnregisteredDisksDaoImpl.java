@@ -93,6 +93,7 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
             diskImage.setDiskDescription(rs.getString("disk_description"));
             diskImage.setActualSizeInBytes(rs.getLong("actual_size"));
             diskImage.setSize(rs.getLong("size"));
+            diskImage.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
             diskImage.setLastModified(DbFacadeUtils.fromDate(rs.getTimestamp("last_modified")));
             diskImage.setStorageIds(GuidUtils.getGuidListFromString(rs.getString("storage_domain_id")));
             diskImage.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
