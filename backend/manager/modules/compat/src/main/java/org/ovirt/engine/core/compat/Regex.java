@@ -39,22 +39,18 @@ public class Regex {
     }
 
     public static String replace(String searchString, String pageStringRegex, String format) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(); // juicommon
+        throw new UnsupportedOperationException();
     }
 
     public String replace(String searchClause, String string) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(); // juicommon
+        throw new UnsupportedOperationException();
     }
 
     public static boolean isMatch(String string, String expression, RegexOptions options) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(); // juicommon
+        throw new UnsupportedOperationException();
     }
 
     public static boolean isMatch(String searchString, String pageStringRegex, int ignorecase) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(); // juicommon
+        throw new UnsupportedOperationException();
     }
 }
