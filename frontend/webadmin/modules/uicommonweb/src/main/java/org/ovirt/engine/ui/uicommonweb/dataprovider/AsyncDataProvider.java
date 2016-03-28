@@ -2681,7 +2681,7 @@ public class AsyncDataProvider {
 
         CommandVersionsInfo commandVersionsInfo = cachedCommandsCompatibilityVersions.get(vdcActionType);
         if (commandVersionsInfo == null) {
-            return false;
+            return true;
         }
 
         Version clusterCompatibility = commandVersionsInfo.getClusterVersion();
