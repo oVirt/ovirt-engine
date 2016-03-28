@@ -4,13 +4,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
@@ -21,7 +18,6 @@ import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.snapshot.SnapshotsViewColumns;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -30,8 +26,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -51,7 +45,6 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     SimplePanel snapshotInfoContainer;
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final IEventListener<EventArgs> entityChangedEvent = new IEventListener<EventArgs>() {
         @Override
@@ -201,21 +194,6 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCloneVmCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                String tooltip = null;
-                if (!getModel().getIsCloneVmSupported() && getModel().getEntity() != null) {
-                    CommandVersionsInfo commandVersionsInfo =
-                            AsyncDataProvider.getInstance().getCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
-                    String minimalClusterVersion = commandVersionsInfo != null ?
-                            commandVersionsInfo.getClusterVersion().toString(2) : ""; //$NON-NLS-1$
-                    tooltip = messages.cloneVmNotSupported(minimalClusterVersion);
-                } else {
-                    tooltip = this.getText();
-                }
-                return SafeHtmlUtils.fromString(tooltip);
             }
         });
         getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.makeTemplateFromSnapshot()) {

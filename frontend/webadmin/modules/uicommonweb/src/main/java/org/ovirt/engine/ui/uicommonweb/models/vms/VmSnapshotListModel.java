@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -29,7 +28,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -174,19 +172,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         onPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap")); //$NON-NLS-1$
     }
 
-    private boolean isCloneVmSupported;
-
-    public boolean getIsCloneVmSupported() {
-        return isCloneVmSupported;
-    }
-
-    private void setIsCloneVmSupported(boolean value) {
-        if (isCloneVmSupported != value) {
-            isCloneVmSupported = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsCloneVmSupported")); //$NON-NLS-1$
-        }
-    }
-
     private boolean memorySnapshotSupported;
 
     public boolean isMemorySnapshotSupported() {
@@ -293,7 +278,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         updateIsMemorySnapshotSupported(value);
         updateIsLiveMergeSupported(value);
         super.setEntity(value);
-        updateIsCloneVmSupported();
         updateVmActiveDisks();
     }
 
@@ -852,7 +836,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isLocked = getIsLocked();
         boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
         boolean isStateless = getIsStateless();
-        boolean isCloneVmSupported = getIsCloneVmSupported();
 
         getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
                 && VdcActionUtils.canExecute(vmList, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
@@ -864,7 +847,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && !isStateless
                 && (isLiveMergeSupported() ? isVmQualifiedForSnapshotMerge : isVmDown));
         getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
-                && !isVmImageLocked && !isStateless && isCloneVmSupported);
+                && !isVmImageLocked && !isStateless);
         getCloneTemplateCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
                 && !isVmImageLocked && !isStateless);
     }
@@ -919,36 +902,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             }
         }
         return null;
-    }
-
-    protected void updateIsCloneVmSupported() {
-        if (getEntity() == null) {
-            return;
-        }
-
-        final VM vm = getEntity();
-
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmSnapshotListModel model = (VmSnapshotListModel) target;
-                StoragePool dataCenter = (StoragePool) returnValue;
-                if (dataCenter == null) {
-                    return;
-                }
-
-                Version minVmVersion = vm.getCompatibilityVersion();
-                Version minDcVersion = dataCenter.getCompatibilityVersion();
-
-                AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmSnapshotListModel model = (VmSnapshotListModel) target;
-                        model.setIsCloneVmSupported((Boolean) returnValue);
-                    }
-                }), VdcActionType.AddVmFromSnapshot, minVmVersion, minDcVersion);
-            }
-        }), vm.getStoragePoolId());
     }
 
     private void updateIsMemorySnapshotSupported(Object entity) {
