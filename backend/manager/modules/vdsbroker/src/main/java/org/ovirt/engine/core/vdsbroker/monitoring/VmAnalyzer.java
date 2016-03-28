@@ -502,9 +502,19 @@ public class VmAnalyzer {
                 }
             }
             if (dbVm != null || vdsmVmDynamic.getStatus() != VMStatus.MigratingFrom) {
-                if (updateVmRunTimeInfo()) {
-                    saveDynamic(dbVm.getDynamicData());
+                if (dbVm == null) {
+                    dbVm = vmDao.get(vdsmVm.getVmDynamic().getId());
+                    // TODO: This is done to keep consistency with VmDao.getById(Guid).
+                    // It should probably be removed, but some research is required.
+                    dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
+
+                    if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
+                            || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
+                        succeededToRun = true;
+                    }
                 }
+
+                updateVmDynamicData();
             }
             if (dbVm != null) {
                 updateVmStatistics();
@@ -565,19 +575,7 @@ public class VmAnalyzer {
         return dbVm.getStatus() == VMStatus.MigratingTo && vdsmVmDynamic.getStatus().isRunning();
     }
 
-    private boolean updateVmRunTimeInfo() {
-        if (dbVm == null) {
-            dbVm = vmDao.get(vdsmVm.getVmDynamic().getId());
-            // TODO: This is done to keep consistency with VmDao.getById(Guid).
-            // It should probably be removed, but some research is required.
-            dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
-
-            if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
-                    || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
-                succeededToRun = true;
-            }
-        }
-
+    private void updateVmDynamicData() {
         // check if dynamic data changed - update cache and DB
         List<String> changedFields = getChangedFields(dbVm.getDynamicData(), vdsmVm.getVmDynamic());
         // remove all fields that should not be checked:
@@ -588,14 +586,11 @@ public class VmAnalyzer {
             vdsmVm.getVmDynamic().setAppList(dbVm.getAppList());
         }
 
-        // if nothing else changed
-        if (changedFields.isEmpty()) {
-            return false;
+        // if something relevant changed
+        if (!changedFields.isEmpty()) {
+            dbVm.getDynamicData().updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
+            saveDynamic(dbVm.getDynamicData());
         }
-
-        dbVm.getDynamicData().updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
-
-        return true;
     }
 
     private boolean isVmMigratingToThisVds() {
