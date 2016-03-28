@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -175,7 +174,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         String sessionId = "sessionId"; //$NON-NLS-1$
         testServlet.initQueryParams(mockQueryParams, sessionId);
         verify(mockQueryParams).setSessionId(sessionId);
-        verify(mockQueryParams).setHttpSessionId(sessionId);
         verify(mockQueryParams).setFiltered(testServlet.filterQueries());
     }
 
@@ -186,7 +184,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         Object result = testServlet.runQuery(queryType, mockQueryParams, sessionId);
         assertEquals(result, mockUser);
         verify(mockQueryParams).setSessionId(sessionId);
-        verify(mockQueryParams).setHttpSessionId(sessionId);
         verify(mockQueryParams).setFiltered(testServlet.filterQueries());
         verify(mockBackend).runQuery(queryType, mockQueryParams);
     }
@@ -203,7 +200,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         Object result = testServlet.runPublicQuery(queryType, mockConfigQueryParams, sessionId);
         assertThat(result, is(instanceOf(Integer.class)));
         verify(mockConfigQueryParams).setSessionId(sessionId);
-        verify(mockConfigQueryParams).setHttpSessionId(sessionId);
         verify(mockConfigQueryParams).setFiltered(testServlet.filterQueries());
         verify(mockBackend).runPublicQuery(queryType, mockConfigQueryParams);
     }

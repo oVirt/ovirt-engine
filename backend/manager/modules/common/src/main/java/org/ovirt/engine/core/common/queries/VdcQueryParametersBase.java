@@ -11,10 +11,6 @@ public class VdcQueryParametersBase implements Serializable {
      * The identifier of session which should be set by sender via Rest Api or by front end
      */
     private String sessionId;
-    /**
-     * The identifier of session which should be set by web client of front end
-     */
-    private String httpSessionId;
 
     /**
      * The boolean flag which provides if the session should be refreshed
@@ -43,14 +39,6 @@ public class VdcQueryParametersBase implements Serializable {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
-    }
-
-    public String getHttpSessionId() {
-        return httpSessionId;
-    }
-
-    public void setHttpSessionId(String httpSessionId) {
-        this.httpSessionId = httpSessionId;
     }
 
     public boolean getRefresh() {

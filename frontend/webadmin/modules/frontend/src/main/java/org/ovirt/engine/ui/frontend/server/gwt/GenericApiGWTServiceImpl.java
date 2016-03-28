@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -140,7 +139,6 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     public DbUser getLoggedInUser() {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
         queryParams.setSessionId(getEngineSessionId());
-        queryParams.setHttpSessionId(getEngineSessionId());
 
         VdcQueryReturnValue vqrv = runQuery(VdcQueryType.GetUserBySessionId,
                 queryParams);

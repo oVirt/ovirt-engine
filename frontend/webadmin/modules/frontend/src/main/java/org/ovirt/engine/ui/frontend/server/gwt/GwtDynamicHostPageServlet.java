@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
-
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -235,7 +234,6 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     protected void initQueryParams(VdcQueryParametersBase queryParams, String sessionId) {
         queryParams.setSessionId(sessionId);
-        queryParams.setHttpSessionId(sessionId);
         queryParams.setFiltered(filterQueries());
     }
 
