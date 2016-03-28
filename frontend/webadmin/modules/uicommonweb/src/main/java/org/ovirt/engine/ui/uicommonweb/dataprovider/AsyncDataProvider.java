@@ -2271,12 +2271,6 @@ public class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
-
-        // GetConfigFromCache(
-        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave,
-        // getDefaultConfigurationVersion()),
-        // aQuery);
-
         aQuery.asyncCallback.onSuccess(aQuery.getModel(), 10);
     }
 
@@ -2287,12 +2281,6 @@ public class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
-
-        // GetConfigFromCache(
-        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave,
-        // getDefaultConfigurationVersion()),
-        // aQuery);
-
         aQuery.asyncCallback.onSuccess(aQuery.getModel(), 5);
     }
 
