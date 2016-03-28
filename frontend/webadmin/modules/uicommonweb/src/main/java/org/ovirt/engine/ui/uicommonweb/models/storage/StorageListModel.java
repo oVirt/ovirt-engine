@@ -875,7 +875,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                     getActiveDetailModel() == vmRegisterListModel
                             || getActiveDetailModel() == templateRegisterListModel
                             || getActiveDetailModel() == diskImageRegisterListModel;
-            boolean isRegisterSubtabsAvailable = isDataStorage &&
+            boolean isRegisterSubtabsAvailable = isDataStorage && storage.getStatus() != StorageDomainStatus.Unattached &&
                     (storage.isContainsUnregisteredEntities() || isRegsiterEntityListModelSelected);
 
             generalModel.setIsAvailable(isGeneralAvailable);
