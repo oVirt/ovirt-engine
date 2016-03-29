@@ -22,6 +22,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
     private Integer totalVirtualFunctions;
     private String networkInterfaceName;
     private Guid vmId;
+    private String driver;
 
     @Override
     public Object getQueryableId() {
@@ -143,6 +144,14 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
         setDeviceName(id.getDeviceName());
     }
 
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
     public boolean isPci() {
         return CAPABILITY_PCI.equals(getCapability());
     }
@@ -167,6 +176,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 && Objects.equals(parentPhysicalFunction, other.parentPhysicalFunction)
                 && Objects.equals(totalVirtualFunctions, other.totalVirtualFunctions)
                 && Objects.equals(networkInterfaceName, other.networkInterfaceName)
+                && Objects.equals(driver, other.driver)
                 && Objects.equals(vmId, other.vmId);
     }
 
@@ -184,7 +194,8 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 parentPhysicalFunction,
                 totalVirtualFunctions,
                 networkInterfaceName,
-                vmId
+                vmId,
+                driver
         );
     }
 
@@ -204,6 +215,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 .append("totalVirtualFunctions", totalVirtualFunctions)
                 .append("networkInterfaceName", networkInterfaceName)
                 .append("vmId", vmId)
+                .append("driver", driver)
                 .build();
     }
 

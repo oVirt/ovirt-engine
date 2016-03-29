@@ -8637,6 +8637,7 @@
          <column>total_vfs</column>
          <column>vm_id</column>
          <column>net_iface_name</column>
+         <column>driver</column>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
              <value>computer</value>
@@ -8644,6 +8645,7 @@
              <value>system</value>
              <value>-1</value>
              <value>ProLiant DL160 G6</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8666,6 +8668,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8677,6 +8680,7 @@
              <value>0x3a35</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8696,6 +8700,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8711,6 +8716,7 @@
              <null/>
              <null/>
              <null/>
+             <value>uhci_hcd</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8722,6 +8728,7 @@
              <value>0x2db3</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8741,6 +8748,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8752,6 +8760,7 @@
              <value>0x2db1</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8771,12 +8780,14 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
              <value>scsi_1_0_0_0</value>
              <value>computer</value>
              <value>scsi</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8801,6 +8812,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8812,6 +8824,7 @@
              <value>0x3a16</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8831,6 +8844,7 @@
              <null/>
              <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8842,6 +8856,7 @@
              <value>0x244e</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8861,6 +8876,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8872,6 +8888,7 @@
              <value>0x3a37</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8891,6 +8908,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8902,6 +8920,7 @@
              <value>0x3a48</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8921,6 +8940,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8932,6 +8952,7 @@
              <value>0x2da3</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8951,12 +8972,14 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
              <value>usb_usb1</value>
              <value>computer</value>
              <value>usb</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -8981,6 +9004,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8996,6 +9020,7 @@
              <null/>
              <null/>
              <value>enp5s16f4</value>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9007,6 +9032,7 @@
              <value>0x2d92</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -9026,6 +9052,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9037,6 +9064,7 @@
              <value>0x2d90</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -9056,6 +9084,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9071,12 +9100,14 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
              <value>usb_5_0_1_0</value>
              <value>usb_usb1</value>
              <value>usb</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -9101,6 +9132,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9112,6 +9144,7 @@
              <value>0x3408</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -9131,12 +9164,14 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
              <value>usb_2_0_1_0</value>
              <value>usb_usb1</value>
              <value>usb</value>
+             <null/>
              <null/>
              <null/>
              <null/>
@@ -9161,6 +9196,7 @@
              <null/>
              <null/>
              <null/>
+             <null/>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9172,6 +9208,7 @@
              <value>0x3423</value>
              <value>Intel Corporation</value>
              <value>0x8086</value>
+             <null/>
              <null/>
              <null/>
              <null/>

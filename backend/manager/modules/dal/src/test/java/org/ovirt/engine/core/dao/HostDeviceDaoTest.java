@@ -44,6 +44,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
         device.setDeviceName(EXISTING_DEVICE_NAME + "___child");
         device.setParentDeviceName(EXISTING_DEVICE_NAME);
         device.setCapability("pci");
+        device.setDriver("mock driver");
 
         return device;
     }
@@ -94,6 +95,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
         HostDevice before = getNetworkDevice();
 
         before.setNetworkInterfaceName(before.getNetworkInterfaceName() + "new");
+        before.setDriver("updated driver");
 
         dao.update(before);
 

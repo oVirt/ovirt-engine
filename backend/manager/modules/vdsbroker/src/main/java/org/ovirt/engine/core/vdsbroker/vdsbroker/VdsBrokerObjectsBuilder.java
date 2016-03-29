@@ -2378,6 +2378,9 @@ public class VdsBrokerObjectsBuilder {
             if (params.containsKey(VdsProperties.NET_INTERFACE_NAME)) {
                 device.setNetworkInterfaceName(params.get(VdsProperties.NET_INTERFACE_NAME).toString());
             }
+            if (params.containsKey(VdsProperties.DRIVER)) {
+                device.setDriver(params.get(VdsProperties.DRIVER).toString());
+            }
 
             devices.add(device);
         }
