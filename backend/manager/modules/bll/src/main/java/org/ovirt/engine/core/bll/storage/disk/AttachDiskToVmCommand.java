@@ -46,6 +46,10 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     public AttachDiskToVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+    }
+
+    @Override
+    protected void init() {
         disk = loadDisk(getParameters().getEntityInfo().getId());
     }
 
