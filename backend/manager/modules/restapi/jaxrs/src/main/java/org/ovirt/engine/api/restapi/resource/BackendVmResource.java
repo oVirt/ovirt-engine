@@ -480,15 +480,6 @@ public class BackendVmResource
     }
 
     @Override
-    public Response move(Action action) {
-        validateParameters(action, "storageDomain.id|name");
-
-        return doAction(VdcActionType.MoveVm,
-                        new MoveVmParameters(guid, getStorageDomainId(action)),
-                        action);
-    }
-
-    @Override
     public Response ticket(Action action) {
         final Response response = doAction(VdcActionType.SetVmTicket,
                 new SetVmTicketParameters(guid,

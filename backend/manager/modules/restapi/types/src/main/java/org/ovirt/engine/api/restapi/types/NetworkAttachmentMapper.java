@@ -81,8 +81,7 @@ public class NetworkAttachmentMapper {
 
         if (ipAddressAssignment.isSetAssignmentMethod()) {
             NetworkBootProtocol assignmentMethod =
-                    BootProtocolMapper.map(BootProtocol.fromValue(ipAddressAssignment.getAssignmentMethod()),
-                            null);
+                    BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod(), null);
             iPv4Address.setBootProtocol(assignmentMethod);
         }
 
@@ -170,7 +169,7 @@ public class NetworkAttachmentMapper {
 
         ipAddressAssignment.setIp(ip);
         BootProtocol assignmentMethod = BootProtocolMapper.map(iPv4Address.getBootProtocol(), null);
-        ipAddressAssignment.setAssignmentMethod(assignmentMethod == null ? null : assignmentMethod.value());
+        ipAddressAssignment.setAssignmentMethod(assignmentMethod);
         return ipAddressAssignment;
     }
 

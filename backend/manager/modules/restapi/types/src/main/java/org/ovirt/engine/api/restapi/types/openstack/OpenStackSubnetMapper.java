@@ -19,8 +19,8 @@ package org.ovirt.engine.api.restapi.types.openstack;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.OpenStackSubnet;
-import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.IpVersionMapper;
 import org.ovirt.engine.api.restapi.types.Mapping;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;

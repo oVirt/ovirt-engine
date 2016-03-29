@@ -34,7 +34,7 @@ public class V3IpOutAdapter implements V3Adapter<Ip, V3IP> {
             to.setNetmask(from.getNetmask());
         }
         if (from.isSetVersion()) {
-            to.setVersion(from.getVersion());
+            to.setVersion(from.getVersion().value());
         }
         return to;
     }

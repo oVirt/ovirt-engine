@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.Ips;
 import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.ReportedDevice;
@@ -53,8 +54,7 @@ public class ReportedDeviceMapper {
             List<String> ipv6 = new ArrayList<>();
             for (Ip ip : model.getIps().getIps()) {
                 if (ip.isSetVersion() && ip.isSetAddress()) {
-                    IpVersion ipVersion = IpVersion.fromValue(ip.getVersion());
-                    switch (ipVersion) {
+                    switch (ip.getVersion()) {
                     case V4:
                         ipv4.add(ip.getAddress());
                         break;
@@ -97,7 +97,7 @@ public class ReportedDeviceMapper {
             for (String entityIp : entityIps) {
                 Ip ip = new Ip();
                 ip.setAddress(entityIp);
-                ip.setVersion(ipVersion.value());
+                ip.setVersion(ipVersion);
                 ips.getIps().add(ip);
             }
         }

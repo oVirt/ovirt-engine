@@ -27,7 +27,7 @@ public class V3IpAddressAssignmentOutAdapter implements V3Adapter<IpAddressAssig
     public V3IpAddressAssignment adapt(IpAddressAssignment from) {
         V3IpAddressAssignment to = new V3IpAddressAssignment();
         if (from.isSetAssignmentMethod()) {
-            to.setAssignmentMethod(from.getAssignmentMethod());
+            to.setAssignmentMethod(from.getAssignmentMethod().value());
         }
         if (from.isSetIp()) {
             to.setIp(adaptOut(from.getIp()));

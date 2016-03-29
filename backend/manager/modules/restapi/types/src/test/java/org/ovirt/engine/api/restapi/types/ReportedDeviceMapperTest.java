@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -15,7 +16,7 @@ public class ReportedDeviceMapperTest extends AbstractInvertibleMappingTest<Repo
     protected ReportedDevice postPopulate(ReportedDevice model) {
         model.setType(MappingTestHelper.shuffle(ReportedDeviceType.class));
         for (Ip ip : model.getIps().getIps()) {
-            ip.setVersion(MappingTestHelper.shuffle(IpVersion.class).value());
+            ip.setVersion(MappingTestHelper.shuffle(IpVersion.class));
             ip.setGateway(null);
             ip.setNetmask(null);
         }

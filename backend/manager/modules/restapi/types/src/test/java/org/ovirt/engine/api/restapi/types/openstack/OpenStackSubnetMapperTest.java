@@ -19,9 +19,9 @@ package org.ovirt.engine.api.restapi.types.openstack;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.restapi.types.AbstractInvertibleMappingTest;
-import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.MappingTestHelper;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 

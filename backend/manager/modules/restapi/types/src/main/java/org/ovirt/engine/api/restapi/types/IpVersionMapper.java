@@ -16,6 +16,7 @@
 
 package org.ovirt.engine.api.restapi.types;
 
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 
 public class IpVersionMapper {

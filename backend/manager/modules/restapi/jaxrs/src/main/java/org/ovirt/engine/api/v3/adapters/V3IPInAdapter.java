@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.adapters;
 
 import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3IP;
 
@@ -34,7 +35,7 @@ public class V3IPInAdapter implements V3Adapter<V3IP, Ip> {
             to.setNetmask(from.getNetmask());
         }
         if (from.isSetVersion()) {
-            to.setVersion(from.getVersion());
+            to.setVersion(IpVersion.fromValue(from.getVersion()));
         }
         return to;
     }

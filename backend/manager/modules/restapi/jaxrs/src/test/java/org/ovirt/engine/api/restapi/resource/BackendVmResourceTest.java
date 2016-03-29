@@ -1045,50 +1045,6 @@ public class BackendVmResourceTest
     }
 
     @Test
-    public void testMoveWithStorageDomainId() throws Exception {
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setId(GUIDS[2].toString());
-        doTestMove(storageDomain);
-    }
-
-    @Test
-    public void testMoveWithStorageDomainName() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
-                NameQueryParameters.class,
-                new String[] { "Name" },
-                new Object[] { NAMES[2] },
-                getStorageDomainStatic(2));
-
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setName(NAMES[2]);
-
-        doTestMove(storageDomain);
-    }
-
-     @Test
-    public void testIncompleteMove() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        try {
-            control.replay();
-            resource.move(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Action", "move", "storageDomain.id|name");
-        }
-    }
-
-    protected void doTestMove(StorageDomain storageDomain) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.MoveVm,
-                MoveVmParameters.class,
-                new String[]{"ContainerId", "StorageDomainId"},
-                new Object[]{GUIDS[0], GUIDS[2]}));
-
-        Action action = new Action();
-        action.setStorageDomain(storageDomain);
-        verifyActionResponse(resource.move(action));
-    }
-
-    @Test
     public void testStatisticalQuery() throws Exception {
         org.ovirt.engine.core.common.businessentities.VM entity = setUpStatisticalExpectations();
 

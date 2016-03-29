@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.List;
 
+import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.IpAddressAssignment;
 import org.ovirt.engine.api.model.QosType;
@@ -46,7 +47,7 @@ public class NetworkAttachmentMapperTest extends AbstractInvertibleMappingTest<o
 
     @Override
     protected org.ovirt.engine.api.model.NetworkAttachment postPopulate(org.ovirt.engine.api.model.NetworkAttachment model) {
-        model.getIpAddressAssignments().getIpAddressAssignments().get(0).setAssignmentMethod("dhcp");
+        model.getIpAddressAssignments().getIpAddressAssignments().get(0).setAssignmentMethod(BootProtocol.DHCP);
         model.getQos().setType(QosType.HOSTNETWORK);
         return super.postPopulate(model);
     }

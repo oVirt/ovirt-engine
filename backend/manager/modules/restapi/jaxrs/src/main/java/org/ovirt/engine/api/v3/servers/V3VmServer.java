@@ -127,14 +127,6 @@ public class V3VmServer extends V3Server<VmResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     @Actionable
-    @Path("move")
-    public Response move(V3Action action) {
-        return adaptAction(getDelegate()::move, action);
-    }
-
-    @POST
-    @Consumes({"application/xml", "application/json"})
-    @Actionable
     @Path("previewsnapshot")
     public Response previewSnapshot(V3Action action) {
         return adaptAction(getDelegate()::previewSnapshot, action);
