@@ -109,6 +109,8 @@
     </table>
 
     <table name="command_entities">
+        <column>user_id</column>
+        <column>engine_session_seq_id</column>
         <column>command_id</column>
         <column>command_type</column>
         <column>root_command_id</column>
@@ -117,6 +119,8 @@
         <column>status</column>
         <column>data</column>
         <row>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>117</value>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>
             <value>230</value>
             <null/>
@@ -126,6 +130,8 @@
             <value>{ "NEXT_COMMAND_TYPE" : [ "org.ovirt.engine.core.common.action.VdcActionType", "DestroyImage" ] }</value>
         </row>
         <row>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>117</value>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a2</value>
             <value>211</value>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>
@@ -135,6 +141,8 @@
             <value>{ "NEXT_COMMAND_TYPE" : [ "org.ovirt.engine.core.common.action.VdcActionType", "DestroyImage" ] }</value>
         </row>
         <row>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>117</value>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a3</value>
             <value>211</value>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>
@@ -144,6 +152,8 @@
             <value>{ "NEXT_COMMAND_TYPE" : [ "org.ovirt.engine.core.common.action.VdcActionType", "DestroyImage" ] }</value>
         </row>
         <row>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>117</value>
             <value>440fd52b-3400-4cdd-8d3f-c9d03704b0aa</value>
             <value>1</value>
             <null/>
@@ -153,6 +163,8 @@
             <value>{ "NEXT_COMMAND_TYPE" : [ "org.ovirt.engine.core.common.action.VdcActionType", "DestroyImage" ] }</value>
         </row>
         <row>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>117</value>
             <value>440fd52b-3400-4cdd-8d3f-c9d03704b0ab</value>
             <value>1</value>
             <null/>

@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION InsertCommandEntity (
     v_user_id uuid,
+    v_engine_session_seq_id BIGINT,
     v_command_id uuid,
     v_command_type INT,
     v_parent_command_id uuid,
@@ -21,6 +22,7 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     INSERT INTO command_entities (
         user_id,
+        engine_session_seq_id,
         command_id,
         command_type,
         parent_command_id,
@@ -39,6 +41,7 @@ BEGIN
         )
     VALUES (
         v_user_id,
+        v_engine_session_seq_id,
         v_command_id,
         v_command_type,
         v_parent_command_id,
@@ -61,6 +64,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateCommandEntity (
     v_user_id uuid,
+    v_engine_session_seq_id BIGINT,
     v_command_id uuid,
     v_command_type INT,
     v_parent_command_id uuid,
@@ -82,6 +86,7 @@ BEGIN
     UPDATE command_entities
     SET command_type = v_command_type,
         user_id = v_user_id,
+        engine_session_seq_id = v_engine_session_seq_id,
         parent_command_id = v_parent_command_id,
         root_command_id = v_root_command_id,
         job_id = v_job_id,
@@ -143,6 +148,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertOrUpdateCommandEntity (
     v_user_id uuid,
+    v_engine_session_seq_id BIGINT,
     v_command_id uuid,
     v_command_type INT,
     v_parent_command_id uuid,
@@ -169,6 +175,7 @@ BEGIN
             ) THEN
                   PERFORM InsertCommandEntity(
                       v_user_id,
+                      v_engine_session_seq_id,
                       v_command_id,
                       v_command_type,
                       v_parent_command_id,
@@ -187,6 +194,7 @@ BEGIN
              ELSE
                  PERFORM UpdateCommandEntity(
                      v_user_id,
+                     v_engine_session_seq_id,
                      v_command_id,
                      v_command_type,
                      v_parent_command_id,

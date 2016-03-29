@@ -20,6 +20,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.aaa.SSOSessionUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -123,6 +124,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     private TransactionScopeOption endActionScope;
     private List<QuotaConsumptionParameter> consumptionParameters;
     protected Map<String, Serializable> commandData;
+    private Long sessionSeqId;
 
     @Inject
     private QuotaManager quotaManager;
@@ -2320,6 +2322,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private CommandEntity buildCommandEntity(Guid rootCommandId, boolean enableCallback) {
         return CommandEntity.buildCommandEntity(getUserId(),
+                getSessionSeqId(),
                 getCommandId(),
                 getParameters().getParentParameters() == null ? Guid.Empty : getParameters().getParentParameters().getCommandId(),
                 rootCommandId,
@@ -2342,6 +2345,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 TransactionSupport.resume(transaction);
             }
         }
+    }
+
+    public long getSessionSeqId() {
+        if (sessionSeqId == null) {
+            String sessionId = getContext().getEngineContext().getSessionId();
+            // The session may not exists for quartz jobs
+            sessionSeqId = getSessionDataContainer().isSessionExists(sessionId)
+                    ? getSessionDataContainer().getEngineSessionSeqId(sessionId)
+                    : SSOSessionUtils.EMPTY_SESSION_SEQ_ID;
+        }
+        return sessionSeqId;
     }
 
     public void setCommandStatus(CommandStatus status) {

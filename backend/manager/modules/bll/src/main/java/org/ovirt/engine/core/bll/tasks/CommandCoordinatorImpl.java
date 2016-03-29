@@ -186,6 +186,11 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     @Override
+    public List<Guid> getCommandIdsBySessionSeqId(long engineSessionSeqId) {
+        return commandsRepository.getCommandIdsBySessionSeqId(engineSessionSeqId);
+    }
+
+    @Override
     public List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId) {
         return commandsRepository.getChildCmdsByParentCmdId(cmdId);
     }

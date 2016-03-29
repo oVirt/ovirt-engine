@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -48,13 +49,16 @@ public class SessionDataContainerTest {
     @Mock
     private SessionDataContainer.SSOSessionValidator ssoSessionValidator;
 
+    @Mock
+    private SSOSessionUtils ssoSessionUtils;
+
     @Before
     public void setUpContainer() {
         when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
         when(ssoSessionValidator.isSessionValid(anyString())).thenReturn(true);
+        when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 
         DbUser user = mock(DbUser.class);
-        container.setSSOSessionValidaor(ssoSessionValidator);
         container.setUser(TEST_SESSION_ID, user);
     }
 
@@ -106,6 +110,18 @@ public class SessionDataContainerTest {
         // nothing should happen as far as the user is concerned
         container.cleanExpiredUsersSessions();
         assertNull("Get not find the session",
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
+    }
+
+    @Test
+    public void testCleanExpiredSessionsWithRunningCommands() {
+        when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(true);
+
+        initDataForClearTest(TEST_KEY);
+        // Clear expired sessions - data is moved to older generation
+        // nothing should happen as far as the user is concerned
+        container.cleanExpiredUsersSessions();
+        assertNotNull("Get found the session",
                 container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
 

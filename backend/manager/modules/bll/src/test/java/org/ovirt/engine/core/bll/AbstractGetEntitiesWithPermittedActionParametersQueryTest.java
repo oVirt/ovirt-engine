@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import org.junit.After;
@@ -35,6 +36,8 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
 
         when(engineSessionDao.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
         when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
+
+        when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 
         sessionDataContainer.setUser(sessionID, getUser());
     }

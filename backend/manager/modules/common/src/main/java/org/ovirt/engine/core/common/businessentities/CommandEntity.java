@@ -15,6 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class CommandEntity implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 5293055556971973650L;
+    private long engineSessionSeqId;
     private Guid userId;
     private Guid commandId;
     private Guid parentCommandId;
@@ -149,6 +150,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     }
 
     public static CommandEntity buildCommandEntity(Guid userId,
+                                                   long engineSessionSeqId,
                                                    Guid commandId,
                                                    Guid parentCommandId,
                                                    Guid rootCommandId,
@@ -161,6 +163,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    VdcReturnValueBase returnValue,
                                                    Map<String, Serializable> data) {
         CommandEntity entity = new CommandEntity();
+        entity.setEngineSessionSeqId(engineSessionSeqId);
         entity.setUserId(userId);
         entity.setId(commandId);
         entity.setParentCommandId(parentCommandId);
@@ -214,5 +217,13 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setUserId(Guid userId) {
         this.userId = userId;
+    }
+
+    public long getEngineSessionSeqId() {
+        return engineSessionSeqId;
+    }
+
+    public void setEngineSessionSeqId(long engineSessionSeqId) {
+        this.engineSessionSeqId = engineSessionSeqId;
     }
 }

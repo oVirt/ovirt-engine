@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 public class SessionDataContainer {
 
     SSOSessionValidator ssoSessionValidator = new SSOSessionValidator();
+    SSOSessionUtils ssoSessionUtils = new SSOSessionUtils();
 
     private static class SessionInfo {
         private ConcurrentMap<String, Object> contentOfSession = new ConcurrentHashMap<>();
@@ -342,11 +343,17 @@ public class SessionDataContainer {
         return sessionInfoMap.containsKey(sessionId);
     }
 
-    public void setSSOSessionValidaor(SSOSessionValidator ssoSessionValidator) {
-        this.ssoSessionValidator = ssoSessionValidator;
-    }
-
     private void removeSessionImpl(String sessionId, int reason, String message, Object... msgArgs) {
+
+        // Only remove session if there are no running commands for this session
+        if (ssoSessionUtils.isSessionInUse(getEngineSessionSeqId(sessionId))) {
+            DbUser dbUser = getUser(sessionId, false);
+            log.info("Not removing session '{}', session has running commands{}",
+                    sessionId,
+                    dbUser == null ? "." : String.format(" for user '%s@%s'.", dbUser.getLoginName(), dbUser.getDomain()));
+            return;
+        }
+
         /*
          * So we won't need to add profile to tests
          */

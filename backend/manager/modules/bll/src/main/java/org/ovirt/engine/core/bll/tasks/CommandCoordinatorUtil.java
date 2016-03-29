@@ -287,6 +287,14 @@ public class CommandCoordinatorUtil {
     }
 
     /**
+     * Return the command ids being executed by the user identified by engine session seq id.
+     * @param engineSessionSeqId The id of the user's engine session
+     */
+    public static List<Guid> getCommandIdsBySessionSeqId(long engineSessionSeqId) {
+        return coco.getCommandIdsBySessionSeqId(engineSessionSeqId);
+    }
+
+    /**
      * Get the command entity for the command identified by the commandId
      * @param commandId The id of the command
      * @return The command entity for the command id

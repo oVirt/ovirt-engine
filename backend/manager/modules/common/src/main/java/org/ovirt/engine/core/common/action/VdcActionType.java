@@ -493,7 +493,10 @@ public enum VdcActionType {
     SyncAllHostNetworks(5205, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
 
     // Hosted Engine
-    ImportHostedEngineStorageDomain(6000, false, QuotaDependency.NONE);
+    ImportHostedEngineStorageDomain(6000, false, QuotaDependency.NONE),
+
+    // CoCo
+    RunAsyncAction(7000, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

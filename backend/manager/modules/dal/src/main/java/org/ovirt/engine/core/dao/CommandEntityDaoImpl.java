@@ -61,6 +61,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
         @Override
         public CommandEntity mapRow(ResultSet resultSet, int rowNum) throws SQLException {
             CommandEntity result = new CommandEntity();
+            result.setEngineSessionSeqId(resultSet.getLong("engine_session_seq_id"));
             result.setUserId(Guid.createGuidFromString(resultSet.getString("user_id")));
             result.setId(Guid.createGuidFromString(resultSet.getString("command_id")));
             result.setJobId(Guid.createGuidFromString(resultSet.getString("job_id")));
@@ -108,7 +109,8 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(CommandEntity entity) {
-        return getCustomMapSqlParameterSource().addValue("user_id", Guid.isNullOrEmpty(entity.getUserId()) ? Guid.Empty : entity.getUserId())
+        return getCustomMapSqlParameterSource().addValue("engine_session_seq_id", entity.getEngineSessionSeqId())
+                .addValue("user_id", Guid.isNullOrEmpty(entity.getUserId()) ? Guid.Empty : entity.getUserId())
                 .addValue("command_id", Guid.isNullOrEmpty(entity.getId()) ? Guid.Empty : entity.getId())
                 .addValue("command_type", entity.getCommandType().getValue())
                 .addValue("parent_command_id", entity.getParentCommandId())

@@ -18,10 +18,10 @@ import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
+import org.ovirt.engine.core.common.action.RunAsyncActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -263,18 +262,7 @@ public class BackendResource extends BaseBackendResource {
         BackendLocal backend = getBackend();
         setCorrelationId(params);
         setJobOrStepId(params);
-        ThreadPoolUtil.execute(() -> {
-            VdcActionParametersBase sp = sessionize(params);
-            DbUser currentUser = getCurrent().getUser();
-            VdcActionParametersBase logout = currentUser != null ? sessionize(new VdcActionParametersBase()) : null;
-            try {
-                backend.runAction(task, sp);
-            } finally {
-                if (currentUser != null) {
-                    backend.logoff(logout);
-                }
-            }
-        });
+        backend.runAction(VdcActionType.RunAsyncAction, sessionize(new RunAsyncActionParameters(task, sessionize(params))));
     }
 
     private void setJobOrStepId(VdcActionParametersBase params) {
