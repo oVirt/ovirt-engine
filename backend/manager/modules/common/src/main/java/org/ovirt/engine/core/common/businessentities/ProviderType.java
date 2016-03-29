@@ -13,7 +13,8 @@ public enum ProviderType implements Identifiable {
     FOREMAN(1, VdcObjectType.VDS),
     OPENSTACK_IMAGE(2, VdcObjectType.Storage),
     OPENSTACK_VOLUME(3, VdcObjectType.Storage),
-    VMWARE(4, VdcObjectType.VM);
+    VMWARE(4, VdcObjectType.VM),
+    EXTERNAL_NETWORK(5, VdcObjectType.Network);
 
     private int value;
     private Set<VdcObjectType> providedTypes;

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
@@ -42,6 +43,8 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
 
         if (entity.getAdditionalProperties() != null) {
             switch (entity.getType()) {
+            case EXTERNAL_NETWORK:
+                break;
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties =
                         (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
@@ -135,6 +138,9 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
 
         private AdditionalProperties mapAdditionalProperties(ResultSet rs, Provider<?> entity) throws SQLException {
             switch (entity.getType()) {
+            case EXTERNAL_NETWORK:
+                return new ExternalNetworkProviderProperties();
+
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
                 networkProperties.setTenantName(rs.getString("tenant_name"));
