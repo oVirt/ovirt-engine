@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -130,13 +131,20 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     private HostNetworkAttachmentsPersister createPersister(List<NetworkAttachment> userNetworkAttachments,
-            VdsNetworkInterface ... hostInterfaces) {
+            VdsNetworkInterface... hostInterfaces) {
+        return createPersister(userNetworkAttachments, Collections.emptySet(), hostInterfaces);
+    }
+
+    private HostNetworkAttachmentsPersister createPersister(List<NetworkAttachment> userNetworkAttachments,
+            Set<Guid> removedNetworkAttachments,
+            VdsNetworkInterface... hostInterfaces) {
         return new HostNetworkAttachmentsPersister(
-            networkAttachmentDao,
-            hostId,
-            new ArrayList<>(Arrays.asList(hostInterfaces)),
-            userNetworkAttachments,
-            clusterNetworks);
+                networkAttachmentDao,
+                hostId,
+                new ArrayList<>(Arrays.asList(hostInterfaces)),
+                userNetworkAttachments,
+                removedNetworkAttachments,
+                clusterNetworks);
     }
 
     @Test
@@ -426,6 +434,42 @@ public class HostNetworkAttachmentsPersisterTest {
         expectedException.expectMessage(HostNetworkAttachmentsPersister.INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED);
 
         persister.persistNetworkAttachments();
+    }
+
+    @Test
+    public void testPersistNetworkAttachmentsRemovedAndNewAttachmentReferToTheSameNetwork() {
+        NetworkAttachment removedNetworkAttachment = createNetworkAttachment(clusterNetworkA);
+        removedNetworkAttachment.setNicId(interfaceWithAttachedClusterNetworkA.getId());
+        Guid removedAttachmentId = removedNetworkAttachment.getId();
+
+        when(networkAttachmentDao.getAllForHost(eq(hostId)))
+                .thenReturn(new ArrayList<>(Arrays.asList(removedNetworkAttachment)));
+
+        NetworkAttachment userNetworkAttachment = new NetworkAttachment(removedNetworkAttachment);
+        userNetworkAttachment.setId(Guid.newGuid());
+
+        // user attachments references network, which is not assigned to NIC.
+        createPersister(Arrays.asList(userNetworkAttachment),
+                Collections.singleton(removedAttachmentId),
+                interfaceWithAttachedClusterNetworkA)
+                        .persistNetworkAttachments();
+
+        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+
+        verify(networkAttachmentDao).remove(eq(removedAttachmentId));
+
+        ArgumentCaptor<NetworkAttachment> networkAttachmentCaptor = ArgumentCaptor.forClass(NetworkAttachment.class);
+
+        verify(networkAttachmentDao).save(networkAttachmentCaptor.capture());
+        // nicId will be updated to calculated value
+        NetworkAttachment attachmentBeingPersisted = networkAttachmentCaptor.getValue();
+        assertThat(attachmentBeingPersisted.getNicId(), is(interfaceWithAttachedClusterNetworkA.getId()));
+        // new id will be generated for persisted record
+        assertThat(attachmentBeingPersisted.getId(), equalTo(userNetworkAttachment.getId()));
+        assertThat(attachmentBeingPersisted.getNetworkId(), is(userNetworkAttachment.getNetworkId()));
+
+        // verify that nothing else happens, no removals, no creations.
+        verifyNoMoreInteractions(networkAttachmentDao);
     }
 
     private void assertIpConfiguration(IpConfiguration ipConfiguration) {

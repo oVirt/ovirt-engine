@@ -82,15 +82,23 @@ public class HostNetworkAttachmentsPersister {
     public void persistNetworkAttachments() {
         List<NetworkAttachment> networkAttachments = networkAttachmentDao.getAllForHost(hostId);
         removeInvalidNetworkAttachmentsFromDb(networkAttachments);
-        removeUserRemovedNetworkAttachments();
+        removeUserRemovedNetworkAttachments(networkAttachments);
 
         persistOrUpdateUserNetworkAttachments(networkAttachments);
         updateReportedNetworkAttachmentsNotMentionedInRequest(networkAttachments);
     }
 
-    private void removeUserRemovedNetworkAttachments() {
+    private void removeUserRemovedNetworkAttachments(List<NetworkAttachment> existingNetworkAttachments) {
         for (Guid attachmentId : userRemovedNetworkAttachments) {
             networkAttachmentDao.remove(attachmentId);
+        }
+
+        // Remove the attachment from the existing attachments list
+        for (Iterator<NetworkAttachment> iterator = existingNetworkAttachments.iterator(); iterator.hasNext();) {
+            Guid networkAttachmentId = iterator.next().getId();
+            if (userRemovedNetworkAttachments.contains(networkAttachmentId)) {
+                iterator.remove();
+            }
         }
     }
 
