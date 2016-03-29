@@ -72,6 +72,7 @@ public class ExecutionHandler {
         job.setDescription(ExecutionMessageDirector.resolveJobMessage(actionType, command.getJobMessageProperties()));
         job.setJobSubjectEntities(getSubjectEntities(command.getPermissionCheckSubjects()));
         job.setOwnerId(command.getUserId());
+        job.setEngineSessionSeqId(command.getSessionSeqId());
         job.setStatus(JobExecutionStatus.STARTED);
         job.setStartTime(new Date());
         job.setCorrelationId(command.getCorrelationId());

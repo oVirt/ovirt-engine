@@ -50,6 +50,11 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
     private Guid ownerId;
 
     /**
+     * The engine session seq id of the user which invoked the job
+     */
+    private long engineSessionSeqId;
+
+    /**
      * Determines whether the Job should be presented
      */
     private boolean isVisible;
@@ -220,6 +225,14 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
         return lastUpdateTime;
     }
 
+    public long getEngineSessionSeqId() {
+        return engineSessionSeqId;
+    }
+
+    public void setEngineSessionSeqId(long engineSessionSeqId) {
+        this.engineSessionSeqId = engineSessionSeqId;
+    }
+
     @Override
     public Object getQueryableId() {
         return id;
@@ -287,6 +300,7 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
     public int hashCode() {
         return Objects.hash(
                 actionType,
+                engineSessionSeqId,
                 correlationId,
                 endTime,
                 id,
@@ -312,6 +326,7 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
         }
         Job other = (Job) obj;
         return actionType == other.actionType
+                && engineSessionSeqId == other.engineSessionSeqId
                 && Objects.equals(correlationId, other.correlationId)
                 && Objects.equals(endTime, other.endTime)
                 && Objects.equals(id, other.id)

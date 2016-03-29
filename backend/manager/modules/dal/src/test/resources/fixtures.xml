@@ -7404,6 +7404,7 @@
 
     <table name="job">
         <column>job_id</column>
+        <column>engine_session_seq_id</column>
         <column>status</column>
         <column>owner_id</column>
         <column>action_type</column>
@@ -7418,6 +7419,7 @@
 
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>137</value>
             <value>STARTED</value>
             <value>9bf7c640-b620-456f-a550-0348f366544a</value>
             <value>AddVm</value>
@@ -7432,6 +7434,7 @@
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5111</value>
+            <value>137</value>
             <value>STARTED</value>
             <value>9bf7c640-b620-456f-a550-0348f3665111</value>
             <value>UpdateVds</value>
@@ -7446,6 +7449,7 @@
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5222</value>
+            <value>137</value>
             <value>FAILED</value>
             <value>9bf7c640-b620-456f-a550-0348f3665222</value>
             <value>AddVds</value>
@@ -7460,6 +7464,7 @@
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5333</value>
+            <value>137</value>
             <value>STARTED</value>
             <value>9bf7c640-b620-456f-a550-0348f3665333</value>
             <value>AddVds</value>
@@ -7474,6 +7479,7 @@
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb0001</value>
+            <value>137</value>
             <value>STARTED</value>
             <value>9bf7c640-b620-456f-a550-0348f3665333</value>
             <value>StartRebalanceGlusterVolume</value>
@@ -7488,6 +7494,7 @@
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb0002</value>
+            <value>137</value>
             <value>STARTED</value>
             <value>9bf7c640-b620-456f-a550-0348f3665333</value>
             <value>StartRebalanceGlusterVolume</value>

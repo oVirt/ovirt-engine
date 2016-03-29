@@ -39,6 +39,17 @@ public interface JobDao extends GenericDao<Job, Guid> {
     List<Job> getJobsByCorrelationId(String correlationId);
 
     /**
+     * Retrieves a list of Jobs by a given engine-session-seq-ID and job execution status
+     *
+     * @param engineSessionSeqId
+     *            the engine-session-seq-ID to fetch Jobs by
+     * @param status
+     *            the job execution status to fetch Jobs by
+     * @return a collection of jobs
+     */
+    List<Job> getJobsBySessionSeqIdAndStatus(long engineSessionSeqId, JobExecutionStatus status);
+
+    /**
      * Updates {@link Job} entity with the last update time of a given instance
      *
      * @param jobId

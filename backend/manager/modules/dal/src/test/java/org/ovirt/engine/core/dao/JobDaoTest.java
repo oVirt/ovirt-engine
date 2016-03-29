@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
@@ -23,7 +24,9 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
     private static final Guid NO_VDSM_TASKS_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5333");
     private static final String EXISTING_CORRELATION_ID = "54947df8-job1";
+    private static final long ENGINE_SESSION_SEQ_ID = 137L;
     private static final int NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID = 1;
+    private static final int NUMBER_OF_JOBS_FOR_ENGINE_SESSION_SEQ_ID_AND_STATUS = 5;
     private static final int TOTAL_JOBS = 6;
 
     @Override
@@ -98,8 +101,17 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     @Test
     public void getJobsByCorrelationID() {
         List<Job> jobsList = dao.getJobsByCorrelationId(EXISTING_CORRELATION_ID);
-        assertTrue("Verify a job is associated with the correlation-ID",
-                jobsList.size() == NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID);
+        assertEquals("Verify a job is associated with the correlation-ID",
+                NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID,
+                jobsList.size());
+    }
+
+    @Test
+    public void getJobsBySessionSeqIdAndStatus() {
+        List<Job> jobsList = dao.getJobsBySessionSeqIdAndStatus(ENGINE_SESSION_SEQ_ID, JobExecutionStatus.STARTED);
+        assertEquals("Verify jobs are associated with the engine-session-seq-ID and status",
+                NUMBER_OF_JOBS_FOR_ENGINE_SESSION_SEQ_ID_AND_STATUS,
+                jobsList.size());
     }
 
     @Test
@@ -133,8 +145,8 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
         Date dateToDelete = df.parse("2013-02-9 10:11:00");
         dao.deleteCompletedJobs(dateToDelete, dateToDelete);
         int sizeAfterDelete = dao.getAll().size();
-        assertTrue("Check job with step and no async task are not deleted",
-                dao.get(new Guid("54947df8-0e9e-4471-a2f9-9af509fb0002")) != null);
+        assertNotNull("Check job with step and no async task are not deleted",
+                dao.get(new Guid("54947df8-0e9e-4471-a2f9-9af509fb0002")));
         assertTrue("Check an entry was deleted", sizeBeforeDelete > sizeAfterDelete);
     }
 

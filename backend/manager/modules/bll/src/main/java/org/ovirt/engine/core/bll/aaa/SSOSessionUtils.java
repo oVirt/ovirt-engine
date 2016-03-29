@@ -1,12 +1,19 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.JobDao;
 
 public class SSOSessionUtils {
 
     public static final long EMPTY_SESSION_SEQ_ID = -1L;
+
+    @Inject
+    private JobDao jobDao;
 
     public boolean isSessionInUse(long sessionSeqId) {
         CommandStatus cmdStatus;
@@ -16,6 +23,7 @@ public class SSOSessionUtils {
                 return true;
             }
         }
-        return false;
+
+        return !jobDao.getJobsBySessionSeqIdAndStatus(sessionSeqId, JobExecutionStatus.STARTED).isEmpty();
     }
 }

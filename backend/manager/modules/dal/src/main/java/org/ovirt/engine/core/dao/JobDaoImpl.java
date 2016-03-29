@@ -41,6 +41,7 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
                 .addValue("description", entity.getDescription())
                 .addValue("status", EnumUtils.nameOrNull(entity.getStatus()))
                 .addValue("owner_id", entity.getOwnerId())
+                .addValue("engine_session_seq_id", entity.getEngineSessionSeqId())
                 .addValue("visible", entity.isVisible())
                 .addValue("start_time", entity.getStartTime())
                 .addValue("end_time", entity.getEndTime())
@@ -75,6 +76,17 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
                 .addValue("correlation_id", correlationId);
 
         return getCallsHandler().executeReadList("GetJobsByCorrelationId", createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
+    public List<Job> getJobsBySessionSeqIdAndStatus(long engineSessionSeqId, JobExecutionStatus status) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("engine_session_seq_id", engineSessionSeqId)
+                .addValue("status", EnumUtils.nameOrNull(status));
+
+        return getCallsHandler().executeReadList("GetJobsByEngineSessionSeqIdAndStatus",
+                createEntityRowMapper(),
+                parameterSource);
     }
 
     @Override
@@ -131,6 +143,7 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
             job.setDescription(rs.getString("description"));
             job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
             job.setOwnerId(getGuid(rs, "owner_id"));
+            job.setEngineSessionSeqId(rs.getLong("engine_session_seq_id"));
             job.setVisible(rs.getBoolean("visible"));
             job.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
             job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));

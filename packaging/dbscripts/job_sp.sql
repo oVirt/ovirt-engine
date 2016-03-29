@@ -9,6 +9,7 @@ CREATE OR REPLACE FUNCTION InsertJob (
     v_description TEXT,
     v_status VARCHAR(32),
     v_owner_id UUID,
+    v_engine_session_seq_id BIGINT,
     v_visible BOOLEAN,
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
@@ -25,6 +26,7 @@ BEGIN
         description,
         status,
         owner_id,
+        engine_session_seq_id,
         visible,
         start_time,
         end_time,
@@ -39,6 +41,7 @@ BEGIN
         v_description,
         v_status,
         v_owner_id,
+        v_engine_session_seq_id,
         v_visible,
         v_start_time,
         v_end_time,
@@ -118,6 +121,23 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+-----------------------------------------------------------------
+-- Retrieves All Job entities by Engine-Session-Seq-ID and Status
+-----------------------------------------------------------------
+CREATE OR REPLACE FUNCTION GetJobsByEngineSessionSeqIdAndStatus (
+    v_engine_session_seq_id BIGINT,
+    v_status VARCHAR(32)
+    )
+RETURNS SETOF job STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT job.*
+    FROM JOB
+    WHERE engine_session_seq_id = v_engine_session_seq_id
+        AND status = v_status;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 ----------------------------------
 -- Updates Job entity in Job table
 ----------------------------------
@@ -127,6 +147,7 @@ CREATE OR REPLACE FUNCTION UpdateJob (
     v_description TEXT,
     v_status VARCHAR(32),
     v_owner_id UUID,
+    v_engine_session_seq_id BIGINT,
     v_visible BOOLEAN,
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
@@ -142,6 +163,7 @@ BEGIN
         description = v_description,
         status = v_status,
         owner_id = v_owner_id,
+        engine_session_seq_id = v_engine_session_seq_id,
         visible = v_visible,
         start_time = v_start_time,
         end_time = v_end_time,
