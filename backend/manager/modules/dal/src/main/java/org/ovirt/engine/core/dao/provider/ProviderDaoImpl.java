@@ -38,12 +38,16 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         MapSqlParameterSource mapper = createBaseProviderParametersMapper(entity);
         String tenantName = null;
         String pluginType = null;
+        boolean readOnly = false;
         AgentConfiguration agentConfiguration = null;
         AdditionalProperties additionalProperties = null;
 
         if (entity.getAdditionalProperties() != null) {
             switch (entity.getType()) {
             case EXTERNAL_NETWORK:
+                ExternalNetworkProviderProperties externalNetworkProperties =
+                    (ExternalNetworkProviderProperties) entity.getAdditionalProperties();
+                readOnly = externalNetworkProperties.getReadOnly();
                 break;
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties =
@@ -75,6 +79,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         mapper.addValue("plugin_type", pluginType);
         mapper.addValue("agent_configuration", SerializationFactory.getSerializer().serialize(agentConfiguration));
         mapper.addValue("additional_properties", SerializationFactory.getSerializer().serialize(additionalProperties));
+        mapper.addValue("read_only", readOnly);
         return mapper;
     }
 
@@ -139,8 +144,9 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         private AdditionalProperties mapAdditionalProperties(ResultSet rs, Provider<?> entity) throws SQLException {
             switch (entity.getType()) {
             case EXTERNAL_NETWORK:
-                return new ExternalNetworkProviderProperties();
-
+                ExternalNetworkProviderProperties externalNetworkProperties = new ExternalNetworkProviderProperties();
+                externalNetworkProperties.setReadOnly(rs.getBoolean("read_only"));
+                return externalNetworkProperties;
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
                 networkProperties.setTenantName(rs.getString("tenant_name"));

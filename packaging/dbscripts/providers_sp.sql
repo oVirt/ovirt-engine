@@ -17,7 +17,8 @@ CREATE OR REPLACE FUNCTION InsertProvider (
     v_plugin_type VARCHAR DEFAULT NULL,
     v_agent_configuration TEXT DEFAULT NULL,
     v_additional_properties TEXT DEFAULT NULL,
-    v_auth_url TEXT DEFAULT NULL
+    v_auth_url TEXT DEFAULT NULL,
+    v_read_only BOOLEAN DEFAULT FALSE
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -35,7 +36,8 @@ BEGIN
         plugin_type,
         agent_configuration,
         additional_properties,
-        auth_url
+        auth_url,
+        read_only
         )
     VALUES (
         v_id,
@@ -51,7 +53,8 @@ BEGIN
         v_plugin_type,
         v_agent_configuration,
         v_additional_properties,
-        v_auth_url
+        v_auth_url,
+        v_read_only
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -70,7 +73,8 @@ CREATE OR REPLACE FUNCTION UpdateProvider (
     v_plugin_type VARCHAR DEFAULT NULL,
     v_agent_configuration TEXT DEFAULT NULL,
     v_additional_properties TEXT DEFAULT NULL,
-    v_auth_url TEXT DEFAULT NULL
+    v_auth_url TEXT DEFAULT NULL,
+    v_read_only BOOLEAN DEFAULT FALSE
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -88,7 +92,8 @@ BEGIN
         _update_date = NOW(),
         agent_configuration = v_agent_configuration,
         additional_properties = v_additional_properties,
-        auth_url = v_auth_url
+        auth_url = v_auth_url,
+        read_only = v_read_only
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
