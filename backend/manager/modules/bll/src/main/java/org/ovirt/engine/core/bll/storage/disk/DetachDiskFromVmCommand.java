@@ -25,39 +25,36 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
     @Override
     protected boolean validate() {
-        boolean retValue = isVmExist();
-        if (retValue) {
-            retValue = canRunActionOnNonManagedVm();
+        if (!isVmExist() || !canRunActionOnNonManagedVm()) {
+            return false;
         }
 
-        if (retValue && getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down) {
-            retValue = failVmStatusIllegal();
+        if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down) {
+            return failVmStatusIllegal();
         }
 
-        if (retValue) {
-            disk = loadDisk(getParameters().getEntityInfo().getId());
-            retValue = isDiskExist(disk);
+        disk = loadDisk(getParameters().getEntityInfo().getId());
+        if (!isDiskExist(disk)) {
+            return false;
         }
-        if (retValue) {
-            vmDevice = getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
 
-            if (vmDevice == null) {
-                retValue = false;
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
+        vmDevice = getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
+        if (vmDevice == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
+        }
+
+        if (vmDevice.getSnapshotId() != null) {
+            disk = loadDiskFromSnapshot(disk.getId(), vmDevice.getSnapshotId());
+        }
+
+        if (vmDevice.getIsPlugged() && getVm().getStatus() != VMStatus.Down) {
+            if (!isDiskSupportedForPlugUnPlug(disk)) {
+                return false;
             }
-
-            if (retValue && vmDevice.getSnapshotId() != null) {
-                disk = loadDiskFromSnapshot(disk.getId(), vmDevice.getSnapshotId());
-            }
-        }
-
-        if (retValue && vmDevice.getIsPlugged() && getVm().getStatus() != VMStatus.Down) {
-            retValue = isDiskSupportedForPlugUnPlug(disk);
         }
 
         // Check if disk has no snapshots before detaching it.
-        if (retValue && DiskStorageType.IMAGE == disk.getDiskStorageType() ||
-                retValue && DiskStorageType.CINDER == disk.getDiskStorageType()) {
+        if (DiskStorageType.IMAGE == disk.getDiskStorageType() || DiskStorageType.CINDER == disk.getDiskStorageType()) {
             // A "regular" disk cannot be detached if it's part of the vm snapshots
             // when a disk snapshot is being detached, it will always be part of snapshots - but of it's "original" vm,
             // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
@@ -66,7 +63,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
                 return failValidation(EngineMessage.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
             }
         }
-        return retValue;
+        return true;
     }
 
     @Override
