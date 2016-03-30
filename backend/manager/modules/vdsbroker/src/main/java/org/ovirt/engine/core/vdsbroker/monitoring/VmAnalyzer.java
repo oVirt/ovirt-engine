@@ -157,7 +157,7 @@ public class VmAnalyzer {
      */
     protected void analyze() {
         if (isVmStoppedBeingReported()) {
-            removeVmFromCache();
+            proceedDisappearedVm();
             return;
         }
 
@@ -660,6 +660,47 @@ public class VmAnalyzer {
                 dbVm.getId(), dbVm.getName(), vdsManager.getVdsId(), vdsManager.getVdsName());
     }
 
+    /**
+     * The VM is no longer reported by VDSM.
+     * There are 3 different cases:
+     * 1. The VM was in MigratingFrom state. We expect it to be down by maybe for some reason it
+     * got destroyed so lets move it to the destination host and see (hand-over)..
+     * 2. The VM was in PoweringDown state. If it is no longer reported - mission accomplished
+     * 3. Otherwise, the VM went down unexpectedly
+     */
+    private void proceedDisappearedVm() {
+        switch (dbVm.getStatus()) {
+        case MigratingFrom:
+            handOverVM(dbVm);
+            break;
+
+        case PoweringDown:
+            clearVm(VmExitStatus.Normal,
+                    String.format("VM %s shutdown complete", dbVm.getName()),
+                    VmExitReason.Success);
+
+            // not sure about that..
+            if (getVmManager() != null && getVmManager().isColdReboot()) {
+                setColdRebootFlag();
+            }
+            break;
+
+        default:
+            clearVm(VmExitStatus.Error,
+                    String.format("Could not find VM %s on host, assuming it went down unexpectedly",
+                            dbVm.getName()),
+                    VmExitReason.GenericError);
+
+            if (resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
+                setRerunFlag();
+            } else if (getVmManager() != null && getVmManager().isColdReboot()) {
+                setColdRebootFlag();
+            } else if (dbVm.isAutoStartup()) {
+                setAutoRunFlag();
+            }
+        }
+    }
+
     // del from cache all vms that not in vdsm
     private void removeVmFromCache() {
         // marks the vm was powered down by user but not reported as Down afterwards by vdsm
@@ -684,8 +725,7 @@ public class VmAnalyzer {
                 dbVm.getId(), dbVm.getName(), vdsManager.getVdsName());
 
         if (!migrating && !rerun && resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
-            rerun = true;
-            log.info("add VM '{}'({}) to rerun treatment", dbVm.getId(), dbVm.getName());
+            setRerunFlag();
         }
         // vm should be auto startup
         // not already in start up list
@@ -695,8 +735,7 @@ public class VmAnalyzer {
                 && !autoVmToRun
                 && (vdsmVm == null || vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal)
                 && !poweredDown) {
-            autoVmToRun = true;
-            log.info("add VM '{}'({}) to HA rerun treatment", dbVm.getId(), dbVm.getName());
+            setAutoRunFlag();
         } else if (getVmManager() != null && getVmManager().isColdReboot()) {
             setColdRebootFlag();
         }
@@ -970,6 +1009,16 @@ public class VmAnalyzer {
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
         auditLogDirector.log(auditLogable, logType);
+    }
+
+    private void setAutoRunFlag() {
+        autoVmToRun = true;
+        log.info("add VM '{}'({}) to HA rerun treatment", dbVm.getId(), dbVm.getName());
+    }
+
+    private void setRerunFlag() {
+        rerun = true;
+        log.info("add VM '{}'({}) to rerun treatment", dbVm.getId(), dbVm.getName());
     }
 
     private void setColdRebootFlag() {
