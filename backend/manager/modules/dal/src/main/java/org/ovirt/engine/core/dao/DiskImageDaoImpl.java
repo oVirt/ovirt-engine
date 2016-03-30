@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -221,6 +222,8 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             entity.setReadRate(rs.getInt("read_rate"));
             entity.setWriteRate(rs.getInt("write_rate"));
             entity.setContentType(rs.getBoolean("ovf_store") ? DiskContentType.OVF_STORE : DiskContentType.DATA);
+ entity.setImageTransferPhase(rs.getObject("image_transfer_phase") != null
+                    ? ImageTransferPhase.forValue(rs.getInt("image_transfer_phase")) : null);
             entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
                     : null);
             entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")

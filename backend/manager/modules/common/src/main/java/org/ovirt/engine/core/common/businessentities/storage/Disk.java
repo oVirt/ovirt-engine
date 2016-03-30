@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.ArrayList;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -34,10 +33,14 @@ public abstract class Disk extends BaseDisk {
     private Boolean plugged;
     private Boolean readOnly;
     private String logicalName;
-    
     private ImageTransferPhase imageTransferPhase;
     private Long imageTransferBytesSent;
     private Long imageTransferBytesTotal;
+
+
+    /**
+     * Image Transfer information is only for display purposes
+     */
 
 
     public Disk() {
@@ -82,7 +85,7 @@ public abstract class Disk extends BaseDisk {
     }
 
     public abstract long getSize();
-    
+
     public ImageTransferPhase getImageTransferPhase() {
         return imageTransferPhase;
     }

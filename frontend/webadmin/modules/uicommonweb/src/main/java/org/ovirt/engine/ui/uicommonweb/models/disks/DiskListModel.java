@@ -131,9 +131,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     private void setCopyCommand(UICommand value) {
         privateCopyCommand = value;
     }
-    
-    
-    private UICommand privateUploadCommand;
+private UICommand privateUploadCommand;
 
 public UICommand getUploadCommand() {
     return privateUploadCommand;
@@ -482,8 +480,7 @@ private void setResumeUploadCommand(UICommand value) {
                 },
                 this);
     }
-    
-    
+
     private void upload() {
         if (getWindow() != null) {
             return;
@@ -550,7 +547,6 @@ private void setResumeUploadCommand(UICommand value) {
                 getSelectedItems() != null ? (List) getSelectedItems() : null,
                 getSystemTreeSelectedItem(),
                 getChangeQuotaCommand());
-        
 
         getCancelUploadCommand().setIsExecutionAllowed(UploadImageModel.isCancelAllowed(disks));
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
@@ -730,7 +726,6 @@ private void setResumeUploadCommand(UICommand value) {
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();
         }
-        
         else if (command == getUploadCommand()) {
             upload();
         }

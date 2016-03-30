@@ -35,7 +35,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Obj
     private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
-    
+
     private UICommand privateUploadCommand;
 
     public UICommand getUploadCommand() {

@@ -4272,8 +4272,7 @@ public class AsyncDataProvider {
                 ConfigurationValues.NetworkExclusivenessPermissiveValidation,
                 version);
     }
-    
-    
+
     public int getUploadImageUiInactivityTimeoutInSeconds() {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageUiInactivityTimeoutInSeconds);
     }

@@ -308,10 +308,10 @@ class Plugin(plugin.PluginBase):
                     )
                     where id = %(storage_id)s
                 """.format(
-                    old_fqdn=self._current_fqdn,
-                    new_fqdn=self.environment[
-                        osetupcons.RenameEnv.FQDN
-                    ],
+                old_fqdn=self._current_fqdn,
+                new_fqdn=self.environment[
+                    osetupcons.RenameEnv.FQDN
+                ],
                 ),
                 args=dict(
                     storage_id=row['storage'],

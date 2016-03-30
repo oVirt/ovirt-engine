@@ -340,7 +340,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Storage Type")
     String dataCenterPopupStorageTypeLabel();
-    
+
     @DefaultStringValue("Upload")
     String uploadImage();
 
@@ -1894,7 +1894,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Timeout (deciseconds)")
     String nfsTimeoutGeneral();
 
-    
     @DefaultStringValue("Image Source")
     String uploadImageSourceLabel();
 
@@ -1921,7 +1920,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Disk Information")
     String uploadImageDiskOptionsInfoOnlyLabel();
-    
+
     @DefaultStringValue("Warning Low Space Indicator (%)")
     String warningLowSpaceIndicatorUnits();
 

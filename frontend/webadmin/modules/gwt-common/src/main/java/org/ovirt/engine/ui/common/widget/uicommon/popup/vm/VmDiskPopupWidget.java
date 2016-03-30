@@ -444,7 +444,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
                 if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                    if (disk.getDiskStorageType().getIsChangable()) {
+                    if (disk.getDiskStorageType().getIsChangable()  && disk.isEditEnabled()) {
                         enableWidget(diskTypePanel);
                     } else {
                         disableWidget(diskTypePanel);
@@ -452,6 +452,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 }
             }
         });
+        if (!disk.isEditEnabled()) {
+            disableWidget(getWidget());
+            disableWidget(diskTypePanel);
+        }
 
         revealStorageView(disk);
         revealDiskPanel(disk);
