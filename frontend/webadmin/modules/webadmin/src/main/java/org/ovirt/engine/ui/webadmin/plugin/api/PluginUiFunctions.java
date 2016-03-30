@@ -5,9 +5,11 @@ import java.util.List;
 import org.ovirt.engine.ui.common.presenter.AddTabActionButtonEvent;
 import org.ovirt.engine.ui.common.presenter.RedrawDynamicTabContainerEvent;
 import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent;
+import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
 import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
@@ -19,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabContentU
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopupEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SetDynamicPopupContentUrlEvent;
+
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -28,6 +31,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.ChangeTabHandler;
@@ -47,16 +51,19 @@ public class PluginUiFunctions implements HasHandlers {
     private final Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider;
 
     private final WebAdminPlaceManager placeManager;
+    private final AlertManager alertManager;
 
     @Inject
     public PluginUiFunctions(EventBus eventBus,
             DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory,
             Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider,
-            WebAdminPlaceManager placeManager) {
+            WebAdminPlaceManager placeManager,
+            AlertManager alertManager) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;
         this.dynamicUrlContentPopupPresenterWidgetProvider = dynamicUrlContentPopupPresenterWidgetProvider;
         this.placeManager = placeManager;
+        this.alertManager = alertManager;
     }
 
     @Override
@@ -264,6 +271,18 @@ public class PluginUiFunctions implements HasHandlers {
             @Override
             public void execute() {
                 ApplySearchStringEvent.fire(PluginUiFunctions.this, searchString);
+            }
+        });
+    }
+
+    /**
+     * Shows an application-wide alert message.
+     */
+    public void showAlert(final AlertPanel.Type type, final String message, final AlertOptions options) {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                alertManager.showAlert(type, SafeHtmlUtils.fromString(message), options.getAutoHideMs().intValue());
             }
         });
     }

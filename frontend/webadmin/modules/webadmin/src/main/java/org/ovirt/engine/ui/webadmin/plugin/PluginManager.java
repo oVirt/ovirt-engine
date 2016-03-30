@@ -421,6 +421,10 @@ public class PluginManager {
             return @org.ovirt.engine.ui.webadmin.plugin.entity.EntityType::from(Ljava/lang/String;)(entityTypeName);
         };
 
+        var getAlertType = function(alertTypeName) {
+            return @org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type::from(Ljava/lang/String;)(alertTypeName);
+        };
+
         var sanitizeObject = function(object) {
             return (object != null) ? object : {};
         };
@@ -505,6 +509,11 @@ public class PluginManager {
             closeDialog: function(dialogToken) {
                 if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::closeDialog(Ljava/lang/String;)(dialogToken);
+                }
+            },
+            showAlert: function(alertTypeName, message, options) {
+                if (validatePluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showAlert(Lorg/ovirt/engine/ui/common/widget/panel/AlertPanel$Type;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/AlertOptions;)(getAlertType(alertTypeName),message,sanitizeObject(options));
                 }
             },
             revealPlace: function(historyToken) {

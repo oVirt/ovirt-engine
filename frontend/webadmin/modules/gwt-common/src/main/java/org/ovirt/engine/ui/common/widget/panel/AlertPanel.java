@@ -44,6 +44,7 @@ public class AlertPanel extends Composite {
      * @see https://www.patternfly.org/widgets/#alerts
      */
     public enum Type {
+
         DANGER(AlertType.DANGER, PatternflyConstants.PFICON_ERROR_CIRCLE_O),
         WARNING(AlertType.WARNING, PatternflyConstants.PFICON_WARNING_TRIANGLE_O),
         SUCCESS(AlertType.SUCCESS, PatternflyConstants.PFICON_OK),
@@ -56,6 +57,15 @@ public class AlertPanel extends Composite {
             this.alertType = alertType;
             this.iconStyleName = iconStyleName;
         }
+
+        public static Type from(String name) {
+            try {
+                return Type.valueOf(name.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return Type.INFO;
+            }
+        }
+
     }
 
     /**
