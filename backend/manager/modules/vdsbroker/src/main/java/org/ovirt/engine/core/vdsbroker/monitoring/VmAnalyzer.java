@@ -469,8 +469,7 @@ public class VmAnalyzer {
                 if (!StringUtils.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
                     clientIpChanged = true;
                 }
-            }
-            if (dbVm != null) {
+
                 logVmStatusTransition();
 
                 if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up
@@ -531,14 +530,10 @@ public class VmAnalyzer {
                 }
 
                 updateVmDynamicData();
-            }
-            if (dbVm != null) {
                 updateVmStatistics();
                 stable = true;
                 if (!vdsManager.isInitialized()) {
-                    resourceManager.removeVmFromDownVms(
-                            vdsManager.getVdsId(),
-                            vdsmVmDynamic.getId());
+                    resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVmDynamic.getId());
                 }
             }
         } else {
