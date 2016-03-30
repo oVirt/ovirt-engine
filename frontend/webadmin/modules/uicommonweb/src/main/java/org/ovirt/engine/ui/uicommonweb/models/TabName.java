@@ -25,8 +25,6 @@ public enum TabName {
     SYSTEM_TAB,
     TAB_RNG,
     ICON_TAB,
-    PF_TAB,
-    VFS_CONFIG_TAB,
     FOREMAN_TAB,
     MAC_POOL_TAB;
 
