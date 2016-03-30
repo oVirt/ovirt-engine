@@ -227,7 +227,10 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     }
 
     public void dismissEvent() {
-        final AuditLog auditLog = getSelectedItem();
+        dismissEvent(getSelectedItem());
+    }
+
+    public void dismissEvent(AuditLog auditLog) {
         if (auditLog == null) {
             return;
         }

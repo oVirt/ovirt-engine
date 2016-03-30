@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.events.HasDismissCommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -33,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskHandler;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
@@ -55,6 +55,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler, TaskHandler {
@@ -404,6 +406,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         };
         table.addColumn(logTimeColumn, constants.timeEvent(), "160px"); //$NON-NLS-1$
 
+        final int DISMISS_COLUMN_INDEX = 2;
         table.addColumn(new DismissColumn<>(eventModelProvider), constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<AuditLog> messageColumn = new AbstractTextColumn<AuditLog>() {
@@ -445,6 +448,19 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                 eventModelProvider.getModel().setSelectedItem(selectedItem);
             }
         });
+
+        table.addCellPreviewHandler(new Handler<AuditLog>() {
+
+            @Override
+            public void onCellPreview(CellPreviewEvent<AuditLog> event) {
+                if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
+                    if (event.getColumn() == DISMISS_COLUMN_INDEX) {
+                        AuditLog auditLog = event.getValue();
+                        eventModelProvider.getModel().dismissEvent(auditLog);
+                    }
+                }
+            }
+        });
     }
 
     void initAlertTable(final SimpleActionTable<AuditLog> table, final AlertModelProvider alertModelProvider) {
@@ -458,6 +474,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         };
         table.addColumn(logTimeColumn, constants.timeEvent(), "160px"); //$NON-NLS-1$
 
+        final int DISMISS_COLUMN_INDEX = 2;
         table.addColumn(new DismissColumn<>(alertModelProvider), constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<AuditLog> messageColumn = new AbstractTextColumn<AuditLog>() {
@@ -498,6 +515,19 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                 List<AuditLog> selectedItems = table.getSelectionModel().getSelectedList();
                 AuditLog selectedItem = selectedItems != null && selectedItems.size() > 0 ? selectedItems.get(0) : null;
                 alertModelProvider.getModel().setSelectedItem(selectedItem);
+            }
+        });
+
+        table.addCellPreviewHandler(new Handler<AuditLog>() {
+
+            @Override
+            public void onCellPreview(CellPreviewEvent<AuditLog> event) {
+                if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
+                    if (event.getColumn() == DISMISS_COLUMN_INDEX) {
+                        AuditLog auditLog = event.getValue();
+                        alertModelProvider.getModel().dismissAlert(auditLog);
+                    }
+                }
             }
         });
     }
@@ -567,7 +597,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         tasksTree.updateTree(taskModelProvider.getModel());
     }
 
-    class DismissColumn<T extends ModelProvider<U>, U extends ListModel<AuditLog> & HasDismissCommand & HasEntity>
+    class DismissColumn<T extends ModelProvider<U>, U extends ListModel<AuditLog> & HasEntity>
             extends AbstractColumn<AuditLog, AuditLog> {
 
         DismissColumn(T modelProvider) {
@@ -585,26 +615,16 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         }
     }
 
-    class DismissAuditLogImageButtonCell<T extends ModelProvider<U>, U extends ListModel<AuditLog> & HasDismissCommand & HasEntity>
+    class DismissAuditLogImageButtonCell<T extends ModelProvider<U>, U extends ListModel<AuditLog> & HasEntity>
             extends AbstractImageButtonCell<AuditLog> {
-
-        T modelProvider;
 
         public DismissAuditLogImageButtonCell(T modelProvider) {
             super(resources.dialogIconClose(), "", resources.dialogIconClose(), ""); //$NON-NLS-1$ //$NON-NLS-2$
-            this.modelProvider = modelProvider;
         }
 
         @Override
         protected UICommand resolveCommand(AuditLog value) {
-            return modelProvider.getModel().getDismissCommand();
-        }
-
-        @Override
-        protected UICommand resolveCommandOnClick(AuditLog value) {
-            modelProvider.getModel().setSelectedItem(value);
-            return resolveCommand(value);
+            return null;
         }
     }
-
 }
