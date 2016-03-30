@@ -16,6 +16,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.dao.JobDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -51,6 +52,8 @@ public class CommonTestMocks {
     private SsoSessionUtils ssoSessionUtils = mock(SsoSessionUtils.class);
     @Produces
     private JobDao jobDao = mock(JobDao.class);
+    @Produces
+    private LabelDao labelDao = mock(LabelDao.class);
 
     public static Class<?>[] commonClasses() {
         return new Class<?>[] {

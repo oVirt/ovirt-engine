@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFil
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.LabelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
@@ -45,6 +46,7 @@ public class InternalClusterPolicies {
                 .setBalancer(NoneBalancePolicyUnit.class)
 
                 .addFilters(PinToHostPolicyUnit.class)
+                .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
@@ -68,6 +70,7 @@ public class InternalClusterPolicies {
                 .setBalancer(EvenDistributionBalancePolicyUnit.class)
 
                 .addFilters(PinToHostPolicyUnit.class)
+                .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
@@ -94,6 +97,7 @@ public class InternalClusterPolicies {
                 .setBalancer(PowerSavingBalancePolicyUnit.class)
 
                 .addFilters(PinToHostPolicyUnit.class)
+                .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
@@ -121,6 +125,7 @@ public class InternalClusterPolicies {
                 .setBalancer(EvenGuestDistributionBalancePolicyUnit.class)
 
                 .addFilters(PinToHostPolicyUnit.class)
+                .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
