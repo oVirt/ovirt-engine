@@ -54,6 +54,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 
@@ -816,5 +817,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     public void setVisibleRange(int start, int length) {
         this.table.setVisibleRange(start, length);
+    }
+
+    public void addCellPreviewHandler(Handler<T> handler) {
+        table.addCellPreviewHandler(handler);
     }
 }

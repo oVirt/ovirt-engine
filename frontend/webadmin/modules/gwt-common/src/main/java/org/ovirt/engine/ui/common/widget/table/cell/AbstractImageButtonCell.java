@@ -67,9 +67,12 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
         }
 
         if (BrowserEvents.CLICK.equals(event.getType()) && isEnabled(value)) {
-            onClick(value);
+
+            UICommand command = resolveCommand(value);
+            if (command != null) {
+                command.execute();
+            }
         }
-        // TODO change the image while the mouse is down (simulate click)
     }
 
     @Override
@@ -81,30 +84,13 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
     }
 
     /**
-     * Get the UICommand associated with the button.
-     */
-    protected abstract UICommand resolveCommand(T value);
-
-    protected UICommand resolveCommandOnClick(T value) {
-        return resolveCommand(value);
-    }
-
-    /**
      * Check if the button is enabled.
      */
     protected boolean isEnabled(T value) {
         UICommand command = resolveCommand(value);
-        return command != null ? command.getIsExecutionAllowed() : false;
+        return command != null ? command.getIsExecutionAllowed() : true;
     }
 
-    /**
-     * Execute the click command.
-     */
-    protected void onClick(T value) {
-        UICommand command = resolveCommandOnClick(value);
-        if (command != null) {
-            command.execute();
-        }
-    }
+    protected abstract UICommand resolveCommand(T value);
 
 }
