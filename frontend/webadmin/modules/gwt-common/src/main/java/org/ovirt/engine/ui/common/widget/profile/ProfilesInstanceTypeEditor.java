@@ -13,19 +13,30 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstancesModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstancesModel, VnicInstanceType, ProfileInstanceTypeEditor> implements HasElementId {
+public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstancesModel, VnicInstanceType,
+    ProfileInstanceTypeEditor> implements HasElementId {
 
     interface WidgetUiBinder extends UiBinder<Widget, ProfilesInstanceTypeEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
+    }
+
+    public interface ProfileWidgetStyle extends WidgetStyle {
+        String mainPanelPadding();
+        String fullWidth();
     }
 
     private String elementId = DOM.createUniqueId();
 
     private Collection<VnicProfileView> vnicProfiles;
     private final List<VmNetworkInterface> vnics;
+
+    @UiField
+    FlowPanel mainPanel;
 
     public ProfilesInstanceTypeEditor() {
         vnics = new ArrayList<>();
@@ -52,6 +63,15 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
             }
         }
         super.init(model);
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        super.setUsePatternFly(use);
+        if (use) {
+            mainPanel.removeStyleName(((ProfileWidgetStyle)style).mainPanelPadding());
+            mainPanel.addStyleName(((ProfileWidgetStyle)style).fullWidth());
+        }
     }
 
     @Override

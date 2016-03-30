@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
  * Allows the user to edit the textbox without any enforcement.
  */
 public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListBox<String> {
+
     private String nullReplacementText;
 
     public ListModelTypeAheadChangeableListBox(SuggestBoxRenderer<String> renderer) {
@@ -54,9 +55,5 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
 
     protected void setNullReplacementString(String nullReplacementText) {
         this.nullReplacementText = nullReplacementText;
-    }
-
-    private String getNullReplacementString() {
-        return nullReplacementText;
     }
 }

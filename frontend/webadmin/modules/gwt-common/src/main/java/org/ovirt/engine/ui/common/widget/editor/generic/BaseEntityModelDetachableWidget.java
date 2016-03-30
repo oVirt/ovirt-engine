@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -46,7 +47,6 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
         setDetachableIconVisible(false);
     }
 
-    @Override
     public void setDetachableIconVisible(boolean visible) {
         if (visible) {
             attachedSeparatedImage.getElement().getStyle().setDisplay(Display.INLINE);
@@ -56,6 +56,12 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
 
         changeWidgetStyle(decoratedWidget, visible);
     }
+
+    public abstract void setLabelColSize(ColumnSize size);
+
+    public abstract void setWidgetColSize(ColumnSize size);
+
+    public abstract void setUsePatternFly(boolean use);
 
     protected void changeWidgetStyle(UIObject widget, boolean detachableIconVisible) {
         if (detachableIconVisible) {

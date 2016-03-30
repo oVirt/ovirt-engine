@@ -8,8 +8,8 @@
 
     <ui:style>
         .mainPanel {
-            width: 510px;
-            padding-left: 5px;
+            width: 100%;
+            padding-right: 50px;
         }
 
         .buttonStyle {

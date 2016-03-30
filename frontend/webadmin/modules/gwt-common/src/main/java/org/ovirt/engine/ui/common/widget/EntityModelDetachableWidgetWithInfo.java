@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelDetachableWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 
@@ -9,7 +10,7 @@ public class EntityModelDetachableWidgetWithInfo extends EntityModelWidgetWithIn
         implements HasDetachable, HasEnabled {
 
     public EntityModelDetachableWidgetWithInfo(EnableableFormLabel label,
-                                               AbstractValidatedWidgetWithLabel contentWidget) {
+                                               AbstractValidatedWidgetWithLabel<?, ?> contentWidget) {
         super(label, new EntityModelDetachableWidget(contentWidget));
     }
 
@@ -21,6 +22,14 @@ public class EntityModelDetachableWidgetWithInfo extends EntityModelWidgetWithIn
     @Override
     public void setAttached(boolean attached) {
         ((HasDetachable) contentWidget).setAttached(attached);
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        super.setUsePatternFly(use);
+        if (use) {
+            contentWidget.addStyleName(ColumnSize.LG_1.getCssName());
+        }
     }
 
     @Override

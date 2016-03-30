@@ -1,245 +1,252 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
   xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-	xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
-	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
+  xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+  xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
+  xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+  <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+  <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmRunOncePopupWidget.Style">
-		.title {
-			font-weight: bold;
-			font-size: 13px;
-			margin: 5px;
-		}
+  <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmRunOncePopupWidget.Style">
+    .title {
+      font-weight: bold;
+      font-size: 13px;
+      margin: 5px;
+    }
 
-		.customPropertiesPanel {
-			border-top: 1px #C0C0C0 solid;
-			border-bottom: 1px #C0C0C0 solid;
-			margin-top: 5px;
-			margin-bottom: 10px;
-			height: 120px;
-			width: 96%;
-			padding: 0px;
-		}
+    .customPropertiesPanel {
+      border-top: 1px #C0C0C0 solid;
+      border-bottom: 1px #C0C0C0 solid;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      height: 120px;
+      width: 96%;
+      padding: 0px;
+    }
 
-		.bootOptionsPanel {
-			width: 100%;
-		}
+    .bootOptionsPanel {
+      width: 100%;
+    }
 
-        .runHostPanel {
+    .runHostPanel {
+    }
 
-        }
+    .attachImageSelectBoxLabel {
+      display: none;
+    }
 
-		.attachImageSelectBoxLabel {
-			display: none;
-		}
+    .attachImageCheckBoxLabel {
+      width: 165px;
+    }
 
-		.attachImageCheckBoxLabel {
-			width: 165px;
-		}
+    .attachImageCheckbox {
+    }
 
-		.attachImageCheckbox {
-		}
+    .attachImageSelectbox {
+    }
 
-		.attachImageSelectbox {
-		}
+    .attachImagePanel,.linuxBootOptionsPanel,.initialRunPanel,.hostPanel {
+      margin-top: 5px;
+      width: 98%;
+    }
 
-		.attachImagePanel,.linuxBootOptionsPanel,.initialRunPanel,.hostPanel {
-			margin-top: 5px;
-			width: 98%;
-		}
+    .initialRunSubPanelLabel {
+      font-weight: bold;
+      margin-left: 10px;
+      margin-bottom: 3px;
+    }
 
-		.initialRunSubPanelLabel {
-			font-weight: bold;
-			margin-left: 10px;
-			margin-bottom: 3px;
-		}
+    .linuxBootOption {
+      margin-left: 20px;
+    }
 
-		.linuxBootOption {
-			margin-left: 20px;
-		}
+    .sysprepOption {
+      margin-left: 30px;
+    }
 
-		.sysprepOption {
-			margin-left: 30px;
-		}
+    .imagesLabel {
+      display: none;
+    }
 
-		.imagesLabel {
-			display: none;
-		}
+    .bootSequencePanel {
+      margin-top: 6px;
+      margin-bottom: 8px;
+      margin-left: 10px;
+      width: 95%;
+    }
 
-		.bootSequencePanel {
-			margin-top: 6px;
-			margin-bottom: 8px;
-			margin-left: 10px;
-			width: 95%;
-		}
+    .bootSequenceButton {
+      font-size: 10px;
+      font-weight: bold;
+      text-align: center;
+      width: 65px;
+      position: relative;
+      left: 5px;
+    }
 
-		.bootSequenceButton {
-			font-size: 10px;
-			font-weight: bold;
-			text-align: center;
-			width: 65px;
-			position: relative;
-			left: 5px;
-		}
+    .bootSequenceButtonUp {
+      padding-top: 2px;
+    }
 
-		.bootSequenceButtonUp {
-			padding-top: 2px;
-		}
+    .bootSequenceButtonDown {
+      position: relative;
+      top: -5px;
+    }
 
-		.bootSequenceButtonDown {
-			position: relative;
-			top: -5px;
-		}
+    .bootSequenceButtonPanel {
+      position: absolute;
+      background: #e5ecff;
+      right: 0px;
+      bottom: 0px;
+      top: 15px;
+      height: 65px;
+      width: 75px
+    }
 
-		.bootSequenceButtonPanel {
-			position: absolute;
-			background: #e5ecff;
-			right: 0px;
-			bottom: 0px;
-			top: 15px;
-			height: 65px;
-			width: 75px
-		}
+    .panelStyle {
+      background: #e5ecff;
+      border-top: 2px solid white;
+      width: 100%;
+    }
 
-		.panelStyle {
-			background: #e5ecff;
-			border-top: 2px solid white;
-			width: 100%;
-		}
+    /* DisclosurePanel header section */
+    .panelStyle a[class=header] {
+      font-weight: bold;
+    }
 
-		/* DisclosurePanel header section */
-		.panelStyle a[class=header] {
-			font-weight: bold;
-		}
+    .sectionLabel {
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
 
-       .sectionLabel {
-            font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
+    .radioButton {
+      padding: 0px;
+    }
 
-        .radioButton {
-            padding: 0px;
-        }
+    .radioButtonSpecificHost {
+      margin-left: 5px;
+    }
 
-        .radioButtonSpecificHost {
-            margin-left: 5px;
-        }
+    .refreshButton {
+      font-size: 12px;
+      height: 14px;
+      line-height: 14px;
+      width: 12px;
+      margin-top: 5px;
+      padding: 2px;
+      background: transparent;
+      border: 1px solid transparent;
+    }
 
-        .refreshButton {
-			font-size: 12px;
-			height: 14px;
-			line-height: 14px;
-			width: 12px;
-			margin-top: 5px;
-			padding: 2px;
-			background: transparent;
-			border: 1px solid transparent;
-		}
+    .cloudInitLabel {
+      font-weight: bold;
+    }
 
-        .cloudInitLabel {
-            font-weight: bold;
-        }
+    .checkboxWithLongLabel {
+      width: 400px;
+      float: left;
+      clear: both;
+    }
 
-        .checkboxWithLongLabel {
-            width: 400px;
-            float: left;
-            clear: both;
-        }
+    .checkboxWithLongLabel label {
+      margin-left: 21px;
+      margin-top: -18px;
+      display: block;
+      line-height: 20px;
+      width: 400px;
+      float: left;
+    }
 
-        .checkboxWithLongLabel label {
-            margin-left: 21px;
-            margin-top: -18px;
-            display: block;
-            line-height: 20px;
-            width: 400px;
-            float: left;
-        }
+    .kernelImageEditorRow {
+      width: 100%;
+    }
 
-		.kernelImageEditorRow {
-			width: 100%;
-		}
+    .kernelImageRefreshButton {
+      margin-right: 0px;
+      margin-left: 0px;
+      padding-left: 0px;
+    }
 
-		.kernelImageRefreshButton {
-			margin-right: 0px;
-			margin-left: 0px;
-			padding-left: 0px;
-		}
+    .refreshButtonOffset {
+      margin-right: 20px;
+    }
 
-		.refreshButtonOffset {
-			margin-right: 20px;
-		}
+    .inlineBlock {
+        display: inline-block;
+        margin-right: 5px;
+    }
 
-        .inlineBlock {
-            display: inline-block;
-            margin-right: 5px;
-        }
+    .container {
+        margin-right: 20px;
+        margin-left: 20px;
+        padding-left: auto;
+        padding-right: auto;
+    }
     </ui:style>
 
-	<g:FlowPanel>
-		<g:DisclosurePanel ui:field="generalBootOptionsPanel" label="{constants.runOncePopupBootOptionsLabel}" addStyleNames="{style.panelStyle}">
-			<g:VerticalPanel addStyleNames="{style.bootOptionsPanel}">
-				<g:VerticalPanel addStyleNames="{style.attachImagePanel}">
-					<g:HorizontalPanel>
-						<ge:EntityModelCheckBoxEditor ui:field="attachFloppyEditor" addStyleNames="{style.attachImageCheckbox}" />
-						<e:ListModelListBoxEditor ui:field="floppyImageEditor" addStyleNames="{style.attachImageSelectbox}" />
-					</g:HorizontalPanel>
+  <g:ScrollPanel>
+    <g:FlowPanel>
+    <g:DisclosurePanel ui:field="generalBootOptionsPanel" label="{constants.runOncePopupBootOptionsLabel}" addStyleNames="{style.panelStyle}">
+      <g:VerticalPanel addStyleNames="{style.bootOptionsPanel}">
+        <g:VerticalPanel addStyleNames="{style.attachImagePanel}">
+          <g:HorizontalPanel>
+            <ge:EntityModelCheckBoxEditor ui:field="attachFloppyEditor" addStyleNames="{style.attachImageCheckbox}" />
+            <e:ListModelListBoxEditor ui:field="floppyImageEditor" addStyleNames="{style.attachImageSelectbox}" />
+          </g:HorizontalPanel>
 
-					<g:HorizontalPanel>
-						<ge:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
-						<e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.attachImageSelectbox}" />
-						<g:PushButton ui:field="isoImagesRefreshButton" addStyleNames="{style.refreshButton}">
-							<g:upFace image='{resources.refreshButtonImage}' />
-						</g:PushButton>
-					</g:HorizontalPanel>
-				</g:VerticalPanel>
+          <g:HorizontalPanel>
+            <ge:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
+            <e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.attachImageSelectbox}" />
+            <g:PushButton ui:field="isoImagesRefreshButton" addStyleNames="{style.refreshButton}">
+              <g:upFace image='{resources.refreshButtonImage}' />
+            </g:PushButton>
+          </g:HorizontalPanel>
+        </g:VerticalPanel>
 
-				<ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" addStyleNames="{style.checkboxWithLongLabel}" />
-				<ge:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
+        <ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" addStyleNames="{style.checkboxWithLongLabel}" />
+        <ge:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
 
-				<g:AbsolutePanel ui:field="bootSequencePanel" addStyleNames="{style.bootSequencePanel}">
-					<g:Label ui:field="bootSequenceLabel" />
+        <g:AbsolutePanel ui:field="bootSequencePanel" addStyleNames="{style.bootSequencePanel}">
+          <g:Label ui:field="bootSequenceLabel" />
 
-					<g:VerticalPanel addStyleNames="{style.bootSequenceButtonPanel}">
-						<g:PushButton ui:field="bootSequenceUpButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonUp}"
-							enabled="false">
-						</g:PushButton>
+          <g:VerticalPanel addStyleNames="{style.bootSequenceButtonPanel}">
+            <g:PushButton ui:field="bootSequenceUpButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonUp}"
+              enabled="false">
+            </g:PushButton>
 
-						<g:PushButton ui:field="bootSequenceDownButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonDown}"
-							enabled="false">
-						</g:PushButton>
-					</g:VerticalPanel>
-				</g:AbsolutePanel>
-				<ge:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
-			</g:VerticalPanel>
-		</g:DisclosurePanel>
+            <g:PushButton ui:field="bootSequenceDownButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonDown}"
+              enabled="false">
+            </g:PushButton>
+          </g:VerticalPanel>
+        </g:AbsolutePanel>
+        <ge:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
+      </g:VerticalPanel>
+    </g:DisclosurePanel>
 
-		<g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
-			<g:VerticalPanel addStyleNames="{style.linuxBootOptionsPanel}">
-				<g:HorizontalPanel addStyleNames="{style.kernelImageEditorRow}">
-					<e:ListModelTypeAheadChangeableListBoxEditor ui:field="kernelImageEditor" addStyleNames="{style.linuxBootOption}"/>
-					<g:PushButton ui:field="linuxBootOptionsRefreshButton" addStyleNames="{style.refreshButton} {style.kernelImageRefreshButton}">
-						<g:upFace image='{resources.refreshButtonImage}'/>
-					</g:PushButton>
-				</g:HorizontalPanel>
+    <g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
+      <g:VerticalPanel addStyleNames="{style.linuxBootOptionsPanel}">
+        <g:HorizontalPanel addStyleNames="{style.kernelImageEditorRow}">
+          <e:ListModelTypeAheadChangeableListBoxEditor ui:field="kernelImageEditor" addStyleNames="{style.linuxBootOption}"/>
+          <g:PushButton ui:field="linuxBootOptionsRefreshButton" addStyleNames="{style.refreshButton} {style.kernelImageRefreshButton}">
+            <g:upFace image='{resources.refreshButtonImage}'/>
+          </g:PushButton>
+        </g:HorizontalPanel>
 
-				<e:ListModelTypeAheadChangeableListBoxEditor ui:field="initrdImageEditor" addStyleNames="{style.linuxBootOption} {style.refreshButtonOffset}"/>
-				<ge:StringEntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption} {style.refreshButtonOffset}" />
-			</g:VerticalPanel>
-		</g:DisclosurePanel>
+        <e:ListModelTypeAheadChangeableListBoxEditor ui:field="initrdImageEditor" addStyleNames="{style.linuxBootOption} {style.refreshButtonOffset}"/>
+        <ge:StringEntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption} {style.refreshButtonOffset}" />
+      </g:VerticalPanel>
+    </g:DisclosurePanel>
 
         <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
-			<g:FlowPanel>
+      <g:FlowPanel addStyleNames="{style.container}">
                 <ge:EntityModelCheckBoxEditor ui:field="cloudInitEnabledEditor" labelStyleName="{style.cloudInitLabel}"/>
                 <g:Label ui:field="sysprepToEnableLabel" addStyleNames="{style.sysprepOption}" />
 
-				<vm:RunOnceVmInitWidget ui:field="vmInitWidget"/>
+        <vm:RunOnceVmInitWidget ui:field="vmInitWidget"/>
                 <g:VerticalPanel ui:field="runOnceSpecificSysprepOptions">
                     <w:ComboBox ui:field="sysPrepDomainNameComboBox" />
                     <ge:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
@@ -248,8 +255,8 @@
                     <ge:StringEntityModelPasswordBoxEditor ui:field="sysPrepPasswordVerificationEditor" addStyleNames="{style.sysprepOption}" />
                 </g:VerticalPanel>
 
-			</g:FlowPanel>
-		</g:DisclosurePanel>
+      </g:FlowPanel>
+    </g:DisclosurePanel>
 
         <g:DisclosurePanel ui:field="systemPanel" label="{constants.systemVmPopup}" addStyleNames="{style.panelStyle}">
             <g:FlowPanel>
@@ -272,21 +279,22 @@
             </g:FlowPanel>
         </g:DisclosurePanel>
 
-		<g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.consoleVmPopup}" addStyleNames="{style.panelStyle}">
-			<g:VerticalPanel>
-				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
-				<e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
-				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
+    <g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.consoleVmPopup}" addStyleNames="{style.panelStyle}">
+      <g:VerticalPanel>
+        <ge:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
+        <e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
+        <ge:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
                 <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
                 <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
-			</g:VerticalPanel>
-		</g:DisclosurePanel>
+      </g:VerticalPanel>
+    </g:DisclosurePanel>
 
-		<g:DisclosurePanel ui:field="customPropertiesPanel" label="{constants.customPropsVmPopup}" addStyleNames="{style.panelStyle}">
-			<g:ScrollPanel addStyleNames="{style.customPropertiesPanel}">
-				<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
-			</g:ScrollPanel>
-		</g:DisclosurePanel>
-	</g:FlowPanel>
+    <g:DisclosurePanel ui:field="customPropertiesPanel" label="{constants.customPropsVmPopup}" addStyleNames="{style.panelStyle}">
+      <g:ScrollPanel addStyleNames="{style.customPropertiesPanel}">
+        <k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
+      </g:ScrollPanel>
+    </g:DisclosurePanel>
+   </g:FlowPanel>
+  </g:ScrollPanel>
 
 </ui:UiBinder>

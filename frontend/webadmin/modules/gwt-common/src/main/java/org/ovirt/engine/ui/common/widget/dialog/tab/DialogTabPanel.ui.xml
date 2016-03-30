@@ -6,8 +6,7 @@
         .bar {
             float: left;
             width: 160px;
-            height: 100%;
-            background-color: #E5E5E5;
+            height: auto;
             border-right: 1px solid #CED8DF;
         }
 
@@ -16,22 +15,23 @@
         }
 
         .contentContainer {
-            overflow: hidden;
-            padding-left: 5px;
+            overflow: auto;
+            background-color: #fff; /* background of content */
+            height: 100%;
         }
 
         .header {
-            background-color: #e5e5e5;
             margin-bottom: 15px;
-            padding-top: 6px;
-            /*Neutralize the 5px padding of the parent*/
-            margin-left: -5px;
             border: 2px solid #d3d3d3;
             display: none;
         }
+
+        .barColor {
+            background-color: #E5E5E5; /* background of bar */
+        }
     </ui:style>
 
-    <g:HTMLPanel>
+    <g:HTMLPanel addStyleNames="{style.barColor}">
         <g:FlowPanel ui:field="tabContainer" addStyleNames="{style.bar}" />
         <g:FlowPanel addStyleNames="{style.contentContainer} dtp_contentContainer_pfly_fix">
             <g:SimplePanel ui:field="tabHeaderContainer" addStyleNames="{style.header}" />

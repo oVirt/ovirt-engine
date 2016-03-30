@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ComboBox<T> extends Composite {
 
-    interface WidgetUiBinder extends UiBinder<Widget, ComboBox> {
+    interface WidgetUiBinder extends UiBinder<Widget, ComboBox<?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
@@ -26,18 +26,28 @@ public class ComboBox<T> extends Composite {
     ListModelListBoxEditor<T> listBoxEditor;
 
     @UiField(provided = true)
-    EntityModelTextBoxEditor textBoxEditor;
+    EntityModelTextBoxEditor<?> textBoxEditor;
 
-    public ComboBox(ListModelListBoxEditor<T> listBoxEditor, EntityModelTextBoxEditor textBoxEditor) {
+    public ComboBox(ListModelListBoxEditor<T> listBoxEditor, EntityModelTextBoxEditor<?> textBoxEditor) {
         this.listBoxEditor = listBoxEditor;
         this.textBoxEditor = textBoxEditor;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        addStyles();
+    }
+
+    public void setUsePatternFly(boolean use) {
+        listBoxEditor.setUsePatternFly(use);
+        textBoxEditor.setUsePatternFly(use);
+        listBoxEditor.addLabelStyleName(style.listBoxLabel());
+        textBoxEditor.addLabelStyleName(style.textBoxLabel());
+        if (!use) {
+            addStyles();
+        } else {
+            textBoxEditor.removeStyleName(style.textBoxEditor());
+            textBoxEditor.removeStyleName(style.textBoxWidget());
+        }
     }
 
     void addStyles() {
-        listBoxEditor.addLabelStyleName(style.listBoxLabel());
-        textBoxEditor.addLabelStyleName(style.textBoxLabel());
         textBoxEditor.addContentWidgetContainerStyleName(style.textBoxWidget());
 
         Element textBox = textBoxEditor.getContentWidgetContainer().getElement();
@@ -59,6 +69,8 @@ public class ComboBox<T> extends Composite {
         String textBoxLabel();
 
         String listBoxLabel();
+
+        String textBoxEditor();
     }
 
 }

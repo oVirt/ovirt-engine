@@ -44,10 +44,6 @@
         .enabledMainPanel {
             background-color: white;
         }
-
-        .disabledMainPanel {
-            /* background-color: #f6f6f5; */
-        }
     </ui:style>
 
     <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.enabledMainPanel}">

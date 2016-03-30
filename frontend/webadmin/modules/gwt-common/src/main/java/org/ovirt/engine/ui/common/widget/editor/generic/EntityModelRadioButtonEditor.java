@@ -87,6 +87,7 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
         if (use) {
             getRadioButtonWidgetLabel().getStyle().setPaddingLeft(10, Unit.PX);
             getRadioButtonWidgetLabel().getStyle().setPosition(Position.RELATIVE);
+            getValidatedWidgetStyle().clearPadding();
             // checkboxes don't use form-control
             getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
             removeContentWidgetStyleName(Styles.FORM_CONTROL);

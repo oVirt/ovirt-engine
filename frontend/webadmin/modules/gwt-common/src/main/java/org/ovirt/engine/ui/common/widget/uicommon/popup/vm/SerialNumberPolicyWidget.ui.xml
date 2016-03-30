@@ -11,6 +11,7 @@
   <ui:style>
     .container {
       width: 100%;
+      float: left;
     }
 
   </ui:style>

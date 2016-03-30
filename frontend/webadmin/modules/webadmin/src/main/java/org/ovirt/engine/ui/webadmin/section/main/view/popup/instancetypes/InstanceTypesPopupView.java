@@ -17,7 +17,7 @@ public class InstanceTypesPopupView extends AbstractVmPopupView implements Insta
 
     @Inject
     public InstanceTypesPopupView(EventBus eventBus, VmPopupResources resources) {
-        super(eventBus, new InstanceTypesPopupWidget(eventBus), "710px", "570px", resources); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, new InstanceTypesPopupWidget(eventBus), resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 }

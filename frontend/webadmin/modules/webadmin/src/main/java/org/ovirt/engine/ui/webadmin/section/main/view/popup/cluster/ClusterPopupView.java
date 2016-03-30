@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.Row;
-import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -18,7 +17,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -31,14 +29,12 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.BootstrapListBoxListModelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
-import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -410,13 +406,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     StringEntityModelTextBoxEditor spiceProxyEditor;
 
-    @UiField(provided = true)
-    @Ignore
-    EntityModelWidgetWithInfo spiceProxyEnabledCheckboxWithInfoIcon;
-
     @Path(value = "spiceProxyEnabled.entity")
     @WithElementId
-    EntityModelCheckBoxOnlyEditor spiceProxyOverrideEnabled;
+    @UiField(provided = true)
+    EntityModelCheckBoxEditor spiceProxyOverrideEnabled;
+
+    @UiField(provided = true)
+    InfoIcon isVirtioScsiEnabledInfoIcon;
 
     @UiField
     @Ignore
@@ -620,6 +616,10 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         skipFencingIfSDActiveCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+        skipFencingIfConnectivityBrokenCheckBox.hideLabel();
+
+        spiceProxyOverrideEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
+        spiceProxyOverrideEnabled.hideLabel();
 
         additionalFeaturesEditor = new ListModelCheckBoxGroup<>(new AbstractRenderer<AdditionalFeature>() {
             @Override
@@ -637,21 +637,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
         allowOverbookingInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
 
-        EnableableFormLabel label = new EnableableFormLabel();
-        label.setText(constants.clusterSpiceProxyEnable());
-        spiceProxyOverrideEnabled = new EntityModelCheckBoxOnlyEditor() {
-            @Override
-            public void setUsePatternFly(final boolean use) {
-                if (use) {
-                    // checkboxes don't use form-control
-                    getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
-                    removeContentWidgetStyleName(Styles.FORM_CONTROL);
-                }
-            }
-        };
-        spiceProxyOverrideEnabled.setUsePatternFly(true);
-        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabled, Align.LEFT);
-
         fencingEnabledInfo = new InfoIcon(
                 templates.italicText(constants.fencingEnabledInfo()));
         skipFencingIfSDActiveInfo = new InfoIcon(
@@ -659,11 +644,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         skipFencingIfConnectivityBrokenInfo = new InfoIcon(
                 templates.italicText(constants.skipFencingWhenConnectivityBrokenInfo()));
+
+        isVirtioScsiEnabledInfoIcon = new InfoIcon(templates.italicText("")); //$NON-NLS-1$
     }
 
     @Override
     public void setSpiceProxyOverrideExplanation(String explanation) {
-        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(templates.italicText(explanation));
+        isVirtioScsiEnabledInfoIcon.setText(templates.italicText(explanation));
     }
 
     private void applyModeCustomizations() {

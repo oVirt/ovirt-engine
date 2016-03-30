@@ -52,7 +52,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     private static final String LMTALB_LISTBOX_PFLY_FIX = "lmtalb_listbox_pfly_fix"; //$NON-NLS-1$
     private static final String LMTALB_WRAPPER_LISTBOX_PFLY_FIX = "lmtalb_suggestboxWrapper_pfly_fix"; //$NON-NLS-1$
     private static final String LMTALB_SUGGESTBOX_PFLY_FIX = "lmtalb_suggestbox_pfly_fix"; //$NON-NLS-1$
-    private static final String PATTERNFLY_IMAGE_HEIGHT = "23px"; //$NON-NLS-1$
+    private static final String PATTERNFLY_IMAGE_HEIGHT = "26px"; //$NON-NLS-1$
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -110,7 +110,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         setAutoHideEnabled(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        mainPanel.getElement().addClassName(LMTALB_LISTBOX_PFLY_FIX);
+        mainPanel.addStyleName(LMTALB_LISTBOX_PFLY_FIX);
 
         registerListeners();
     }
@@ -122,6 +122,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             mainPanel.addStyleName(style.maxWidth());
             suggestBox.removeStyleName(style.suggestBoxStyle_legacy());
             suggestBox.removeStyleName(LMTALB_SUGGESTBOX_PFLY_FIX);
+            suggestBox.addStyleName(Styles.FORM_CONTROL);
             suggestBox.getParent().removeStyleName(LMTALB_WRAPPER_LISTBOX_PFLY_FIX);
             suggestBox.getParent().removeStyleName(style.suggestBoxWrapperStyle_legacy());
             dropDownImage.setHeight(PATTERNFLY_IMAGE_HEIGHT);

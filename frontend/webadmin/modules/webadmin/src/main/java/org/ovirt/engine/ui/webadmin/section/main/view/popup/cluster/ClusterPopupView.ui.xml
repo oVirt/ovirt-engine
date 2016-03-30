@@ -131,18 +131,6 @@
             padding-top: 15px;
         }
 
-        .thresholdCheckboxWidth {
-            width: 30px;
-        }
-
-        .thresholdLabelWidth {
-            width: 80%;
-        }
-
-        .thresholdIconWidth {
-            width: 32px;
-        }
-
         .groupTitle {
             font-weight: bold;
             padding-top: 10px;
@@ -175,8 +163,21 @@
             padding: 0 5px;
         }
 
-        .migrationPolicyEditor {
-            width: 320px;
+        .infoIcon {
+            float: left;
+            padding-left: 2px;
+        }
+
+        .checkBoxLabel {
+            padding-left: 10px;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .patternFlycheckBoxLabel {
+            padding-left: 10px;
+            padding-right: 10px;
+            position: relative;
         }
     </ui:style>
 
@@ -312,7 +313,7 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <e:ListModelListBoxEditor ui:field="migrationPolicyEditor" addStyleNames="{style.floatLeft}" contentWidgetContainerStyleName="{style.migrationPolicyEditor}"/>
+                                        <e:ListModelListBoxEditor ui:field="migrationPolicyEditor" addStyleNames="{style.floatLeft}" />
                                         <g:HTML ui:field="migrationPolicyDetails" />
                                     </b:Column>
                                 </b:Row>
@@ -413,12 +414,12 @@
                         <t:content>
                           <b:Container addStyleNames="{style.container}">
                             <b:Row addStyleNames="{style.topElement}">
-                              <b:Column size="LG_12">
-                                <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" usePatternFly="true" />
+                              <b:Column size="LG_6">
+                                <ge:EntityModelCheckBoxEditor ui:field="spiceProxyOverrideEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" />
+                                <g:Label text="{constants.overriddenSpiceProxyAddress}" addStyleNames="{style.floatLeft} {style.patternFlycheckBoxLabel}" />
+                                <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}"/>
                               </b:Column>
-                            </b:Row>
-                            <b:Row>
-                              <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" label="{constants.overriddenSpiceProxyAddress}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                              <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" usePatternFly="true" widgetColSize="LG_6" />
                             </b:Row>
                           </b:Container>
                         </t:content>
@@ -442,9 +443,9 @@
                             </b:Row>
                             <b:Row>
                               <b:Column size="LG_7">
-                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft} {style.thresholdCheckboxWidth}" />
-                                <g:Label ui:field="skipFencingIfConnectivityBrokenCheckBoxLabel" addStyleNames="{style.floatLeft} {style.thresholdLabelWidth}" text="{constants.skipFencingWhenConnectivityBroken}" />
-                                <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" addStyleNames="{style.floatLeft} {style.thresholdIconWidth}" />
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" />
+                                <g:Label ui:field="skipFencingIfConnectivityBrokenCheckBoxLabel" addStyleNames="{style.floatLeft} {style.checkBoxLabel}" text="{constants.skipFencingWhenConnectivityBroken}" />
+                                <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" addStyleNames="{style.floatLeft}" />
                               </b:Column>
                               <b:Column size="LG_5">
                                 <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" addStyleNames="{style.floatLeft}" label="{constants.hostsWithBrokenConnectivityThresholdLabel}" />

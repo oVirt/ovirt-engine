@@ -2,33 +2,40 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.AddRemoveRowWidget.WidgetStyle">
-		.mainPanel {
-			border-top: 1px solid black;
-			float: left;
-			padding-left: 5px;
-			margin-left: 5px;
-		}
+    <ui:style type="org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor.ProfileWidgetStyle">
+        .mainPanel {
+            border-top: 1px solid black;
+            float: left;
+        }
 
-		.headerLabel {
-			padding-top: 5px;
-		}
+        .mainPanelPadding {
+            padding-left: 5px;
+            margin-left: 5px;
+        }
 
-		.buttonStyle {
-			width: 9px;
-			height: 11px;
-			padding-left: 2px;
-			padding-top: 2px;
-			margin-top: 7px;
-			margin-left: 10px;
-		}
-	</ui:style>
+        .headerLabel {
+            padding-top: 5px;
+        }
 
-	<g:FlowPanel addStyleNames="{style.mainPanel}" >
-		<g:Label ui:field="headerLabel" text="{constants.assignNics}" addStyleNames="{style.headerLabel}" />
+        .buttonStyle {
+            width: 9px;
+            height: 11px;
+            padding-left: 2px;
+            padding-top: 2px;
+            margin-top: 7px;
+            margin-left: 10px;
+        }
+
+        .fullWidth {
+            width: 100%;
+        }
+    </ui:style>
+
+    <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel} {style.mainPanelPadding}" >
+        <g:Label ui:field="headerLabel" text="{constants.assignNics}" addStyleNames="{style.headerLabel}" />
         <g:FlowPanel ui:field="contentPanel" addStyleNames="pite_content_pfly_fix"/>
-	</g:FlowPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

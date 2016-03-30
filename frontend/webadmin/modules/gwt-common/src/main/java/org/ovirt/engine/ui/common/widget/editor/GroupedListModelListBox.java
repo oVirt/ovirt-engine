@@ -116,6 +116,7 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
 
             ListBox listBox = asListBox();
             SelectElement selectElement = listBox.getElement().cast();
+            selectElement.addClassName(Styles.FORM_CONTROL);
             //Wipe out the existing options and group option elements.
             selectElement.removeAllChildren();
             selectableObjects.clear();
@@ -170,6 +171,7 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
         if (usePatternFly) {
             container.addStyleName(Styles.FORM_CONTROL);
             container.addStyleName(style.container());
+            container.removeStyleName(style.container_legacy());
             getWidget().addStyleName(style.listBoxPatternfly());
             groupLabelContainer.addStyleName(style.labelContainer());
         } else {

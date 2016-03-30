@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
-	<ui:style>
-		.diskListPanel {
-			overflow: auto;
-			position: absolute;
-			width: 100%;
-		}
-	</ui:style>
+    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView.Style">
+        .overflow {
+            overflow: auto;
+        }
 
-	<g:FlowPanel>
-		<g:SimplePanel ui:field="diskListHeaderPanel" />
-		<g:FlowPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel}"/>
-	</g:FlowPanel>
+        .diskListPanel {
+            position: absolute;
+            width: 100%;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:SimplePanel ui:field="diskListHeaderPanel" />
+        <g:FlowPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel} {style.overflow}" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

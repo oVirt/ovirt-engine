@@ -5,10 +5,12 @@ import java.util.Iterator;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
@@ -18,6 +20,15 @@ public class GenericWidgetWithLabel extends Composite implements HasWidgets, Has
     interface WidgetUiBinder extends UiBinder<Widget, GenericWidgetWithLabel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
+
+    protected interface Style extends CssResource {
+        String wrapper_legacy();
+        String label_legacy();
+        String contentWidgetContainer_legacy();
+    }
+
+    @UiField
+    protected Style style;
 
     public GenericWidgetWithLabel() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -30,9 +41,20 @@ public class GenericWidgetWithLabel extends Composite implements HasWidgets, Has
     @UiField
     EnableableFormLabel label;
 
+    @UiField
+    HTMLPanel wrapperPanel;
+
     @Override
     public void add(Widget w) {
         childrenPanel.add(w);
+    }
+
+    public void setUsePatternFly(boolean use) {
+        if (use) {
+            wrapperPanel.removeStyleName(style.wrapper_legacy());
+            label.removeStyleName(style.label_legacy());
+            childrenPanel.removeStyleName(style.contentWidgetContainer_legacy());
+        }
     }
 
     @Override

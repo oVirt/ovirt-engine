@@ -5,11 +5,13 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -17,7 +19,11 @@ import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.user.client.ui.CheckBox;
 
 public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidatedWidgetWithLabel<T, BaseEntityModelCheckbox<T>>
-        implements IsEditor<WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>>> {
+        implements IsEditor<WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>>>, PatternFlyCompatible {
+
+    private static final String CBE_RIGHT_OF_LABEL_PFLY_FIX = "cbe_right_of_label_pfly_fix"; //$NON-NLS-1$
+    private static final String CBE_CHECKBOX_PFLY_FIX = "cbe_checkbox_pfly_fix"; //$NON-NLS-1$
+    private static final String CBE_LABEL_PFLY_FIX = "cbe_label_pfly_fix"; //$NON-NLS-1$
 
     private final WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>> editor;
 
@@ -31,11 +37,13 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         this(labelAlign, contentWidget, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
-    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget, VisibilityRenderer visibilityRenderer) {
+    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget,
+            VisibilityRenderer visibilityRenderer) {
         this(labelAlign, contentWidget, visibilityRenderer, false);
     }
 
-    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget, VisibilityRenderer visibilityRendere, boolean useFullWidthIfAvailable) {
+    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget,
+            VisibilityRenderer visibilityRendere, boolean useFullWidthIfAvailable) {
         super(contentWidget, visibilityRendere);
 
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
@@ -52,10 +60,10 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         }
 
         // patternfly hacks
-        getContentWidgetElement().addClassName("cbe_checkbox_pfly_fix"); //$NON-NLS-1$
-        getInternalLabelElement().addClassName("cbe_label_pfly_fix"); //$NON-NLS-1$
+        getContentWidgetElement().addClassName(CBE_CHECKBOX_PFLY_FIX);
+        getInternalLabelElement().addClassName(CBE_LABEL_PFLY_FIX);
         if (!useCheckBoxWidgetLabel) {
-            addWrapperStyleName("cbe_right_of_label_pfly_fix"); //$NON-NLS-1$
+            addWrapperStyleName(CBE_RIGHT_OF_LABEL_PFLY_FIX);
         }
 
     }
@@ -69,11 +77,20 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         super.setUsePatternFly(use);
         if (use) {
             getCheckboxWidgetLabel().getStyle().setPaddingLeft(10, Unit.PX);
+            getCheckboxWidgetLabel().getStyle().setPaddingRight(10, Unit.PX);
             getCheckboxWidgetLabel().getStyle().setPosition(Position.RELATIVE);
-            // checkboxes don't use form-control
-            getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
-            removeContentWidgetStyleName(Styles.FORM_CONTROL);
+            noPaddingNoFixes();
+            removeWrapperStyleName(CBE_RIGHT_OF_LABEL_PFLY_FIX);
         }
+    }
+
+    protected void noPaddingNoFixes() {
+        getValidatedWidgetStyle().clearPadding();
+        getCheckboxWidgetLabel().removeClassName(CBE_LABEL_PFLY_FIX);
+        getContentWidgetElement().removeClassName(CBE_CHECKBOX_PFLY_FIX);
+        // checkboxes don't use form-control
+        getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
+        removeContentWidgetStyleName(Styles.FORM_CONTROL);
     }
 
     protected LabelElement getCheckboxWidgetLabel() {
@@ -83,14 +100,6 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
     @Override
     public WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>> asEditor() {
         return editor;
-    }
-
-    @Override
-    protected void applyCommonValidationStyles() {
-        super.applyCommonValidationStyles();
-        if (!isUsePatternfly()) {
-            getValidatedWidgetStyle().setPadding(5, Unit.PX);
-        }
     }
 
     @Override
@@ -124,6 +133,12 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         } else {
             super.updateLabelElementId(elementId);
         }
+    }
+
+    @Override
+    public void hideLabel() {
+        super.hideLabel();
+        getCheckboxWidgetLabel().getStyle().setDisplay(Display.NONE);
     }
 
     @Override

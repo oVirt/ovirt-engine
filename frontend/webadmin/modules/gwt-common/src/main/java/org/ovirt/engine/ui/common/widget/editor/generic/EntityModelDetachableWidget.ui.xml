@@ -45,13 +45,13 @@
 
     <g:HTMLPanel ui:field="wrapperPanel" addStyleNames="{style.wrapper}">
         <g:FlowPanel ui:field="contentWrapper" addStyleNames="{style.contentWrapper}">
-            <g:FlowPanel addStyleNames="{style.image}">
+            <g:FlowPanel ui:field="imageWrapper" addStyleNames="{style.image}">
                 <t:WidgetTooltip ui:field="tooltip">
                     <g:Image ui:field="attachedSeparatedImage" />
                 </t:WidgetTooltip>
             </g:FlowPanel>
 
-            <g:SimplePanel ui:field="contentWidgetContainer" addStyleNames="{style.contentWidgetContainer}" />
+            <g:FlowPanel ui:field="contentWidgetContainer" addStyleNames="{style.contentWidgetContainer}" />
         </g:FlowPanel>
     </g:HTMLPanel>
 

@@ -7,7 +7,7 @@ import java.text.ParseException;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ToStringEntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -50,14 +50,14 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
     @Override
     protected void createNumOfDesktopEditors() {
-        incraseNumOfVmsEditor = new IntegerEntityModelTextBoxOnlyEditor();
+        increaseNumOfVmsEditor = new IntegerEntityModelTextBoxEditor();
 
         numOfVmsEditor = new EntityModelTextBoxEditor<>(new ToStringEntityModelRenderer<Integer>(), new Parser<Integer>() {
 
             @Override
             public Integer parse(CharSequence text) throws ParseException {
                 // forwards to the currently active editor
-                return incraseNumOfVmsEditor.asEditor().getValue();
+                return increaseNumOfVmsEditor.asEditor().getValue();
             }
 
         });
@@ -74,44 +74,12 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         prestartedVmsEditor.setEnabled(true);
 
         editPrestartedVmsEditor.setEnabled(true);
-        incraseNumOfVmsEditor.setEnabled(true);
+        increaseNumOfVmsEditor.setEnabled(true);
         editMaxAssignedVmsPerUserEditor.setEnabled(true);
 
         spiceProxyEditor.setEnabled(model.getSpiceProxyEnabled().getEntity());
 
         templateWithVersionEditor.setEnabled(true);
-    }
-
-    @Override
-    protected void applyStyles() {
-        super.applyStyles();
-
-        // In 'ja' locale the text of prestarted vms is too long for 230px.
-        // Changed all the right column widgets width to 250px.
-        dataCenterWithClusterEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        vmTypeEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        quotaEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        instanceTypesEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        descriptionEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        memSizeEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        templateWithVersionEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        detachableMemSizeEditor.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        totalvCPUsEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        totalvCPUsEditorWithInfoIcon.getContentWidget().setContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        corePerSocketEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        corePerSocketEditorWithDetachable.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        numOfSocketsEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        numOfSocketsEditorWithDetachable.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        threadsPerCoreEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        threadsPerCoreEditorWithInfoIcon.getContentWidget().setContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        oSTypeEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        isStatelessEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        isRunAndPauseEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        isDeleteProtectedEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
-        editIncreaseVmsPanel.addStyleName(style.generalTabExtendedRightWidgetWidth());
-        editPrestartedVmsPanel.addStyleName(style.generalTabExtendedRightWidgetWidth());
-        nameEditor.addStyleName(style.generalTabExtendedRightWidgetWidth());
-        nameEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
     }
 
     @Override
@@ -121,12 +89,12 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
                 update(spiceProxyEnabledCheckboxWithInfoIcon, simpleField().visibleInAdvancedModeOnly()).
                 update(spiceProxyOverrideEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 update(numOfVmsEditor, hiddenField()).
-                update(newPoolEditVmsPanel, hiddenField()).
-                update(newPoolEditMaxAssignedVmsPerUserPanel, hiddenField()).
-                update(editPoolEditVmsPanel, simpleField()).
-                update(editPoolIncraseNumOfVmsPanel, simpleField()).
+                update(newPoolEditVmsRow, hiddenField()).
+                update(newPoolEditMaxAssignedVmsPerUserRow, hiddenField()).
+                update(editPoolEditVmsRow, simpleField()).
+                update(editPoolIncreaseNumOfVmsRow, simpleField()).
                 update(foremanTab, hiddenField()).
-                update(editPoolEditMaxAssignedVmsPerUserPanel, simpleField()).
+                update(editPoolEditMaxAssignedVmsPerUserRow, simpleField()).
                 update(templateVersionNameEditor, hiddenField());
     }
 

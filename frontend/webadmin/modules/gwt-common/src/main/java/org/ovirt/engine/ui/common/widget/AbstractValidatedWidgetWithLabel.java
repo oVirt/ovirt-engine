@@ -28,8 +28,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -51,8 +51,10 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <W>
  *            Content widget type.
  */
-public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?> & TakesValue<T> & HasValueChangeHandlers<T>> extends AbstractValidatedWidget
-        implements HasLabel, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, HasElementId, Focusable, FocusableComponentsContainer {
+public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?> & TakesValue<T> &
+    HasValueChangeHandlers<T>> extends AbstractValidatedWidget
+        implements HasLabel, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, HasElementId, Focusable,
+        FocusableComponentsContainer, PatternFlyCompatible {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -67,7 +69,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
         String contentWidgetContainer_legacy();
 
-        String contentWidget_legacy();
+        String maxWidth();
     }
 
     //We need to store the valid state of the editor so that when the model validator
@@ -81,13 +83,15 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     private final W contentWidget;
 
     @UiField
-    HTMLPanel wrapperPanel;
+    FlowPanel wrapperPanel;
 
     @UiField
     FormLabel label;
 
     @UiField
-    SimplePanel contentWidgetContainer;
+    FlowPanel contentWidgetContainer;
+
+    SimplePanel sizeContainer;
 
     @UiField
     WidgetTooltip labelTooltip;
@@ -125,7 +129,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     @Override
     protected void initWidget(Widget wrapperWidget) {
         super.initWidget(wrapperWidget);
-        contentWidgetContainer.setWidget(contentWidget);
+        contentWidgetContainer.add(contentWidget);
 
         label.addStyleName(OvirtCss.LABEL_ENABLED);
 
@@ -155,7 +159,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         this.usePatternfly = usePatternfly;
         // toggle styles -- remove both PatternFly and non-PatternFly styles
         removeLabelStyleName(style.label_legacy());
-        removeContentWidgetStyleName(style.contentWidget_legacy());
+        removeContentWidgetStyleName(style.maxWidth());
         removeContentWidgetStyleName(Styles.FORM_CONTROL);
         removeContentWidgetContainerStyleName(style.contentWidgetContainer_legacy());
         removeContentWidgetContainerStyleName("avw_contentWidgetContainer_pfly_fix"); //$NON-NLS-1$
@@ -166,13 +170,21 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         // add the proper styles
         if (usePatternfly) {
             addContentWidgetStyleName(Styles.FORM_CONTROL);
+            addContentWidgetContainerStyleName(Styles.INPUT_GROUP);
+            addContentWidgetContainerStyleName(style.maxWidth());
             if (!removeFormGroup) {
                 addWrapperStyleName(Styles.FORM_GROUP);
+            }
+            wrapperPanel.remove(contentWidgetContainer);
+            if (sizeContainer == null) {
+                sizeContainer = new SimplePanel();
+                sizeContainer.setWidget(contentWidgetContainer);
+                wrapperPanel.insert(sizeContainer, 1);
             }
         }
         else {
             addLabelStyleName(style.label_legacy());
-            addContentWidgetStyleName(style.contentWidget_legacy());
+            addContentWidgetStyleName(style.maxWidth());
             addContentWidgetContainerStyleName(style.contentWidgetContainer_legacy());
             addContentWidgetContainerStyleName("avw_contentWidgetContainer_pfly_fix"); //$NON-NLS-1$
             addWrapperStyleName(style.wrapper_legacy());
@@ -180,12 +192,21 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         }
     }
 
+    public void setUnitString(String unitString) {
+        SimplePanel unitAddOn = new SimplePanel();
+        unitAddOn.getElement().setInnerHTML(unitString);
+        unitAddOn.addStyleName(Styles.INPUT_GROUP_ADDON);
+        contentWidgetContainer.add(unitAddOn);
+    }
+
     public void setLabelColSize(ColumnSize size) {
         addLabelStyleName(size.getCssName());
     }
 
     public void setWidgetColSize(ColumnSize size) {
-        addContentWidgetContainerStyleName(size.getCssName());
+        if (sizeContainer != null) {
+            sizeContainer.addStyleName(size.getCssName());
+        }
     }
 
     /**
@@ -216,7 +237,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         return contentWidget.asWidget().getElement();
     }
 
-    public SimplePanel getContentWidgetContainer() {
+    public FlowPanel getContentWidgetContainer() {
         return contentWidgetContainer;
     }
 

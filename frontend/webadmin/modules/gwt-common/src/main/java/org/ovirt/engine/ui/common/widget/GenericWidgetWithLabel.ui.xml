@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
-    <ui:style>
+    <ui:style type="org.ovirt.engine.ui.common.widget.GenericWidgetWithLabel.Style">
         .wrapper_legacy {
             line-height: 30px;
             text-align: left;

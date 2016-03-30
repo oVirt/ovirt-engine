@@ -37,6 +37,11 @@ public class ListModelTypeAheadChangeableListBoxEditor extends AbstractValidated
         return editor;
     }
 
+    public void setUsePatternFly(final boolean usePatternFly) {
+        super.setUsePatternFly(usePatternFly);
+        getContentWidget().setUsePatternFly(usePatternFly);
+    }
+
     @Override
     public ListModelTypeAheadChangeableListBox asWidget() {
         return getContentWidget();

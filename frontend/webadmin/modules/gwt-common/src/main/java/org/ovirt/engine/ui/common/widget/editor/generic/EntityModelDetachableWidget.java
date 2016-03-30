@@ -4,23 +4,27 @@ import static com.google.gwt.dom.client.Style.Unit;
 
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Takes a AbstractValidatedWidgetWithLabel, decorates it with the detachable icon but does not render it's label
  */
-public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget implements HasEnabled, HasValidation {
+public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget implements HasEnabled, HasValidation,
+    PatternFlyCompatible {
 
     interface WidgetUiBinder extends UiBinder<Widget, EntityModelDetachableWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -29,15 +33,18 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
     interface Style extends BaseStyle {
         String contentWrapperImageOnRight();
         String contentWrapper();
+        String wrapper();
+        String image();
+        String contentWidgetContainer();
     }
 
     @UiField
     Image attachedSeparatedImage;
 
     @UiField(provided = true)
-    SimplePanel contentWidgetContainer;
+    FlowPanel contentWidgetContainer;
 
-    private AbstractValidatedWidgetWithLabel decorated;
+    private AbstractValidatedWidgetWithLabel<?, ?> decorated;
 
     @UiField
     FlowPanel contentWrapper;
@@ -45,7 +52,13 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
     @UiField
     Style style;
 
-    public EntityModelDetachableWidget(AbstractValidatedWidgetWithLabel decorated, Align attachedImageAlign) {
+    @UiField
+    HTMLPanel wrapperPanel;
+
+    @UiField
+    FlowPanel imageWrapper;
+
+    public EntityModelDetachableWidget(AbstractValidatedWidgetWithLabel<?, ?> decorated, Align attachedImageAlign) {
         this.decorated = decorated;
         this.contentWidgetContainer = decorated.getContentWidgetContainer();
 
@@ -81,7 +94,7 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
         }
     }
 
-    public EntityModelDetachableWidget(AbstractValidatedWidgetWithLabel decorated) {
+    public EntityModelDetachableWidget(AbstractValidatedWidgetWithLabel<?, ?> decorated) {
         this(decorated, Align.LEFT);
     }
 
@@ -116,5 +129,25 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
     @Override
     public boolean isValid() {
         return decorated.isValid();
+    }
+
+    @Override
+    public void setLabelColSize(ColumnSize size) {
+        decorated.setLabelColSize(size);
+    }
+
+    public void setWidgetColSize(ColumnSize size) {
+        decorated.setWidgetColSize(size);
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        decorated.setUsePatternFly(use);
+        if (use) {
+            wrapperPanel.removeStyleName(style.wrapper());
+            contentWrapper.removeStyleName(style.contentWrapper());
+            imageWrapper.removeStyleName(style.image());
+            contentWidgetContainer.removeStyleName(style.contentWidgetContainer());
+        }
     }
 }

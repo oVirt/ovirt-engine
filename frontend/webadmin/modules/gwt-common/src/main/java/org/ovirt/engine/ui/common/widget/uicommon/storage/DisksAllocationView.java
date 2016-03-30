@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -20,6 +21,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
@@ -29,7 +31,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId, FocusableComponentsContainer {
+public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId,
+    FocusableComponentsContainer, PatternFlyCompatible {
 
     interface Driver extends SimpleBeanEditorDriver<DisksAllocationModel, DisksAllocationView> {
     }
@@ -37,6 +40,13 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     interface ViewUiBinder extends UiBinder<Widget, DisksAllocationView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    protected interface Style extends CssResource {
+        String diskListPanel();
+    }
+
+    @UiField
+    Style style;
 
     @UiField
     FlowPanel diskListPanel;
@@ -116,12 +126,12 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @Override
     public void edit(DisksAllocationModel model) {
         driver.edit(model);
-        initListerners(model);
+        initListeners(model);
         updateColumnsAvailability(model);
         updateListHeader(model);
     }
 
-    private void initListerners(final DisksAllocationModel model) {
+    private void initListeners(final DisksAllocationModel model) {
         model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
@@ -187,6 +197,13 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @Override
     public void setElementId(String elementId) {
         this.elementId = elementId;
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        if (use) {
+            diskListPanel.removeStyleName(style.diskListPanel());
+        }
     }
 
 }

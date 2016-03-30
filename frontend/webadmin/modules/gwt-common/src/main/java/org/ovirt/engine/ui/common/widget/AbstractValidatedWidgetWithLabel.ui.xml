@@ -25,19 +25,23 @@ xmlns:b="urn:import:org.gwtbootstrap3.client.ui" >
             line-height: 16px !important;
         }
 
-        .contentWidget_legacy {
+        .maxWidth {
             width: 100%;
+        }
+
+        .clear {
+            clear: both;
         }
     </ui:style>
 
-    <g:HTMLPanel ui:field="wrapperPanel">
+    <g:FlowPanel ui:field="wrapperPanel">
         <t:WidgetTooltip ui:field="labelTooltip">
             <b:FormLabel ui:field="label"/>
         </t:WidgetTooltip>
         <t:WidgetTooltip ui:field="contentWidgetContainerTooltip">
-            <g:SimplePanel ui:field="contentWidgetContainer" />
+            <g:FlowPanel ui:field="contentWidgetContainer" />
         </t:WidgetTooltip>
-        <div style="clear: both;" />
-    </g:HTMLPanel>
+        <g:SimplePanel addStyleNames="{style.clear}" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

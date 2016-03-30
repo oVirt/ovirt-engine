@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -18,6 +17,8 @@ import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -56,6 +57,8 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     @Path("customSerialNumber.entity")
     public StringEntityModelTextBoxOnlyEditor customSerialNumber;
 
+    private final EnableableFormLabel label;
+
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
@@ -65,13 +68,11 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
             @Override
             public void setUsePatternFly(final boolean use) {
                 if (use) {
-                    // checkboxes don't use form-control
-                    getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
-                    removeContentWidgetStyleName(Styles.FORM_CONTROL);
+                    noPaddingNoFixes();
                 }
             }
         };
-        EnableableFormLabel label = new EnableableFormLabel();
+        label = new EnableableFormLabel();
         label.setText(constants.overrideSerialNumberPolicy());
         overrideSerialNumberPolicyWithInfo = new EntityModelWidgetWithInfo(label, overrideSerialNumberPolicy, Align.LEFT);
         overrideSerialNumberPolicyWithInfo.setExplanation(templates.italicText(messages.serialNumberInfo()));
@@ -87,6 +88,11 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     public void setUsePatternFly(boolean use) {
         overrideSerialNumberPolicyWithInfo.setUsePatternFly(use);
         overrideSerialNumberPolicy.setUsePatternFly(use);
+        if (use) {
+            label.getElement().getStyle().setPaddingLeft(10, Unit.PX);
+            label.getElement().getStyle().setPaddingRight(10, Unit.PX);
+            label.getElement().getStyle().setPosition(Position.RELATIVE);
+        }
     }
 
     @Override
@@ -103,11 +109,13 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
         overrideSerialNumberPolicy.setRenderer(renderer);
     }
 
-    @Override public boolean isEnabled() {
+    @Override
+    public boolean isEnabled() {
         return serialNumberPolicy.isEnabled();
     }
 
-    @Override public void setEnabled(boolean enabled) {
+    @Override
+    public void setEnabled(boolean enabled) {
         overrideSerialNumberPolicy.setEnabled(enabled);
         serialNumberPolicy.setEnabled(enabled);
         customSerialNumber.setEnabled(enabled);

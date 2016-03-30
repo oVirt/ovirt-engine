@@ -8,7 +8,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImageLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImagesModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 
@@ -26,9 +29,31 @@ public class InstanceImagesEditor extends AddRemoveRowWidget<InstanceImagesModel
         WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
 
+    public interface InstanceImagesWidgetStyle extends WidgetStyle {
+        String titleStylePadding();
+        String mainPanel();
+        String contentPanel();
+    }
+
+    @UiField
+    Label title;
+
+    @UiField
+    FlowPanel mainPanel;
+
     public InstanceImagesEditor() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        super.setUsePatternFly(use);
+        if (use) {
+            title.removeStyleName(((InstanceImagesWidgetStyle)style).titleStylePadding());
+            mainPanel.removeStyleName(((InstanceImagesWidgetStyle)style).mainPanel());
+            contentPanel.removeStyleName(((InstanceImagesWidgetStyle)style).contentPanel());
+        }
     }
 
     @Override

@@ -2021,6 +2021,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Use custom migration policy")
     String overrideMigrationPolicyLabel();
 
+    @DefaultStringValue("Migration mode")
+    String migrationMode();
+
     @DefaultStringValue("Migration downtime (ms)")
     String migrationDowntimeLabel();
 

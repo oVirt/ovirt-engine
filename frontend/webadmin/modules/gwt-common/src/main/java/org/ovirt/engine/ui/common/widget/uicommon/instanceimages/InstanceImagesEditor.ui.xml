@@ -4,19 +4,24 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
-    <ui:style type="org.ovirt.engine.ui.common.widget.AddRemoveRowWidget.WidgetStyle">
+    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.instanceimages.InstanceImagesEditor.InstanceImagesWidgetStyle">
         .buttonStyle {
             padding-left: 2px;
             padding-top: 2px;
             margin-top: 6px;
             margin-left: 10px;
+            position: relative;
+            top: -24px;
         }
 
         .titleStyle {
-            padding: 0 5px;
-            margin-left: 5px;
             float: left;
             width: 100%;
+        }
+
+        .titleStylePadding {
+            padding: 0 5px;
+            margin-left: 5px;
         }
 
         .mainPanel {
@@ -30,8 +35,8 @@
 
     </ui:style>
 
-    <g:FlowPanel addStyleNames="{style.mainPanel}">
-        <g:Label addStyleNames="{style.titleStyle}" text="{constants.instanceImages}"/>
+    <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
+        <g:Label ui:field="title" addStyleNames="{style.titleStyle} {style.titleStylePadding}" text="{constants.instanceImages}"/>
         <g:FlowPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}"/>
     </g:FlowPanel>
 </ui:UiBinder>

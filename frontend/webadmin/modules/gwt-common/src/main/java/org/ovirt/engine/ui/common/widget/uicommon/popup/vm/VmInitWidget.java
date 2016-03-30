@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -68,6 +70,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         String customScript();
 
         String expanderContent();
+
     }
 
     public static interface Resources extends ClientBundle {
@@ -77,6 +80,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     interface Style extends CssResource {
         String displayNone();
+
+        String primaryOptionComboBox();
     }
 
     private final BasicStyle customizableStyle;
@@ -97,7 +102,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @WithElementId
     ListModelListBoxEditor<Map.Entry<String, String>> windowsSysprepTimeZoneEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "windowsSysprepTimeZoneEnabled.entity")
     @WithElementId
     EntityModelCheckBoxEditor windowsSyspreptimeZoneEnabledEditor;
@@ -177,13 +182,13 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField(provided = true)
     public InfoIcon customScriptInfoIcon;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "regenerateKeysEnabled.entity")
     @WithElementId
     EntityModelCheckBoxEditor regenerateKeysEnabledEditor;
 
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "timeZoneEnabled.entity")
     @WithElementId
     EntityModelCheckBoxEditor timeZoneEnabledEditor;
@@ -201,7 +206,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Ignore
     FlowPanel authenticationExpanderContent;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "cloudInitPasswordSet.entity")
     @WithElementId
     EntityModelCheckBoxEditor cloudInitPasswordSetEditor;
@@ -216,7 +221,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @WithElementId
     StringEntityModelPasswordBoxEditor cloudInitRootPasswordVerificationEditor;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "sysprepPasswordSet.entity")
     @WithElementId
     EntityModelCheckBoxEditor sysprepPasswordSetEditor;
@@ -259,10 +264,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField
     @Ignore
     Label networkSelectLabel;
-
-    @UiField
-    @Ignore
-    Label networkLabelSepSelectAdd;
 
     @UiField
     PushButton networkAddButton;
@@ -317,7 +318,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     @UiField
     @Ignore
-    FlowPanel networkOptions;
+    Row networkOptions;
 
     @UiField(provided = true)
     @Path(value = "ipv4BootProtocolList.selectedItem")
@@ -339,7 +340,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @WithElementId
     StringEntityModelTextBoxEditor networkGatewayEditor;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "networkStartOnBoot.entity")
     @WithElementId
     EntityModelCheckBoxEditor networkStartOnBootEditor;
@@ -399,7 +400,12 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     void initCheckBoxEditors() {
         networkEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        networkStartOnBootEditor = new EntityModelCheckBoxEditor(Align.LEFT);
+        networkStartOnBootEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        timeZoneEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloudInitPasswordSetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        regenerateKeysEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        windowsSyspreptimeZoneEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        sysprepPasswordSetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void initListBoxEditors() {
@@ -424,9 +430,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkListEditor = new ListModelListBoxEditor<>();
         networkNameEditor = new StringEntityModelTextBoxEditor();
         networkComboBox = new ComboBox<>(networkListEditor, networkNameEditor);
-
     }
-
 
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
@@ -441,10 +445,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         userLocaleEditor.setLabel(constants.userLocaleLabel());
         userNameEditor.setLabel(constants.cloudInitUserNameLabel());
         authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
-        cloudInitPasswordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
-        sysprepPasswordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
-        regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
-        timeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
         timeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
         windowsSyspreptimeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
         windowsSysprepTimeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
@@ -453,12 +453,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         sysprepAdminPasswordEditor.setLabel(constants.sysprepAdminPasswordLabel());
         sysprepAdminPasswordVerificationEditor.setLabel(constants.sysprepAdminPasswordVerificationLabel());
 
-        networkEnabledEditor.setLabel(constants.cloudInitNetworkLabel());
-
         String sep = "|"; //$NON-NLS-1$
         // sequence is: <select label> | [+] <add label> | [-] <remove label>
         networkSelectLabel.setText(constants.cloudInitNetworkSelectLabel());
-        networkLabelSepSelectAdd.setText(sep);
         networkAddLabel.setText(constants.cloudInitObjectAddLabel());
         networkLabelSepAddRemove.setText(sep);
         networkRemoveLabel.setText(constants.cloudInitObjectRemoveLabel());
@@ -467,7 +464,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkIpAddressEditor.setLabel(constants.cloudInitNetworkIpAddressLabel());
         networkNetmaskEditor.setLabel(constants.cloudInitNetworkNetmaskLabel());
         networkGatewayEditor.setLabel(constants.cloudInitNetworkGatewayLabel());
-        networkStartOnBootEditor.setLabel(constants.cloudInitNetworkStartOnBootLabel());
         dnsServers.setLabel(constants.cloudInitDnsServersLabel());
         dnsSearchDomains.setLabel(constants.cloudInitDnsSearchDomainsLabel());
 
@@ -529,7 +525,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         inputLocaleEditor.addStyleName(customizableStyle.primaryOption());
         uiLanguageEditor.addStyleName(customizableStyle.primaryOption());
-        sysprepScriptEditor.setContentWidgetContainerStyleName(customizableStyle.customScript());
         activeDirectoryOUEditor.addStyleName(customizableStyle.primaryOption());
         systemLocaleEditor.addStyleName(customizableStyle.primaryOption());
         userLocaleEditor.addStyleName(customizableStyle.primaryOption());
@@ -547,9 +542,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         cloudInitPasswordSetEditor.addStyleName(customizableStyle.primaryOption());
         sysprepPasswordSetEditor.addStyleName(customizableStyle.primaryOption());
         regenerateKeysEnabledEditor.addStyleName(customizableStyle.primaryOption());
-
-        customScriptEditor.setContentWidgetContainerStyleName(customizableStyle.customScript());
-
         authenticationExpanderContent.addStyleName(customizableStyle.expanderContent());
         customScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
         sysprepScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
@@ -558,12 +550,81 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkExpanderContent.addStyleName(customizableStyle.expanderContent());
     }
 
+    public void setUsePatternFly(boolean use) {
+        windowsHostnameEditorWithInfo.setUsePatternFly(use);
+        sysprepDomainEditor.setUsePatternFly(use);
+        sysprepOrgNameEditor.setUsePatternFly(use);
+        activeDirectoryOUEditor.setUsePatternFly(use);
+        windowsSyspreptimeZoneEnabledEditor.setUsePatternFly(use);
+        windowsSysprepTimeZoneEditor.setUsePatternFly(use);
+        sysprepPasswordSetEditor.setUsePatternFly(use);
+        sysprepAdminPasswordEditor.setUsePatternFly(use);
+        sysprepAdminPasswordVerificationEditor.setUsePatternFly(use);
+        inputLocaleEditor.setUsePatternFly(use);
+        uiLanguageEditor.setUsePatternFly(use);
+        systemLocaleEditor.setUsePatternFly(use);
+        userLocaleEditor.setUsePatternFly(use);
+        sysprepScriptEditor.setUsePatternFly(use);
+        hostnameEditor.setUsePatternFly(use);
+        timeZoneEnabledEditor.setUsePatternFly(use);
+        timeZoneEditor.setUsePatternFly(use);
+        userNameEditor.setUsePatternFly(use);
+        cloudInitPasswordSetEditor.setUsePatternFly(use);
+        cloudInitRootPasswordEditor.setUsePatternFly(use);
+        cloudInitRootPasswordVerificationEditor.setUsePatternFly(use);
+        authorizedKeysEditor.setUsePatternFly(use);
+        regenerateKeysEnabledEditor.setUsePatternFly(use);
+        dnsServers.setUsePatternFly(use);
+        dnsSearchDomains.setUsePatternFly(use);
+        networkEnabledEditor.setUsePatternFly(use);
+        networkStartOnBootEditor.setUsePatternFly(use);
+        if (use) {
+            authenticationExpanderContent.removeStyleName(customizableStyle.expanderContent());
+            customScriptExpanderContent.removeStyleName(customizableStyle.expanderContent());
+            sysprepScriptExpanderContent.removeStyleName(customizableStyle.expanderContent());
+            sysprepPasswordExpanderContent.removeStyleName(customizableStyle.expanderContent());
+            sysprepInputsExpanderContent.removeStyleName(customizableStyle.expanderContent());
+            networkExpanderContent.removeStyleName(customizableStyle.expanderContent());
+            windowsSyspreptimeZoneEnabledEditor.removeStyleName(customizableStyle.primaryOption());
+            sysprepDomainEditor.removeStyleName(customizableStyle.primaryOption());
+            ipv4BootProtocolEditor.removeStyleName(customizableStyle.primaryOption());
+            networkIpAddressEditor.removeStyleName(customizableStyle.primaryOption());
+            networkNetmaskEditor.removeStyleName(customizableStyle.primaryOption());
+            networkGatewayEditor.removeStyleName(customizableStyle.primaryOption());
+            networkStartOnBootEditor.removeStyleName(customizableStyle.primaryOption());
+
+            windowsSysprepTimeZoneEditor.removeStyleName(customizableStyle.primaryOption());
+            inputLocaleEditor.removeStyleName(customizableStyle.primaryOption());
+            uiLanguageEditor.removeStyleName(customizableStyle.primaryOption());
+            activeDirectoryOUEditor.removeStyleName(customizableStyle.primaryOption());
+            systemLocaleEditor.removeStyleName(customizableStyle.primaryOption());
+            userLocaleEditor.removeStyleName(customizableStyle.primaryOption());
+            userNameEditor.removeStyleName(customizableStyle.primaryOption());
+            hostnameEditor.removeStyleName(customizableStyle.primaryOption());
+            windowsHostnameEditor.removeStyleName(customizableStyle.primaryOption());
+            sysprepOrgNameEditor.removeStyleName(customizableStyle.primaryOption());
+            timeZoneEnabledEditor.removeStyleName(customizableStyle.primaryOption());
+            timeZoneEditor.removeStyleName(customizableStyle.primaryOption());
+            cloudInitRootPasswordEditor.removeStyleName(customizableStyle.primaryOption());
+            cloudInitRootPasswordVerificationEditor.removeStyleName(customizableStyle.primaryOption());
+            sysprepAdminPasswordEditor.removeStyleName(customizableStyle.primaryOption());
+            sysprepAdminPasswordVerificationEditor.removeStyleName(customizableStyle.primaryOption());
+            authorizedKeysEditor.removeStyleName(customizableStyle.primaryOption());
+            cloudInitPasswordSetEditor.removeStyleName(customizableStyle.primaryOption());
+            sysprepPasswordSetEditor.removeStyleName(customizableStyle.primaryOption());
+            regenerateKeysEnabledEditor.removeStyleName(customizableStyle.primaryOption());
+            networkComboBox.removeStyleName(style.primaryOptionComboBox());
+            networkSelectLabel.addStyleName(Styles.FORM_GROUP);
+        } else {
+            sysprepScriptEditor.setContentWidgetContainerStyleName(customizableStyle.customScript());
+        }
+    }
+
     /* Controls style for network options based on network selection */
     private void setNetworkDetailsStyle(boolean enabled) {
         networkNameEditor.setEnabled(enabled);
         networkListEditor.setEnabled(enabled);
         setLabelEnabled(networkSelectLabel, enabled);
-        setLabelEnabled(networkLabelSepSelectAdd, enabled);
         setLabelEnabled(networkLabelSepAddRemove, enabled);
         setLabelEnabled(networkRemoveLabel, enabled);
         networkRemoveButton.setEnabled(enabled);

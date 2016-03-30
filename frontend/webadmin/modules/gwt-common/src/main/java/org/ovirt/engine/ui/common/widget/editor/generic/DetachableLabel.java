@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
@@ -40,6 +42,17 @@ public class DetachableLabel extends BaseEntityModelDetachableWidget {
 
     public void setLabelStyleName(String labelStyleName) {
         decorated.setStyleName(labelStyleName);
+    }
+
+    @Override
+    public void setLabelColSize(ColumnSize size) {
+    }
+
+    public void setWidgetColSize(ColumnSize size) {
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
     }
 
 }

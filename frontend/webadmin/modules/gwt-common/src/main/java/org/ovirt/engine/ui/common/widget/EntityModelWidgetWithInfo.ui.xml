@@ -3,10 +3,9 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
-    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
-    <ui:style>
+    <ui:style type="org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo.Style">
         .floatLeft {
             float: left;
         }
@@ -16,22 +15,17 @@
             margin-left: 5px;
         }
 
-        .container {
-            width: 100%;
-        }
-
         .floatRight {
             float: right;
         }
     </ui:style>
 
-    <b:Container addStyleNames="{style.container}">
-        <b:Row>
-            <b:Column size="LG12" ui:field="contentColumn">
-                <l:EnableableFormLabel ui:field="label" addStyleNames="{style.floatLeft}" />
-                <d:InfoIcon ui:field="infoIcon" addStyleNames="{style.infoIcon}" />
-            </b:Column>
-        </b:Row>
-    </b:Container>
+    <g:FlowPanel ui:field="container">
+      <g:FlowPanel ui:field="labelPanel">
+        <l:EnableableFormLabel ui:field="label" addStyleNames="{style.floatLeft}" />
+        <d:InfoIcon ui:field="infoIcon" addStyleNames="{style.infoIcon}" />
+      </g:FlowPanel>
+      <g:FlowPanel ui:field="contentWidgetContainer" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

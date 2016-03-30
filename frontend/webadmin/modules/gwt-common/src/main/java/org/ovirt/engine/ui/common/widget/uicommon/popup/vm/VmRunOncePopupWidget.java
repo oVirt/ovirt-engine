@@ -49,10 +49,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceModel> {
@@ -60,7 +60,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     interface Driver extends SimpleBeanEditorDriver<RunOnceModel, VmRunOncePopupWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, VmRunOncePopupWidget> {
+    interface ViewUiBinder extends UiBinder<ScrollPanel, VmRunOncePopupWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

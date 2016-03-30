@@ -6,7 +6,7 @@ import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetCon
 import java.text.ParseException;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ToStringEntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
@@ -43,7 +43,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     @Override
     protected void createNumOfDesktopEditors() {
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor();
-        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor<>(
+        increaseNumOfVmsEditor = new EntityModelTextBoxEditor<>(
                 new ToStringEntityModelRenderer<Integer>(), new Parser<Integer>() {
 
             @Override
@@ -65,10 +65,10 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 update(spiceProxyOverrideEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 putOne(isStatelessEditor, hiddenField()).
                 putOne(isRunAndPauseEditor, hiddenField()).
-                putOne(editPoolEditVmsPanel, hiddenField()).
-                putOne(editPoolIncraseNumOfVmsPanel, hiddenField()).
-                putOne(logicalNetworksEditorPanel, hiddenField()).
-                putOne(editPoolEditMaxAssignedVmsPerUserPanel, hiddenField()).
+                putOne(editPoolEditVmsRow, hiddenField()).
+                putOne(editPoolIncreaseNumOfVmsRow, hiddenField()).
+                putOne(logicalNetworksEditorRow, hiddenField()).
+                putOne(editPoolEditMaxAssignedVmsPerUserRow, hiddenField()).
                 putOne(baseTemplateEditor, hiddenField()).
                 update(templateVersionNameEditor, hiddenField()).
                 putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly());

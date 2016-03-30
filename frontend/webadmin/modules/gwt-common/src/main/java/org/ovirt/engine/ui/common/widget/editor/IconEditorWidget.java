@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -42,7 +43,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.UIObject;
@@ -61,7 +61,6 @@ public class IconEditorWidget extends AbstractValidatedWidget
     }
 
     protected interface Style extends CssResource {
-        String grey();
         String iconImageDisabled();
     }
 
@@ -84,7 +83,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
     protected Button defaultButton;
 
     @UiField
-    protected HTML errorMessageHtml;
+    protected Alert errorMessage;
 
     protected final CommonApplicationTemplates templates;
 
@@ -269,19 +268,18 @@ public class IconEditorWidget extends AbstractValidatedWidget
 
     private void updateErrorIconLabel(List<String> reasons) {
         if (reasons.isEmpty()) {
-            errorMessageHtml.setHTML(SafeHtmlUtils.EMPTY_SAFE_HTML);
+            errorMessage.setText(SafeHtmlUtils.EMPTY_SAFE_HTML.asString());
         } else {
-            final SafeHtml htmlReasons = toUnorderedList(reasons);
-            errorMessageHtml.setHTML(htmlReasons);
+            final SafeHtml htmlReasons = toList(reasons);
+            errorMessage.setText(htmlReasons.asString());
+            errorMessage.setVisible(true);
         }
     }
 
-    private SafeHtml toUnorderedList(List<String> stringItems) {
+    private SafeHtml toList(List<String> stringItems) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        for (String stringItem : stringItems) {
-            builder.append(templates.listItem(stringItem));
-        }
-        return templates.unorderedList(builder.toSafeHtml());
+        builder.appendEscaped(stringItems.get(0));
+        return builder.toSafeHtml();
     }
 
     native void readUploadedIconFile(Element inputFileElement) /*-{
@@ -314,6 +312,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
     @Override
     public void markAsValid() {
         super.markAsValid();
+        errorMessage.setVisible(false);
         getValidatedWidgetStyle().setBorderColor("transparent"); //$NON-NLS-1$
     }
 
@@ -321,6 +320,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
     public void markAsInvalid(List<String> validationHints) {
         super.markAsInvalid(validationHints);
         updateErrorIconLabel(validationHints);
+        errorMessage.setVisible(true);
     }
 
     @Override
@@ -370,8 +370,6 @@ public class IconEditorWidget extends AbstractValidatedWidget
         uploadButton.setTitle(hint);
         defaultButton.setEnabled(enabled);
         defaultButton.setTitle(hint);
-        ensureStyleNamePresent(errorMessageHtml, !enabled, style.grey());
-        errorMessageHtml.setTitle(hint);
         ensureStyleNamePresent(image, !enabled, style.iconImageDisabled());
         image.setTitle(hint);
     }

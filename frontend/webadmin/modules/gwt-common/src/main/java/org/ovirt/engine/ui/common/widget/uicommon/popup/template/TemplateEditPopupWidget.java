@@ -32,7 +32,7 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         PopupWidgetConfigMap popupWidgetConfigMap = super.createWidgetConfiguration().
                 update(foremanTab, hiddenField()).
-                putOne(logicalNetworksEditorPanel, hiddenField()).
+                putOne(logicalNetworksEditorRow, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(detachableInstanceTypesEditor, hiddenField()).
                 putOne(templateWithVersionEditor, hiddenField()).
@@ -42,7 +42,7 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
             popupWidgetConfigMap = popupWidgetConfigMap.
                 putOne(dataCenterWithClusterEditor, hiddenField()).
                 putOne(startRunningOnPanel, hiddenField()).
-                putOne(attachCdPanel, hiddenField());
+                putOne(attachCdRow, hiddenField());
         }
 
         return popupWidgetConfigMap;
@@ -50,7 +50,7 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
 
     protected List<Widget> resourceAllocationTemplateHiddenFields() {
         return Arrays.<Widget> asList(
-                cpuPinningPanel,
+                cpuPinningRow,
                 storageAllocationPanel,
                 disksAllocationPanel);
     }
