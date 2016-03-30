@@ -22,12 +22,14 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferUpdates;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveImageTicketVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SetVolumeLegalityVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -55,6 +57,8 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     private static final String TOKEN_ISSUED_AT = "iat";
     private static final String TOKEN_IMAGED_HOST_URI = "imaged-uri";
     private static final String TOKEN_TRANSFER_TICKET = "transfer-ticket";
+    private static final boolean LEGAL_IMAGE = true;
+    private static final boolean ILLEGAL_IMAGE = false;
 
     // Container for context needed by state machine handlers
     class StateContext {
@@ -250,6 +254,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     private void handleFinalizingSuccess(final StateContext context) {
         log.info("Finalizing successful upload to {}", getUploadDescription());
         stopImageTransferSession(context.entity);
+        setVolumeLegalityInStorage(LEGAL_IMAGE);
         unLockImage();
         updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
     }
@@ -348,6 +353,10 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
             return false;
         }
 
+        if (!setVolumeLegalityInStorage(ILLEGAL_IMAGE)) {
+            return false;
+        }
+
         AddImageTicketVDSCommandParameters
                 transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
                         imagedTicketId, operations, timeout, getParameters().getUploadSize(), imagePath);
@@ -377,6 +386,23 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         updateEntity(updates);
 
         setNewSessionExpiration(timeout);
+        return true;
+    }
+
+    private boolean setVolumeLegalityInStorage(boolean legal) {
+        SetVolumeLegalityVDSCommandParameters parameters =
+                new SetVolumeLegalityVDSCommandParameters(getStoragePool().getId(),
+                        getStorageDomainId(),
+                        getImage().getImage().getDiskId(),
+                        getImage().getImageId(),
+                        legal);
+        try {
+            runVdsCommand(VDSCommandType.SetVolumeLegality, parameters);
+        } catch (EngineException e) {
+            log.error("Failed to set image's volume's legality to {} for image {} and volume {}: {}",
+                    legal, getImage().getImage().getDiskId(), getImage().getImageId(), e);
+            return false;
+        }
         return true;
     }
 
