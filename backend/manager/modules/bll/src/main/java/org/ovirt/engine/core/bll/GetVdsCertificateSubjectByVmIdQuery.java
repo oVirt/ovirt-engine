@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -21,9 +21,9 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> e
             if (vm != null) {
                 Guid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
-                    returnValue =
-                            runInternalQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                                    new IdQueryParameters(vdsId));
+                    VDS vds = getDbFacade().getVdsDao().get(vdsId);
+                    returnValue = new VdcQueryReturnValue();
+                    returnValue.setReturnValue(vds.getCertificateSubject());
                 }
             }
         }

@@ -27,7 +27,6 @@ public class BackendHostsResourceTest
         extends AbstractBackendCollectionResourceTest<Host, VDS, BackendHostsResource> {
 
     protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
-    public static final String CERTIFICATE_SUBJECT = "O=ORG,CN=HOSTNAME";
     protected static final VDSStatus[] VDS_STATUS = { VDSStatus.Up, VDSStatus.Down, VDSStatus.Up };
     protected static final HostStatus[] HOST_STATUS = { HostStatus.UP, HostStatus.DOWN,
             HostStatus.UP };
@@ -41,7 +40,6 @@ public class BackendHostsResourceTest
     @Override
     public void testQuery() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(QUERY);
-        setUpGetCertificateInfo(NAMES.length);
         setUpQueryExpectations(QUERY);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -52,7 +50,6 @@ public class BackendHostsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetCertificateInfo(NAMES.length);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -63,7 +60,6 @@ public class BackendHostsResourceTest
         try {
             accepts.add("application/xml; detail=statistics");
             UriInfo uriInfo = setUpUriExpectations(null);
-            setUpGetCertificateInfo(NAMES.length);
             setUpQueryExpectations("");
             collection.setUriInfo(uriInfo);
             List<Host> hosts = getCollection();
@@ -84,7 +80,6 @@ public class BackendHostsResourceTest
                 new Object[] { "Default" },
                 setUpCluster(GUIDS[1]));
 
-        setUpGetCertificateInfo();
         setUpCreationExpectations(VdcActionType.AddVds,
                                   AddVdsActionParameters.class,
                                   new String[] { "RootPassword" },
@@ -116,7 +111,6 @@ public class BackendHostsResourceTest
                 new Object[] { NAMES[1] },
                 setUpCluster(GUIDS[1]));
 
-        setUpGetCertificateInfo();
         setUpCreationExpectations(VdcActionType.AddVds,
                                   AddVdsActionParameters.class,
                                   new String[] { "RootPassword" },
@@ -143,7 +137,6 @@ public class BackendHostsResourceTest
     @Test
     public void testAddHostClusterById() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetCertificateInfo();
         setUpCreationExpectations(VdcActionType.AddVds,
                                   AddVdsActionParameters.class,
                                   new String[] { "RootPassword" },
@@ -280,21 +273,5 @@ public class BackendHostsResourceTest
         assertEquals(NAMES[index], model.getName());
         assertEquals(ADDRESSES[index], model.getAddress());
         assertEquals(HOST_STATUS[index].value(), model.getStatus().getState());
-        assertNotNull(model.getCertificate());
-        assertEquals(model.getCertificate().getSubject(), CERTIFICATE_SUBJECT);
-    }
-
-    protected void setUpGetCertificateInfo(int times) throws Exception {
-        for (int i=0;i < times;i++){
-            setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[i] },
-                    BackendHostsResourceTest.CERTIFICATE_SUBJECT);
-        }
-    }
-
-    private void setUpGetCertificateInfo() throws Exception {
-        setUpGetCertificateInfo(1);
     }
 }

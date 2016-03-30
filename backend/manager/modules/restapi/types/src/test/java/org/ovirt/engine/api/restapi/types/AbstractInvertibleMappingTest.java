@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 
 /**
@@ -45,6 +46,7 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
     @Test
     public void testRoundtrip() throws Exception {
         setUpConfigExpectations();
+        mcr.mockConfigValue(ConfigValues.OrganizationName, "oVirt");
 
         F model = fromClass.cast(populate(fromClass));
         model = postPopulate(model);

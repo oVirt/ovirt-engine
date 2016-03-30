@@ -43,6 +43,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     private ServerCpu cpuName;
     private Integer vdsSpmId;
     private float maxSchedulingMemory;
+    private String certificateSubject;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -1435,4 +1436,11 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         return result;
     }
 
+    public String getCertificateSubject() {
+        return vdsStatic.getCertificateSubject();
+    }
+
+    public void setCertificateSubject(String certificateSubject) {
+        vdsStatic.setCertificateSubject(certificateSubject);
+    }
 }

@@ -742,9 +742,6 @@ public class BackendHostResourceTest
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }
-        if (!notFound) {
-            setUpGetCertificateInfo();
-        }
     }
 
     private void setUpGetEntityWithNoCertificateInfoExpectations(int times) throws Exception {
@@ -759,14 +756,6 @@ public class BackendHostResourceTest
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }
-    }
-
-    protected void setUpGetCertificateInfo() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                BackendHostsResourceTest.CERTIFICATE_SUBJECT);
     }
 
     private void verifyActionResponse(Response r) throws Exception {

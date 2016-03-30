@@ -356,6 +356,9 @@
 
         <include name="common/utils/pm/PowerManagementUtils.java"/>
 
+
+        <include name="common/utils/CertificateSubjectHelper.java"/>
+
         <!-- Host-deploy -->
         <include name="common/action/hostdeploy/*.java"/>
         <include name="common/queries/hostdeploy/*.java"/>

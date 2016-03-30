@@ -132,20 +132,8 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
                 new String[] { "Id", "Filtered" },
                 new Object[] { GUIDS[0], filter },
                 getEntity(0));
-
-        if (getCertInfo) {
-            setUpGetCertificateInfo();
-        }
     }
 
-
-    protected void setUpGetCertificateInfo() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                BackendHostsResourceTest.CERTIFICATE_SUBJECT);
-    }
 
 
     protected VDS getEntity(int index) {

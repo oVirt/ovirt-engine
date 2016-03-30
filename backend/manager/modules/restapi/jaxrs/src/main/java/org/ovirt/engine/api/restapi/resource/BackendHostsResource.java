@@ -5,7 +5,6 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.Hosts;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
@@ -108,7 +106,6 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (details.contains("statistics")) {
             addStatistics(model, entity);
         }
-        addCertificateInfo(model);
         return model;
     }
 
@@ -128,28 +125,6 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
             collection.getHosts().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
-    }
-
-    //TODO: REVISIT when backend expose CertificateSubject in vds
-    public Host addCertificateInfo(Host host) {
-        VdcQueryReturnValue result =
-            runQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                    new IdQueryParameters(asGuid(host.getId())));
-
-        if (result != null
-            && result.getSucceeded()
-            && result.getReturnValue() != null) {
-            String subject = result.getReturnValue().toString();
-            if (subject != null){
-                host.setCertificate(new Certificate());
-                host.getCertificate().setSubject(subject);
-                host.getCertificate().setOrganization(subject.split(",")[0].replace("O=", ""));
-            }
-        }
-        else {
-            log.error("Could not fetch certificate info for host '{}'", host.getId());
-        }
-        return host;
     }
 
     private Hosts mapGlusterOnlyCollection(List<VDS> entities) {

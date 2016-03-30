@@ -12,6 +12,7 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.AutoNumaStatus;
+import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CpuTopology;
@@ -113,6 +114,9 @@ public class HostMapper {
         if (model.isSetExternalHostProvider()) {
             String providerId = model.getExternalHostProvider().getId();
             entity.setHostProviderId(providerId == null ? null : GuidUtils.asGuid(providerId));
+        }
+        if (model.isSetCertificate()) {
+            entity.setCertificateSubject(model.getCertificate().getSubject());
         }
         return entity;
     }
@@ -310,6 +314,13 @@ public class HostMapper {
             model.setDevicePassthrough(devicePassthrough);
         }
         devicePassthrough.setEnabled(entity.isHostDevicePassthroughEnabled());
+
+        if(entity.getCertificateSubject() != null) {
+            String subject = entity.getCertificateSubject();
+            model.setCertificate(new Certificate());
+            model.getCertificate().setSubject(subject);
+            model.getCertificate().setOrganization(subject.split(",")[0].replace("O=", ""));
+        }
 
         return model;
     }

@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
+import org.ovirt.engine.core.common.utils.CertificateSubjectHelper;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -22,6 +23,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private static final int HOST_DEFAULT_SPM_PRIORITY = 5;
     private static final int DEFAULT_SSH_PORT = 22;
     private static final String DEFAULT_SSH_USERNAME = "root";
+
 
     private Guid id;
 
@@ -111,6 +113,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableField
     private Guid hostProviderId;
+
+    private String certificateSubject;
 
     public boolean isAutoRecoverable() {
         return autoRecoverable;
@@ -332,6 +336,17 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public Guid getHostProviderId () {
         return hostProviderId;
+    }
+
+    public String getCertificateSubject() {
+        if (certificateSubject == null && getHostName() != null) {
+            setCertificateSubject(CertificateSubjectHelper.getCertificateSubject(getHostName()));
+        }
+        return certificateSubject;
+    }
+
+    public void setCertificateSubject(String certificateSubject) {
+        this.certificateSubject = certificateSubject;
     }
 
     @Override
