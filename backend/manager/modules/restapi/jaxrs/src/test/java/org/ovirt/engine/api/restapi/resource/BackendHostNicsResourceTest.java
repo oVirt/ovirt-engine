@@ -12,9 +12,11 @@ import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.restapi.types.Ipv4BootProtocolMapper;
+import org.ovirt.engine.api.restapi.types.Ipv6BootProtocolMapper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -27,7 +29,8 @@ public class BackendHostNicsResourceTest
     public static final Guid PARENT_GUID = GUIDS[0];
     public static final Guid NETWORK_GUID = new Guid("33333333-3333-3333-3333-333333333333");
     public static final String NETWORK_NAME = "skynet";
-    public static final Ipv4BootProtocol BOOT_PROTOCOL = Ipv4BootProtocol.STATIC_IP;
+    public static final Ipv4BootProtocol IPV4_BOOT_PROTOCOL = Ipv4BootProtocol.STATIC_IP;
+    public static final Ipv6BootProtocol IPV6_BOOT_PROTOCOL = Ipv6BootProtocol.AUTOCONF;
     public static final Guid MASTER_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     public static final String MASTER_NAME = "master";
     private static final Guid SLAVE_GUID = new Guid("66666666-6666-6666-6666-666666666666");
@@ -139,7 +142,8 @@ public class BackendHostNicsResourceTest
         entity.setSpeed(NIC_SPEED);
         entity = setUpStatistics(entity, GUIDS[index]);
         entity.getStatistics().setStatus(NIC_STATUS);
-        entity.setIpv4BootProtocol(BOOT_PROTOCOL);
+        entity.setIpv4BootProtocol(IPV4_BOOT_PROTOCOL);
+        entity.setIpv6BootProtocol(IPV6_BOOT_PROTOCOL);
         return entity;
     }
 
@@ -150,7 +154,8 @@ public class BackendHostNicsResourceTest
         entity.setNetworkName(NETWORK_NAME);
         entity.setSpeed(NIC_SPEED);
         entity.setBonded(true);
-        entity.setIpv4BootProtocol(BOOT_PROTOCOL);
+        entity.setIpv4BootProtocol(IPV4_BOOT_PROTOCOL);
+        entity.setIpv6BootProtocol(IPV6_BOOT_PROTOCOL);
         return setUpStatistics(entity, MASTER_GUID);
     }
 
@@ -161,7 +166,8 @@ public class BackendHostNicsResourceTest
         entity.setNetworkName(NETWORK_NAME);
         entity.setSpeed(NIC_SPEED);
         entity.setBondName(MASTER_NAME);
-        entity.setIpv4BootProtocol(BOOT_PROTOCOL);
+        entity.setIpv4BootProtocol(IPV4_BOOT_PROTOCOL);
+        entity.setIpv6BootProtocol(IPV6_BOOT_PROTOCOL);
         return setUpStatistics(entity, SLAVE_GUID);
     }
 
@@ -202,7 +208,8 @@ public class BackendHostNicsResourceTest
         assertEquals(calcSpeed(NIC_SPEED), model.getSpeed());
         assertNotNull(model.getStatus());
         assertEquals(map(NIC_STATUS, null).value(), model.getStatus().getState());
-        assertEquals(map(BOOT_PROTOCOL), model.getBootProtocol());
+        assertEquals(map(IPV4_BOOT_PROTOCOL), model.getBootProtocol());
+        assertEquals(map(IPV6_BOOT_PROTOCOL), model.getIpv6BootProtocol());
     }
 
     private Long calcSpeed(Integer nicSpeed) {
@@ -218,6 +225,10 @@ public class BackendHostNicsResourceTest
 
     protected BootProtocol map(Ipv4BootProtocol ipv4BootProtocol) {
         return Ipv4BootProtocolMapper.map(ipv4BootProtocol);
+    }
+
+    protected BootProtocol map(Ipv6BootProtocol ipv6BootProtocol) {
+        return Ipv6BootProtocolMapper.map(ipv6BootProtocol);
     }
 
     protected void verifyMaster(HostNic model) {

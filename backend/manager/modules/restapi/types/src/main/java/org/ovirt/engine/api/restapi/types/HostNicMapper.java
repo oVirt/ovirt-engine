@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.HostNicVirtualFunctionsConfiguration;
 import org.ovirt.engine.api.model.Ip;
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.Mac;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
@@ -61,17 +63,8 @@ public class HostNicMapper {
         if (model.isSetBaseInterface()) {
             entity.setBaseInterface(model.getBaseInterface());
         }
-        if (model.isSetIp()) {
-            if (model.getIp().isSetAddress()) {
-                entity.setIpv4Address(model.getIp().getAddress());
-            }
-            if (model.getIp().isSetGateway()) {
-                entity.setIpv4Gateway(model.getIp().getGateway());
-            }
-            if (model.getIp().isSetNetmask()) {
-                entity.setIpv4Subnet(model.getIp().getNetmask());
-            }
-        }
+        mapIpv4FromModel(model, entity);
+        mapIpv6FromModel(model, entity);
         if (model.isSetMac() && model.getMac().isSetAddress()) {
             entity.setMacAddress(model.getMac().getAddress());
         }
@@ -88,17 +81,55 @@ public class HostNicMapper {
                 entity.setBondOptions(optionsString);
             }
         }
-        if(model.isSetBootProtocol()){
-            Ipv4BootProtocol ipv4BootProtocol = Ipv4BootProtocolMapper.map(model.getBootProtocol());
-            if(ipv4BootProtocol != null){
-                entity.setIpv4BootProtocol(ipv4BootProtocol);
-            }
-        }
 
         if (model.isSetQos()) {
             entity.setQos((HostNetworkQos) QosMapper.map(model.getQos(), null));
         }
         return entity;
+    }
+
+    private static void mapIpv4FromModel(HostNic model, VdsNetworkInterface entity) {
+        if (model.isSetIp()) {
+            if (model.getIp().isSetAddress()) {
+                entity.setIpv4Address(model.getIp().getAddress());
+            }
+            if (model.getIp().isSetGateway()) {
+                entity.setIpv4Gateway(model.getIp().getGateway());
+            }
+            if (model.getIp().isSetNetmask()) {
+                entity.setIpv4Subnet(model.getIp().getNetmask());
+            }
+        }
+        if (model.isSetBootProtocol()) {
+            Ipv4BootProtocol ipv4BootProtocol = Ipv4BootProtocolMapper.map(model.getBootProtocol());
+            if (ipv4BootProtocol != null) {
+                entity.setIpv4BootProtocol(ipv4BootProtocol);
+            }
+        }
+    }
+
+    private static void mapIpv6FromModel(HostNic model, VdsNetworkInterface entity) {
+        if (model.isSetIpv6()) {
+            if (model.getIpv6().isSetAddress()) {
+                entity.setIpv6Address(model.getIpv6().getAddress());
+            }
+            if (model.getIpv6().isSetGateway()) {
+                entity.setIpv6Gateway(model.getIpv6().getGateway());
+            }
+            if (model.getIpv6().isSetNetmask()) {
+                try {
+                    final Integer ipv6Prefix = Integer.valueOf(model.getIpv6().getNetmask());
+                    entity.setIpv6Prefix(ipv6Prefix);
+                } catch (NumberFormatException ignore) {
+                }
+            }
+        }
+        if (model.isSetIpv6BootProtocol()) {
+            Ipv6BootProtocol ipv6BootProtocol = Ipv6BootProtocolMapper.map(model.getIpv6BootProtocol());
+            if (ipv6BootProtocol != null) {
+                entity.setIpv6BootProtocol(ipv6BootProtocol);
+            }
+        }
     }
 
     @Mapping(from = HostNic.class, to = Bond.class)
@@ -180,18 +211,10 @@ public class HostNicMapper {
             model.setVlan(new org.ovirt.engine.api.model.Vlan());
             model.getVlan().setId(entity.getVlanId());
         }
-        if (entity.getIpv4Address() != null || entity.getIpv4Gateway() != null || entity.getIpv4Subnet() != null) {
-            model.setIp(new Ip());
-            if (entity.getIpv4Address() != null) {
-                model.getIp().setAddress(entity.getIpv4Address());
-            }
-            if (entity.getIpv4Gateway() != null) {
-                model.getIp().setGateway(entity.getIpv4Gateway());
-            }
-            if (entity.getIpv4Subnet() != null) {
-                model.getIp().setNetmask(entity.getIpv4Subnet());
-            }
-        }
+
+        mapIpv4ToModel(entity, model);
+        mapIpv6ToModel(entity, model);
+
         if (entity.getMacAddress() != null) {
             model.setMac(new Mac());
             model.getMac().setAddress(entity.getMacAddress());
@@ -222,10 +245,6 @@ public class HostNicMapper {
             }
         }
 
-        BootProtocol bootProtocol = Ipv4BootProtocolMapper.map(entity.getIpv4BootProtocol());
-        if(bootProtocol!=null){
-            model.setBootProtocol(bootProtocol);
-        }
         model.setMtu(entity.getMtu());
         model.setBridged(entity.isBridged());
         if (entity.getNetworkImplementationDetails() != null) {
@@ -238,6 +257,50 @@ public class HostNicMapper {
         }
 
         return model;
+    }
+
+    private static void mapIpv4ToModel(VdsNetworkInterface entity, HostNic model) {
+        BootProtocol ipv4BootProtocol = Ipv4BootProtocolMapper.map(entity.getIpv4BootProtocol());
+        if(ipv4BootProtocol!=null){
+            model.setBootProtocol(ipv4BootProtocol);
+        }
+
+        if (entity.getIpv4Address() != null || entity.getIpv4Gateway() != null || entity.getIpv4Subnet() != null) {
+            final Ip ipv4 = new Ip();
+            ipv4.setVersion(IpVersion.V4);
+            if (entity.getIpv4Address() != null) {
+                ipv4.setAddress(entity.getIpv4Address());
+            }
+            if (entity.getIpv4Gateway() != null) {
+                ipv4.setGateway(entity.getIpv4Gateway());
+            }
+            if (entity.getIpv4Subnet() != null) {
+                ipv4.setNetmask(entity.getIpv4Subnet());
+            }
+            model.setIp(ipv4);
+        }
+    }
+
+    private static void mapIpv6ToModel(VdsNetworkInterface entity, HostNic model) {
+        BootProtocol ipv6BootProtocol = Ipv6BootProtocolMapper.map(entity.getIpv6BootProtocol());
+        if(ipv6BootProtocol!=null){
+            model.setIpv6BootProtocol(ipv6BootProtocol);
+        }
+
+        if (entity.getIpv6Address() != null || entity.getIpv6Gateway() != null || entity.getIpv6Prefix() != null) {
+            final Ip ipv6 = new Ip();
+            ipv6.setVersion(IpVersion.V6);
+            if (entity.getIpv6Address() != null) {
+                ipv6.setAddress(entity.getIpv6Address());
+            }
+            if (entity.getIpv6Gateway() != null) {
+                ipv6.setGateway(entity.getIpv6Gateway());
+            }
+            if (entity.getIpv6Prefix() != null) {
+                ipv6.setNetmask(entity.getIpv6Prefix().toString());
+            }
+            model.setIpv6(ipv6);
+        }
     }
 
     private static String getType(final String[] optionPair) {
