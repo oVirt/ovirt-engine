@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
@@ -54,7 +53,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         // Check if disk has no snapshots before detaching it.
-        if (DiskStorageType.IMAGE == disk.getDiskStorageType() || DiskStorageType.CINDER == disk.getDiskStorageType()) {
+        if (disk.getDiskStorageType().isInternal()) {
             // A "regular" disk cannot be detached if it's part of the vm snapshots
             // when a disk snapshot is being detached, it will always be part of snapshots - but of it's "original" vm,
             // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
