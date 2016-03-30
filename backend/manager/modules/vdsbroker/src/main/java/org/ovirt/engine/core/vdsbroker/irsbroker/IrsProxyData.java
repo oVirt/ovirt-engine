@@ -441,7 +441,7 @@ public class IrsProxyData {
                 data.setStoragePoolId(_storagePoolId);
                 DbFacade.getInstance().getStoragePoolIsoMapDao().save(data.getStoragePoolIsoMapData());
                 statusChanged = true;
-            } else if (domainPoolMap.getStatus() != StorageDomainStatus.Locked
+            } else if (!domainPoolMap.getStatus().isStorageDomainInProcess()
                     && domainPoolMap.getStatus() != data.getStatus()) {
                 if (domainPoolMap.getStatus() != StorageDomainStatus.Inactive
                         && data.getStatus() != StorageDomainStatus.Inactive) {
