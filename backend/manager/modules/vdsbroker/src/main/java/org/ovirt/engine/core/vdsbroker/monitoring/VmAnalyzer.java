@@ -156,7 +156,7 @@ public class VmAnalyzer {
      * TODO consider throwing a checked exception or catching one inside
      */
     protected void analyze() {
-        if (vdsmVm == null) {
+        if (isVmStoppedBeingReported()) {
             removeVmFromCache();
             return;
         }
@@ -174,10 +174,24 @@ public class VmAnalyzer {
         prepareGuestAgentNetworkDevicesForUpdate();
     }
 
+    private boolean isVmStoppedBeingReported() {
+        if (vdsmVm == null) {
+            logVmDisappeared();
+            return true;
+        }
+        return false;
+    }
+
     private boolean isExternalOrUnmanagedHostedEngineVm() {
-        boolean externalVm = dbVm == null && vmStaticDao.get(vdsmVm.getVmDynamic().getId()) == null;
-        boolean hostedEngineUnmanaged = dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE;
-        return externalVm || hostedEngineUnmanaged;
+        if (dbVm == null && vmStaticDao.get(vdsmVm.getVmDynamic().getId()) == null) {
+            logExternalVmDiscovery();
+            return true;
+        }
+        if (dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
+            logUnmanagedHostedEngineDiscovery();
+            return true;
+        }
+        return false;
     }
 
     private void processUnmanagedVm() {
@@ -235,7 +249,8 @@ public class VmAnalyzer {
             // Vm failed to run - try to rerun it on other Vds
             if (cacheVm != null) {
                 if (resourceManager.isVmInAsyncRunningList(vmDynamic.getId())) {
-                    log.info("Running on vds during rerun failed vm: '{}'", vmDynamic.getRunOnVds());
+                    log.info("Running on VDS '{}' during rerun failed VM: '{}'({})",
+                            vmDynamic.getRunOnVds(), cacheVm.getId(), cacheVm.getName());
                     rerun = true;
                 } else if (cacheVm.isAutoStartup()) {
                     autoVmToRun = true;
@@ -353,10 +368,11 @@ public class VmAnalyzer {
                 VDSCommandType.DestroyVm,
                 new DestroyVmVDSCommandParameters(dbVm.getMigratingToVds(), dbVm.getId(), true, false, 0));
         if (destoryReturnValue.getSucceeded()) {
-            log.info("Stopped migrating VM: '{}' on VDS: '{}'", dbVm.getName(), dbVm.getMigratingToVds());
+            log.info("Stopped migrating VM: '{}'({}) on VDS: '{}'",
+                    dbVm.getId(), dbVm.getName(), dbVm.getMigratingToVds());
         } else {
-            log.info("Could not stop migrating VM: '{}' on VDS: '{}', Error: '{}'", dbVm.getName(),
-                    dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
+            log.info("Could not stop migrating VM: '{}'({}) on VDS: '{}', Error: '{}'",
+                    dbVm.getId(), dbVm.getName(), dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
         }
     }
 
@@ -628,6 +644,27 @@ public class VmAnalyzer {
         }
     }
 
+    private void logExternalVmDiscovery() {
+        log.info("VM '{}' was discovered with status '{}' on VDS '{}'({})",
+                vdsmVm.getVmDynamic().getId(),
+                vdsmVm.getVmDynamic().getStatus().name(),
+                vdsManager.getVdsId(),
+                vdsManager.getVdsName());
+    }
+
+    private void logUnmanagedHostedEngineDiscovery() {
+        log.info("VM '{}' that is set as hosted-engine was discovered with status '{}' on VDS '{}'({})",
+                vdsmVm.getVmDynamic().getId(),
+                vdsmVm.getVmDynamic().getStatus().name(),
+                vdsManager.getVdsId(),
+                vdsManager.getVdsName());
+    }
+
+    private void logVmDisappeared() {
+        log.info("VM '{}'({}) is running in db and not running on VDS '{}'({})",
+                dbVm.getId(), dbVm.getName(), vdsManager.getVdsId(), vdsManager.getVdsName());
+    }
+
     // del from cache all vms that not in vdsm
     private void removeVmFromCache() {
         // marks the vm was powered down by user but not reported as Down afterwards by vdsm
@@ -648,12 +685,12 @@ public class VmAnalyzer {
                     VmExitReason.GenericError);
         }
 
-        log.info("VM '{}({}) is running in db and not running in VDS '{}'",
+        log.info("VM '{}'({}) is running in db and not running in VDS '{}'",
                 dbVm.getId(), dbVm.getName(), vdsManager.getVdsName());
 
         if (!migrating && !rerun && resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
             rerun = true;
-            log.info("add VM '{}' to rerun treatment", dbVm.getName());
+            log.info("add VM '{}'({}) to rerun treatment", dbVm.getId(), dbVm.getName());
         }
         // vm should be auto startup
         // not already in start up list
@@ -664,7 +701,7 @@ public class VmAnalyzer {
                 && (vdsmVm == null || vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal)
                 && !poweredDown) {
             autoVmToRun = true;
-            log.info("add VM '{}' to HA rerun treatment", dbVm.getName());
+            log.info("add VM '{}'({}) to HA rerun treatment", dbVm.getId(), dbVm.getName());
         } else if (getVmManager() != null && getVmManager().isColdReboot()) {
             setColdRebootFlag();
         }
@@ -683,8 +720,8 @@ public class VmAnalyzer {
         vmToRemove.setRunOnVds(destinationHostId);
 
         log.info("Handing over VM '{}'({}) to Host '{}'. Setting VM to status '{}'",
-                vmToRemove.getName(),
                 vmToRemove.getId(),
+                vmToRemove.getName(),
                 destinationHostId,
                 newVmStatus);
 
@@ -701,9 +738,8 @@ public class VmAnalyzer {
         if (runningVm.getStatus() == VMStatus.MigratingTo) {
             // in migration
             log.info(
-                    "RefreshVmList VM id '{}' is migrating to VDS '{}' ignoring it in the refresh until migration is done",
-                    runningVm.getId(),
-                    vdsManager.getVdsName());
+                    "RefreshVmList VM id '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
+                    runningVm.getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
             return true;
         }
 
@@ -713,10 +749,8 @@ public class VmAnalyzer {
             if (vmDynamic != null && vmDynamic.getRunOnVds() != null
                     && !vmDynamic.getRunOnVds().equals(vdsManager.getVdsId()) && runningVm.getStatus() != VMStatus.Up) {
                 log.info(
-                        "RefreshVmList VM id '{}' status = '{}' on VDS '{}' ignoring it in the refresh until migration is done",
-                        runningVm.getId(),
-                        runningVm.getStatus(),
-                        vdsManager.getVdsName());
+                        "RefreshVmList VM id '{}' status = '{}' on VDS '{}'({}) ignoring it in the refresh until migration is done",
+                        runningVm.getId(), runningVm.getStatus(), vdsManager.getVdsId(), vdsManager.getVdsName());
                 return true;
             }
         }
@@ -733,7 +767,7 @@ public class VmAnalyzer {
         if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom
                 && currentVmStatus.isRunning()) {
             rerun = true;
-            log.info("Adding VM '{}' to re-run list", runningVm.getId());
+            log.info("Adding VM '{}'({}) to re-run list", vmToUpdate.getId(), vmToUpdate.getName());
             vmToUpdate.setMigratingToVds(null);
             vmToUpdate.setMigrationProgressPercent(0);
             saveStatistics();
@@ -946,7 +980,7 @@ public class VmAnalyzer {
     private void setColdRebootFlag() {
         coldRebootVmToRun = true;
         getVmManager().setColdReboot(false);
-        log.info("add VM '{}' to cold reboot treatment", dbVm.getName());
+        log.info("add VM '{}'({}) to cold reboot treatment", dbVm.getId(), dbVm.getName());
     }
 
     public boolean isRerun() {
