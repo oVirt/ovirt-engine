@@ -554,6 +554,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Applications")
     String virtualMachineApplicationSubTabLabel();
 
+    @DefaultStringValue("Containers")
+    String virtualMachineContainerSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String virtualMachinePermissionSubTabLabel();
 

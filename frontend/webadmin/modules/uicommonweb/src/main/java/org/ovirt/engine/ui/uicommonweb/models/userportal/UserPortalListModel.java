@@ -77,6 +77,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -223,6 +224,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private final PoolGeneralModel poolGeneralModel;
     private final PoolDiskListModel poolDiskListModel;
     private final PoolInterfaceListModel poolInterfaceListModel;
+    private final VmGuestContainerListModel vmGuestContainerListModel;
 
     private VM privatetempVm;
 
@@ -255,7 +257,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             final UserPortalPermissionListModel userPortalPermissionListModel,
             final UserPortalVmEventListModel userPortalVmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PoolGeneralModel poolGeneralModel, final PoolDiskListModel poolDiskListModel,
-            final PoolInterfaceListModel poolInterfaceListModel) {
+            final PoolInterfaceListModel poolInterfaceListModel, VmGuestContainerListModel vmVmGuestContainerListModel) {
         this.vmGeneralModel = vmGeneralModel;
         this.vmGuestInfoModel = vmGuestInfoModel;
         this.vmSnapshotListModel = userPortalVmSnapshotListModel;
@@ -268,6 +270,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         this.poolGeneralModel = poolGeneralModel;
         this.poolDiskListModel = poolDiskListModel;
         this.poolInterfaceListModel = poolInterfaceListModel;
+        this.vmGuestContainerListModel = vmVmGuestContainerListModel;
         setDetailList();
 
         setApplicationPlace(UserPortalApplicationPlaces.extendedVirtualMachineSideTabPlace);
@@ -301,6 +304,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         vmEventListModel.setIsAvailable(true);
         vmAppListModel.setIsAvailable(true);
         vmGuestInfoModel.setIsAvailable(true);
+        vmGuestContainerListModel.setIsAvailable(true);
 
         List<HasEntity<? /* extends VmOrPool */>> list = new ArrayList<>();
         list.add(vmGeneralModel);
@@ -315,6 +319,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         list.add(vmAppListModel);
         list.add(vmMonitorModel);
         list.add(vmGuestInfoModel);
+        list.add(vmGuestContainerListModel);
 
         setDetailModels((List) list);
     }

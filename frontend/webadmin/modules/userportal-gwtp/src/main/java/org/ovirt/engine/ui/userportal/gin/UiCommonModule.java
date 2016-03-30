@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.gin;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -29,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
@@ -82,6 +84,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(new TypeLiteral<UserPortalPermissionListModel<UserPortalListModel>>(){}).in(Singleton.class);
         bind(UserPortalVmEventListModel.class).in(Singleton.class);
         bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
+        bind(VmGuestContainerListModel.class).in(Singleton.class);
         bind(VmMonitorModel.class).in(Singleton.class);
         bind(PoolInterfaceListModel.class).in(Singleton.class);
         bind(VmGuestInfoModel.class).in(Singleton.class);
@@ -121,6 +124,8 @@ public class UiCommonModule extends BaseUiCommonModule {
                 UserPortalVmEventListModel>>(){}).in(Singleton.class);
         bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<String, UserPortalListModel, VmAppListModel<VM>>>(){})
             .in(Singleton.class);
+        bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<GuestContainer, UserPortalListModel, VmGuestContainerListModel>>(){})
+                .in(Singleton.class);
         bind(VmMonitorModelProvider.class).in(Singleton.class);
         bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel,
                 PoolInterfaceListModel>>(){}).in(Singleton.class);

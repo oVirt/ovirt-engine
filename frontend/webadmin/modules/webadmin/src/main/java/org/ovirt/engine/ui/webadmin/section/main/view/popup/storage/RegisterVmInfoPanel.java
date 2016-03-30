@@ -35,12 +35,14 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
         initDisksTable();
         initNicsTable();
         initAppsTable();
+        initContainersTable();
 
         // Add Tabs
         add(new ScrollPanel(generalView.asWidget()), constants.generalLabel());
         add(new ScrollPanel(disksTable), constants.disksLabel());
         add(new ScrollPanel(nicsTable), constants.nicsLabel());
         add(new ScrollPanel(appsTable), constants.applicationsLabel());
+        add(new ScrollPanel(containersTable), constants.containersLabel());
     }
 
     @Override

@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.Sub
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmApplicationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGuestContainerPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGuestInfoPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmMonitorPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
@@ -95,6 +96,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabEx
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmApplicationView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmEventView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGuestContainerView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGuestInfoView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmMonitorView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmNetworkInterfaceView;
@@ -199,6 +201,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedVmApplicationPresenter.ViewDef.class,
                 SubTabExtendedVmApplicationView.class,
                 SubTabExtendedVmApplicationPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedVmGuestContainerPresenter.class,
+                SubTabExtendedVmGuestContainerPresenter.ViewDef.class,
+                SubTabExtendedVmGuestContainerView.class,
+                SubTabExtendedVmGuestContainerPresenter.ProxyDef.class);
         bindPresenter(SubTabExtendedVmMonitorPresenter.class,
                 SubTabExtendedVmMonitorPresenter.ViewDef.class,
                 SubTabExtendedVmMonitorView.class,

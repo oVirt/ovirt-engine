@@ -773,6 +773,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Applications")
     String applicationsTitle();
 
+    @DefaultStringValue("Containers")
+    String containersTitle();
+
     @DefaultStringValue("Monitor")
     String monitorTitle();
 

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -25,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -43,6 +45,7 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
     protected EntityModelCellTable<ListModel> disksTable;
     protected EntityModelCellTable<ListModel> nicsTable;
     protected EntityModelCellTable<ListModel> appsTable;
+    protected EntityModelCellTable<ListModel> containersTable;
 
     protected RegisterEntityModel<T> registerEntityModel;
 
@@ -292,5 +295,45 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
         appsTable.setRowData(new ArrayList<EntityModel>());
         appsTable.setWidth("100%", true); //$NON-NLS-1$
         appsTable.setSelectionModel(new NoSelectionModel());
+    }
+
+
+    protected void initContainersTable() {
+        containersTable = new EntityModelCellTable<>(false, true);
+
+        containersTable.addColumn(new AbstractTextColumn<GuestContainer>() {
+            @Override
+            public String getValue(GuestContainer row) {
+                return row.getId().toString();
+            }
+        }, constants.idContainer());
+        containersTable.addColumn(new AbstractTextColumn<GuestContainer>() {
+            @Override
+            public String getValue(GuestContainer row) {
+                return StringUtils.join(row.getNames(), ", "); //$NON-NLS-1$
+            }
+        }, constants.namesContainer());
+        containersTable.addColumn(new AbstractTextColumn<GuestContainer>() {
+            @Override
+            public String getValue(GuestContainer row) {
+                return row.getImage();
+            }
+        }, constants.imageContainer());
+        containersTable.addColumn(new AbstractTextColumn<GuestContainer>() {
+            @Override
+            public String getValue(GuestContainer row) {
+                return row.getCommand();
+            }
+        }, constants.commandContainer());
+        containersTable.addColumn(new AbstractTextColumn<GuestContainer>() {
+            @Override
+            public String getValue(GuestContainer row) {
+                return row.getStatus();
+            }
+        }, constants.statusContainer());
+
+        containersTable.setRowData(new ArrayList<EntityModel>());
+        containersTable.setWidth("100%", true); //$NON-NLS-1$
+        containersTable.setSelectionModel(new NoSelectionModel());
     }
 }

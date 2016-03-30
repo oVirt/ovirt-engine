@@ -416,6 +416,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Installed Applications")
     String applicationsLabel();
 
+    @DefaultStringValue("Containers")
+    String containersLabel();
+
     @DefaultStringValue("Read-Only")
     String readonlyLabel();
 
@@ -1005,6 +1008,21 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Name")
     String nameSnapshot();
 
+    @DefaultStringValue("Names")
+    String namesContainer();
+
+    @DefaultStringValue("ID")
+    String idContainer();
+
+    @DefaultStringValue("Image")
+    String imageContainer();
+
+    @DefaultStringValue("Command")
+    String commandContainer();
+
+    @DefaultStringValue("Status")
+    String statusContainer();
+
     // Disk
     @DefaultStringValue("New")
     String newDisk();
@@ -1141,6 +1159,10 @@ public interface CommonApplicationConstants extends Constants {
     // Application list
     @DefaultStringValue("Installed Applications")
     String installedApp();
+
+    // Application list
+    @DefaultStringValue("Running Guest Containers")
+    String guestContainer();
 
     // Template- general
     @DefaultStringValue("Name")

@@ -83,6 +83,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Applications")
     String extendedVirtualMachineApplicationSubTabLabel();
 
+    @DefaultStringValue("Containers")
+    String extendedVirtualMachineGuestContainersSubTabLabel();
+
     @DefaultStringValue("Monitor")
     String extendedVirtualMachineMonitorSubTabLabel();
 

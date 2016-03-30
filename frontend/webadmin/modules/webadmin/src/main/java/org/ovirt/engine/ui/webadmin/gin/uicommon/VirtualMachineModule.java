@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Erratum;
+import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -41,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -479,6 +481,7 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(VmSnapshotListModel.class).in(Singleton.class);
         bind(VmAffinityGroupListModel.class).in(Singleton.class);
         bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
+        bind(VmGuestContainerListModel.class).in(Singleton.class);
         bind(VmHostDeviceListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VM>>(){}).in(Singleton.class);
         bind(new TypeLiteral<VmDevicesListModel<VM>>() {}).in(Singleton.class);
@@ -497,6 +500,9 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(new TypeLiteral<SearchableDetailModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})
            .to(new TypeLiteral<SearchableDetailTabModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})
            .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>(){})
+                .to(new TypeLiteral<SearchableDetailTabModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>(){})
+                .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<VM, VmListModel<Void>>>() {}).in(Singleton.class);
