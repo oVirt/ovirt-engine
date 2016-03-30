@@ -58,7 +58,6 @@ public class HostSetupNetworkPoller {
         } catch (TimeoutException e) {
             // VDSReturn value did not become available in given timeout. Ignore failure.
             // network can go down due to VDSM changing the network.
-            // No need to suspend between polls, as timeout is longer than waiting period between polls.
             return false;
         }
     }
