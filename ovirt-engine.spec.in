@@ -1311,7 +1311,6 @@ fi
 %endif
 
 %files tools-backup
-%license LICENSE
 %{_bindir}/engine-backup
 %{_mandir}/man8/engine-backup.*
 %{engine_data}/bin/engine-backup.sh
