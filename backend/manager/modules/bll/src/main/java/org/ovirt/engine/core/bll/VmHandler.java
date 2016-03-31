@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1077,7 +1077,7 @@ public class VmHandler {
 
         DisplayType defaultDisplayType = null;
         // map holding display type -> set of supported graphics types for this display type
-        Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new HashMap<>();
+        Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new LinkedHashMap<>();
 
         for (Pair<GraphicsType, DisplayType> graphicsAndDisplay : graphicsAndDisplays) {
             DisplayType display = graphicsAndDisplay.getSecond();

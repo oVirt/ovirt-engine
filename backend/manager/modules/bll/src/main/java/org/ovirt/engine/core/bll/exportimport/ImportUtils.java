@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -33,6 +34,14 @@ public class ImportUtils {
         if (vmBase == null || vmBase.getManagedDeviceMap() == null || clusterVersion == null) {
             return;
         }
+
+        if (Version.v4_0.lessOrEquals(clusterVersion)) {
+            if (removeVideoDevice(VmDeviceType.VNC, VmDeviceType.CIRRUS, vmBase.getManagedDeviceMap())) {
+                vmBase.setDefaultDisplayType(DisplayType.qxl);
+                addVideoDevice(vmBase);
+            }
+        }
+
         List<VmDevice> videoDevs = getDevicesOfType(VmDeviceGeneralType.VIDEO, vmBase.getManagedDeviceMap());
         boolean hasNoGraphics = getDevicesOfType(VmDeviceGeneralType.GRAPHICS, vmBase.getManagedDeviceMap()).isEmpty();
 
@@ -43,6 +52,36 @@ public class ImportUtils {
                 vmBase.getManagedDeviceMap().put(compatibleGraphics.getDeviceId(), compatibleGraphics);
             }
         }
+    }
+
+    private static boolean removeVideoDevice(VmDeviceType whenGraphicsExists, VmDeviceType videoToRemove,
+                                                Map<Guid, VmDevice> managedDevicesMap) {
+        if (VmDeviceCommonUtils.isVmDeviceExists(managedDevicesMap, whenGraphicsExists)) {
+            Guid key = null;
+            for (Map.Entry<Guid, VmDevice> graphicsDevice : managedDevicesMap.entrySet()) {
+                if (videoToRemove.getName().equals(graphicsDevice.getValue().getDevice())) {
+                    key = graphicsDevice.getKey();
+                    break;
+                }
+            }
+            if (key != null) {
+                managedDevicesMap.remove(key);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void addVideoDevice(VmBase vmBase) {
+        VmDevice vmDevice = new VmDevice();
+        vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
+        vmDevice.setType(VmDeviceGeneralType.VIDEO);
+        vmDevice.setDevice(vmBase.getDefaultDisplayType().getDefaultVmDeviceType().getName());
+        vmDevice.setIsManaged(true);
+        vmDevice.setIsPlugged(true);
+        vmDevice.setIsReadOnly(false);
+        vmDevice.setAddress("");
+        vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
     }
 
     private static List<VmDevice> getDevicesOfType(VmDeviceGeneralType type, Map<Guid, VmDevice> managedDevicesMap) {

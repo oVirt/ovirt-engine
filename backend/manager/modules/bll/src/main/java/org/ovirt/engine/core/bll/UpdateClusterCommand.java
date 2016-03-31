@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationPa
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -154,7 +155,33 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         if (isKsmPolicyChanged) {
             momPolicyUpdatedEvent.fire(getCluster());
         }
+
+        // Call UpdateVmCommand on all VMs in the cluster to update defaults (i.e. DisplayType)
+        if (!updateVms()) {
+            setSucceeded(false);
+            return;
+        }
+
         setSucceeded(true);
+    }
+
+    private boolean updateVms() {
+        List<VM> vmList = getVmDao().getAllForCluster(getParameters().getCluster().getId());
+
+        for (VM vm : vmList) {
+            VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+
+            VdcReturnValueBase result = runInternalAction(
+                            VdcActionType.UpdateVm,
+                            updateParams,
+                            cloneContextAndDetachFromParent());
+
+            if (!result.getSucceeded()) {
+                getReturnValue().setFault(result.getFault());
+                return false;
+            }
+        }
+        return true;
     }
 
     private String getEmulatedMachineOfHostInCluster(VDS vds) {

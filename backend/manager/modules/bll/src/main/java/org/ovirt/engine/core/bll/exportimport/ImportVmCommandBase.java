@@ -177,7 +177,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean validateGraphicsAndDisplay() {
         return VmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
                 getGraphicsTypesForVm(),
-                getParameters().getVm().getDefaultDisplayType(),
+                getVm().getDefaultDisplayType(),
                 getReturnValue().getValidationMessages(),
                 getEffectiveCompatibilityVersion());
     }

@@ -531,8 +531,7 @@ public abstract class OvfReader implements IOvfBuilder {
         node = selectSingleNode(content, getDefaultDisplayTypeStringRepresentation());
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
-                defaultDisplayType = DisplayType.forValue(Integer.parseInt(node.innerText));
-                vmBase.setDefaultDisplayType(defaultDisplayType);
+                vmBase.setDefaultDisplayType(DisplayType.forValue(Integer.parseInt(node.innerText)));
             }
         }
 
@@ -950,7 +949,7 @@ public abstract class OvfReader implements IOvfBuilder {
                                 DisplayType firstDisplayType = supportedGraphicsAndDisplays.get(0).getSecond();
                                 vmDevice.setDevice(firstDisplayType.getDefaultVmDeviceType().getName());
                             } else {
-                                vmDevice.setDevice(VmDeviceType.CIRRUS.getName());
+                                vmDevice.setDevice(VmDeviceType.QXL.getName());
                             }
                         }
                     } else { // default to spice if quantity not found
