@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 
@@ -16,7 +16,8 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
+
 
 public class SyntaxCheckerTest {
 

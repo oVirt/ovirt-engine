@@ -20,8 +20,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.dao.EngineSessionDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * A test case for the {@link SessionDataContainer} class.

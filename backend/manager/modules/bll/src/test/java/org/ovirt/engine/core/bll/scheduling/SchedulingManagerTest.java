@@ -27,11 +27,11 @@ import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Arquillian.class)
 public class SchedulingManagerTest {

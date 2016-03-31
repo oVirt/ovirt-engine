@@ -3,7 +3,7 @@ package org.ovirt.engine.core.utils;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurati
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkInSyncWithVdsNetworkInterfaceTest {

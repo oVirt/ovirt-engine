@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 
 public class SyntaxCheckerFactoryTest {
 

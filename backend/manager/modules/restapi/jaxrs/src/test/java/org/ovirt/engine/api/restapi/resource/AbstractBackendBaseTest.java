@@ -55,8 +55,9 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
+
 
 public abstract class AbstractBackendBaseTest extends Assert {
     protected static final Guid[] GUIDS = { new Guid("00000000-0000-0000-0000-000000000000"),

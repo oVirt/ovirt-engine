@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils;
+package org.ovirt.engine.core.common.utils;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,6 +27,8 @@ public class MockConfigRule extends TestWatcher {
     /** A descriptor for a single config mocking */
     public static class MockConfigDescriptor<T> {
 
+        public MockConfigDescriptor() {
+        }
         public MockConfigDescriptor(ConfigValues value, String version, T returnValue) {
             this.value = value;
             this.version = version;
