@@ -45,7 +45,17 @@ import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 public class RemoveImageCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr =
-        new MockConfigRule(mockConfig(ConfigValues.VdcVersion, Version.getLast().toString()));
+        new MockConfigRule(
+                mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
+                mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
+                mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v3_6, 16),
+                mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v3_6, 1),
+                mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
+                mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
+                mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v4_0, 16),
+                mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v4_0, 8),
+                mockConfig(ConfigValues.VdcVersion, Version.getLast().toString())
+        );
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
