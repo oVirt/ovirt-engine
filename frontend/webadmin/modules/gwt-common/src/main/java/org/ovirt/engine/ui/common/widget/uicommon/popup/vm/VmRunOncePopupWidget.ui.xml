@@ -154,7 +154,7 @@
         }
 
         .checkboxWithLongLabel label {
-            margin-left: 26px;
+            margin-left: 21px;
             margin-top: -18px;
             display: block;
             line-height: 20px;
@@ -200,7 +200,7 @@
 					</g:HorizontalPanel>
 				</g:VerticalPanel>
 
-				<ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" />
+				<ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" addStyleNames="{style.checkboxWithLongLabel}" />
 				<ge:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
 
 				<g:AbsolutePanel ui:field="bootSequencePanel" addStyleNames="{style.bootSequencePanel}">
