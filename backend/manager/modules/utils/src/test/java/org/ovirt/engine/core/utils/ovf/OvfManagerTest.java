@@ -7,6 +7,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +79,21 @@ public class OvfManagerTest {
 
     @ClassRule
     public static MockConfigRule mockConfigRule =
-            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.VdcVersion, "1.0.0.0"));
+            new MockConfigRule(
+                    mockConfig(ConfigValues.VdcVersion, "1.0.0.0"),
+                    mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
+                    mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
+                    mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v3_6, 16),
+                    mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v3_6, 1),
+                    mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
+                    mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
+                    mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v4_0, 16),
+                    mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v4_0, 8),
+                    mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_1, 16),
+                    mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_1, 16),
+                    mockConfig(ConfigValues.MaxNumOfCpuPerSocket, Version.v4_1, 16),
+                    mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, Version.v4_1, 8)
+                    );
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();

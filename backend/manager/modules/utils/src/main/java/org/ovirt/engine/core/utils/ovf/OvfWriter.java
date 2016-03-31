@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -673,6 +674,9 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeEndElement();
         _writer.writeStartElement(RASD_URI, "threads_per_cpu");
         _writer.writeRaw(String.valueOf(vmBase.getThreadsPerCpu()));
+        _writer.writeEndElement();
+        _writer.writeStartElement(RASD_URI, "max_num_of_vcpus");
+        _writer.writeRaw(String.valueOf(VmCpuCountHelper.calcMaxVCpu(vmBase, version)));
         _writer.writeEndElement();
         _writer.writeEndElement(); // item
     }

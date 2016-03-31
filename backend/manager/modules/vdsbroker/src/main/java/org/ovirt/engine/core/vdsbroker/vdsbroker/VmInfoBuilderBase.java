@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
@@ -179,19 +180,8 @@ public abstract class VmInfoBuilderBase {
         }
     }
 
-    private Integer calcMaxVCpu() {
-        Integer maxSockets = Config.<Integer>getValue(
-                ConfigValues.MaxNumOfVmSockets,
-                vm.getCompatibilityVersion().getValue());
-        Integer maxVCpus = Config.<Integer>getValue(
-                ConfigValues.MaxNumOfVmCpus,
-                vm.getCompatibilityVersion().getValue());
-
-        int threadsPerCore = vm.getThreadsPerCpu();
-        int cpuPerSocket = vm.getCpuPerSocket();
-        maxVCpus = cpuPerSocket * threadsPerCore *
-                Math.min(maxSockets, maxVCpus / (cpuPerSocket * threadsPerCore));
-        return maxVCpus;
+    public Integer calcMaxVCpu() {
+        return VmCpuCountHelper.calcMaxVCpu(vm.getStaticData(), vm.getClusterCompatibilityVersion());
     }
 
     private void addCpuPinning(final String compatibilityVersion) {
