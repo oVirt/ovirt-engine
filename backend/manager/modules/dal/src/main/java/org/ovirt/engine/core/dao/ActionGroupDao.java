@@ -2,9 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -21,8 +19,4 @@ public interface ActionGroupDao extends Dao {
      * @return the list of action groups
      */
     List<ActionGroup> getAllForRole(Guid id);
-
-    ActionVersionMap getActionVersionMapByActionType(VdcActionType action_type);
-
-    List<ActionVersionMap> getAllActionVersionMap();
 }

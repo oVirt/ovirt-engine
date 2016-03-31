@@ -101,7 +101,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
 import org.ovirt.engine.core.common.queries.ClusterEditParameters;
-import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
@@ -2652,51 +2651,6 @@ public class AsyncDataProvider {
         };
         GetConnectionsByDataCenterAndStorageTypeParameters params = new GetConnectionsByDataCenterAndStorageTypeParameters(storagePoolId, storageType);
         Frontend.getInstance().runQuery(VdcQueryType.GetConnectionsByDataCenterAndStorageType, params, aQuery);
-    }
-
-    private HashMap<VdcActionType, CommandVersionsInfo> cachedCommandsCompatibilityVersions;
-
-    public void isCommandCompatible(AsyncQuery aQuery, final VdcActionType vdcActionType,
-            final Version cluster, final Version dc) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object source, AsyncQuery _asyncQuery) {
-                cachedCommandsCompatibilityVersions = (HashMap<VdcActionType, CommandVersionsInfo>) source;
-                return isCommandCompatible(vdcActionType, cluster, dc);
-            }
-        };
-
-        if (cachedCommandsCompatibilityVersions != null) {
-            aQuery.asyncCallback.onSuccess(aQuery.getModel(), isCommandCompatible(vdcActionType, cluster, dc));
-        } else {
-            Frontend.getInstance().runQuery(VdcQueryType.GetCommandsCompatibilityVersions,
-                    new VdcQueryParametersBase().withoutRefresh(), aQuery);
-        }
-    }
-
-    private boolean isCommandCompatible(VdcActionType vdcActionType, Version cluster, Version dc) {
-        if (cachedCommandsCompatibilityVersions == null || cluster == null || dc == null) {
-            return false;
-        }
-
-        CommandVersionsInfo commandVersionsInfo = cachedCommandsCompatibilityVersions.get(vdcActionType);
-        if (commandVersionsInfo == null) {
-            return true;
-        }
-
-        Version clusterCompatibility = commandVersionsInfo.getClusterVersion();
-        Version dcCompatibility = commandVersionsInfo.getStoragePoolVersion();
-
-        return (clusterCompatibility.compareTo(cluster) <= 0)
-                && (dcCompatibility.compareTo(dc) <= 0);
-    }
-
-    public CommandVersionsInfo getCommandVersionsInfo(VdcActionType vdcActionType) {
-        if (cachedCommandsCompatibilityVersions == null) {
-            return null;
-        }
-
-        return cachedCommandsCompatibilityVersions.get(vdcActionType);
     }
 
     /**

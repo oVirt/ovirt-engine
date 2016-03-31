@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
@@ -83,7 +82,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -859,7 +857,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             }
             try {
                 returnValue =
-                        isUserAuthorizedToRunAction() && isBackwardsCompatible() && validateInputs() && acquireLock()
+                        isUserAuthorizedToRunAction() && validateInputs() && acquireLock()
                                 && validate()
                                 && internalValidateAndSetQuota();
                 if (!returnValue && getReturnValue().getValidationMessages().size() > 0) {
@@ -965,24 +963,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     protected List<Class<?>> addValidationGroup(Class<?>... validationGroup) {
         validationGroups.addAll(Arrays.asList(validationGroup));
         return validationGroups;
-    }
-
-    protected boolean isBackwardsCompatible() {
-        boolean result = true;
-        ActionVersionMap actionVersionMap = DbFacade.getInstance()
-                .getActionGroupDao().getActionVersionMapByActionType(getActionType());
-        // if actionVersionMap not null check cluster level
-        // cluster level ok check storage_pool level
-        if (actionVersionMap != null
-                && ((getCluster() != null && getCluster().getCompatibilityVersion().compareTo(
-                        new Version(actionVersionMap.getClusterMinimalVersion())) < 0) ||
-                (!"*".equals(actionVersionMap.getStoragePoolMinimalVersion()) && getStoragePool() != null && getStoragePool()
-                        .getCompatibilityVersion().compareTo(
-                                new Version(actionVersionMap.getStoragePoolMinimalVersion())) < 0))) {
-            result = false;
-            addValidationMessage(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-        }
-        return result;
     }
 
     /**

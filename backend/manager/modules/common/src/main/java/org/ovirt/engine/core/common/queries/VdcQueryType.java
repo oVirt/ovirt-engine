@@ -378,9 +378,6 @@ public enum VdcQueryType implements Serializable {
     GetStepByStepId,
     GetStepsByJobId,
 
-    // Commands
-    GetCommandsCompatibilityVersions(VdcQueryAuthType.User),
-
     // Disks
     GetNextAvailableDiskAliasNameByVMId(VdcQueryAuthType.User),
 

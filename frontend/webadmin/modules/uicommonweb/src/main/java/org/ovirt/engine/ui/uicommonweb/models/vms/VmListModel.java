@@ -458,14 +458,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-
-        // Call 'IsCommandCompatible' for precaching
-        AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                    }
-                }), null, null, null);
     }
 
     private void setDetailList(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,

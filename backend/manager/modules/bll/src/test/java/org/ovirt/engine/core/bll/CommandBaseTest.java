@@ -92,11 +92,6 @@ public class CommandBaseTest extends BaseCommandTest {
         }
 
         @Override
-        protected boolean isBackwardsCompatible() {
-            return true;
-        }
-
-        @Override
         protected boolean parentHasCallback() {
             return false;
         }

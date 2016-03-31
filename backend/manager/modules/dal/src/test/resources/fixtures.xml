@@ -6541,22 +6541,6 @@
          </row>
     </table>
 
-   <table name="action_version_map">
-        <column>action_type</column>
-        <column>cluster_minimal_version</column>
-        <column>storage_pool_minimal_version</column>
-        <row>
-            <value>1</value>
-            <value>2.3</value>
-            <value>2.3</value>
-        </row>
-        <row>
-            <value>2</value>
-            <value>2.2</value>
-            <value>2.2</value>
-        </row>
-    </table>
-
     <table name="vds_spm_id_map">
         <column>storage_pool_id</column>
         <column>vds_spm_id</column>
