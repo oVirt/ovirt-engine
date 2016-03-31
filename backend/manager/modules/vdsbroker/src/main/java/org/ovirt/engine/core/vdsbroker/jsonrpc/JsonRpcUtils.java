@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class JsonRpcUtils {
     private static Logger log = LoggerFactory.getLogger(JsonRpcUtils.class);
-    private static final String identifierLogMessage="setting up connection policy identifier for host {}";
+    private static final String identifierLogMessage = "Setting up connection policy identifier for host {}";
 
     public static JsonRpcClient createStompClient(String hostname,
             int port,
