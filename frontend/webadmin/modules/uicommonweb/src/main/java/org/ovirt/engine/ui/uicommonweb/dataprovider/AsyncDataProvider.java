@@ -3516,12 +3516,9 @@ public class AsyncDataProvider {
         }
 
         for (VM vm : vms) {
-            Version version = vm.getCompatibilityVersion();
-            Version anyDcVersion = new Version();
-            boolean compatibleCluster = isCommandCompatible(VdcActionType.RebootVm, version, anyDcVersion);
             boolean guestAgentPresent = !StringHelper.isNullOrEmpty(vm.getVmIp());
             boolean acpiEnabled = Boolean.TRUE.equals(vm.getAcpiEnable());
-            if (!(compatibleCluster && (guestAgentPresent || acpiEnabled))) {
+            if (!(guestAgentPresent || acpiEnabled)) {
                 return false;
             }
         }
