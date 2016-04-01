@@ -88,8 +88,7 @@ public class CommandCallbacksPoller implements BackendService {
                 errorInCallback = true;
                 handleError(ex, status, cmdId);
             } finally {
-                if (CommandStatus.FAILED.equals(status)
-                        || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
+                if (CommandStatus.FAILED == status || (CommandStatus.SUCCEEDED == status && !errorInCallback)) {
                     commandsRepository.updateCallbackNotified(cmdId);
                     iterator.remove();
                     CommandEntity cmdEntity = commandsRepository.getCommandEntity(entry.getKey());
