@@ -101,7 +101,7 @@ public class InClusterUpgradeWeightPolicyUnitTest extends AbstractPolicyUnitTest
     @Test
     public void shouldWeightNewestHostsBetterOnVmStarts() {
         final VM newVM = new VM();
-        assertThat(filter(newVM, tooOldHost, newEnoughHost), hasItems(
+        assertThat(filter(newVM, newEnoughHost, tooOldHost), hasItems(
                         weight(tooOldHost, BAD_WEIGHT),
                         weight(newEnoughHost, BEST_WEIGHT))
         );
