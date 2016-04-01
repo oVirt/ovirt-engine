@@ -8,8 +8,11 @@ import java.util.Map;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FenceOptionsParser {
+    private static Logger log = LoggerFactory.getLogger(FenceOptionsParser.class);
 
     /* Format of @str is <agent>;<agent>;...
      * Format of @typeStr is <name>=<type>,<name=type>,...
@@ -21,7 +24,10 @@ public class FenceOptionsParser {
 
         for (String agent : str.split(";", -1)) {
             if (!agent.isEmpty()) {
-                ret.add(parseAgent(agent, types, ignoreValues));
+                Agent parsedAgent = parseAgent(agent, types, ignoreValues);
+                if (parsedAgent != null) {
+                    ret.add(parsedAgent);
+                }
             }
         }
 
@@ -42,7 +48,8 @@ public class FenceOptionsParser {
                 String[] parts = option.split("=", -1);
 
                 if (parts.length != 2) {
-                    throw new IllegalArgumentException("Invalid fencing type description: '" + option + "'");
+                    log.error("Invalid fencing type description \"{}\".", option);
+                    continue;
                 }
 
                 ret.put(parts[0], parts[1]);
@@ -60,7 +67,8 @@ public class FenceOptionsParser {
         String[] parts = str.split(":", -1);
 
         if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid fencing agent description: '" + str + "'");
+            log.error("Invalid fencing agent description \"{}\".", str);
+            return null;
         }
 
         Agent ret = new Agent();
@@ -76,7 +84,10 @@ public class FenceOptionsParser {
 
         for (String option : str.split(",", -1)) {
             if (!option.isEmpty()) {
-                ret.getOptions().add(parseOption(option, types, ignoreValues));
+                Option parsedOption = parseOption(option, types, ignoreValues);
+                if (parsedOption != null) {
+                    ret.getOptions().add(parsedOption);
+                }
             }
         }
 
@@ -89,7 +100,8 @@ public class FenceOptionsParser {
         String[] parts = str.split("=", -1);
 
         if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid fencing option description: '" + str + "'");
+            log.error("Invalid fencing option description \"{}\".", str);
+            return null;
         }
 
         Option ret = new Option();
@@ -101,8 +113,10 @@ public class FenceOptionsParser {
 
         if (types.containsKey(parts[0])) {
             ret.setType(types.get(parts[0]));
-        } else {
-            throw new IllegalArgumentException("No type specified for option: '" + parts[0] + "'");
+        }
+        else {
+            log.error("No type specified for fencing option \"{}\".", parts[0]);
+            return null;
         }
 
         return ret;

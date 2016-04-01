@@ -104,19 +104,30 @@ public class FenceOptionsParserTest extends Assert {
         verifyResult(ret.get(1), "apc_snmp", "port", "int", "port", "encrypt_options", "bool", "encrypt_options");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseMissingType() {
-        parse("foo:one=1", "two=int");
+        List<Agent> ret = parse("foo:one=1", "two=int");
+        assertNotNull(ret);
+        assertEquals(1, ret.size());
+        verifyResult(ret.get(0), "foo");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseStrayColons() {
-        parse("foo:::one=1,two=2,three=3", "one=bool,two=int,three=bool");
+        List<Agent> ret = parse("foo:::one=1,two=2,three=3", "one=bool,two=int,three=bool");
+        assertNotNull(ret);
+        assertEquals(0, ret.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseInvalidOption() {
-        parse("foo:one=1,two=2,three", "one=bool,two=int,three=bool");
+        List<Agent> ret = parse("foo:one=1,two=2,three", "one=bool,two=int,three=bool");
+        assertNotNull(ret);
+        assertEquals(1, ret.size());
+        verifyResult(ret.get(0),
+                     "foo",
+                     "one", "bool", "1",
+                     "two", "int", "2");
     }
 
     private void verifyResult(Agent result, String type, String... options) {
