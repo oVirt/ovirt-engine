@@ -854,6 +854,17 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getConfigurationValueBoolean(AsyncQuery aQuery, ConfigurationValues configVal) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
+                return source != null ? ((Boolean) source).booleanValue() : true;
+            }
+        };
+        getConfigFromCache(
+                new GetConfigurationValueParameters(configVal, getDefaultConfigurationVersion()), aQuery);
+    }
+
     public void getWANColorDepth(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

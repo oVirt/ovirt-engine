@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.uicommon;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
@@ -102,4 +103,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         return SyntaxCheckerFactory.createUISyntaxChecker("LDAP"); //$NON-NLS-1$
     }
 
+    @Override
+    protected ConfigurationValues spiceFullScreenConfigKey() {
+        return ConfigurationValues.FullScreenWebadminDefault;
+    }
 }

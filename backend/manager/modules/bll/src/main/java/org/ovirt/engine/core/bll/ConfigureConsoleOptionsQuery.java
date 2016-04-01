@@ -125,6 +125,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         options.setToggleFullscreenHotKey(getConfigValue(ConfigValues.ConsoleToggleFullScreenKeys));
         options.setReleaseCursorHotKey(getConfigValue(ConfigValues.ConsoleReleaseCursorKeys));
         options.setRemapCtrlAltDelete(getConfigValue(ConfigValues.RemapCtrlAltDelDefault));
+        options.setFullScreen(getConfigValue(ConfigValues.FullScreenWebadminDefault));
 
         fillRemoteViewerVersions(options);
     }

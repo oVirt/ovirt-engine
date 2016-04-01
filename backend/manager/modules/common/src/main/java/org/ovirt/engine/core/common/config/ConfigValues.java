@@ -318,6 +318,18 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SpiceUsbAutoShare,
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    FullScreenWebadminDefault,
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    FullScreenUserportalBasicDefault,
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    FullScreenUserportalExtendedDefault,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EncryptHostCommunication,

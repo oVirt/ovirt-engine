@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
@@ -117,14 +118,6 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         }
     }
 
-    /**
-     * Returns true if the basic view is shown, else returns false
-     */
-    @Override
-    public boolean getSpiceFullScreen() {
-        return placeManager.isMainSectionBasicPlaceVisible();
-    }
-
     @Override
     protected Event<FileFetchEventArgs> getSpiceVersionFileFetchedEvent() {
         return spiceVersionFileFetchedEvent;
@@ -155,4 +148,12 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         return null;
     }
 
+    @Override
+    protected ConfigurationValues spiceFullScreenConfigKey() {
+        if (placeManager.isMainSectionBasicPlaceVisible()) {
+            return ConfigurationValues.FullScreenUserportalBasicDefault;
+        }
+
+        return ConfigurationValues.FullScreenUserportalExtendedDefault;
+    }
 }

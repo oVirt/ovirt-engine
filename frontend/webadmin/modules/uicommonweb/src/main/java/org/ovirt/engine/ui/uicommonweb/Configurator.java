@@ -34,7 +34,6 @@ public abstract class Configurator {
 
     public Configurator() {
         // Set default configuration values
-        setSpiceFullScreen(false);
 
         String locale = LocaleInfo.getCurrentLocale().getLocaleName();
         // doc package uses hyphens in the locale name dirs
@@ -80,16 +79,6 @@ public abstract class Configurator {
 
     protected void setSpiceAdminConsole(boolean value) {
         privateSpiceAdminConsole = value;
-    }
-
-    private boolean privateSpiceFullScreen;
-
-    public boolean getSpiceFullScreen() {
-        return privateSpiceFullScreen;
-    }
-
-    protected void setSpiceFullScreen(boolean value) {
-        privateSpiceFullScreen = value;
     }
 
     private ValidateServerCertificateEnum privateValidateServerCertificate = ValidateServerCertificateEnum.values()[0];
@@ -225,9 +214,9 @@ public abstract class Configurator {
         }
 
         spice.getOptions().setAdminConsole(getSpiceAdminConsole());
-        spice.getOptions().setFullScreen(getSpiceFullScreen());
         spice.getOptions().setUsbFilter(getUsbFilter());
         updateSpiceUsbAutoShare(spice);
+        updateSpiceFullScreenDefault(spice);
     }
 
     private void updateSpiceUsbAutoShare(final ISpice spice) {
@@ -238,6 +227,18 @@ public abstract class Configurator {
                                                                                     spice.getOptions().setUsbAutoShare((Boolean) returnValue);
                                                                                 }
                                                                             }));
+    }
+
+    protected abstract ConfigurationValues spiceFullScreenConfigKey();
+
+    private void updateSpiceFullScreenDefault(final ISpice spice) {
+        AsyncDataProvider.getInstance().getConfigurationValueBoolean(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        spice.getOptions().setFullScreen((Boolean) returnValue);
+                    }
+                }), spiceFullScreenConfigKey());
     }
 
     public void updateSpice32Version() {

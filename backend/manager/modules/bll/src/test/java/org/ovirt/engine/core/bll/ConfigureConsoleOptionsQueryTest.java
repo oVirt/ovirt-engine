@@ -91,6 +91,8 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
         doReturn(mockVm(GraphicsType.VNC)).when(query).getCachedVm();
         doReturn(null).when(query).getConfigValue(any(ConfigValues.class));
         doReturn(true).when(query).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
+        doReturn(false).when(query).getConfigValue(ConfigValues.FullScreenWebadminDefault);
+
 
         VdcReturnValueBase result = new VdcReturnValueBase();
         result.setSucceeded(true);
@@ -112,6 +114,7 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
         mockSpiceRelatedConfig(query);
         doReturn(true).when(query).getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation);
         doReturn(true).when(query).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
+        doReturn(false).when(query).getConfigValue(ConfigValues.FullScreenWebadminDefault);
 
         VdcQueryReturnValue caResult = new VdcQueryReturnValue();
         caResult.setSucceeded(false);
@@ -132,6 +135,7 @@ public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
         mockSpiceRelatedConfig(query);
         doReturn(false).when(query).getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation);
         doReturn(true).when(query).getConfigValue(ConfigValues.RemapCtrlAltDelDefault);
+        doReturn(false).when(query).getConfigValue(ConfigValues.FullScreenWebadminDefault);
 
         doReturn(null).when(backend).runInternalQuery(eq(VdcQueryType.GetCACertificate), any(VdcQueryParametersBase.class));
         doReturn(backend).when(query).getBackend();
