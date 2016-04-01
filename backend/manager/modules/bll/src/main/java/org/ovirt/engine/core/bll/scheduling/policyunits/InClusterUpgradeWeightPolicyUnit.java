@@ -65,7 +65,7 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
                 }
                 Version version = highestVersions.get(os.getOsFamily());
                 if (version == null || version.getMajor() < os.getVersion().getMajor()) {
-                    highestVersions.put(os.getOsFamily(), version);
+                    highestVersions.put(os.getOsFamily(), os.getVersion());
                     referenceHost = host.getDynamicData();
                 }
             }
