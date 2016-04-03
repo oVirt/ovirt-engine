@@ -562,6 +562,7 @@
                 <t:content>
                     <g:FlowPanel>
                         <e:ListModelListBoxEditor ui:field="poolTypeEditor" label="{constants.poolTypeVmPopup}" />
+                        <ge:EntityModelCheckBoxEditor ui:field="poolStatefulEditor" label="{constants.poolStatefulLabel}"/>
                     </g:FlowPanel>
                 </t:content>
             </t:DialogTab>

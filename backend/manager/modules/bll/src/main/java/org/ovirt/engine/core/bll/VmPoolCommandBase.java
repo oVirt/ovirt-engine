@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -73,12 +74,12 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         super(parameters, commandContext);
     }
 
-    protected static int getNumOfPrestartedVmsInPool(Guid poolId, ArrayList<String> messages) {
-        List<VM> vmsInPool = DbFacade.getInstance().getVmDao().getAllForVmPool(poolId);
+    protected static int getNumOfPrestartedVmsInPool(VmPool pool, ArrayList<String> messages) {
+        List<VM> vmsInPool = DbFacade.getInstance().getVmDao().getAllForVmPool(pool.getVmPoolId());
         int numOfPrestartedVmsInPool = 0;
         if (vmsInPool != null) {
             for (VM vm : vmsInPool) {
-                if (vm.isStartingOrUp() && canAttachPrestartedVmToUser(vm.getId(), messages)) {
+                if (vm.isStartingOrUp() && canAttachPrestartedVmToUser(vm.getId(), pool.isStateful(), messages)) {
                     ++numOfPrestartedVmsInPool;
                 }
             }
@@ -104,12 +105,19 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      * Checks if a running Vm can be attached to a user.
      * @param vmId
      *            the VM GUID to check.
+     * @param isStatefulPool True if the VM is part of a stateful pool, false otherwise.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean canAttachPrestartedVmToUser(Guid vmId, List<String> messages) {
+    protected static boolean canAttachPrestartedVmToUser(Guid vmId, boolean isStatefulPool, List<String> messages) {
         // check that there isn't another user already attached to this VM
         // and make sure the Vm is running stateless
-        return !vmAssignedToUser(vmId, messages) && vmIsRunningStateless(vmId);
+        return !vmAssignedToUser(vmId, messages)
+                && (isStatefulPool && !vmIsStartedByRunOnce(vmId) || vmIsRunningStateless(vmId));
+    }
+
+    private static boolean vmIsStartedByRunOnce(Guid vmId) {
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
+        return vmDynamic != null && vmDynamic.isRunOnce();
     }
 
     private static boolean vmIsRunningStateless(Guid vmId) {

@@ -383,7 +383,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                     setHasTimeZone(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
                     poolGeneralModel.setTimeZone(getvm().getTimeZone());
 
-                    poolGeneralModel.setIsStateless(getvm().isStateless());
+                    poolGeneralModel.setIsStateless(!pool.isStateful());
 
                     poolGeneralModel.setQuotaName(getvm().getQuotaName());
 
@@ -436,7 +436,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                     poolGeneralModel.setTimeZone(null);
                     poolGeneralModel.setUsbPolicy(null);
                     poolGeneralModel.setDefaultHost(null);
-                    poolGeneralModel.setIsStateless(false);
+                    poolGeneralModel.setIsStateless(!pool.isStateful());
                     poolGeneralModel.setGraphicsType(""); //$NON-NLS-1$
 
                     poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.EMPTY);

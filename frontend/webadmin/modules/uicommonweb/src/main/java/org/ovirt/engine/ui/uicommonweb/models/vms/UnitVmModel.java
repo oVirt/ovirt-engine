@@ -1685,6 +1685,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         // VM/Template views as this model is shared across VM/Template/Pool models
         setPoolType(new NotChangableForVmInPoolListModel<EntityModel<VmPoolType>>());
 
+        setPoolStateful(new NotChangableForVmInPoolEntityModel<Boolean>());
+        getPoolStateful().setEntity(false);
+        getPoolStateful().setIsAvailable(false);
+        getPoolStateful().setIsChangeable(false);
+
         setNumOfDesktops(new NotChangableForVmInPoolEntityModel<Integer>());
         getNumOfDesktops().setEntity(0);
         getNumOfDesktops().setIsAvailable(false);
@@ -3032,6 +3037,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     protected void setPoolType(NotChangableForVmInPoolListModel<EntityModel<VmPoolType>> value) {
         poolType = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Boolean> poolStateful;
+
+    public EntityModel<Boolean> getPoolStateful() {
+        return poolStateful;
+    }
+
+    protected void setPoolStateful(NotChangableForVmInPoolEntityModel<Boolean> poolStateful) {
+        this.poolStateful = poolStateful;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> numOfDesktops;

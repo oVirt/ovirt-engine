@@ -87,6 +87,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("vm_pool_id", pool.getVmPoolId())
                 .addValue("vm_pool_name", pool.getName())
                 .addValue("vm_pool_type", pool.getVmPoolType())
+                .addValue("stateful", pool.isStateful())
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("cluster_id", pool.getClusterId())
@@ -105,6 +106,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("vm_pool_id", pool.getVmPoolId())
                 .addValue("vm_pool_name", pool.getName())
                 .addValue("vm_pool_type", pool.getVmPoolType())
+                .addValue("stateful", pool.isStateful())
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("cluster_id", pool.getClusterId())
@@ -177,6 +179,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
+            entity.setStateful(rs.getBoolean("stateful"));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
             entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
@@ -203,6 +206,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
+            entity.setStateful(rs.getBoolean("stateful"));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
             entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));

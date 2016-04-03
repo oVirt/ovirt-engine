@@ -117,7 +117,9 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachPrestartedVmToUser(map.getVmId(), getReturnValue().getValidationMessages())) {
+                if (canAttachPrestartedVmToUser(map.getVmId(),
+                        getVmPool().isStateful(),
+                        getReturnValue().getValidationMessages())) {
                     return map.getVmId();
                 }
             }
@@ -216,7 +218,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             runVmParams.setParentParameters(getParameters());
             runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
-            runVmParams.setRunAsStateless(true);
+            runVmParams.setRunAsStateless(!getVmPool().isStateful());
             ExecutionContext runVmContext = createRunVmContext();
             VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
                     runVmParams, cloneContext().withExecutionContext(runVmContext).withoutLock().withCompensationContext(null));

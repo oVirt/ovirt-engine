@@ -82,8 +82,7 @@ public class VmPoolMonitor implements BackendService {
      * (the minimum between the two).
      */
     private void managePrestartedVmsInPool(VmPool vmPool) {
-        Guid vmPoolId = vmPool.getVmPoolId();
-        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId, new ArrayList<>());
+        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPool, new ArrayList<>());
         int missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
         if (missingPrestartedVms > 0) {
             // We do not want to start too many vms at once
@@ -91,20 +90,20 @@ public class VmPoolMonitor implements BackendService {
                     Math.min(missingPrestartedVms, Config.<Integer> getValue(ConfigValues.VmPoolMonitorBatchSize));
 
             log.info("VmPool '{}' is missing {} prestarted VMs, attempting to prestart {} VMs",
-                    vmPoolId,
+                    vmPool.getVmPoolId(),
                     missingPrestartedVms,
                     numOfVmsToPrestart);
-            prestartVms(vmPoolId, numOfVmsToPrestart);
+            prestartVms(vmPool, numOfVmsToPrestart);
         }
     }
 
     /***
      * Prestarts the given amount of vmsToPrestart, in the given Vm Pool
      */
-    private void prestartVms(Guid vmPoolId, int numOfVmsToPrestart) {
+    private void prestartVms(VmPool vmPool, int numOfVmsToPrestart) {
         // Fetch all vms that are in status down
         List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
-                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
+                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPool.getVmPoolId(), VMStatus.Down);
         int failedAttempts = 0;
         int prestartedVmsCounter = 0;
         final int maxFailedAttempts = Config.<Integer> getValue(ConfigValues.VmPoolMonitorMaxAttempts);
@@ -113,7 +112,7 @@ public class VmPoolMonitor implements BackendService {
             for (VmPoolMap map : vmPoolMaps) {
                 if (failedAttempts < maxFailedAttempts && prestartedVmsCounter < numOfVmsToPrestart) {
                     List<String> messages = new ArrayList<>();
-                    if (prestartVm(map.getVmId(), messages)) {
+                    if (prestartVm(map.getVmId(), !vmPool.isStateful(), messages)) {
                         prestartedVmsCounter++;
                         failedAttempts = 0;
                     } else {
@@ -122,7 +121,10 @@ public class VmPoolMonitor implements BackendService {
                     }
                 } else {
                     // If we reached the required amount or we exceeded the number of allowed failures, stop
-                    logResultOfPrestartVms(prestartedVmsCounter, numOfVmsToPrestart, vmPoolId, failureReasons);
+                    logResultOfPrestartVms(prestartedVmsCounter,
+                            numOfVmsToPrestart,
+                            vmPool.getVmPoolId(),
+                            failureReasons);
                     break;
                 }
             }
@@ -171,10 +173,10 @@ public class VmPoolMonitor implements BackendService {
      * Prestarts the given Vm
      * @return whether or not succeeded to prestart the Vm
      */
-    private boolean prestartVm(Guid vmGuid, List<String> messages) {
+    private boolean prestartVm(Guid vmGuid, boolean runAsStateless, List<String> messages) {
         if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid, messages)) {
             VM vmToPrestart = DbFacade.getInstance().getVmDao().get(vmGuid);
-            return runVmAsStateless(vmToPrestart);
+            return runVmFromPool(vmToPrestart, runAsStateless);
         }
         return false;
     }
@@ -182,23 +184,25 @@ public class VmPoolMonitor implements BackendService {
     /**
      * Run the given VM as stateless
      */
-    private boolean runVmAsStateless(VM vmToRunAsStateless) {
-        log.info("Running VM '{}' as stateless", vmToRunAsStateless);
-        RunVmParams runVmParams = new RunVmParams(vmToRunAsStateless.getId());
-        runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRunAsStateless.getId()));
-        runVmParams.setRunAsStateless(true);
+    private boolean runVmFromPool(VM vmToRun, boolean runAsStateless) {
+        log.info("Running VM '{}' as {}", vmToRun, runAsStateless ? "stateless" : "stateful");
+        RunVmParams runVmParams = new RunVmParams(vmToRun.getId());
+        runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRun.getId()));
+        runVmParams.setRunAsStateless(runAsStateless);
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                 runVmParams, ExecutionHandler.createInternalJobContext());
         boolean prestartingVmSucceeded = vdcReturnValue.getSucceeded();
 
         if (!prestartingVmSucceeded) {
             AuditLogableBase log = new AuditLogableBase();
-            log.addCustomValue("VmPoolName", vmToRunAsStateless.getVmPoolName());
+            log.addCustomValue("VmPoolName", vmToRun.getVmPoolName());
             new AuditLogDirector().log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
         }
 
-        log.info("Running VM '{}' as stateless {}",
-                vmToRunAsStateless, prestartingVmSucceeded ? "succeeded" : "failed");
+        log.info("Running VM '{}' as {} {}",
+                vmToRun,
+                runAsStateless ? "stateless" : "stateful",
+                prestartingVmSucceeded ? "succeeded" : "failed");
         return prestartingVmSucceeded;
     }
 

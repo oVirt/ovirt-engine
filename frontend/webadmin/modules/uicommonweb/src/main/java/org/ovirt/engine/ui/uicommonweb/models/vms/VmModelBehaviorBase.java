@@ -65,6 +65,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeMana
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -1619,6 +1622,44 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public IValidation getNameAllowedCharactersIValidation() {
         return new I18NNameValidation();
+    }
+
+    protected abstract class UpdateTemplateWithVersionListener implements IEventListener<EventArgs> {
+
+        @Override
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+            if (getModel().getTemplateWithVersion() == null ||
+                    getModel().getTemplateWithVersion().getItems() == null ||
+                    getModel().getTemplateWithVersion().getSelectedItem() == null) {
+                return;
+            }
+
+            List<VmTemplate> baseTemplates = new ArrayList<>();
+            for (TemplateWithVersion templateWithVersion : getModel().getTemplateWithVersion().getItems()) {
+                if (templateWithVersion.isLatest() || templateWithVersion.getTemplateVersion() == null) {
+                    continue;
+                }
+                baseTemplates.add(templateWithVersion.getTemplateVersion());
+            }
+
+            TemplateWithVersion selectedItemTemplateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
+
+            VmTemplate selectedTemplateWithVersion = selectedItemTemplateWithVersion.getTemplateVersion();
+            if (selectedTemplateWithVersion == null) {
+                return;
+            }
+
+            Guid selectedId = selectedTemplateWithVersion.getId();
+
+            beforeUpdate();
+            initTemplateWithVersion(baseTemplates, selectedId, selectedItemTemplateWithVersion.isLatest(), isAddLatestVersion());
+        }
+
+        protected void beforeUpdate() {
+        }
+
+        protected abstract boolean isAddLatestVersion();
+
     }
 
 }

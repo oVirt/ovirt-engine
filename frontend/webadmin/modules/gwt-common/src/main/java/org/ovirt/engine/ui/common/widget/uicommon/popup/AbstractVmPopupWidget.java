@@ -377,6 +377,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("poolType")
     public ListModelListBoxEditor<EntityModel<VmPoolType>> poolTypeEditor;
 
+    @UiField
+    @Path(value = "poolStateful.entity")
+    @WithElementId("poolStateful")
+    public EntityModelCheckBoxEditor poolStatefulEditor;
+
     @UiField(provided = true)
     @Ignore
     public InfoIcon newPoolPrestartedVmsIcon;
@@ -1985,6 +1990,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // == Pools ==
         nextTabIndex = poolTab.setTabIndexes(nextTabIndex);
         poolTypeEditor.setTabIndex(nextTabIndex++);
+        poolStatefulEditor.setTabIndex(nextTabIndex++);
 
         // ==Initial run Tab==
         nextTabIndex = initialRunTab.setTabIndexes(nextTabIndex);

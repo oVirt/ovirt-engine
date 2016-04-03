@@ -2718,6 +2718,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("User is already attached to maximum number of VMs from this VM-Pool.")
     String VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL();
 
+    @DefaultStringValue("Cannot change VM-Pool type.")
+    String VM_POOL_CANNOT_CHANGE_POOL_TYPE();
+
+    @DefaultStringValue("Cannot change VM-Pool stateful option.")
+    String VM_POOL_CANNOT_CHANGE_POOL_STATEFUL_OPTION();
+
     // bad names
     // NETWORK_INTERFACE_EXITED_MAX_INTERFACES
     @DefaultStringValue("Cannot ${action} ${type}. Selected Cluster is missing one or more networks ${networks} that is used by VM.")

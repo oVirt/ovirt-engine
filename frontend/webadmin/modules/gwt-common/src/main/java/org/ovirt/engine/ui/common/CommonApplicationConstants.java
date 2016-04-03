@@ -674,6 +674,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Pool Type")
     String poolTypeVmPopup();
 
+    @DefaultStringValue("Stateful Pool")
+    String poolStatefulLabel();
+
     @DefaultStringValue("Initial Run")
     String initialRunVmPopup();
 

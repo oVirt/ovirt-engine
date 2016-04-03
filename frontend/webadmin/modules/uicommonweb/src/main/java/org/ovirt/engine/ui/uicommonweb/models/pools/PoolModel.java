@@ -28,6 +28,7 @@ public class PoolModel extends UnitVmModel {
 
         getPoolType().setItems(poolTypeItems);
 
+        getPoolStateful().setIsAvailable(true);
         getAssignedVms().setIsAvailable(true);
         getNumOfDesktops().setIsAvailable(true);
         getPrestartedVms().setIsAvailable(true);

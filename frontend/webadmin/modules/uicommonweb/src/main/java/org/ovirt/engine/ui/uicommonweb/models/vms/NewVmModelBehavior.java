@@ -28,9 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
@@ -58,35 +55,16 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     protected void commonInitialize() {
         super.commonInitialize();
 
-        getModel().getIsStateless().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+        getModel().getIsStateless().getEntityChangedEvent().addListener(new UpdateTemplateWithVersionListener() {
             @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getModel().getTemplateWithVersion() == null ||
-                        getModel().getTemplateWithVersion().getItems() == null ||
-                        getModel().getTemplateWithVersion().getSelectedItem() == null) {
-                    return;
-                }
-
-                List<VmTemplate> baseTemplates = new ArrayList<>();
-                for (TemplateWithVersion templateWithVersion : getModel().getTemplateWithVersion().getItems()) {
-                    if (templateWithVersion.isLatest() || templateWithVersion.getTemplateVersion() == null) {
-                        continue;
-                    }
-                    baseTemplates.add(templateWithVersion.getTemplateVersion());
-                }
-
-                TemplateWithVersion selectedItemTemplateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
-
-                VmTemplate selectedTemplateWithVersion = selectedItemTemplateWithVersion.getTemplateVersion();
-                if (selectedTemplateWithVersion == null) {
-                    return;
-                }
-
-                Guid selectedId = selectedTemplateWithVersion.getId();
-
+            protected void beforeUpdate() {
                 // will be moved back in the callback which can be async
                 updateStatelessFlag = false;
-                initTemplateWithVersion(baseTemplates, selectedId, selectedItemTemplateWithVersion.isLatest(), getModel().getIsStateless().getEntity());
+            }
+
+            @Override
+            protected boolean isAddLatestVersion() {
+                return getModel().getIsStateless().getEntity();
             }
         });
     }

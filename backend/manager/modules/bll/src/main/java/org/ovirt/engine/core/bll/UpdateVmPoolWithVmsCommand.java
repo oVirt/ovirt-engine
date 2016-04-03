@@ -86,6 +86,14 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
             return failValidation(EngineMessage.VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL);
         }
 
+        if (oldPool.getVmPoolType() != getParameters().getVmPool().getVmPoolType()) {
+            return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_POOL_TYPE);
+        }
+
+        if (oldPool.isStateful() != getParameters().getVmPool().isStateful()) {
+            return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_POOL_STATEFUL_OPTION);
+        }
+
         return true;
     }
 

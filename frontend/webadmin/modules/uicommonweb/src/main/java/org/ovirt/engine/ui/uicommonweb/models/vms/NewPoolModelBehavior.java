@@ -28,12 +28,25 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         super.initialize(systemTreeSelectedItem);
 
         getModel().getVmType().setIsChangeable(true);
+        getModel().getPoolStateful().setIsChangeable(true);
 
         templateValidate();
 
         instanceTypeManager = new NewPoolInstanceTypeManager(getModel());
 
         getModel().getVmInitModel().init(null);
+    }
+
+    @Override
+    protected void commonInitialize() {
+        super.commonInitialize();
+
+        getModel().getPoolStateful().getEntityChangedEvent().addListener(new UpdateTemplateWithVersionListener() {
+            @Override
+            protected boolean isAddLatestVersion() {
+                return !getModel().getPoolStateful().getEntity();
+            }
+        });
     }
 
     @Override

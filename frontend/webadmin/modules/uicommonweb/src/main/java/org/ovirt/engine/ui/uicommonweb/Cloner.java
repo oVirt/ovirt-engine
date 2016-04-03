@@ -363,9 +363,8 @@ public final class Cloner {
         obj.setVmPoolId(instance.getVmPoolId());
         obj.setName(instance.getName());
         obj.setVmPoolType(instance.getVmPoolType());
+        obj.setStateful(instance.isStateful());
         obj.setClusterId(instance.getClusterId());
-
-        obj.setVmPoolType(instance.getVmPoolType());
         obj.setParameters(instance.getParameters());
         obj.setDefaultEndTime(instance.getDefaultEndTime());
         obj.setDefaultStartTime(instance.getDefaultStartTime());

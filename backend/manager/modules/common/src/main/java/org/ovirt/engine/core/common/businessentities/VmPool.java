@@ -34,6 +34,8 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     private VmPoolType type;
 
+    private boolean stateful;
+
     @Size(max = BusinessEntitiesDefinitions.VM_POOL_PARAMS)
     private String parameters;
 
@@ -86,6 +88,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 description,
                 name,
                 type,
+                stateful,
                 maxAssignedVmsPerUser,
                 spiceProxy
         );
@@ -109,6 +112,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && Objects.equals(description, other.description)
                 && Objects.equals(name, other.name)
                 && Objects.equals(type, other.type)
+                && Objects.equals(stateful, other.stateful)
                 && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser
                 && Objects.equals(spiceProxy, other.spiceProxy);
     }
@@ -226,6 +230,14 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public void setVmPoolType(VmPoolType value) {
         this.type = value;
+    }
+
+    public boolean isStateful() {
+        return stateful;
+    }
+
+    public void setStateful(boolean stateful) {
+        this.stateful = stateful;
     }
 
     public Guid getClusterId() {

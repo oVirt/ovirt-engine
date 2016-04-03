@@ -279,6 +279,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                         model.getName().setEntity(pool.getName());
                         model.getDescription().setEntity(pool.getVmPoolDescription());
                         model.getComment().setEntity(pool.getComment());
+                        model.getPoolStateful().setEntity(pool.isStateful());
                         model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
                         model.getPrestartedVms().setEntity(pool.getPrestartedVms());
                         model.setPrestartedVmsHint("0-" + pool.getAssignedVmsCount()); //$NON-NLS-1$
@@ -437,6 +438,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         pool.setVmPoolDescription(model.getDescription().getEntity());
         pool.setClusterId(model.getSelectedCluster().getId());
         pool.setComment(model.getComment().getEntity());
+        pool.setStateful(model.getPoolStateful().getEntity());
         pool.setPrestartedVms(model.getPrestartedVms().getEntity());
         pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().getEntity());
 
