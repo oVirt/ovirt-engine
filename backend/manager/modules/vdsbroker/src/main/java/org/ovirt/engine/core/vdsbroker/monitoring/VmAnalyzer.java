@@ -208,9 +208,6 @@ public class VmAnalyzer {
 
         // VM is running on another host - must be during migration
         if (dbVm == null) {
-            if (vmDynamicDao.get(vdsmVm.getVmDynamic().getId()).getStatus() != VMStatus.MigratingFrom) {
-                handleVmOnDown();
-            }
             return;
         }
 
@@ -234,10 +231,31 @@ public class VmAnalyzer {
             break;
 
         default:
+            auditVmOnDownEvent();
             clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                     vdsmVm.getVmDynamic().getExitMessage(),
                     vdsmVm.getVmDynamic().getExitReason());
-            handleVmOnDown();
+
+            switch (vdsmVm.getVmDynamic().getExitStatus()) {
+            case Error:
+                if (resourceManager.isVmInAsyncRunningList(vdsmVm.getVmDynamic().getId())) {
+                    setRerunFlag();
+                    break;
+                }
+
+                if (dbVm.isAutoStartup()) {
+                    setAutoRunFlag();
+                    break;
+                }
+
+                break;
+
+            case Normal:
+                resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+                if (getVmManager() != null && getVmManager().isColdReboot()) {
+                    setColdRebootFlag();
+                }
+            }
         }
     }
 
@@ -246,36 +264,6 @@ public class VmAnalyzer {
                 VDSCommandType.Destroy,
                 new DestroyVmVDSCommandParameters(vdsManager.getVdsId(),
                         vdsmVm.getVmDynamic().getId(), null, false, false, 0, true));
-    }
-
-    private void handleVmOnDown() {
-        // we don't need to have an audit log for the case where the VM went down on a host
-        // which is different than the one it should be running on (must be in migration process)
-        if (dbVm != null) {
-            auditVmOnDownEvent();
-        }
-
-        if (vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
-            // Vm failed to run - try to rerun it on other Vds
-            if (dbVm != null) {
-                if (resourceManager.isVmInAsyncRunningList(vdsmVm.getVmDynamic().getId())) {
-                    setRerunFlag();
-                } else if (dbVm.isAutoStartup()) {
-                    setAutoRunFlag();
-                }
-            }
-            // if failed in destination right after migration
-            else { // => cacheVm == null
-                resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
-                saveDynamic(vdsmVm.getVmDynamic());
-            }
-        } else {
-            // Vm moved safely to down status. May be migration - just remove it from Async Running command.
-            resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
-            if (getVmManager() != null && getVmManager().isColdReboot()) {
-                setColdRebootFlag();
-            }
-        }
     }
 
     private void saveDynamic(VmDynamic vmDynamic) {
