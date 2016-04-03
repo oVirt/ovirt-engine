@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -152,5 +153,10 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return new ConcurrentChildCommandsExecutionCallback();
     }
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
@@ -79,6 +80,11 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         }
     }
 
+    @Override
+    public CommandCallback getCallback() {
+        return null;
+    }
+
     private AddVmParameters buildAddVmParameters() {
         AddVmParameters parameters = new AddVmParameters(getParameters().getVmStaticData());
         parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
@@ -96,6 +102,9 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
         parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
+        parameters.setParentCommand(getParameters().getParentCommand());
+        parameters.setParentParameters(getParameters().getParentParameters());
+        parameters.setShouldBeEndedByParent(false);
 
         if (getParameters().isUpdateRngDevice()) {
             parameters.setUpdateRngDevice(true);

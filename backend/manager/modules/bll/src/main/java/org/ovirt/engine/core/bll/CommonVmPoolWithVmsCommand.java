@@ -249,6 +249,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 currVm, poolId, vmName, diskInfoDestinationMap);
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setParentCommand(VdcActionType.AddVmPoolWithVms);
+        parameters.setParentParameters(getParameters());
         // check if device is enabled or we need to override it to true
         parameters.setSoundDeviceEnabled(Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled())
                 || VmDeviceUtils.shouldOverrideSoundDevice(
@@ -258,6 +259,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
         parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
+        parameters.setShouldBeEndedByParent(false);
 
         VmRngDevice rngDevice = getParameters().getRngDevice();
         if (rngDevice != null) {
