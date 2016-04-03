@@ -240,15 +240,6 @@ public class CommandAsyncTask extends SPMAsyncTask {
                         actionType,
                         vdcReturnValue.getSucceeded() ? "" : "hasn't ");
 
-                    /**
-                     * Terminate the job by the return value of endAction.
-                     * The operation will end also the FINALIZING step.
-                     */
-                    if (context != null) {
-                        ExecutionHandler.endTaskStepAndJob(context, vdcReturnValue.getSucceeded()
-                                && isTaskGroupSuccess);
-                    }
-
                     commandInfo.clearTasks();
 
                     synchronized (_lockObject) {

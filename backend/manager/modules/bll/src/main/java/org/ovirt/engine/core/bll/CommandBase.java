@@ -537,6 +537,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             } catch (TransactionRolledbackLocalException e) {
                 log.info("endAction: Transaction was aborted in {}", this.getClass().getName());
             } finally {
+                endStepsAndJobIfNeeded();
                 freeLockEndAction();
                 if (getCommandShouldBeLogged()) {
                     logCommand();
@@ -547,6 +548,26 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
 
         return getReturnValue();
+    }
+
+    private void endStepsAndJobIfNeeded() {
+        //TODO: getEndActionTryAgain() isn't supported currently by the coco infrastructure
+        boolean endActionWillRunAgain = !getSucceeded() && getReturnValue().getEndActionTryAgain();
+        if (endActionWillRunAgain) {
+            return;
+        }
+
+        boolean succeeded = getSucceeded() && getParameters().getTaskGroupSuccess();
+
+        //TODO: We should support also Commands with callbacks that has steps
+        if (getCallback() == null) {
+            ExecutionHandler.endFinalizingStepAndCurrentStep(getContext().getExecutionContext(), succeeded);
+        }
+
+        if (!parentHasCallback()) {
+            ExecutionHandler.endTaskJobIfNeeded(getContext().getExecutionContext(), getSucceeded() && getParameters()
+                    .getTaskGroupSuccess());
+        }
     }
 
     /**
