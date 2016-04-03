@@ -93,7 +93,7 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         JobRepositoryFactory.getJobRepository().updateStep(step);
 
         ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
-        ExecutionHandler.endTaskJob(finalContext, exitStatus);
+        ExecutionHandler.endTaskStepAndJob(finalContext, exitStatus);
     }
 
     protected GlusterAsyncTask handleTaskReturn(GlusterAsyncTask asyncTask) {

@@ -122,7 +122,7 @@ public class GlusterTaskUtils {
     public void endStepJob(Step step) {
         getJobRepository().updateStep(step);
         ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
-        ExecutionHandler.endTaskJob(finalContext, isTaskSuccess(step.getStatus()));
+        ExecutionHandler.endTaskStepAndJob(finalContext, isTaskSuccess(step.getStatus()));
     }
 
     public boolean isTaskSuccess(JobExecutionStatus status) {

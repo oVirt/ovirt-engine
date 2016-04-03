@@ -54,7 +54,7 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
                         .addAll(vdcReturnValue.getInternalVdsmTaskIdList());
 
                 if (!parameters.getTaskGroupSuccess()) {
-                    ExecutionHandler.endTaskJob(commandContext.getExecutionContext(), false);
+                    ExecutionHandler.endTaskStepAndJob(commandContext.getExecutionContext(), false);
                     log.error("Failed LiveMigrateDisk (Disk '{}' , VM '{}')",
                             parameters.getImageGroupID(),
                             parameters.getVmId());

@@ -245,7 +245,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
                      * The operation will end also the FINALIZING step.
                      */
                     if (context != null) {
-                        ExecutionHandler.endTaskJob(context, vdcReturnValue.getSucceeded() && isTaskGroupSuccess);
+                        ExecutionHandler.endTaskStepAndJob(context, vdcReturnValue.getSucceeded()
+                                && isTaskGroupSuccess);
                     }
 
                     commandInfo.clearTasks();

@@ -762,6 +762,36 @@ public class ExecutionHandler {
     }
 
     /**
+     * If the provided {@link ExecutionContext} execution method is as Step the current step will
+     * be ended with the appropriate exitStatus and so is the FINALIZING {@link Step} if present.
+     *
+     * @param context
+     *            The context of the execution
+     * @param exitStatus
+     *            Indicates if the execution ended successfully or not.
+     */
+    public static void endFinalizingStepAndCurrentStep(ExecutionContext context, boolean exitStatus) {
+        if (context == null) {
+            return;
+        }
+
+        try {
+            Step parentStep = context.getStep();
+            if (context.getExecutionMethod() == ExecutionMethod.AsStep && parentStep != null) {
+                Step finalizingStep = parentStep.getStep(StepEnum.FINALIZING);
+                if (finalizingStep != null) {
+                    finalizingStep.markStepEnded(exitStatus);
+                    JobRepositoryFactory.getJobRepository().updateStep(finalizingStep);
+                }
+                parentStep.markStepEnded(exitStatus);
+                JobRepositoryFactory.getJobRepository().updateStep(parentStep);
+            }
+        } catch (RuntimeException e) {
+            log.error("Exception", e);
+        }
+    }
+
+    /**
      * Finalizes Job with VDSM tasks, as this case requires verification that no other steps are running in order to
      * close the entire Job
      *
@@ -770,41 +800,44 @@ public class ExecutionHandler {
      * @param exitStatus
      *            Indicates if the execution described by the job ended successfully or not.
      */
-    public static void endTaskJob(ExecutionContext context, boolean exitStatus) {
+    public static void endTaskJobIfNeeded(ExecutionContext context, boolean exitStatus) {
         if (context == null) {
             return;
         }
 
-        try {
-            if (context.getExecutionMethod() == ExecutionMethod.AsJob && context.getJob() != null) {
-                endJob(context, exitStatus);
-            } else {
-                Step parentStep = context.getStep();
-                if (context.getExecutionMethod() == ExecutionMethod.AsStep && parentStep != null) {
-                    Step finalizingStep = parentStep.getStep(StepEnum.FINALIZING);
-                    if (finalizingStep != null) {
-                        finalizingStep.markStepEnded(exitStatus);
-                        JobRepositoryFactory.getJobRepository().updateStep(finalizingStep);
-                    }
-                    parentStep.markStepEnded(exitStatus);
-                    JobRepositoryFactory.getJobRepository().updateStep(parentStep);
-
-                    List<Step> steps = DbFacade.getInstance().getStepDao().getStepsByJobId(parentStep.getJobId());
-                    boolean hasChildStepsRunning = false;
-                    for (Step step : steps) {
-                        if (step.getStatus() == JobExecutionStatus.STARTED && step.getParentStepId() != null) {
-                            hasChildStepsRunning = true;
-                            break;
-                        }
-                    }
-                    if (!hasChildStepsRunning) {
-                        endJob(exitStatus, JobRepositoryFactory.getJobRepository().getJob(parentStep.getJobId()));
+        if (context.getExecutionMethod() == ExecutionMethod.AsJob && context.getJob() != null) {
+            endJob(context, exitStatus);
+        } else {
+            Step parentStep = context.getStep();
+            if (context.getExecutionMethod() == ExecutionMethod.AsStep && parentStep != null) {
+                List<Step> steps = DbFacade.getInstance().getStepDao().getStepsByJobId(parentStep.getJobId());
+                boolean hasChildStepsRunning = false;
+                for (Step step : steps) {
+                    if (step.getStatus() == JobExecutionStatus.STARTED && step.getParentStepId() != null) {
+                        hasChildStepsRunning = true;
+                        break;
                     }
                 }
+                if (!hasChildStepsRunning) {
+                    endJob(exitStatus, JobRepositoryFactory.getJobRepository().getJob(parentStep.getJobId()));
+                }
             }
-        } catch (RuntimeException e) {
-            log.error("Exception", e);
         }
+    }
+
+    /**
+     * If the provided {@link ExecutionContext} execution method is as Step the current step will
+     * be ended with the appropriate exitStatus and so is the FINALIZING {@link Step} if present.
+     * If needed the job will be ended as well.
+     *
+     * @param context
+     *            The context of the execution which defines how the job should be ended
+     * @param exitStatus
+     *            Indicates if the execution described by the job ended successfully or not.
+     */
+    public static void endTaskStepAndJob(ExecutionContext context, boolean exitStatus) {
+        endFinalizingStepAndCurrentStep(context, exitStatus);
+        endTaskJobIfNeeded(context, exitStatus);
     }
 
     /**
