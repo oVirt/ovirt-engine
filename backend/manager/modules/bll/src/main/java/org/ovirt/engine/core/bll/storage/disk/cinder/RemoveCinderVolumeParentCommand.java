@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.RemoveImageCommand;
@@ -21,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> {
+public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> implements SerialChildExecutingCommand {
 
     public RemoveCinderVolumeParentCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -122,4 +123,22 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
                     return null;
                 });
     }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        CinderDisk cinderVolume =
+                getParameters().getChildCommandsParameters().get(completedChildCount - 1).getRemovedVolume();
+        removeDiskFromDbCallBack(cinderVolume);
+
+        if(getParameters().getChildCommandsParameters().size() == completedChildCount){
+            return false;
+        }
+        getParameters().setRemovedVolumeIndex(completedChildCount);
+        removeCinderVolume(completedChildCount, getParameters().getRemovedVolume().getStorageIds().get(0));
+        return true;
+    }
+
+    @Override public void handleFailure() {
+    }
+
 }

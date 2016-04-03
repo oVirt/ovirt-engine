@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -155,7 +156,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
 
     @Override
     public CommandCallback getCallback() {
-        return new RemoveCinderDiskCommandCallback();
+        return new SerialChildCommandsExecutionCallback();
     }
 
     @Override
