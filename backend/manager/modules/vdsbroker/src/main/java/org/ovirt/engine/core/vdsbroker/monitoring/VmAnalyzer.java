@@ -201,7 +201,7 @@ public class VmAnalyzer {
 
     void proceedDownVm() {
         if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
-            VMStatus prevStatus = VMStatus.Unassigned;
+            VMStatus prevStatus;
             if (dbVm != null) {
                 prevStatus = dbVm.getStatus();
                 proceedVmBeforeDeletion();
@@ -217,14 +217,13 @@ public class VmAnalyzer {
             } else {
                 prevStatus = vmDynamicDao.get(vdsmVm.getVmDynamic().getId()).getStatus();
             }
-            if (prevStatus != VMStatus.Unassigned) {
-                destroyVm();
 
-                if (dbVm != null && prevStatus == VMStatus.SavingState) {
-                    afterSuspendTreatment(vdsmVm.getVmDynamic());
-                } else if (prevStatus != VMStatus.MigratingFrom) {
-                    handleVmOnDown(dbVm, vdsmVm.getVmDynamic());
-                }
+            destroyVm();
+
+            if (dbVm != null && prevStatus == VMStatus.SavingState) {
+                afterSuspendTreatment();
+            } else if (prevStatus != VMStatus.MigratingFrom) {
+                handleVmOnDown();
             }
         }
     }
@@ -236,23 +235,24 @@ public class VmAnalyzer {
                         vdsmVm.getVmDynamic().getId(), null, false, false, 0, true));
     }
 
-    private void handleVmOnDown(VM cacheVm, VmDynamic vmDynamic) {
+    private void handleVmOnDown() {
+        VmDynamic vmDynamic = vdsmVm.getVmDynamic();
         VmExitStatus exitStatus = vmDynamic.getExitStatus();
 
         // we don't need to have an audit log for the case where the VM went down on a host
         // which is different than the one it should be running on (must be in migration process)
-        if (cacheVm != null) {
+        if (dbVm != null) {
             auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmDynamic.getId());
         }
 
         if (exitStatus != VmExitStatus.Normal) {
             // Vm failed to run - try to rerun it on other Vds
-            if (cacheVm != null) {
+            if (dbVm != null) {
                 if (resourceManager.isVmInAsyncRunningList(vmDynamic.getId())) {
                     log.info("Running on VDS '{}' during rerun failed VM: '{}'({})",
-                            vmDynamic.getRunOnVds(), cacheVm.getId(), cacheVm.getName());
+                            vmDynamic.getRunOnVds(), dbVm.getId(), dbVm.getName());
                     rerun = true;
-                } else if (cacheVm.isAutoStartup()) {
+                } else if (dbVm.isAutoStartup()) {
                     autoVmToRun = true;
                 }
             }
@@ -283,7 +283,8 @@ public class VmAnalyzer {
         auditLog(logable, type);
     }
 
-    private void afterSuspendTreatment(VmDynamic vm) {
+    private void afterSuspendTreatment() {
+        VmDynamic vm = vdsmVm.getVmDynamic();
         AuditLogType type = vm.getExitStatus() == VmExitStatus.Normal ? AuditLogType.USER_SUSPEND_VM_OK
                 : AuditLogType.USER_FAILED_SUSPEND_VM;
 
@@ -337,7 +338,7 @@ public class VmAnalyzer {
         if (dbVm.getStatus() == VMStatus.MigratingFrom) {
             // if a VM that was a source host in migration process is now down with normal
             // exit status that's OK, otherwise..
-            if (vdsmVm != null && vdsmVm.getVmDynamic() != null && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
+            if (vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
                 if (dbVm.getMigratingToVds() != null) {
                     destroyVmOnDestinationHost();
                 }
@@ -464,7 +465,7 @@ public class VmAnalyzer {
         VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
 
         // if not migrating here and not down
-        if (!inMigrationTo(vdsmVmDynamic, dbVm) && vdsmVmDynamic.getStatus() != VMStatus.Down) {
+        if (!inMigrationTo() && vdsmVmDynamic.getStatus() != VMStatus.Down) {
             if (dbVm != null) {
                 if (!StringUtils.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
                     clientIpChanged = true;
@@ -733,7 +734,7 @@ public class VmAnalyzer {
         // or reported from vdsm with error code
         else if (dbVm.isAutoStartup()
                 && !autoVmToRun
-                && (vdsmVm == null || vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal)
+                && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal
                 && !poweredDown) {
             setAutoRunFlag();
         } else if (getVmManager() != null && getVmManager().isColdReboot()) {
@@ -768,23 +769,21 @@ public class VmAnalyzer {
         saveVmInterfaces();
     }
 
-    private boolean inMigrationTo(VmDynamic runningVm, VM vmToUpdate) {
-        if (runningVm.getStatus() == VMStatus.MigratingTo) {
+    private boolean inMigrationTo() {
+        if (vdsmVm.getVmDynamic().getStatus() == VMStatus.MigratingTo) {
             // in migration
-            log.info(
-                    "RefreshVmList VM id '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
-                    runningVm.getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+            log.info("RefreshVmList VM id '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
+                    vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
             return true;
         }
 
-        if (vmToUpdate == null && runningVm.getStatus() != VMStatus.MigratingFrom) {
-            // check if the vm exists on another vds
-            VmDynamic vmDynamic = vmDynamicDao.get(runningVm.getId());
-            if (vmDynamic != null && vmDynamic.getRunOnVds() != null
-                    && !vmDynamic.getRunOnVds().equals(vdsManager.getVdsId()) && runningVm.getStatus() != VMStatus.Up) {
-                log.info(
-                        "RefreshVmList VM id '{}' status = '{}' on VDS '{}'({}) ignoring it in the refresh until migration is done",
-                        runningVm.getId(), runningVm.getStatus(), vdsManager.getVdsId(), vdsManager.getVdsName());
+        if (dbVm == null && vdsmVm.getVmDynamic().getStatus() != VMStatus.MigratingFrom) {
+            // the VM exists on another VDS
+            VmDynamic vmDynamic = vmDynamicDao.get(vdsmVm.getVmDynamic().getId());
+            if (vmDynamic.getRunOnVds() != null && !vmDynamic.getRunOnVds().equals(vdsManager.getVdsId())
+                    && vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
+                log.info("RefreshVmList VM id '{}' status = '{}' on VDS '{}'({}) ignoring it in the refresh until migration is done",
+                        vdsmVm.getVmDynamic().getId(), vdsmVm.getVmDynamic().getStatus(), vdsManager.getVdsId(), vdsManager.getVdsName());
                 return true;
             }
         }
