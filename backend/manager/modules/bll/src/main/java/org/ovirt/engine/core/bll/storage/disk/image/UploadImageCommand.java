@@ -249,15 +249,15 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
     private void handleFinalizingSuccess(final StateContext context) {
         log.info("Finalizing successful upload to {}", getUploadDescription());
-        unLockImage();
         stopImageTransferSession(context.entity);
+        unLockImage();
         updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
     }
 
     private void handleFinalizingFailure(final StateContext context) {
         log.error("Finalizing failed upload to {}", getUploadDescription());
-        setImageStatus(ImageStatus.ILLEGAL);
         stopImageTransferSession(context.entity);
+        setImageStatus(ImageStatus.ILLEGAL);
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
     }
 
