@@ -8,16 +8,58 @@ if [ -x "$0.local" ]; then
 	exit 1
 fi
 
+die() {
+	local m="$1"
+	echo "FATAL: ${m}" >&2
+	exit 1
+}
+
+# Allow different java home per component
+COMPONENT=engine
+while [ -n "$1" ]; do
+	x="$1"
+	v="${x#*=}"
+	shift
+	case "${x}" in
+		--component=*)
+			COMPONENT="${v}"
+		;;
+		*)
+			die "Invalid option '${x}'"
+		;;
+	esac
+done
+case "${COMPONENT}" in
+	engine|reports)
+		:
+	;;
+	*)
+		die "Invalid component '${COMPONENT}'"
+	;;
+esac
+
 validjre() {
 	local dir="$1"
 	local ret=1
 
 	if [ -x "${dir}/bin/java" ]; then
-		local version="$("${dir}/bin/java" -version 2>&1 | sed \
-			-e 's/^openjdk version "1\.8\.0.*/VERSION_OK/' \
-			-e 's/^java version "1\.7\.0.*/VERSION_OK/' \
-			-e 's/^OpenJDK .*(.*).*/VENDOR_OK/' \
-                )"
+		local version
+
+		case "${COMPONENT}" in
+			engine)
+				version="$("${dir}/bin/java" -version 2>&1 | sed \
+					-e 's/^openjdk version "1\.8\.0.*/VERSION_OK/' \
+					-e 's/^java version "1\.7\.0.*/VERSION_OK/' \
+					-e 's/^OpenJDK .*(.*).*/VENDOR_OK/' \
+				)"
+			;;
+			reports)
+				version="$("${dir}/bin/java" -version 2>&1 | sed \
+					-e 's/^java version "1\.7\.0.*/VERSION_OK/' \
+					-e 's/^OpenJDK .*(.*).*/VENDOR_OK/' \
+				)"
+			;;
+		esac
 		if echo "${version}" | grep -q "VERSION_OK" && echo "${version}" | grep -q "VENDOR_OK"; then
 			ret=0
 		fi
@@ -43,7 +85,16 @@ fi
 # select alternates folder
 # if we find, first wins
 #
-for dir in /usr/lib/jvm/jre /usr/lib/jvm/jre-1.7.0 /usr/lib/jvm/jre-1.7.0_openjdk;  do
+DIRS=
+case "${COMPONENT}" in
+	engine)
+		DIRS="/usr/lib/jvm/jre /usr/lib/jvm/jre-1.7.0 /usr/lib/jvm/jre-1.7.0_openjdk"
+	;;
+	reports)
+		DIRS="/usr/lib/jvm/jre-1.7.0 /usr/lib/jvm/jre-1.7.0_openjdk /usr/lib/jvm/jre"
+	;;
+esac
+for dir in ${DIRS};  do
 	if validjre "${dir}"; then
 		echo "${dir}"
 		exit 0
