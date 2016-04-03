@@ -79,7 +79,6 @@ public class VmAnalyzer {
     private boolean poweringUp;
     private boolean succeededToRun;
     private boolean removeFromAsync;
-    private boolean stable;
     private boolean autoVmToRun;
     private boolean unmanagedVm;
     private boolean coldRebootVmToRun;
@@ -224,6 +223,10 @@ public class VmAnalyzer {
                 afterSuspendTreatment();
             } else if (prevStatus != VMStatus.MigratingFrom) {
                 handleVmOnDown();
+            }
+
+            if (dbVm != null) {
+                removeVmFromCache();
             }
         }
     }
@@ -532,23 +535,14 @@ public class VmAnalyzer {
 
                 updateVmDynamicData();
                 updateVmStatistics();
-                stable = true;
                 if (!vdsManager.isInitialized()) {
                     resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVmDynamic.getId());
                 }
             }
         } else {
-            if (vdsmVmDynamic.getStatus() == VMStatus.MigratingTo) {
-                stable = true;
-            }
-
             if (vmDynamicDao.get(vdsmVmDynamic.getId()).getStatus() != VMStatus.Unknown) {
                 saveDynamic(null);
             }
-        }
-        // compare between vm in cache and vm from vdsm
-        if (dbVm != null && !stable) {
-            removeVmFromCache();
         }
     }
 
