@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -76,7 +77,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
 
     @Override
     public CommandCallback getCallback() {
-        return new RemoveCinderDiskCommandCallback<>();
+        return new SerialChildCommandsExecutionCallback();
     }
 
     @Override
