@@ -198,6 +198,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___ATTACH_DISK();
 
+    String ActionGroup___CREATE_CPU_PROFILE();
+
+    String ActionGroup___DELETE_CPU_PROFILE();
+
+    String ActionGroup___UPDATE_CPU_PROFILE();
+
+    String ActionGroup___ASSIGN_CPU_PROFILE();
+
     String ActionGroup___EDIT_DISK_PROPERTIES();
 
     String ActionGroup___CONFIGURE_SCSI_GENERIC_IO();
