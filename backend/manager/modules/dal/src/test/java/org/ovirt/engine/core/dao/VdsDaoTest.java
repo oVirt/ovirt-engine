@@ -15,10 +15,15 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsDaoTest extends BaseDaoTestCase {
@@ -26,13 +31,14 @@ public class VdsDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_VDS_ID_2 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
     private static final Guid CLUSTER_WITH_FEDORA = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-
     private static final Guid CLUSTER_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
 
     private static final String IP_ADDRESS = "192.168.122.17";
+
     private VdsDao dao;
     private VDS existingVds;
     private VDS existingVds2;
+    private static Guid newVmId;
 
     @Override
     public void setUp() throws Exception {
@@ -40,6 +46,11 @@ public class VdsDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getVdsDao();
         existingVds = dao.get(EXISTING_VDS_ID);
         existingVds2 = dao.get(EXISTING_VDS_ID_2);
+    }
+
+    @BeforeClass
+    public static void createNewVmId() {
+        newVmId = Guid.newGuid();
     }
 
     /**
@@ -519,5 +530,96 @@ public class VdsDaoTest extends BaseDaoTestCase {
     private void assertCorrectGetAllResult(List<VDS> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
+    }
+
+    /**
+     * Ensures that the is_hosted_engine_host value is set to false when the VmCount is zero
+     * and there is no hosted engine VM assigned to the VDS instance.
+     */
+    @Test
+    public void testIsNotHeHostWithVmCountOfZeroAndNoHeVmAssigned() {
+        // Given
+        final int vmCount = 0;
+        final boolean isHostedEngine = false;
+        setupHostedEngineTests(isHostedEngine, vmCount);
+
+        // When
+        boolean isHostedEngineHost = dao.get(existingVds.getId()).isHostedEngineHost();
+
+        // Then
+        assertFalse(isHostedEngineHost);
+    }
+
+    /**
+     * Ensures that the is_hosted_engine_host value is set to false when the VmCount is zero
+     * and there is a hosted engine VM assigned to the VDS instance.
+     */
+    @Test
+    public void testIsNotHeHostWithVmCountOfZeroAndHeVmAssigned() {
+        // Given
+        final int vmCount = 0;
+        final boolean isHostedEngine = true;
+        setupHostedEngineTests(isHostedEngine, vmCount);
+
+        // When
+        boolean isHostedEngineHost = dao.get(existingVds.getId()).isHostedEngineHost();
+
+        // Then
+        assertFalse(isHostedEngineHost);
+    }
+
+    /**
+     * Ensures that the is_hosted_engine_host value is set to false when the VmCount is greater
+     * than zero and no hosted engine VM is assigned to the VDS instance.
+     */
+    @Test
+    public void testIsNotHeHostWithVmCountGreaterThanZero() {
+        // Given
+        final int vmCount = 1;
+        final boolean isHostedEngine = false;
+        setupHostedEngineTests(isHostedEngine, vmCount);
+
+        // When
+        boolean isHostedEngineHost = dao.get(existingVds.getId()).isHostedEngineHost();
+
+        // Then
+        assertFalse(isHostedEngineHost);
+    }
+
+    /**
+     * Ensures that the is_hosted_engine_host value is set to true when the VmCount is greater
+     * than zero and the hosted engine VM is assigned to the VDS instance.
+     */
+    @Test
+    public void testIsHeHostWithVmCountGreaterThanZero() {
+        // Given
+        final int vmCount = 1;
+        final boolean isHostedEngine = true;
+        setupHostedEngineTests(isHostedEngine, vmCount);
+
+        // When
+        boolean isHostedEngineHost = dao.get(existingVds.getId()).isHostedEngineHost();
+
+        // Then
+        assertTrue(isHostedEngineHost);
+    }
+
+    private void setupHostedEngineTests(boolean isHostedEngineVm, int vmCount) {
+        // create the VmStatic instance
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setId(newVmId);
+        vmStatic.setOrigin(isHostedEngineVm ? OriginType.MANAGED_HOSTED_ENGINE : OriginType.RHEV);
+        dbFacade.getVmStaticDao().save(vmStatic);
+
+        // create the VmDynamic instance
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setId(newVmId);
+        vmDynamic.setStatus(VMStatus.Up);
+        vmDynamic.setRunOnVds(existingVds.getId());
+        dbFacade.getVmDynamicDao().save(vmDynamic);
+
+        // update the VDS instance
+        existingVds.setVmCount(vmCount);
+        dbFacade.getVdsDynamicDao().update(existingVds.getDynamicData());
     }
 }

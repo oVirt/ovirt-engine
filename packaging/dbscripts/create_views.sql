@@ -1,3 +1,4 @@
+-- noinspection SqlResolveForFile
 
 
 -- ----------------------------------------------------------------------
@@ -1692,7 +1693,18 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_dynamic.maintenance_reason AS maintenance_reason,
     fence_agents.encrypt_options AS agent_encrypt_options,
     vds_dynamic.is_update_available AS is_update_available,
-    vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled
+    vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled,
+    -- optimization for following subquery
+    vds_dynamic.vm_count > 0
+        AND vds_statistics.ha_score IS NOT NULL
+        AND EXISTS (
+            SELECT 1
+            FROM vm_dynamic
+            LEFT JOIN vm_static
+                ON vm_dynamic.vm_guid = vm_static.vm_guid
+            WHERE vds_static.vds_id = vm_dynamic.run_on_vds
+            -- Values (5 & 6) correspond to OriginTypes of HOSTED_ENGINE & MANAGED_HOSTED_ENGINE respectively
+            AND vm_static.origin IN (5,6)) AS is_hosted_engine_host
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

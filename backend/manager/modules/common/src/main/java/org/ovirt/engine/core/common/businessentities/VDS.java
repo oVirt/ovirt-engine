@@ -44,6 +44,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     private Integer vdsSpmId;
     private float maxSchedulingMemory;
     private String certificateSubject;
+    private boolean hostedEngineHost;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -198,6 +199,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setClusterCompatibilityVersion(getClusterCompatibilityVersion());
         vds.setUpdateAvailable(isUpdateAvailable());
         vds.setHostDevicePassthroughEnabled(isHostDevicePassthroughEnabled());
+        vds.setHostedEngineHost(isHostedEngineHost());
         return vds;
     }
 
@@ -1426,5 +1428,13 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setCertificateSubject(String certificateSubject) {
         vdsStatic.setCertificateSubject(certificateSubject);
+    }
+
+    public boolean isHostedEngineHost() {
+        return hostedEngineHost;
+    }
+
+    public void setHostedEngineHost(boolean value) {
+        hostedEngineHost = value;
     }
 }

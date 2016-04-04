@@ -425,6 +425,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             }
             entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
             entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
+            entity.setHostedEngineHost(rs.getBoolean("is_hosted_engine_host"));
             return entity;
         }
     }
