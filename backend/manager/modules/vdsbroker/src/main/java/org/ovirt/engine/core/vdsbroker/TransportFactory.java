@@ -32,19 +32,19 @@ public class TransportFactory {
         if (VdsProtocol.STOMP == vdsProtocol) {
             irsServer = new JsonRpcIIrsServer(JsonRpcUtils.createStompClient(hostname,
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
-                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication),
-                    Config.<String> getValue(ConfigValues.VdsmSSLProtocol),
-                    Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize),
-                    Config.<String> getValue(ConfigValues.IrsRequestQueueName),
-                    Config.<String> getValue(ConfigValues.IrsResponseQueueName),
+                    Config.getValue(ConfigValues.EncryptHostCommunication),
+                    Config.getValue(ConfigValues.VdsmSSLProtocol),
+                    Config.getValue(ConfigValues.EventProcessingPoolSize),
+                    Config.getValue(ConfigValues.IrsRequestQueueName),
+                    Config.getValue(ConfigValues.IrsResponseQueueName),
                     null));
         } else if (VdsProtocol.XML == vdsProtocol){
             Pair<IrsServerConnector, HttpClient> returnValue =
                     XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
                             clientRetries,
-                            Config.<Integer> getValue(ConfigValues.IrsMaxConnectionsPerHost),
-                            Config.<Integer> getValue(ConfigValues.MaxTotalConnections),
-                            IrsServerConnector.class, Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
+                            Config.getValue(ConfigValues.IrsMaxConnectionsPerHost),
+                            Config.getValue(ConfigValues.MaxTotalConnections),
+                            IrsServerConnector.class, Config.getValue(ConfigValues.EncryptHostCommunication));
             irsServer = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
         }
         return irsServer;
@@ -62,25 +62,25 @@ public class TransportFactory {
         Pair<VdsServerConnector, HttpClient> returnValue =
                 XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
                         clientRetries,
-                        Config.<Integer> getValue(ConfigValues.VdsMaxConnectionsPerHost),
-                        Config.<Integer> getValue(ConfigValues.MaxTotalConnections),
+                        Config.getValue(ConfigValues.VdsMaxConnectionsPerHost),
+                        Config.getValue(ConfigValues.MaxTotalConnections),
                         VdsServerConnector.class,
-                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
+                        Config.getValue(ConfigValues.EncryptHostCommunication));
 
         if (VdsProtocol.STOMP == vdsProtocol) {
             String eventQueue = getEventsQueue(version);
             vdsServer = new JsonRpcVdsServer(JsonRpcUtils.createStompClient(hostname,
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
-                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication),
-                    Config.<String> getValue(ConfigValues.VdsmSSLProtocol),
-                    Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize),
-                    Config.<String> getValue(ConfigValues.VdsRequestQueueName),
-                    Config.<String> getValue(ConfigValues.VdsResponseQueueName),
+                    Config.getValue(ConfigValues.EncryptHostCommunication),
+                    Config.getValue(ConfigValues.VdsmSSLProtocol),
+                    Config.getValue(ConfigValues.EventProcessingPoolSize),
+                    Config.getValue(ConfigValues.VdsRequestQueueName),
+                    Config.getValue(ConfigValues.VdsResponseQueueName),
                     eventQueue),
                     returnValue.getSecond());
         } else if (VdsProtocol.XML == vdsProtocol) {
             HttpClient httpClient = returnValue.getSecond();
-            String protocol = Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication) ? "https" : "http";
+            String protocol = Config.getValue(ConfigValues.EncryptHostCommunication) ? "https" : "http";
             httpClient.getHostConfiguration().setHost(hostname, port, Protocol.getProtocol(protocol));
             vdsServer = new VdsServerWrapper(returnValue.getFirst(), httpClient);
         }
@@ -90,7 +90,7 @@ public class TransportFactory {
     private static String getEventsQueue(Version version) {
         String eventsQueue = null;
         if (FeatureSupported.events(version)) {
-            eventsQueue = Config.<String> getValue(ConfigValues.EventQueueName);
+            eventsQueue = Config.getValue(ConfigValues.EventQueueName);
         }
         return eventsQueue;
     }
