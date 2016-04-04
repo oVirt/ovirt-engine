@@ -294,7 +294,7 @@ class Plugin(plugin.PluginBase):
             args=dict(
                 admin_user=self.environment[
                     oenginecons.ConfigEnv.ADMIN_USER
-                ],
+                ].rsplit('@', 1)[0],
                 authz_name=self.environment[
                     oenginecons.ConfigEnv.ADMIN_USER_AUTHZ_NAME
                 ],
