@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.compat.Guid;
@@ -11,7 +9,6 @@ public class RemoveCinderDiskParameters extends RemoveImageParameters {
 
     private CinderDisk removedVolume;
     protected LinkedList<RemoveCinderDiskVolumeParameters> childCommandsParameters = new LinkedList<>();
-    private List<Guid> finishedChildCmdIds = new ArrayList<>();
     private int removedVolumeIndex = 0;
     private Guid vmId;
     private Guid storageDomainId;
@@ -44,14 +41,6 @@ public class RemoveCinderDiskParameters extends RemoveImageParameters {
 
     public void setChildCommandsParameters(LinkedList<RemoveCinderDiskVolumeParameters> childCommands) {
         this.childCommandsParameters = childCommands;
-    }
-
-    public List<Guid> getFinishedChildCmdIds() {
-        return finishedChildCmdIds;
-    }
-
-    public void setFinishedChildCmdIds(List<Guid> finishedChildCmdIds) {
-        this.finishedChildCmdIds = finishedChildCmdIds;
     }
 
     public int getRemovedVolumeIndex() {
