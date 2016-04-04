@@ -143,7 +143,12 @@ public class CommandBaseTest extends BaseCommandTest {
         VdcActionParametersBase parameterMock = mock(VdcActionParametersBase.class);
         when(parameterMock.getTransactionScopeOption()).thenReturn(TransactionScopeOption.Required);
         when(parameterMock.getLockProperties()).thenReturn(LockProperties.create(LockProperties.Scope.None));
-        CommandBase<VdcActionParametersBase> command = spy(new CommandBaseDummy(parameterMock));
+        CommandBase<VdcActionParametersBase> command = spy(new CommandBaseDummy(parameterMock) {
+            @Override
+            protected SessionDataContainer getSessionDataContainer() {
+                return sessionDataContainer;
+            }
+        });
         command.executeAction();
         verify(command).executeCommand();
     }

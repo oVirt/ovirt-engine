@@ -616,7 +616,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         SystemTreeItemModel sessionsItem = new SystemTreeItemModel();
         sessionsItem.setType(SystemTreeItemType.Sessions);
         sessionsItem.setApplicationMode(ApplicationMode.AllModes);
-        sessionsItem.setTitle(ConstantsManager.getInstance().getConstants().sessionsTitle());
+        sessionsItem.setTitle(ConstantsManager.getInstance().getConstants().activeUserSessionsTitle());
         systemItem.addChild(sessionsItem);
 
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {

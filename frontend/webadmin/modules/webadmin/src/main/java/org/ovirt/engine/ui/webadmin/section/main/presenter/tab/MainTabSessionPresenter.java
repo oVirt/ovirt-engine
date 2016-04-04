@@ -47,7 +47,7 @@ public class MainTabSessionPresenter
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
             MainModelProvider<UserSession, SessionListModel> modelProvider) {
-        return new ModelBoundTabData(constants.sessionMainTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.activeUserSessionMainTabLabel(), 1, modelProvider);
     }
 
     @Override

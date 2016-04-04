@@ -100,8 +100,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Details")
     String errataDetailsSubTabLabel();
 
-    @DefaultStringValue("Sessions")
-    String sessionMainTabLabel();
+    @DefaultStringValue("Active User Sessions")
+    String activeUserSessionMainTabLabel();
 
     @DefaultStringValue("General")
     String volumeGeneralSubTabLabel();
@@ -2223,6 +2223,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Session DB Id")
     String sessionDbId();
+
+    @DefaultStringValue("Session Start Time")
+    String sessionStartTime();
+
+    @DefaultStringValue("Session Last Active Time")
+    String sessionLastActiveTime();
 
     @DefaultStringValue("Source IP")
     String sourceIp();

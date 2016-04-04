@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -30,6 +31,10 @@ public class EngineSession implements IVdcQueryable {
     private Collection<Guid> roleIds;
 
     private Collection<Guid> groupIds;
+
+    private Date startTime;
+
+    private Date lastActiveTime;
 
     public EngineSession() {}
 
@@ -145,5 +150,21 @@ public class EngineSession implements IVdcQueryable {
 
     public void setAuthzName(String authzName) {
         this.authzName = authzName;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getLastActiveTime() {
+        return lastActiveTime;
+    }
+
+    public void setLastActiveTime(Date lastActiveTime) {
+        this.lastActiveTime = lastActiveTime;
     }
 }

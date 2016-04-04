@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -296,8 +297,15 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<UserSession> searchSessions() {
-        return genericSearch(getDbFacade().getEngineSessionDao(), false).stream().map(UserSession::new)
+        return genericSearch(getDbFacade().getEngineSessionDao(), false).stream().peek(this::injectSessionInfo)
+                .map(UserSession::new)
                 .collect(Collectors.toList());
+    }
+
+    private void injectSessionInfo(EngineSession engineSession) {
+        engineSession.setStartTime(getSessionDataContainer().getSessionStartTime(engineSession.getEngineSessionId()));
+        engineSession.setLastActiveTime(
+                getSessionDataContainer().getSessionLastActiveTime(engineSession.getEngineSessionId()));
     }
 
     private static final String[] AD_SEARCH_TYPES = {

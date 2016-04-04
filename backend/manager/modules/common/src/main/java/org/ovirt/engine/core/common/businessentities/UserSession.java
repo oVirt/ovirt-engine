@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Date;
 import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -11,6 +12,8 @@ public class UserSession implements IVdcQueryable {
     private Guid userId;
     private String sourceIp;
     private String authzName;
+    private Date sessionStartTime;
+    private Date sessionLastActiveTime;
 
     public UserSession(EngineSession engineSession) {
         Objects.requireNonNull(engineSession, "engineSession cannot be null");
@@ -20,6 +23,8 @@ public class UserSession implements IVdcQueryable {
         userId = engineSession.getUserId();
         sourceIp = engineSession.getSourceIp();
         authzName = engineSession.getAuthzName();
+        sessionStartTime = engineSession.getStartTime();
+        sessionLastActiveTime = engineSession.getLastActiveTime();
     }
 
     private UserSession() {
@@ -48,6 +53,14 @@ public class UserSession implements IVdcQueryable {
 
     public String getAuthzName() {
         return authzName;
+    }
+
+    public Date getSessionStartTime() {
+        return sessionStartTime;
+    }
+
+    public Date getSessionLastActiveTime() {
+        return sessionLastActiveTime;
     }
 
     @Override

@@ -56,6 +56,8 @@ public class SessionDataContainer {
     private static final String SSO_ACCESS_TOKEN_PARAMETER_NAME = "sso_access_token";
     private static final String SESSION_VALID_PARAMETER_NAME = "session_valid";
     private static final String SOFT_LIMIT_INTERVAL_PARAMETER_NAME = "soft_limit_interval";
+    private static final String SESSION_START_TIME = "session_start_time";
+    private static final String SESSION_LAST_ACTIVE_TIME = "session_last_active_time";
 
     @Inject
     private EngineSessionDao engineSessionDao;
@@ -123,6 +125,7 @@ public class SessionDataContainer {
         if (sessionInfo != null) {
             sessionInfo.contentOfSession.put(ENGINE_SESSION_SEQ_ID,
                     engineSessionDao.save(new EngineSession(getUser(sessionId, false), sessionId, getSourceIp(sessionId))));
+            setSessionStartTime(sessionId);
         }
     }
 
@@ -222,6 +225,24 @@ public class SessionDataContainer {
 
     public final void setSessionValid(String sessionId, boolean valid) {
         setData(sessionId, SESSION_VALID_PARAMETER_NAME, valid);
+    }
+
+    public final void setSessionStartTime(String sessionId) {
+        setData(sessionId, SESSION_START_TIME, new Date());
+    }
+
+    public final Date getSessionStartTime(String sessionId) {
+        return (Date) getData(sessionId, SESSION_START_TIME, false);
+    }
+
+    public final void updateSessionLastActiveTime(String sessionId) {
+        if (isSessionExists(sessionId)) {
+            setData(sessionId, SESSION_LAST_ACTIVE_TIME, new Date());
+        }
+    }
+
+    public final Date getSessionLastActiveTime(String sessionId) {
+        return (Date) getData(sessionId, SESSION_LAST_ACTIVE_TIME, false);
     }
 
     public boolean getSessionValid(String sessionId, boolean refresh) {
@@ -340,7 +361,7 @@ public class SessionDataContainer {
     }
 
     public boolean isSessionExists(String sessionId) {
-        return sessionInfoMap.containsKey(sessionId);
+        return StringUtils.isEmpty(sessionId) ? false : sessionInfoMap.containsKey(sessionId);
     }
 
     private void removeSessionImpl(String sessionId, int reason, String message, Object... msgArgs) {

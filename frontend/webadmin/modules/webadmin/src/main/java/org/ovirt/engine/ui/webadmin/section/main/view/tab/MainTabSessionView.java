@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabSessionPre
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.inject.Inject;
 
 public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<UserSession, SessionListModel>
@@ -77,6 +78,30 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                     }
                 };
         getTable().addColumn(sourceIpColumn, constants.sourceIp(), "200px"); //$NON-NLS-1$
+
+        final DateTimeFormat dateFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
+
+        AbstractTextColumn<UserSession> sessionStartColumn =
+                new AbstractTextColumn<UserSession>() {
+                    @Override
+                    public String getValue(UserSession session) {
+                        return session.getSessionStartTime() == null ?
+                                "" : //$NON-NLS-1$
+                                dateFormat.format(session.getSessionStartTime());
+                    }
+                };
+        getTable().addColumn(sessionStartColumn, constants.sessionStartTime(), "200px"); //$NON-NLS-1$
+
+        AbstractTextColumn<UserSession> sessionLastActiveColumn =
+                new AbstractTextColumn<UserSession>() {
+                    @Override
+                    public String getValue(UserSession session) {
+                        return session.getSessionLastActiveTime() == null ?
+                                "" : //$NON-NLS-1$
+                                dateFormat.format(session.getSessionLastActiveTime());
+                    }
+                };
+        getTable().addColumn(sessionLastActiveColumn, constants.sessionLastActiveTime(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {
             @Override

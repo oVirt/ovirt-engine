@@ -366,6 +366,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     public VdcReturnValueBase executeAction() {
+        getSessionDataContainer().updateSessionLastActiveTime(getParameters().getSessionId());
         determineExecutionReason();
         actionState = CommandActionState.EXECUTE;
         String tempVar = getDescription();
