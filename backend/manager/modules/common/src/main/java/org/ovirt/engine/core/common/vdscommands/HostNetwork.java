@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class HostNetwork {
@@ -17,6 +18,7 @@ public class HostNetwork {
     private boolean bonding;
     private boolean qosConfiguredOnInterface;
     private HostNetworkQos qos;
+    private SwitchType switchType;
 
     @SuppressWarnings("unused")
     private HostNetwork() {
@@ -175,6 +177,14 @@ public class HostNetwork {
         return qos;
     }
 
+    public SwitchType getSwitchType() {
+        return switchType;
+    }
+
+    public void setSwitchType(SwitchType switchType) {
+        this.switchType = switchType;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
@@ -195,6 +205,7 @@ public class HostNetwork {
                 .append("ipv6Address", getIpv6Address())
                 .append("ipv6Prefix", getIpv6Prefix())
                 .append("ipv6Gateway", getIpv6Gateway())
+                .append("switchType", getSwitchType())
                 .build();
     }
 }

@@ -624,6 +624,8 @@ select fn_db_add_config_value('UploadImageXhrRetryIntervalInSeconds','3','genera
 select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 
 select fn_db_add_config_value_for_versions_up_to('AdPartnerMacSupported','false','3.6');
+select fn_db_add_config_value_for_versions_up_to('OvsSupported','false','3.6');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
