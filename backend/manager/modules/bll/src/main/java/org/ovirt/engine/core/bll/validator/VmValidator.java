@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,22 +31,16 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /** A Validator for various VM validate needs */
 public class VmValidator {
-    private Iterable<VM> vms;
+    private VM vm;
 
     public VmValidator(VM vm) {
-        this.vms = Collections.singletonList(vm);
-    }
-
-    public VmValidator(Iterable<VM> vms) {
-        this.vms = vms;
+        this.vm = vm;
     }
 
     /** @return Validation result that indicates if the VM is during migration or not. */
     public ValidationResult vmNotDuringMigration() {
-        for (VM vm : vms) {
-            if (vm.getStatus() == VMStatus.MigratingFrom || vm.getStatus() == VMStatus.MigratingTo) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
-            }
+        if (vm.getStatus() == VMStatus.MigratingFrom || vm.getStatus() == VMStatus.MigratingTo) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
         }
 
         return ValidationResult.VALID;
@@ -55,10 +48,8 @@ public class VmValidator {
 
     /** @return Validation result that indicates if the VM is down or not. */
     public ValidationResult vmDown() {
-        for (VM vm : vms) {
-            if (!vm.isDown()) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-            }
+        if (!vm.isDown()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         }
 
         return ValidationResult.VALID;
@@ -66,11 +57,9 @@ public class VmValidator {
 
     /** @return Validation result that indicates if the VM is qualified to have its snapshots merged. */
     public ValidationResult vmQualifiedForSnapshotMerge() {
-        for (VM vm : vms) {
-            if (!vm.isQualifiedForSnapshotMerge()) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP,
-                        String.format("$VmName %s", vm.getName()));
-            }
+        if (!vm.isQualifiedForSnapshotMerge()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP,
+                    String.format("$VmName %s", vm.getName()));
         }
 
         return ValidationResult.VALID;
@@ -81,67 +70,55 @@ public class VmValidator {
      * of live merging snapshots.  Should be used in combination with vmQualifiedForSnapshotMerge().
      */
     public ValidationResult vmHostCanLiveMerge() {
-        for (VM vm : vms) {
-            if (!vm.isDown() &&
-                    (vm.getRunOnVds() == null ||
-                    !DbFacade.getInstance().getVdsDao().get(vm.getRunOnVds()).getLiveMergeSupport())) {
-                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE,
-                            String.format("$VmName %s", vm.getName()));
-            }
+        if (!vm.isDown() &&
+                (vm.getRunOnVds() == null ||
+                        !DbFacade.getInstance().getVdsDao().get(vm.getRunOnVds()).getLiveMergeSupport())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE,
+                    String.format("$VmName %s", vm.getName()));
         }
 
         return ValidationResult.VALID;
     }
 
     public ValidationResult vmNotLocked() {
-        for (VM vm : vms) {
-            if (vm.getStatus() == VMStatus.ImageLocked) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED);
-            }
+        if (vm.getStatus() == VMStatus.ImageLocked) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED);
         }
 
         return ValidationResult.VALID;
     }
 
     public ValidationResult vmNotSavingRestoring() {
-        for (VM vm : vms) {
-            if (vm.getStatus().isHibernating() || vm.getStatus() == VMStatus.RestoringState) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
-            }
+        if (vm.getStatus().isHibernating() || vm.getStatus() == VMStatus.RestoringState) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
         }
 
         return ValidationResult.VALID;
     }
 
     public ValidationResult validateVmStatusUsingMatrix(VdcActionType actionType) {
-        for (VM vm : vms) {
-            if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
-                    actionType)) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
-                        LocalizedVmStatus.from(vm.getStatus()));
-            }
+        if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
+                actionType)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
+                    LocalizedVmStatus.from(vm.getStatus()));
         }
 
         return ValidationResult.VALID;
     }
 
     public ValidationResult vmNotIlegal() {
-        for (VM vm : vms) {
-            if (vm.getStatus() == VMStatus.ImageIllegal) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
-            }
+        if (vm.getStatus() == VMStatus.ImageIllegal) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
         }
 
         return ValidationResult.VALID;
     }
 
     public ValidationResult vmNotRunningStateless() {
-        for (VM vm : vms) {
-            if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
-                EngineMessage message = vm.isRunning() ? EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :
-                        EngineMessage.ACTION_TYPE_FAILED_VM_HAS_STATELESS_SNAPSHOT_LEFTOVER;
-                return new ValidationResult(message);
-            }
+        if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
+            EngineMessage message = vm.isRunning() ? EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :
+                    EngineMessage.ACTION_TYPE_FAILED_VM_HAS_STATELESS_SNAPSHOT_LEFTOVER;
+            return new ValidationResult(message);
         }
 
         return ValidationResult.VALID;
@@ -151,14 +128,12 @@ public class VmValidator {
      * @return ValidationResult indicating whether snapshots of disks are attached to other vms.
      */
     public ValidationResult vmNotHavingDeviceSnapshotsAttachedToOtherVms(boolean onlyPlugged) {
-        for (VM vm : vms) {
-            List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vm.getId());
-            ValidationResult result =
-                    new DiskImagesValidator(ImagesHandler.filterImageDisks(vmDisks, true, false, true))
-                            .diskImagesSnapshotsNotAttachedToOtherVms(onlyPlugged);
-            if (result != ValidationResult.VALID) {
-                return result;
-            }
+        List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vm.getId());
+        ValidationResult result =
+                new DiskImagesValidator(ImagesHandler.filterImageDisks(vmDisks, true, false, true))
+                        .diskImagesSnapshotsNotAttachedToOtherVms(onlyPlugged);
+        if (result != ValidationResult.VALID) {
+            return result;
         }
 
         return ValidationResult.VALID;
@@ -170,7 +145,7 @@ public class VmValidator {
      */
     public ValidationResult canDisableVirtioScsi(Collection<? extends Disk> vmDisks) {
         if (vmDisks == null) {
-            vmDisks = getDiskDao().getAllForVm(vms.iterator().next().getId(), true);
+            vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         }
 
         boolean isVirtioScsiDiskExist =
@@ -195,19 +170,17 @@ public class VmValidator {
      * @return ValidationResult indicating whether a vm contains passthrough vnics
      */
     public ValidationResult vmNotHavingPassthroughVnics() {
-        for (VM vm : vms) {
-            List<VmNetworkInterface> vnics =
-                    getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+        List<VmNetworkInterface> vnics =
+                getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId());
 
-            List<String> passthroughVnicNames =
-                    vnics.stream().filter(VmNic::isPassthrough).map(VmNic::getName).collect(Collectors.toList());
+        List<String> passthroughVnicNames =
+                vnics.stream().filter(VmNic::isPassthrough).map(VmNic::getName).collect(Collectors.toList());
 
-            if (!passthroughVnicNames.isEmpty()) {
-                Collection<String> replacements = ReplacementUtils.replaceWith("interfaces", passthroughVnicNames);
-                replacements.add(String.format("$vmName %s", vm.getName()));
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
-                        replacements);
-            }
+        if (!passthroughVnicNames.isEmpty()) {
+            Collection<String> replacements = ReplacementUtils.replaceWith("interfaces", passthroughVnicNames);
+            replacements.add(String.format("$vmName %s", vm.getName()));
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
+                    replacements);
         }
         return ValidationResult.VALID;
     }
@@ -217,23 +190,19 @@ public class VmValidator {
      * @return If scsi lun with scsi reservation is plugged to VM
      */
     public ValidationResult isVmPluggedDiskNotUsingScsiReservation() {
-        for (VM vm : vms) {
-            List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.DISK);
-            for (VmDevice device : devices) {
-                if (device.getIsPlugged() && device.isUsingScsiReservation()) {
-                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION,
-                            String.format("$VmName %s", vm.getName()));
-                }
+        List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.DISK);
+        for (VmDevice device : devices) {
+            if (device.getIsPlugged() && device.isUsingScsiReservation()) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION,
+                        String.format("$VmName %s", vm.getName()));
             }
         }
         return ValidationResult.VALID;
     }
 
     public ValidationResult vmNotHavingPciPassthroughDevices() {
-        for (VM vm : vms) {
-           if (getHostDeviceManager().checkVmNeedsPciDevices(vm.getId())) {
-               return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES);
-           }
+        if (getHostDeviceManager().checkVmNeedsPciDevices(vm.getId())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES);
         }
         return ValidationResult.VALID;
     }
