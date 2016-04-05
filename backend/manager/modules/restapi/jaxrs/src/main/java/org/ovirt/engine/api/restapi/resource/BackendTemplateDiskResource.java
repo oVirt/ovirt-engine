@@ -28,12 +28,14 @@ public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<D
     public Response copy(Action action) {
         validateParameters(action, "storageDomain.id|name");
         Guid storageDomainId = getStorageDomainId(action);
-        Guid imageId = asGuid(getDisk().getImageId());
+        Disk disk = getDisk();
+        Guid imageId = asGuid(disk.getImageId());
         MoveOrCopyImageGroupParameters params =
                 new MoveOrCopyImageGroupParameters(imageId,
                         Guid.Empty,
                         storageDomainId,
                         ImageOperation.Copy);
+        params.setImageGroupID(asGuid(disk.getId()));
         return doAction(VdcActionType.MoveOrCopyDisk, params, action);
     }
 
