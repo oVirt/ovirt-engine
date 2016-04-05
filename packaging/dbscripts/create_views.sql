@@ -3714,4 +3714,20 @@ SELECT qos.*,
 
 FROM qos
     INNER JOIN disk_profiles
-        ON qos.id = disk_profiles.qos_id
+        ON qos.id = disk_profiles.qos_id;
+
+CREATE OR REPLACE VIEW labels_map_view AS
+
+-- the aggregated arrays have to be type-casted to strings, because of a missing functionality in pgsql JDBC driver
+-- reading UUID arrays is not supported
+-- see https://github.com/pgjdbc/pgjdbc/pull/50 and https://github.com/pgjdbc/pgjdbc/pull/81 for details
+
+SELECT labels.label_id,
+    labels.label_name,
+    labels.read_only,
+    array_agg(labels_map.vm_id::text) as vm_ids,
+    array_agg(labels_map.vds_id::text) as vds_ids
+FROM labels
+LEFT JOIN labels_map
+    ON labels_map.label_id = labels.label_id
+GROUP BY labels.label_id, labels.label_name, labels.read_only;
