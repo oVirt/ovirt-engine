@@ -87,11 +87,11 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         return validate(storageDomainValidator.isDomainExistAndActive());
     }
 
-    protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
+    private StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
         return new StorageDomainValidator(storageDomain);
     }
 
-    protected void performDbLoads() {
+    private void performDbLoads() {
         oldVmDevice =
                 getVmDeviceDao().get(new VmDeviceId(getParameters().getDiskId(), getVmId()));
         if (oldVmDevice != null) {
