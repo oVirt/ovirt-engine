@@ -1870,6 +1870,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    OvsSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     AllowEditingHostedEngine,
 
     @TypeConverterAttribute(Boolean.class)

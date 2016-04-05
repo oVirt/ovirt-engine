@@ -23,6 +23,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
     private static final String DEFAULT_ROUTE = "defaultRoute";
+
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
 
     public HostSetupNetworksVDSCommand(T parameters) {
@@ -69,6 +70,13 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
 
             if (hostNetwork.isDefaultRoute()) {
                 attributes.put(DEFAULT_ROUTE, Boolean.TRUE);
+            }
+
+            if (hostNetwork.getSwitchType() != null) {
+                /**
+                 * optional, specifies switch type.  Legacy will be used if switch option is not passed.
+                 */
+                attributes.put(VdsProperties.SWITCH_KEY, hostNetwork.getSwitchType().getOptionValue());
             }
 
             if (hostNetwork.hasProperties()) {
