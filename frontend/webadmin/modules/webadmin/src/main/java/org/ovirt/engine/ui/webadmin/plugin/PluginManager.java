@@ -535,6 +535,11 @@ public class PluginManager {
                 if (validatePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getUserId()();
                 }
+            },
+            engineBaseUrl: function() {
+                if (validatePluginAction(this.pluginName)) {
+                    return @org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils::getRootURL()() + @org.ovirt.engine.ui.frontend.utils.BaseContextPathData::getRelativePath()();
+                }
             }
 
         };
