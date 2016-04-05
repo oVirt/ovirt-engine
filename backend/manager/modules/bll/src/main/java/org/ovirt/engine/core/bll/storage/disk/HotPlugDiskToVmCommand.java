@@ -87,7 +87,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         return validate(storageDomainValidator.isDomainExistAndActive());
     }
 
-    private StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
+    protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
         return new StorageDomainValidator(storageDomain);
     }
 
