@@ -556,11 +556,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
 
         boolean succeeded = getSucceeded() && getParameters().getTaskGroupSuccess();
-
-        //TODO: We should support also Commands with callbacks that has steps
-        if (getCallback() == null) {
-            ExecutionHandler.endFinalizingStepAndCurrentStep(getContext().getExecutionContext(), succeeded);
-        }
+        ExecutionHandler.endFinalizingStepAndCurrentStep(getContext().getExecutionContext(), succeeded);
 
         if (!parentHasCallback()) {
             ExecutionHandler.endTaskJobIfNeeded(getContext().getExecutionContext(), getSucceeded() && getParameters()
