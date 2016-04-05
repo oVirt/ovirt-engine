@@ -206,6 +206,7 @@ public class VmAnalyzer {
         // destroy the VM as soon as possible
         destroyVm();
 
+        // VM is running on another host - must be during migration
         if (dbVm == null) {
             if (vmDynamicDao.get(vdsmVm.getVmDynamic().getId()).getStatus() != VMStatus.MigratingFrom) {
                 handleVmOnDown();
@@ -227,6 +228,9 @@ public class VmAnalyzer {
             clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                     vdsmVm.getVmDynamic().getExitMessage(),
                     vdsmVm.getVmDynamic().getExitReason());
+            if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal) {
+                handOverVM(dbVm);
+            }
             break;
 
         default:
@@ -235,8 +239,6 @@ public class VmAnalyzer {
                     vdsmVm.getVmDynamic().getExitReason());
             handleVmOnDown();
         }
-
-        removeVmFromCache();
     }
 
     private void destroyVm() {
@@ -257,11 +259,9 @@ public class VmAnalyzer {
             // Vm failed to run - try to rerun it on other Vds
             if (dbVm != null) {
                 if (resourceManager.isVmInAsyncRunningList(vdsmVm.getVmDynamic().getId())) {
-                    log.info("Running on VDS '{}' during rerun failed VM: '{}'({})",
-                            vdsmVm.getVmDynamic().getRunOnVds(), dbVm.getId(), dbVm.getName());
-                    rerun = true;
+                    setRerunFlag();
                 } else if (dbVm.isAutoStartup()) {
-                    autoVmToRun = true;
+                    setAutoRunFlag();
                 }
             }
             // if failed in destination right after migration
@@ -702,46 +702,6 @@ public class VmAnalyzer {
                 setAutoRunFlag();
                 break;
             }
-        }
-    }
-
-    // del from cache all vms that not in vdsm
-    private void removeVmFromCache() {
-        // marks the vm was powered down by user but not reported as Down afterwards by vdsm
-        boolean poweredDown = false;
-        proceedVmBeforeDeletion();
-        boolean migrating = dbVm.getStatus() == VMStatus.MigratingFrom;
-        if (migrating) {
-            handOverVM(dbVm);
-        } else if (dbVm.getStatus() == VMStatus.PoweringDown) {
-            poweredDown = true;
-            clearVm(VmExitStatus.Normal,
-                    String.format("VM %s shutdown complete", dbVm.getName()),
-                    VmExitReason.Success);
-        } else {
-            clearVm(VmExitStatus.Error,
-                    String.format("Could not find VM %s on host, assuming it went down unexpectedly",
-                            dbVm.getName()),
-                    VmExitReason.GenericError);
-        }
-
-        log.info("VM '{}'({}) is running in db and not running in VDS '{}'",
-                dbVm.getId(), dbVm.getName(), vdsManager.getVdsName());
-
-        if (!migrating && !rerun && resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
-            setRerunFlag();
-        }
-        // vm should be auto startup
-        // not already in start up list
-        // not in reported from vdsm at all (and was not powered-down before)
-        // or reported from vdsm with error code
-        else if (dbVm.isAutoStartup()
-                && !autoVmToRun
-                && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal
-                && !poweredDown) {
-            setAutoRunFlag();
-        } else if (getVmManager() != null && getVmManager().isColdReboot()) {
-            setColdRebootFlag();
         }
     }
 

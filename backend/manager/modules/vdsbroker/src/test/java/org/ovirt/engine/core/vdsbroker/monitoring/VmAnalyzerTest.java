@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -185,7 +184,6 @@ public class VmAnalyzerTest {
         //then
         vmAnalyzer.analyze();
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
-        verify(resourceManager, atLeast(3)).isVmInAsyncRunningList(data.dbVm().getId());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
     }
 
