@@ -478,4 +478,6 @@ public final class VdsProperties {
     public static final String vmJobCursorEnd = "end";
     public static final String vmJobBandwidth = "bandwidth";
     public static final String vmJobImageUUID = "imgUUID";
+
+    public static final String SWITCH_KEY = "switch";
 }

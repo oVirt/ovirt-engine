@@ -109,8 +109,11 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.AdPartnerMacSupported, version);
     }
 
-
     public static boolean ipv6Supported(Version version) {
         return supportedInConfig(ConfigValues.Ipv6Supported, version);
+    }
+
+    public static boolean ovsSupported(Version version) {
+        return supportedInConfig(ConfigValues.OvsSupported, version);
     }
 }
