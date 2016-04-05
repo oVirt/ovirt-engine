@@ -87,25 +87,6 @@ public class VmValidatorTest extends DbDependentTestBase {
 
     }
 
-    @Test
-    public void vmNotHavingPassthroughVnicsMulitpleVmsValid() {
-        List<VM> vmList = initValidatorWithMultipleVms(2);
-        vmNotHavingPassthroughVnicsCommon(vmList.get(0).getId(), 0, 2);
-        vmNotHavingPassthroughVnicsCommon(vmList.get(1).getId(), 0, 8);
-        assertThat(validator.vmNotHavingPassthroughVnics(), isValid());
-
-    }
-
-    @Test
-    public void vmNotHavingPassthroughVnicsMulitpleVmsNotValid() {
-        List<VM> vmList = initValidatorWithMultipleVms(3);
-        vmNotHavingPassthroughVnicsCommon(vmList.get(0).getId(), 0, 2);
-        vmNotHavingPassthroughVnicsCommon(vmList.get(1).getId(), 3, 8);
-        vmNotHavingPassthroughVnicsCommon(vmList.get(2).getId(), 0, 4);
-        assertThat(validator.vmNotHavingPassthroughVnics(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
-    }
-
     private void vmNotHavingPassthroughVnicsCommon(Guid vmId, int numOfPassthroughVnic, int numOfRegularVnics) {
         List<VmNetworkInterface> vnics = new ArrayList<>();
 
@@ -130,17 +111,5 @@ public class VmValidatorTest extends DbDependentTestBase {
     private void assertThatVmNotHavingPassthroughVnics(boolean valid) {
         assertThat(validator.vmNotHavingPassthroughVnics(), valid ? isValid()
                 : failsWith(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED));
-    }
-
-    private List<VM> initValidatorWithMultipleVms(int numOfVms) {
-        List<VM> vmList = new ArrayList<>();
-
-        for (int i = 0; i < numOfVms; ++i) {
-            vmList.add(createVm());
-        }
-
-        validator = new VmValidator(vmList);
-
-        return vmList;
     }
 }
