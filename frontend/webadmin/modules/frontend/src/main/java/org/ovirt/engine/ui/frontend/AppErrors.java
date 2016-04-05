@@ -568,6 +568,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The attachment of network '${ATTACHMENT_REFERENCE_VLAN_DEVICE_ENTITY}' references vlan device '${nicName}'. Network attachment cannot reference vlan device.")
     String ATTACHMENT_REFERENCE_VLAN_DEVICE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network ${networkName} is already attached via attachment ${networkAttachmentID}. A new attachment cannot be used for the same network, please reuse the existing one.")
+    String ATTACHMENT_IS_NOT_REUSED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Custom properties are not supported for device type: ${InvalidDeviceType}")
     String ACTION_TYPE_FAILED_INVALID_DEVICE_TYPE_FOR_CUSTOM_PROPERTIES();
 

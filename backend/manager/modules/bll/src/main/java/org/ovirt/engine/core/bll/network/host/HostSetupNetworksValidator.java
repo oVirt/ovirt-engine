@@ -680,6 +680,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : modifiedAttachmentExists(attachment.getId());
             vr = skipValidation(vr) ? vr : modifiedAttachmentNotRemoved(attachment);
             vr = skipValidation(vr) ? vr : validateAttachmentNotReferenceVlanDevice(attachment);
+            vr = skipValidation(vr) ? vr : validator.existingAttachmentIsReused(existingAttachmentsByNetworkId);
             vr = skipValidation(vr) ? vr : validateAttachmentAndNicReferenceSameLabelNotConflict(attachment);
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();

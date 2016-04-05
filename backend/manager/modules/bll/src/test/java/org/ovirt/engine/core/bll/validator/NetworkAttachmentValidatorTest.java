@@ -11,6 +11,8 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.ClassRule;
@@ -577,6 +579,62 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
 
         assertThat(validator.networkNotUsedByVms(), isValid());
+    }
+
+    @Test
+    public void testExistingAttachmentIsReusedNotReused() {
+        Guid networkId = Guid.newGuid();
+
+        NetworkAttachment oldAttachment = new NetworkAttachment();
+        oldAttachment.setNetworkId(networkId);
+        oldAttachment.setNetworkName("reusedNetwork");
+        oldAttachment.setId(Guid.newGuid());
+
+        Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId = new HashMap<>();
+        existingAttachmentsByNetworkId.put(networkId, oldAttachment);
+
+        NetworkAttachment attachment = new NetworkAttachment();
+        attachment.setNetworkId(networkId);
+
+        assertThat(
+                createNetworkAttachmentValidator(attachment).existingAttachmentIsReused(existingAttachmentsByNetworkId),
+                failsWith(EngineMessage.ATTACHMENT_IS_NOT_REUSED,
+                        ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_NETWORK_ATTACHMENT_ID,
+                                oldAttachment.getId()),
+                        ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_NETWORK_NAME,
+                                oldAttachment.getNetworkName())));
+    }
+
+    @Test
+    public void testExistingAttachmentIsReusedNoExisting() {
+        NetworkAttachment attachment = new NetworkAttachment();
+        attachment.setNetworkId(Guid.newGuid());
+
+        assertThat(
+                createNetworkAttachmentValidator(attachment).existingAttachmentIsReused(Collections.emptyMap()),
+                isValid());
+    }
+
+    @Test
+    public void testExistingAttachmentExistingHasSameId() {
+        Guid networkId = Guid.newGuid();
+        Guid attachmentId = Guid.newGuid();
+
+        NetworkAttachment oldAttachment = new NetworkAttachment();
+        oldAttachment.setNetworkId(networkId);
+        oldAttachment.setNetworkName("reusedNetwork");
+        oldAttachment.setId(attachmentId);
+
+        Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId = new HashMap<>();
+        existingAttachmentsByNetworkId.put(networkId, oldAttachment);
+
+        NetworkAttachment attachment = new NetworkAttachment();
+        attachment.setNetworkId(networkId);
+        attachment.setId(attachmentId);
+
+        assertThat(
+                createNetworkAttachmentValidator(attachment).existingAttachmentIsReused(existingAttachmentsByNetworkId),
+                isValid());
     }
 
     private Collection<String> collectionContainingOneGivenNetworkName(final String name) {

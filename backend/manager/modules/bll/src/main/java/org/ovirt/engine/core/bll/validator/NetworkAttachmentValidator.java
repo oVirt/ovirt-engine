@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +33,7 @@ public class NetworkAttachmentValidator {
     public static final String VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY = "ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY";
     public static final String VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST = "ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST";
     public static final String VAR_NETWORK_ATTACHMENT_ID = "networkAttachmentID";
+    public static final String VAR_NETWORK_NAME = "networkName";
 
     private final VdsDao vdsDao;
     private final NetworkDao networkDao;
@@ -217,6 +219,22 @@ public class NetworkAttachmentValidator {
         }
 
         return false;
+    }
+
+    public ValidationResult existingAttachmentIsReused(Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId) {
+        NetworkAttachment existingAttachmentWithTheSameNetwork =
+                existingAttachmentsByNetworkId.get(attachment.getNetworkId());
+
+        if (existingAttachmentWithTheSameNetwork == null) {
+            return ValidationResult.VALID;
+        }
+
+        return ValidationResult.failWith(EngineMessage.ATTACHMENT_IS_NOT_REUSED,
+                ReplacementUtils.createSetVariableString(VAR_NETWORK_ATTACHMENT_ID,
+                        existingAttachmentWithTheSameNetwork.getId()),
+                ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME,
+                        existingAttachmentWithTheSameNetwork.getNetworkName()))
+                .unless(existingAttachmentWithTheSameNetwork.getId().equals(attachment.getId()));
     }
 
     protected Network getNetwork() {
