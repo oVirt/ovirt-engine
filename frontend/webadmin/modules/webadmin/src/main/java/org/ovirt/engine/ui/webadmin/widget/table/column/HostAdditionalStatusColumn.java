@@ -50,6 +50,10 @@ public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS
                         constants.ExternalStatus() + externalStatus.name());
             }
         }
+        if (host.isHostedEngineHost()) {
+            imagesToText.put(getImageSafeHtml(resources.mgmtNetwork()), constants.actionItems());
+        }
+
         return imagesToText;
     }
 
