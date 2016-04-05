@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,27 +28,27 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getClusterPolicyDao();
-        existingPolicy = dao.get(FixturesTool.CLUSTER_POLICY_EVEN_DISTRIBUTION);
+        existingPolicy = dao.get(FixturesTool.CLUSTER_POLICY_EVEN_DISTRIBUTION, Collections.emptyMap());
         createDummyPolicy();
     };
 
     @Test
     public void testGet() {
-        ClusterPolicy result = dao.get(existingPolicy.getId());
+        ClusterPolicy result = dao.get(existingPolicy.getId(), Collections.emptyMap());
 
         assertTrue(result.equals(existingPolicy));
     }
 
     @Test
     public void testGetNegative() {
-        ClusterPolicy result = dao.get(Guid.newGuid());
+        ClusterPolicy result = dao.get(Guid.newGuid(), Collections.emptyMap());
 
         assertNull(result);
     }
 
     @Test
     public void testGetAll() {
-        List<ClusterPolicy> result = dao.getAll();
+        List<ClusterPolicy> result = dao.getAll(Collections.emptyMap());
 
         assertNotNull(result);
         assertEquals(result.size(), NUMBER_OF_CLUSTER_POLICIES);
@@ -56,7 +57,7 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
     @Test
     public void testSave() {
         dao.save(dummyPolicy);
-        ClusterPolicy result = dao.get(dummyPolicy.getId());
+        ClusterPolicy result = dao.get(dummyPolicy.getId(), Collections.emptyMap());
         assertTrue(result.equals(dummyPolicy));
         dao.remove(dummyPolicy.getId());
     }
@@ -66,7 +67,7 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
         dao.save(dummyPolicy);
         dummyPolicy.setName("Altered dummy policy");
         dao.update(dummyPolicy);
-        ClusterPolicy result = dao.get(dummyPolicy.getId());
+        ClusterPolicy result = dao.get(dummyPolicy.getId(), Collections.emptyMap());
         assertTrue(result.equals(dummyPolicy));
     }
 
@@ -74,7 +75,7 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
     public void testRemove() {
         dao.save(dummyPolicy);
         dao.remove(dummyPolicy.getId());
-        ClusterPolicy result = dao.get(dummyPolicy.getId());
+        ClusterPolicy result = dao.get(dummyPolicy.getId(), Collections.emptyMap());
         assertNull(result);
 
     }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,7 +65,7 @@ public class SchedulingManagerTest {
         when(dbFacade.getPolicyUnitDao()).thenReturn(policyUnitDao);
         when(dbFacade.getClusterPolicyDao()).thenReturn(clusterPolicyDao);
         when(policyUnitDao.getAll()).thenReturn(Collections.<PolicyUnit> emptyList());
-        when(clusterPolicyDao.getAll()).thenReturn(Collections.<ClusterPolicy> emptyList());
+        when(clusterPolicyDao.getAll(any())).thenReturn(Collections.<ClusterPolicy> emptyList());
     }
 
     @Deployment

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao.scheduling;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -58,7 +60,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
     }
 
     @Override
-    public List<ClusterPolicy> getAll() {
+    public List<ClusterPolicy> getAll(@NotNull Map<Guid, PolicyUnitType> internalUnitTypes) {
         List<ClusterPolicy> clusterPolicies = super.getAll();
         Map<Guid, ClusterPolicy> map = new HashMap<>();
         for (ClusterPolicy clusterPolicy : clusterPolicies) {
@@ -68,12 +70,12 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
                 getCallsHandler().executeReadList("GetAllFromClusterPolicyUnits",
                 createClusterPolicyUnitRowMapper(),
                 getCustomMapSqlParameterSource());
-        fillClusterPolicy(map, clusterPolicyUnits);
+        fillClusterPolicy(map, clusterPolicyUnits, Collections.unmodifiableMap(internalUnitTypes));
         return clusterPolicies;
     }
 
     @Override
-    public ClusterPolicy get(Guid id) {
+    public ClusterPolicy get(Guid id, @NotNull Map<Guid, PolicyUnitType> internalUnitTypes) {
         ClusterPolicy clusterPolicy = super.get(id);
         if (clusterPolicy == null) {
             return null;
@@ -84,18 +86,22 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
                         createIdParameterMapper(id));
         Map<Guid, ClusterPolicy> map = new HashMap<>();
         map.put(clusterPolicy.getId(), clusterPolicy);
-        fillClusterPolicy(map, clusterPolicyUnits);
+        fillClusterPolicy(map, clusterPolicyUnits, Collections.unmodifiableMap(internalUnitTypes));
         return clusterPolicy;
     }
 
-    private void fillClusterPolicy(Map<Guid, ClusterPolicy> map, List<ClusterPolicyUnit> clusterPolicyUnits) {
-        Map<Guid, PolicyUnit> policyUnitMap = new HashMap<>();
+    private void fillClusterPolicy(Map<Guid, ClusterPolicy> map, List<ClusterPolicyUnit> clusterPolicyUnits,
+            @NotNull Map<Guid, PolicyUnitType> internalUnitTypes) {
+        Map<Guid, PolicyUnitType> policyUnitTypeMap = new HashMap<>(internalUnitTypes);
+
         for (PolicyUnit policyUnit : policyUnitDao.getAll()) {
-            policyUnitMap.put(policyUnit.getId(), policyUnit);
+            policyUnitTypeMap.put(policyUnit.getId(), policyUnit.getPolicyUnitType());
         }
+
         for (ClusterPolicyUnit clusterPolicyUnit : clusterPolicyUnits) {
             ClusterPolicy clusterPolicy = map.get(clusterPolicyUnit.getClusterPolicyId());
-            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.FILTER) {
+
+            if (policyUnitTypeMap.get(clusterPolicyUnit.getPolicyUnitId()) == PolicyUnitType.FILTER) {
                 if (clusterPolicy.getFilters() == null) {
                     clusterPolicy.setFilters(new ArrayList<>());
                 }
@@ -108,14 +114,14 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
                             clusterPolicyUnit.getFilterSequence());
                 }
             }
-            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.WEIGHT) {
+            if (policyUnitTypeMap.get(clusterPolicyUnit.getPolicyUnitId()) == PolicyUnitType.WEIGHT) {
                 if(clusterPolicy.getFunctions() == null){
                     clusterPolicy.setFunctions(new ArrayList<>());
                 }
                 clusterPolicy.getFunctions().add(new Pair<>(clusterPolicyUnit.getPolicyUnitId(),
                         clusterPolicyUnit.getFactor()));
             }
-            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
+            if (policyUnitTypeMap.get(clusterPolicyUnit.getPolicyUnitId()) == PolicyUnitType.LOAD_BALANCING) {
                 clusterPolicy.setBalance(clusterPolicyUnit.getPolicyUnitId());
             }
         }

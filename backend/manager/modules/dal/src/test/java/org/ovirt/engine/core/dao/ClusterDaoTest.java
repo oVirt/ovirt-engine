@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -61,7 +62,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setClusterPolicyId(existingCluster.getClusterPolicyId());
         ClusterPolicyDao clusterPolicyDao = dbFacade.getClusterPolicyDao();
         // set cluster policy name to allow equals method to succeed
-        newGroup.setClusterPolicyName(clusterPolicyDao.get(existingCluster.getClusterPolicyId()).getName());
+        newGroup.setClusterPolicyName(clusterPolicyDao.get(existingCluster.getClusterPolicyId(),
+                Collections.emptyMap()).getName());
         newGroup.setClusterPolicyProperties(new LinkedHashMap<>());
         newGroup.setDetectEmulatedMachine(true);
         newGroup.setEmulatedMachine("rhel6.4.0");

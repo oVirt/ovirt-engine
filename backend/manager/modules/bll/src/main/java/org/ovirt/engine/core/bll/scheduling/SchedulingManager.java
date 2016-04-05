@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -195,8 +196,14 @@ public class SchedulingManager implements BackendService {
         // Load internal cluster policies
         policyMap.putAll(InternalClusterPolicies.getClusterPolicies());
 
+        Map<Guid, PolicyUnitType> internalTypes = new HashMap<>();
+        for (PolicyUnitImpl unit: policyUnits.values()) {
+            internalTypes.put(unit.getGuid(), unit.getType());
+        }
+
         // Get all user provided cluster policies
-        List<ClusterPolicy> allClusterPolicies = getClusterPolicyDao().getAll();
+        List<ClusterPolicy> allClusterPolicies = getClusterPolicyDao().getAll(
+                Collections.unmodifiableMap(internalTypes));
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
             policyMap.put(clusterPolicy.getId(), clusterPolicy);
         }
