@@ -199,36 +199,44 @@ public class VmAnalyzer {
     }
 
     void proceedDownVm() {
-        if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
-            VMStatus prevStatus;
-            if (dbVm != null) {
-                prevStatus = dbVm.getStatus();
-                proceedVmBeforeDeletion();
+        if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Down) {
+            return;
+        }
 
-                // when going to suspend, delete vm from cache later
-                if (prevStatus == VMStatus.SavingState) {
-                    resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
-                }
+        // destroy the VM as soon as possible
+        destroyVm();
 
-                clearVm(vdsmVm.getVmDynamic().getExitStatus(),
-                        vdsmVm.getVmDynamic().getExitMessage(),
-                        vdsmVm.getVmDynamic().getExitReason());
-            } else {
-                prevStatus = vmDynamicDao.get(vdsmVm.getVmDynamic().getId()).getStatus();
-            }
-
-            destroyVm();
-
-            if (dbVm != null && prevStatus == VMStatus.SavingState) {
-                afterSuspendTreatment();
-            } else if (prevStatus != VMStatus.MigratingFrom) {
+        if (dbVm == null) {
+            if (vmDynamicDao.get(vdsmVm.getVmDynamic().getId()).getStatus() != VMStatus.MigratingFrom) {
                 handleVmOnDown();
             }
-
-            if (dbVm != null) {
-                removeVmFromCache();
-            }
+            return;
         }
+
+        switch (dbVm.getStatus()) {
+        case SavingState:
+            resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
+            clearVm(vdsmVm.getVmDynamic().getExitStatus(),
+                    vdsmVm.getVmDynamic().getExitMessage(),
+                    vdsmVm.getVmDynamic().getExitReason());
+            afterSuspendTreatment();
+            break;
+
+        case MigratingFrom:
+            proceedVmBeforeDeletion();
+            clearVm(vdsmVm.getVmDynamic().getExitStatus(),
+                    vdsmVm.getVmDynamic().getExitMessage(),
+                    vdsmVm.getVmDynamic().getExitReason());
+            break;
+
+        default:
+            clearVm(vdsmVm.getVmDynamic().getExitStatus(),
+                    vdsmVm.getVmDynamic().getExitMessage(),
+                    vdsmVm.getVmDynamic().getExitReason());
+            handleVmOnDown();
+        }
+
+        removeVmFromCache();
     }
 
     private void destroyVm() {
