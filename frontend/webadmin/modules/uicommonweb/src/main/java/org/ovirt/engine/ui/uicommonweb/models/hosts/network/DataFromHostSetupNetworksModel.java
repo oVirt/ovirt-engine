@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
@@ -22,6 +23,8 @@ public class DataFromHostSetupNetworksModel {
     private Set<String> networksToSync = new HashSet<>();;
 
     private Set<String> removedUnmanagedNetworks = new HashSet<>();
+
+    private Map<Guid, Guid> networkIdToExistingAttachmentId;
 
     public Set<String> getNetworksToSync() {
         return networksToSync;
@@ -59,6 +62,19 @@ public class DataFromHostSetupNetworksModel {
         return removedUnmanagedNetworks;
     }
 
+    public void addNetworkAttachmentToParameters(NetworkAttachment networkAttachment) {
+        assert networkAttachment.getId() == null : "When adding attachment to parameters its id should be null"; //$NON-NLS-1$
+        Guid idOfAttachmentNetworkWasPreviouslyAttachedTo =
+                networkIdToExistingAttachmentId.get(networkAttachment.getNetworkId());
+        networkAttachment.setId(idOfAttachmentNetworkWasPreviouslyAttachedTo);
+
+        if (idOfAttachmentNetworkWasPreviouslyAttachedTo != null) {
+            removedNetworkAttachments.remove(idOfAttachmentNetworkWasPreviouslyAttachedTo);
+        }
+
+        networkAttachments.add(networkAttachment);
+    }
+
     public void removeNetworkAttachmentFromParameters(NetworkAttachment networkAttachment) {
         networkAttachments.remove(networkAttachment);
 
@@ -89,5 +105,9 @@ public class DataFromHostSetupNetworksModel {
         if (originalLabels.contains(nicLabel.getLabel())) {
             removedLabels.remove(nicLabel.getLabel());
         }
+    }
+
+    public void setNetworkIdToExistingAttachmentId(Map<Guid, Guid> networkIdToExistingAttachmentId) {
+        this.networkIdToExistingAttachmentId = networkIdToExistingAttachmentId;
     }
 }

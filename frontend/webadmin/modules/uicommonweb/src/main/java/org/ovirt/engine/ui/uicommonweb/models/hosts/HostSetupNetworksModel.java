@@ -1067,6 +1067,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 Object returnValue2 = returnValue.getReturnValue();
                 hostSetupNetworksParametersData.getNetworkAttachments().addAll((List<NetworkAttachment>) returnValue2);
 
+                initNetworkIdToExistingAttachmentMap();
+
                 // chain the vfsConfig query
                 queryVfsConfig();
             }
@@ -1311,5 +1313,14 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     public VdsNetworkInterface getExistingVlanDeviceByVlanId(int vlanId) {
         return existingVlanDevicesByVlanId.get(vlanId);
+    }
+
+    private void initNetworkIdToExistingAttachmentMap() {
+        Map<Guid, Guid> networkIdToExistingAttachmentId = new HashMap<>();
+        for (NetworkAttachment attachment : hostSetupNetworksParametersData.getNetworkAttachments()) {
+            networkIdToExistingAttachmentId.put(attachment.getNetworkId(), attachment.getId());
+        }
+
+        hostSetupNetworksParametersData.setNetworkIdToExistingAttachmentId(networkIdToExistingAttachmentId);
     }
 }

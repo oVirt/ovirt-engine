@@ -21,8 +21,7 @@ public class LogicalNetworkModelParametersHelper {
 
         networkModel.getSetupModel()
                 .getHostSetupNetworksParametersData()
-                .getNetworkAttachments()
-                .add(networkAttachment);
+                .addNetworkAttachmentToParameters(networkAttachment);
     }
 
     private NetworkAttachment createAttachmentWhenAttachingTo(VdsNetworkInterface targetNic) {
