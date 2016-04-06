@@ -29,6 +29,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
         this.client = client;
     }
 
+    @Override
     public void close() {
         this.client.close();
     }

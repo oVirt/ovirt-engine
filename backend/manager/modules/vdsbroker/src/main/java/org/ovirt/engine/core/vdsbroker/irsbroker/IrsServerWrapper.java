@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public class IrsServerWrapper implements IIrsServer {
 
@@ -15,9 +16,9 @@ public class IrsServerWrapper implements IIrsServer {
         this.irsServer = innerImplementor;
         this.httpClient = httpClient;
     }
-
-    public HttpClient getHttpClient() {
-        return httpClient;
+    @Override
+    public void close() {
+        XmlRpcUtils.shutDownConnection(httpClient);
     }
 
     @Override

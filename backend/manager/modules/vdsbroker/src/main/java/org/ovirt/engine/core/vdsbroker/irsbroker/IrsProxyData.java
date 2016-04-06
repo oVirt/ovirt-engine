@@ -77,10 +77,8 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportFactory;
-import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcIIrsServer;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1122,11 +1120,7 @@ public class IrsProxyData {
 
     private void nullifyInternalProxies() {
         if (irsProxy != null) {
-            if (IrsServerWrapper.class.isInstance(irsProxy)) {
-                XmlRpcUtils.shutDownConnection(((IrsServerWrapper) irsProxy).getHttpClient());
-            } else {
-                ((JsonRpcIIrsServer) irsProxy).close();
-            }
+            irsProxy.close();
         }
         privatemCurrentIrsHost = null;
         irsProxy = null;
