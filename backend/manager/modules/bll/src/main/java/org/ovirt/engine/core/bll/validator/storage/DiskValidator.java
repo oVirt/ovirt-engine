@@ -196,7 +196,7 @@ public class DiskValidator {
 
     public ValidationResult isDiskAttachedToVm(Guid vmId) {
         List<VM> vms = getVmDao().getVmsListForDisk(disk.getId(), true);
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST).
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM).
                 when(vms.stream().noneMatch(vm -> vm.getId().equals(vmId)));
     }
 }
