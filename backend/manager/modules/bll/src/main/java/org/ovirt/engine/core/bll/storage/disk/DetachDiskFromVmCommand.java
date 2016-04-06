@@ -34,7 +34,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         disk = loadDisk(getParameters().getEntityInfo().getId());
-        if (!isDiskExist(disk)) {
+        if (!isDiskExistAndAttachedToVm(disk)) {
             return false;
         }
 

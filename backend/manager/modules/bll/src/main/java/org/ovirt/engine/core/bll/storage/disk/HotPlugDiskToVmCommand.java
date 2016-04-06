@@ -56,7 +56,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
                 validate(new VmValidator(getVm()).isVmExists()) &&
                 isVmInUpPausedDownStatus() &&
                 canRunActionOnNonManagedVm() &&
-                isDiskExist(getDisk()) &&
+                isDiskExistAndAttachedToVm(getDisk()) &&
                 interfaceDiskValidation() &&
                 checkCanPerformPlugUnPlugDisk() &&
                 isVmNotInPreviewSnapshot() &&

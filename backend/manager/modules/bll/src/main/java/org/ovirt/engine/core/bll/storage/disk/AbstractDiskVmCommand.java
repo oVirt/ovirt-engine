@@ -207,7 +207,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return true;
     }
 
-    protected boolean isDiskExist(Disk disk) {
+    protected boolean isDiskExistAndAttachedToVm(Disk disk) {
         DiskValidator diskValidator = getDiskValidator(disk);
         return validate(diskValidator.isDiskExists()) && validate(diskValidator.isDiskAttachedToVm(getVm()));
     }

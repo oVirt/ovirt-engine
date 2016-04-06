@@ -160,7 +160,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     protected boolean validate() {
-        if (!validate(new VmValidator(getVm()).isVmExists()) || !isDiskExist(getOldDisk())) {
+        if (!validate(new VmValidator(getVm()).isVmExists()) || !isDiskExistAndAttachedToVm(getOldDisk())) {
             return false;
         }
 
