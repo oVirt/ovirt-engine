@@ -539,10 +539,6 @@ public class VmAnalyzer {
                     resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVmDynamic.getId());
                 }
             }
-        } else {
-            if (vmDynamicDao.get(vdsmVmDynamic.getId()).getStatus() != VMStatus.Unknown) {
-                saveDynamic(null);
-            }
         }
     }
 
