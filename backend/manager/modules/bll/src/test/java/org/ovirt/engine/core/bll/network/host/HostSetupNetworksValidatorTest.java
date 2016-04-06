@@ -233,42 +233,6 @@ public class HostSetupNetworksValidatorTest {
             network);
     }
 
-    @Test
-    public void testNotRemovingLabeledNetworksNicHasLabelOldAttachRemovedNewAttachWithSameNetworkAddedToNicValid() {
-        VdsNetworkInterface nicWithLabel = createNic("nicWithLabel");
-        nicWithLabel.setLabels(Collections.singleton("lbl1"));
-
-        Network network = createNetworkWithNameAndLabel("net", "lbl1");
-        NetworkAttachment removedAttachment = createNetworkAttachment(network, nicWithLabel);
-
-        NetworkAttachment addedAttachment = new NetworkAttachment(removedAttachment);
-        addedAttachment.setId(Guid.newGuid());
-
-        assertTestNotRemovingLabeledNetworksValid(nicWithLabel,
-            removedAttachment,
-            new ParametersBuilder().addNetworkAttachments(addedAttachment).build(),
-            network);
-    }
-
-    @Test
-    public void testNotRemovingLabeledNetworksLabelAddedToNicOldAttachRemovedNewAttachWithSameNetworkAddedToNicValid() {
-        VdsNetworkInterface nic = createNic("nicWithNoLabel");
-        NicLabel nicLabel = new NicLabel(nic.getId(), nic.getName(), "lbl1");
-
-        Network network = createNetworkWithNameAndLabel("net", nicLabel.getLabel());
-        NetworkAttachment removedAttachment = createNetworkAttachment(network, nic);
-        NetworkAttachment addedAttachment = new NetworkAttachment(removedAttachment);
-        addedAttachment.setId(Guid.newGuid());
-
-        assertTestNotRemovingLabeledNetworksValid(nic,
-            removedAttachment,
-            new ParametersBuilder()
-                .addNetworkAttachments(addedAttachment)
-                .addLabels(nicLabel)
-                .build(),
-            network);
-    }
-
     private void assertTestNotRemovingLabeledNetworksValid(VdsNetworkInterface nic,
             NetworkAttachment removedAttachment,
             HostSetupNetworksParameters params, Network network) {
@@ -715,7 +679,7 @@ public class HostSetupNetworksValidatorTest {
         when(vmInterfaceManagerMock.findActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
             .thenReturn(Collections.<String>emptyList());
 
-        assertThat(validator.validateNotRemovingUsedNetworkByVms(), isValid());
+        assertThat(validator.validateNotRemovingUsedNetworkByVms("removedNet"), isValid());
     }
 
     @Test

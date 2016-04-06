@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -80,13 +81,14 @@ public class HostSetupNetworksValidator {
     private BusinessEntityMap<VdsNetworkInterface> removedBondVdsNetworkInterfaceMap;
     private List<NetworkAttachment> removedNetworkAttachments;
     private BusinessEntityMap<Network> networkBusinessEntityMap;
-    private final Map<Guid, NetworkAttachment> attachmentsById;
+    private final Map<Guid, NetworkAttachment> existingAttachmentsById;
     private final NetworkClusterDao networkClusterDao;
     private final NetworkDao networkDao;
     private final VdsDao vdsDao;
     private final BusinessEntityMap<CreateOrUpdateBond> createOrUpdateBondBusinessEntityMap;
     private final VmDao vmDao;
-    private Map<Guid, NetworkAttachment> networkAttachmentsByNetworkId;
+    private Map<Guid, NetworkAttachment> networkAttachmentsFromParamsByNetworkId;
+    private Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
     private List<VdsNetworkInterface> existingInterfaces;
@@ -123,15 +125,16 @@ public class HostSetupNetworksValidator {
         this.removedBondVdsNetworkInterfaceMap = new BusinessEntityMap<>(removedBondVdsNetworkInterface);
         this.removedNetworkAttachments = Entities.filterEntitiesByRequiredIds(params.getRemovedNetworkAttachments(),
             existingAttachments);
+        existingAttachmentsByNetworkId = new MapNetworkAttachments(existingAttachments).byNetworkId();
 
         setSupportedFeatures();
 
         networkExclusivenessValidator =
                 networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(host.getSupportedClusterVersionsSet());
 
-        attachmentsById = Entities.businessEntitiesById(existingAttachments);
+        existingAttachmentsById = Entities.businessEntitiesById(existingAttachments);
         createOrUpdateBondBusinessEntityMap = new BusinessEntityMap<>(params.getCreateOrUpdateBonds());
-        networkAttachmentsByNetworkId = new MapNetworkAttachments(params.getNetworkAttachments()).byNetworkId();
+        networkAttachmentsFromParamsByNetworkId = new MapNetworkAttachments(params.getNetworkAttachments()).byNetworkId();
 
         nicLabelByLabel = Entities.entitiesByName(params.getLabels());
 
@@ -350,15 +353,13 @@ public class HostSetupNetworksValidator {
     }
 
     @SuppressWarnings("unchecked")
-    ValidationResult validateNotRemovingUsedNetworkByVms() {
-        Collection<String> removedNetworks = new HashSet<>();
-        for (NetworkAttachment removedAttachment : removedNetworkAttachments) {
-            removedNetworks.add(existingNetworkRelatedToAttachment(removedAttachment).getName());
-        }
-        final List<String> vmsNames = getVmInterfaceManager().findActiveVmsUsingNetworks(host.getId(), removedNetworks);
-        final List<String> removedNetworksList = new ArrayList<>(removedNetworks);
-        DetachNetworkUsedByVmValidator detachNetworkUsedByVmValidator = new DetachNetworkUsedByVmValidator(vmsNames, removedNetworksList);
-        return  detachNetworkUsedByVmValidator.validate();
+    ValidationResult validateNotRemovingUsedNetworkByVms(String removedNetworkName) {
+        final List<String> removedNetworkNames = Collections.singletonList(removedNetworkName);
+        final List<String> vmsNames = getVmInterfaceManager().findActiveVmsUsingNetworks(host.getId(),
+                removedNetworkNames);
+        DetachNetworkUsedByVmValidator detachNetworkUsedByVmValidator =
+                new DetachNetworkUsedByVmValidator(vmsNames, removedNetworkNames);
+        return detachNetworkUsedByVmValidator.validate();
     }
 
     ValidationResult validRemovedBonds(Collection<NetworkAttachment> attachmentsToConfigure) {
@@ -688,7 +689,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : nicActuallyExistsOrReferencesNewBond(attachment);
 
             vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(existingInterfacesMap);
-            vr = skipValidation(vr) ? vr : validator.networkNotChanged(attachmentsById.get(attachment.getId()));
+            vr = skipValidation(vr) ? vr : validator.networkNotChanged(existingAttachmentsById.get(attachment.getId()));
             vr = skipValidation(vr) ? vr : networkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(params.getNetworkAttachments());
 
             boolean attachmentUpdated = !isNewAttachment(attachment.getId());
@@ -809,17 +810,18 @@ public class HostSetupNetworksValidator {
         }
 
         ValidationResult vr = ValidationResult.VALID;
+
         Iterator<NetworkAttachment> iterator = removedNetworkAttachments.iterator();
         while (iterator.hasNext() && vr.isValid()) {
             NetworkAttachment attachment = iterator.next();
-            NetworkAttachment attachmentToValidate = attachmentsById.get(attachment.getId());
-            NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachmentToValidate);
+            NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
 
             vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
+
             vr = skipValidation(vr) ? vr : validator.notRemovingManagementNetwork();
             vr = skipValidation(vr) ? vr : notRemovingLabeledNetworks(attachment);
-            vr = skipValidation(vr) ? vr : validateNotRemovingUsedNetworkByVms();
+            vr = skipValidation(vr) ? vr : validateNotRemovingUsedNetworkByVms(attachment.getNetworkName());
         }
 
         return vr;
@@ -849,25 +851,22 @@ public class HostSetupNetworksValidator {
             return ValidationResult.VALID;
         }
 
-        boolean networkAttachedToNicByAnotherAttachment =
-                networkAttachmentsByNetworkId.get(removedNetwork.getId()) != null;
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC;
         return ValidationResult.failWith(engineMessage,
                 ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, removedNetwork.getName()))
-                .when(!networkAttachedToNicByAnotherAttachment
-                    && isNicToConfigureContainTheLabel(attachment.getNicName(), removedNetwork.getLabel()));
+                .when(isNicToConfigureContainTheLabel(attachment.getNicName(), removedNetwork.getLabel()));
 
     }
 
-    ValidationResult notMovingLabeledNetworkToDifferentNic(NetworkAttachment attachment) {
-        Network movedNetwork = existingNetworkRelatedToAttachment(attachment);
+    ValidationResult notMovingLabeledNetworkToDifferentNic(NetworkAttachment newOrModifedAttachmet) {
+        Network movedNetwork = existingNetworkRelatedToAttachment(newOrModifedAttachmet);
 
         if (!NetworkUtils.isLabeled(movedNetwork)) {
             return ValidationResult.VALID;
         }
 
-        NetworkAttachment existingAttachment = attachmentsById.get(attachment.getId());
-        boolean movedToDifferentNic = !existingAttachment.getNicId().equals(attachment.getNicId());
+        NetworkAttachment existingAttachment = existingAttachmentsById.get(newOrModifedAttachmet.getId());
+        boolean movedToDifferentNic = !existingAttachment.getNicId().equals(newOrModifedAttachmet.getNicId());
 
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC;
         return ValidationResult.failWith(engineMessage,
