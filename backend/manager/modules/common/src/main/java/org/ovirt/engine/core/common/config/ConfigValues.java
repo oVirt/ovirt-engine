@@ -1029,6 +1029,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     HotPlugEnabled,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("60")
+    UploadImageUiInactivityTimeoutInSeconds,
+
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
