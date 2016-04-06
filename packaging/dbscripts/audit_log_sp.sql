@@ -534,15 +534,10 @@ BEGIN
     IF (SWV_RowCount > 0) THEN
         DELETE
         FROM audit_log
-        WHERE audit_log_id <= v_id
-            AND audit_log_id NOT IN (
-                SELECT audit_log_id
-                FROM event_notification_hist
-                );
-END
-
-IF ;END;$PROCEDURE$
-    LANGUAGE plpgsql;
+        WHERE audit_log_id <= v_id;
+    END IF;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAuditAlertLogByVdsIDAndType (
     v_vds_id UUID,
