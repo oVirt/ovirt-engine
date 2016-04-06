@@ -247,8 +247,7 @@ BEGIN
       GET DIAGNOSTICS SWV_RowCount = ROW_COUNT;
       if (SWV_RowCount > 0) then
          DELETE FROM audit_log
-         WHERE audit_log_id <= v_id and
-         audit_log_id not in(select audit_log_id from event_notification_hist);
+         WHERE audit_log_id <= v_id;
       end if;
 END; $procedure$
 LANGUAGE plpgsql;
