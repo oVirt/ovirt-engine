@@ -163,7 +163,11 @@ public class VmAnalyzer {
             return;
         }
 
-        proceedDownVm();
+        if (isVmDown()) {
+            proceedDownVm();
+            return;
+        }
+
         proceedWatchdogEvents();
         proceedBalloonCheck();
         proceedGuaranteedMemoryCheck();
@@ -191,16 +195,19 @@ public class VmAnalyzer {
         return false;
     }
 
+    private boolean isVmDown() {
+        if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
+            return true;
+        }
+        return false;
+    }
+
     private void processUnmanagedVm() {
         unmanagedVm = true;
         saveDynamic(vdsmVm.getVmDynamic());
     }
 
     void proceedDownVm() {
-        if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Down) {
-            return;
-        }
-
         // destroy the VM as soon as possible
         destroyVm();
 
@@ -460,7 +467,7 @@ public class VmAnalyzer {
         VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
 
         // if not migrating here and not down
-        if (!inMigrationTo() && vdsmVmDynamic.getStatus() != VMStatus.Down) {
+        if (!inMigrationTo()) {
             if (dbVm != null) {
                 if (!Objects.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
                     auditClientIpChange();

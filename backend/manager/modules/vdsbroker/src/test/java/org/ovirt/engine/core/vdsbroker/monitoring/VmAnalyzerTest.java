@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
@@ -131,7 +132,6 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() == VmExitStatus.Normal);
         //then
         vmAnalyzer.analyze();
-        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         verify(resourceManager, never()).removeAsyncRunningVm(data.dbVm().getId());
         verify(vmAnalyzer).runVdsCommand(vdsCommandTypeCaptor.capture(), vdsParamsCaptor.capture());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
@@ -180,6 +180,7 @@ public class VmAnalyzerTest {
         initMocks(data, true);
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
@@ -191,6 +192,7 @@ public class VmAnalyzerTest {
         initMocks(data, true);
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
