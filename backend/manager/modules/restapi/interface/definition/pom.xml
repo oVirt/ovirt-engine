@@ -111,26 +111,17 @@
             <configuration>
               <mainClass>org.ovirt.api.metamodel.tool.Main</mainClass>
               <arguments>
-                <argument>--model</argument>
-                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
-                <argument>--version-prefix</argument>
-                <argument>V4</argument>
-                <argument>--xml-description</argument>
-                <argument>${project.basedir}/target/generated-resources/model.xml</argument>
-                <argument>--json-description</argument>
-                <argument>${project.basedir}/target/generated-resources/model.json</argument>
-                <argument>--in-schema</argument>
-                <argument>${project.basedir}/src/main/schema/api.xsd</argument>
-                <argument>--out-schema</argument>
-                <argument>${project.basedir}/target/generated-resources/v4/api.xsd</argument>
-                <argument>--java</argument>
-                <argument>${project.basedir}/target/generated-sources/model</argument>
-                <argument>--jaxrs</argument>
-                <argument>${project.basedir}/target/generated-sources/model</argument>
-                <argument>--jaxrs-package</argument>
-                <argument>^services\.(.*)$=org.ovirt.engine.api.resource.$1</argument>
-                <argument>--jaxrs-package</argument>
-                <argument>org.ovirt.engine.api.resource</argument>
+                <argument>org.ovirt.api.metamodel.tool.Tool</argument>
+                <argument>--model=${project.basedir}/target/generated-resources/model.jar</argument>
+                <argument>--version-prefix=V4</argument>
+                <argument>--xml-description=${project.basedir}/target/generated-resources/model.xml</argument>
+                <argument>--json-description=${project.basedir}/target/generated-resources/model.json</argument>
+                <argument>--in-schema=${project.basedir}/src/main/schema/api.xsd</argument>
+                <argument>--out-schema=${project.basedir}/target/generated-resources/v4/api.xsd</argument>
+                <argument>--java=${project.basedir}/target/generated-sources/model</argument>
+                <argument>--jaxrs=${project.basedir}/target/generated-sources/model</argument>
+                <argument>--jaxrs-package=^services\.(.*)$=org.ovirt.engine.api.resource.$1</argument>
+                <argument>--jaxrs-package=org.ovirt.engine.api.resource</argument>
               </arguments>
               <includePluginDependencies>true</includePluginDependencies>
               <includeProjectDependencies>false</includeProjectDependencies>
@@ -143,14 +134,12 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.ovirt.api.metamodel.tool.MainEnums</mainClass>
+              <mainClass>org.ovirt.api.metamodel.tool.Main</mainClass>
               <arguments>
-                <argument>--model</argument>
-                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
-                <argument>--java</argument>
-                <argument>${project.basedir}/target/generated-sources/model</argument>
-                <argument>--version-prefix</argument>
-                <argument>V4</argument>
+                <argument>org.ovirt.api.metamodel.tool.EnumGenerationTool</argument>
+                <argument>--model=${project.basedir}/target/generated-resources/model.jar</argument>
+                <argument>--java=${project.basedir}/target/generated-sources/model</argument>
+                <argument>--version-prefix=V4</argument>
               </arguments>
               <includePluginDependencies>true</includePluginDependencies>
               <includeProjectDependencies>false</includeProjectDependencies>
@@ -163,12 +152,11 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.ovirt.api.metamodel.tool.MainEnumsJaxb</mainClass>
+              <mainClass>org.ovirt.api.metamodel.tool.Main</mainClass>
               <arguments>
-                <argument>--model</argument>
-                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
-                <argument>--xjc</argument>
-                <argument>${project.basedir}/target/generated-sources/xjc-v4</argument>
+                <argument>org.ovirt.api.metamodel.tool.EnumGenerationToolJaxb</argument>
+                <argument>--model=${project.basedir}/target/generated-resources/model.jar</argument>
+                <argument>--xjc=${project.basedir}/target/generated-sources/xjc-v4</argument>
               </arguments>
               <includePluginDependencies>true</includePluginDependencies>
               <includeProjectDependencies>false</includeProjectDependencies>

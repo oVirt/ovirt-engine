@@ -107,6 +107,11 @@ public class BackendStorageDomainResource
     }
 
     @Override
+    public Response updateOvfStore(Action action) {
+        return null;
+    }
+
+    @Override
     public Response remove() {
         String host = ParametersHelper.getParameter(httpHeaders, uriInfo, HOST);
         if (host == null) {
