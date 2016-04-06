@@ -103,7 +103,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected boolean validate() {
-        if (!isVmExist()) {
+        if (!isFloatingDisk() && !validate(new VmValidator(getVm()).isVmExists())) {
             return false;
         }
 
@@ -320,9 +320,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return 0;
     }
 
-    private boolean isVmExist() {
-        return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId()) ||
-                validate(new VmValidator(getVm()).isVmExists());
+    private boolean isFloatingDisk() {
+        return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId());
     }
 
     /** @return The disk from the parameters, cast to a {@link DiskImage} */
@@ -385,7 +384,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> listPermissionSubjects;
-        if (getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId())) {
+        if (isFloatingDisk()) {
             listPermissionSubjects = new ArrayList<>();
         } else {
             listPermissionSubjects = super.getPermissionCheckSubjects();
@@ -657,8 +656,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (getParameters().getDiskInfo().isBoot() && getParameters().getVmId() != null
-                && !Guid.Empty.equals(getParameters().getVmId())) {
+        if (getParameters().getDiskInfo().isBoot() && !isFloatingDisk()) {
             return Collections.singletonMap(getParameters().getVmId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
