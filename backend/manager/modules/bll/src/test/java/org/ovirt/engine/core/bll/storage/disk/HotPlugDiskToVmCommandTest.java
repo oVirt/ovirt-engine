@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -21,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -60,6 +60,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     private final Guid storageDomainId = Guid.newGuid();
     protected static final List<String> DISK_HOTPLUGGABLE_INTERFACES = Arrays.asList("VirtIO_SCSI", "VirtIO");
 
+    private DiskImage disk = new DiskImage();
+
     @Mock
     private VmDao vmDao;
     @Mock
@@ -73,8 +75,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
-    @Mock
-    private DiskValidator diskValidator;
+    @Spy
+    private DiskValidator diskValidator = new DiskValidator(disk);
     @Mock
     protected OsRepository osRepository;
 
@@ -82,6 +84,13 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
      * The command under test.
      */
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> command;
+
+    @Before
+    public void setup() {
+        doReturn(diskValidator).when(command).getDiskValidator(disk);
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vmId);
+    }
 
     @Test
     public void validateFailedVMNotFound() throws Exception {
@@ -139,6 +148,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockInterfaceList();
         when(osRepository.getOsName(0)).thenReturn("RHEL6");
         createNotVirtIODisk();
+
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
@@ -251,14 +261,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     private void mockVMDao(VM vm) {
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        List<VM> vmList = new ArrayList<>();
-        VM vm1 = new VM();
-        vm1.setId(command.getParameters().getVmId());
-        VM vm2 = new VM();
-        vm2.setId(Guid.newGuid());
-        vmList.add(vm1);
-        vmList.add(vm2);
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
     }
 
     /**
@@ -318,7 +320,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     protected DiskImage getDiskImage() {
-        DiskImage disk = new DiskImage();
         disk.setImageId(diskImageGuid);
         ArrayList<Guid> storageIdList = new ArrayList<>();
         storageIdList.add(storageDomainId);

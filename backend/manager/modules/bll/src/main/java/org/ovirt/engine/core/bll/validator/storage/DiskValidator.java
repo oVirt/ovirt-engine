@@ -193,4 +193,14 @@ public class DiskValidator {
         }
         return ValidationResult.VALID;
     }
+
+    public ValidationResult isDiskAttachedToVm(Guid vmId) {
+        List<VM> vms = getVmDao().getVmsListForDisk(disk.getId(), true);
+        for (VM vm : vms) {
+            if (vm.getId().equals(vmId)) {
+                return ValidationResult.VALID;
+            }
+        }
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+    }
 }

@@ -162,6 +162,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void validateFailedVMHasNotDisk() throws Exception {
         initializeCommand(createParameters());
         createNullDisk();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST)).
+                when(diskValidator).isDiskExists();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
@@ -500,7 +502,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, updatedDisk));
 
-        when(diskValidator.isDiskUsedAsOvfStore()).thenCallRealMethod();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED)).
+                when(diskValidator).isDiskUsedAsOvfStore();
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
@@ -596,6 +599,11 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
         when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskUsedAsOvfStore()).thenReturn(ValidationResult.VALID);
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
+        doReturn(ValidationResult.VALID).when(diskValidator).validateNotHostedEngineDisk();
+        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+        doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
 
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
@@ -772,7 +780,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         }
 
         when(vmDao.getVmsWithPlugInfo(diskImageGuid)).thenReturn(vmsWithVmDevice);
-        when(vmDao.getVmsListForDisk(diskImageGuid, true)).thenReturn(vms);
     }
 
     /**

@@ -209,15 +209,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isDiskExist(Disk disk) {
         DiskValidator diskValidator = getDiskValidator(disk);
-        if (!validate(diskValidator.isDiskExists())) {
-            return false;
-        }
-
-        if (!isDiskExistInVm(disk)) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
-            return false;
-        }
-        return true;
+        return validate(diskValidator.isDiskExists()) && validate(diskValidator.isDiskAttachedToVm(getVmId()));
     }
 
     protected boolean checkDiskUsedAsOvfStore(Disk disk) {
@@ -226,16 +218,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean checkDiskUsedAsOvfStore(DiskValidator diskValidator) {
         return validate(diskValidator.isDiskUsedAsOvfStore());
-    }
-
-    private boolean isDiskExistInVm(Disk disk) {
-        List<VM> listVms = getVmDao().getVmsListForDisk(disk.getId(), true);
-        for (VM vm : listVms) {
-            if (vm.getId().equals(getVmId())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
