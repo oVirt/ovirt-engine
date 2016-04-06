@@ -208,7 +208,12 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isDiskExist(Disk disk) {
-        if (disk == null || !isDiskExistInVm(disk)) {
+        DiskValidator diskValidator = getDiskValidator(disk);
+        if (!validate(diskValidator.isDiskExists())) {
+            return false;
+        }
+
+        if (!isDiskExistInVm(disk)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             return false;
         }

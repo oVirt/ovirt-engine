@@ -187,4 +187,10 @@ public class DiskValidator {
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK);
     }
 
+    public ValidationResult isDiskExists() {
+        if (disk == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+        }
+        return ValidationResult.VALID;
+    }
 }
