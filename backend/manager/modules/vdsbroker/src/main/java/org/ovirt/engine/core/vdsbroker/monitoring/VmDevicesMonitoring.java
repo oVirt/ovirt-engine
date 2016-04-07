@@ -629,7 +629,6 @@ public class VmDevicesMonitoring implements BackendService {
      * Builds a new device structure for the device recognized by libvirt.
      */
     private VmDevice buildNewVmDevice(Guid vmId, Map device, String logicalName) {
-        Guid newDeviceId = Guid.Empty;
         String typeName = (String) device.get(VdsProperties.Type);
         String deviceName = (String) device.get(VdsProperties.Device);
         VmDevice newDevice = null;
@@ -641,7 +640,7 @@ public class VmDevicesMonitoring implements BackendService {
             String address = device.get(VdsProperties.Address).toString();
             String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
             Object specParams = device.get(VdsProperties.SpecParams);
-            newDeviceId = Guid.newGuid();
+            Guid newDeviceId = Guid.newGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             newDevice = new VmDevice(id, VmDeviceGeneralType.forValue(typeName), deviceName, address,
                     0,
