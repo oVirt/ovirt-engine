@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -47,7 +46,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -74,8 +72,6 @@ public class VmAnalyzerTest {
     private ArgumentCaptor<VDSParametersBase> vdsParamsCaptor;
     @Mock
     private VmStaticDao vmStaticDao;
-    @Mock
-    private VmDynamicDao vmDynamicDao;
     @Mock
     private VdsDynamicDao vdsDynamicDao;
     @Mock
@@ -344,7 +340,6 @@ public class VmAnalyzerTest {
                 auditLogDirector,
                 resourceManager,
                 vmStaticDao,
-                vmDynamicDao,
                 vmDao,
                 vmNetworkInterfaceDao,
                 vdsDynamicDao,
@@ -361,13 +356,8 @@ public class VmAnalyzerTest {
     }
 
     private void stubDaos() {
-        mockVmDynamic();
         mockVmStatic(true);
         mockVdsDao();
-    }
-
-    private void mockVmDynamic() {
-        when(vmDynamicDao.get(any(Guid.class))).thenReturn(mock(VmDynamic.class));
     }
 
     private void mockVmStatic(boolean stubExists) {

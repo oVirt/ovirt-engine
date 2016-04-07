@@ -13,7 +13,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -33,7 +32,6 @@ public class VmAnalyzerFactory {
     private ResourceManager resourceManager;
 
     private VmStaticDao vmStaticDao;
-    private VmDynamicDao vmDynamicDao;
     private VmDao vmDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private VdsDynamicDao vdsDynamicDao;
@@ -46,7 +44,6 @@ public class VmAnalyzerFactory {
             AuditLogDirector auditLogDirector,
             ResourceManager resourceManager,
             VmStaticDao vmStaticDao,
-            VmDynamicDao vmDynamicDao,
             VmDao vmDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VdsDynamicDao vdsDynamicDao,
@@ -57,7 +54,6 @@ public class VmAnalyzerFactory {
         this.auditLogDirector = auditLogDirector;
         this.resourceManager = resourceManager;
         this.vmStaticDao = vmStaticDao;
-        this.vmDynamicDao = vmDynamicDao;
         this.vmDao = vmDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         this.vdsDynamicDao = vdsDynamicDao;
@@ -85,7 +81,6 @@ public class VmAnalyzerFactory {
                 auditLogDirector,
                 resourceManager,
                 vmStaticDao,
-                vmDynamicDao,
                 vmDao,
                 vmNetworkInterfaceDao,
                 vdsDynamicDao,

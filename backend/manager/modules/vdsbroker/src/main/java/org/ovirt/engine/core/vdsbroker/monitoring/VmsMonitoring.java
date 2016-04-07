@@ -176,7 +176,6 @@ public class VmsMonitoring implements BackendService {
                 auditLogDirector,
                 resourceManager,
                 vmStaticDao,
-                vmDynamicDao,
                 vmDao,
                 vmNetworkInterfaceDao,
                 vdsDynamicDao,
