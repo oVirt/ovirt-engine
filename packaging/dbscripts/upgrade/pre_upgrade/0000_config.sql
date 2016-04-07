@@ -495,8 +495,10 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
 select fn_db_add_config_value('AutoRecoveryAllowedTypes','{"storage domains":"true","hosts":"true"}','general');
--- SPICE client mode default settings (Auto, Native, Plugin)
+-- SPICE client mode default settings (Auto, Native, Html5), the 'Plugin' is not supported since 4.0
 select fn_db_add_config_value('ClientModeSpiceDefault','Native','general');
+-- Workaround to reenable the Spice Plugin to fix potential production issues: set EnableDeprecatedClientModeSpicePlugin to 'true'. Will be removed in 4.1
+select fn_db_add_config_value('EnableDeprecatedClientModeSpicePlugin','false','general');
 -- VNC client mode default settings (Native, NoVnc)
 select fn_db_add_config_value('ClientModeVncDefault','Native','general');
 -- RDP client mode default settings (Auto, Native, Plugin)
@@ -782,6 +784,9 @@ select fn_db_update_default_config_value('vdsHeartbeatInSeconds','10','30','gene
 -- Update VM name length
 select fn_db_rename_config_key('MaxVmNameLengthNonWindows', 'MaxVmNameLength', 'general');
 select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep', 'general');
+
+-- automatically switch SPICE Plugin to Native
+select fn_db_update_default_config_value('ClientModeSpiceDefault','Plugin','Native','general',false);
 
 ------------------------------------------------------------------------------------
 --                  SCALE

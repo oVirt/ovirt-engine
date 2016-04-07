@@ -52,7 +52,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
             ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister,
             CurrentUserRole currentUserRole,
             EventBus eventBus,
-            Provider<ISpicePlugin> spicePluginProvider,
+            Provider<ISpicePlugin> spicePluginProvider, // deprecated in 4.0
             Provider<ISpiceNative> spiceNativeProvider,
             Provider<ISpiceHtml5> spiceHtml5Provider,
             Provider<IRdpPlugin> rdpPluginProvider,
@@ -88,7 +88,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
             return logger;
         } else if (type == ITimer.class) {
             return new TimerImpl();
-        } else if (type == ISpicePlugin.class) {
+        } else if (type == ISpicePlugin.class) {// deprecated in 4.0
             return spicePluginProvider.get();
         } else if (type == ISpiceNative.class) {
             return withSessionId(spiceNativeProvider.get());

@@ -41,7 +41,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     @Override
     public boolean isBrowserPluginSupported(ConsoleProtocol protocol) {
         switch (protocol) {
-        case SPICE:
+        case SPICE: // unsupported since 4.0, to be removed in 4.1
             if ((clientAgentType.os.equalsIgnoreCase("Windows") //$NON-NLS-1$
                     && clientAgentType.browser.equalsIgnoreCase("Explorer") //$NON-NLS-1$
                     && (clientAgentType.version >= 7.0))

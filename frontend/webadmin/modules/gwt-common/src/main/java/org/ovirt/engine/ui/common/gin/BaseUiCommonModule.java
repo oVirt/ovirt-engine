@@ -58,7 +58,7 @@ public abstract class BaseUiCommonModule extends AbstractGinModule {
 
         bind(ISpiceHtml5.class).to(SpiceHtml5Impl.class);
         bind(ISpiceNative.class).to(SpiceNativeImpl.class);
-        bind(ISpicePlugin.class).to(SpicePluginImpl.class);
+        bind(ISpicePlugin.class).to(SpicePluginImpl.class);// Deprecated in 4.0
 
         bind(IRdpNative.class).to(RdpNativeImpl.class);
         bind(IRdpPlugin.class).to(RdpPluginImpl.class);

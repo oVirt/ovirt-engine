@@ -2730,6 +2730,16 @@ public class AsyncDataProvider {
     }
 
     /**
+     * TODO: to be removed in 4.1
+     * @return true if the workaround showing the Spice Plugin in UI is enabled.
+     */
+    @Deprecated
+    public boolean isEnableDeprecatedClientModeSpicePlugin() {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.EnableDeprecatedClientModeSpicePlugin,
+                getDefaultConfigurationVersion());
+    }
+
+    /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
      *
      * @param aQuery

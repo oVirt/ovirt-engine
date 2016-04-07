@@ -1738,9 +1738,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("VNC Options")
     String vncOptions();
 
-    @DefaultStringValue("If there is a SPICE plugin installed in your browser, it is used for invoking the console " +
-            "session.Otherwise SPICE configuration file is downloaded which will automatically launch locally " +
-            "installed Remote Viewer (found under \"Console Client Resources\" page.).")
+    @DefaultStringValue("SPICE configuration file is downloaded which will automatically launch locally " +
+            "installed Remote Viewer (found under \"Console Client Resources\" page.) to invoke the console session.")
     String spiceInvokeAuto();
 
     @DefaultStringValue("Downloads a console configuration file to be opened by Remote Viewer application installed on "
@@ -1749,6 +1748,7 @@ public interface CommonApplicationConstants extends Constants {
     String consoleInvokeNative();
 
     @DefaultStringValue("Uses SPICE browser plugin for invoking console session. For this you must have SPICE console plugin installed in your browser.")
+    @Deprecated // will be removed in 4.1
     String spiceInvokePlugin();
 
     @DefaultStringValue("Uses SPICE HTML5 client that runs inside your browser. This client is a Technology preview and it's possible some functions (e.g. keyboard layouts) will not work as expected.")

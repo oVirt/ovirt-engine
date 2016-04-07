@@ -86,6 +86,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode consoleMode);
 
+        void setSpicePluginImplVisible(boolean visible);
+
         void setSpicePluginImplEnabled(boolean enabled, String reason);
 
         void setSpiceHtml5ImplEnabled(boolean enabled, String reason);
@@ -211,8 +213,15 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().getOptions().isSpiceProxyEnabled();
         }
 
-        if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.SPICE)) {
-            getView().setSpicePluginImplEnabled(false, constants.spicePluginNotSupportedByBrowser());
+        // Allow Spice Plugin after explicit manual configuration (set vdc_option EnableDeprecatedClientModeSpicePlugin to 'true').
+        // TODO: The plugin is unsupported in 4.0 and all related code will be removed in 4.1
+        if (model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).isEnableDeprecatedClientModeSpicePlugin()) {
+            getView().setSpicePluginImplVisible(true);
+            if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.SPICE)) {
+                getView().setSpicePluginImplEnabled(false, constants.spicePluginNotSupportedByBrowser());
+            }
+        } else {
+            getView().setSpicePluginImplVisible(false);
         }
 
         getView().setSpiceHtml5ImplEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());

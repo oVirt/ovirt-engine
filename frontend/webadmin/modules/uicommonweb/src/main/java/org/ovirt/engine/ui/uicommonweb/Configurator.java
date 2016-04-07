@@ -208,7 +208,7 @@ public abstract class Configurator {
     }
 
     public void configure(ISpice spice) {
-        if (spice instanceof ISpicePlugin) {
+        if (spice instanceof ISpicePlugin) {// Unsupported since 4.0
             ((ISpicePlugin) spice).setPluginVersion(getSpiceVersion());
             ((ISpicePlugin) spice).setSpiceBaseURL(getSpiceBaseURL());
         }

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import com.google.inject.Inject;
 
+@Deprecated
 public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
 
     protected Version pluginVersion = new Version(4, 4);

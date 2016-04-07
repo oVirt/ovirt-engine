@@ -1314,6 +1314,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     GlusterRefreshRateTasks,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    EnableDeprecatedClientModeSpicePlugin,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
     ClientModeSpiceDefault,

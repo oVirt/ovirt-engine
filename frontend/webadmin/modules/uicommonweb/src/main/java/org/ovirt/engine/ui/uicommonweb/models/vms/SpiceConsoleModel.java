@@ -51,7 +51,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class SpiceConsoleModel extends ConsoleModel {
 
-    public enum ClientConsoleMode { Native, Plugin, Auto, Html5 }
+    public enum ClientConsoleMode { Native, Plugin, Auto, Html5 }// The 'Plugin' is unsupported since 4.0 and will be removed in 4.1
 
     public static EventDefinition spiceDisconnectedEventDefinition;
     public static EventDefinition spiceConnectedEventDefinition;
@@ -85,8 +85,12 @@ public class SpiceConsoleModel extends ConsoleModel {
         setConsoleClientMode(getDefaultConsoleMode());
     }
 
-    protected ClientConsoleMode getDefaultConsoleMode() {
+    public ClientConsoleMode getDefaultConsoleMode() {
         return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault));
+    }
+
+    public boolean isEnableDeprecatedClientModeSpicePlugin() {
+        return AsyncDataProvider.getInstance().isEnableDeprecatedClientModeSpicePlugin();
     }
 
     public ISpice getspice() {
@@ -101,12 +105,10 @@ public class SpiceConsoleModel extends ConsoleModel {
     }
 
     /**
-     * Sets implementation of ISpice which will be used (either implementation
-     * that uses spice browser plugin or the one using configuration servlet)
+     * Sets implementation of ISpice which will be used
      * and performs sets initial configuration as well (different for WA/UP).
      *
-     * Default mode is "Auto" (spice browser plugin is used only if it is
-     * installed).
+     * Default mode is "Auto"
      */
     public void setConsoleClientMode(ClientConsoleMode consoleMode) {
         ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
@@ -116,7 +118,7 @@ public class SpiceConsoleModel extends ConsoleModel {
             case Native:
                 setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
                 break;
-            case Plugin:
+            case Plugin:// Unsupported since 4.0
                 setspice((ISpice) TypeResolver.getInstance().resolve(ISpicePlugin.class));
                 break;
             case Html5:
@@ -145,9 +147,7 @@ public class SpiceConsoleModel extends ConsoleModel {
     }
 
     private void setDefaultConsoleMode() {
-        ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().resolve(ISpicePlugin.class);
-        setspice(pluginSpice.detectBrowserPlugin() ? pluginSpice
-                : (ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
+        setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
     }
 
     @Override

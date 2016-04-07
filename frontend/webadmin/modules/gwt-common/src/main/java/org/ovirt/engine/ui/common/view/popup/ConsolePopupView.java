@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
@@ -389,10 +390,15 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     private String createSpiceInvocationInfo() {
-        return new KeyValueHtmlRowMaker(constants.auto(), constants.spiceInvokeAuto())
-                .append(constants.nativeClient(), constants.consoleInvokeNative())
-                .append(constants.browserPlugin(), constants.spiceInvokePlugin())
-                .append(constants.spiceHtml5(), constants.spiceInvokeHtml5()).toString();
+        KeyValueHtmlRowMaker rowMaker = new KeyValueHtmlRowMaker(constants.auto(), constants.spiceInvokeAuto());
+        rowMaker.append(constants.nativeClient(), constants.consoleInvokeNative());
+
+        if (AsyncDataProvider.getInstance().isEnableDeprecatedClientModeSpicePlugin()) {
+            rowMaker.append(constants.browserPlugin(), constants.spiceInvokePlugin());
+        }
+
+        rowMaker.append(constants.spiceHtml5(), constants.spiceInvokeHtml5());
+        return rowMaker.toString();
     }
 
     private String createVncInvocationInfo() {
@@ -721,6 +727,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public Boolean getSpiceProxy() {
         return enableSpiceProxy.asCheckBox().getValue();
+    }
+
+    @Override
+    public void setSpicePluginImplVisible(boolean visible) {
+        spicePluginImplRadioButton.setVisible(visible);// Unsupported since 4.0
     }
 
     @Override
