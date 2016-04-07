@@ -32,8 +32,9 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid GLUSTER_VOLUME_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final long EXISTING_ENTRY_ID = 44291;
-    private static final long EXTERNAL_ENTRY_ID = 44296;
+    private static final long EXTERNAL_ENTRY_ID = 44297;
     private static final int FILTERED_COUNT = 6;
+    private static final int AFTER_DATE_COUNT = 7;
     private static final int TOTAL_COUNT = 8;
     private static final String ORIGIN="oVirt";
     private static final int CUSTOM_BAKUP_EVENT_ID = 9022;
@@ -141,7 +142,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         List<AuditLog> result = dao.getAllAfterDate(cutoff);
 
         assertNotNull(result);
-        assertEquals(FILTERED_COUNT, result.size());
+        assertEquals(AFTER_DATE_COUNT, result.size());
 
         cutoff = EXPECTED_DATE_FORMAT.parse("2010-12-20 14:00:00");
 
@@ -244,9 +245,8 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
             throws Exception {
         Date cutoff = EXPECTED_DATE_FORMAT.parse("2010-12-20 13:11:00");
         dao.removeAllBeforeDate(cutoff);
-        // show be 1 left that was in event_notification_hist
         List<AuditLog> result = dao.getAll(PRIVILEGED_USER_ID, true);
-        assertEquals(3, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
