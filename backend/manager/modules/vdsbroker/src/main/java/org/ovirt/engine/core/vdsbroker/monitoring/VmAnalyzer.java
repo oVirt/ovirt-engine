@@ -462,79 +462,81 @@ public class VmAnalyzer {
 
 
     private void updateRepository() {
-        VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
+        if (inMigrationTo()) {
+            return;
+        }
 
-        // if not migrating here and not down
-        if (!inMigrationTo()) {
-            if (dbVm != null) {
-                if (!Objects.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
-                    auditClientIpChange();
+        if (dbVm != null) {
+            VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
+
+            if (!Objects.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
+                auditClientIpChange();
+            }
+
+            logVmStatusTransition();
+
+            if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up
+                    || dbVm.getStatus() != VMStatus.PoweringUp
+                    && vdsmVmDynamic.getStatus() == VMStatus.PoweringUp) {
+                poweringUp = true;
+            }
+
+            // Generate an event for those machines that transition from "PoweringDown" to
+            // "Up" as this means that the power down operation failed:
+            if (dbVm.getStatus() == VMStatus.PoweringDown && vdsmVmDynamic.getStatus() == VMStatus.Up) {
+                auditVmPowerDownFailed();
+            }
+
+            // log vm recovered from error
+            if (dbVm.getStatus() == VMStatus.Paused && dbVm.getVmPauseStatus().isError()
+                    && vdsmVmDynamic.getStatus() == VMStatus.Up) {
+                auditVmRecoveredFromError();
+            }
+
+            if (isRunSucceeded(vdsmVmDynamic) || isMigrationSucceeded(vdsmVmDynamic)) {
+                // Vm moved to Up status - remove its record from Async
+                // reportedAndUnchangedVms handling
+                log.debug("removing VM '{}' from successful run VMs list", dbVm.getId());
+                succeededToRun = true;
+            }
+            afterMigrationFrom(vdsmVmDynamic, dbVm);
+
+            if (dbVm.getStatus() != VMStatus.NotResponding
+                    && vdsmVmDynamic.getStatus() == VMStatus.NotResponding) {
+                auditVmNotResponding();
+            }
+            // check if vm is suspended and remove it from async list
+            else if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
+                removeFromAsync = true;
+                if (dbVm.getStatus() != VMStatus.Paused) {
+                    auditVmPaused();
+
+                    // check exit message to determine why the VM is paused
+                    if (vdsmVmDynamic.getPauseStatus().isError()) {
+                        auditVmPausedError(vdsmVmDynamic);
+                    }
                 }
 
-                logVmStatusTransition();
+            }
+        }
 
-                if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up
-                        || dbVm.getStatus() != VMStatus.PoweringUp
-                        && vdsmVmDynamic.getStatus() == VMStatus.PoweringUp) {
-                    poweringUp = true;
-                }
+        if (dbVm != null || vdsmVm.getVmDynamic().getStatus() != VMStatus.MigratingFrom) {
+            if (dbVm == null) {
+                dbVm = vmDao.get(vdsmVm.getVmDynamic().getId());
+                // TODO: This is done to keep consistency with VmDao.getById(Guid).
+                // It should probably be removed, but some research is required.
+                dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
 
-                // Generate an event for those machines that transition from "PoweringDown" to
-                // "Up" as this means that the power down operation failed:
-                if (dbVm.getStatus() == VMStatus.PoweringDown && vdsmVmDynamic.getStatus() == VMStatus.Up) {
-                    auditVmPowerDownFailed();
-                }
-
-                // log vm recovered from error
-                if (dbVm.getStatus() == VMStatus.Paused && dbVm.getVmPauseStatus().isError()
-                        && vdsmVmDynamic.getStatus() == VMStatus.Up) {
-                    auditVmRecoveredFromError();
-                }
-
-                if (isRunSucceeded(vdsmVmDynamic) || isMigrationSucceeded(vdsmVmDynamic)) {
-                    // Vm moved to Up status - remove its record from Async
-                    // reportedAndUnchangedVms handling
-                    log.debug("removing VM '{}' from successful run VMs list", dbVm.getId());
+                if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
+                        || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
                     succeededToRun = true;
                 }
-                afterMigrationFrom(vdsmVmDynamic, dbVm);
-
-                if (dbVm.getStatus() != VMStatus.NotResponding
-                        && vdsmVmDynamic.getStatus() == VMStatus.NotResponding) {
-                    auditVmNotResponding();
-                }
-                // check if vm is suspended and remove it from async list
-                else if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
-                    removeFromAsync = true;
-                    if (dbVm.getStatus() != VMStatus.Paused) {
-                        auditVmPaused();
-
-                        // check exit message to determine why the VM is paused
-                        if (vdsmVmDynamic.getPauseStatus().isError()) {
-                            auditVmPausedError(vdsmVmDynamic);
-                        }
-                    }
-
-                }
             }
-            if (dbVm != null || vdsmVmDynamic.getStatus() != VMStatus.MigratingFrom) {
-                if (dbVm == null) {
-                    dbVm = vmDao.get(vdsmVm.getVmDynamic().getId());
-                    // TODO: This is done to keep consistency with VmDao.getById(Guid).
-                    // It should probably be removed, but some research is required.
-                    dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
 
-                    if ((isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning())
-                            || vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
-                        succeededToRun = true;
-                    }
-                }
-
-                updateVmDynamicData();
-                updateVmStatistics();
-                if (!vdsManager.isInitialized()) {
-                    resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVmDynamic.getId());
-                }
+            updateVmDynamicData();
+            updateVmStatistics();
+            if (!vdsManager.isInitialized()) {
+                resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
             }
         }
     }
