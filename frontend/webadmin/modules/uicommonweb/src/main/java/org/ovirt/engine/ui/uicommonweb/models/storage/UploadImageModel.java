@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -384,8 +383,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         setImagePath(new EntityModel<String>());
         setImageUri(new EntityModel<String>());
         setVolumeFormat(new ListModel<VolumeFormat>());
-        getVolumeFormat().setItems(new ArrayList<>(Collections.singletonList(VolumeFormat.RAW)));
-        // TODO when supported: getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
+        getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
 
         setUploadState(UploadState.NEW);
         setProgressStr(""); //$NON-NLS-1$

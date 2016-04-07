@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeLegalityVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -254,9 +255,35 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     private void handleFinalizingSuccess(final StateContext context) {
         log.info("Finalizing successful upload to {}", getUploadDescription());
         stopImageTransferSession(context.entity);
-        setVolumeLegalityInStorage(LEGAL_IMAGE);
-        unLockImage();
-        updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
+
+        // We want to use the transferring vds for image actions for having a coherent log when uploading.
+        Guid transferingVdsId = context.entity.getVdsId();
+        if (verifyImage(transferingVdsId)) {
+            setVolumeLegalityInStorage(LEGAL_IMAGE);
+            unLockImage();
+            updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
+        } else {
+            setImageStatus(ImageStatus.ILLEGAL);
+            updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+        }
+    }
+
+    private boolean verifyImage(Guid transferingVdsId) {
+        ImageActionsVDSCommandParameters parameters =
+                new ImageActionsVDSCommandParameters(transferingVdsId, getStoragePool().getId(),
+                        getStorageDomainId(),
+                        getImage().getImage().getDiskId(),
+                        getImage().getImageId());
+
+        try {
+            // As we currently support a single volume image, we only need to verify that volume.
+            getBackend().getResourceManager().runVdsCommand(VDSCommandType.VerifyUntrustedVolume,
+                    parameters);
+        } catch (RuntimeException e) {
+            log.error("Failed to verify uploaded image: {}", e);
+            return false;
+        }
+        return true;
     }
 
     private void handleFinalizingFailure(final StateContext context) {

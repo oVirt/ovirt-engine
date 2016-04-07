@@ -445,4 +445,6 @@ public interface VdsServerConnector {
             String volumeID, boolean allowIllegal);
 
     public Map<String, Object> teardownImage(String sdID, String spID, String imageID, String volumeID);
+
+    public Map<String, Object> verifyUntrustedVolume(String sdID, String spID, String imageID, String volumeID);
 }

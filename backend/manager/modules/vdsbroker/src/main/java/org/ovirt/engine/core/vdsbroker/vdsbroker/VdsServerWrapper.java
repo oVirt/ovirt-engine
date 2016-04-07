@@ -1718,6 +1718,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusReturnForXmlRpc verifyUntrustedVolume(String spID, String sdID, String imageID, String volumeID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.verifyUntrustedVolume(sdID, spID, imageID, volumeID);
+            StatusReturnForXmlRpc wrapper = new StatusReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVMs(uri, username, password);

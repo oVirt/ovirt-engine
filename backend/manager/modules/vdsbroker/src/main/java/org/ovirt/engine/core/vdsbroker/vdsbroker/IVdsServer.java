@@ -104,6 +104,8 @@ public interface IVdsServer {
 
     StatusReturnForXmlRpc teardownImage(String spId, String sdId, String imgGroupId, String imgId);
 
+    StatusReturnForXmlRpc verifyUntrustedVolume(String spId, String sdId, String imgGroupId, String imgId);
+
     OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation);
 
     OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation);

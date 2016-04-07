@@ -1826,6 +1826,20 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusReturnForXmlRpc verifyUntrustedVolume(String spID, String sdID, String imageID, String volumeID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.verify_untrusted")
+                        .withParameter("storagepoolID", spID)
+                        .withParameter("storagedomainID", sdID)
+                        .withParameter("imageID", imageID)
+                        .withParameter("volumeID", volumeID)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusReturnForXmlRpc(response);
+    }
+
+    @Override
     public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getExternalVMs")
