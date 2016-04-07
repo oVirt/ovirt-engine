@@ -94,6 +94,7 @@ import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Snapshot;
+import org.ovirt.engine.api.model.SshPublicKey;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StorageConnection;
@@ -268,6 +269,8 @@ import org.ovirt.engine.api.resource.aaa.DomainUsersResource;
 import org.ovirt.engine.api.resource.aaa.DomainsResource;
 import org.ovirt.engine.api.resource.aaa.GroupResource;
 import org.ovirt.engine.api.resource.aaa.GroupsResource;
+import org.ovirt.engine.api.resource.aaa.SshPublicKeyResource;
+import org.ovirt.engine.api.resource.aaa.SshPublicKeysResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.resource.externalhostproviders.EngineKatelloErrataResource;
@@ -661,6 +664,10 @@ public class LinkHelper {
         map.add(KatelloErratumResource.class, KatelloErrataResource.class, Vm.class);
         map.add(KatelloErratumResource.class, EngineKatelloErrataResource.class, NO_PARENT);
         TYPES.put(KatelloErratum.class, map);
+
+        map = new ParentToCollectionMap();
+        map.add(SshPublicKeyResource.class, SshPublicKeysResource.class, User.class);
+        TYPES.put(SshPublicKey.class, map);
     }
 
     /**
