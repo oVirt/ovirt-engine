@@ -197,6 +197,7 @@ public class VmAnalyzer {
 
     private boolean isVmDown() {
         if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
+            logVmDown();
             return true;
         }
         return false;
@@ -216,6 +217,7 @@ public class VmAnalyzer {
             return;
         }
 
+        logVmStatusTransition();
         switch (dbVm.getStatus()) {
         case SavingState:
             resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
@@ -653,6 +655,11 @@ public class VmAnalyzer {
     private void logVmDisappeared() {
         log.info("VM '{}'({}) is running in db and not running on VDS '{}'({})",
                 dbVm.getId(), dbVm.getName(), vdsManager.getVdsId(), vdsManager.getVdsName());
+    }
+
+    private void logVmDown() {
+        log.info("VM '{}' was reported as Down on VDS '{}'({})",
+                vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
     }
 
     /**
