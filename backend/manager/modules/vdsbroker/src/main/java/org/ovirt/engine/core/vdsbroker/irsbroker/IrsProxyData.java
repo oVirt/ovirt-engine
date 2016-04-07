@@ -406,12 +406,10 @@ public class IrsProxyData {
 
     private void proceedStorageDomain(StorageDomain data, int dataMasterVersion, StoragePool storagePool) {
         StorageDomain storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
-        StorageDomainStatic domainFromDb = null;
-        StoragePoolIsoMap domainPoolMap = null;
 
         if (storage_domain != null) {
-            domainFromDb = storage_domain.getStorageStaticData();
-            domainPoolMap = storage_domain.getStoragePoolIsoMapData();
+            StorageDomainStatic domainFromDb = storage_domain.getStorageStaticData();
+            StoragePoolIsoMap domainPoolMap = storage_domain.getStoragePoolIsoMapData();
             // If the domain is master in the DB
             if (domainFromDb.getStorageDomainType() == StorageDomainType.Master && domainPoolMap != null
                     && domainPoolMap.getStatus() != StorageDomainStatus.Locked) {
