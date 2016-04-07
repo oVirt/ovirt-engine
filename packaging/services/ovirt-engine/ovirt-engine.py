@@ -371,6 +371,14 @@ class Daemon(service.Daemon):
                 '-XX:+PrintGCDetails',
             ])
 
+        # Specify special krb5.conf file if required
+        if self._config.get('AAA_KRB5_CONF_FILE'):
+            self._engineArgs.append(
+                '-Djava.security.krb5.conf=%s' % self._config.get(
+                    'AAA_KRB5_CONF_FILE'
+                )
+            )
+
         # Add arguments for JBoss:
         self._engineArgs.extend([
             '-Djava.util.logging.manager=org.jboss.logmanager',

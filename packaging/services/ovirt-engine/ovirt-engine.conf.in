@@ -120,7 +120,6 @@ ENGINE_PROPERTIES=""
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} java.awt.headless=true"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} sun.rmi.dgc.client.gcInterval=3600000 sun.rmi.dgc.server.gcInterval=3600000"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jsse.enableSNIExtension=false"
-ENGINE_PROPERTIES="${ENGINE_PROPERTIES} \"java.security.krb5.conf=${ENGINE_ETC}/krb5.conf\""
 
 #
 # Extra Java arguments to be added to command-line.
@@ -355,3 +354,32 @@ ENGINE_API_SUPPORTED_VERSIONS="3, 4"
 # explicitly select a specific version.
 #
 ENGINE_API_DEFAULT_VERSION="4"
+
+#
+# Specify custom krb5.conf file (if empty the default is /etc/krb5.conf)
+#
+AAA_KRB5_CONF_FILE=
+
+#
+# All following options are used for JAAS 'oVirtKerbAAA' client configuration
+#
+
+#
+# Enable/disable usage of ticket cache file for authentication
+#
+AAA_JAAS_USE_TICKET_CACHE=false
+
+#
+# Specify custom ticket cache file (if empty the default is /tmp/krb5cc_${UID} where UID if used id of ovirt user)
+#
+AAA_JAAS_TICKET_CACHE_FILE=
+
+#
+# Enable/disable usage of keytab file for authentication
+#
+AAA_JAAS_USE_KEYTAB=false
+
+#
+# Specify custom keytab file (if empty the default is ${OVIRT_HOME}/krb5.keytab where OVIRT_HOME is home directory of ovirt user)
+#
+AAA_JAAS_KEYTAB_FILE=
