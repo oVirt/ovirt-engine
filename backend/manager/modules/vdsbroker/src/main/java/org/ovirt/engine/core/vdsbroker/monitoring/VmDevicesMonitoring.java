@@ -338,7 +338,7 @@ public class VmDevicesMonitoring implements BackendService {
     }
 
     private static <T> List<T> getOptionalList(List<T> list) {
-        return list != null ? list : Collections.EMPTY_LIST;
+        return list != null ? list : Collections.emptyList();
     }
 
     public Change createChange(long fetchTime) {

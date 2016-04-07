@@ -90,7 +90,7 @@ public class VmDevicesMonitoringTest {
         deviceInfo.put("device", device);
         deviceInfo.put("type", deviceType);
         deviceInfo.put("alias", device + "0");
-        deviceInfo.put("specParams", Collections.EMPTY_MAP);
+        deviceInfo.put("specParams", Collections.emptyMap());
         if (address != null) {
             deviceInfo.put("address", address);
         }
@@ -107,12 +107,12 @@ public class VmDevicesMonitoringTest {
                 device,
                 "",
                 0,
-                Collections.EMPTY_MAP,
+                Collections.emptyMap(),
                 isManaged,
                 true,
                 false,
                 "",
-                Collections.EMPTY_MAP,
+                Collections.emptyMap(),
                 null,
                 null);
     }
@@ -414,8 +414,8 @@ public class VmDevicesMonitoringTest {
         change.flush();
 
         initDevices();
-        doReturn(Collections.EMPTY_LIST).when(vmDeviceDao).getVmDeviceByVmId(VM_ID);
-        doReturn(Collections.EMPTY_LIST).when(vmDeviceDao).getVmDevicesByDeviceId(controllerId, VM_ID);
+        doReturn(Collections.emptyList()).when(vmDeviceDao).getVmDeviceByVmId(VM_ID);
+        doReturn(Collections.emptyList()).when(vmDeviceDao).getVmDevicesByDeviceId(controllerId, VM_ID);
 
         change = vmDevicesMonitoring.createChange(3L);
         change.updateDevice(controller);
