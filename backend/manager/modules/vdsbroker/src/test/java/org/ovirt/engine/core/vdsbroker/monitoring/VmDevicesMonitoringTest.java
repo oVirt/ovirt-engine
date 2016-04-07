@@ -59,7 +59,6 @@ public class VmDevicesMonitoringTest {
     private static final Guid VM_ID = new Guid("7cfc3666-5185-4438-8381-646de77ca9a7");
     private static final Guid VIDEO_DEVICE_ID = new Guid("5987c100-a653-4a6e-87ae-fe1f808225ed");
     private static final Guid CDROM_DEVICE_ID = new Guid("dbf244e9-b91c-4304-a96e-f6868b362443");
-    private static final Guid SERIAL_DEVICE_ID = new Guid("77819a89-6910-4c77-a386-b741b69d5d80");
     private static final String VIDEO_DEVICE_ADDRESS = "address1";
     private static final String CDROM_DEVICE_ADDRESS = "address2";
     private static final String SERIAL_DEVICE_ADDRESS = "address3";
