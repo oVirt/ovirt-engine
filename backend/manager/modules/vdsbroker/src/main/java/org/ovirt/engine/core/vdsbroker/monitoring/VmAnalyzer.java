@@ -46,10 +46,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -65,7 +62,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VmAnalyzer {
 
-    private VM dbVm;
+    private final VM dbVm;
     private final VmInternalData vdsmVm;
 
     private VmDynamic vmDynamicToSave;
@@ -109,9 +106,6 @@ public class VmAnalyzer {
     private final boolean updateStatistics;
     private Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider;
 
-    private VmStaticDao vmStaticDao;
-    private VmDao vmDao;
-    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private VdsDynamicDao vdsDynamicDao;
     private VmNumaNodeDao vmNumaNodeDao;
 
@@ -122,9 +116,6 @@ public class VmAnalyzer {
             VdsManager vdsManager,
             AuditLogDirector auditLogDirector,
             ResourceManager resourceManager,
-            VmStaticDao vmStaticDao,
-            VmDao vmDao,
-            VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VdsDynamicDao vdsDynamicDao,
             Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
             VmNumaNodeDao vmNumaNodeDao) {
@@ -134,9 +125,6 @@ public class VmAnalyzer {
         this.vdsManager = vdsManager;
         this.auditLogDirector = auditLogDirector;
         this.resourceManager = resourceManager;
-        this.vmStaticDao = vmStaticDao;
-        this.vmDao = vmDao;
-        this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         this.vdsDynamicDao = vdsDynamicDao;
         this.vdsNumaNodesProvider = vdsNumaNodesProvider;
         this.vmNumaNodeDao = vmNumaNodeDao;
@@ -185,11 +173,11 @@ public class VmAnalyzer {
     }
 
     private boolean isExternalOrUnmanagedHostedEngineVm() {
-        if (dbVm == null && vmStaticDao.get(vdsmVm.getVmDynamic().getId()) == null) {
+        if (dbVm == null) {
             logExternalVmDiscovery();
             return true;
         }
-        if (dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
+        if (dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
             logUnmanagedHostedEngineDiscovery();
             return true;
         }
@@ -205,7 +193,7 @@ public class VmAnalyzer {
     }
 
     private boolean isVmRunningInDatabaseOnMonitoredHost() {
-        return dbVm != null;
+        return vdsManager.getVdsId().equals(dbVm.getRunOnVds());
     }
 
     private void processUnmanagedVm() {
@@ -225,10 +213,6 @@ public class VmAnalyzer {
             break;
 
         default:
-            dbVm = vmDao.get(vdsmVm.getVmDynamic().getId());
-            // TODO: This is done to keep consistency with VmDao.getById(Guid).
-            // It should probably be removed, but some research is required.
-            dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
             VmDynamic vmDynamic = dbVm.getDynamicData();
             if (vmDynamic.getRunOnVds() != null && vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
                 log.info("RefreshVmList VM id '{}' status = '{}' on VDS '{}'({}) ignoring it in the refresh until migration is done",
@@ -814,9 +798,6 @@ public class VmAnalyzer {
             return;
         }
 
-        if (dbVm.getInterfaces() == null || dbVm.getInterfaces().isEmpty()) {
-            dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
-        }
         List<String> macs = new ArrayList<>();
 
         dbVm.setUsageNetworkPercent(0);

@@ -28,7 +28,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
@@ -69,8 +68,6 @@ public class VmsMonitoring implements BackendService {
     private VmStatisticsDao vmStatisticsDao;
     @Inject
     private VmGuestAgentInterfaceDao vmGuestAgentInterfaceDao;
-    @Inject
-    private VmStaticDao vmStaticDao;
     @Inject
     private VmDao vmDao;
     @Inject
@@ -175,7 +172,6 @@ public class VmsMonitoring implements BackendService {
                 statistics,
                 auditLogDirector,
                 resourceManager,
-                vmStaticDao,
                 vmDao,
                 vmNetworkInterfaceDao,
                 vdsDynamicDao,

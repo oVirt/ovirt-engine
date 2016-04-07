@@ -73,7 +73,7 @@ public enum VmTestPairs {
     DST_VM_WITH_STATUS_UP("9") {
         @Override
         Pair<VM, VmInternalData> build() {
-            Pair<VM, VmInternalData> pair = pairOf(null, createVmInternalData());
+            Pair<VM, VmInternalData> pair = pairOf(createDbVm(), createVmInternalData());
             pair.getSecond().getVmDynamic().setStatus(VMStatus.Up);
             pair.getSecond().getVmDynamic().setRunOnVds(DST_HOST_ID);
             return pair;
@@ -82,7 +82,7 @@ public enum VmTestPairs {
     DST_VM_WITH_STATUS_MIGRATING_TO("A") {
         @Override
         Pair<VM, VmInternalData> build() {
-            Pair<VM, VmInternalData> pair = pairOf(null, createVmInternalData());
+            Pair<VM, VmInternalData> pair = pairOf(createDbVm(), createVmInternalData());
             pair.getSecond().getVmDynamic().setStatus(VMStatus.MigratingTo);
             pair.getSecond().getVmDynamic().setRunOnVds(DST_HOST_ID);
             return pair;
@@ -210,10 +210,11 @@ public enum VmTestPairs {
     VmInternalData createVmInternalData() {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(id);
+        vmDynamic.setRunOnVds(SRC_HOST_ID);
         VmStatistics vmStatistics = new VmStatistics();
         vmStatistics.setVmBalloonInfo(new VmBalloonInfo());
         vmStatistics.setInterfaceStatistics(new ArrayList<>());
-        ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = new ArrayList<>();
+        ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = null;
         HashMap<String, LUNs> lunsMap = new HashMap<>();
         VmInternalData vmInternalData =
                 new VmInternalData(vmDynamic, vmStatistics,

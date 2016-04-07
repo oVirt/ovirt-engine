@@ -12,12 +12,13 @@ import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Objects;
 
 import org.junit.Before;
 import org.junit.experimental.theories.DataPoints;
@@ -27,16 +28,13 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -45,9 +43,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
@@ -71,8 +66,6 @@ public class VmAnalyzerTest {
     @Captor
     private ArgumentCaptor<VDSParametersBase> vdsParamsCaptor;
     @Mock
-    private VmStaticDao vmStaticDao;
-    @Mock
     private VdsDynamicDao vdsDynamicDao;
     @Mock
     private VdsDynamic srcHost;
@@ -86,17 +79,11 @@ public class VmAnalyzerTest {
     private VDS vdsManagerVds;
     @Mock
     private ResourceManager resourceManager;
-    @Mock
-    private VmDao vmDao;
-    @Mock
-    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Theory
     public void externalVMWhenMissingInDb(VmTestPairs data) {
         //given
         initMocks(data, false);
-        mockVmStatic(false);
-        mockVmNotInDb(data);
         //when
         assumeTrue(data.dbVm() == null);
         assumeTrue(data.vdsmVm() != null);
@@ -177,6 +164,7 @@ public class VmAnalyzerTest {
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
         assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
+        assumeTrue(Objects.equals(data.vdsmVm().getVmDynamic().getRunOnVds(), data.dbVm().getRunOnVds()));
         //then
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
@@ -189,6 +177,7 @@ public class VmAnalyzerTest {
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
         assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
+        assumeTrue(Objects.equals(data.vdsmVm().getVmDynamic().getRunOnVds(), data.dbVm().getRunOnVds()));
         //then
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
@@ -264,7 +253,6 @@ public class VmAnalyzerTest {
         initMocks(data, false);
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
-        // when migration failed
         assumeTrue(data.dbVm().getStatus() == VMStatus.Up);
         assumeTrue(data.dbVm().isAutoStartup());
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
@@ -272,8 +260,6 @@ public class VmAnalyzerTest {
         vmAnalyzer.analyze();
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertNotNull(vmAnalyzer.getVmStatisticsToSave());
-        assertEquals(VmTestPairs.SRC_HOST_ID, data.dbVm().getRunOnVds());
-        assertNull(data.vdsmVm().getVmDynamic().getRunOnVds());
         assertFalse(vmAnalyzer.isRerun());
         assertTrue(vmAnalyzer.isAutoVmToRun());
         assertNull(data.dbVm().getMigratingToVds());
@@ -298,7 +284,7 @@ public class VmAnalyzerTest {
         //given
         initMocks(data, false);
         //when
-        assumeNotNull(data.vdsmVm());
+        assumeNotNull(data.dbVm(), data.vdsmVm());
         assumeTrue(data.vdsmVm().getVmDynamic().getRunOnVds() == VmTestPairs.DST_HOST_ID);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingTo);
         //then
@@ -329,8 +315,6 @@ public class VmAnalyzerTest {
         // -- default behaviors --
         // dst host is up
         mockDstHostStatus(VDSStatus.Up);
-        // dst VM is in DB under the same Guid
-        mockVmInDbForDstVms(vmData);
         // -- end of behaviors --
         vmAnalyzer = spy(new VmAnalyzer(
                 vmData.dbVm(),
@@ -339,9 +323,6 @@ public class VmAnalyzerTest {
                 vdsManager,
                 auditLogDirector,
                 resourceManager,
-                vmStaticDao,
-                vmDao,
-                vmNetworkInterfaceDao,
                 vdsDynamicDao,
                 null,
                 null));
@@ -356,13 +337,7 @@ public class VmAnalyzerTest {
     }
 
     private void stubDaos() {
-        mockVmStatic(true);
         mockVdsDao();
-    }
-
-    private void mockVmStatic(boolean stubExists) {
-        Mockito.reset(vmStaticDao);
-        when(vmStaticDao.get(any(Guid.class))).thenReturn(stubExists ? mock(VmStatic.class) : null);
     }
 
     private void mockVdsDao() {
@@ -374,18 +349,4 @@ public class VmAnalyzerTest {
         when(dstHost.getStatus()).thenReturn(status);
     }
 
-
-    private void mockVmInDbForDstVms(VmTestPairs vmData) {
-        if (vmData.dbVm() == null && vmData.vdsmVm() != null) {
-            VM dbVm = vmData.createDbVm();
-            when(vmDao.get(vmData.vdsmVm().getVmDynamic().getId()))
-                    .thenReturn(dbVm);
-        }
-    }
-    private void mockVmNotInDb(VmTestPairs vmData) {
-        if (vmData.vdsmVm() != null) {
-            when(vmDao.get(vmData.vdsmVm().getVmDynamic().getId()))
-                    .thenReturn(null);
-        }
-    }
 }
