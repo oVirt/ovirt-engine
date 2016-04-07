@@ -296,7 +296,7 @@ public class VmDevicesMonitoring implements BackendService {
 
     private ConcurrentMap<Guid, DevicesStatus> vmDevicesStatuses = new ConcurrentHashMap<>();
     private ConcurrentMap<Guid, ReentrantLock> vmDevicesLocks = new ConcurrentHashMap<>();
-    private Object devicesStatusesLock = new Object();
+    private final Object devicesStatusesLock = new Object();
 
     public VmDevicesMonitoring() {
     }
