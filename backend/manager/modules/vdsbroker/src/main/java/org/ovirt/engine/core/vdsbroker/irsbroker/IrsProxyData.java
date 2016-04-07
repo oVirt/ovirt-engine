@@ -404,18 +404,18 @@ public class IrsProxyData {
         this.preferredHostId = preferredHostId;
     }
 
-    private void proceedStorageDomain(StorageDomain data, int dataMasterVersion, StoragePool storagePool) {
-        StorageDomain storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
+    private void proceedStorageDomain(StorageDomain domainFromVdsm, int dataMasterVersion, StoragePool storagePool) {
+        StorageDomain storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(domainFromVdsm.getId(), _storagePoolId);
 
         if (storage_domain != null) {
             StorageDomainStatic domainFromDb = storage_domain.getStorageStaticData();
-            StoragePoolIsoMap domainPoolMap = storage_domain.getStoragePoolIsoMapData();
+            StoragePoolIsoMap domainPoolMapFromDb = storage_domain.getStoragePoolIsoMapData();
             // If the domain is master in the DB
-            if (domainFromDb.getStorageDomainType() == StorageDomainType.Master && domainPoolMap != null
-                    && domainPoolMap.getStatus() != StorageDomainStatus.Locked) {
+            if (domainFromDb.getStorageDomainType() == StorageDomainType.Master && domainPoolMapFromDb != null
+                    && domainPoolMapFromDb.getStatus() != StorageDomainStatus.Locked) {
                 // and the domain is not master in the VDSM
-                if (!((data.getStorageDomainType() == StorageDomainType.Master) || (data.getStorageDomainType() == StorageDomainType.Unknown))) {
-                    reconstructMasterDomainNotInSync(data.getStoragePoolId(),
+                if (!((domainFromVdsm.getStorageDomainType() == StorageDomainType.Master) || (domainFromVdsm.getStorageDomainType() == StorageDomainType.Unknown))) {
+                    reconstructMasterDomainNotInSync(domainFromVdsm.getStoragePoolId(),
                             domainFromDb.getId(),
                             "Mismatch between master in DB and VDSM",
                             MessageFormat.format("Master domain is not in sync between DB and VDSM. "
@@ -424,7 +424,7 @@ public class IrsProxyData {
                 } // or master in DB and VDSM but there is a version
                   // mismatch
                 else if (dataMasterVersion != storagePool.getMasterDomainVersion()) {
-                    reconstructMasterDomainNotInSync(data.getStoragePoolId(),
+                    reconstructMasterDomainNotInSync(domainFromVdsm.getStoragePoolId(),
                             domainFromDb.getId(),
                             "Mismatch between master version in DB and VDSM",
                             MessageFormat.format("Master domain version is not in sync between DB and VDSM. "
@@ -435,21 +435,21 @@ public class IrsProxyData {
                 }
             }
             boolean statusChanged = false;
-            if (domainPoolMap == null) {
-                data.setStoragePoolId(_storagePoolId);
-                DbFacade.getInstance().getStoragePoolIsoMapDao().save(data.getStoragePoolIsoMapData());
+            if (domainPoolMapFromDb == null) {
+                domainFromVdsm.setStoragePoolId(_storagePoolId);
+                DbFacade.getInstance().getStoragePoolIsoMapDao().save(domainFromVdsm.getStoragePoolIsoMapData());
                 statusChanged = true;
-            } else if (!domainPoolMap.getStatus().isStorageDomainInProcess()
-                    && domainPoolMap.getStatus() != data.getStatus()) {
-                if (domainPoolMap.getStatus() != StorageDomainStatus.Inactive
-                        && data.getStatus() != StorageDomainStatus.Inactive) {
-                    DbFacade.getInstance().getStoragePoolIsoMapDao().update(data.getStoragePoolIsoMapData());
+            } else if (!domainPoolMapFromDb.getStatus().isStorageDomainInProcess()
+                    && domainPoolMapFromDb.getStatus() != domainFromVdsm.getStatus()) {
+                if (domainPoolMapFromDb.getStatus() != StorageDomainStatus.Inactive
+                        && domainFromVdsm.getStatus() != StorageDomainStatus.Inactive) {
+                    DbFacade.getInstance().getStoragePoolIsoMapDao().update(domainFromVdsm.getStoragePoolIsoMapData());
                     statusChanged = true;
                 }
-                if (data.getStatus() != null && data.getStatus() == StorageDomainStatus.Inactive
+                if (domainFromVdsm.getStatus() != null && domainFromVdsm.getStatus() == StorageDomainStatus.Inactive
                         && domainFromDb.getStorageDomainType() == StorageDomainType.Master) {
                     StoragePool pool = DbFacade.getInstance().getStoragePoolDao()
-                            .get(domainPoolMap.getStoragePoolId());
+                            .get(domainPoolMapFromDb.getStoragePoolId());
                     if (pool != null) {
                         DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(),
                                 StoragePoolStatus.Maintenance);
@@ -461,20 +461,20 @@ public class IrsProxyData {
             }
 
             // For block domains, synchronize LUN details comprising the storage domain with the DB
-            if (statusChanged && data.getStatus() == StorageDomainStatus.Active && storage_domain.getStorageType().isBlockDomain()) {
+            if (statusChanged && domainFromVdsm.getStatus() == StorageDomainStatus.Active && storage_domain.getStorageType().isBlockDomain()) {
                 ResourceManager.getInstance().getEventListener().syncLunsInfoForBlockStorageDomain(
-                        data.getId(), getCurrentVdsId());
+                        domainFromVdsm.getId(), getCurrentVdsId());
             }
 
             // if status didn't change and still not active no need to
             // update dynamic data
             if (statusChanged
-                    || (domainPoolMap.getStatus() != StorageDomainStatus.Inactive && data.getStatus() == StorageDomainStatus.Active)) {
-                DbFacade.getInstance().getStorageDomainDynamicDao().update(data.getStorageDynamicData());
-                if (data.getAvailableDiskSize() != null && data.getUsedDiskSize() != null) {
-                    double freePercent = data.getStorageDynamicData().getfreeDiskPercent();
+                    || (domainPoolMapFromDb.getStatus() != StorageDomainStatus.Inactive && domainFromVdsm.getStatus() == StorageDomainStatus.Active)) {
+                DbFacade.getInstance().getStorageDomainDynamicDao().update(domainFromVdsm.getStorageDynamicData());
+                if (domainFromVdsm.getAvailableDiskSize() != null && domainFromVdsm.getUsedDiskSize() != null) {
+                    double freePercent = domainFromVdsm.getStorageDynamicData().getfreeDiskPercent();
                     AuditLogType type = AuditLogType.UNASSIGNED;
-                    Integer freeDiskInGB = data.getStorageDynamicData().getAvailableDiskSize();
+                    Integer freeDiskInGB = domainFromVdsm.getStorageDynamicData().getAvailableDiskSize();
                     if (freeDiskInGB != null) {
                         if (freePercent < domainFromDb.getWarningLowSpaceIndicator()) {
                             type = AuditLogType.IRS_DISK_SPACE_LOW;
@@ -487,21 +487,21 @@ public class IrsProxyData {
 
                     if (type != AuditLogType.UNASSIGNED) {
                         AuditLogableBase logable = new AuditLogableBase();
-                        logable.setStorageDomain(data);
+                        logable.setStorageDomain(domainFromVdsm);
                         logable.setStoragePoolId(_storagePoolId);
-                        logable.addCustomValue("DiskSpace", data.getAvailableDiskSize().toString());
-                        data.setStorageName(domainFromDb.getStorageName());
+                        logable.addCustomValue("DiskSpace", domainFromVdsm.getAvailableDiskSize().toString());
+                        domainFromVdsm.setStorageName(domainFromDb.getStorageName());
                         new AuditLogDirector().log(logable, type);
 
                     }
                 }
 
-                Set<EngineError> alerts = data.getAlerts();
+                Set<EngineError> alerts = domainFromVdsm.getAlerts();
                 if (alerts != null && !alerts.isEmpty()) {
 
                     AuditLogableBase logable = new AuditLogableBase();
-                    logable.setStorageDomain(data);
-                    data.setStorageName(domainFromDb.getStorageName());
+                    logable.setStorageDomain(domainFromVdsm);
+                    domainFromVdsm.setStorageName(domainFromDb.getStorageName());
                     logable.setStoragePoolId(_storagePoolId);
 
                     for (EngineError alert : alerts) {
@@ -514,8 +514,8 @@ public class IrsProxyData {
                             break;
                         default:
                             log.error("Unrecognized alert for domain {}(id = {}): {}",
-                                    data.getStorageName(),
-                                    data.getId(),
+                                    domainFromVdsm.getStorageName(),
+                                    domainFromVdsm.getId(),
                                     alert);
                             break;
                         }
@@ -524,7 +524,7 @@ public class IrsProxyData {
             }
 
         } else {
-            log.debug("The domain with id '{}' was not found in DB", data.getId());
+            log.debug("The domain with id '{}' was not found in DB", domainFromVdsm.getId());
         }
     }
 
