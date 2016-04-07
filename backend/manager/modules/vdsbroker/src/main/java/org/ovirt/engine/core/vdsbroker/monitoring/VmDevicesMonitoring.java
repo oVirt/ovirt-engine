@@ -454,7 +454,7 @@ public class VmDevicesMonitoring implements BackendService {
 
         VDS vds = new VDS(); // TODO refactor commands to use vdsId only - the whole vds object here is useless
         vds.setId(vdsId);
-        List<String> vmIds = vms.stream().map(guid -> guid.toString()).collect(Collectors.toList());
+        List<String> vmIds = vms.stream().map(Guid::toString).collect(Collectors.toList());
         VDSReturnValue vdsReturnValue =
                 getResourceManager().runVdsCommand(VDSCommandType.FullList,
                         new FullListVDSCommandParameters(vds, vmIds));
