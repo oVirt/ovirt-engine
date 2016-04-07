@@ -319,7 +319,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     runInternalAction(
                             VdcActionType.HotSetNumberOfCpus,
                             params, cloneContextAndDetachFromParent());
-            newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newNumOfSockets : currentSockets);
+            // Hosted engine VM does not care if hotplug failed. The requested CPU count is serialized
+            // into the OVF store and automatically used during the next HE VM start
+            if (!getVm().isHostedEngine()) {
+                newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newNumOfSockets : currentSockets);
+            }
             hotSetCpusLog(params);
         }
     }
@@ -361,7 +365,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 runInternalAction(
                         VdcActionType.HotSetAmountOfMemory,
                         params, cloneContextAndDetachFromParent());
-        newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemory : currentMemory);
+        // Hosted engine VM does not care if hostplug failed. The requested memory size is serialized
+        // into the OVF store and automatically used during the next HE VM start
+        if (!getVm().isHostedEngine()) {
+            newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemory : currentMemory);
+        }
         hotSetMemlog(params, setAmountOfMemoryResult);
     }
 
