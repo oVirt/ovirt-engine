@@ -45,7 +45,8 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
             addValidationMessage(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
             returnValue = false;
         }
-        if(!Objects.equals(p.getAdElementId(), getParameters().getTargetId())) {
+        if(!Objects.equals(p.getAdElementId(), getParameters().getTargetId())
+            && getDbUserDao().get(getParameters().getTargetId()) != null) {
             addValidationMessage(EngineMessage.INHERITED_PERMISSION_CANT_BE_REMOVED);
             returnValue = false;
         }
