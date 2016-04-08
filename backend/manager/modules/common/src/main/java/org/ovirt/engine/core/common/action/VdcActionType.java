@@ -505,6 +505,16 @@ public enum VdcActionType {
     // Hosted Engine
     ImportHostedEngineStorageDomain(6000, false, QuotaDependency.NONE),
 
+    /* Scheduling enabled `Label` actions are currently tied to the same
+       permissions as Tags as they have similar semantics and follow
+       almost the same rules.
+
+       TODO: change the action group as soon as the intended permissions change too
+    */
+    AddLabel(6100, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
+    RemoveLabel(6101, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
+    UpdateLabel(6102, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
+
     // CoCo
     RunAsyncAction(7000, QuotaDependency.NONE);
 
