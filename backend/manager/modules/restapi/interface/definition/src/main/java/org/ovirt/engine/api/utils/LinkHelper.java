@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -100,6 +99,7 @@ import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
+import org.ovirt.engine.api.model.SSHPublicKey;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.model.Session;
@@ -268,6 +268,8 @@ import org.ovirt.engine.api.resource.aaa.DomainUsersResource;
 import org.ovirt.engine.api.resource.aaa.DomainsResource;
 import org.ovirt.engine.api.resource.aaa.GroupResource;
 import org.ovirt.engine.api.resource.aaa.GroupsResource;
+import org.ovirt.engine.api.resource.aaa.SSHPublicKeyResource;
+import org.ovirt.engine.api.resource.aaa.SSHPublicKeysResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalComputeResourceResource;
@@ -658,6 +660,9 @@ public class LinkHelper {
         map.add(KatelloErratumResource.class, KatelloErrataResource.class, VM.class);
         map.add(KatelloErratumResource.class, SystemKatelloErrataResource.class, NO_PARENT);
         TYPES.put(KatelloErratum.class, map);
+
+        map = new ParentToCollectionMap(SSHPublicKeyResource.class, SSHPublicKeysResource.class, User.class);
+        TYPES.put(SSHPublicKey.class, map);
     }
 
     /**
