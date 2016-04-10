@@ -34,4 +34,8 @@ public abstract class CommandCallback {
     public boolean pollOnExecutionFailed() {
         return false;
     }
+
+    public boolean shouldRepeatEndMethodsOnFail(Guid cmdId) {
+        return false;
+    }
 }

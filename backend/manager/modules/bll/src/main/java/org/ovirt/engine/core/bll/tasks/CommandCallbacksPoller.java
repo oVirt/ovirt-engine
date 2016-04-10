@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +50,34 @@ public class CommandCallbacksPoller implements BackendService {
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
+    private boolean endCallback(Guid cmdId, CommandCallback callback, CommandStatus status) {
+        try {
+            if (status == CommandStatus.FAILED) {
+                callback.onFailed(cmdId, getChildCommandIds(cmdId));
+            } else {
+                callback.onSucceeded(cmdId, getChildCommandIds(cmdId));
+            }
+        } catch (Exception ex) {
+            if (callback.shouldRepeatEndMethodsOnFail(cmdId)) {
+                log.error("Failed invoking callback end method '{}' for command '{}' with exception '{}', the callback"
+                        + " is marked for end method retries",
+                        getCallbackMethod(status),
+                        cmdId,
+                        ex.getMessage());
+                log.debug("Exception", ex);
+                return true;
+            }
+
+            throw ex;
+        }
+
+        return false;
+    }
+
+    private List<Guid> getChildCommandIds(Guid cmdId) {
+        return commandsRepository.getChildCommandIds(cmdId);
+    }
+
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public void invokeCallbackMethods() {
         Iterator<Entry<Guid, CallbackTiming>> iterator = commandsRepository.getCallbacksTiming().entrySet().iterator();
@@ -71,23 +100,22 @@ public class CommandCallbacksPoller implements BackendService {
 
             CommandCallback callback = callbackTiming.getCallback();
             CommandStatus status = commandsRepository.getCommandStatus(cmdId);
+            boolean runCallbackAgain = false;
             boolean errorInCallback = false;
             try {
                 switch (status) {
                     case FAILED:
-                        callback.onFailed(cmdId,  commandsRepository.getChildCommandIds(cmdId));
-                        break;
                     case SUCCEEDED:
-                        callback.onSucceeded(cmdId, commandsRepository.getChildCommandIds(cmdId));
+                        runCallbackAgain = endCallback(cmdId, callback, status);
                         break;
                     case ACTIVE:
                         if (commandEntity != null && commandEntity.isExecuted()) {
-                            callback.doPolling(cmdId, commandsRepository.getChildCommandIds(cmdId));
+                            callback.doPolling(cmdId, getChildCommandIds(cmdId));
                         }
                         break;
                     case EXECUTION_FAILED:
                         if (callback.pollOnExecutionFailed()) {
-                            callback.doPolling(cmdId, commandsRepository.getChildCommandIds(cmdId));
+                            callback.doPolling(cmdId, getChildCommandIds(cmdId));
                         }
                         break;
                     default:
@@ -97,7 +125,8 @@ public class CommandCallbacksPoller implements BackendService {
                 errorInCallback = true;
                 handleError(ex, status, cmdId);
             } finally {
-                if (CommandStatus.FAILED == status || (CommandStatus.SUCCEEDED == status && !errorInCallback)) {
+                if ((CommandStatus.FAILED == status || (CommandStatus.SUCCEEDED == status && !errorInCallback))
+                        && !runCallbackAgain) {
                     commandsRepository.updateCallbackNotified(cmdId);
                     iterator.remove();
                     CommandEntity cmdEntity = commandsRepository.getCommandEntity(entry.getKey());

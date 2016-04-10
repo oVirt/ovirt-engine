@@ -7,7 +7,10 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
@@ -114,7 +117,18 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
 
     private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds, boolean succeeded) {
         if (shouldExecuteEndMethod(commandBase)) {
-            commandBase.endAction();
+            VdcReturnValueBase returnVal = commandBase.endAction();
+
+            if (!returnVal.getSucceeded() && shouldRepeatEndMethodsOnFail(returnVal)) {
+                if (shouldRepeatEndMethodsOnFail(returnVal)) {
+                    throw new EngineException(EngineError.ENGINE, String.format("Command %1$s id: '%2$s' endAction() " +
+                            "didn't complete successfully", commandBase.getActionType(), commandBase.getCommandId()));
+                } else {
+                    log.warn("Command '{}' id: '{}' end method execution failed, as the command isn't marked for " +
+                            "endAction() retries silently ignoring", commandBase.getActionType(),
+                            commandBase.getCommandId());
+                }
+            }
 
             if (commandBase.getParameters().getParentCommand() == VdcActionType.Unknown) {
                 CommandCoordinatorUtil.removeAllCommandsInHierarchy(commandBase.getCommandId());
@@ -152,5 +166,14 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
     @Override
     public boolean pollOnExecutionFailed() {
         return true;
+    }
+
+    @Override
+    public boolean shouldRepeatEndMethodsOnFail(Guid cmdId) {
+        return shouldRepeatEndMethodsOnFail(CommandCoordinatorUtil.getCommandEntity(cmdId).getReturnValue());
+    }
+
+    private boolean shouldRepeatEndMethodsOnFail(VdcReturnValueBase returnValue) {
+        return returnValue.getEndActionTryAgain();
     }
 }
