@@ -142,10 +142,13 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     }
 
     /**
-     * Disabled to change this in userportal
+     * User can't change default host from the portal, however if the template was created
+     * with a specific host the vm needs to be added with the same host.
+     * The super method does just that.
      */
     @Override
-    protected void doChangeDefaultHost(List<Guid> hostGuid) {
+    protected void doChangeDefaultHost(List<Guid> hostGuids) {
+        super.doChangeDefaultHost(hostGuids);
     }
 
     @Override
