@@ -321,7 +321,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private boolean isFloatingDisk() {
-        return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId());
+        return Guid.isNullOrEmpty(getParameters().getVmId());
     }
 
     /** @return The disk from the parameters, cast to a {@link DiskImage} */
