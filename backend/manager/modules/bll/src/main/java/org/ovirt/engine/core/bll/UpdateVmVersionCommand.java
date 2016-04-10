@@ -163,7 +163,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     }
 
     private RemoveVmFromPoolParameters buildRemoveVmFromPoolParameters() {
-        RemoveVmFromPoolParameters parameters = new RemoveVmFromPoolParameters(getVmId(), false);
+        RemoveVmFromPoolParameters parameters = new RemoveVmFromPoolParameters(getVmId(), false, false);
         parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         return parameters;
     }

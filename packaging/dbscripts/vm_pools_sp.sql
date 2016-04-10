@@ -385,4 +385,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
+CREATE OR REPLACE FUNCTION BoundVmPoolPrestartedVms (v_vm_pool_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE vm_pools
+    SET prestarted_vms = LEAST (
+        prestarted_vms, (
+            SELECT COUNT (*)
+            FROM vm_pool_map
+            WHERE vm_pool_id = v_vm_pool_id
+            )
+        )
+    WHERE vm_pool_id = v_vm_pool_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

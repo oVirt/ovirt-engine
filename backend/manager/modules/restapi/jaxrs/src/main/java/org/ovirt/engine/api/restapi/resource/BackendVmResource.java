@@ -459,7 +459,7 @@ public class BackendVmResource
     @Override
     public Response detach(Action action) {
         return doAction(VdcActionType.RemoveVmFromPool,
-                        new RemoveVmFromPoolParameters(guid),
+                        new RemoveVmFromPoolParameters(guid, false, true),
                         action);
     }
 

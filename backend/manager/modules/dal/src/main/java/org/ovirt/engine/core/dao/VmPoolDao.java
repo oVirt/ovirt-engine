@@ -109,7 +109,7 @@ public interface VmPoolDao extends Dao, SearchDao<VmPool> {
     /**
      * Returns a single VM from the vm pool with the specified id, with optional filtering.
      *
-     * @param id
+     * @param vmPoolId
      *            the vm pool id
      * @param userID
      *            the ID of the user requesting the information
@@ -118,4 +118,14 @@ public interface VmPoolDao extends Dao, SearchDao<VmPool> {
      * @return a single VM from the pool
      */
     VM getVmDataFromPoolByPoolGuid(Guid vmPoolId, Guid userID, boolean isFiltered);
+
+    /**
+     * If number of prestarted VMs in the pool is greater than total number of VMs, set
+     * the number of prestarted VMs to be equal to the total number of VMs. Otherwise, leave
+     * the number of prestarted VMs untouched.
+     *
+     * @param vmPoolId
+     *            the VM pool ID
+     */
+    void boundVmPoolPrestartedVms(Guid vmPoolId);
 }

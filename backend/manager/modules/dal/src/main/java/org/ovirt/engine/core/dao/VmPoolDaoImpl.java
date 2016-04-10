@@ -157,6 +157,13 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 parameterSource);
     }
 
+    @Override
+    public void boundVmPoolPrestartedVms(Guid vmPoolId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId);
+
+        getCallsHandler().executeModification("BoundVmPoolPrestartedVms", parameterSource);
+    }
+
     private static final class VmPoolFullRowMapper implements RowMapper<VmPool> {
         public static final VmPoolFullRowMapper instance = new VmPoolFullRowMapper();
 

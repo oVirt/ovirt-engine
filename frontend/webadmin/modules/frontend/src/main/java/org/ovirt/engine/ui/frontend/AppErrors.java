@@ -3417,6 +3417,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A VM is being created and attached to pool ${VmPoolName}.")
     String ACTION_TYPE_FAILED_VM_IS_BEING_CREATED_AND_ATTACHED_TO_POOL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being removed from VM Pool ${VmPoolName}.")
+    String ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_POOL();
+
     @DefaultStringValue("$filterType external")
     String VAR__FILTERTYPE__INTERNAL();
 

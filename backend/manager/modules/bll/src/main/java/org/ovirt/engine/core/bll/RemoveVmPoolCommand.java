@@ -169,7 +169,8 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     private boolean removeVm(VM vm) {
-        RemoveVmFromPoolParameters removeVmFromPoolParameters = new RemoveVmFromPoolParameters(vm.getId());
+        RemoveVmFromPoolParameters removeVmFromPoolParameters =
+                new RemoveVmFromPoolParameters(vm.getId(), false, false);
         removeVmFromPoolParameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
         VdcReturnValueBase result = runInternalActionWithTasksContext(
                 VdcActionType.RemoveVmFromPool,
@@ -242,7 +243,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
             commandCtx = cloneContext().withoutCompensationContext().withExecutionContext(ctx).withLock(engineLock);
 
         } catch (RuntimeException e) {
-            log.error("Failed to create command context of removing VM '{}' from Pool '{}': {}",
+            log.error("Failed to create command context of removing VM '{}' that was in Pool '{}': {}",
                     vm.getName(),
                     getVmPoolName(),
                     e.getMessage());

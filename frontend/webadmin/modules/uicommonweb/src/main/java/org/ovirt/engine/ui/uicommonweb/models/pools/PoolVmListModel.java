@@ -135,7 +135,7 @@ public class PoolVmListModel extends VmListModel<VmPool> {
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
-            list.add(new RemoveVmFromPoolParameters(vm.getId(), true));
+            list.add(new RemoveVmFromPoolParameters(vm.getId(), true, true));
         }
 
         model.startProgress();
