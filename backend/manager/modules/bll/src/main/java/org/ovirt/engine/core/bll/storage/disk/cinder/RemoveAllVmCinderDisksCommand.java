@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -74,7 +75,7 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         removeDiskParams.setParentCommand(getActionType());
         removeDiskParams.setParentParameters(getParameters());
         removeDiskParams.setShouldBeLogged(false);
-        removeDiskParams.setShouldBeEndedByParent(false);
+        removeDiskParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return removeDiskParams;
     }
 

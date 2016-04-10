@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -207,7 +208,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         restoreParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
         restoreParams.setParentCommand(getActionType());
         restoreParams.setParentParameters(getParameters());
-        restoreParams.setShouldBeEndedByParent(false);
+        restoreParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return withRootCommandInfo(restoreParams);
     }
 

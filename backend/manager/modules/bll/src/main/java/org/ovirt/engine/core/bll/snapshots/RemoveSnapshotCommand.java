@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -243,7 +244,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         parameters.setParentCommand(getActionType());
         parameters.setCommandType(getSnapshotActionType());
         parameters.setVdsId(getVm().getRunOnVds());
-        parameters.setShouldBeEndedByParent(!getVm().isQualifiedForLiveSnapshotMerge());
+        parameters.setEndProcedure(getVm().isQualifiedForLiveSnapshotMerge() ? EndProcedure.COMMAND_MANAGED :
+                EndProcedure.PARENT_MANAGED);
         return parameters;
     }
 

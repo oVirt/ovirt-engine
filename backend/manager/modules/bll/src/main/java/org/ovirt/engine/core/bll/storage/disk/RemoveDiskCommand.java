@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -306,7 +307,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 break;
             case CINDER:
                 RemoveCinderDiskParameters params = new RemoveCinderDiskParameters(getParameters().getDiskId());
-                params.setShouldBeEndedByParent(false);
+                params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.RemoveCinderDisk,
                         params,

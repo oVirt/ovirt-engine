@@ -55,8 +55,7 @@ public class VdcActionParametersBase implements Serializable {
 
     private int executionIndex;
 
-
-    private boolean shouldBeEndedByParent = true;
+    private EndProcedure endProcedure = EndProcedure.PARENT_MANAGED;
 
     private boolean useCinderCommandCallback;
 
@@ -305,6 +304,25 @@ public class VdcActionParametersBase implements Serializable {
         ROLLBACK_FLOW;
     }
 
+    /**
+     * Enum for determining how the command should end when it has a parent command
+     */
+    public enum EndProcedure {
+        /**
+         * The command should be ended soon as its async operations end
+         */
+        COMMAND_MANAGED,
+        /**
+         * The command should be ended by its parent command
+         */
+        PARENT_MANAGED,
+        /**
+         * For internal use only - indicates that the command end method execution is currently
+         * used by the different internal flows (like the retry flow) and should be executed as soon as its called
+         */
+        FLOW_MANAGED
+    }
+
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return tsb.append("commandId", getCommandId())
                 .append("user", getParametersCurrentUser() == null ? null : getParametersCurrentUser().getLoginName())
@@ -316,11 +334,11 @@ public class VdcActionParametersBase implements Serializable {
         return appendAttributes(ToStringBuilder.forInstance(this)).build();
     }
 
-    public boolean getShouldBeEndedByParent() {
-        return shouldBeEndedByParent;
+    public EndProcedure getEndProcedure() {
+        return endProcedure;
     }
 
-    public void setShouldBeEndedByParent(boolean shouldBeEndedByParent) {
-        this.shouldBeEndedByParent = shouldBeEndedByParent;
+    public void setEndProcedure(EndProcedure endProcedure) {
+        this.endProcedure = endProcedure;
     }
 }

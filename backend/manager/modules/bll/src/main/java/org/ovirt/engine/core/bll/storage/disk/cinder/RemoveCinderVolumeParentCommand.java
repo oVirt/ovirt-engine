@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.RemoveImageCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -75,7 +76,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         RemoveCinderDiskVolumeParameters childParam = new RemoveCinderDiskVolumeParameters(cinderDiskVolume);
         childParam.setParentCommand(getActionType());
         childParam.setParentParameters(getParameters());
-        childParam.setShouldBeEndedByParent(false);
+        childParam.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return childParam;
     }
 

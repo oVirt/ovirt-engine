@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -348,7 +349,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 return Collections.emptyList();
             }
             RemoveAllVmCinderDisksParameters param = new RemoveAllVmCinderDisksParameters(getVmId(), cinderDisks);
-            param.setShouldBeEndedByParent(false);
+            param.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveAllVmCinderDisks,
                     withRootCommandInfo(param),

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -86,7 +87,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
         params.setSkipDomainChecks(true);
-        params.setShouldBeEndedByParent(false);
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return params;
     }
 

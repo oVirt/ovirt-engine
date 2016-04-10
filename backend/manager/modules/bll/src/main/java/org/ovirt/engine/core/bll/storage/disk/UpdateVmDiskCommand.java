@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
@@ -593,7 +594,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(
                 new DiskVmElement(newCinderDisk.getId(), getVmId()), newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
-        parameters.setShouldBeEndedByParent(false);
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
 

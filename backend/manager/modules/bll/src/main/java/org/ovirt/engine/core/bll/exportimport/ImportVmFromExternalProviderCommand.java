@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -336,7 +337,7 @@ implements QuotaStorageDependent {
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
-        parameters.setShouldBeEndedByParent(false);
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
 

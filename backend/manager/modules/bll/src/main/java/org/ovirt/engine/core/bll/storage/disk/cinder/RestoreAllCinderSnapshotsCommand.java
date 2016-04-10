@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
 import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -53,7 +54,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             removeDiskParam.setParentCommand(getActionType());
             removeDiskParam.setStorageDomainId(cinderDisk.getStorageIds().get(0));
             removeDiskParam.setParentParameters(getParameters());
-            removeDiskParam.setShouldBeEndedByParent(false);
+            removeDiskParam.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveCinderDisk,
@@ -72,7 +73,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
                     new RemoveCinderDiskVolumeParameters(cinderVolume);
             removeDiskVolumeParam.setParentCommand(getActionType());
             removeDiskVolumeParam.setParentParameters(getParameters());
-            removeDiskVolumeParam.setShouldBeEndedByParent(false);
+            removeDiskVolumeParam.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveCinderDiskVolume,

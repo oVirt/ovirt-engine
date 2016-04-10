@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecutionReason;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -619,8 +620,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             List<VdcActionParametersBase> parameters = new LinkedList<>();
             for (Guid id : childCommands) {
                 CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(id);
-                if (command.getParameters().getShouldBeEndedByParent()) {
-                    command.getParameters().setShouldBeEndedByParent(false);
+                if (command.getParameters().getEndProcedure() == EndProcedure.PARENT_MANAGED
+                        || command.getParameters().getEndProcedure() == EndProcedure.FLOW_MANAGED) {
+                    command.getParameters().setEndProcedure(EndProcedure.FLOW_MANAGED);
                     command.getParameters().setCommandType(command.getActionType());
                     parameters.add(command.getParameters());
                 }
@@ -635,8 +637,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 && getParameters().getExecutionReason() == CommandExecutionReason.REGULAR_FLOW;
     }
 
+    private boolean isEndProcedureApplicableToEndAction() {
+        return getParameters().getEndProcedure() == EndProcedure.FLOW_MANAGED
+                || getParameters().getEndProcedure() == EndProcedure.COMMAND_MANAGED;
+    }
+
     private boolean handleCommandExecutionEnded() {
-        boolean shouldEndAction = parentHasCallback() ? !getParameters().getShouldBeEndedByParent() : true;
+        boolean shouldEndAction = parentHasCallback() ? isEndProcedureApplicableToEndAction() : true;
+
         CommandStatus newStatus = isEndSuccessfully() ? CommandStatus.SUCCEEDED : CommandStatus.FAILED;
         if (getCallback() == null) {
             setCommandStatus(newStatus);

@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -273,7 +274,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 completedChildren + 1, getParameters().getImageIds().size(), imageId);
 
         RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskLiveParameters(imageId);
-        parameters.setShouldBeEndedByParent(false);
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         if (getParameters().getChildImageIds() == null) {
             getParameters().setChildImageIds(Arrays.asList(new Guid[getParameters().getImageIds().size()]));
         }
@@ -400,7 +401,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         params.setParentParameters(getParameters());
         params.setSessionId(getParameters().getSessionId());
         params.setInvokeEndActionOnParent(false);
-        params.setShouldBeEndedByParent(false);
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return params;
     }
 

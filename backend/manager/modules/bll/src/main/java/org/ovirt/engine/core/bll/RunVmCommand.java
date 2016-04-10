@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -521,7 +522,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         CreateAllSnapshotsFromVmParameters parameters = buildCreateSnapshotParameters();
         parameters.setImagesParameters(getParameters().getImagesParameters());
         if (getParameters().isUseCinderCommandCallback()) {
-            parameters.setShouldBeEndedByParent(false);
+            parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             parameters.setCommandId(getParametersForChildCommand().get(0).getCommandId());
         }
         return parameters;

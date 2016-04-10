@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters.OvfUpdateStep;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -289,7 +290,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
             uploadStreamParameters.setParentCommand(getActionType());
             uploadStreamParameters.setParentParameters(getParameters());
-            uploadStreamParameters.setShouldBeEndedByParent(false);
+            uploadStreamParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             VdcReturnValueBase vdcReturnValueBase =
                     runInternalActionWithTasksContext(VdcActionType.UploadStream, uploadStreamParameters);
             if (vdcReturnValueBase.getSucceeded()) {
@@ -331,7 +332,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         parameters.setSkipDomainChecks(getParameters().isSkipDomainChecks());
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
-        parameters.setShouldBeEndedByParent(false);
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
 

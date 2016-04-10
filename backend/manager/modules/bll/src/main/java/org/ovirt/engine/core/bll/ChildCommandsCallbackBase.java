@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -60,11 +61,15 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
         childCommandsExecutionEnded(command, anyFailed, childCmdIds, status, completedChildren);
     }
 
+    private boolean shouldCommandEndOnAsyncOpEnd(CommandBase<?> cmd) {
+        return cmd.getParameters().getEndProcedure() == EndProcedure.COMMAND_MANAGED;
+    }
+
     private boolean shouldWaitForEndMethodsCompletion(CommandBase<?> childCommand, CommandBase<?> parentCommand) {
         CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(childCommand.getCommandId());
         boolean hasNotifiedCallback = cmdEntity.isCallbackEnabled() && cmdEntity.isCallbackNotified();
 
-        if (!childCommand.getParameters().getShouldBeEndedByParent() && !hasNotifiedCallback) {
+        if (shouldCommandEndOnAsyncOpEnd(childCommand) && !hasNotifiedCallback) {
             logWaitingForChildCommand(childCommand, parentCommand);
             return true;
         }
@@ -103,7 +108,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
 
     protected boolean shouldExecuteEndMethod(CommandBase<?> commandBase) {
         return commandBase.getParameters().getParentCommand() == VdcActionType.Unknown
-                || !commandBase.getParameters().getShouldBeEndedByParent();
+                || shouldCommandEndOnAsyncOpEnd(commandBase);
     }
 
 
