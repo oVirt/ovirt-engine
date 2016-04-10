@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -52,7 +53,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         performDbLoads();
 
         return
-                isVmExist() &&
+                validate(new VmValidator(getVm()).isVmExists()) &&
                 isVmInUpPausedDownStatus() &&
                 canRunActionOnNonManagedVm() &&
                 isDiskExist(getDisk()) &&

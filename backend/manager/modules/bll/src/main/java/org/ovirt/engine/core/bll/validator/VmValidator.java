@@ -226,4 +226,11 @@ public class VmValidator {
 
         return ValidationResult.VALID;
     }
+
+    public ValidationResult isVmExists() {
+        if (vm == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+        return ValidationResult.VALID;
+    }
 }

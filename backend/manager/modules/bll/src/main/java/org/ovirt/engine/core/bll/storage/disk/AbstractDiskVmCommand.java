@@ -208,14 +208,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return true;
     }
 
-    protected boolean isVmExist() {
-        if (getVm() == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-            return false;
-        }
-        return true;
-    }
-
     protected boolean isDiskExist(Disk disk) {
         if (disk == null || !isDiskExistInVm(disk)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);

@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -319,9 +320,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return 0;
     }
 
-    @Override
-    protected boolean isVmExist() {
-        return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId()) || super.isVmExist();
+    private boolean isVmExist() {
+        return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId()) ||
+                validate(new VmValidator(getVm()).isVmExists());
     }
 
     /** @return The disk from the parameters, cast to a {@link DiskImage} */
