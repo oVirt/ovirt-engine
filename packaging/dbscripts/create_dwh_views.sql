@@ -453,15 +453,6 @@ WHERE i.active = TRUE
             )
         );
 
-CREATE OR REPLACE VIEW dwh_disk_vm_map_history_view AS
-
-SELECT image_guid AS vm_disk_id,
-    vm_device.vm_id
-FROM vm_device
-INNER JOIN images
-    ON vm_device.device_id = images.image_group_id
-WHERE images.active = TRUE;
-
 CREATE OR REPLACE VIEW dwh_vm_device_history_view AS
 
 SELECT device_id,
