@@ -188,7 +188,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
         }
 
-        if (getVm() != null && !(isVmNotLocked() && isVmNotInPreviewSnapshot())) {
+        if (getVm() != null && !(validate(new VmValidator(getVm()).vmNotLocked()) && isVmNotInPreviewSnapshot())) {
             return false;
         }
 
@@ -261,7 +261,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             returnValue =
                     validate(new StoragePoolValidator(sp).isUp()) &&
                     isStoragePoolMatching(vm) &&
-                    isVmNotLocked() &&
+                    validate(new VmValidator(getVm()).vmNotLocked()) &&
                     isVmNotInPreviewSnapshot();
         }
 

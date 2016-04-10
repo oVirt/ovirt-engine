@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.storage.connection.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -265,12 +264,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 getVmId() != null &&
                 validate(snapshotsValidator.vmNotDuringSnapshot(getVmId())) &&
                 validate(snapshotsValidator.vmNotInPreview(getVmId()));
-    }
-
-    protected boolean isVmNotLocked() {
-        return
-                getVm() != null &&
-                validate(new VmValidator(getVm()).vmNotLocked());
     }
 
     public CinderBroker getCinderBroker() {
