@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -29,7 +28,6 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -38,8 +36,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -100,36 +96,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString()));
-    }
-
-    @Test
-    public void getFCStorageTypeForLun() throws Exception {
-        LUNs lun = new LUNs();
-        ArrayList<StorageServerConnections> connections = new ArrayList<>();
-        lun.setLunConnections(connections);
-        StorageType storageType = command.getLUNStorageType(lun);
-        assertEquals("Lun disk should be of FC storage type since it does not had connections",
-                StorageType.FCP,
-                storageType);
-    }
-
-    @Test
-    public void getISCSIStorageTypeForLun() throws Exception {
-        LUNs lun = new LUNs();
-        ArrayList<StorageServerConnections> connections = new ArrayList<>();
-        connections.add(new StorageServerConnections("Some LUN connection",
-                "id",
-                "iqn",
-                "password",
-                StorageType.ISCSI,
-                "Username",
-                "port",
-                "portal"));
-        lun.setLunConnections(connections);
-        StorageType storageType = command.getLUNStorageType(lun);
-        assertEquals("Lun disk should be of ISCSI storage type since it has one connection with ISCSI storage type",
-                StorageType.ISCSI,
-                storageType);
     }
 
     @Test

@@ -98,18 +98,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     /**
-     * If the LUN has no connections we assume that it is FCP storage type, since FCP does not have connections,
-     * otherwise, we return the storage type of the first connection
-     *
-     * @param lun
-     *            - The lun we set the connection at.
-     * @return The storage type of the lun (ISCSI or FCP).
-     */
-    protected StorageType getLUNStorageType(LUNs lun) {
-        return lun.getLunConnections().isEmpty() ? StorageType.FCP : lun.getLunConnections().get(0).getStorageType();
-    }
-
-    /**
      * Sets the LUN connection list from the DB.
      *
      * @param lun
