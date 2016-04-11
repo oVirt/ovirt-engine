@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -11,12 +12,14 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -37,6 +40,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DiskValidatorTest {
@@ -242,6 +246,32 @@ public class DiskValidatorTest {
 
         assertThat(lunValidator.isUsingScsiReservationValid(null, lunDisk1),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK));
+    }
+
+    @Test
+    public void testDiskAttachedToVMValid() {
+        VM vm = createVM();
+        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.singletonList(vm));
+        assertThat(validator.isDiskAttachedToVm(vm), isValid());
+    }
+
+    @Test
+    public void testDiskAttachedToVMFail() {
+        VM vm = createVM();
+        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
+        assertThat(validator.isDiskAttachedToVm(vm), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM));
+    }
+
+    @Test
+    public void testDiskAttachedToVMFailWithCorrectReplacements() {
+        VM vm = createVM();
+        vm.setName("MyVm");
+        disk.setDiskAlias("MyDisk");
+        when(vmDao.getVmsListForDisk(Matchers.any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
+        String[] expectedReplacements = {
+                ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
+                ReplacementUtils.createSetVariableString(DiskValidator.VM_NAME_VARIABLE, vm.getName())};
+        assertThat(validator.isDiskAttachedToVm(vm), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM, expectedReplacements));
     }
 
     private LunDisk createLunDisk(ScsiGenericIO sgio, boolean isUsingScsiReservation) {

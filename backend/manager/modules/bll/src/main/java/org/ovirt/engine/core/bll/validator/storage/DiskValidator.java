@@ -34,8 +34,8 @@ public class DiskValidator {
 
     private Disk disk;
 
-    private static final String DISK_NAME_VARIABLE = "DiskName";
-    private static final String VM_NAME_VARIABLE = "VmName";
+    protected static final String DISK_NAME_VARIABLE = "DiskName";
+    protected static final String VM_NAME_VARIABLE = "VmName";
 
     public DiskValidator(Disk disk) {
         this.disk = disk;
