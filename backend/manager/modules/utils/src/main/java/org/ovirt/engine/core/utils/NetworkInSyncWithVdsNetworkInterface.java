@@ -104,41 +104,6 @@ public class NetworkInSyncWithVdsNetworkInterface {
         return SubnetUtils.getInstance();
     }
 
-    public boolean qosParametersEqual() {
-        if (ifaceQos == hostNetworkQos) {
-            return true;
-        }
-
-        boolean ifaceQosUnset = qosUnset(ifaceQos);
-        boolean hostNetworkQosUnset = qosUnset(hostNetworkQos);
-
-        if (ifaceQosUnset && hostNetworkQosUnset) {
-            return true;
-        }
-
-        if (ifaceQosUnset != hostNetworkQosUnset) {
-            return false;
-        }
-
-        return isOutAverageLinkShareInSync() && isOutAverageUpperLimitInSync() && isOutAverageRealTimeInSync();
-    }
-
-    private boolean qosUnset(HostNetworkQos ifaceQos) {
-        return ifaceQos == null || ifaceQos.isEmpty();
-    }
-
-    private boolean isOutAverageRealTimeInSync() {
-        return Objects.equals(getOutAverageRealtime(ifaceQos), getOutAverageRealtime(hostNetworkQos));
-    }
-
-    private boolean isOutAverageUpperLimitInSync() {
-        return Objects.equals(getOutAverageUpperlimit(ifaceQos), getOutAverageUpperlimit(hostNetworkQos));
-    }
-
-    private boolean isOutAverageLinkShareInSync() {
-        return Objects.equals(getOutAverageLinkshare(ifaceQos), getOutAverageLinkshare(hostNetworkQos));
-    }
-
     private static Integer getOutAverageRealtime(HostNetworkQos qos) {
         return qos == null ? null : qos.getOutAverageRealtime();
     }
