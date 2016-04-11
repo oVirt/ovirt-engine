@@ -98,9 +98,7 @@ public class DiskMapper {
                 ((LunDisk) engineDisk).setUsingScsiReservation(disk.isUsesScsiReservation());
             }
             if (disk.isSetSgio() && engineDisk.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
-                if (disk.isSetSgio()) {
-                    engineDisk.setSgio(map(disk.getSgio(), null));
-                }
+                engineDisk.setSgio(map(disk.getSgio(), null));
             }
         } else {
             mapDiskToDiskImageProperties(disk, (DiskImage) engineDisk);
