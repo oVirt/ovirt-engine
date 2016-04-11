@@ -23,8 +23,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
-import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
-import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
@@ -49,10 +47,12 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.InterfacePropertiesAccessor.FromNetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel.AllNetworksSelector;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.DataFromHostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModelParametersHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
@@ -395,20 +395,13 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     if (!networkDialogModel.validate()) {
                         return;
                     }
-                    IPv4Address iPv4Address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
-                    iPv4Address.setBootProtocol(networkDialogModel.getIpv4BootProtocol());
-                    if (networkDialogModel.getIsStaticIpv4Address()) {
-                        iPv4Address.setAddress(networkDialogModel.getIpv4Address().getEntity());
-                        iPv4Address.setNetmask(networkDialogModel.getIpv4Subnet().getEntity());
-                        iPv4Address.setGateway(networkDialogModel.getIpv4Gateway().getEntity());
-                    }
-                    IpV6Address iPv6Address = networkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
-                    iPv6Address.setBootProtocol(networkDialogModel.getIpv6BootProtocol());
-                    if (networkDialogModel.getIsStaticIpv6Address()) {
-                        iPv6Address.setAddress(networkDialogModel.getIpv6Address().getEntity());
-                        iPv6Address.setPrefix(networkDialogModel.getIpv6Prefix().getEntity());
-                        iPv6Address.setGateway(networkDialogModel.getIpv6Gateway().getEntity());
-                    }
+                    final FromNetworkAttachmentModel interfacePropertiesAccessor = new FromNetworkAttachmentModel(networkDialogModel);
+                    LogicalNetworkModelParametersHelper.populateIpv4Details(
+                            interfacePropertiesAccessor,
+                            networkAttachment.getIpConfiguration().getIpv4PrimaryAddress());
+                    LogicalNetworkModelParametersHelper.populateIpv6Details(
+                            interfacePropertiesAccessor,
+                            networkAttachment.getIpConfiguration().getIpv6PrimaryAddress());
 
                     if (networkDialogModel.getQosModel().getIsAvailable()) {
                         if (networkDialogModel.getQosOverridden().getEntity()) {

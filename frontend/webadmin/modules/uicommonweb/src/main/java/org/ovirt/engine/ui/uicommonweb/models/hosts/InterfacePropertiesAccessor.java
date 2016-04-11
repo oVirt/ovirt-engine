@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 
 public interface InterfacePropertiesAccessor {
     String getIpv4Address();
@@ -172,6 +173,73 @@ public interface InterfacePropertiesAccessor {
         @Override
         public Map<String, String> getCustomProperties() {
             return networkAttachment.getProperties();
+        }
+    }
+
+    class FromNetworkAttachmentModel implements InterfacePropertiesAccessor {
+        private final NetworkAttachmentModel networkAttachmentModel;
+
+        FromNetworkAttachmentModel(NetworkAttachmentModel networkAttachmentModel) {
+            this.networkAttachmentModel = networkAttachmentModel;
+        }
+
+        @Override
+        public String getIpv4Address() {
+            return networkAttachmentModel.getIpv4Address().getEntity();
+        }
+
+        @Override
+        public String getIpv4Netmask() {
+            return networkAttachmentModel.getIpv4Subnet().getEntity();
+        }
+
+        @Override
+        public String getIpv4Gateway() {
+            return networkAttachmentModel.getIpv4Gateway().getEntity();
+        }
+
+        @Override
+        public Ipv4BootProtocol getIpv4BootProtocol() {
+            return networkAttachmentModel.getIpv4BootProtocol();
+        }
+
+        @Override
+        public String getIpv6Address() {
+            return networkAttachmentModel.getIpv6Address().getEntity();
+        }
+
+        @Override
+        public Integer getIpv6Prefix() {
+            return networkAttachmentModel.getIpv6Prefix().getEntity();
+        }
+
+        @Override
+        public String getIpv6Gateway() {
+            return networkAttachmentModel.getIpv6Gateway().getEntity();
+        }
+
+        @Override
+        public Ipv6BootProtocol getIpv6BootProtocol() {
+            return networkAttachmentModel.getIpv6BootProtocol();
+        }
+
+        @Override
+        public boolean isQosOverridden() {
+            return networkAttachmentModel.getQosOverridden().getEntity();
+        }
+
+        @Override
+        public HostNetworkQos getHostNetworkQos() {
+            return networkAttachmentModel.getQosModel().getEntity();
+        }
+
+        @Override
+        public Map<String, String> getCustomProperties() {
+            boolean customPropertiesAvailable = networkAttachmentModel.getCustomPropertiesModel().getIsAvailable();
+            Map<String, String> customProperties = customPropertiesAvailable
+                    ? KeyValueModel.convertProperties(networkAttachmentModel.getCustomPropertiesModel().serialize())
+                    : null;
+            return customProperties;
         }
     }
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
@@ -75,17 +76,8 @@ public class LogicalNetworkModelParametersHelper {
 
     private void applyOnAttachmentParamsFrom(InterfacePropertiesAccessor interfacePropertiesAccessor,
             NetworkAttachment networkAttachment) {
-        IPv4Address ipV4address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
-        ipV4address.setBootProtocol(interfacePropertiesAccessor.getIpv4BootProtocol());
-        ipV4address.setAddress(interfacePropertiesAccessor.getIpv4Address());
-        ipV4address.setNetmask(interfacePropertiesAccessor.getIpv4Netmask());
-        ipV4address.setGateway(interfacePropertiesAccessor.getIpv4Gateway());
-
-        IpV6Address ipv6Address = networkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
-        ipv6Address.setBootProtocol(interfacePropertiesAccessor.getIpv6BootProtocol());
-        ipv6Address.setAddress(interfacePropertiesAccessor.getIpv6Address());
-        ipv6Address.setPrefix(interfacePropertiesAccessor.getIpv6Prefix());
-        ipv6Address.setGateway(interfacePropertiesAccessor.getIpv6Gateway());
+        populateIpv4Details(interfacePropertiesAccessor, networkAttachment.getIpConfiguration().getIpv4PrimaryAddress());
+        populateIpv6Details(interfacePropertiesAccessor, networkAttachment.getIpConfiguration().getIpv6PrimaryAddress());
 
         if (interfacePropertiesAccessor.isQosOverridden()) {
             networkAttachment.setHostNetworkQos(interfacePropertiesAccessor.getHostNetworkQos());
@@ -133,5 +125,25 @@ public class LogicalNetworkModelParametersHelper {
         netParams.setCustomProperties(networkAttachment.getProperties());
 
         networkModel.getSetupModel().getNetworkToLastDetachParams().put(networkModel.getName(), netParams);
+    }
+
+    public static void populateIpv4Details(InterfacePropertiesAccessor interfacePropertiesAccessor,
+            IPv4Address ipv4Address) {
+        final Ipv4BootProtocol ipv4BootProtocol = interfacePropertiesAccessor.getIpv4BootProtocol();
+        ipv4Address.setBootProtocol(ipv4BootProtocol);
+        final boolean staticBootProtocol = Ipv4BootProtocol.STATIC_IP == ipv4BootProtocol;
+        ipv4Address.setAddress(staticBootProtocol ? interfacePropertiesAccessor.getIpv4Address() : null);
+        ipv4Address.setNetmask(staticBootProtocol ? interfacePropertiesAccessor.getIpv4Netmask() : null);
+        ipv4Address.setGateway(staticBootProtocol ? interfacePropertiesAccessor.getIpv4Gateway() : null);
+    }
+
+    public static void populateIpv6Details(InterfacePropertiesAccessor interfacePropertiesAccessor,
+            IpV6Address ipv6Address) {
+        final Ipv6BootProtocol ipv6BootProtocol = interfacePropertiesAccessor.getIpv6BootProtocol();
+        ipv6Address.setBootProtocol(ipv6BootProtocol);
+        final boolean staticBootProtocol = Ipv6BootProtocol.STATIC_IP == ipv6BootProtocol;
+        ipv6Address.setAddress(staticBootProtocol ? interfacePropertiesAccessor.getIpv6Address() : null);
+        ipv6Address.setPrefix(staticBootProtocol ? interfacePropertiesAccessor.getIpv6Prefix() : null);
+        ipv6Address.setGateway(staticBootProtocol ? interfacePropertiesAccessor.getIpv6Gateway() : null);
     }
 }
