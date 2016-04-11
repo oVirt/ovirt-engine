@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -249,7 +250,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("ksm_merge_across_nodes", cluster.isKsmMergeAcrossNumaNodes())
                 .addValue("migration_bandwidth_limit_type", cluster.getMigrationBandwidthLimitType().name())
                 .addValue("custom_migration_bandwidth_limit", cluster.getCustomMigrationNetworkBandwidth())
-                .addValue("migration_policy_id", cluster.getMigrationPolicyId());
+                .addValue("migration_policy_id", cluster.getMigrationPolicyId())
+                .addValue("switch_type", cluster.getRequiredSwitchTypeForCluster().getOptionValue());
 
         return parameterSource;
     }
@@ -323,6 +325,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
             entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));
             entity.setCustomMigrationNetworkBandwidth(getInteger(rs, "custom_migration_bandwidth_limit"));
             entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
+            entity.setRequiredSwitchTypeForCluster(SwitchType.parse(rs.getString("switch_type")));
 
             return entity;
         }
