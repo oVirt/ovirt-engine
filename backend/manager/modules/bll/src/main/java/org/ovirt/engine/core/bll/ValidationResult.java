@@ -22,7 +22,7 @@ public final class ValidationResult {
     public static final ValidationResult VALID = new ValidationResult();
 
     /**
-     * In case the validation succeeded it is <code>null</code>, otherwise it contains the validation failure message.
+     * In case the validation succeeded it is {@code null}, otherwise it contains the validation failure message.
      */
     private final EngineMessage message;
 
@@ -81,14 +81,14 @@ public final class ValidationResult {
     }
 
     /**
-     * @return <code>null</code> in case the validation succeeded, otherwise the validation failure message
+     * @return {@code null} in case the validation succeeded, otherwise the validation failure message
      */
     public EngineMessage getMessage() {
         return message;
     }
 
     /**
-     * @return <code>null</code> in case there are no replacements, otherwise a list of the replacements for message
+     * @return {@code null} in case there are no replacements, otherwise a list of the replacements for message
      *         variables.
      */
     public List<String> getVariableReplacements() {
