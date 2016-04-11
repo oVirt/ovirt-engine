@@ -82,7 +82,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             initUnregisteredVM();
         }
 
-        getParameters().setVmId(getParameters().getVm().getId());
+        if (Guid.Empty.equals(getParameters().getVmId()) && getParameters().getVm() != null) {
+            getParameters().setVmId(getParameters().getVm().getId());
+        }
         setClusterId(getParameters().getClusterId());
         getParameters().setStoragePoolId(getCluster().getStoragePoolId());
         super.init();
