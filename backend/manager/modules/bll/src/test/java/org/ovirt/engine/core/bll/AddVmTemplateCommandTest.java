@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +22,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -57,6 +61,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     private VM vm;
     private Cluster cluster;
     private Guid spId;
+
     @Mock
     private VmDao vmDao;
     @Mock
@@ -126,6 +131,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
             @Override
             public void separateCustomProperties(VmStatic parameterMasterVm) {
             }
+
         });
 
         doReturn(vmDao).when(cmd).getVmDao();
@@ -246,6 +252,48 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         assertTrue(cmd.isDisksAliasNotEmpty());
     }
 
+    @Test
+    public void testPermissionsForAddingTemplateDedicatedHostNotChanged(){
+        setupDedicatedHostForVmAndTemplate(true);
+
+        List<PermissionSubject> permissionCheckSubjects = cmd.getPermissionCheckSubjects();
+        for(PermissionSubject permissionSubject : permissionCheckSubjects){
+            assertFalse(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES.equals(permissionSubject.getActionGroup()));
+        }
+    }
+
+    @Test
+    public void testPermissionsForAddingTemplateDedicatedHostChanged(){
+        setupDedicatedHostForVmAndTemplate(false);
+
+        PermissionSubject editDefaultHostPermission = new PermissionSubject(spId,
+                VdcObjectType.StoragePool,
+                ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES);
+        List<PermissionSubject> permissionCheckSubjects = cmd.getPermissionCheckSubjects();
+        permissionCheckSubjects.stream()
+                .filter(permissionSubject ->
+                        ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES == permissionSubject.getActionGroup())
+                .forEach(permissionSubject -> {verifyPermissions(editDefaultHostPermission, permissionSubject);});
+    }
+
+    private void verifyPermissions(PermissionSubject editDefaultHostPermission, PermissionSubject permissionSubject) {
+            assertTrue(permissionSubject.getMessage().equals(editDefaultHostPermission.getMessage()));
+            assertTrue(permissionSubject.getActionGroup().equals(editDefaultHostPermission.getActionGroup()));
+            assertTrue(permissionSubject.getObjectId().equals(editDefaultHostPermission.getObjectId()));
+            assertTrue(permissionSubject.getObjectType().equals(editDefaultHostPermission.getObjectType()));
+    }
+
+    private void setupDedicatedHostForVmAndTemplate(boolean setDefaultHostForTemplate){
+        Guid hostId = Guid.newGuid();
+        vm.setDedicatedVmForVdsList(Arrays.asList(hostId));
+
+        AddVmTemplateParameters parameters = new AddVmTemplateParameters();
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setDedicatedVmForVdsList(setDefaultHostForTemplate ? Arrays.asList(hostId) : new ArrayList<>());
+        parameters.setMasterVm(vmStatic);
+        parameters.setTemplateType(VmEntityType.TEMPLATE);
+        doReturn(parameters).when(cmd).getParameters();
+    }
 
     private void setupForStorageTests() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
@@ -274,4 +322,5 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         disksList.add(disk);
         return disksList;
     }
+
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -942,8 +943,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getActionType().getActionGroup()));
 
                 // host-specific parameters can be changed by administration role only
-                if (getParameters().getMasterVm().getDedicatedVmForVdsList().size() > 0 ||
-                        !StringUtils.isEmpty(getParameters().getMasterVm().getCpuPinning())) {
+                if (!new HashSet<>(getParameters().getMasterVm().getDedicatedVmForVdsList())
+                        .equals(new HashSet<>(getVm().getDedicatedVmForVdsList()))
+                        || !StringUtils.isEmpty(getParameters().getMasterVm().getCpuPinning())) {
                     permissionCheckSubject.add(
                             new PermissionSubject(storagePoolId,
                                     VdcObjectType.StoragePool,

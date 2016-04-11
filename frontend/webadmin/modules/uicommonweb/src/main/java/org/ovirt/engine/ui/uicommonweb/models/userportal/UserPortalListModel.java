@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CpuSharesVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
@@ -603,7 +604,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         BuilderExecutor.build(vm.getStaticData(), tempVar.getStaticData(),
                 new KernelParamsVmBaseToVmBaseBuilder(),
                 new UsbPolicyVmBaseToVmBaseBuilder(),
-                new CpuSharesVmBaseToVmBaseBuilder());
+                new CpuSharesVmBaseToVmBaseBuilder(),
+                new DedicatedVmForVdsVmBaseToVmBaseBuilder());
         return tempVar;
     }
 
