@@ -8,7 +8,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -22,55 +24,115 @@ public class NetworkAttachmentIpConfigurationValidator {
 
     public ValidationResult validateNetworkAttachmentIpConfiguration(
             Collection<NetworkAttachment> attachmentsToConfigure) {
-        IpConfiguration networkAttachmentIpConfiguration = null;
-        IPv4Address iPv4Address = null;
         for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
-            networkAttachmentIpConfiguration = networkAttachment.getIpConfiguration();
-            if (networkAttachmentIpConfiguration == null || !networkAttachmentIpConfiguration.hasIpv4PrimaryAddressSet()) {
+            IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
+            if (ipConfiguration == null
+                    || !(ipConfiguration.hasIpv4PrimaryAddressSet() || ipConfiguration.hasIpv6PrimaryAddressSet())) {
                 return incompleteIpConfigurationValidationResult(
                         EngineMessage.NETWORK_ATTACHMENT_MISSING_IP_CONFIGURATION,
                         networkAttachment.getNetworkName(),
                         networkAttachment.getNicName());
             }
-            iPv4Address = networkAttachmentIpConfiguration.getIpv4PrimaryAddress();
-            if (iPv4Address.getBootProtocol() == null) {
-                return incompleteIpConfigurationValidationResult(
-                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
-                        networkAttachment.getNetworkName(),
-                        networkAttachment.getNicName());
-            }
-            Ipv4BootProtocol bootProtocol = iPv4Address.getBootProtocol();
-            if (bootProtocol == Ipv4BootProtocol.DHCP || bootProtocol == Ipv4BootProtocol.NONE) {
-                if (!validDhcpOrNoneIpAddressDetails(iPv4Address)) {
-                    return new ValidationResult(
-                            EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
-                            ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME,
-                                    networkAttachment.getNetworkName()),
-                            ReplacementUtils.createSetVariableString(VAR_INTERFACE_NAME,
-                                    networkAttachment.getNicName()),
-                            ReplacementUtils.createSetVariableString(VAR_BOOT_PROTOCOL, bootProtocol.getDisplayName()));
 
-                }
+            final ValidationResult ipv4ValidationResult = validateIpv4Configuration(networkAttachment);
+            if (!ipv4ValidationResult.isValid()) {
+                return ipv4ValidationResult;
             }
-            if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
-                if (!validStaticAddressDetails(iPv4Address)) {
-                    return incompleteIpConfigurationValidationResult(
-                            EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,
-                            networkAttachment.getNetworkName(),
-                            networkAttachment.getNicName());
-                }
+            final ValidationResult ipv6ValidationResult = validateIpv6Configuration(networkAttachment);
+            if (!ipv6ValidationResult.isValid()) {
+                return ipv6ValidationResult;
             }
         }
         return ValidationResult.VALID;
     }
 
-    private boolean validDhcpOrNoneIpAddressDetails(IPv4Address iPv4Address) {
-        return StringUtils.isEmpty(iPv4Address.getAddress()) && StringUtils.isEmpty(iPv4Address.getNetmask())
+    private ValidationResult validateIpv4Configuration(NetworkAttachment networkAttachment) {
+        IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
+        if (!ipConfiguration.hasIpv4PrimaryAddressSet()) {
+            return ValidationResult.VALID;
+        }
+        IPv4Address iPv4Address = ipConfiguration.getIpv4PrimaryAddress();
+        String networkName = networkAttachment.getNetworkName();
+        String nicName = networkAttachment.getNicName();
+        if (iPv4Address.getBootProtocol() == null) {
+            return incompleteIpConfigurationValidationResult(
+                    EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
+                    networkName,
+                    nicName);
+        }
+        Ipv4BootProtocol bootProtocol = iPv4Address.getBootProtocol();
+        if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
+            if (!validStaticIpv4AddressDetails(iPv4Address)) {
+                return incompleteIpConfigurationValidationResult(
+                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,
+                        networkName,
+                        nicName);
+            }
+        } else {
+            if (!isEmptyIpv4AddressDetails(iPv4Address)) {
+                return new ValidationResult(
+                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
+                        ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName),
+                        ReplacementUtils.createSetVariableString(VAR_INTERFACE_NAME, nicName),
+                        ReplacementUtils.createSetVariableString(VAR_BOOT_PROTOCOL, bootProtocol.getDisplayName()));
+
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    private ValidationResult validateIpv6Configuration(NetworkAttachment networkAttachment) {
+        final IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
+        if (!ipConfiguration.hasIpv6PrimaryAddressSet()) {
+            return ValidationResult.VALID;
+        }
+        IpV6Address ipv6Address = ipConfiguration.getIpv6PrimaryAddress();
+        String networkName = networkAttachment.getNetworkName();
+        String nicName = networkAttachment.getNicName();
+        if (ipv6Address.getBootProtocol() == null) {
+            return incompleteIpConfigurationValidationResult(
+                    EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
+                    networkName,
+                    nicName);
+        }
+        Ipv6BootProtocol bootProtocol = ipv6Address.getBootProtocol();
+        if (bootProtocol == Ipv6BootProtocol.STATIC_IP) {
+            if (!validStaticIpv6AddressDetails(ipv6Address)) {
+                return incompleteIpConfigurationValidationResult(
+                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,
+                        networkName,
+                        nicName);
+            }
+        } else {
+            if (!isEmptyIpv6AddressDetails(ipv6Address)) {
+                return new ValidationResult(
+                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
+                        ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName),
+                        ReplacementUtils.createSetVariableString(VAR_INTERFACE_NAME, nicName),
+                        ReplacementUtils.createSetVariableString(VAR_BOOT_PROTOCOL, bootProtocol.getDisplayName()));
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    private boolean isEmptyIpv4AddressDetails(IPv4Address iPv4Address) {
+        return StringUtils.isEmpty(iPv4Address.getAddress())
+                && StringUtils.isEmpty(iPv4Address.getNetmask())
                 && StringUtils.isEmpty(iPv4Address.getGateway());
     }
 
-    private boolean validStaticAddressDetails(IPv4Address iPv4Address) {
+    private boolean isEmptyIpv6AddressDetails(IpV6Address ipv6Address) {
+        return StringUtils.isEmpty(ipv6Address.getAddress())
+                && ipv6Address.getPrefix() == null
+                && StringUtils.isEmpty(ipv6Address.getGateway());
+    }
+
+    private boolean validStaticIpv4AddressDetails(IPv4Address iPv4Address) {
         return !(StringUtils.isEmpty(iPv4Address.getAddress()) || StringUtils.isEmpty(iPv4Address.getNetmask()));
+    }
+
+    private boolean validStaticIpv6AddressDetails(IpV6Address ipv6Address) {
+        return !(StringUtils.isEmpty(ipv6Address.getAddress()) || ipv6Address.getPrefix() == null);
     }
 
     private ValidationResult incompleteIpConfigurationValidationResult(EngineMessage engineMessage,
@@ -80,5 +142,4 @@ public class NetworkAttachmentIpConfigurationValidator {
                 ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName),
                 ReplacementUtils.createSetVariableString(VAR_INTERFACE_NAME, interfaceName));
     }
-
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator.network;
 
 import static org.junit.Assert.assertThat;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.ReplacementUtils.createSetVariableString;
 
 import java.util.ArrayList;
@@ -9,13 +10,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -51,7 +52,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     }
 
     @Test
-    public void checkMissingPrimaryAddress() {
+    public void checkMissingBothAddresses() {
         initIpConfiguration();
         assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
                 failsWith(EngineMessage.NETWORK_ATTACHMENT_MISSING_IP_CONFIGURATION,
@@ -62,8 +63,24 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     }
 
     @Test
-    public void checkMissingBootProtocol() {
-        initIpConfigurationWithPrimaryAddress();
+    public void checkMissingPrimaryIpv4Address() {
+        initIpConfiguration();
+        initIpv6ConfigurationDetails(Ipv6BootProtocol.AUTOCONF, false, false);
+
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    @Test
+    public void checkMissingPrimaryIpv6Address() {
+        initIpConfiguration();
+        initIpv4ConfigurationDetails(Ipv4BootProtocol.DHCP, false, false);
+
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    @Test
+    public void checkMissingV4BootProtocol() {
+        initIpv4ConfigurationWithPrimaryAddress();
         assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
                 failsWith(EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
                         ReplacementUtils.createSetVariableString(
@@ -73,19 +90,40 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     }
 
     @Test
-    public void checkIncompatibleIpAddressDetailsBootProtocolNone() {
-        checkIncompatibleIpAddressDetailsBootProtocol(Ipv4BootProtocol.NONE);
+    public void checkMissingV6BootProtocol() {
+        initIpv6ConfigurationWithPrimaryAddress();
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+                failsWith(EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
+                        ReplacementUtils.createSetVariableString(
+                                NetworkAttachmentIpConfigurationValidator.VAR_NETWORK_NAME, NETWORK_NAME),
+                        createSetVariableString(NetworkAttachmentIpConfigurationValidator.VAR_INTERFACE_NAME,
+                                INTERFACE_NAME)));
     }
 
     @Test
-    public void checkIncompatibleIpAddressDetailsBootProtocolDhcp() {
-        checkIncompatibleIpAddressDetailsBootProtocol(Ipv4BootProtocol.DHCP);
+    public void checkIncompatibleIpv4AddressDetailsBootProtocolNone() {
+        checkIncompatibleIpv4AddressDetailsBootProtocol(Ipv4BootProtocol.NONE);
     }
 
     @Test
-    public void checkMissingIpAddressDetailsBootProtocolStatic() {
+    public void checkIncompatibleIpv6AddressDetailsBootProtocolNone() {
+        checkIncompatibleIpv6AddressDetailsBootProtocol(Ipv6BootProtocol.NONE);
+    }
+
+    @Test
+    public void checkIncompatibleIpv4AddressDetailsBootProtocolDhcp() {
+        checkIncompatibleIpv4AddressDetailsBootProtocol(Ipv4BootProtocol.DHCP);
+    }
+
+    @Test
+    public void checkIncompatibleIpv6AddressDetailsBootProtocolDhcp() {
+        checkIncompatibleIpv6AddressDetailsBootProtocol(Ipv6BootProtocol.DHCP);
+    }
+
+    @Test
+    public void checkMissingIpv4AddressDetailsBootProtocolStatic() {
         final boolean initAddress = random.nextBoolean();
-        initIpConfigurationDetails(Ipv4BootProtocol.STATIC_IP, initAddress, !initAddress);
+        initIpv4ConfigurationDetails(Ipv4BootProtocol.STATIC_IP, initAddress, !initAddress);
         assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
                 failsWith(
                         EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,
@@ -96,29 +134,63 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     }
 
     @Test
-    public void checkValidIpConfigurationNoneBootProtocol() {
-        initIpConfigurationDetails(Ipv4BootProtocol.NONE, false, false);
-        ValidationResult actual = underTest.validateNetworkAttachmentIpConfiguration(networkAttachments);
-        Assert.assertEquals(ValidationResult.VALID, actual);
-    }
-
-    @Test
-    public void checkValidIpConfigurationDHCPBootProtocol() {
-        initIpConfigurationDetails(Ipv4BootProtocol.DHCP, false, false);
-        ValidationResult actual = underTest.validateNetworkAttachmentIpConfiguration(networkAttachments);
-        Assert.assertEquals(ValidationResult.VALID, actual);
-    }
-
-    @Test
-    public void checkValidIpConfigurationStaticBootProtocol() {
-        initIpConfigurationDetails(Ipv4BootProtocol.STATIC_IP, true, true);
-        ValidationResult actual = underTest.validateNetworkAttachmentIpConfiguration(networkAttachments);
-        Assert.assertEquals(ValidationResult.VALID, actual);
-    }
-
-    private void checkIncompatibleIpAddressDetailsBootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
+    public void checkMissingIpv6AddressDetailsBootProtocolStatic() {
         final boolean initAddress = random.nextBoolean();
-        initIpConfigurationDetails(ipv4BootProtocol, initAddress, !initAddress);
+        initIpv6ConfigurationDetails(Ipv6BootProtocol.STATIC_IP, initAddress, !initAddress);
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+                failsWith(
+                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,
+                        ReplacementUtils.createSetVariableString(
+                                NetworkAttachmentIpConfigurationValidator.VAR_NETWORK_NAME, NETWORK_NAME),
+                        createSetVariableString(NetworkAttachmentIpConfigurationValidator.VAR_INTERFACE_NAME,
+                                INTERFACE_NAME)));
+    }
+
+    @Test
+    public void checkValidIpv4ConfigurationNoneBootProtocol() {
+        initIpv4ConfigurationDetails(Ipv4BootProtocol.NONE, false, false);
+        initIpv6Address();
+        setIpv6BootProtocol(Ipv6BootProtocol.AUTOCONF);
+
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    @Test
+    public void checkValidIpv6ConfigurationNoneBootProtocol() {
+        initIpv6ConfigurationDetails(Ipv6BootProtocol.NONE, false, false);
+        initIpv4Address();
+        setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
+
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    @Test
+    public void checkValidIpv4ConfigurationDHCPBootProtocol() {
+        initIpv4ConfigurationDetails(Ipv4BootProtocol.DHCP, false, false);
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    @Test
+    public void checkValidIpv6ConfigurationDHCPBootProtocol() {
+        initIpv6ConfigurationDetails(Ipv6BootProtocol.AUTOCONF, false, false);
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    @Test
+    public void checkValidIpv4ConfigurationStaticBootProtocol() {
+        initIpv4ConfigurationDetails(Ipv4BootProtocol.STATIC_IP, true, true);
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    @Test
+    public void checkValidIpv6ConfigurationStaticBootProtocol() {
+        initIpv6ConfigurationDetails(Ipv6BootProtocol.STATIC_IP, true, true);
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+    }
+
+    private void checkIncompatibleIpv4AddressDetailsBootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
+        final boolean initAddress = random.nextBoolean();
+        initIpv4ConfigurationDetails(ipv4BootProtocol, initAddress, !initAddress);
         assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
                 failsWith(
                         EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
@@ -130,15 +202,41 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
                                 ipv4BootProtocol.getDisplayName())));
     }
 
-    private void initIpConfigurationDetails(Ipv4BootProtocol ipv4BootProtocol,
+    private void checkIncompatibleIpv6AddressDetailsBootProtocol(Ipv6BootProtocol ipv6BootProtocol) {
+        final boolean initAddress = random.nextBoolean();
+        initIpv6ConfigurationDetails(ipv6BootProtocol, initAddress, !initAddress);
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+                failsWith(
+                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
+                        ReplacementUtils.createSetVariableString(
+                                NetworkAttachmentIpConfigurationValidator.VAR_NETWORK_NAME, NETWORK_NAME),
+                        createSetVariableString(NetworkAttachmentIpConfigurationValidator.VAR_INTERFACE_NAME,
+                                INTERFACE_NAME),
+                        createSetVariableString(NetworkAttachmentIpConfigurationValidator.VAR_BOOT_PROTOCOL,
+                                ipv6BootProtocol.getDisplayName())));
+    }
+
+    private void initIpv4ConfigurationDetails(Ipv4BootProtocol ipv4BootProtocol,
             boolean initAddress,
             boolean initNetmask) {
-        initIpConfigurationWithBootProtocol(ipv4BootProtocol);
+        initIpv4ConfigurationWithBootProtocol(ipv4BootProtocol);
         if (initAddress) {
-            initIpConfigurationAddress();
+            initIpv4ConfigurationAddress();
         }
         if (initNetmask) {
-            initIpConfigurationNetmask();
+            initIpv4ConfigurationNetmask();
+        }
+    }
+
+    private void initIpv6ConfigurationDetails(Ipv6BootProtocol ipv6BootProtocol,
+            boolean initAddress,
+            boolean initNetmask) {
+        initIpv6ConfigurationWithBootProtocol(ipv6BootProtocol);
+        if (initAddress) {
+            initIpv6ConfigurationAddress();
+        }
+        if (initNetmask) {
+            initIpv6ConfigurationPrefix();
         }
     }
 
@@ -151,22 +249,56 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
         getTestedNetworkAttachment().setIpConfiguration(ipConfiguration);
     }
 
-    private void initIpConfigurationWithPrimaryAddress() {
+    private void initIpv4ConfigurationWithPrimaryAddress() {
         initIpConfiguration();
-        getTestedNetworkAttachment().getIpConfiguration().setIPv4Addresses(Arrays.asList(new IPv4Address()));
+        initIpv4Address();
     }
 
-    private void initIpConfigurationWithBootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
-        initIpConfigurationWithPrimaryAddress();
+    private void initIpv6ConfigurationWithPrimaryAddress() {
+        initIpConfiguration();
+        initIpv6Address();
+    }
+
+    private void initIpv4ConfigurationWithBootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
+        initIpv4ConfigurationWithPrimaryAddress();
+        setIpv4BootProtocol(ipv4BootProtocol);
+    }
+
+    private void setIpv4BootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
         getTestedNetworkAttachment().getIpConfiguration().getIpv4PrimaryAddress().setBootProtocol(ipv4BootProtocol);
     }
 
-    private void initIpConfigurationAddress() {
+    private void initIpv6ConfigurationWithBootProtocol(Ipv6BootProtocol ipv6BootProtocol) {
+        initIpv6ConfigurationWithPrimaryAddress();
+        setIpv6BootProtocol(ipv6BootProtocol);
+    }
+
+    private void setIpv6BootProtocol(Ipv6BootProtocol ipv6BootProtocol) {
+        getTestedNetworkAttachment().getIpConfiguration().getIpv6PrimaryAddress().setBootProtocol(ipv6BootProtocol);
+    }
+
+    private void initIpv4ConfigurationAddress() {
         getTestedNetworkAttachment().getIpConfiguration().getIpv4PrimaryAddress().setAddress(ADDRESS);
     }
 
-    private void initIpConfigurationNetmask() {
+    private void initIpv4ConfigurationNetmask() {
         getTestedNetworkAttachment().getIpConfiguration().getIpv4PrimaryAddress().setNetmask(NETMASK);
+    }
+
+    private void initIpv6ConfigurationAddress() {
+        getTestedNetworkAttachment().getIpConfiguration().getIpv6PrimaryAddress().setAddress(ADDRESS);
+    }
+
+    private void initIpv6ConfigurationPrefix() {
+        getTestedNetworkAttachment().getIpConfiguration().getIpv6PrimaryAddress().setPrefix(666);
+    }
+
+    private void initIpv4Address() {
+        getTestedNetworkAttachment().getIpConfiguration().setIPv4Addresses(Arrays.asList(new IPv4Address()));
+    }
+
+    private void initIpv6Address() {
+        getTestedNetworkAttachment().getIpConfiguration().setIpV6Addresses(Arrays.asList(new IpV6Address()));
     }
 
 }
