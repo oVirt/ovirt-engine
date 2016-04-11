@@ -976,6 +976,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String outAverageUpperLimitOutOfSyncPopUp();
 
+    String switchTypeOutOfSyncPopUp();
+
     String outAverageRealTimeOutOfSyncPopUp();
 
     String unknownPropertyOutOfSyncPopUp();

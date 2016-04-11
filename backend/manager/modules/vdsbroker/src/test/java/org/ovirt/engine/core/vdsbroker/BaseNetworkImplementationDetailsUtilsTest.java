@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -16,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -40,7 +44,19 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     @Mock
     private NetworkAttachmentDao networkAttachmentDaoMock;
 
+    @Mock
+    private ClusterDao clusterDaoMock;
+
+    @Mock
+    private VdsDao vdsDaoMock;
+
     @Mock CalculateBaseNic calculateBaseNic;
+
+    private Guid VDS_ID = Guid.newGuid();
+    private Guid CLUSTER_ID = Guid.newGuid();
+    private VDS vds;
+    private Cluster cluster;
+
 
     protected VdsNetworkInterface testIface;
 
@@ -56,9 +72,22 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         qosB = createAndMockQos(60, 60, 60);
         unlimitedHostNetworkQos = createQos(null, null, null);
 
+        vds = new VDS();
+        vds.setId(VDS_ID);
+        vds.setClusterId(CLUSTER_ID);
+
+        cluster = new Cluster();
+        cluster.setId(CLUSTER_ID);
+
+        when(vdsDaoMock.get(eq(VDS_ID))).thenReturn(vds);
+        when(clusterDaoMock.get(eq(CLUSTER_ID))).thenReturn(cluster);
+
         EffectiveHostNetworkQos effectiveHostNetworkQos = new EffectiveHostNetworkQos(hostNetworkQosDaoMock);
-        networkImplementationDetailsUtils =
-            new NetworkImplementationDetailsUtils(effectiveHostNetworkQos, networkAttachmentDaoMock, calculateBaseNic);
+        networkImplementationDetailsUtils = new NetworkImplementationDetailsUtils(effectiveHostNetworkQos,
+                        networkAttachmentDaoMock,
+                        vdsDaoMock,
+                        clusterDaoMock,
+                        calculateBaseNic);
 
     }
 
@@ -269,6 +298,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         baseInterface.setNetworkName(networkName);
         baseInterface.setName("eth");
         baseInterface.setQos(qos);
+        baseInterface.setVdsId(VDS_ID);
         return baseInterface;
     }
 
@@ -283,6 +313,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         vlanIface.setBaseInterface(baseIface.getName());
         vlanIface.setName(vlanIface.getBaseInterface() + "_" + vlanIface.getVlanId());
         vlanIface.setQos(qos);
+        vlanIface.setVdsId(VDS_ID);
         return vlanIface;
     }
 }
