@@ -60,6 +60,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VGListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
@@ -505,31 +506,79 @@ public class JsonRpcVdsServer implements IVdsServer {
             public Map<String, Object> call() throws Exception {
                 if (isPolicyReset) {
                     updateHeartbeatPolicy(client.getClientRetryPolicy().clone(), false);
+                    if (client.isClosed()) {
+                        waitUntilCheck(new Predicate<JsonRpcClient>() {
+                            @Override
+                            public boolean test(JsonRpcClient client) {
+                                return client.isClosed();
+                            }
+                        },
+                                "Waiting on losing connection to {}",
+                                "Connection lost for {}");
+                    }
+                    waitUntilCheck(new Predicate<JsonRpcClient>() {
+                        @Override
+                        public boolean test(JsonRpcClient client) {
+                            return !client.isClosed();
+                        }
+                    },
+                            "Waiting on opening connection for {}",
+                            "Done reconnecting for {}!");
                 }
                 return new FutureMap(client, request).withResponseKey("status");
             }
         });
         FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 
-                    @Override
-                    public boolean isDone() {
-                        if (callable.isDone()) {
-                            if (isPolicyReset) {
-                                updateHeartbeatPolicy(client.getClientRetryPolicy(), true);
-                            }
-                            return true;
-                        }
-                        return false;
+            @Override
+            public boolean isDone() {
+                if (callable.isDone()) {
+                    if (isPolicyReset) {
+                        updateHeartbeatPolicy(client.getClientRetryPolicy(), true);
                     }
-                };
+                    return true;
+                }
+                return false;
+            }
+        };
         ThreadPoolUtil.execute(future);
         return future;
+    }
+
+    interface Predicate<T> {
+        boolean test(T client);
     }
 
     private void updateHeartbeatPolicy(ClientPolicy policy, boolean isHeartbeat) {
         policy.setIncomingHeartbeat(isHeartbeat);
         policy.setOutgoingHeartbeat(isHeartbeat);
         client.setClientRetryPolicy(policy);
+    }
+
+    /**
+     * The method waits on {@link Predicate#test} condition. If it is not met after 10 seconds it would
+     * throw {@link VDSNetworkException}.
+     *
+     * @param check - a lambda which provides condition function.
+     * @param formatBefore - log formatter which accepts hostname as parameter. It is logged in debug level
+     *                       before calling condition function.
+     * @param formatAfter - log formatter which accepts hostname as parameter. Is is logged in debug level
+     *                      after successful wait.
+     * @throws InterruptedException - It is thrown when waiting operation was interrupted.
+     */
+    private void waitUntilCheck(Predicate<JsonRpcClient> check, String formatBefore, String formatAfter)
+            throws InterruptedException {
+        String hostname = client.getHostname();
+        logger.debug(formatBefore, hostname);
+        int retries = 50;
+        while (check.test(this.client)) {
+            if (retries == 0) {
+                throw new VDSNetworkException("Unable to reconnect to " + hostname + " after policy reset");
+            }
+            retries--;
+            TimeUnit.MILLISECONDS.sleep(200);
+        }
+        logger.debug(formatAfter, hostname);
     }
 
     @Override
