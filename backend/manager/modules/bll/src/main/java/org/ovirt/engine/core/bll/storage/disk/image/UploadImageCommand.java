@@ -254,17 +254,19 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
     private void handleFinalizingSuccess(final StateContext context) {
         log.info("Finalizing successful upload to {}", getUploadDescription());
-        stopImageTransferSession(context.entity);
 
-        // We want to use the transferring vds for image actions for having a coherent log when uploading.
-        Guid transferingVdsId = context.entity.getVdsId();
-        if (verifyImage(transferingVdsId)) {
-            setVolumeLegalityInStorage(LEGAL_IMAGE);
-            unLockImage();
-            updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
-        } else {
-            setImageStatus(ImageStatus.ILLEGAL);
-            updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+        // If stopping the session did not succeed, don't change the upload state.
+        if (stopImageTransferSession(context.entity)) {
+            // We want to use the transferring vds for image actions for having a coherent log when uploading.
+            Guid transferingVdsId = context.entity.getVdsId();
+            if (verifyImage(transferingVdsId)) {
+                setVolumeLegalityInStorage(LEGAL_IMAGE);
+                unLockImage();
+                updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
+            } else {
+                setImageStatus(ImageStatus.ILLEGAL);
+                updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+            }
         }
     }
 
@@ -474,9 +476,10 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         persistCommand(getParameters().getParentCommand(), true);
     }
 
-    private void stopImageTransferSession(ImageTransfer entity) {
+    private boolean stopImageTransferSession(ImageTransfer entity) {
         if (entity.getImagedTicketId() == null) {
-            return;
+            log.warn("Failed to stop image transfer session. Ticket does not exist for image '{}'", entity.getDiskId());
+            return false;
         }
 
         Guid resourceId = entity.getImagedTicketId();
@@ -490,12 +493,12 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
                     VDSCommandType.RemoveImageTicket, parameters);
         } catch (RuntimeException e) {
             log.error("Failed to stop image transfer session for ticket '{}': {}", resourceId.toString(), e);
-            return;
+            return false;
         }
 
         if (!vdsRetVal.getSucceeded()) {
             log.warn("Failed to stop image transfer session for ticket '{}'", resourceId.toString());
-            return;
+            return false;
         }
         log.info("Successfully stopped image transfer session for ticket '{}'", resourceId.toString());
 
@@ -504,6 +507,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         updateEntity(updates);
 
         tearDownImage(entity.getVdsId());
+        return true;
     }
 
     protected abstract void tearDownImage(Guid vdsId);
