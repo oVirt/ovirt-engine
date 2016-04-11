@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -518,11 +519,17 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return new MultipleStorageDomainsValidator(spId, sdIds);
     }
 
+    @Override
+    public CommandCallback getCallback() {
+        return new ConcurrentChildCommandsExecutionCallback();
+    }
+
     /**
      * Required for the audit logging
      */
     public String getVmsCount() {
         return String.valueOf(getParameters().getVmsCount());
     }
+
 
 }
