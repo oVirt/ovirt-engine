@@ -2,19 +2,19 @@ package org.ovirt.engine.core.utils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -22,11 +22,13 @@ import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,8 +54,10 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     private Network network;
     private HostNetworkQos ifaceQos;
     private HostNetworkQos networkQos;
-    @Mock
-    private IpConfiguration mockedIpConfiguration;
+
+    private NetworkAttachment testedNetworkAttachment;
+
+    private Cluster cluster;
 
     private IPv4Address ipv4Address = new IPv4Address();
     private IpV6Address ipv6Address = new IpV6Address();
@@ -68,9 +72,16 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         iface = new VdsNetworkInterface();
         //needed because network is vm network by default
         iface.setBridged(true);
+        iface.setQos(ifaceQos);
+        iface.setReportedSwitchType(SwitchType.LEGACY);
+
         network = new Network();
 
-        iface.setQos(ifaceQos);
+        testedNetworkAttachment = new NetworkAttachment();
+        testedNetworkAttachment.setIpConfiguration(new IpConfiguration());
+
+        cluster = new Cluster();
+        cluster.setRequiredSwitchTypeForCluster(SwitchType.LEGACY);
     }
 
     @Test
@@ -184,7 +195,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     public NetworkInSyncWithVdsNetworkInterface createTestedInstance() {
-        return new NetworkInSyncWithVdsNetworkInterface(iface, network, networkQos, mockedIpConfiguration);
+        return new NetworkInSyncWithVdsNetworkInterface(iface, network, networkQos, testedNetworkAttachment, cluster);
     }
 
     @Test
@@ -202,35 +213,39 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
         List<ReportedConfiguration> expectedReportedConfigurations = Arrays.asList(
-                        new ReportedConfiguration(ReportedConfigurationType.MTU,
-                                Integer.toString(iface.getMtu()),
-                                Integer.toString(network.getMtu()),
-                                true),
-                        new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
-                                Boolean.toString(iface.isBridged()),
-                                Boolean.toString(network.isVmNetwork()),
-                                true),
-                        new ReportedConfiguration(ReportedConfigurationType.VLAN,
-                                Integer.toString(iface.getVlanId()),
-                                Integer.toString(network.getVlanId()),
-                                true),
+                new ReportedConfiguration(ReportedConfigurationType.MTU,
+                        Integer.toString(iface.getMtu()),
+                        Integer.toString(network.getMtu()),
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
+                        Boolean.toString(iface.isBridged()),
+                        Boolean.toString(network.isVmNetwork()),
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.VLAN,
+                        Integer.toString(iface.getVlanId()),
+                        Integer.toString(network.getVlanId()),
+                        true),
 
-                        new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
-                                ifaceQos.getOutAverageLinkshare().toString(),
-                                null,
-                                false),
-                        new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
-                                ifaceQos.getOutAverageUpperlimit().toString(),
-                                null,
-                                false),
-                        new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
-                                ifaceQos.getOutAverageRealtime().toString(),
-                                null,
-                                false)
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
+                        ifaceQos.getOutAverageLinkshare().toString(),
+                        null,
+                        false),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
+                        ifaceQos.getOutAverageUpperlimit().toString(),
+                        null,
+                        false),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
+                        ifaceQos.getOutAverageRealtime().toString(),
+                        null,
+                        false),
+                new ReportedConfiguration(ReportedConfigurationType.SWITCH_TYPE,
+                        SwitchType.LEGACY.toString(),
+                        SwitchType.LEGACY.toString(),
+                        true)
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
-        assertThat(reportedConfigurationList.size(), is(6));
+        assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
     @Test
     public void testReportConfigurationsOnHostWhenIfaceQosIsNull() throws Exception {
@@ -249,27 +264,34 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
         List<ReportedConfiguration> expectedReportedConfigurations = Arrays.asList(
-            new ReportedConfiguration(ReportedConfigurationType.MTU,
-                Integer.toString(iface.getMtu()),
-                Integer.toString(network.getMtu()),
-                true),
-            new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
-                Boolean.toString(iface.isBridged()),
-                Boolean.toString(network.isVmNetwork()),
-                true),
-            new ReportedConfiguration(ReportedConfigurationType.VLAN,
-                Integer.toString(iface.getVlanId()),
-                Integer.toString(network.getVlanId()),
-                true),
-            new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
-                null,
-                networkQos.getOutAverageLinkshare().toString(), false),
-            new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
-                null,
-                networkQos.getOutAverageRealtime().toString(), false),
-            new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
-                null,
-                networkQos.getOutAverageUpperlimit().toString(), false)
+                new ReportedConfiguration(ReportedConfigurationType.MTU,
+                        Integer.toString(iface.getMtu()),
+                        Integer.toString(network.getMtu()),
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.BRIDGED,
+                        Boolean.toString(iface.isBridged()),
+                        Boolean.toString(network.isVmNetwork()),
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.VLAN,
+                        Integer.toString(iface.getVlanId()),
+                        Integer.toString(network.getVlanId()),
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
+                        null,
+                        networkQos.getOutAverageLinkshare().toString(),
+                        false),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
+                        null,
+                        networkQos.getOutAverageRealtime().toString(),
+                        false),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
+                        null,
+                        networkQos.getOutAverageUpperlimit().toString(),
+                        false),
+                new ReportedConfiguration(ReportedConfigurationType.SWITCH_TYPE,
+                        SwitchType.LEGACY.toString(),
+                        SwitchType.LEGACY.toString(),
+                        true)
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
@@ -278,14 +300,12 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     @Test
     public void testIsNetworkInSyncWhenIpConfigurationIsNull() throws Exception {
-        mockedIpConfiguration = null;
+        this.testedNetworkAttachment.setIpConfiguration(null);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
     public void testIsNetworkInSyncWhenIpConfigurationIsEmpty() throws Exception {
-        when(mockedIpConfiguration.hasIpv4PrimaryAddressSet()).thenReturn(false);
-        when(mockedIpConfiguration.hasIpv6PrimaryAddressSet()).thenReturn(false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
@@ -302,6 +322,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                 (IPV4_BOOT_PROTOCOL.getValue() + 1) % Ipv4BootProtocol.values().length));
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
+
 
     @Test
     public void testIsNetworkInSyncWhenIpv4StaticBootProtocolAddressEqual() throws Exception {
@@ -375,9 +396,10 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList =
                 testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
         List<ReportedConfiguration> expectedReportedConfigurations = createDefaultExpectedReportedConfigurations();
+        IPv4Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV4_BOOT_PROTOCOL,
                 iface.getIpv4BootProtocol().name(),
-                mockedIpConfiguration.getIpv4PrimaryAddress().getBootProtocol().name(),
+                primaryAddress.getBootProtocol().name(),
                 true));
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
@@ -396,21 +418,22 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList =
                 testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
         List<ReportedConfiguration> expectedReportedConfigurations = createDefaultExpectedReportedConfigurations();
+        IPv4Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV4_BOOT_PROTOCOL,
                 iface.getIpv4BootProtocol().name(),
-                mockedIpConfiguration.getIpv4PrimaryAddress().getBootProtocol().name(),
+                primaryAddress.getBootProtocol().name(),
                 true));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV4_NETMASK,
                 iface.getIpv4Subnet(),
-                mockedIpConfiguration.getIpv4PrimaryAddress().getNetmask(),
+                primaryAddress.getNetmask(),
                 syncNetmask));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV4_ADDRESS,
                 iface.getIpv4Address(),
-                mockedIpConfiguration.getIpv4PrimaryAddress().getAddress(),
+                primaryAddress.getAddress(),
                 syncAddress));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV4_GATEWAY,
                 iface.getIpv4Gateway(),
-                mockedIpConfiguration.getIpv4PrimaryAddress().getGateway(),
+                primaryAddress.getGateway(),
                 syncGateway));
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
@@ -508,9 +531,10 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList =
                 testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
         List<ReportedConfiguration> expectedReportedConfigurations = createDefaultExpectedReportedConfigurations();
+        IpV6Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV6_BOOT_PROTOCOL,
                 iface.getIpv6BootProtocol().name(),
-                mockedIpConfiguration.getIpv6PrimaryAddress().getBootProtocol().name(),
+                primaryAddress.getBootProtocol().name(),
                 true));
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
@@ -529,21 +553,22 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> reportedConfigurationList =
                 testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
         List<ReportedConfiguration> expectedReportedConfigurations = createDefaultExpectedReportedConfigurations();
+        IpV6Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV6_BOOT_PROTOCOL,
                 iface.getIpv6BootProtocol().name(),
-                mockedIpConfiguration.getIpv6PrimaryAddress().getBootProtocol().name(),
+                primaryAddress.getBootProtocol().name(),
                 true));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV6_PREFIX,
                 Objects.toString(iface.getIpv6Prefix(), null),
-                Objects.toString(mockedIpConfiguration.getIpv6PrimaryAddress().getPrefix(), null),
+                Objects.toString(primaryAddress.getPrefix(), null),
                 syncIpv6Prefix));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV6_ADDRESS,
                 iface.getIpv6Address(),
-                mockedIpConfiguration.getIpv6PrimaryAddress().getAddress(),
+                primaryAddress.getAddress(),
                 syncIpv6Address));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IPV6_GATEWAY,
                 iface.getIpv6Gateway(),
-                mockedIpConfiguration.getIpv6PrimaryAddress().getGateway(),
+                primaryAddress.getGateway(),
                 syncIpv6Gateway));
 
         for (ReportedConfiguration expectedReportedConfiguration : expectedReportedConfigurations) {
@@ -554,13 +579,14 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 */
 
     private void initIpv4Configuration() {
-        when(mockedIpConfiguration.hasIpv4PrimaryAddressSet()).thenReturn(true);
-        when(mockedIpConfiguration.getIpv4PrimaryAddress()).thenReturn(ipv4Address);
+        IpConfiguration ipConfiguration = this.testedNetworkAttachment.getIpConfiguration();
+        ipConfiguration.setIPv4Addresses(Collections.singletonList(ipv4Address));
+
     }
 
     private void initIpv6Configuration() {
-        when(mockedIpConfiguration.hasIpv6PrimaryAddressSet()).thenReturn(true);
-        when(mockedIpConfiguration.getIpv6PrimaryAddress()).thenReturn(ipv6Address);
+        IpConfiguration ipConfiguration = this.testedNetworkAttachment.getIpConfiguration();
+        ipConfiguration.setIpV6Addresses(Collections.singletonList(ipv6Address));
     }
 
     private void initIpv4ConfigurationBootProtocol(boolean sameBootProtocol) {
@@ -630,7 +656,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     private List<ReportedConfiguration> createDefaultExpectedReportedConfigurations() {
-        List<ReportedConfiguration> defaultExpectedReportedConfigurations = Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 new ReportedConfiguration(
                         ReportedConfigurationType.MTU,
                         Integer.toString(iface.getMtu()),
@@ -644,9 +670,22 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                         Integer.toString(iface.getVlanId()),
                         Integer.toString(network.getVlanId()),
                         true),
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE, null, null, true),
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME, null, null, true),
-                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT, null, null, true));
-        return new LinkedList<>(defaultExpectedReportedConfigurations);
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE,
+                        null,
+                        null,
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_REAL_TIME,
+                        null,
+                        null,
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT,
+                        null,
+                        null,
+                        true),
+                new ReportedConfiguration(ReportedConfigurationType.SWITCH_TYPE,
+                        SwitchType.LEGACY.toString(),
+                        SwitchType.LEGACY.toString(),
+                        true)
+        ));
     }
 }
