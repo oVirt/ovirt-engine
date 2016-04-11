@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +23,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -239,6 +243,49 @@ public class AddVmTemplateCommandTest {
         assertTrue(cmd.isDisksAliasNotEmpty());
     }
 
+    @Test
+    public void testPermissionsForAddingTemplateDedicatedHostNotChanged(){
+        setupDedicatedHostForVmAndTemplate(true);
+
+        List<PermissionSubject> permissionCheckSubjects = cmd.getPermissionCheckSubjects();
+        for(PermissionSubject permissionSubject : permissionCheckSubjects){
+            assertFalse(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES == permissionSubject.getActionGroup());
+        }
+    }
+
+    @Test
+    public void testPermissionsForAddingTemplateDedicatedHostChanged(){
+        setupDedicatedHostForVmAndTemplate(false);
+
+        PermissionSubject editDefaultHostPermission = new PermissionSubject(spId,
+                VdcObjectType.StoragePool,
+                ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES);
+        List<PermissionSubject> permissionCheckSubjects = cmd.getPermissionCheckSubjects();
+        for(PermissionSubject permissionSubject : permissionCheckSubjects){
+            if(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES == permissionSubject.getActionGroup()){
+                verifyPermissions(editDefaultHostPermission, permissionSubject);
+            }
+        }
+    }
+
+    private void verifyPermissions(PermissionSubject editDefaultHostPermission, PermissionSubject permissionSubject) {
+            assertTrue(permissionSubject.getMessage().equals(editDefaultHostPermission.getMessage()));
+            assertTrue(permissionSubject.getActionGroup().equals(editDefaultHostPermission.getActionGroup()));
+            assertTrue(permissionSubject.getObjectId().equals(editDefaultHostPermission.getObjectId()));
+            assertTrue(permissionSubject.getObjectType().equals(editDefaultHostPermission.getObjectType()));
+    }
+
+    private void setupDedicatedHostForVmAndTemplate(boolean setDefaultHostForTemplate){
+        Guid hostId = Guid.newGuid();
+        vm.setDedicatedVmForVdsList(Arrays.asList(hostId));
+
+        AddVmTemplateParameters parameters = new AddVmTemplateParameters();
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setDedicatedVmForVdsList(setDefaultHostForTemplate ? Arrays.asList(hostId) : new ArrayList<Guid>());
+        parameters.setMasterVm(vmStatic);
+        parameters.setTemplateType(VmEntityType.TEMPLATE);
+        doReturn(parameters).when(cmd).getParameters();
+    }
 
     private void setupForStorageTests() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
