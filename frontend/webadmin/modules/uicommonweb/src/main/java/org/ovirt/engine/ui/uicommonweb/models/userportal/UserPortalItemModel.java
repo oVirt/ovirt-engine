@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -22,6 +21,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class UserPortalItemModel extends EntityModel {
     private UICommand runCommand;
@@ -396,11 +396,7 @@ public class UserPortalItemModel extends EntityModel {
     }
 
     public Pair<VMStatus, Boolean> getStatusWithConsoleState() {
-        boolean consoleTaken = false;
-        if (getVM() != null) {
-            consoleTaken = !StringHelper.isNullOrEmpty(getVM().getConsoleCurentUserName());
-        }
-
+        boolean consoleTaken = getVM() != null && !StringUtils.isEmpty(getVM().getClientIp());
         return new Pair<> (getStatus(), consoleTaken);
     }
 

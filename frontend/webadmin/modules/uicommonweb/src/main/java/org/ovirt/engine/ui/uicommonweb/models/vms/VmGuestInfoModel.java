@@ -92,7 +92,9 @@ public class VmGuestInfoModel extends EntityModel<VM> {
         VM vm = getEntity();
 
         setClientIp(vm.getClientIp());
-        setConsoleUserName(vm.getConsoleCurentUserName());
+        setConsoleUserName(!StringUtils.isEmpty(vm.getClientIp())
+                ? vm.getConsoleCurentUserName()
+                : null);
         setGuestUserName(vm.getGuestCurentUserName());
         setGuestOs(vm.getGuestOs());
         setGuestOsArch(vm.getGuestOsArch());

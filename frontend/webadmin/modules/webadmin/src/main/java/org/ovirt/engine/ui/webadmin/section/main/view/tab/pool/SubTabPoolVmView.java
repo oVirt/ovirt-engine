@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
@@ -20,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolListModel, PoolVmListModel>
@@ -106,8 +108,10 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
 
         AbstractTextColumn<VM> consoleConnectedUserColumn = new AbstractTextColumn<VM>() {
             @Override
-            public String getValue(VM object) {
-                return object.getConsoleCurentUserName();
+            public String getValue(VM vm) {
+                return !StringUtils.isEmpty(vm.getClientIp())
+                       ? vm.getConsoleCurentUserName()
+                       : null;
             }
         };
         getTable().addColumn(consoleConnectedUserColumn, constants.consoleConnectedUserVm(), "200px"); //$NON-NLS-1$

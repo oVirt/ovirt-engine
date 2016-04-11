@@ -27,8 +27,10 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private Date lastStopTime;
     private String guestCurUserName;
+    /** Last connected user name */
     @UnchangeableByVdsm
     private String consoleCurrentUserName;
+    /** Last connected user id */
     @UnchangeableByVdsm
     private Guid consoleUserId;
     private String guestOs;
