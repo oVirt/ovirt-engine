@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
@@ -86,6 +87,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -93,6 +95,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -1768,6 +1771,7 @@ public class VdsBrokerObjectsBuilder {
                     Map<String, Object> bridgeProperties = (bridges == null) ? null : bridges.get(interfaceName);
 
                     boolean bridgedNetwork = isBridgedNetwork(networkProperties);
+                    SwitchType switchType = getSwitchType(host.getClusterCompatibilityVersion(), networkProperties);
                     HostNetworkQos qos = new HostNetworkQosMapper(networkProperties).deserialize();
 
                     /**
@@ -1794,6 +1798,7 @@ public class VdsBrokerObjectsBuilder {
                         iface.setIpv6Address(v6Addr);
                         iface.setIpv6Prefix(v6Prefix);
                         iface.setBridged(bridgedNetwork);
+                        iface.setReportedSwitchType(switchType);
                         iface.setQos(qos);
 
                         // set the management ip
@@ -1857,7 +1862,7 @@ public class VdsBrokerObjectsBuilder {
      *
      * @param interfaces
      *            The network's interfaces
-     * @param network
+     * @param networkName
      *            The network to report for
      * @param vds
      *            The host in which the network is defined
@@ -2137,6 +2142,21 @@ public class VdsBrokerObjectsBuilder {
      */
     private static boolean isBridgedNetwork(Map<String, Object> network) {
         return network.get("bridged") == null || Boolean.parseBoolean(network.get("bridged").toString());
+    }
+
+    /**
+     * @return {@link SwitchType} obtained from reported network properties.
+     * @throws IllegalStateException when switch type is not reported.
+     */
+    private static SwitchType getSwitchType(Version clusterVersion, Map<String, Object> networkProperties) {
+        Object switchType = networkProperties.get(VdsProperties.SWITCH_KEY);
+        boolean switchTypeShouldBeReportedByOvs = FeatureSupported.ovsSupported(clusterVersion);
+
+        if (switchTypeShouldBeReportedByOvs && switchType == null) {
+            throw new IllegalStateException("Required SwitchType is not reported.");
+        }
+
+        return SwitchType.parse(switchType.toString());
     }
 
     // we check for old bonding options,
