@@ -67,7 +67,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostFenceP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManagementNetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAttachmentPopupPresenterWidget;
@@ -338,7 +337,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostFenceProxyP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManagementNetworkAttachmentPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.NetworkAttachmentPopupView;
@@ -1342,9 +1340,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(NetworkAttachmentPopupPresenterWidget.class,
                 NetworkAttachmentPopupPresenterWidget.ViewDef.class,
                 NetworkAttachmentPopupView.class);
-        bindPresenterWidget(ManagementNetworkAttachmentPopupPresenterWidget.class,
-                ManagementNetworkAttachmentPopupPresenterWidget.ViewDef.class,
-                ManagementNetworkAttachmentPopupView.class);
         bindPresenterWidget(SetupNetworksBondPopupPresenterWidget.class,
                 SetupNetworksBondPopupPresenterWidget.ViewDef.class,
                 SetupNetworksBondPopupView.class);

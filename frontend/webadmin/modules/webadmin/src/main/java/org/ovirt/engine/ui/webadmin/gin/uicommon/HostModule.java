@@ -43,7 +43,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.ManagementNetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksBondModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
@@ -58,7 +57,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureL
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManagementNetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
@@ -181,7 +179,6 @@ public class HostModule extends AbstractGinModule {
     public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> getHostInterfaceListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<NetworkAttachmentPopupPresenterWidget> setupNetworksInterfacePopupProvider,
-            final Provider<ManagementNetworkAttachmentPopupPresenterWidget> setupNetworksManagementPopupProvider,
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<VfsConfigPopupPresenterWidget> vfsConfigPopupProvider,
             final Provider<SetupNetworksLabelPopupPresenterWidget> setupNetworksLabelPopupProvider,
@@ -204,8 +201,6 @@ public class HostModule extends AbstractGinModule {
                             // Resolve by dialog model
                             if (windowModel instanceof SetupNetworksBondModel) {
                                 return setupNetworksBondPopupProvider.get();
-                            } else if (windowModel instanceof ManagementNetworkAttachmentModel) {
-                                return setupNetworksManagementPopupProvider.get();
                             } else if (windowModel instanceof NetworkAttachmentModel) {
                                 return setupNetworksInterfacePopupProvider.get();
                             } else if (windowModel instanceof VfsConfigModel) {

@@ -27,7 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.ManagementNetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksBondModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksLabelModel;
@@ -45,7 +44,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Cluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManagementNetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
@@ -240,11 +238,11 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(
+            EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<NetworkAttachmentPopupPresenterWidget> setupNetworksInterfacePopupProvider,
-            final Provider<ManagementNetworkAttachmentPopupPresenterWidget> setupNetworksManagementPopupProvider,
             final Provider<VfsConfigPopupPresenterWidget> vfsConfigPopupProvider,
             final Provider<SetupNetworksLabelPopupPresenterWidget> setupNetworksLabelPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider,
@@ -261,8 +259,6 @@ public class NetworkModule extends AbstractGinModule {
                         // Resolve by dialog model
                         if (windowModel instanceof SetupNetworksBondModel) {
                             return setupNetworksBondPopupProvider.get();
-                        } else if (windowModel instanceof ManagementNetworkAttachmentModel) {
-                            return setupNetworksManagementPopupProvider.get();
                         } else if (windowModel instanceof NetworkAttachmentModel) {
                             return setupNetworksInterfacePopupProvider.get();
                         } else if (windowModel instanceof VfsConfigModel) {
