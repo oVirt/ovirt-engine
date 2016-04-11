@@ -599,7 +599,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
         when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskUsedAsOvfStore()).thenReturn(ValidationResult.VALID);
-        doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(any(VM.class));
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).validateNotHostedEngineDisk();
         doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();

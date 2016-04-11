@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
  * A validator for the {@link Disk} class.
@@ -32,6 +33,9 @@ import org.ovirt.engine.core.dao.VmDao;
 public class DiskValidator {
 
     private Disk disk;
+
+    private static final String DISK_NAME_VARIABLE = "DiskName";
+    private static final String VM_NAME_VARIABLE = "VmName";
 
     public DiskValidator(Disk disk) {
         this.disk = disk;
@@ -194,9 +198,11 @@ public class DiskValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult isDiskAttachedToVm(Guid vmId) {
+    public ValidationResult isDiskAttachedToVm(VM vm) {
         List<VM> vms = getVmDao().getVmsListForDisk(disk.getId(), true);
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM).
-                when(vms.stream().noneMatch(vm -> vm.getId().equals(vmId)));
+        String[] replacements = {ReplacementUtils.createSetVariableString(DISK_NAME_VARIABLE, disk.getDiskAlias()),
+                ReplacementUtils.createSetVariableString(VM_NAME_VARIABLE, vm.getName())};
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM, replacements).
+                when(vms.stream().noneMatch(vm1 -> vm1.getId().equals(vm.getId())));
     }
 }

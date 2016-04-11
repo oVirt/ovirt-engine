@@ -56,6 +56,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     protected Guid diskImageGuid = Guid.newGuid();
     protected Guid vmId = Guid.newGuid();
+    private VM vm = new VM();
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid storageDomainId = Guid.newGuid();
     protected static final List<String> DISK_HOTPLUGGABLE_INTERFACES = Arrays.asList("VirtIO_SCSI", "VirtIO");
@@ -89,7 +90,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     public void setup() {
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
-        doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vmId);
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vm);
     }
 
     @Test
@@ -249,7 +250,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
      * Mock a VM in status Up
      */
     protected VM mockVmStatusUp() {
-        VM vm = new VM();
         vm.setStatus(VMStatus.Up);
         vm.setVmOs(8);
         vm.setId(vmId);
