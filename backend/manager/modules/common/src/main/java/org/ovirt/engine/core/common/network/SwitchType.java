@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common.network;
 
-import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.compat.Version;
-
 public enum SwitchType {
     LEGACY("legacy"),
     OVS("ovs");
@@ -31,8 +28,4 @@ public enum SwitchType {
         throw new IllegalArgumentException("No enum constant for option " + optionValue);
     }
 
-    public static SwitchType getDefaultSwitchType(Version clusterCompatibilityVersion) {
-        boolean ovsSupported = FeatureSupported.ovsSupported(clusterCompatibilityVersion);
-        return ovsSupported ? SwitchType.OVS : SwitchType.LEGACY;
-    }
 }
