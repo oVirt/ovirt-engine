@@ -67,6 +67,12 @@ public class BackendVmPoolsResourceTest extends
         return entity;
     }
 
+    protected org.ovirt.engine.core.common.businessentities.Cluster getClusterEntity() {
+        org.ovirt.engine.core.common.businessentities.Cluster entity = control.createMock(org.ovirt.engine.core.common.businessentities.Cluster.class);
+        expect(entity.getId()).andReturn(GUIDS[2]).anyTimes();
+        return entity;
+    }
+
     private VmPool getModel(int index) {
         VmPool model = new VmPool();
         model.setName(NAMES[index]);
@@ -79,9 +85,17 @@ public class BackendVmPoolsResourceTest extends
         return model;
     }
 
+
+
     @Test
     public void add() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getClusterEntity());
 
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
@@ -127,6 +141,12 @@ public class BackendVmPoolsResourceTest extends
     @Test
     public void addWithName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getClusterEntity());
 
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,

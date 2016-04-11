@@ -10,11 +10,13 @@ import org.ovirt.engine.api.model.VmPools;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -53,10 +55,8 @@ public class BackendVmPoolsResource
     public Response add(VmPool pool) {
         validateParameters(pool, "name", "template.id|name", "cluster.id|name");
 
-        if (namedCluster(pool)) {
-            Cluster cluster = getCluster(pool);
-            pool.getCluster().setId(cluster.getId().toString());
-        }
+        Cluster cluster = getCluster(pool);
+        pool.getCluster().setId(cluster.getId().toString());
 
         VmTemplate template = getVmTemplate(pool);
         if (namedTemplate(pool)) {
@@ -65,7 +65,7 @@ public class BackendVmPoolsResource
 
         org.ovirt.engine.core.common.businessentities.VmPool entity = map(pool);
 
-        VM vm = mapToVM(pool, template);
+        VM vm = mapToVM(pool, template, cluster);
 
         int size = pool.isSetSize() ? pool.getSize() : 1;
 
@@ -127,11 +127,21 @@ public class BackendVmPoolsResource
                 "Vms: pool=" + model.getName());
     }
 
-    protected VM mapToVM(VmPool model, VmTemplate template) {
+    protected VM mapToVM(VmPool model, VmTemplate template, Cluster cluster) {
         // apply template
-        VmStatic vmStatic = getMapper(VmTemplate.class, VmStatic.class).map(template, null);
+        VmStatic fromTemplate = getMapper(VmTemplate.class, VmStatic.class).map(template, null);
+
+        VmStatic fromInstanceType = null;
+        if (model.isSetInstanceType()) {
+            InstanceType instanceType = loadInstanceType(model);
+            fromTemplate.setInstanceTypeId(instanceType.getId());
+            fromInstanceType = VmMapper.map(instanceType, fromTemplate, cluster.getCompatibilityVersion());
+            fromInstanceType.setInstanceTypeId(instanceType.getId());
+        }
+
         // override with client-provided data
-        VM vm = new VM(getMapper(VmPool.class, VmStatic.class).map(model, vmStatic), new VmDynamic(), new VmStatistics());
+        VM vm = new VM(getMapper(VmPool.class, VmStatic.class).map(
+                model, fromInstanceType != null ? fromInstanceType : fromTemplate), new VmDynamic(), new VmStatistics());
 
         return vm;
     }
@@ -149,10 +159,17 @@ public class BackendVmPoolsResource
     }
 
     protected Cluster getCluster(VmPool pool) {
-        return getEntity(Cluster.class,
-                VdcQueryType.GetClusterByName,
-                new NameQueryParameters(pool.getCluster().getName()),
-                "Cluster: name=" + pool.getCluster().getName());
+        if (namedCluster(pool)) {
+            return getEntity(Cluster.class,
+                    VdcQueryType.GetClusterByName,
+                    new NameQueryParameters(pool.getCluster().getName()),
+                    "Cluster: name=" + pool.getCluster().getName());
+        } else {
+            return getEntity(Cluster.class,
+                    VdcQueryType.GetClusterById,
+                    new IdQueryParameters(asGuid(pool.getCluster().getId())),
+                    "Cluster: id=" + pool.getCluster().getId());
+        }
     }
 
     protected boolean namedTemplate(VmPool pool) {
@@ -180,6 +197,27 @@ public class BackendVmPoolsResource
                 VdcQueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
+    }
+
+    private InstanceType loadInstanceType(VmPool pool) {
+        validateParameters(pool.getInstanceType(), "id|name");
+
+        GetVmTemplateParameters params;
+        String identifier;
+
+        org.ovirt.engine.api.model.InstanceType instanceType = pool.getInstanceType();
+        if (instanceType.isSetId()) {
+            params = new GetVmTemplateParameters(asGuid(instanceType.getId()));
+            identifier = "InstanceType: id=" + instanceType.getId();
+        } else {
+            params = new GetVmTemplateParameters(instanceType.getName());
+            identifier = "InstanceType: name=" + instanceType.getName();
+        }
+
+        return getEntity(VmTemplate.class,
+                VdcQueryType.GetInstanceType,
+                params,
+                identifier);
     }
 
 }
