@@ -3781,7 +3781,7 @@ public class AsyncDataProvider {
                     }
                 }
 
-                Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
+                Collections.sort(fileNameList, new LexoNumericComparator());
                 return fileNameList;
             }
             return new ArrayList<String>();
