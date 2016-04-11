@@ -546,7 +546,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void initUnregisteredDisksToDB(Guid storageDomainId) {
-        List<DiskImage> existingDisks = getDiskImageDao().getAllForStorageDomain(getStorageDomainId());
+        List<DiskImage> existingDisks = getDiskImageDao().getAllForStorageDomain(storageDomainId);
         for (Object unregisteredDiskObj : unregisteredDisks) {
             UnregisteredDisk unregisteredDisk = (UnregisteredDisk) unregisteredDiskObj;
             if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getId()))) {
