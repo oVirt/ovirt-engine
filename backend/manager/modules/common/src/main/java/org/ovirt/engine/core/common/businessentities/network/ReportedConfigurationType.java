@@ -14,7 +14,8 @@ public enum ReportedConfigurationType {
     IPV6_GATEWAY("ipv6_gateway"),
     OUT_AVERAGE_LINK_SHARE("outAverageLinkShare"),
     OUT_AVERAGE_UPPER_LIMIT("outAverageUpperLimit"),
-    OUT_AVERAGE_REAL_TIME("outAverageRealTime");
+    OUT_AVERAGE_REAL_TIME("outAverageRealTime"),
+    SWITCH_TYPE("switchType");
 
     private final String name;
 

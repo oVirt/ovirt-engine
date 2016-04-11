@@ -7,6 +7,7 @@ import static org.ovirt.engine.core.common.businessentities.network.ReportedConf
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -23,19 +25,22 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
     private final VdsNetworkInterface iface;
     private final Network network;
+    private final NetworkAttachment networkAttachment;
     private final HostNetworkQos ifaceQos;
     private final HostNetworkQos hostNetworkQos;
-    private final IpConfiguration networkDataCenterIpConfigurationDefinition;
+    private final Cluster cluster;
 
     public NetworkInSyncWithVdsNetworkInterface(VdsNetworkInterface iface,
             Network network,
             HostNetworkQos hostNetworkQos,
-            IpConfiguration networkDataCenterIpConfigurationDefinition) {
+            NetworkAttachment networkAttachment,
+            Cluster cluster) {
         this.iface = iface;
         this.network = network;
         this.ifaceQos = iface.getQos();
         this.hostNetworkQos = hostNetworkQos;
-        this.networkDataCenterIpConfigurationDefinition = networkDataCenterIpConfigurationDefinition;
+        this.networkAttachment = networkAttachment;
+        this.cluster = cluster;
     }
 
     public boolean isNetworkInSync() {
@@ -49,6 +54,9 @@ public class NetworkInSyncWithVdsNetworkInterface {
         result.add(ReportedConfigurationType.MTU, iface.getMtu(), networkMtu, isNetworkMtuInSync());
         result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork());
         result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId());
+        result.add(ReportedConfigurationType.SWITCH_TYPE,
+                iface.getReportedSwitchType(),
+                cluster.getRequiredSwitchTypeForCluster());
 
         addReportedIpv4Configuration(result);
 
@@ -117,21 +125,29 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private boolean isIpv4PrimaryAddressExist() {
+        IpConfiguration networkDataCenterIpConfigurationDefinition = getIpConfigurationOfNetworkAttachment();
         return networkDataCenterIpConfigurationDefinition != null
                 && networkDataCenterIpConfigurationDefinition.hasIpv4PrimaryAddressSet();
     }
 
+    @SuppressWarnings("ConstantConditions")
     private IPv4Address getIpv4PrimaryAddress() {
-        return networkDataCenterIpConfigurationDefinition.getIpv4PrimaryAddress();
+        return getIpConfigurationOfNetworkAttachment().getIpv4PrimaryAddress();
     }
 
     private boolean isIpv6PrimaryAddressExist() {
-        return networkDataCenterIpConfigurationDefinition != null
-                && networkDataCenterIpConfigurationDefinition.hasIpv6PrimaryAddressSet();
+        IpConfiguration ipConfiguration = getIpConfigurationOfNetworkAttachment();
+        return ipConfiguration != null
+                && ipConfiguration.hasIpv6PrimaryAddressSet();
     }
 
+    @SuppressWarnings("ConstantConditions")
     private IpV6Address getIpv6PrimaryAddress() {
-        return networkDataCenterIpConfigurationDefinition.getIpv6PrimaryAddress();
+        return getIpConfigurationOfNetworkAttachment().getIpv6PrimaryAddress();
+    }
+
+    private IpConfiguration getIpConfigurationOfNetworkAttachment() {
+        return networkAttachment == null ? null : networkAttachment.getIpConfiguration();
     }
 
     private void addReportedIpv4Configuration(ReportedConfigurations result) {

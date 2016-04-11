@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -41,6 +44,9 @@ public class ReportedConfigurationsFillerTest {
 
     @Mock
     private NetworkDao networkDao;
+
+    @Mock
+    private ClusterDao clusterDao;
 
     @Mock
     private VdsDao vdsDao;
@@ -61,6 +67,7 @@ public class ReportedConfigurationsFillerTest {
     private Guid clusterId;
     private HostNetworkQos baseNicNetworkQos;
     private HostNetworkQos vlanNetworkQos;
+    private Cluster cluster;
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
@@ -94,6 +101,9 @@ public class ReportedConfigurationsFillerTest {
         when(vdsDao.get(hostId)).thenReturn(vds);
         when(hostNetworkQosDao.get(eq(baseNicNetwork.getQosId()))).thenReturn(baseNicNetworkQos);
         when(hostNetworkQosDao.get(eq(vlanNetwork.getQosId()))).thenReturn(vlanNetworkQos);
+
+        cluster = new Cluster();
+        when(clusterDao.get(any())).thenReturn(cluster);
     }
 
     private VdsNetworkInterface createNic(String name) {
@@ -128,7 +138,7 @@ public class ReportedConfigurationsFillerTest {
         when(effectiveHostNetworkQos.getQos(networkAttachment, baseNicNetwork)).thenReturn(baseNicNetworkQos);
         filler.fillReportedConfiguration(networkAttachment, hostId);
 
-        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, baseNic, baseNicNetwork);
+        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, baseNic, baseNicNetwork, cluster);
     }
 
     @Test
@@ -147,6 +157,6 @@ public class ReportedConfigurationsFillerTest {
         when(effectiveHostNetworkQos.getQos(networkAttachment, vlanNetwork)).thenReturn(vlanNetworkQos);
         filler.fillReportedConfiguration(networkAttachment, hostId);
 
-        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, vlanNic, vlanNetwork);
+        verify(filler).createNetworkInSyncWithVdsNetworkInterface(networkAttachment, vlanNic, vlanNetwork, cluster);
     }
 }

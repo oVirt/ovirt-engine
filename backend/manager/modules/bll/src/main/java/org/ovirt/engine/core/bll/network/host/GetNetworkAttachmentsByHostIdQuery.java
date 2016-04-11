@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -35,6 +36,9 @@ public class GetNetworkAttachmentsByHostIdQuery<P extends IdQueryParameters> ext
     private VdsDao hostDao;
 
     @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
     private NetworkIdNetworkNameCompleter networkIdNetworkNameCompleter;
 
     public GetNetworkAttachmentsByHostIdQuery(P parameters) {
@@ -53,12 +57,14 @@ public class GetNetworkAttachmentsByHostIdQuery<P extends IdQueryParameters> ext
 
         List<VdsNetworkInterface> allInterfacesForHost = interfaceDao.getAllInterfacesForVds(hostId);
 
-        BusinessEntityMap<Network> networkMap =
-                new BusinessEntityMap<>(networkDao.getAllForCluster(hostDao.get(hostId).getClusterId()));
+        Guid clusterId = hostDao.get(hostId).getClusterId();
+
+        BusinessEntityMap<Network> networkMap = new BusinessEntityMap<>(networkDao.getAllForCluster(clusterId));
 
         reportedConfigurationsFiller.fillReportedConfigurations(allInterfacesForHost,
                 networkMap,
-                networkAttachments);
+                networkAttachments,
+                clusterId);
 
         completeNicNames(networkAttachments, allInterfacesForHost);
         completeNetworkNames(networkAttachments, networkMap);
