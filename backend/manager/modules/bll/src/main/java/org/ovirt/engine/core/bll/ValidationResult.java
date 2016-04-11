@@ -131,7 +131,7 @@ public final class ValidationResult {
      *
      * <pre>
      * int num = 1;
-     * ValidationResult.error(EngineMessage.ERROR_CONST).when(num == 2);
+     * ValidationResult.failWith(EngineMessage.ERROR_CONST).when(num == 2);
      * </pre>
      *
      * <br>
@@ -142,7 +142,7 @@ public final class ValidationResult {
      *
      * <pre>
      * int num = 1;
-     * ValidationResult.error(EngineMessage.ERROR_CONST, &quot;$COMPARED_NUM 2&quot;).unless(num == 2);
+     * ValidationResult.failWith((EngineMessage.ERROR_CONST, &quot;$COMPARED_NUM 2&quot;).unless(num == 2);
      * </pre>
      *
      * <br>
@@ -181,7 +181,7 @@ public final class ValidationResult {
          * For example, if we want to make sure that <b>num doesn't equal 2</b> then we would do:
          * <pre>
          *     int num = 1;
-         *     ValidationResult.error(EngineMessage.ERROR_CONST).when(num == 2);</pre>
+         *     ValidationResult.failWith((EngineMessage.ERROR_CONST).when(num == 2);</pre>
          * <br>
          * Which would return a valid result since 1 != 2.<br>
          * If we were to set <b>num = 2</b> in the example then the desired validation error would return.<br>
@@ -200,7 +200,7 @@ public final class ValidationResult {
          * For example, if we want to make sure that <b>num equals 2</b> then we would do:
          * <pre>
          *     int num = 1;
-         *     ValidationResult.error(EngineMessage.ERROR_CONST).unless(num == 2);</pre>
+         *     ValidationResult.failWith(EngineMessage.ERROR_CONST).unless(num == 2);</pre>
          * <br>
          * Which would return the desired validation error since 1 != 2.<br>
          * If we were to set <b>num = 2</b> in the example then the result would be valid.<br>
