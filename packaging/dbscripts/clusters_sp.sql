@@ -45,7 +45,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_migration_bandwidth_limit_type VARCHAR(16),
     v_custom_migration_bandwidth_limit INT,
     v_migration_policy_id UUID,
-    v_mac_pool_id UUID
+    v_mac_pool_id UUID,
+    v_switch_type VARCHAR(6)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -91,7 +92,8 @@ BEGIN
         migration_bandwidth_limit_type,
         custom_migration_bandwidth_limit,
         migration_policy_id,
-        mac_pool_id
+        mac_pool_id,
+        switch_type
         )
     VALUES (
         v_cluster_id,
@@ -135,7 +137,8 @@ BEGIN
         v_migration_bandwidth_limit_type,
         v_custom_migration_bandwidth_limit,
         v_migration_policy_id,
-        v_mac_pool_id
+        v_mac_pool_id,
+        v_switch_type
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -183,7 +186,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_migration_bandwidth_limit_type VARCHAR(16),
     v_custom_migration_bandwidth_limit INT,
     v_migration_policy_id UUID,
-    v_mac_pool_id UUID
+    v_mac_pool_id UUID,
+    v_switch_type VARCHAR(6)
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -232,7 +236,8 @@ BEGIN
         migration_bandwidth_limit_type = v_migration_bandwidth_limit_type,
         custom_migration_bandwidth_limit = v_custom_migration_bandwidth_limit,
         migration_policy_id = v_migration_policy_id,
-        mac_pool_id = v_mac_pool_id
+        mac_pool_id = v_mac_pool_id,
+        switch_type = v_switch_type
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.validation.annotation.ValidCluster;
@@ -89,6 +90,11 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     private String clusterPolicyName;
 
     private Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported;
+
+    /**
+     * Currently we want all networks of sole cluster to have same switch type.
+     */
+    private SwitchType requiredSwitchTypeForCluster;
 
     @ValidUri(message = "VALIDATION_CLUSTER_SPICE_PROXY_HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
@@ -522,6 +528,14 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         this.macPoolId = macPoolId;
     }
 
+    public SwitchType getRequiredSwitchTypeForCluster() {
+        return requiredSwitchTypeForCluster;
+    }
+
+    public void setRequiredSwitchTypeForCluster(SwitchType requiredSwitchTypeForCluster) {
+        this.requiredSwitchTypeForCluster = requiredSwitchTypeForCluster;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -536,6 +550,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 name,
                 storagePoolId,
                 storagePoolName,
+                requiredSwitchTypeForCluster,
                 transparentHugepages,
                 virtService,
                 glusterService,
@@ -589,6 +604,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 && Objects.equals(name, other.name)
                 && Objects.equals(storagePoolId, other.storagePoolId)
                 && Objects.equals(storagePoolName, other.storagePoolName)
+                && Objects.equals(requiredSwitchTypeForCluster, other.requiredSwitchTypeForCluster)
                 && transparentHugepages == other.transparentHugepages
                 && virtService == other.virtService
                 && glusterService == other.glusterService

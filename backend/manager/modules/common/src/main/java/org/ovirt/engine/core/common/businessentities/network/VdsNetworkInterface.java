@@ -8,6 +8,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.Ipv6;
@@ -30,6 +31,11 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private Guid vdsId;
     private String vdsName;
     private String networkName;
+
+    /**
+     * Switch type of network attached to this nic, as reported by vdsm.
+     */
+    private SwitchType reportedSwitchType;
 
     private Ipv4BootProtocol ipv4BootProtocol;
 
@@ -406,6 +412,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.bridged = bridged;
     }
 
+    public SwitchType getReportedSwitchType() {
+        return reportedSwitchType;
+    }
+
+    public void setReportedSwitchType(SwitchType reportedSwitchType) {
+        this.reportedSwitchType = reportedSwitchType;
+    }
+
     public NetworkImplementationDetails getNetworkImplementationDetails() {
         return networkImplementationDetails;
     }
@@ -473,6 +487,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append("ipv6Gateway", getIpv6Gateway())
                 .append("mtu", getMtu())
                 .append("bridged", isBridged())
+                .append("reportedSwitchType", getReportedSwitchType())
                 .append("type", getType())
                 .append("networkImplementationDetails", getNetworkImplementationDetails())
                 .append("qos", getQos())
@@ -504,6 +519,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 bonded,
                 ipv4BootProtocol,
                 ipv6BootProtocol,
+                reportedSwitchType,
                 networkName,
                 bridged,
                 ipv4Gateway,
@@ -538,6 +554,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 && Objects.equals(bonded, other.bonded)
                 && ipv4BootProtocol == other.ipv4BootProtocol
                 && ipv6BootProtocol == other.ipv6BootProtocol
+                && Objects.equals(reportedSwitchType, other.reportedSwitchType)
                 && Objects.equals(networkName, other.networkName)
                 && bridged == other.bridged
                 && Objects.equals(ipv4Gateway, other.ipv4Gateway)

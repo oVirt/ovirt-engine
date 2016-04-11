@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
@@ -156,7 +157,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("mtu", nic.getMtu())
                 .addValue("bridged", nic.isBridged())
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
-                .addValue("ad_partner_mac", nic.getAdPartnerMac());
+                .addValue("ad_partner_mac", nic.getAdPartnerMac())
+                .addValue("reported_switch_type", nic.getReportedSwitchType() == null ? null : nic.getReportedSwitchType().getOptionValue());
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {
@@ -355,6 +357,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     entity.setId(getGuidDefaultEmpty(rs, "id"));
                     entity.setIpv4BootProtocol(Ipv4BootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setIpv6BootProtocol(Ipv6BootProtocol.forValue(rs.getInt("ipv6_boot_protocol")));
+                    entity.setReportedSwitchType(SwitchType.parse(rs.getString("reported_switch_type")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
                     entity.setQos(hostNetworkQosDao.get(entity.getId()));

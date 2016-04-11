@@ -139,6 +139,7 @@
         <include name="common/businessentities/VDSDomainsData.java" />
         <include name="common/businessentities/VdsDynamic.java" />
         <include name="common/businessentities/Cluster.java" />
+        <include name="common/network/SwitchType.java" />
         <include name="common/businessentities/AdditionalFeature.java" />
         <include name="common/businessentities/SupportedAdditionalClusterFeature.java" />
         <include name="common/businessentities/FencingPolicy.java" />
