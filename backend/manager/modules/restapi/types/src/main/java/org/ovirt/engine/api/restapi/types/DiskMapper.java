@@ -90,8 +90,10 @@ public class DiskMapper {
         if (disk.isSetShareable()) {
             engineDisk.setShareable(disk.isShareable());
         }
-        if (disk.isSetLunStorage()) {
-            ((LunDisk)engineDisk).setLun(StorageLogicalUnitMapper.map(disk.getLunStorage(), null));
+        if (!engineDisk.getDiskStorageType().isInternal()) {
+            if (disk.isSetLunStorage()) {
+                ((LunDisk) engineDisk).setLun(StorageLogicalUnitMapper.map(disk.getLunStorage(), null));
+            }
             if (disk.isSetUsesScsiReservation()) {
                 ((LunDisk) engineDisk).setUsingScsiReservation(disk.isUsesScsiReservation());
             }
