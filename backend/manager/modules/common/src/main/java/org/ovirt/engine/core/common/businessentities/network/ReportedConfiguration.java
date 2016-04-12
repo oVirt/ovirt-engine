@@ -28,6 +28,11 @@ public class ReportedConfiguration implements Serializable {
 
     public ReportedConfiguration(ReportedConfigurationType type, Object actualValue, Object expectedValue, boolean inSync) {
         this(type, Objects.toString(actualValue, null), Objects.toString(expectedValue, null), inSync);
+
+    }
+
+    public ReportedConfiguration(ReportedConfigurationType type) {
+        this(type, null, null, true);
     }
 
     public ReportedConfigurationType getType() {
