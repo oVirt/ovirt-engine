@@ -308,7 +308,7 @@ public class SessionDataContainer {
         return String.format(
                 "%s@%s",
                 getPrincipalName(sessionId),
-                getProfile(sessionId) != null ? getProfile(sessionId).getName() : "N/A");
+                getProfile(sessionId) != null ? getProfile(sessionId).getAuthzName() : "N/A");
     }
 
     public void setPrincipalName(String engineSessionId, String name) {
