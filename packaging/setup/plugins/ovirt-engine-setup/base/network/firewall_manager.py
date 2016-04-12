@@ -161,6 +161,29 @@ class Plugin(plugin.PluginBase):
             else self._detected_managers
         )
 
+        if (
+            self.environment[
+                osetupcons.ConfigEnv.FIREWALL_MANAGER
+            ] is not None and
+            self.environment[
+                osetupcons.ConfigEnv.FIREWALL_MANAGER
+            ] not in [
+                m.name
+                for m in self._available_managers
+            ]
+        ):
+            self.logger.warning(
+                _(
+                    "Firewall manager was previously set to '{m}', which is "
+                    "currently not available."
+                ).format(
+                    m=self.environment[
+                        osetupcons.ConfigEnv.FIREWALL_MANAGER
+                    ],
+                )
+            )
+            self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGER] = None
+
         if self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGER] is None:
             if active_managers and len(self._available_managers) == 1:
                 self.environment[
