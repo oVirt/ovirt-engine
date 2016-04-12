@@ -97,16 +97,8 @@ class Plugin(plugin.PluginBase):
             self._setEngineMode(
                 maintenance=True,
             )
-            self._parent.services.state(
-                name=oenginecons.Const.ENGINE_SERVICE_NAME,
-                state=True,
-            )
 
         def __exit__(self, exc_type, exc_value, traceback):
-            self._parent.services.state(
-                name=oenginecons.Const.ENGINE_SERVICE_NAME,
-                state=False,
-            )
             self._setEngineMode(
                 maintenance=False,
             )
@@ -408,6 +400,23 @@ class Plugin(plugin.PluginBase):
                     ),
                 )
             )
+            if (
+                not self.services.exists(
+                    name=oenginecons.Const.ENGINE_SERVICE_NAME
+                ) or not self.services.status(
+                    name=oenginecons.Const.ENGINE_SERVICE_NAME
+                )
+            ):
+                self.dialog.note(
+                    text=_(
+                        'Please note that the engine is currently down. you '
+                        'may want to try to start it using the following '
+                        'command:\n'
+                        '# service {service} start\n'
+                    ).format(
+                        service=oenginecons.Const.ENGINE_SERVICE_NAME,
+                    )
+                )
             time.sleep(
                 self.environment[
                     oenginecons.AsyncTasksEnv.
