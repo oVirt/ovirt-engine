@@ -1438,17 +1438,29 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Vlan")
     String vlanOutOfSyncPopUp();
 
-    @DefaultStringValue("Boot protocol")
-    String bootProtocolOutOfSyncPopUp();
+    @DefaultStringValue("IPv4 Boot protocol")
+    String ipv4BootProtocolOutOfSyncPopUp();
 
-    @DefaultStringValue("IP address")
-    String ipAddressOutOfSyncPopUp();
+    @DefaultStringValue("IPv4 address")
+    String ipv4AddressOutOfSyncPopUp();
 
-    @DefaultStringValue("Netmask")
-    String netmaskOutOfSyncPopUp();
+    @DefaultStringValue("IPv4 Netmask")
+    String ipv4NetmaskOutOfSyncPopUp();
 
-    @DefaultStringValue("Gateway")
-    String gatewayOutOfSyncPopUp();
+    @DefaultStringValue("IPv4 Gateway")
+    String ipv4GatewayOutOfSyncPopUp();
+
+    @DefaultStringValue("IPv6 Boot protocol")
+    String ipv6BootProtocolOutOfSyncPopUp();
+
+    @DefaultStringValue("IPv6 address")
+    String ipv6AddressOutOfSyncPopUp();
+
+    @DefaultStringValue("IPv6 Prefix")
+    String ipv6PrefixOutOfSyncPopUp();
+
+    @DefaultStringValue("IPv6 Gateway")
+    String ipv6GatewayOutOfSyncPopUp();
 
     @DefaultStringValue("QoS Out average link share")
     String outAverageLinkShareOutOfSyncPopUp();

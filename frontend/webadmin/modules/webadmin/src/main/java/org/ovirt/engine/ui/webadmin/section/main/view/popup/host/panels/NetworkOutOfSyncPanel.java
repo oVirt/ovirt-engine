@@ -126,14 +126,22 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
             return constants.bridgedOutOfSyncPopUp();
         case VLAN:
             return constants.vlanOutOfSyncPopUp();
-        case BOOT_PROTOCOL:
-            return constants.bootProtocolOutOfSyncPopUp();
-        case IP_ADDRESS:
-            return constants.ipAddressOutOfSyncPopUp();
-        case NETMASK:
-            return constants.netmaskOutOfSyncPopUp();
-        case GATEWAY:
-            return constants.gatewayOutOfSyncPopUp();
+        case IPV4_BOOT_PROTOCOL:
+            return constants.ipv4BootProtocolOutOfSyncPopUp();
+        case IPV4_ADDRESS:
+            return constants.ipv4AddressOutOfSyncPopUp();
+        case IPV4_NETMASK:
+            return constants.ipv4NetmaskOutOfSyncPopUp();
+        case IPV4_GATEWAY:
+            return constants.ipv4GatewayOutOfSyncPopUp();
+        case IPV6_BOOT_PROTOCOL:
+            return constants.ipv6BootProtocolOutOfSyncPopUp();
+        case IPV6_ADDRESS:
+            return constants.ipv6AddressOutOfSyncPopUp();
+        case IPV6_PREFIX:
+            return constants.ipv6PrefixOutOfSyncPopUp();
+        case IPV6_GATEWAY:
+            return constants.ipv6GatewayOutOfSyncPopUp();
         case OUT_AVERAGE_LINK_SHARE:
             return constants.outAverageLinkShareOutOfSyncPopUp();
         case OUT_AVERAGE_UPPER_LIMIT:

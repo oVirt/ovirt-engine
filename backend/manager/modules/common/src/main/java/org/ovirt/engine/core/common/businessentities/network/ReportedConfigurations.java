@@ -17,8 +17,8 @@ public class ReportedConfigurations implements Serializable {
     private List<ReportedConfiguration> reportedConfigurationList = new ArrayList<>();
 
     public <T> ReportedConfigurations add(ReportedConfigurationType type, T actual, T expected, boolean inSync) {
-        String actualValue = actual == null ? null : actual.toString();
-        String expectedValue = expected == null ? null : expected.toString();
+        String actualValue = Objects.toString(actual, null);
+        String expectedValue = Objects.toString(expected, null);
         reportedConfigurationList.add(new ReportedConfiguration(type, actualValue, expectedValue, inSync));
         return this;
     }
