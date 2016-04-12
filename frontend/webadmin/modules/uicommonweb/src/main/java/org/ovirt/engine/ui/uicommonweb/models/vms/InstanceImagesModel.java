@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -255,6 +256,9 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
     }
 
     public List<Disk> getAllCurrentDisks() {
+        if (getItems() == null) {
+            return Collections.emptyList();
+        }
         List<Disk> res = new ArrayList<>();
         for (InstanceImageLineModel line : getItems()) {
             if (line.isGhost()) {
