@@ -3,7 +3,9 @@ package org.ovirt.engine.core.utils.extensionsmgr;
 import static java.util.Arrays.sort;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
@@ -15,6 +17,8 @@ import org.slf4j.LoggerFactory;
 public class EngineExtensionsManager extends ExtensionsManager {
 
     private static final String ENGINE_EXTENSION_ENABLED = "ENGINE_EXTENSION_ENABLED_";
+    // The pattern of extension types to ignore
+    private static final String ENGINE_EXTENSIONS_IGNORED = "ENGINE_EXTENSIONS_IGNORED";
 
     private static volatile EngineExtensionsManager instance = null;
     private static Logger log = LoggerFactory.getLogger(EngineExtensionsManager.class);
@@ -70,6 +74,9 @@ public class EngineExtensionsManager extends ExtensionsManager {
             }
         }
 
+        Pattern pattern = Pattern.compile(EngineLocalConfig.getInstance()
+                .getProperty(ENGINE_EXTENSIONS_IGNORED));
+
         for (ExtensionProxy extension : getLoadedExtensions()) {
             if (
                 EngineLocalConfig.getInstance().getBoolean(
@@ -83,7 +90,9 @@ public class EngineExtensionsManager extends ExtensionsManager {
                                     Base.ContextKeys.CONFIGURATION
                             ).getProperty(Base.ConfigKeys.ENABLED, "true")
                     )
-                )
+                ) &&
+                !((Collection<String>)extension.getContext().get(Base.ContextKeys.PROVIDES)).stream()
+                        .anyMatch(p -> pattern.matcher(p).matches())
             ) {
                 try {
                     initialize(extension.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME));

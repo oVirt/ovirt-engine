@@ -258,6 +258,11 @@ ENGINE_EXTENSION_PATH="${ENGINE_USR}/extensions.d:${ENGINE_ETC}/extensions.d"
 #
 
 #
+# The extensions ignored by engine, but might be loaded and used by other modules like SSO
+#
+ENGINE_EXTENSIONS_IGNORED=".*?(Authz)"
+
+#
 # Engine (client) SSO configuration
 #
 

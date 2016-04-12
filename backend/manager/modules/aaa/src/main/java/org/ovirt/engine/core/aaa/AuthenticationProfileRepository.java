@@ -81,7 +81,7 @@ public class AuthenticationProfileRepository extends Observable {
                 String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
                 AuthenticationProfile profile = new AuthenticationProfile(
                         authnExtension,
-                        EngineExtensionsManager.getInstance().getExtensionByName(authzName),
+                        authzName,
                         mapperName != null ? EngineExtensionsManager.getInstance().getExtensionByName(mapperName) : null
                         );
 

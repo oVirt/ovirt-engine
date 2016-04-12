@@ -15,7 +15,6 @@ import javax.inject.Singleton;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
@@ -353,7 +352,7 @@ public class SessionDataContainer {
          */
         String authzName = null;
         if (getProfile(sessionId) != null) {
-            authzName = getProfile(sessionId).getAuthz().getContext().<String>get(Base.ContextKeys.INSTANCE_NAME);
+            authzName = getProfile(sessionId).getAuthzName();
         }
 
         AcctUtils.reportRecords(reason,

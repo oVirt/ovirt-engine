@@ -16,9 +16,9 @@ public class AuthenticationProfile {
      */
     private String name;
 
-    private ExtensionProxy authn;
+    private String authzName;
 
-    private ExtensionProxy authz;
+    private ExtensionProxy authn;
 
     private ExtensionProxy mapper;
 
@@ -28,15 +28,14 @@ public class AuthenticationProfile {
      * Create a new authentication profile with the given name, authenticator and directory.
      *
      * @param authn the authenticator that will be used to check the credentials of the user
-     * @param authz the directory that will be used to lookup the details of the user once it is successfully
      * @param mapping the mappinng extension to map the post authn auth record
      *     authenticated
      */
-    public AuthenticationProfile(ExtensionProxy authn, ExtensionProxy authz, ExtensionProxy mapper) {
+    public AuthenticationProfile(ExtensionProxy authn, String authzName, ExtensionProxy mapper) {
         Properties config = authn.getContext().<Properties> get(Base.ContextKeys.CONFIGURATION);
         this.name = config.getProperty(Authn.ConfigKeys.PROFILE_NAME);
+        this.authzName = authzName;
         this.authn = authn;
-        this.authz = authz;
         this.mapper = mapper;
         this.negotiationPriority = Integer.parseInt(config.getProperty(Authn.ConfigKeys.NEGOTIATION_PRIORITY, "50"));
     }
@@ -55,14 +54,6 @@ public class AuthenticationProfile {
         return authn;
     }
 
-    /**
-     * Get a reference to the directory.
-     */
-
-    public ExtensionProxy getAuthz() {
-        return authz;
-    }
-
     public ExtensionProxy getMapper() {
         return mapper;
     }
@@ -72,7 +63,7 @@ public class AuthenticationProfile {
     }
 
     public String getAuthzName() {
-        return authz.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME);
+        return authzName;
     }
 
     public int getNegotiationPriority() {
