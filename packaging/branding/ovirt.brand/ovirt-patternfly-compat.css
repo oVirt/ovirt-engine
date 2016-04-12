@@ -200,7 +200,7 @@ div.avw_contentWidgetContainer_pfly_fix {
     top: -3px;
     left: -8px;
 }
-.cvp_consoleContent_pfly_fix, .cvp_clusterPolicyContent_pfly_fix, .cvp_fencingPolicyContent_pfly_fix {
+.cvp_consoleContent_pfly_fix, .cvp_fencingPolicyContent_pfly_fix {
     padding-top: 5px;
 }
 .cpv_spiceProxyEnabledCheckbox_pfly_fix span.gwt-CheckBox {
