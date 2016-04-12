@@ -347,6 +347,7 @@ validations:	generated-files
 		build/shell-check.sh && \
 		build/python-check.sh && \
 		build/image-check.sh && \
+		build/helptag-oneline-check.py && \
 		build/dbscripts-duplicate_upgrade_scripts.sh; \
 	fi
 
