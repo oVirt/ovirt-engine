@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.AutoNumaStatus;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostProtocol;
+import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.KatelloErrata;
 import org.ovirt.engine.api.model.KdumpStatus;
 import org.ovirt.engine.api.model.Spm;
@@ -190,7 +191,11 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
             to.setTransparentHugepages(adaptIn(from.getTransparentHugepages()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            // In version 3 of the API the string for the RHEV_H value was "rhev-h", with a dash instead of an
+            // underscore, and we need to accept that for backwards compatibility:
+            String fromType = from.getType();
+            HostType toType = fromType.equalsIgnoreCase("rhev-h")? HostType.RHEV_H: HostType.fromValue(fromType);
+            to.setType(toType);
         }
         if (from.isSetUpdateAvailable()) {
             to.setUpdateAvailable(from.isUpdateAvailable());

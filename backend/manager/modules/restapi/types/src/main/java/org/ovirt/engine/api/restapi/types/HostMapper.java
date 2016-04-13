@@ -269,7 +269,7 @@ public class HostMapper {
         model.setSummary(vmSummary);
         if (entity.getVdsType() != null) {
             HostType type = map(entity.getVdsType(), null);
-            model.setType(type != null ? type.value() : null);
+            model.setType(type);
         }
         model.setMemory(Long.valueOf(entity.getPhysicalMemMb() == null ? 0 : entity.getPhysicalMemMb()
                 * BYTES_IN_MEGABYTE));

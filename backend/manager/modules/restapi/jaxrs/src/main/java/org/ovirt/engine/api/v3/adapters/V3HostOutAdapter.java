@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.Spm;
 import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.model.Status;
@@ -182,7 +183,11 @@ public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
             to.setTransparentHugepages(adaptOut(from.getTransparentHugepages()));
         }
         if (from.isSetType()) {
-            to.setType(from.getType());
+            // In version 3 of the API the string for the RHEV_H value was "rhev-h", with a dash instead of an
+            // underscore, and we need to preserve that for backwards compatibility:
+            HostType fromType = from.getType();
+            String toType = fromType == HostType.RHEV_H? "rhev-h": fromType.value();
+            to.setType(toType);
         }
         if (from.isSetUpdateAvailable()) {
             to.setUpdateAvailable(from.isUpdateAvailable());
