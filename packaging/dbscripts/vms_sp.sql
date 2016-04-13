@@ -111,7 +111,7 @@ BEGIN
     RETURN QUERY
 
     SELECT templates.vmt_guid AS vm_guid
-    FROM vm_templates_view templates,
+    FROM vm_templates_based_view templates,
         vm_ovf_generations generations
     WHERE generations.vm_guid = templates.vmt_guid
         AND templates.db_generation > generations.ovf_generation

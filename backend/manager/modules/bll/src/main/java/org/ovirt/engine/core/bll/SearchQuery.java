@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
@@ -98,7 +97,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = searchVDSsByDb();
             break;
         case VmTemplate:
-            returnValue = searchVMTemplates();
+            returnValue = searchVmTemplates();
             break;
         case VmPools:
             returnValue = searchVmPools();
@@ -131,7 +130,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = searchInstanceTypes();
             break;
         case ImageType:
-            returnValue = searchVMTemplates();
+            returnValue = searchVmTemplates();
             break;
         case Session:
             returnValue = searchSessions();
@@ -223,11 +222,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getDbGroupDao(), true);
     }
 
-    private List<VmTemplate> searchVMTemplates() {
-
-        return genericSearch(getDbFacade().getVmTemplateDao(), true).stream()
-                .filter(v -> v.getTemplateType() == VmEntityType.TEMPLATE)
-                .collect(Collectors.toList());
+    private List<VmTemplate> searchVmTemplates() {
+        return genericSearch(getDbFacade().getVmTemplateDao(), true);
     }
 
     private List<VmTemplate> searchInstanceTypes() {

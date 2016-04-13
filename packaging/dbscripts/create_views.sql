@@ -801,7 +801,7 @@ LEFT JOIN disk_lun_map
 LEFT JOIN all_disks
     ON disk_lun_map.disk_id = all_disks.disk_id;
 
-CREATE OR REPLACE VIEW vm_templates_view AS
+CREATE OR REPLACE VIEW vm_templates_based_view AS
 
 SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.vm_name AS name,
@@ -891,20 +891,20 @@ WHERE entity_type = 'TEMPLATE'
     OR entity_type = 'INSTANCE_TYPE'
     OR entity_type = 'IMAGE_TYPE';
 
-CREATE OR REPLACE VIEW vm_templates_with_plug_info AS
+CREATE OR REPLACE VIEW vm_templates_based_with_plug_info AS
 
-SELECT vm_templates_view.*,
+SELECT vm_templates_based_view.*,
     image_guid,
     image_group_id,
     is_plugged
-FROM vm_templates_view
+FROM vm_templates_based_view
 INNER JOIN vm_device vd
-    ON vd.vm_id = vm_templates_view.vmt_guid
+    ON vd.vm_id = vm_templates_based_view.vmt_guid
 INNER JOIN images
     ON images.image_group_id = vd.device_id
         AND images.active = TRUE;
 
-CREATE OR REPLACE VIEW vm_templates_storage_domain AS
+CREATE OR REPLACE VIEW vm_templates_based_storage_domain AS
 
 SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.vm_name AS name,
@@ -1062,28 +1062,40 @@ WHERE entity_type = 'TEMPLATE'
     OR entity_type = 'INSTANCE_TYPE'
     OR entity_type = 'IMAGE_TYPE';
 
+CREATE OR REPLACE VIEW vm_templates_view AS
+
+SELECT *
+FROM vm_templates_based_view
+WHERE entity_type = 'TEMPLATE';
+
+CREATE OR REPLACE VIEW vm_templates_storage_domain AS
+
+SELECT *
+FROM vm_templates_based_storage_domain
+WHERE entity_type = 'TEMPLATE';
+
 CREATE OR REPLACE VIEW instance_types_view AS
 
 SELECT *
-FROM vm_templates_view
+FROM vm_templates_based_view
 WHERE entity_type = 'INSTANCE_TYPE';
 
 CREATE OR REPLACE VIEW instance_types_storage_domain AS
 
 SELECT *
-FROM vm_templates_storage_domain
+FROM vm_templates_based_storage_domain
 WHERE entity_type = 'INSTANCE_TYPE';
 
 CREATE OR REPLACE VIEW image_types_view AS
 
 SELECT *
-FROM vm_templates_view
+FROM vm_templates_based_view
 WHERE entity_type = 'IMAGE_TYPE';
 
 CREATE OR REPLACE VIEW image_types_storage_domain AS
 
 SELECT *
-FROM vm_templates_storage_domain
+FROM vm_templates_based_storage_domain
 WHERE entity_type = 'IMAGE_TYPE';
 
 CREATE OR REPLACE VIEW vm_pool_map_view AS
@@ -2734,7 +2746,7 @@ UNION ALL
 
 SELECT storage_id,
     ad_element_id
-FROM vm_templates_storage_domain
+FROM vm_templates_based_storage_domain
 INNER JOIN internal_permissions_view
     ON vmt_guid = internal_permissions_view.object_id
         AND object_type_id = 4
@@ -2745,8 +2757,8 @@ UNION ALL
 SELECT storage_id,
     ad_element_id
 FROM vm_static
-INNER JOIN vm_templates_storage_domain
-    ON vm_static.vmt_guid = vm_templates_storage_domain.vmt_guid
+INNER JOIN vm_templates_based_storage_domain
+    ON vm_static.vmt_guid = vm_templates_based_storage_domain.vmt_guid
 INNER JOIN internal_permissions_view
     ON vm_static.vm_guid = object_id
         AND objecT_type_id = 2
