@@ -119,6 +119,41 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private String certificateSubject;
 
+    /**
+     * Current kernel cmdline
+     *
+     * <p>`null` ~ ""</p>
+     */
+    @EditableField
+    private String currentKernelCmdline;
+
+    /**
+     * True iff current {@link #currentKernelCmdline} can be build purely based on kernleCmdline*
+     * options.
+     */
+    @EditableField
+    private boolean kernelCmdlineParsable;
+
+    /**
+     * Kernel cmdline used during last successful host-deploy set
+     *
+     * <p>`null` ~ ""</p>
+     * <p>This shouldn't be updated by users. Only host deploy updates it.</p>
+     */
+    private String lastStoredKernelCmdline;
+
+    @EditableField
+    private boolean kernelCmdlineIommu;
+
+    @EditableField
+    private boolean kernelCmdlineKvmNested;
+
+    @EditableField
+    private boolean kernelCmdlineUnsafeInterrupts;
+
+    @EditableField
+    private boolean kernelCmdlinePciRealloc;
+
     public boolean isAutoRecoverable() {
         return autoRecoverable;
     }
@@ -360,6 +395,62 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.certificateSubject = certificateSubject;
     }
 
+    public String getCurrentKernelCmdline() {
+        return currentKernelCmdline;
+    }
+
+    public void setCurrentKernelCmdline(String currentKernelCmdline) {
+        this.currentKernelCmdline = currentKernelCmdline;
+    }
+
+    public boolean isKernelCmdlineParsable() {
+        return kernelCmdlineParsable;
+    }
+
+    public void setKernelCmdlineParsable(boolean kernelCmdlineParsable) {
+        this.kernelCmdlineParsable = kernelCmdlineParsable;
+    }
+
+    public String getLastStoredKernelCmdline() {
+        return lastStoredKernelCmdline;
+    }
+
+    public void setLastStoredKernelCmdline(String lastStoredKernelCmdline) {
+        this.lastStoredKernelCmdline = lastStoredKernelCmdline;
+    }
+
+    public boolean isKernelCmdlineIommu() {
+        return kernelCmdlineIommu;
+    }
+
+    public void setKernelCmdlineIommu(boolean kernelCmdlineIommu) {
+        this.kernelCmdlineIommu = kernelCmdlineIommu;
+    }
+
+    public boolean isKernelCmdlineKvmNested() {
+        return kernelCmdlineKvmNested;
+    }
+
+    public void setKernelCmdlineKvmNested(boolean kernelCmdlineKvmNested) {
+        this.kernelCmdlineKvmNested = kernelCmdlineKvmNested;
+    }
+
+    public boolean isKernelCmdlineUnsafeInterrupts() {
+        return kernelCmdlineUnsafeInterrupts;
+    }
+
+    public void setKernelCmdlineUnsafeInterrupts(boolean kernelCmdlineUnsafeInterrupts) {
+        this.kernelCmdlineUnsafeInterrupts = kernelCmdlineUnsafeInterrupts;
+    }
+
+    public boolean isKernelCmdlinePciRealloc() {
+        return kernelCmdlinePciRealloc;
+    }
+
+    public void setKernelCmdlinePciRealloc(boolean kernelCmdlinePciRealloc) {
+        this.kernelCmdlinePciRealloc = kernelCmdlinePciRealloc;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -381,7 +472,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 vdsType,
                 disablePowerManagementPolicy,
                 hostProviderId,
-                openstackNetworkProviderId
+                openstackNetworkProviderId,
+                currentKernelCmdline,
+                kernelCmdlineParsable,
+                lastStoredKernelCmdline,
+                kernelCmdlineIommu,
+                kernelCmdlineKvmNested,
+                kernelCmdlinePciRealloc,
+                kernelCmdlineUnsafeInterrupts
         );
     }
 
@@ -413,6 +511,13 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint)
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
                 && Objects.equals(hostProviderId, other.hostProviderId)
-                && Objects.equals(openstackNetworkProviderId, other.openstackNetworkProviderId);
+                && Objects.equals(openstackNetworkProviderId, other.openstackNetworkProviderId)
+                && Objects.equals(currentKernelCmdline, other.currentKernelCmdline)
+                && Objects.equals(kernelCmdlineParsable, other.kernelCmdlineParsable)
+                && Objects.equals(lastStoredKernelCmdline, other.lastStoredKernelCmdline)
+                && Objects.equals(kernelCmdlineIommu, other.kernelCmdlineIommu)
+                && Objects.equals(kernelCmdlineKvmNested, other.kernelCmdlineKvmNested)
+                && Objects.equals(kernelCmdlinePciRealloc, other.kernelCmdlinePciRealloc)
+                && Objects.equals(kernelCmdlineUnsafeInterrupts, other.kernelCmdlineUnsafeInterrupts);
     }
 }

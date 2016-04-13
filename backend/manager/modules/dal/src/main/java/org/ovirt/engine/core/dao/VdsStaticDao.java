@@ -53,4 +53,10 @@ public interface VdsStaticDao extends GenericDao<VdsStatic, Guid> {
      * @return the list of host names
      */
     List<String> getAllHostNamesPinnedToVm(Guid vm);
+
+    /**
+     * Separate update method for {@code last_stored_kernel_cmdline} column to prevent
+     * race overwrites.
+     */
+    void updateLastStoredKernelCmdline(Guid vdsStaticId, String lastStoredKernelCmdline);
  }

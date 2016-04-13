@@ -36,6 +36,9 @@ public class VdsStaticDaoTest extends BaseDaoTestCase {
         newStaticVds.setClusterId(existingVds.getClusterId());
         newStaticVds.setSshKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
         newStaticVds.setProtocol(VdsProtocol.STOMP);
+        newStaticVds.setCurrentKernelCmdline("a=b");
+        newStaticVds.setLastStoredKernelCmdline("c=d");
+        newStaticVds.setKernelCmdlineIommu(true);
     }
 
     /**

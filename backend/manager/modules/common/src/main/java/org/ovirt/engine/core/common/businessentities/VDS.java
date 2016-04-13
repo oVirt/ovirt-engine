@@ -200,6 +200,13 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setUpdateAvailable(isUpdateAvailable());
         vds.setHostDevicePassthroughEnabled(isHostDevicePassthroughEnabled());
         vds.setHostedEngineHost(isHostedEngineHost());
+        vds.setCurrentKernelCmdline(getCurrentKernelCmdline());
+        vds.setLastStoredKernelCmdline(getLastStoredKernelCmdline());
+        vds.setKernelCmdlineParsable(isKernelCmdlineParsable());
+        vds.setKernelCmdlineIommu(isKernelCmdlineIommu());
+        vds.setKernelCmdlineKvmNested(isKernelCmdlineKvmNested());
+        vds.setKernelCmdlinePciRealloc(isKernelCmdlinePciRealloc());
+        vds.setKernelCmdlineUnsafeInterrupts(isKernelCmdlineUnsafeInterrupts());
         return vds;
     }
 
@@ -1404,6 +1411,62 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public boolean isHostDevicePassthroughEnabled() {
         return vdsDynamic.isHostDevicePassthroughEnabled();
+    }
+
+    public String getLastStoredKernelCmdline() {
+        return getStaticData().getLastStoredKernelCmdline();
+    }
+
+    public void setLastStoredKernelCmdline(String lastSentKernelArguments) {
+        getStaticData().setLastStoredKernelCmdline(lastSentKernelArguments);
+    }
+
+    public String getCurrentKernelCmdline() {
+        return getStaticData().getCurrentKernelCmdline();
+    }
+
+    public void setCurrentKernelCmdline(String currentKernelArguments) {
+        getStaticData().setCurrentKernelCmdline(currentKernelArguments);
+    }
+
+    public boolean isKernelCmdlineParsable() {
+        return vdsStatic.isKernelCmdlineParsable();
+    }
+
+    public void setKernelCmdlineParsable(boolean kernelCmdlineParsable) {
+        vdsStatic.setKernelCmdlineParsable(kernelCmdlineParsable);
+    }
+
+    public void setKernelCmdlineUnsafeInterrupts(boolean kernelCmdlineUnsafeInterrupts) {
+        vdsStatic.setKernelCmdlineUnsafeInterrupts(kernelCmdlineUnsafeInterrupts);
+    }
+
+    public boolean isKernelCmdlineIommu() {
+        return vdsStatic.isKernelCmdlineIommu();
+    }
+
+    public boolean isKernelCmdlinePciRealloc() {
+        return vdsStatic.isKernelCmdlinePciRealloc();
+    }
+
+    public void setKernelCmdlinePciRealloc(boolean kernelCmdlinePciRealloc) {
+        vdsStatic.setKernelCmdlinePciRealloc(kernelCmdlinePciRealloc);
+    }
+
+    public void setKernelCmdlineIommu(boolean kernelCmdlineIommu) {
+        vdsStatic.setKernelCmdlineIommu(kernelCmdlineIommu);
+    }
+
+    public boolean isKernelCmdlineKvmNested() {
+        return vdsStatic.isKernelCmdlineKvmNested();
+    }
+
+    public void setKernelCmdlineKvmNested(boolean kernelCmdlineKvmNested) {
+        vdsStatic.setKernelCmdlineKvmNested(kernelCmdlineKvmNested);
+    }
+
+    public boolean isKernelCmdlineUnsafeInterrupts() {
+        return vdsStatic.isKernelCmdlineUnsafeInterrupts();
     }
 
     public boolean shouldVdsBeFenced() {

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.utils.CpuVendor;
+
 public class ServerCpu implements Serializable {
     private static final long serialVersionUID = -267863982363067020L;
 
@@ -89,6 +91,10 @@ public class ServerCpu implements Serializable {
                 && Objects.equals(privateFlags, other.privateFlags)
                 && privateLevel == other.privateLevel
                 && Objects.equals(privateVdsVerbData, other.privateVdsVerbData);
+    }
+
+    public CpuVendor getVendor() {
+        return CpuVendor.fromFlags(privateFlags);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -67,6 +71,10 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .execute(getInsertOrUpdateParams(vds));
     }
 
+    /**
+     * Note: Id doesn't update {@code last_stored_kernel_cmdline} column.
+     * @see #updateLastStoredKernelCmdline(Guid, String)
+     */
     @Override
     public void update(VdsStatic vds) {
         getCallsHandler().executeModification("UpdateVdsStatic", getInsertOrUpdateParams(vds));
@@ -96,7 +104,9 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .addValue("ssh_username", vds.getSshUsername())
                 .addValue("disable_auto_pm", vds.isDisablePowerManagementPolicy())
                 .addValue("host_provider_id", vds.getHostProviderId())
-                .addValue("openstack_network_provider_id", vds.getOpenstackNetworkProviderId());
+                .addValue("openstack_network_provider_id", vds.getOpenstackNetworkProviderId())
+                .addValue("kernel_cmdline", KernelCmdlineColumn.fromVdsStatic(vds).toJson())
+                .addValue("last_stored_kernel_cmdline", vds.getLastStoredKernelCmdline());
     }
 
     @Override
@@ -147,7 +157,8 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
             entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
             entity.setHostProviderId(getGuid(rs, "host_provider_id"));
             entity.setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
-
+            KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVdsStatic(entity);
+            entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
             return entity;
         }
     }
@@ -164,4 +175,76 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
     public List<String> getAllHostNamesPinnedToVm(Guid vm) {
         return getCallsHandler().executeReadList("GetNamesOfHostsDedicatedToVm", getStringMapper(),
                 getCustomMapSqlParameterSource().addValue("vm_guid", vm));
-    }}
+    }
+
+    @Override
+    public void updateLastStoredKernelCmdline(Guid vdsStaticId, String lastStoredKernelCmdline) {
+        getCallsHandler().executeModification(
+                "UpdateVdsStaticLastStoredKernelCmdline",
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", vdsStaticId)
+                        .addValue("last_stored_kernel_cmdline", lastStoredKernelCmdline));
+    }
+
+    /**
+     * Model of JSON structured column "kernel_cmdline"
+     */
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    static class KernelCmdlineColumn {
+
+        private String current;
+        private boolean parsable;
+        private boolean iommu;
+        private boolean kvmNested;
+        private boolean unsafeInterrupts;
+        private boolean pciRealloc;
+
+        public String toJson() {
+            try {
+                return new ObjectMapper().writeValueAsString(this);
+            } catch (IOException ex) {
+                throw new RuntimeException(
+                        "Error during JSON serialization of " + KernelCmdlineColumn.class.getCanonicalName(), ex);
+            }
+        }
+
+        public static KernelCmdlineColumn fromJson(String json) {
+            final String nonSafeJson = json == null ? "{}" : json;
+            try {
+                return new ObjectMapper().readValue(nonSafeJson, KernelCmdlineColumn.class);
+            } catch (IOException ex) {
+                throw new RuntimeException(
+                        "Error during JSON deserialization of " + KernelCmdlineColumn.class.getCanonicalName(), ex);
+            }
+        }
+
+        public void toVdsStatic(VdsStatic vdsStatic) {
+            vdsStatic.setCurrentKernelCmdline(current);
+            vdsStatic.setKernelCmdlineParsable(parsable);
+            vdsStatic.setKernelCmdlineIommu(iommu);
+            vdsStatic.setKernelCmdlineKvmNested(kvmNested);
+            vdsStatic.setKernelCmdlineUnsafeInterrupts(unsafeInterrupts);
+            vdsStatic.setKernelCmdlinePciRealloc(pciRealloc);
+        }
+
+        public void toVds(VDS vds) {
+            vds.setCurrentKernelCmdline(current);
+            vds.setKernelCmdlineParsable(parsable);
+            vds.setKernelCmdlineIommu(iommu);
+            vds.setKernelCmdlineKvmNested(kvmNested);
+            vds.setKernelCmdlineUnsafeInterrupts(unsafeInterrupts);
+            vds.setKernelCmdlinePciRealloc(pciRealloc);
+        }
+
+        public static KernelCmdlineColumn fromVdsStatic(VdsStatic vdsStatic) {
+            final KernelCmdlineColumn kernelCmdlineColumn = new KernelCmdlineColumn();
+            kernelCmdlineColumn.current = vdsStatic.getCurrentKernelCmdline();
+            kernelCmdlineColumn.parsable = vdsStatic.isKernelCmdlineParsable();
+            kernelCmdlineColumn.iommu = vdsStatic.isKernelCmdlineIommu();
+            kernelCmdlineColumn.kvmNested = vdsStatic.isKernelCmdlineKvmNested();
+            kernelCmdlineColumn.unsafeInterrupts = vdsStatic.isKernelCmdlineUnsafeInterrupts();
+            kernelCmdlineColumn.pciRealloc = vdsStatic.isKernelCmdlinePciRealloc();
+            return kernelCmdlineColumn;
+        }
+    }
+}

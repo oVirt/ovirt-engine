@@ -1706,7 +1706,9 @@ SELECT cluster.cluster_id AS cluster_id,
                 ON vm_dynamic.vm_guid = vm_static.vm_guid
             WHERE vds_static.vds_id = vm_dynamic.run_on_vds
             -- Values (5 & 6) correspond to OriginTypes of HOSTED_ENGINE & MANAGED_HOSTED_ENGINE respectively
-            AND vm_static.origin IN (5,6)) AS is_hosted_engine_host
+            AND vm_static.origin IN (5,6)) AS is_hosted_engine_host,
+    vds_static.kernel_cmdline AS kernel_cmdline,
+    vds_static.last_stored_kernel_cmdline AS last_stored_kernel_cmdline
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

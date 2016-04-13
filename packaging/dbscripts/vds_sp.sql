@@ -604,7 +604,9 @@ CREATE OR REPLACE FUNCTION InsertVdsStatic (
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
     v_host_provider_id UUID,
-    v_openstack_network_provider_id UUID
+    v_openstack_network_provider_id UUID,
+    v_kernel_cmdline TEXT,
+    v_last_stored_kernel_cmdline TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -637,7 +639,9 @@ BEGIN
             ssh_username,
             disable_auto_pm,
             host_provider_id,
-            openstack_network_provider_id
+            openstack_network_provider_id,
+            kernel_cmdline,
+            last_stored_kernel_cmdline
             )
         VALUES (
             v_vds_id,
@@ -661,10 +665,30 @@ BEGIN
             v_ssh_username,
             v_disable_auto_pm,
             v_host_provider_id,
-            v_openstack_network_provider_id
+            v_openstack_network_provider_id,
+            v_kernel_cmdline,
+            v_last_stored_kernel_cmdline
             );
     END;
 END IF;
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateVdsStaticLastStoredKernelCmdline (
+    v_vds_id UUID,
+    v_last_stored_kernel_cmdline TEXT
+    )
+RETURNS VOID
+    --The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+    AS $PROCEDURE$
+BEGIN
+    BEGIN
+        UPDATE vds_static
+        SET last_stored_kernel_cmdline = v_last_stored_kernel_cmdline
+        WHERE vds_id = v_vds_id;
+    END;
 
     RETURN;
 END;$PROCEDURE$
@@ -693,11 +717,12 @@ CREATE OR REPLACE FUNCTION UpdateVdsStatic (
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
     v_host_provider_id UUID,
-    v_openstack_network_provider_id UUID
-    )
-RETURNS VOID
+    v_openstack_network_provider_id UUID,
+    v_kernel_cmdline TEXT
+)
+    RETURNS VOID
     --The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+AS $PROCEDURE$
 BEGIN
     BEGIN
         UPDATE vds_static
@@ -723,7 +748,8 @@ BEGIN
             console_address = v_console_address,
             ssh_port = v_ssh_port,
             ssh_username = v_ssh_username,
-            disable_auto_pm = v_disable_auto_pm
+            disable_auto_pm = v_disable_auto_pm,
+            kernel_cmdline = v_kernel_cmdline
         WHERE vds_id = v_vds_id;
     END;
 
