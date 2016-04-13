@@ -82,7 +82,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;
 
     private List<VDS> allForCluster;
-    private Cluster oldGroup;
+    private Cluster oldCluster;
 
     private boolean isAddedToStoragePool = false;
 
@@ -91,7 +91,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Override
     protected void init() {
         updateMigrateOnError();
-        oldGroup = getClusterDao().get(getCluster().getId());
+        oldCluster = getClusterDao().get(getCluster().getId());
     }
 
     public UpdateClusterCommand(T parameters, CommandContext commandContext) {
@@ -104,7 +104,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     private Guid getOldMacPoolId() {
-        return oldGroup.getMacPoolId();
+        return oldCluster.getMacPoolId();
     }
 
     private Guid getNewMacPoolId() {
@@ -124,9 +124,11 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         getCluster().setArchitecture(getArchitecture());
 
+        setDefaultSwitchTypeIfNeeded();
+
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
-        if (!Objects.equals(oldGroup.getCompatibilityVersion(), getParameters().getCluster().getCompatibilityVersion())) {
+        if (!Objects.equals(oldCluster.getCompatibilityVersion(), getParameters().getCluster().getCompatibilityVersion())) {
             String emulatedMachine = null;
             // pick an UP host randomly - all should have latest compat version already if we passed validate.
             for (VDS vds : allForCluster) {
@@ -141,7 +143,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 getParameters().getCluster().setEmulatedMachine(emulatedMachine);
             }
         }
-        else if (oldGroup.getArchitecture() != getCluster().getArchitecture()) {
+        else if (oldCluster.getArchitecture() != getCluster().getArchitecture()) {
             // if architecture was changed, emulated machines must be updated when adding new host.
             // At this point the cluster is empty and have changed CPU name
             getParameters().getCluster().setDetectEmulatedMachine(true);
@@ -279,12 +281,12 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         List<VM> vmList = null;
 
-        if (oldGroup == null) {
+        if (oldCluster == null) {
             addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             result = false;
         }
         // if the name was changed then make sure the new name is unique
-        if (result && !StringUtils.equals(oldGroup.getName(), getCluster().getName())) {
+        if (result && !StringUtils.equals(oldCluster.getName(), getCluster().getName())) {
             if (!isClusterUnique(getCluster().getName())) {
                 addValidationMessage(EngineMessage.CLUSTER_CANNOT_DO_ACTION_NAME_IN_USE);
                 result = false;
@@ -297,18 +299,18 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (result) {
-            allForCluster = getVdsDao().getAllForCluster(oldGroup.getId());
+            allForCluster = getVdsDao().getAllForCluster(oldCluster.getId());
         }
         // decreasing of compatibility version is only allowed when no hosts exists, and not beneath the DC version
-        if (result && getCluster().getCompatibilityVersion().compareTo(oldGroup.getCompatibilityVersion()) < 0) {
+        if (result && getCluster().getCompatibilityVersion().compareTo(oldCluster.getCompatibilityVersion()) < 0) {
             if (!allForCluster.isEmpty()) {
                 result = false;
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
             }
 
-            if (oldGroup.getStoragePoolId() != null) {
+            if (oldCluster.getStoragePoolId() != null) {
                 ClusterValidator validator = new ClusterValidator(
-                        getDbFacade(), oldGroup, getCpuFlagsManagerHandler());
+                        getDbFacade(), oldCluster, getCpuFlagsManagerHandler());
                 if (!validate(validator.dataCenterVersionMismatch())) {
                     result = false;
                     addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
@@ -316,8 +318,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
 
         }
-        if (result && oldGroup.getStoragePoolId() != null
-                && !oldGroup.getStoragePoolId().equals(getCluster().getStoragePoolId())) {
+        if (result && oldCluster.getStoragePoolId() != null
+                && !oldCluster.getStoragePoolId().equals(getCluster().getStoragePoolId())) {
             addValidationMessage(EngineMessage.CLUSTER_CANNOT_CHANGE_STORAGE_POOL);
             result = false;
         }
@@ -327,7 +329,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
         // Validate the cpu only if the cluster supports Virt
         if (result && getCluster().supportsVirtService()
-                && (oldGroup.getCpuName() != null || getCluster().getCpuName() != null)) {
+                && (oldCluster.getCpuName() != null || getCluster().getCpuName() != null)) {
             // Check that cpu exist
             if (!checkIfCpusExist()) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
@@ -336,8 +338,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             } else {
                 // if cpu changed from intel to amd (or backwards) and there are
                 // vds in this cluster, cannot update
-                if (!StringUtils.isEmpty(oldGroup.getCpuName())
-                        && !checkIfCpusSameManufacture(oldGroup)
+                if (!StringUtils.isEmpty(oldCluster.getCpuName())
+                        && !checkIfCpusSameManufacture(oldCluster)
                         && !allVdssInMaintenance) {
                     addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_ILLEGAL);
                     result = false;
@@ -346,11 +348,11 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (result) {
-            vmList = getVmDao().getAllForCluster(oldGroup.getId());
+            vmList = getVmDao().getAllForCluster(oldCluster.getId());
             hasVmOrHost = !vmList.isEmpty() || !allForCluster.isEmpty();
         }
 
-        if (result && !getCluster().getCompatibilityVersion().equals(oldGroup.getCompatibilityVersion())) {
+        if (result && !getCluster().getCompatibilityVersion().equals(oldCluster.getCompatibilityVersion())) {
             // all VMs must be in Down state when major.minor cluster version change
             for (VM vm : vmList) {
                 if (!vm.isDown()) {
@@ -370,13 +372,13 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (result) {
-            sameCpuNames = StringUtils.equals(oldGroup.getCpuName(), getCluster().getCpuName());
+            sameCpuNames = StringUtils.equals(oldCluster.getCpuName(), getCluster().getCpuName());
         }
 
         if (result) {
-            boolean isOldCPUEmpty = StringUtils.isEmpty(oldGroup.getCpuName());
+            boolean isOldCPUEmpty = StringUtils.isEmpty(oldCluster.getCpuName());
 
-            if (!isOldCPUEmpty && !sameCpuNames && !isCpuUpdatable(oldGroup) && hasVmOrHost) {
+            if (!isOldCPUEmpty && !sameCpuNames && !isCpuUpdatable(oldCluster) && hasVmOrHost) {
                 addValidationMessage(EngineMessage.CLUSTER_CPU_IS_NOT_UPDATABLE);
                 result = false;
             }
@@ -384,7 +386,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         if (result) {
             List<VDS> vdss = new ArrayList<>();
-            isAddedToStoragePool = oldGroup.getStoragePoolId() == null
+            isAddedToStoragePool = oldCluster.getStoragePoolId() == null
                     && getCluster().getStoragePoolId() != null;
 
             if (isAddedToStoragePool && !validateManagementNetworkAttachement()) {
@@ -447,7 +449,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                         addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
                         result = false;
                     } else if (notDownVms) {
-                        int compareResult = compareCpuLevels(oldGroup);
+                        int compareResult = compareCpuLevels(oldCluster);
                         if (compareResult > 0) {// Upgrade of CPU in same compability level is allowed if
                                                        // there
                             // are running VMs - but we should warn they
@@ -463,7 +465,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
         if (result && getCluster().getStoragePoolId() != null) {
             StoragePool storagePool = getStoragePoolDao().get(getCluster().getStoragePoolId());
-            if (oldGroup.getStoragePoolId() == null && storagePool.isLocal()) {
+            if (oldCluster.getStoragePoolId() == null && storagePool.isLocal()) {
                 // we allow only one cluster in localfs data center
                 if (!getClusterDao().getAllForStoragePool(getCluster().getStoragePoolId()).isEmpty()) {
                     getReturnValue()
@@ -513,7 +515,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (result) {
-            result = validateClusterPolicy(oldGroup);
+            result = validateClusterPolicy(oldCluster);
         }
         if (result && getParameters().isForceResetEmulatedMachine()) {
             for (VDS vds : allForCluster) {
@@ -598,8 +600,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     protected boolean isArchitectureUpdatable() {
-        return oldGroup.getArchitecture() == ArchitectureType.undefined ? true
-                : getArchitecture() == oldGroup.getArchitecture();
+        return oldCluster.getArchitecture() == ArchitectureType.undefined ? true
+                : getArchitecture() == oldCluster.getArchitecture();
     }
 
     protected boolean checkIfCpusSameManufacture(Cluster group) {
@@ -659,7 +661,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Override
     public String getEntityOldName() {
-        return oldGroup.getName();
+        return oldCluster.getName();
     }
 
     @Override
@@ -669,7 +671,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Override
     public void setEntityId(AuditLogableBase logable) {
-        logable.setClusterId(oldGroup.getId());
+        logable.setClusterId(oldCluster.getId());
     }
 
     DefaultManagementNetworkFinder getDefaultManagementNetworkFinder() {
