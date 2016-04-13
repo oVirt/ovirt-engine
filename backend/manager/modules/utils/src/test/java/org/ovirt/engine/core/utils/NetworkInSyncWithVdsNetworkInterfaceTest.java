@@ -232,6 +232,24 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
+
+    @Test
+    public void testReportConfigurationsOnHostWhenSwitchTypeIsOutOfSync() throws Exception {
+        cluster.setRequiredSwitchTypeForCluster(SwitchType.OVS);
+
+        ReportedConfigurations reportedConfigurations = createTestedInstance().reportConfigurationsOnHost();
+
+        assertThat(reportedConfigurations.isNetworkInSync(), is(false));
+        List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
+
+        ReportedConfiguration expectedReportedConfiguration = new ReportedConfiguration(ReportedConfigurationType.SWITCH_TYPE,
+                SwitchType.LEGACY,
+                SwitchType.OVS,
+                false);
+
+        assertThat(reportedConfigurationList.contains(expectedReportedConfiguration), is(true));
+    }
+
     @Test
     public void testReportConfigurationsOnHostWhenIfaceQosIsNull() throws Exception {
         ifaceQos = null;
