@@ -390,8 +390,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.RegisterVmPo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestroyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageForceCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.UploadImagePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemovePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.UploadImagePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportCloneDialogPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmFromExportDomainPopupView;
