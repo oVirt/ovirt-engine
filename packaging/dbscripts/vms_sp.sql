@@ -83,7 +83,7 @@ Create or replace FUNCTION GetVmTemplatesIdsForOvfUpdate(v_storage_pool_id UUID)
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT templates.vmt_guid as vm_guid
-   FROM vm_templates_view templates, vm_ovf_generations generations
+   FROM vm_templates_based_view templates, vm_ovf_generations generations
    WHERE generations.vm_guid = templates.vmt_guid
    AND templates.db_generation > generations.ovf_generation
    AND templates.storage_pool_id = v_storage_pool_id;
