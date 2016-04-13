@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -24,7 +25,9 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -43,6 +46,13 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     private static final Guid CLUSTER_ID = Guid.newGuid();
+    private static final BusinessEntityMap<VdsNetworkInterface> EMPTY_NICS_MAP =
+            new BusinessEntityMap<>(Collections.emptyList());
+    private static final String HOST_NAME = "hostName";
+    private static final String NIC_NAME = "nicName";
+    private static final String NETWORK_NAME = "networkName";
+    private static final String IPV4_ADDRESS = "any IPv4 Address";
+    private static final String IPV6_ADDRESS = "any IPv6 Address";
 
     @Mock
     private NetworkDao networkDaoMock;
@@ -54,7 +64,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     private VdsDao vdsDaoMock;
 
     @Mock
-    private NetworkValidator networkValidatorMock;;
+    private NetworkValidator networkValidatorMock;
 
     @Mock
     private ManagementNetworkUtil managementNetworkUtilMock;
@@ -66,7 +76,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     public NetworkAttachmentValidatorTest() {
         host = new VDS();
-        host.getStaticData().setName("hostName");
+        host.getStaticData().setName(HOST_NAME);
         host.setId(Guid.newGuid());
         host.setClusterId(CLUSTER_ID);
     }
@@ -84,8 +94,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testNetworkAttachmentIsSetWhenAttachmentIsNull() {
         EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS;
         assertThat(createNetworkAttachmentValidator(null).networkAttachmentIsSet(),
-            failsWith(engineMessage,
-                ReplacementUtils.getVariableAssignmentString(engineMessage, "null")));
+                failsWith(engineMessage, ReplacementUtils.getVariableAssignmentString(engineMessage, null)));
     }
 
     @Test
@@ -117,21 +126,19 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     @Test
     public void testNetworkExistWhenOnlyNetworkNameIsSet() {
-        String networkName = "network";
-
         NetworkAttachment networkAttachment = new NetworkAttachment();
-        networkAttachment.setNetworkName(networkName);
+        networkAttachment.setNetworkName(NETWORK_NAME);
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
         EngineMessage engineMessage = EngineMessage.NETWORK_HAVING_NAME_NOT_EXISTS;
         assertThat(validator.networkExists(),
                 failsWith(engineMessage,
-                        ReplacementUtils.getVariableAssignmentString(engineMessage, networkName)));
+                        ReplacementUtils.getVariableAssignmentString(engineMessage, NETWORK_NAME)));
     }
 
     @Test
     public void testNetworkExistWhenBothNetworkNameAndNetworkIdAreSet() {
         NetworkAttachment networkAttachment = new NetworkAttachment();
-        networkAttachment.setNetworkName("network");
+        networkAttachment.setNetworkName(NETWORK_NAME);
         networkAttachment.setNetworkId(Guid.newGuid());
         assertThat(createNetworkAttachmentValidator(networkAttachment).networkExists(), isValid());
     }
@@ -175,9 +182,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK, "a");
         when(networkValidatorMock.notRemovingManagementNetwork()).thenReturn(propagatedResult);
 
-        assertThat("ValidationResult is not correctly propagated",
-                networkAttachmentValidatorSpy.notRemovingManagementNetwork(),
-            failsWith(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK, "a"));
+        assertThat("ValidationResult is not propagated correctly",
+                networkAttachmentValidatorSpy.notRemovingManagementNetwork(), is(propagatedResult));
     }
 
     @Test
@@ -199,7 +205,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testNetworkAttachedToClusterWhenNotAttached() {
         Network network = new Network();
         network.setId(Guid.newGuid());
-        network.setName("networkName");
+        network.setName(NETWORK_NAME);
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
@@ -214,7 +220,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             failsWith(engineMessage, ReplacementUtils.getVariableAssignmentString(engineMessage, network.getName())));
     }
 
-    private NetworkAttachment createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol bootProtocol,
+    private NetworkAttachment createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol bootProtocol,
             String address,
             String netmask) {
 
@@ -224,6 +230,23 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         primaryAddress.setNetmask(netmask);
         primaryAddress.setBootProtocol(bootProtocol);
         ipConfiguration.getIPv4Addresses().add(primaryAddress);
+
+        NetworkAttachment attachment = new NetworkAttachment();
+        attachment.setIpConfiguration(ipConfiguration);
+
+        return attachment;
+    }
+
+    private NetworkAttachment createNetworkAttachmentWithIpv6Configuration(Ipv6BootProtocol bootProtocol,
+            String address,
+            Integer prefix) {
+
+        IpConfiguration ipConfiguration = new IpConfiguration();
+        IpV6Address primaryAddress = new IpV6Address();
+        primaryAddress.setAddress(address);
+        primaryAddress.setPrefix(prefix);
+        primaryAddress.setBootProtocol(bootProtocol);
+        ipConfiguration.getIpV6Addresses().add(primaryAddress);
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setIpConfiguration(ipConfiguration);
@@ -291,7 +314,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = createNetwork();
 
         NetworkAttachment attachment =
-                createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.NONE, null, null);
+                createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.NONE, null, null);
         attachment.setNetworkId(network.getId());
 
         doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
@@ -309,7 +332,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     private Network createNetwork() {
         Network network = new Network();
         network.setId(Guid.newGuid());
-        network.setName("networkName");
+        network.setName(NETWORK_NAME);
         return network;
     }
 
@@ -318,7 +341,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = createNetwork();
 
         NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.NONE, null, null);
+            createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.NONE, null, null);
         attachment.setNetworkId(network.getId());
 
 
@@ -338,7 +361,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = createNetwork();
 
         NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.DHCP, null, null);
+            createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.DHCP, null, null);
         attachment.setNetworkId(network.getId());
 
         doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(true,
@@ -387,10 +410,10 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     private void doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(Ipv4BootProtocol bootProtocol) {
-        NetworkAttachment attachment = createNetworkAttachmentWithIpConfiguration(bootProtocol, null, null);
+        NetworkAttachment attachment = createNetworkAttachmentWithIpv4Configuration(bootProtocol, null, null);
 
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
-        ValidationResult actual = validator.networkIpAddressWasSameAsHostnameAndChanged(null);
+        ValidationResult actual = validator.networkIpAddressWasSameAsHostnameAndChanged(EMPTY_NICS_MAP);
         assertThat(actual, isValid());
     }
 
@@ -398,33 +421,62 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIfaceDoesNotExist() {
 
         NetworkAttachment attachment =
-                createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.STATIC_IP, null, null);
-        attachment.setNicName("nicName");
+                createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.STATIC_IP, null, null);
+        attachment.setNicName(NIC_NAME);
 
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
-        BusinessEntityMap<VdsNetworkInterface> nics =
-            new BusinessEntityMap<>(Collections.<VdsNetworkInterface> emptyList());
-        assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(nics), isValid());
+
+        assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(EMPTY_NICS_MAP), isValid());
     }
 
     @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChanged() {
+    public void testNetworkIpv4AddressWasSameAsHostnameAndChanged() {
         Network network = new Network();
-        network.setName("networkName");
+        network.setName(NETWORK_NAME);
         network.setId(Guid.newGuid());
 
 
         VdsNetworkInterface existingInterface = new VdsNetworkInterface();
-        existingInterface.setName("nicName");
-        existingInterface.setIpv4Address("anyAddress");
+        existingInterface.setName(NIC_NAME);
+        existingInterface.setIpv4Address(IPV4_ADDRESS);
         existingInterface.setNetworkName(network.getName());
 
         NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(Ipv4BootProtocol.STATIC_IP, null, null);
+            createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.STATIC_IP, null, null);
         attachment.setNicName(existingInterface.getName());
         attachment.setNetworkId(network.getId());
 
         host.setHostName(existingInterface.getIpv4Address());
+
+        when(networkDaoMock.get(attachment.getNetworkId())).thenReturn(network);
+
+        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
+        BusinessEntityMap<VdsNetworkInterface> nics =
+            new BusinessEntityMap<>(Collections.singletonList(existingInterface));
+        assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(nics),
+            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED,
+                    ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
+                            existingInterface.getNetworkName())));
+    }
+
+    @Test
+    public void testNetworkIpv6AddressWasSameAsHostnameAndChanged() {
+        Network network = new Network();
+        network.setName(NETWORK_NAME);
+        network.setId(Guid.newGuid());
+
+
+        VdsNetworkInterface existingInterface = new VdsNetworkInterface();
+        existingInterface.setName(NIC_NAME);
+        existingInterface.setIpv6Address(IPV6_ADDRESS);
+        existingInterface.setNetworkName(network.getName());
+
+        NetworkAttachment attachment =
+            createNetworkAttachmentWithIpv6Configuration(Ipv6BootProtocol.STATIC_IP, null, null);
+        attachment.setNicName(existingInterface.getName());
+        attachment.setNetworkId(network.getId());
+
+        host.setHostName(existingInterface.getIpv6Address());
 
         when(networkDaoMock.get(attachment.getNetworkId())).thenReturn(network);
 
@@ -477,7 +529,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         when(networkDaoMock.get(network.getId())).thenReturn(network);
 
         // no vds for network id.
-        when(vdsDaoMock.getAllForNetwork(eq(network.getId()))).thenReturn(Collections.<VDS> emptyList());
+        when(vdsDaoMock.getAllForNetwork(eq(network.getId()))).thenReturn(Collections.emptyList());
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
@@ -492,14 +544,14 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         when(networkDaoMock.get(network.getId())).thenReturn(network);
         when(vdsDaoMock.getAllForNetwork(eq(network.getId()))).thenReturn(Collections.singletonList(host));
 
-        String networkName = "networkName";
+        String networkName = NETWORK_NAME;
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
         attachment.setNetworkName(networkName);
         assertThat(createNetworkAttachmentValidator(attachment).networkNotAttachedToHost(),
             failsWith(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_HOST,
-                    ReplacementUtils.createSetVariableString("networkName", networkName),
-                    ReplacementUtils.createSetVariableString("hostName", host.getName())));
+                    ReplacementUtils.createSetVariableString(NETWORK_NAME, networkName),
+                    ReplacementUtils.createSetVariableString(HOST_NAME, host.getName())));
     }
 
     @Test
@@ -508,7 +560,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         NetworkAttachment oldAttachment = new NetworkAttachment();
         oldAttachment.setNetworkId(networkId);
-        oldAttachment.setNetworkName("reusedNetwork");
+        oldAttachment.setNetworkName(NETWORK_NAME);
         oldAttachment.setId(Guid.newGuid());
 
         Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId = new HashMap<>();
@@ -543,7 +595,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         NetworkAttachment oldAttachment = new NetworkAttachment();
         oldAttachment.setNetworkId(networkId);
-        oldAttachment.setNetworkName("reusedNetwork");
+        oldAttachment.setNetworkName(NETWORK_NAME);
         oldAttachment.setId(attachmentId);
 
         Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId = new HashMap<>();

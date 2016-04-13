@@ -96,6 +96,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByAddressPredicate;
+import org.ovirt.engine.core.utils.network.predicate.IpAddressPredicate;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1671,9 +1672,8 @@ public class VdsBrokerObjectsBuilder {
         if (hostIp == null) {
             return null;
         }
-        final String managementAddress = hostIp;
         VdsNetworkInterface activeIface = host.getInterfaces().stream()
-                .filter(new InterfaceByAddressPredicate(managementAddress)).findFirst().orElse(null);
+                .filter(new InterfaceByAddressPredicate(hostIp)).findFirst().orElse(null);
         return activeIface;
     }
 
@@ -1764,8 +1764,8 @@ public class VdsBrokerObjectsBuilder {
      * @return the name of the bridge obtaining ipAddress, null in case no such exist
      */
     private static String findActiveBridge(String ipAddress, Map<String, Map<String, Object>> bridges) {
-        String activeBridge = null;
         if (bridges != null) {
+            final Predicate<String> ipAddressPredicate = new IpAddressPredicate(ipAddress);
             for (Entry<String, Map<String, Object>> entry : bridges.entrySet()) {
                 Map<String, Object> bridgeProperties = entry.getValue();
                 String bridgeName = entry.getKey();
@@ -1773,14 +1773,13 @@ public class VdsBrokerObjectsBuilder {
                     String bridgeIpv4Address = (String) bridgeProperties.get("addr");
                     String bridgeIpv6Address = extractIpv6Address(getIpv6Address(bridgeProperties));
                     // in case host is communicating with engine over a bridge
-                    if ((bridgeIpv4Address != null && bridgeIpv4Address.equals(ipAddress)) ||
-                            (bridgeIpv6Address != null && bridgeIpv6Address.equals(ipAddress))) {
-                        activeBridge = bridgeName;
+                    if (ipAddressPredicate.test(bridgeIpv4Address) || ipAddressPredicate.test(bridgeIpv6Address)) {
+                        return bridgeName;
                     }
                 }
             }
         }
-        return activeBridge;
+        return null;
     }
 
     /**
