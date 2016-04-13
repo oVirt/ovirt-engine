@@ -355,6 +355,79 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return _returnValue;
     }
 
+    /**
+     * Validates that the pre-conditions for command execution are met.
+     * This method is called internally from the code.
+     * <p>
+     * In general, each command has its own conditions which should met, in order to expect a valid command execution.
+     * An attempt to execute a command which failed to meet all the condition will lead to unpredicted result and should
+     * be avoided.
+     * <p>
+     * The violated condition messages are stored by {@link #addValidationMessage(EngineMessage)} and can be reviewed
+     * in {@link VdcReturnValueBase#getValidationMessages()} retrieved by {@link #getReturnValue()}
+     *
+     * @return VdcReturnValueBase A container object for the operation result.
+     */
+    public VdcReturnValueBase validateOnly() {
+        setActionMessageParameters();
+        getReturnValue().setValid(internalValidate());
+        String tempVar = getDescription();
+        getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
+        return _returnValue;
+    }
+
+    private boolean isValidateSupportsTransaction() {
+        return getClass().isAnnotationPresent(ValidateSupportsTransaction.class);
+    }
+    /**
+     * Add a message to the {@link CommandBase#validate()}'s return value.
+     * This return value will be sent to the client for the detailed information
+     * of why the action can't be performed.
+     *
+     * @param message
+     *            The message to add.
+     */
+    protected void addValidationMessage(EngineMessage message) {
+        getReturnValue().getValidationMessages().add(message.name());
+    }
+
+    private boolean internalValidate() {
+        boolean returnValue = false;
+        try {
+            Transaction transaction = null;
+            if (!isValidateSupportsTransaction()) {
+                transaction = TransactionSupport.suspend();
+            }
+            try {
+                returnValue =
+                        isUserAuthorizedToRunAction() && isBackwardsCompatible() && validateInputs() && acquireLock()
+                                && validate()
+                                && internalValidateAndSetQuota();
+                if (!returnValue && getReturnValue().getValidationMessages().size() > 0) {
+                    log.warn("Validation of action '{}' failed for user {}. Reasons: {}",
+                            getActionType(), getUserName(),
+                            StringUtils.join(getReturnValue().getValidationMessages(), ','));
+                }
+            } finally {
+                if (transaction != null) {
+                    TransactionSupport.resume(transaction);
+                }
+            }
+        } catch (DataAccessException dataAccessEx) {
+            log.error("Data access error during ValidateFailure.", dataAccessEx);
+            addValidationMessage(EngineMessage.CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE);
+        } catch (RuntimeException ex) {
+            log.error("Error during ValidateFailure.", ex);
+            addValidationMessage(EngineMessage.CAN_DO_ACTION_GENERAL_FAILURE);
+        } finally {
+            if (!returnValue) {
+                setCommandStatus(CommandStatus.ENDED_WITH_FAILURE);
+                freeLock();
+            }
+        }
+        return returnValue;
+    }
+
     public VdcReturnValueBase executeAction() {
         determineExecutionReason();
         _actionState = CommandActionState.EXECUTE;
@@ -1139,6 +1212,22 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 }
             }
         }
+    }
+
+    /**
+     * Validates that the pre-conditions for command execution are met.
+     * <p>
+     * In general, each command has its own conditions which should met, in order to expect a valid command execution.
+     * An attempt to execute a command which failed to meet all the condition will lead to unpredicted result and should
+     * be avoided.
+     * <p>
+     * The violated condition messages are stored by {@link #addValidationMessage(EngineMessage)} and can be reviewed
+     * in {@link VdcReturnValueBase#getValidationMessages()} retrieved by {@link #getReturnValue()}
+     *
+     * @return {@code true} if the command can be executed, else {@code false}
+     */
+    protected boolean validate() {
+        return true;
     }
 
     protected boolean canDoAction() {

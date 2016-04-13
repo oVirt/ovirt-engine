@@ -43,6 +43,13 @@ public abstract class Disk extends BaseDisk {
      */
 
 
+    /**
+     * Image Transfer information is only for display purposes
+     */
+    private ImageTransferPhase imageTransferPhase;
+    private Long imageTransferBytesSent;
+    private Long imageTransferBytesTotal;
+
     public Disk() {
         contentType = DiskContentType.DATA;
     }
@@ -89,6 +96,7 @@ public abstract class Disk extends BaseDisk {
     public ImageTransferPhase getImageTransferPhase() {
         return imageTransferPhase;
     }
+
     public void setImageTransferPhase(ImageTransferPhase imageTransferPhase) {
         this.imageTransferPhase = imageTransferPhase;
     }

@@ -59,6 +59,8 @@ public enum VDSCommandType {
     HSMGetStorageDomainInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetStorageDomainsList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    PrepareImage("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    TeardownImage("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateVolumeContainer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CopyVolumeData("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     IsolateVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
@@ -138,6 +140,11 @@ public enum VDSCommandType {
     GetConvertedOvf("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DeleteV2VJob("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CancelConvertVm("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    AddImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    RemoveImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    ExtendImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetImageTransferSessionStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+
     // Gluster VDS commands
     CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster"),

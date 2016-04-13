@@ -223,6 +223,9 @@ SELECT
     images_storage_domain_view.alignment AS alignment,
     images_storage_domain_view.last_alignment_scan AS last_alignment_scan,
     images_storage_domain_view.ovf_store AS ovf_store,
+    images_storage_domain_view.image_transfer_phase AS image_transfer_phase,
+    images_storage_domain_view.image_transfer_bytes_sent AS image_transfer_bytes_sent,
+    images_storage_domain_view.image_transfer_bytes_total AS image_transfer_bytes_total,
     images_storage_domain_view.disk_storage_type as disk_storage_type,
     images_storage_domain_view.cinder_volume_type as cinder_volume_type
 FROM
@@ -288,6 +291,9 @@ FROM (
             storage_for_image_view.quota_name AS quota_name,
             quota_enforcement_type,
             ovf_store,
+            image_transfer_phase,
+            image_transfer_bytes_sent,
+            image_transfer_bytes_total,
             storage_for_image_view.disk_profile_id AS disk_profile_id,
             -- disk profile fields
             storage_for_image_view.disk_profile_name AS disk_profile_name,
@@ -339,6 +345,9 @@ FROM (
             storage_for_image_view.quota_name,
             quota_enforcement_type,
             ovf_store,
+            image_transfer_phase,
+            image_transfer_bytes_sent,
+            image_transfer_bytes_total,
             storage_for_image_view.disk_profile_id,
             storage_for_image_view.disk_profile_name
         UNION
@@ -385,6 +394,9 @@ FROM (
             NULL AS quota_name,
             NULL AS quota_enforcement_type,
             FALSE AS ovf_store,
+            NULL AS image_transfer_phase,
+            NULL AS image_transfer_bytes_sent,
+            NULL AS image_transfer_bytes_total,
             NULL AS disk_profile_id,
             -- disk profile fields
             NULL AS disk_profile_name,

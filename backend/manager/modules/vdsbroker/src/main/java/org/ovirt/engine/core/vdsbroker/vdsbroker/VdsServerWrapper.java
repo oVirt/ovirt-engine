@@ -39,6 +39,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
@@ -1702,6 +1703,52 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc add_image_ticket(String ticketId,
+            String[] ops, long timeout, long size, String url) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.add_image_ticket(ticketId,
+                    ops, timeout, size, url);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc remove_image_ticket(String ticketId) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.remove_image_ticket(ticketId);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc extend_image_ticket(String ticketId, long timeout) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.extend_image_ticket(ticketId, timeout);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public OneMapReturnForXmlRpc get_image_transfer_session_stats(String ticketId) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.get_image_transfer_session_stats(ticketId);
+            OneMapReturnForXmlRpc wrapper = new OneMapReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public GlusterTasksListReturnForXmlRpc glusterTasksList() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterTasksList();
@@ -1738,6 +1785,28 @@ public class VdsServerWrapper implements IVdsServer {
                     e.getMessage());
             logger.debug("Exception", e);
             return null;
+        }
+    }
+
+    @Override
+    public PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.prepareImage(sdID, spID, imageID, volumeID);
+            PrepareImageReturnForXmlRpc wrapper = new PrepareImageReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusReturnForXmlRpc teardownImage(String sdID, String spID, String imageID, String volumeID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.teardownImage(sdID, spID, imageID, volumeID);
+            StatusReturnForXmlRpc wrapper = new StatusReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
         }
     }
 

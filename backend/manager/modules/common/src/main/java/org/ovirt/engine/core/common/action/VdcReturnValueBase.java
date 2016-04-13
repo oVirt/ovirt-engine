@@ -10,7 +10,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdcReturnValueBase implements Serializable {
     private static final long serialVersionUID = 6063371142273092365L;
 
+    private boolean valid;
     private boolean canDoAction;
+    private ArrayList<String> validationMessages;
     private ArrayList<String> canDoActionMessages;
     private boolean succeeded;
     private boolean isSyncronious;
@@ -36,6 +38,7 @@ public class VdcReturnValueBase implements Serializable {
     private Guid jobId;
 
     public VdcReturnValueBase() {
+        validationMessages = new ArrayList<>();
         canDoActionMessages = new ArrayList<String>();
         description = "";
         taskPlaceHolderIdList = new ArrayList<Guid>();
@@ -56,6 +59,22 @@ public class VdcReturnValueBase implements Serializable {
 
     public void setFault(EngineFault value) {
         fault = value;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean value) {
+        valid = value;
+    }
+
+    public ArrayList<String> getValidationMessages() {
+        return validationMessages;
+    }
+
+    public void setValidationMessages(ArrayList<String> value) {
+        validationMessages = value;
     }
 
     public boolean getCanDoAction() {

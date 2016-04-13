@@ -33,6 +33,11 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
         return VdsHandler.handleVdsResult(getResourceManager().runVdsCommand(commandType, parameters));
     }
 
+    @Override
+    public VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
+        return VdsHandler.handleVdsResult(getResourceManager().runVdsCommand(commandType, parameters));
+    }
+
     /*
      * (non-Javadoc)
      *

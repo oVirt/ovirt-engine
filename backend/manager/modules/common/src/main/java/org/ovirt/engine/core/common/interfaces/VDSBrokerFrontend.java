@@ -23,4 +23,6 @@ public interface VDSBrokerFrontend {
     FutureVDSCall<VDSReturnValue> runFutureVdsCommand(FutureVDSCommandType commandType,
             VdsIdVDSCommandParametersBase parameters);
 
+    VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters);
+
 }
