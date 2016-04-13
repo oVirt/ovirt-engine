@@ -26,6 +26,11 @@ public class ClusterMapper {
     @Mapping(from = org.ovirt.engine.api.model.Cluster.class, to = Cluster.class)
     public static Cluster map(org.ovirt.engine.api.model.Cluster model, Cluster template) {
         Cluster entity = template != null ? template : new Cluster();
+
+        if (model.isSetSwitchType()) {
+            entity.setRequiredSwitchTypeForCluster(SwitchTypeMapper.mapFromModel(model.getSwitchType()));
+        }
+
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -130,6 +135,8 @@ public class ClusterMapper {
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
         model.setComment(entity.getComment());
+        model.setSwitchType(SwitchTypeMapper.mapToModel(entity.getRequiredSwitchTypeForCluster()));
+
         if (entity.getCpuName() != null) {
             Cpu cpu = new Cpu();
             cpu.setType(entity.getCpuName());
