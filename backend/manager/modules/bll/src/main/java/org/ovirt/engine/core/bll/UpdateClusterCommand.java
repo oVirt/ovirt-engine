@@ -110,6 +110,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     protected void executeCommand() {
         getCluster().setArchitecture(getArchitecture());
 
+        setDefaultSwitchTypeIfNeeded();
+
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
         if (!Objects.equals(oldGroup.getCompatibilityVersion(), getParameters().getCluster().getCompatibilityVersion())) {
