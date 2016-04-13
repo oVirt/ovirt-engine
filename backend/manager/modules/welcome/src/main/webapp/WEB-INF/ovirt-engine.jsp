@@ -14,7 +14,7 @@
     <obrand:javascripts />
     <script src="splash.js" type="text/javascript"></script>
 </head>
-<body onload="pageLoaded()">
+<body>
     <div class="obrand_loginPageBackground">
         <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
              <span class="obrand_loginPageLogoImage"></span>

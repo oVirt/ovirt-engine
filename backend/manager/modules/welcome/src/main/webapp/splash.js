@@ -1,10 +1,3 @@
-function pageLoaded()
-{
-    // TODO fix these IDs
-    document.getElementById("warningMessage").style.display = "none";
-    document.getElementById("dynamicLinksSection").style.display = "block";
-}
-
 function localeSelected(selectBox) {
     var selectedLocale = selectBox.options[selectBox.selectedIndex].value;
     var newParam = 'locale=' + encodeURIComponent(selectedLocale);
