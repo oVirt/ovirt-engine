@@ -24,6 +24,8 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.network.DefaultSwitchType;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
@@ -239,5 +241,13 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     protected InClusterUpgradeValidator getUpgradeValidator() {
         return upgradeValidator;
+    }
+
+    protected void setDefaultSwitchTypeIfNeeded() {
+        Cluster cluster = getCluster();
+        if (cluster.getRequiredSwitchTypeForCluster() == null) {
+            SwitchType defaultSwitchType = DefaultSwitchType.getDefaultSwitchType(cluster.getCompatibilityVersion());
+            cluster.setRequiredSwitchTypeForCluster(defaultSwitchType);
+        }
     }
 }

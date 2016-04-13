@@ -73,6 +73,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     protected void executeCommand() {
         Cluster cluster = getCluster();
         cluster.setArchitecture(getArchitecture());
+        setDefaultSwitchTypeIfNeeded();
 
         checkMaxMemoryOverCommitValue();
         cluster.setDetectEmulatedMachine(true);
