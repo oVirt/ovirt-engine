@@ -62,8 +62,8 @@ public class LocaleFilter implements Filter {
             final FilterChain chain) throws IOException, ServletException {
         Locale locale = determineLocale((HttpServletRequest) request);
         request.setAttribute(LOCALE, locale);
-        chain.doFilter(request, response);
         setCookie((HttpServletResponse) response, request.getServletContext(), locale);
+        chain.doFilter(request, response);
     }
 
     /**
