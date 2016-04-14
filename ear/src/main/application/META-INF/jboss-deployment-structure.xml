@@ -5,11 +5,42 @@
       <module name="javax.enterprise.api"/>
       <module name="javax.inject.api"/>
       <module name="javax.interceptor.api"/>
-      <module name="org.ovirt.engine.core.common" export="true" meta-inf="import"/>
-      <module name="org.ovirt.engine.core.utils" export="true" meta-inf="import"/>
-      <module name="org.ovirt.engine.core.dal" export="true" meta-inf="import"/>
+      <module name="javax.validation.api"/>
+
+      <module name="asm.asm" export="true"/>
+      <module name="com.woorea.openstack.sdk" export="true" services="import" />
+      <module name="org.apache.commons.beanutils" export="true"/>
+      <module name="org.apache.commons.codec" export="true"/>
+      <module name="org.apache.commons.collections" export="true"/>
+      <module name="org.apache.commons.httpclient" export="true"/>
+      <module name="org.apache.commons.lang" export="true"/>
+      <module name="org.apache.httpcomponents" export="true"/>
+      <module name="org.apache.xmlrpc" export="true"/>
+      <module name="org.codehaus.jackson.jackson-core-asl" export="true"/>
+      <module name="org.codehaus.jackson.jackson-mapper-asl" export="true"/>
+      <module name="org.dom4j" export="true"/>
+      <module name="org.hibernate.validator" export="true"/>
+      <module name="org.infinispan" export="true"/>
+      <module name="org.jboss.resteasy.resteasy-jaxrs" export="true"/>
+      <module name="org.quartz" export="true"/>
+      <module name="org.slf4j" export="true"/>
+      <module name="org.springframework" export="true"/>
+      <module name="org.yaml.snakeyaml" export="true"/>
+
+      <module name="org.ovirt.engine.api.ovirt-engine-extensions-api" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.aaa" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.branding" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.common" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.compat" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.dal" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.extensions-manager" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.searchbackend" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.utils" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.uutils" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.extensions.builtin" export="true" meta-inf="import"/>
+      <module name="org.ovirt.otopi" export="true"/>
+      <module name="org.ovirt.ovirt-host-deploy" export="true" meta-inf="import"/>
+      <module name="org.ovirt.vdsm-jsonrpc-java" export="true"/>
     </dependencies>
   </deployment>
 </jboss-deployment-structure>

@@ -253,11 +253,8 @@
 
           </modules>
 
-          <!-- Add a the manifest that contains the required dependencies
-               for JBoss modules: -->
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
           </archive>
 
           <!-- Add the META-INF directory, all the EJB and web
