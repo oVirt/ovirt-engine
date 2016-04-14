@@ -33,12 +33,6 @@ WHERE (
             )
         );
 
-CREATE OR REPLACE VIEW dwh_datacenter_history_view AS
-
-SELECT id AS datacenter_id,
-    CAST(status AS SMALLINT) AS datacenter_status
-FROM storage_pool;
-
 CREATE OR REPLACE VIEW dwh_storage_domain_configuration_history_view AS
 
 SELECT id AS storage_domain_id,
