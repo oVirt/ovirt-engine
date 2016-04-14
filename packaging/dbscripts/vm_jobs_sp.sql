@@ -13,21 +13,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVmJobsByVmAndImage (
-    v_vm_id uuid,
-    v_image_group_id uuid
-    )
-RETURNS SETOF vm_jobs STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT vm_jobs.*
-    FROM vm_jobs
-    WHERE vm_jobs.vm_id = v_vm_id
-        AND vm_jobs.image_group_id = v_image_group_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION UpdateVmJobs (
     v_vm_job_id UUID,
     v_vm_id UUID,

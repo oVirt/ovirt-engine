@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmJobsMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,6 @@ public class MergeCommand<T extends MergeParameters>
 
     @Override
     public CommandCallback getCallback() {
-        return new MergeCommandCallback();
+        return Injector.injectMembers(new MergeCommandCallback());
     }
 }

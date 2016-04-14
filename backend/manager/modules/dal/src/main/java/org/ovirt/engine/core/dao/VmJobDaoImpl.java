@@ -37,13 +37,6 @@ public class VmJobDaoImpl extends MassOperationsGenericDao<VmJob, Guid> implemen
     }
 
     @Override
-    public List<VmJob> getAllForVmDisk(Guid vm, Guid image) {
-        return getCallsHandler().executeReadList("GetVmJobsByVmAndImage",
-                VmJobRowMapper.instance,
-                getCustomMapSqlParameterSource().addValue("vm_id", vm).addValue("image_group_id", image));
-    }
-
-    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("vm_job_id", id);
     }

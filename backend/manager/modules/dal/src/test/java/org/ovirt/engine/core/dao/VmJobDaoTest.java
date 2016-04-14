@@ -69,26 +69,6 @@ public class VmJobDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetAllForDisk() {
-        List<VmJob> jobs = dao.getAllForVmDisk(FixturesTool.VM_RHEL5_POOL_59, FixturesTool.IMAGE_GROUP_ID);
-        assertEquals(1, jobs.size());
-        assertEquals(FixturesTool.EXISTING_VM_BLOCK_JOB, jobs.get(0).getId());
-        assertTrue(jobs.get(0) instanceof VmBlockJob);
-    }
-
-    @Test
-    public void testGetAllForDiskWithWrongVM() {
-        List<VmJob> jobs = dao.getAllForVmDisk(FixturesTool.VM_RHEL5_POOL_57, FixturesTool.IMAGE_GROUP_ID);
-        assertTrue(jobs.isEmpty());
-    }
-
-    @Test
-    public void testGetAllForDiskWithWrongDisk() {
-        List<VmJob> jobs = dao.getAllForVmDisk(FixturesTool.VM_RHEL5_POOL_59, Guid.Empty);
-        assertTrue(jobs.isEmpty());
-    }
-
-    @Test
     public void testDelete() {
         dao.remove(FixturesTool.EXISTING_VM_JOB);
         List<Guid> ids = dao.getAll().stream().map(VmJob::getId).collect(toList());
@@ -131,9 +111,7 @@ public class VmJobDaoTest extends BaseDaoTestCase {
         dao.save(job);
 
         // Retrieve it
-        List<VmJob> jobs = dao.getAll().stream()
-                .filter(job2 -> job2.getVmId().equals(job.getVmId()))
-                .collect(toList());
+        List<VmJob> jobs = dao.getAll();
         assertThat(jobs, hasItem(job));
 
         // Be kind, rewind
@@ -143,18 +121,21 @@ public class VmJobDaoTest extends BaseDaoTestCase {
     @Test
     public void testUpdate() {
         // Get a block job
-        List<VmJob> jobs = dao.getAllForVmDisk(FixturesTool.VM_RHEL5_POOL_59, FixturesTool.IMAGE_GROUP_ID);
+        VmBlockJob job = (VmBlockJob) dao.getAll().stream()
+                .filter(j -> j.getId().equals(FixturesTool.EXISTING_VM_BLOCK_JOB))
+                .findFirst().orElse(null);
 
         // Make some changes
-        VmBlockJob job = (VmBlockJob) jobs.get(0);
         job.setBandwidth(1981L);
         job.setJobState(VmJobState.UNKNOWN);
         dao.update(job);
 
         // Get the job again
-        jobs = dao.getAllForVmDisk(FixturesTool.VM_RHEL5_POOL_59, FixturesTool.IMAGE_GROUP_ID);
-        VmBlockJob updatedJob = (VmBlockJob) jobs.get(0);
+        VmBlockJob updatedJob =  (VmBlockJob) dao.getAll().stream()
+                .filter(j -> j.getId().equals(FixturesTool.EXISTING_VM_BLOCK_JOB))
+                .findFirst().orElse(null);
 
         assertEquals(job, updatedJob);
     }
+
 }

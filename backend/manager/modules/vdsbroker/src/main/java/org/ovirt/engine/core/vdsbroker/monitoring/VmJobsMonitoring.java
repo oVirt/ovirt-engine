@@ -130,6 +130,10 @@ public class VmJobsMonitoring {
         log.info("Stored placeholder for job id '{}'", job.getId());
     }
 
+    public VmJob getJobById(Guid jobId) {
+        return jobId != null ? jobsRepository.get(jobId) : null;
+    }
+
     void onVmDelete(@Observes @VmDeleted Guid vmId) {
         jobsRepository.values().stream()
         .filter(job -> job.getVmId().equals(vmId))
