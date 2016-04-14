@@ -2410,4 +2410,33 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("<No Network Filter>")
     String vnicProfileNoFilter();
+
+    @DefaultStringValue("Kernel")
+    String hostKernelTabLabel();
+
+    @DefaultStringValue("Kernel boot parameters")
+    String kernelCmdlineBootParamsLabel();
+
+    @DefaultStringValue("Modifying kernel boot parameters settings can lead to a host boot failure. "
+            + "Please consult the documentation before doing any changes. "
+            + "The host needs to be rebooted after successful host deploy for kernel boot parameters to be applied.")
+    String kernelCmdlineWarning();
+
+    @DefaultStringValue("Hostdev Passthrough & SR-IOV")
+    String hostKernelCmdlineIommu();
+
+    @DefaultStringValue("Nested Virtualization")
+    String hostKernelCmdlineKvmNested();
+
+    @DefaultStringValue("Unsafe Interrupts")
+    String hostKernelCmdlineUnsafeInterrupts();
+
+    @DefaultStringValue("PCI Reallocation")
+    String hostKernelCmdlinePciRealloc();
+
+    @DefaultStringValue("Reset")
+    String hostKernelCmdlineReset();
+
+    @DefaultStringValue("Kernel command line")
+    String kernelCmdlineLabel();
 }

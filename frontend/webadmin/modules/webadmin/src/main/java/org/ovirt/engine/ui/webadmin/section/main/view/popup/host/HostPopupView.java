@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
@@ -36,6 +37,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.TextEntityModelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -55,6 +57,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupP
 import org.ovirt.engine.ui.webadmin.widget.host.FenceAgentsEditor;
 import org.ovirt.engine.ui.webadmin.widget.host.HostProxySourceEditor;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TextDecoration;
@@ -370,6 +373,34 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     FlowPanel expanderContent;
 
+    @UiField
+    @Ignore
+    DialogTab kernelTab;
+
+    @UiField(provided = true)
+    @Path("kernelCmdlineIommu.entity")
+    EntityModelCheckBoxEditor kernelCmdlineIommu;
+
+    @UiField(provided = true)
+    @Path("kernelCmdlineKvmNested.entity")
+    EntityModelCheckBoxEditor kernelCmdlineKvmNested;
+
+    @UiField(provided = true)
+    @Path("kernelCmdlineUnsafeInterrupts.entity")
+    EntityModelCheckBoxEditor kernelCmdlineUnsafeInterrupts;
+
+    @UiField(provided = true)
+    @Path("kernelCmdlinePciRealloc.entity")
+    EntityModelCheckBoxEditor kernelCmdlinePciRealloc;
+
+    @UiField
+    @Path("kernelCmdline.entity")
+    TextEntityModelEditor kernelCmdlineText;
+
+    @UiField
+    @Ignore
+    Button kernelCmdlineResetButton;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -511,6 +542,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
         rbDiscoveredHost = new RadioButton("2"); //$NON-NLS-1$
         rbProvisionedHost = new RadioButton("2"); //$NON-NLS-1$
+
+        kernelCmdlineIommu = new EntityModelCheckBoxEditor(Align.RIGHT);
+        kernelCmdlineKvmNested = new EntityModelCheckBoxEditor(Align.RIGHT);
+        kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
+        kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private ListModelTypeAheadListBoxEditor<ExternalEntityBase> getListModelTypeAheadListBoxEditor() {
@@ -989,10 +1025,16 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         getTabNameMapping().put(TabName.NETWORK_PROVIDER_TAB, this.networkProviderTab);
         getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
         getTabNameMapping().put(TabName.SPM_TAB, this.spmTab);
+        getTabNameMapping().put(TabName.KERNEL_TAB, this.kernelTab);
     }
 
     @Override
     public DialogTabPanel getTabPanel() {
         return tabPanel;
+    }
+
+    @Override
+    public HasClickHandlers getKernelCmdlineResetButton() {
+        return kernelCmdlineResetButton;
     }
 }

@@ -29,5 +29,6 @@ public enum TabName {
     MAC_POOL_TAB,
     IPV4_TAB,
     IPV6_TAB,
-    QOS_TAB
+    QOS_TAB,
+    KERNEL_TAB
 }

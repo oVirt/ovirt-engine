@@ -193,6 +193,8 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class AsyncDataProvider {
 
@@ -282,6 +284,9 @@ public class AsyncDataProvider {
     // cached custom properties
     private Map<Version, Map<String, String>> customPropertiesList;
 
+    /** (CPU name, cluster compatibility version) -> {@link ServerCpu} */
+    private Map<Pair<String, Version>, ServerCpu> cpuMap;
+
     public String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
     }
@@ -332,6 +337,7 @@ public class AsyncDataProvider {
         initCustomPropertiesList();
         initSoundDeviceSupportMap();
         initMigrationPolicies();
+        initCpuMap();
     }
 
     private void initMigrationPolicies() {
@@ -367,6 +373,37 @@ public class AsyncDataProvider {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllMigrationPolicies,
                 new VdcQueryParametersBase(), aQuery);
+    }
+
+    private void initCpuMap() {
+        cpuMap = new HashMap<>();
+
+        final List<VdcQueryType> queryTypes = new ArrayList<>();
+        final List<VdcQueryParametersBase> queryParams = new ArrayList<>();
+        for (Version version : Version.ALL) {
+            queryTypes.add(VdcQueryType.GetAllServerCpuList);
+            queryParams.add(new GetAllServerCpuListParameters(version));
+        }
+
+        final IFrontendMultipleQueryAsyncCallback callback = new IFrontendMultipleQueryAsyncCallback() {
+            @Override
+            public void executed(FrontendMultipleQueryAsyncResult result) {
+                for (int i = 0; i < result.getReturnValues().size(); i++) {
+                    final List<ServerCpu> cpus = result.getReturnValues().get(i).getReturnValue();
+                    final Version version =
+                            ((GetAllServerCpuListParameters) result.getParameters().get(i)).getVersion();
+                    initCpuMapForVersion(version, cpus);
+                }
+            }
+        };
+
+        Frontend.getInstance().runMultipleQueries(queryTypes, queryParams, callback);
+    }
+
+    private void initCpuMapForVersion(Version version, List<ServerCpu> cpus) {
+        for (ServerCpu cpu : cpus) {
+            cpuMap.put(new Pair<>(cpu.getCpuName(), version), cpu);
+        }
     }
 
     private void initCustomPropertiesList() {
@@ -984,6 +1021,10 @@ public class AsyncDataProvider {
                 new GetConfigurationValueParameters(ConfigurationValues.WANDisableEffects,
                         getDefaultConfigurationVersion()),
                 aQuery);
+    }
+
+    public ServerCpu getCpuByName(String cpuName, Version clusterVersion) {
+        return cpuMap.get(new Pair<>(cpuName, clusterVersion));
     }
 
     public void getMaxVmsInPool(AsyncQuery aQuery) {

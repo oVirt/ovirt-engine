@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.utils.CpuVendor;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -62,6 +65,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     public static final String RootUserName = "root"; //$NON-NLS-1$
 
     UIConstants constants = ConstantsManager.getInstance().getConstants();
+
+    private CpuVendor lastNonNullCpuVendor;
+
+    private EnableableEventListener<EventArgs> kernelCmdlineListener;
 
     private UICommand privateUpdateHostsCommand;
 
@@ -328,6 +335,66 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             isPowerManagementTabSelected = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabSelected")); //$NON-NLS-1$
         }
+    }
+
+    private EntityModel<String> kernelCmdline;
+
+    public EntityModel<String> getKernelCmdline() {
+        return kernelCmdline;
+    }
+
+    public void setKernelCmdline(EntityModel<String> kernelCmdline) {
+        this.kernelCmdline = kernelCmdline;
+    }
+
+    private boolean kernelCmdlineParsable;
+
+    public boolean isKernelCmdlineParsable() {
+        return kernelCmdlineParsable;
+    }
+
+    public void setKernelCmdlineParsable(boolean kernelCmdlineParsable) {
+        this.kernelCmdlineParsable = kernelCmdlineParsable;
+    }
+
+    private EntityModel<Boolean> kernelCmdlineIommu;
+
+    public EntityModel<Boolean> getKernelCmdlineIommu() {
+        return kernelCmdlineIommu;
+    }
+
+    public void setKernelCmdlineIommu(EntityModel<Boolean> kernelCmdlineIommu) {
+        this.kernelCmdlineIommu = kernelCmdlineIommu;
+    }
+
+    private EntityModel<Boolean> kernelCmdlineKvmNested;
+
+    public EntityModel<Boolean> getKernelCmdlineKvmNested() {
+        return kernelCmdlineKvmNested;
+    }
+
+    public void setKernelCmdlineKvmNested(EntityModel<Boolean> kernelCmdlineKvmNested) {
+        this.kernelCmdlineKvmNested = kernelCmdlineKvmNested;
+    }
+
+    private EntityModel<Boolean> kernelCmdlineUnsafeInterrupts;
+
+    public EntityModel<Boolean> getKernelCmdlineUnsafeInterrupts() {
+        return kernelCmdlineUnsafeInterrupts;
+    }
+
+    public void setKernelCmdlineUnsafeInterrupts(EntityModel<Boolean> kernelCmdlineUnsafeInterrupts) {
+        this.kernelCmdlineUnsafeInterrupts = kernelCmdlineUnsafeInterrupts;
+    }
+
+    private EntityModel<Boolean> kernelCmdlinePciRealloc;
+
+    public EntityModel<Boolean> getKernelCmdlinePciRealloc() {
+        return kernelCmdlinePciRealloc;
+    }
+
+    public void setKernelCmdlinePciRealloc(EntityModel<Boolean> kernelCmdlinePciRealloc) {
+        this.kernelCmdlinePciRealloc = kernelCmdlinePciRealloc;
     }
 
     private VdsProtocol vdsProtocol;
@@ -637,6 +704,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         setNetworkProviderModel(new HostNetworkProviderModel());
         setIsDiscoveredHosts(new EntityModel<Boolean>());
+
+        setKernelCmdline(new EntityModel<String>());
+        setKernelCmdlineIommu(new EntityModel<Boolean>());
+        setKernelCmdlineKvmNested(new EntityModel<Boolean>());
+        setKernelCmdlineUnsafeInterrupts(new EntityModel<Boolean>());
+        setKernelCmdlinePciRealloc(new EntityModel<Boolean>());
+        kernelCmdlineListener = new EnableableEventListener<>(null);
     }
 
     private void updatePmModels() {
@@ -799,6 +873,14 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             cluster_SelectedItemChanged();
         } else if (sender == getConsoleAddressEnabled()) {
             consoleAddressChanged();
+        } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)
+                && (sender == getKernelCmdlineIommu()
+                || sender == getKernelCmdlineKvmNested()
+                || sender == getKernelCmdlineUnsafeInterrupts()
+                || sender == getKernelCmdlinePciRealloc())) {
+            if (isKernelCmdlineParsable()) {
+                updateKernelCmdlineAccordingToCheckboxes();
+            }
         }
     }
 
@@ -811,28 +893,20 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         StoragePool dataCenter = getDataCenter().getSelectedItem();
         if (dataCenter != null) {
             AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result) {
-                    HostModel hostModel = (HostModel) model;
+                public void onSuccess(Object nothing, Object result) {
                     @SuppressWarnings("unchecked")
-                    ArrayList<Cluster> clusters = (ArrayList<Cluster>) result;
+                    final ArrayList<Cluster> clusters = (ArrayList<Cluster>) result;
 
-                    if (hostModel.getIsNew()) {
-                        updateClusterList(hostModel, clusters);
+                    if (getIsNew()) {
+                        updateClusterList(HostModel.this, clusters);
                     } else {
                         AsyncQuery architectureQuery = new AsyncQuery();
 
-                        architectureQuery.setModel(new Object[] { hostModel, clusters });
                         architectureQuery.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void onSuccess(Object model, Object returnValue) {
-                                Object[] objArray = (Object[]) model;
-                                HostModel hostModel = (HostModel) objArray[0];
-                                @SuppressWarnings("unchecked")
-                                ArrayList<Cluster> clusters = (ArrayList<Cluster>) objArray[1];
-
+                            public void onSuccess(Object nothing, Object returnValue) {
                                 ArchitectureType architecture = (ArchitectureType) returnValue;
 
                                 ArrayList<Cluster> filteredClusters = new ArrayList<>();
@@ -845,11 +919,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                                     }
                                 }
 
-                                updateClusterList(hostModel, filteredClusters);
+                                updateClusterList(HostModel.this, filteredClusters);
                             }
                         };
 
-                        AsyncDataProvider.getInstance().getHostArchitecture(architectureQuery, hostModel.getHostId());
+                        AsyncDataProvider.getInstance().getHostArchitecture(architectureQuery, getHostId());
 
                     }
                     updatePmModels();
@@ -893,39 +967,49 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         return result;
     }
 
-    private void cluster_SelectedItemChanged() {
+    protected void cluster_SelectedItemChanged() {
         Cluster cluster = getCluster().getSelectedItem();
-        if (cluster != null) {
-            AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
+        if (cluster == null) {
+            return;
+        }
 
-                    List<String> pmTypes = (ArrayList<String>) returnValue;
-                    updatePmTypeList(pmTypes);
-                }
-            }), cluster.getCompatibilityVersion());
+        AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
 
-            boolean clusterSupportsJsonrpcOnly = cluster.getCompatibilityVersion().greaterOrEquals(Version.v3_6);
-
-            if (clusterSupportsJsonrpcOnly) {
-                getProtocol().setIsAvailable(false);
-                getProtocol().setEntity(true);
-            } else {
-                getProtocol().setIsAvailable(true);
-                getProtocol().setEntity(vdsProtocol == null ? true : VdsProtocol.STOMP == vdsProtocol);
+                List<String> pmTypes = (ArrayList<String>) returnValue;
+                updatePmTypeList(pmTypes);
             }
-            getProtocol().setIsChangeable(true);
-            //Match the appropriate selected data center to the selected cluster, don't fire update events.
-            if (getDataCenter() != null && getDataCenter().getItems() != null) {
-                for (StoragePool datacenter : getDataCenter().getItems()) {
-                    if (datacenter.getId().equals(cluster.getStoragePoolId())) {
-                        getDataCenter().setSelectedItem(datacenter, false);
-                        break;
-                    }
+        }), cluster.getCompatibilityVersion());
+
+        boolean clusterSupportsJsonrpcOnly = cluster.getCompatibilityVersion().greaterOrEquals(Version.v3_6);
+
+        if (clusterSupportsJsonrpcOnly) {
+            getProtocol().setIsAvailable(false);
+            getProtocol().setEntity(true);
+        } else {
+            getProtocol().setIsAvailable(true);
+            getProtocol().setEntity(vdsProtocol == null ? true : VdsProtocol.STOMP == vdsProtocol);
+        }
+        getProtocol().setIsChangeable(true);
+        //Match the appropriate selected data center to the selected cluster, don't fire update events.
+        if (getDataCenter() != null && getDataCenter().getItems() != null) {
+            for (StoragePool datacenter : getDataCenter().getItems()) {
+                if (datacenter.getId().equals(cluster.getStoragePoolId())) {
+                    getDataCenter().setSelectedItem(datacenter, false);
+                    break;
                 }
             }
         }
+
+        final CpuVendor newCpuVendor = getCurrentCpuVendor();
+        if (newCpuVendor != null && !newCpuVendor.equals(lastNonNullCpuVendor)) {
+            lastNonNullCpuVendor = newCpuVendor;
+            cpuVendorChanged();
+        }
     }
+
+    protected abstract void cpuVendorChanged();
 
     private void updatePmTypeList(List<String> pmTypes) {
         getFenceAgentListModel().setPmTypes(pmTypes);
@@ -1110,6 +1194,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 break;
             }
         }
+
+        getKernelCmdline().setEntity(vds.getCurrentKernelCmdline());
+        setKernelCmdlineParsable(vds.isKernelCmdlineParsable());
+        getKernelCmdlineIommu().setEntity(vds.isKernelCmdlineIommu());
+        getKernelCmdlineKvmNested().setEntity(vds.isKernelCmdlineKvmNested());
+        getKernelCmdlineUnsafeInterrupts().setEntity(vds.isKernelCmdlineUnsafeInterrupts());
+        getKernelCmdlinePciRealloc().setEntity(vds.isKernelCmdlinePciRealloc());
     }
 
     public void cleanHostParametersFields() {
@@ -1152,6 +1243,140 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
     }
 
+    /**
+     * This should be called when model is synchronously filled by data from business entity
+     * (async model updates may follow).
+     */
+    public void onDataInitialized() {
+        addKernelCmdlineCheckboxesListeners();
+        addKernelCmdlineListener();
+        updateKernelCmdlineCheckboxesChangeability();
+    }
+
+    private void addKernelCmdlineListener() {
+        kernelCmdlineListener = new EnableableEventListener<>(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                setKernelCmdlineParsable(false);
+                resetKernelCmdlineCheckboxes();
+            }
+        });
+        getKernelCmdline().getEntityChangedEvent().addListener(kernelCmdlineListener);
+    }
+
+    public void resetKernelCmdlineCheckboxes() {
+        final CpuVendor cpuVendor = getCurrentCpuVendor();
+        if (cpuVendor == null) {
+            return;
+        }
+        switch (cpuVendor) {
+            case INTEL:
+            case AMD:
+                setKernelCmdlineCheckboxesValue(false);
+                break;
+            case IBM:
+                setKernelCmdlineCheckboxesValue(true);
+                break;
+            default:
+                throw new RuntimeException("Unknown CpuVendor type: " + cpuVendor); //$NON-NLS-1$
+        }
+        updateKernelCmdlineCheckboxesChangeability();
+    }
+
+    protected void updateKernelCmdlineCheckboxesChangeability() {
+        final CpuVendor cpuVendor = getCurrentCpuVendor();
+        if (cpuVendor == null) {
+            return;
+        }
+        switch (cpuVendor) {
+            case INTEL:
+            case AMD:
+                setKernelCmdlineCheckboxesChangeability(
+                        isKernelCmdlineParsable(),
+                        constants.kernelCmdlineCheckboxesAndDirectCustomizationNotAllowed());
+                break;
+            case IBM:
+                setKernelCmdlineCheckboxesChangeability(
+                        false,
+                        constants.kernelCmdlineNotAvailableInClusterWithIbmCpu());
+                break;
+            default:
+                throw new RuntimeException("Unknown CpuVendor type: " + cpuVendor); //$NON-NLS-1$
+        }
+    }
+
+    private void setKernelCmdlineCheckboxesChangeability(boolean changeable, String reason) {
+        getKernelCmdlineIommu().setIsChangeable(changeable, reason);
+        getKernelCmdlineKvmNested().setIsChangeable(changeable, reason);
+        getKernelCmdlineUnsafeInterrupts().setIsChangeable(changeable, reason);
+        getKernelCmdlinePciRealloc().setIsChangeable(changeable, reason);
+    }
+
+    private void setKernelCmdlineCheckboxesValue(boolean checked) {
+        getKernelCmdlineIommu().setEntity(checked);
+        getKernelCmdlineKvmNested().setEntity(checked);
+        getKernelCmdlineUnsafeInterrupts().setEntity(checked);
+        getKernelCmdlinePciRealloc().setEntity(checked);
+    }
+
+    /**
+     * @return it may return `null`
+     */
+    private CpuVendor getCurrentCpuVendor() {
+        if (getCluster().getSelectedItem() == null) {
+            return null;
+        }
+        final Cluster selectedCluster = getCluster().getSelectedItem();
+        final ServerCpu clustersCpu = AsyncDataProvider.getInstance()
+                .getCpuByName(selectedCluster.getCpuName(), selectedCluster.getCompatibilityVersion());
+        if (clustersCpu == null) {
+            // in case CPU of cluster was not yet set
+            return null;
+        }
+        return  clustersCpu.getVendor();
+    }
+
+    private void addKernelCmdlineCheckboxesListeners() {
+        getKernelCmdlineIommu().getEntityChangedEvent().addListener(this);
+        getKernelCmdlineKvmNested().getEntityChangedEvent().addListener(this);
+        getKernelCmdlineUnsafeInterrupts().getEntityChangedEvent().addListener(this);
+        getKernelCmdlinePciRealloc().getEntityChangedEvent().addListener(this);
+    }
+
+    private void updateKernelCmdlineAccordingToCheckboxes() {
+        final CpuVendor cpuVendor = getCurrentCpuVendor();
+        if (cpuVendor == null
+                || getKernelCmdlineIommu().getEntity() == null
+                || getKernelCmdlineKvmNested().getEntity() == null
+                || getKernelCmdlineUnsafeInterrupts().getEntity() == null
+                || getKernelCmdlinePciRealloc().getEntity() == null) {
+            return;
+        }
+        final String kernelCmdline = KernelCmdlineUtil.create(
+                cpuVendor,
+                getKernelCmdlineIommu().getEntity(),
+                getKernelCmdlineKvmNested().getEntity(),
+                getKernelCmdlineUnsafeInterrupts().getEntity(),
+                getKernelCmdlinePciRealloc().getEntity());
+        kernelCmdlineListener.whilePaused(new Runnable() {
+            @Override
+            public void run() {
+                getKernelCmdline().setEntity(kernelCmdline);
+            }
+        });
+    }
+
+    public void resetKernelCmdline() {
+        setKernelCmdlineParsable(true);
+        kernelCmdlineListener.whilePaused(new Runnable() {
+            @Override
+            public void run() {
+                getKernelCmdline().setEntity("");
+            }
+        });
+        resetKernelCmdlineCheckboxes();
+    }
+
     protected abstract boolean showInstallationProperties();
 
     protected abstract boolean editTransportProperties(VDS vds);
@@ -1179,4 +1404,33 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     protected abstract void setPort(VDS vds);
 
     public abstract boolean showNetworkProviderTab();
+
+    /**
+     * {@code EntityModel.setEntity(..., false);} can't be used because this prevents
+     * view form update
+     */
+    private static class EnableableEventListener<T extends EventArgs> implements IEventListener<T> {
+
+        private boolean enabled = true;
+
+        private final IEventListener<T> delegate;
+
+        public EnableableEventListener(IEventListener<T> delegate) {
+            this.delegate = delegate;
+        }
+
+        public void whilePaused(Runnable action) {
+            final boolean originalEnabled = this.enabled;
+            enabled = false;
+            action.run();
+            enabled = originalEnabled;
+        }
+
+        @Override
+        public void eventRaised(Event<? extends T> ev, Object sender, T args) {
+            if (enabled && delegate != null) {
+                delegate.eventRaised(ev, sender, args);
+            }
+        }
+    }
 }

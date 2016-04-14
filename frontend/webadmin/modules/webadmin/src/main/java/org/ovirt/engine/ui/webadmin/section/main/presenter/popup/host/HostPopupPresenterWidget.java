@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -23,6 +24,7 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
          */
         void showPowerManagement();
         void setHostProviderVisibility(boolean visible);
+        HasClickHandlers getKernelCmdlineResetButton();
     }
 
     @Inject
@@ -37,6 +39,16 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
         addPowerManagementListener(model);
         addHostProviderListener(model);
         addRadioButtonsListeners(model);
+        addKernelCmdlineResetListener(model);
+    }
+
+    private void addKernelCmdlineResetListener(final HostModel model) {
+        registerHandler(getView().getKernelCmdlineResetButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.resetKernelCmdline();
+            }
+        }));
     }
 
     private void addRadioButtonsListeners(final HostModel model) {

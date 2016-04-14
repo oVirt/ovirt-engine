@@ -3034,4 +3034,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("xen+ssh://root@<hostname>")
     String xenUriExample();
+
+    @DefaultStringValue("Not available in cluster with PPC CPUs.")
+    String kernelCmdlineNotAvailableInClusterWithIbmCpu();
+
+    @DefaultStringValue("It's not possible to combine checkboxes with direct customization of kernel command line. "
+            + "User Reset button drop all custom parameters and enable checkboxes.")
+    String kernelCmdlineCheckboxesAndDirectCustomizationNotAllowed();
 }

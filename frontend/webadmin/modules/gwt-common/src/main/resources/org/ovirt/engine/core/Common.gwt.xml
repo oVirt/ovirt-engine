@@ -111,6 +111,7 @@
         <include name="common/businessentities/Role.java" />
         <include name="common/businessentities/SELinuxMode.java" />
         <include name="common/businessentities/ServerCpu.java" />
+        <include name="common/utils/CpuVendor.java" />
         <include name="common/businessentities/SessionState.java" />
         <include name="common/businessentities/Snapshot.java" />
         <include name="common/businessentities/StorageDomainDynamic.java" />

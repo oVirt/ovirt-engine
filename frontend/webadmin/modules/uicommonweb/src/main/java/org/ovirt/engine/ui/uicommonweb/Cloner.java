@@ -234,6 +234,13 @@ public final class Cloner {
         obj.setUniqueId(instance.getUniqueId());
         obj.setVdsSpmPriority(instance.getVdsSpmPriority());
         obj.setProtocol(instance.getProtocol());
+        obj.setCurrentKernelCmdline(instance.getCurrentKernelCmdline());
+        obj.setKernelCmdlineParsable(instance.isKernelCmdlineParsable());
+        obj.setLastStoredKernelCmdline(instance.getLastStoredKernelCmdline());
+        obj.setKernelCmdlineIommu(instance.isKernelCmdlineIommu());
+        obj.setKernelCmdlineKvmNested(instance.isKernelCmdlineKvmNested());
+        obj.setKernelCmdlinePciRealloc(instance.isKernelCmdlinePciRealloc());
+        obj.setKernelCmdlineUnsafeInterrupts(instance.isKernelCmdlineUnsafeInterrupts());
 
         return obj;
     }

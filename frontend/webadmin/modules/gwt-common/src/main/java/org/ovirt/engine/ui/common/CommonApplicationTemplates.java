@@ -151,4 +151,19 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             "To disable SSH host key verification add 'no_verify' parameter to the URI, " +
             "i.e.: xen+ssh://root@xen.example.com?no_verify=1</i>")
     SafeHtml xenUriInfo();
+
+    @Template("This is not the entire kernel command line. Parameters listed below will be added to default kernel parameters.")
+    SafeHtml kernelCmdlineInfoIcon();
+
+    @Template("Enables or disables host's IOMMU, allowing PCI passthrough devices to be added to guests. Has no effect unless IOMMU is supported by the hardware and enabled in a firmware.")
+    SafeHtml kernelCmdlineIommuInfoIcon();
+
+    @Template("Enables or disables nested virtualization. Nested virtualization passes vmx/svm (hardware virtualization flag) to guest operating system. Requires vdsm 'nestedvt' hook.")
+    SafeHtml kernelCmdlineKvmNestedInfoIcon();
+
+    @Template("Enables or disables unsafe interrupt remapping. Should only be enabled if VMs with PCI passthrough devices cannot be started and 'dmesg' command indicates that it should be enabled (search for 'No interrupt remapping support.').")
+    SafeHtml kernelCmdlineUnsafeInterruptsInfoIcon();
+
+    @Template("Enables or disables reallocation of PCI bridge resources. Some firmware does not correctly handle SR-IOV devices, disallowing VF creation. Dynamic reallocation attempts to solve this problem. Does not help on unsupported hardware.")
+    SafeHtml kernelCmdlinePciReallocInfoIcon();
 }

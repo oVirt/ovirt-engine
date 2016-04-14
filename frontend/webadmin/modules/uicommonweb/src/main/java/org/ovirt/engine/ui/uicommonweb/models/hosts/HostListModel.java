@@ -736,6 +736,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                     innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
                 }
 
+                innerHostModel.onDataInitialized();
 
                 UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
                 innerHostModel.getCommands().add(onSaveFalseCommand);
@@ -770,6 +771,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 hostListModel.setWindow(hostModel);
                 hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
                 hostModel.setSelectedCluster(host);
+                hostModel.onDataInitialized();
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
                 hostModel.setHelpTag(HelpTag.edit_host);
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
@@ -898,6 +900,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         host.setPmEnabled(model.getIsPm().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
         host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
+
+        host.setCurrentKernelCmdline(model.getKernelCmdline().getEntity());
+        host.setKernelCmdlineParsable(model.isKernelCmdlineParsable());
+        host.setKernelCmdlineIommu(model.getKernelCmdlineIommu().getEntity());
+        host.setKernelCmdlineKvmNested(model.getKernelCmdlineKvmNested().getEntity());
+        host.setKernelCmdlineUnsafeInterrupts(model.getKernelCmdlineUnsafeInterrupts().getEntity());
+        host.setKernelCmdlinePciRealloc(model.getKernelCmdlinePciRealloc().getEntity());
 
 
         cancelConfirm();

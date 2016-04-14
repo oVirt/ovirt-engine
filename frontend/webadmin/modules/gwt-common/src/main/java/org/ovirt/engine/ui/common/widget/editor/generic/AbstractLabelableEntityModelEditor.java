@@ -245,4 +245,14 @@ public abstract class AbstractLabelableEntityModelEditor<E, W extends Widget & F
         tooltip.setText("");
         tooltip.reconfigure();
     }
+
+    /**
+     * Method name is creepy to allow standard usage in UiBinder .ui.xml files
+     * <pre>
+     *     &lt;AbstractLabelableEntityModelEditor addStyleName="..." />
+     * </pre>
+     */
+    public void setAddStyleNames(String style) {
+        getEditorWidget().addStyleName(style);
+    }
 }

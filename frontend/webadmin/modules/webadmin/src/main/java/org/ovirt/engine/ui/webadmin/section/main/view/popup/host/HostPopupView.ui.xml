@@ -13,6 +13,7 @@
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+    <ui:with field='templates' type='org.ovirt.engine.ui.common.CommonApplicationTemplates'/>
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView.Style">
         .generalTabTopDecorator {
             background-color: #D3D3D3;
@@ -74,7 +75,7 @@
         }
 
         .container {
-            width: 100%;
+            width: auto;
         }
 
         .proxyListBox {
@@ -140,7 +141,7 @@
             width: 230px;
         }
 
-        .checkBox .gwt-CheckBox{
+        .checkBox .gwt-CheckBox {
             padding: 0px !important;
             border-width: 0px !important;
         }
@@ -198,7 +199,7 @@
         }
 
         .content {
-            width:100%;
+            width: 100%;
         }
 
         .expanderContent {
@@ -243,6 +244,26 @@
 
         .radioLabel {
             padding-left: 20px;
+        }
+
+        .warningLabel {
+            color: red;
+        }
+
+        .inline {
+            display: inline-block;
+        }
+
+        .topOfLine {
+            vertical-align: top;
+        }
+
+        .kernelCmdline-reset {
+            margin-top: 5px;
+        }
+
+        .monospace {
+            font-family: "Courier New", Courier, monospace;
         }
     </ui:style>
 
@@ -430,6 +451,80 @@
                     <t:DialogTab ui:field="networkProviderTab">
                         <t:content>
                             <p:HostNetworkProviderWidget ui:field="networkProviderWidget" />
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="kernelTab" label="{constants.hostKernelTabLabel}">
+                        <t:content>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <g:Label text="{constants.kernelCmdlineBootParamsLabel}" addStyleNames="{style.headerLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <g:Label text="{constants.kernelCmdlineWarning}" addStyleNames="{style.warningLabel}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="kernelCmdlineIommu"
+                                                                      label="{constants.hostKernelCmdlineIommu}"
+                                                                      removeFormGroup="true"
+                                                                      usePatternFly="true"
+                                                                      addStyleNames="{style.inline}"/>
+                                        <d:InfoIcon text="{templates.kernelCmdlineIommuInfoIcon}" addStyleNames="{style.inline} {style.topOfLine}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="kernelCmdlineKvmNested"
+                                                                      label="{constants.hostKernelCmdlineKvmNested}"
+                                                                      removeFormGroup="true"
+                                                                      usePatternFly="true"
+                                                                      addStyleNames="{style.inline}"/>
+                                        <d:InfoIcon text="{templates.kernelCmdlineKvmNestedInfoIcon}" addStyleNames="{style.inline} {style.topOfLine}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="kernelCmdlineUnsafeInterrupts"
+                                                                      label="{constants.hostKernelCmdlineUnsafeInterrupts}"
+                                                                      removeFormGroup="true"
+                                                                      usePatternFly="true"
+                                                                      addStyleNames="{style.inline}"/>
+                                        <d:InfoIcon text="{templates.kernelCmdlineUnsafeInterruptsInfoIcon}" addStyleNames="{style.inline} {style.topOfLine}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="kernelCmdlinePciRealloc"
+                                                                      label="{constants.hostKernelCmdlinePciRealloc}"
+                                                                      removeFormGroup="true"
+                                                                      usePatternFly="true"
+                                                                      addStyleNames="{style.inline}"/>
+                                        <d:InfoIcon text="{templates.kernelCmdlinePciReallocInfoIcon}" addStyleNames="{style.inline} {style.topOfLine}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <g:InlineLabel text="{constants.kernelCmdlineLabel}" />
+                                        <d:InfoIcon text="{templates.kernelCmdlineInfoIcon}" addStyleNames="{style.inline}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:TextEntityModelEditor ui:field="kernelCmdlineText" addStyleNames="{style.monospace}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_2" addStyleNames="pull-right text-right">
+                                        <b:Button ui:field="kernelCmdlineResetButton" text="{constants.hostKernelCmdlineReset}" addStyleNames="{style.kernelCmdline-reset}"/>
+                                    </b:Column>
+                                </b:Row>
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

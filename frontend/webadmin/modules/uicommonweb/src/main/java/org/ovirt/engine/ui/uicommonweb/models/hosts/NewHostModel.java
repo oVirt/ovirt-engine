@@ -261,4 +261,8 @@ public class NewHostModel extends HostModel {
     protected boolean editTransportProperties(VDS vds) {
         return true;
     }
+
+    protected void cpuVendorChanged() {
+        resetKernelCmdline();
+    }
 }

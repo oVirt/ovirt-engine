@@ -112,4 +112,9 @@ public class EditHostModel extends HostModel {
             getCluster().setSelectedItem(Linq.firstOrNull(clusters));
         }
     }
+
+    @Override
+    protected void cpuVendorChanged() {
+        updateKernelCmdlineCheckboxesChangeability();
+    }
 }
