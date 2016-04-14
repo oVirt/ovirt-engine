@@ -27,7 +27,7 @@ public class MergeCommandCallback extends CommandCallback {
         VmJob vmJob = vmJobsMonitoring.getJobById(jobId);
         // If the VM Job exists, the command is still active
         if (vmJob != null) {
-            log.info("Waiting on merge command to complete");
+            log.info("Waiting on merge command to complete (jobId = {})", jobId);
             return;
         }
 
@@ -35,7 +35,8 @@ public class MergeCommandCallback extends CommandCallback {
         command.setSucceeded(true);
         command.setCommandStatus(CommandStatus.SUCCEEDED);
         command.persistCommand(command.getParameters().getParentCommand(), true);
-        log.info("Merge command has completed for images '{}'..'{}'",
+        log.info("Merge command (jobId = {}) has completed for images '{}'..'{}'",
+                jobId,
                 command.getParameters().getBaseImage().getImageId(),
                 command.getParameters().getTopImage().getImageId());
     }
