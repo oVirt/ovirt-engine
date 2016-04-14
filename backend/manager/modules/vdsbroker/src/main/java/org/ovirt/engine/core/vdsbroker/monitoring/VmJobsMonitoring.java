@@ -15,10 +15,13 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmJobDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -29,6 +32,9 @@ public class VmJobsMonitoring {
 
     @Inject
     private VmJobDao vmJobDao;
+    @Inject
+    private VmDao vmDao;
+
     private final Map<Guid, VmJob> jobsRepository;
 
     private static final Logger log = LoggerFactory.getLogger(VmJobsMonitoring.class);
@@ -40,6 +46,7 @@ public class VmJobsMonitoring {
     @PostConstruct
     void init() {
         jobsRepository.putAll(getVmJobDao().getAll().stream().collect(toMap(VmJob::getId, identity())));
+        removeJobsByVmIds(getIdsOfDownVms());
     }
 
     void process(Map<Guid, List<VmJob>> vmIdToJobs) {
@@ -103,6 +110,20 @@ public class VmJobsMonitoring {
         }
     }
 
+    public void removeJobsByVmIds(Collection<Guid> vmIds) {
+        List<Guid> jobIdsToRemove = jobsRepository.values().stream()
+                .filter(job -> vmIds.contains(job.getVmId()))
+                .map(VmJob::getId)
+                .collect(toList());
+        getVmJobDao().removeAll(jobIdsToRemove);
+        jobIdsToRemove.forEach(this::removeJobOfDownVm);
+    }
+
+    private void removeJobOfDownVm(Guid jobId) {
+        jobsRepository.remove(jobId);
+        log.info("VM job '{}' is removed, VM is down", jobId);
+    }
+
     public void addJob(VmJob job) {
         getVmJobDao().save(job);
         jobsRepository.put(job.getId(), job);
@@ -118,5 +139,12 @@ public class VmJobsMonitoring {
 
     VmJobDao getVmJobDao() {
         return vmJobDao;
+    }
+
+    List<Guid> getIdsOfDownVms() {
+        return vmDao.getAll().stream()
+                .filter(vm -> vm.getStatus() == VMStatus.Down)
+                .map(VM::getId)
+                .collect(toList());
     }
 }

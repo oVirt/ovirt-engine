@@ -93,6 +93,7 @@ public class VmJobsMonitoringTest {
         when(vmJobDao.getAll()).thenReturn(Arrays.asList(job1FromDb, job4FromDb, job2FromDb, job3FromDb));
         doReturn(vmJobDao).when(vmJobsMonitoring).getVmJobDao();
         doNothing().when(vmJobsMonitoring).removeJobsFromDb(any());
+        doReturn(Collections.emptyList()).when(vmJobsMonitoring).getIdsOfDownVms();
 
         vmJobsMonitoring.init();
     }

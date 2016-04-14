@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.MergeParameters;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,20 +20,13 @@ public class MergeCommandCallback extends CommandCallback {
         // If the VM Job exists, the command is still active
         boolean isRunning = false;
         MergeCommand<MergeParameters> command = getCommand(cmdId);
-        VMStatus vmStatus = DbFacade.getInstance().getVmDynamicDao().get(command.getParameters().getVmId()).getStatus();
         List<VmJob> vmJobs = DbFacade.getInstance().getVmJobDao().getAllForVmDisk(
                 command.getParameters().getVmId(),
                 command.getParameters().getImageGroupId());
         for (VmJob vmJob : vmJobs) {
             if (vmJob.getId().equals(command.getParameters().getVmJobId())) {
-                if (vmStatus == VMStatus.Down) {
-                    DbFacade.getInstance().getVmJobDao().remove(vmJob.getId());
-                    log.info("VM '{}' is down, Merge command '{}' removed",
-                            command.getParameters().getVmId(), vmJob.getId());
-                } else {
-                    log.info("Waiting on merge command to complete");
-                    isRunning = true;
-                }
+                log.info("Waiting on merge command to complete");
+                isRunning = true;
                 break;
             }
         }

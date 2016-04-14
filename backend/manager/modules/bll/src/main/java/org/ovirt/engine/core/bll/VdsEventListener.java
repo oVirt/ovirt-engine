@@ -95,6 +95,7 @@ import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmJobsMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +135,8 @@ public class VdsEventListener implements IVdsEventListener {
     private GlusterBrickDao glusterBrickDao;
     @Inject
     private VDSBrokerFrontend vdsBroker;
+    @Inject
+    private VmJobsMonitoring vmJobsMonitoring;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -224,6 +227,7 @@ public class VdsEventListener implements IVdsEventListener {
             return;
         }
 
+        vmJobsMonitoring.removeJobsByVmIds(vmIds);
         ThreadPoolUtil.execute(() -> processOnVmStopInternal(vmIds, hostId));
     }
 
