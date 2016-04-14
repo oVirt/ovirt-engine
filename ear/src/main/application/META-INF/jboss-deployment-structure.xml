@@ -5,6 +5,7 @@
       <module name="javax.enterprise.api"/>
       <module name="javax.inject.api"/>
       <module name="javax.interceptor.api"/>
+      <module name="javax.mail.api" export="true"/>
       <module name="javax.validation.api"/>
 
       <module name="asm.asm" export="true"/>
