@@ -4,7 +4,6 @@ public final class VdsProperties {
     // vds configuration (i.e. VdsStatic)
     // vds runtime (i.e. VdsDynamic req getVdsCapabilities)
     public static final String hostDatetime = "dateTime";
-    public static final String time_zone = "timeZone";
     public static final String utc_diff = "timeOffset";
     public static final String cpu_flags = "cpuFlags";
 
@@ -21,11 +20,9 @@ public final class VdsProperties {
     public static final String cpu_model = "cpuModel";
     public static final String online_cpus = "onlineCpus";
     public static final String cpu_speed_mh = "cpuSpeed";
-    public static final String if_total_speed = "eth0Speed";
     public static final String kvm_enabled = "kvmEnabled";
     public static final String physical_mem_mb = "memSize";
     public static final String Protocol = "protocol";
-    public static final String vm_types = "vmTypes"; // Currently not in use
     public static final String reservedMem = "reservedMem";
     public static final String bootTime = "bootTime";
     public static final String KDUMP_STATUS = "kdumpStatus";
@@ -42,13 +39,8 @@ public final class VdsProperties {
     public static final String cpu_load = "cpuLoad";
     public static final String cpu_sys = "cpuSys"; // in vm also
     public static final String cpu_user = "cpuUser"; // in vm also
-    public static final String destroy_rate = "destroyRate";
-    public static final String destroy_total = "destroyTotal";
     public static final String elapsed_time = "elapsedTime"; // in vm also
     public static final String statusTime = "statusTime";
-    public static final String launch_rate = "launchRate";
-    public static final String launch_total = "launchTotal";
-    public static final String vds_usage_mem_percent = "memUsed";
     public static final String guestOverhead = "guestOverhead";
     public static final String rx_dropped = "rxDropped"; // in vm also
     public static final String rx_rate = "rxRate"; // in vm also
@@ -104,7 +96,6 @@ public final class VdsProperties {
     public static final String MTU = "mtu";
     public static final String VLAN_ID = "vlanid";
     public static final String BASE_INTERFACE = "iface";
-    public static final String FORCE = "force";
     public static final String CONNECTIVITY_CHECK = "connectivityCheck";
     public static final String CONNECTIVITY_TIMEOUT = "connectivityTimeout";
     public static final String GLOBAL_GATEWAY = "gateway";
@@ -119,7 +110,6 @@ public final class VdsProperties {
     public static final String NETWORKS = "networks";
     public static final String NETWORK_BONDINGS = "bondings";
     public static final String NETWORK_BRIDGES = "bridges";
-    public static final String NETWORK_LAST_CLIENT_INTERFACE = "lastClientIface";
     public static final String VM_NETWORK_INTERFACES = "netIfaces";
     public static final String VM_IPV4_ADDRESSES = "inet";
     public static final String VM_IPV6_ADDRESSES = "inet6";
@@ -161,7 +151,6 @@ public final class VdsProperties {
 
     // Addressing related strings
     public static final String Controller = "controller";
-    public static final String Drive = "drive";
     public static final String spapr_vio = "spapr-vio";
 
     public static final String mem_available = "memAvailable";
@@ -181,7 +170,6 @@ public final class VdsProperties {
 
     public static final String exit_code = "exitCode";
     public static final String exit_message = "exitMessage";
-    public static final String multimedia_ports = "multimediaPorts";
     public static final String monitorResponse = "monitorResponse";
     public static final String exit_reason = "exitReason";
 
@@ -190,7 +178,6 @@ public final class VdsProperties {
 
     // Disks configuration
     public static final String vm_disks = "disks";
-    public static final String vm_disk_name = "name";
     public static final String vm_disk_read_rate = "readRate";
     public static final String vm_disk_write_rate = "writeRate";
     public static final String vm_disk_read_latency = "readLatency";
@@ -217,7 +204,6 @@ public final class VdsProperties {
     public static final String maxMemSize = "maxMemSize";
     public static final String maxMemSlots = "maxMemSlots";
     public static final String mem_guaranteed_size_mb = "memGuaranteedSize";
-    public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
     public static final String cores_per_socket = "smpCoresPerSocket";
     public static final String threads_per_core = "smpThreadsPerCore";
@@ -245,7 +231,6 @@ public final class VdsProperties {
     public static final String display_secure_port = "displaySecurePort";
     public static final String displayType = "displayType";
     public static final String displayIp = "displayIp";
-    public static final String vm_pid = "pid";
     public static final String vm_type = "vmType";
     public static final String launch_paused_param = "launchPaused";
     public static final String session = "session";
@@ -278,28 +263,17 @@ public final class VdsProperties {
     public static final String GUEST_TIMEZONE_OFFSET = "offset";
     public static final String GUEST_TIMEZONE_ZONE = "zone";
 
-    public static final String DriveC = "hda"; // drive C:
-    public static final String DriveE = "hdb"; // drive E: (D: is the CD-ROM)
-    public static final String DriveF = "hdc"; // drive F:
-    public static final String DriveG = "hdd"; // drive G:
-
     public static final String kvmEnable = "kvmEnable"; // Optional
     public static final String acpiEnable = "acpiEnable"; // Optional
     public static final String BOOT_MENU_ENABLE = "bootMenuEnable";
     public static final String win2kHackEnable = "win2kHackEnable"; // Optional
-    public static final String initFromFloppy = "initFromFloppy"; // Optional
-    public static final String sysprepInf = "sysprepInf"; // for the binary sys
     public static final String spiceFileTransferEnable = "fileTransferEnable";
     public static final String spiceCopyPasteEnable = "copyPasteEnable";
     public static final String hypervEnable = "hypervEnable";
-                                                          // prep
-    public static final String Boot = "boot"; // Optional
+
     public static final String BootOrder = "bootOrder";
     public static final String CDRom = "cdrom"; // Optional
-    public static final String Floppy = "floppy"; // Optional
     public static final String Snapshot = "snapshotFile"; // Optional
-    public static final String soundDevice = "soundDevice";
-    public static final String virtioConsole = "console";
     public static final String cpuType = "cpuType";
     public static final String niceLevel = "nice";
     public static final String cpuShares = "cpuShares";
@@ -329,8 +303,6 @@ public final class VdsProperties {
     public static final String Format = "format";
     public static final String Shareable = "shared";
     public static final String None = "none";
-    public static final String Exclusive = "exclusive";
-    public static final String Shared = "shared";
     public static final String Transient = "transient";
     public static final String SpecParams = "specParams";
     public static final String Address = "address";
@@ -414,7 +386,6 @@ public final class VdsProperties {
 
     // Network QoS
     public static final String HOST_QOS = "hostQos";
-    public static final String HOST_QOS_INBOUND = "in";
     public static final String HOST_QOS_OUTBOUND = "out";
     public static final String HOST_QOS_LINKSHARE = "ls";
     public static final String HOST_QOS_UPPERLIMIT = "ul";
@@ -436,7 +407,6 @@ public final class VdsProperties {
     public static final String PRODUCT_ID = "product_id";
     public static final String VENDOR_NAME = "vendor";
     public static final String VENDOR_ID = "vendor_id";
-    public static final String VM_ID = "vmId";
     public static final String PARENT_NAME = "parent";
     public static final String PHYSICAL_FUNCTION = "physfn";
     public static final String TOTAL_VFS = "totalvfs";
@@ -473,7 +443,6 @@ public final class VdsProperties {
     public static final String ksmMergeAcrossNodes = "ksmMergeAcrossNodes";
 
     // properties for ServerConnectionListReturnForXmlRpc
-    public static final String serverType = "serverType";
     public static final String target = "target";
 
     // V2V Jobs
@@ -491,5 +460,4 @@ public final class VdsProperties {
     public static final String vmJobCursorEnd = "end";
     public static final String vmJobBandwidth = "bandwidth";
     public static final String vmJobImageUUID = "imgUUID";
-
 }
