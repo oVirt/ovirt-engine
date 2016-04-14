@@ -16,7 +16,7 @@ public class IpAddressPredicateTest {
 
     @Test
     public void testCompressedIpv6AndNotCompressedIpv6() {
-        assertTrue(new IpAddressPredicate("::/128").test("0:0:0:0:0:0:0:0"));
+        assertTrue(new IpAddressPredicate("::").test("0:0:0:0:0:0:0:0"));
     }
 
     @Test
