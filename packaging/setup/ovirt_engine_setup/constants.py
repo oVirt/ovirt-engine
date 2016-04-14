@@ -246,6 +246,7 @@ class Const(object):
             '-dbscripts',
             '-restapi',
             '-tools',
+            '-tools-backup',
             '-userportal',
             '-webadmin-portal',
         )
