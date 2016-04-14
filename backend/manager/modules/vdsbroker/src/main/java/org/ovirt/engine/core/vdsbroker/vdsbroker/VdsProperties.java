@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.businessentities.MigrationMethod;
-
 public final class VdsProperties {
     // vds configuration (i.e. VdsStatic)
     // vds runtime (i.e. VdsDynamic req getVdsCapabilities)
@@ -391,8 +389,6 @@ public final class VdsProperties {
     public static final String src = "src";
     public static final String dst = "dst";
     public static final String method = "method";
-    public static final String offline = "offline";
-    public static final String online = "online";
     public static final String domains = "storageDomains";
     public static final String hooks = "hooks";
     public static final String TUNNELED = "tunneled";
@@ -470,19 +466,6 @@ public final class VdsProperties {
     public static final String jobError = "error";
     public static final String jobErrorCode = "code";
     public static final String jobErrorMessage = "message";
-
-    public static String migrationMethodtoString(MigrationMethod method) {
-        switch (method) {
-        case OFFLINE:
-            return offline;
-
-        case ONLINE:
-            return online;
-
-        default:
-            return "";
-        }
-    }
 
     // MoM policy tuning
     public static final String balloonEnabled = "balloonEnabled";

@@ -25,8 +25,7 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         migrationInfo.put(VdsProperties.vm_guid, parameters.getVmId().toString());
         migrationInfo.put(VdsProperties.src, String.format("%1$s", parameters.getSrcHost()));
         migrationInfo.put(VdsProperties.dst, String.format("%1$s", parameters.getDstHost()));
-        migrationInfo.put(VdsProperties.method,
-                VdsProperties.migrationMethodtoString(parameters.getMigrationMethod()));
+        migrationInfo.put(VdsProperties.method, parameters.getMigrationMethod().name().toLowerCase());
         migrationInfo.put(VdsProperties.TUNNELED, Boolean.toString(parameters.isTunnelMigration()));
         migrationInfo.put("abortOnError", Boolean.TRUE.toString());
 
