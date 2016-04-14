@@ -12,7 +12,7 @@
     <title><fmt:message key="obrand.welcome.title" /></title>
     <obrand:stylesheets />
     <obrand:javascripts />
-    <script src="splash.js" type="text/javascript"></script>
+    <script src="welcome-locale-selector.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="obrand_loginPageBackground">
