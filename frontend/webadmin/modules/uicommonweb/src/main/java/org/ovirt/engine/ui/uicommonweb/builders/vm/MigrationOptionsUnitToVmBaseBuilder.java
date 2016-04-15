@@ -9,5 +9,6 @@ public class MigrationOptionsUnitToVmBaseBuilder<T extends VmBase> extends BaseS
     protected void build(UnitVmModel model, VmBase vm) {
         vm.setMigrationSupport(model.getMigrationMode().getSelectedItem());
         vm.setMigrationDowntime(model.getSelectedMigrationDowntime());
+        vm.setMigrationPolicyId(model.getSelectedMigrationPolicy());
     }
 }

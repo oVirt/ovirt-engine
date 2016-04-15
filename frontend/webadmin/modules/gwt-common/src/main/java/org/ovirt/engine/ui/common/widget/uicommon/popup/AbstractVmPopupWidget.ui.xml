@@ -19,84 +19,84 @@
 
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget.Style">
 
-      .sectionPanel {
-        margin-bottom: 20px;
-      }
+        .sectionPanel {
+            margin-bottom: 20px;
+        }
 
-      .sectionPanelTight {
-        margin-bottom: 6px;
-        float: left;
-        width: 100%;
-      }
+        .sectionPanelTight {
+            margin-bottom: 6px;
+            float: left;
+            width: 100%;
+        }
 
-      .sectionLabel {
-        font-weight: bold;
-        margin-top: 10px;
-        margin-bottom: 5px;
-      }
+        .sectionLabel {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
 
-      .slimSectionLabel {
-        font-weight: bold;
-        margin-top: 2px;
-        margin-bottom: 1px;
-      }
+        .slimSectionLabel {
+            font-weight: bold;
+            margin-top: 2px;
+            margin-bottom: 1px;
+        }
 
-      .sectionComment {
-        margin-top: 10px;
-        margin-left: 5px;
-        font-style: italic;
-      }
+        .sectionComment {
+            margin-top: 10px;
+            margin-left: 5px;
+            font-style: italic;
+        }
 
-      .horizontallyAlignedCheckBox {
-        float: left;
-        padding-right: 15px;
-      }
+        .horizontallyAlignedCheckBox {
+            float: left;
+            padding-right: 15px;
+        }
 
-      .horizontallyAlignedCheckBoxContent {
-      }
+        .horizontallyAlignedCheckBoxContent {
+        }
 
-      .migrationDowntimePanel {
-        padding-left: 1px;
-        line-height: 30px;
-      }
+        .migrationFieldsPanel {
+            padding-left: 1px;
+            line-height: 30px;
+        }
 
-      .overrideMigrationDowntime {
-        display: inline;
-        float: left;
-        width: 50px;
-      }
+        .overrideMigrationFields {
+            display: inline;
+            float: left;
+            width: 50px;
+        }
 
-      .overrideMigrationDowntime div {
-        width: 20px;
-        margin-top: 0;
-      }
+        .overrideMigrationFields div {
+            width: 20px;
+            margin-top: 0;
+        }
 
-      .overrideMigrationDowntime>div {
-          width: 50px;
-      }
+        .overrideMigrationFields > div {
+            width: 50px;
+        }
 
-      .migrationDowntimeLabel {
-        display: inline-block;
-        float: left;
-        max-width: 300px;
-      }
+        .migrationFieldsLabel {
+            display: inline-block;
+            float: left;
+            max-width: 300px;
+        }
 
-      .migrationSelectInfoIcon {
-          display: inline;
-          float: left;
-      }
+        .migrationSelectInfoIcon {
+            display: inline;
+            float: left;
+        }
 
-      .migrationDowntimeInfoIcon {
-        display: inline;
-        float: left;
-      }
+        .migrationFieldsInfoIcon {
+            display: inline;
+            float: left;
+        }
 
-      .migrationDowntime {
-        display: inline;
-        float: right;
-        padding-right: 14px;
-      }
-      <!-- 			turns off the original styles -->
+        .migrationFields {
+            display: inline;
+            float: right;
+            padding-right: 14px;
+        }
+        <!-- 			turns off the original styles -->
 
         .checkbox, .listbox div select {
             margin-left: -9px;
@@ -371,7 +371,7 @@
         .cpuSharesListEditor {
             display: inline-block;
             width: 100px;
-         }
+        }
 
         .cpuSharesTextEditor {
             display: inline-block;
@@ -412,7 +412,7 @@
             padding: 0 5px;
         }
 
-        .migrationModeContentWidgetEditor, .overrideMigrationDowntimeContentEditor {
+        .migrationModeContentWidgetEditor, .overrideMigrationFieldsContentEditor {
             float: left;
         }
 
@@ -420,7 +420,7 @@
             width: 300px;
         }
 
-        .overrideMigrationDowntimeContentEditor {
+        .overrideMigrationFieldsContentEditor {
             width: 20px;
         }
 
@@ -640,14 +640,23 @@
                                 <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" addStyleNames="{style.migrationSelect}" contentWidgetContainerStyle="{style.migrationModeContentWidgetEditor}" />
                                 <d:InfoIcon ui:field="migrationSelectInfoIcon" addStyleNames="{style.migrationSelectInfoIcon} avmpw_infoIcon_pfly_fix" />
                             </g:HorizontalPanel>
-                             <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
-                               <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" addStyleNames="{style.overrideMigrationDowntime} avmpw_overrideMigrationDowntime_pfly_fix" contentWidgetContainerStyle="{style.overrideMigrationDowntimeContentEditor}" />
-                               <l:EnableableFormLabel ui:field="overrideMigrationDowntimeLabel" text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationDowntimeLabel} avmpw_migrationDowntimeLabel_pfly_fix" />
-                               <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationDowntimeInfoIcon} avmpw_infoIcon_pfly_fix" />
-                               <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />
+
+                            <g:FlowPanel addStyleNames="{style.migrationFieldsPanel}">
+                                <ge:EntityModelDetachableWidget ui:field="overrideMigrationPolicyEditorWithDetachable" addStyleNames="{style.overrideMigrationFields} avmpw_overrideMigrationFields_pfly_fix" contentWidgetContainerStyle="{style.overrideMigrationFieldsContentEditor}" />
+                                <l:EnableableFormLabel ui:field="overrideMigrationPolicyLabel" text="{constants.overrideMigrationPolicyLabel}" addStyleNames="{style.migrationFieldsLabel} avmpw_migrationFieldsLabel_pfly_fix" />
+                                <d:InfoIcon ui:field="migrationPolicyInfoIcon" addStyleNames="{style.migrationFieldsInfoIcon} avmpw_infoIcon_pfly_fix" />
+                                <e:ListModelListBoxOnlyEditor ui:field="migrationPolicyEditor" addStyleNames="{style.migrationFields}" />
+                            </g:FlowPanel>
+
+                             <g:FlowPanel addStyleNames="{style.migrationFieldsPanel}">
+                               <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" addStyleNames="{style.overrideMigrationFields} avmpw_overrideMigrationFields_pfly_fix" contentWidgetContainerStyle="{style.overrideMigrationFieldsContentEditor}" />
+                               <l:EnableableFormLabel ui:field="overrideMigrationDowntimeLabel" text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationFieldsLabel} avmpw_migrationFieldsLabel_pfly_fix" />
+                               <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationFieldsInfoIcon} avmpw_infoIcon_pfly_fix" />
+                               <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationFields}" />
                              </g:FlowPanel>
                              <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" addStyleNames="{style.listbox}" />
                              <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" addStyleNames="{style.listbox}" />
+
                              <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" label="{constants.passThroughHostCpu}"/>
                              <g:FlowPanel ui:field="numaPanel">
                                  <d:InfoIcon ui:field="numaInfoIcon" addStyleNames="{style.labelToCoupleCoupleLeft} avmpw_infoIcon_pfly_fix"/>

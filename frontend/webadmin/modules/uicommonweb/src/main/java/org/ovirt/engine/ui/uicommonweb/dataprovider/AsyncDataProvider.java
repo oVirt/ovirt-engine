@@ -98,6 +98,7 @@ import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
+import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
@@ -232,6 +233,9 @@ public class AsyncDataProvider {
      */
     private Map<Guid, Guid> largeToSmallOsDefaultIconIdMap;
 
+    // all defined migration policies
+    private List<MigrationPolicy> migrationPolicies;
+
     // cached list of os ids
     private List<Integer> osIds;
 
@@ -327,6 +331,42 @@ public class AsyncDataProvider {
         initMemoryHotUnplugSupportMap();
         initCustomPropertiesList();
         initSoundDeviceSupportMap();
+        initMigrationPolicies();
+    }
+
+    private void initMigrationPolicies() {
+        AsyncQuery aQuery = new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                migrationPolicies = (List<MigrationPolicy>) returnValue;
+            }
+        });
+
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
+                if (returnValue == null) {
+                    return new ArrayList<MigrationPolicy>();
+                }
+
+                Collections.sort((List<MigrationPolicy>) returnValue, new Comparator<MigrationPolicy>() {
+                    @Override
+                    public int compare(MigrationPolicy m1, MigrationPolicy m2) {
+                        // the empty one is always the first
+                        if (NoMigrationPolicy.ID.equals(m1.getId())) {
+                            return -1;
+                        }
+                        return m1.getName().compareTo(m2.getName());
+                    }
+                });
+
+                return returnValue;
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllMigrationPolicies,
+                new VdcQueryParametersBase(), aQuery);
     }
 
     private void initCustomPropertiesList() {
@@ -820,20 +860,8 @@ public class AsyncDataProvider {
         getDataCenterList(aQuery, true);
     }
 
-    public void getMigrationPolicies(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
-                if (returnValue == null) {
-                    return new ArrayList<MigrationPolicy>();
-                }
-
-                return returnValue;
-            }
-        };
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllMigrationPolicies,
-                new VdcQueryParametersBase(), aQuery);
+    public List<MigrationPolicy> getMigrationPolicies() {
+        return migrationPolicies;
     }
 
     public void getDataCenterList(AsyncQuery aQuery, boolean doRefresh) {

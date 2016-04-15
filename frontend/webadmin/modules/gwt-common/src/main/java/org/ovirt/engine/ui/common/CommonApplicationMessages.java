@@ -139,6 +139,9 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("When at least one of the VM activated disks use SCSI reservation, migration option is ignored and VM cannot be migrated.")
     String migrationSelectInfo();
 
+    @DefaultMessage("Represents the policy which handles the migration convergence. No migration policy means the hypervisor takes care of convergence.")
+    String migrationPolicyInfo();
+
     @DefaultMessage("Hot add CPUs by changing the number of sockets." +
             " Please consult documentation for your guest operating system to ensure it has proper support for CPU Hot Add")
     String hotPlugUnplugCpuWarning();

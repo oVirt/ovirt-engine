@@ -8,5 +8,6 @@ public class MigrationOptionsVmBaseToVmBaseBuilder extends BaseSyncBuilder<VmBas
     protected void build(VmBase source, VmBase destination) {
         destination.setMigrationSupport(source.getMigrationSupport());
         destination.setMigrationDowntime(source.getMigrationDowntime());
+        destination.setMigrationPolicyId(source.getMigrationPolicyId());
     }
 }

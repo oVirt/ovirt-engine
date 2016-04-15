@@ -3025,4 +3025,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Stop Gluster service")
     String stopGlusterServices();
+
+    @DefaultStringValue("Only available when No Migration Policy is selected")
+    String availableOnlyWithNoMigrationPolicy();
 }

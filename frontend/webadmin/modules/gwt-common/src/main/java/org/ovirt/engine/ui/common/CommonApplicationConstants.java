@@ -2015,6 +2015,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Use custom migration downtime")
     String overrideMigrationDowntimeLabel();
 
+    @DefaultStringValue("Use custom migration policy")
+    String overrideMigrationPolicyLabel();
+
     @DefaultStringValue("Migration downtime (ms)")
     String migrationDowntimeLabel();
 

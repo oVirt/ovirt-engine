@@ -181,10 +181,10 @@ div.avw_contentWidgetContainer_pfly_fix {
 .avmpw_specificHostLabel_pfly_fix {
     padding-left: 5px !important;
 }
-.avmpw_migrationDowntimeLabel_pfly_fix {
+.avmpw_migrationFieldsLabel_pfly_fix {
     padding-left: 7px;
 }
-.avmpw_overrideMigrationDowntime_pfly_fix {
+.avmpw_overrideMigrationFields_pfly_fix {
     position: relative;
     top: -3px;
 }

@@ -21,6 +21,7 @@ public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmMod
         model.getThreadsPerCore().setSelectedItem(vm.getThreadsPerCpu());
         model.getIsSmartcardEnabled().setEntity(vm.isSmartcardEnabled());
         model.setSelectedMigrationDowntime(vm.getMigrationDowntime());
+        model.selectMigrationPolicy(vm.getMigrationPolicyId());
         model.getEmulatedMachine().setSelectedItem(vm.getCustomEmulatedMachine());
         model.getCustomCpu().setSelectedItem(vm.getCustomCpuName());
     }

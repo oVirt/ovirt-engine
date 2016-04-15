@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterF
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
-import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
@@ -1283,31 +1281,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setCustomMigrationNetworkBandwidth(new EntityModel<Integer>());
         setMigrationBandwidthLimitType(new ListModel<MigrationBandwidthLimitType>());
 
-        AsyncDataProvider.getInstance().getMigrationPolicies(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<MigrationPolicy> policies = new ArrayList<>((Collection<MigrationPolicy>) returnValue);
-                Collections.sort(policies, new Comparator<MigrationPolicy>() {
-                    @Override
-                    public int compare(MigrationPolicy m1, MigrationPolicy m2) {
-                        // the empty one is always the first
-                        if (m1.getId() == NoMigrationPolicy.ID) {
-                           return -1;
-                        }
-                        return m1.getName().compareTo(m2.getName());
-                    }
-                });
-                getMigrationPolicies().setItems(policies);
-                if (isEdit) {
-                    for (MigrationPolicy policy : policies) {
-                        if (Objects.equals(policy.getId(), getEntity().getMigrationPolicyId())) {
-                            getMigrationPolicies().setSelectedItem(policy);
-                            break;
-                        }
-                    }
+        List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies();
+        getMigrationPolicies().setItems(policies);
+        if (isEdit) {
+            for (MigrationPolicy policy : policies) {
+                if (Objects.equals(policy.getId(), getEntity().getMigrationPolicyId())) {
+                    getMigrationPolicies().setSelectedItem(policy);
+                    break;
                 }
             }
-        }));
+        }
     }
 
     boolean isClusterDetached() {

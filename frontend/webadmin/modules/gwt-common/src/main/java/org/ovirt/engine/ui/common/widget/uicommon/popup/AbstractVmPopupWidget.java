@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -660,6 +661,25 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public InfoIcon migrationDowntimeInfoIcon;
 
     @UiField(provided = true)
+    @Path(value = "migrationPolicies.selectedItem")
+    @WithElementId("migrationPolicy")
+    public ListModelListBoxOnlyEditor<MigrationPolicy> migrationPolicyEditor;
+
+    @UiField(provided = true)
+    public EntityModelDetachableWidget overrideMigrationPolicyEditorWithDetachable;
+
+    @Path(value = "overrideMigrationPolicy.entity")
+    @WithElementId("overrideMigrationPolicy")
+    public EntityModelCheckBoxOnlyEditor overrideMigrationPolicyEditor;
+
+    @UiField
+    @Ignore
+    public EnableableFormLabel overrideMigrationPolicyLabel;
+
+    @UiField(provided = true)
+    public InfoIcon migrationPolicyInfoIcon;
+
+    @UiField(provided = true)
     public InfoIcon migrationSelectInfoIcon;
 
     @UiField(provided = true)
@@ -1014,8 +1034,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cpuPinningInfo.setTooltipMaxWidth(Width.W420);
         isVirtioScsiEnabledInfoIcon =
                 new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
+
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
+
         migrationDowntimeInfoIcon = new InfoIcon(templates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)));
+
+        migrationPolicyInfoIcon = new InfoIcon(templates.italicText(messages.migrationPolicyInfo()));
+
         migrationSelectInfoIcon = new InfoIcon(templates.italicText(messages.migrationSelectInfo()));
         priorityEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<Integer>>() {
             @Override
@@ -1073,6 +1098,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.IGNORE);
         overrideMigrationDowntimeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
+
+        overrideMigrationPolicyEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationPolicyEditor, Align.IGNORE);
+        overrideMigrationPolicyEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
         overrideMigrationDowntimeEditor.getContentWidgetContainer().getElement().getStyle().setWidth(20, Unit.PX);
 
@@ -1440,6 +1468,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         overrideMigrationDowntimeEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
         migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+
+        overrideMigrationPolicyEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
+        migrationPolicyEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<MigrationPolicy>(), new ModeSwitchingVisibilityRenderer());
 
         autoConvergeEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromCluster()),
@@ -1986,6 +2017,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         specificHost.setTabIndex(nextTabIndex++);
         defaultHostEditor.setTabIndex(nextTabIndex++);
         migrationModeEditor.setTabIndex(nextTabIndex++);
+        overrideMigrationPolicyEditor.setTabIndex(nextTabIndex++);
+        migrationPolicyEditor.setTabIndex(nextTabIndex++);
         overrideMigrationDowntimeEditor.setTabIndex(nextTabIndex++);
         migrationDowntimeEditor.setTabIndex(nextTabIndex++);
         autoConvergeEditor.setTabIndex(nextTabIndex++);
@@ -2132,7 +2165,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 ioThreadsLabel,
                 detachableMemSizeEditor,
                 detachableInstanceTypesEditor,
-                overrideMigrationDowntimeEditorWithDetachable
+                overrideMigrationDowntimeEditorWithDetachable,
+                overrideMigrationPolicyEditorWithDetachable
         );
     }
 

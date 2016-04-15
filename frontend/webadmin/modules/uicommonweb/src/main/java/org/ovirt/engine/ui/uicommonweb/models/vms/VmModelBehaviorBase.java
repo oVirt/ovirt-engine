@@ -129,6 +129,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         priorityUtil = new PriorityUtil(getModel());
         virtioScsiUtil = new VirtioScsiUtil(getModel());
         getModel().getVmId().setIsAvailable(false);
+        getModel().getMigrationPolicies().setItems(AsyncDataProvider.getInstance().getMigrationPolicies());
     }
 
     public void dataCenterWithClusterSelectedItemChanged() {
@@ -1616,4 +1617,5 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public IValidation getNameAllowedCharactersIValidation() {
         return new I18NNameValidation();
     }
+
 }

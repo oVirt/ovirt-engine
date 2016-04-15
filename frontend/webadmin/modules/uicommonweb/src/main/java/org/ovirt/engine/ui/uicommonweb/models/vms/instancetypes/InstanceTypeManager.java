@@ -278,6 +278,8 @@ public abstract class InstanceTypeManager {
         maybeSetSelectedItem(model.getCustomCpu(), vmBase.getCustomCpuName());
 
         model.setSelectedMigrationDowntime(vmBase.getMigrationDowntime());
+        model.selectMigrationPolicy(vmBase.getMigrationPolicyId());
+
         priorityUtil.initPriority(vmBase.getPriority(), new PriorityUtil.PriorityUpdatingCallbacks() {
             @Override
             public void beforeUpdates() {
