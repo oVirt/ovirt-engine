@@ -1837,6 +1837,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    AdPartnerMacSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     AllowEditingHostedEngine,
 
     @TypeConverterAttribute(Boolean.class)

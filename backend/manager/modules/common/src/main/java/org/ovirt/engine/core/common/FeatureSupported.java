@@ -104,4 +104,8 @@ public class FeatureSupported {
     public static boolean migrationPoliciesSupported(Version version) {
         return supportedInConfig(ConfigValues.MigrationPoliciesSupported, version);
     }
+
+    public static boolean adPartenerMacSupported(Version version) {
+        return supportedInConfig(ConfigValues.AdPartnerMacSupported, version);
+    }
 }
