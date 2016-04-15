@@ -897,12 +897,17 @@ public enum ConfigValues {
     OriginType,
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("http://localhost")
-    ImageProxyURL,
+    @DefaultValueAttribute("localhost:54323")
+    ImageProxyAddress,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ImageProxySSLEnabled,
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("8081")
-    ImageProxyPort,
+    @DefaultValueAttribute("54322")
+    ImageDaemonPort,
+
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3600")
