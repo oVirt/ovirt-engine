@@ -57,6 +57,10 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     private static final String TOKEN_IMAGED_HOST_URI = "imaged-uri";
     private static final String TOKEN_TRANSFER_TICKET = "transfer-ticket";
 
+    private static final String HTTP_SCHEME = "http://";
+    private static final String HTTPS_SCHEME = "https://";
+    private static final String IMAGES_PATH = "/images";
+
     // Container for context needed by state machine handlers
     class StateContext {
         ImageTransfer entity;
@@ -475,7 +479,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         elements.put(TOKEN_NOT_BEFORE, ts);
         elements.put(TOKEN_ISSUED_AT, ts);
         elements.put(TOKEN_EXPIRATION, ts + getClientTicketLifetime());
-        elements.put(TOKEN_IMAGED_HOST_URI, vds.getHostName());
+        elements.put(TOKEN_IMAGED_HOST_URI, getImageDaemonUri(vds.getHostName()));
         elements.put(TOKEN_TRANSFER_TICKET, transferToken.toString());
 
         String payload;
@@ -600,8 +604,14 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
     }
 
     private String getProxyUri() {
-        return Config.getValue(ConfigValues.ImageProxyURL) + ":"
-                + Config.<Integer>getValue(ConfigValues.ImageProxyPort) + "/images";
+        String scheme = Config.<Boolean> getValue(ConfigValues.ImageProxySSLEnabled)?  HTTPS_SCHEME : HTTP_SCHEME;
+        String address = Config.getValue(ConfigValues.ImageProxyAddress);
+        return scheme + address + IMAGES_PATH;
+    }
+
+    private String getImageDaemonUri(String daemonHostname) {
+        String port = Config.getValue(ConfigValues.ImageDaemonPort);
+        return HTTPS_SCHEME + daemonHostname + ":" + port;
     }
 
     protected ImageTransferDao getImageTransferDao() {
