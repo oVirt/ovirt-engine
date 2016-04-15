@@ -730,7 +730,7 @@ select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.2.0,
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.6,4.0','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.6,4.0');
-select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4.14,4.15,4.16,4.17','general');
+select fn_db_update_config_value('SupportedVDSMVersions','4.17','general');
 select fn_db_update_config_value('VdcVersion','4.0.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','4.0.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.6');
