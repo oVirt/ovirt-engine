@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -9,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModelBas
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.HostDeviceColumnHelper;
+
 import com.google.gwt.event.shared.EventBus;
 
 public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase<?>> extends AbstractModelBoundTableWidget<HostDeviceView, M> {
@@ -48,19 +51,25 @@ public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase
                 return HostDeviceColumnHelper.renderNameId(object.getProductName(), object.getProductId());
             }
         });
-        addColumn(constants.currentlyUsedByVm(), "150px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+        addColumn(constants.driver(), "100px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+            @Override
+            public String getValue(HostDeviceView hostDeviceView) {
+                return Objects.toString(hostDeviceView.getDriver(), "");
+            }
+        });
+        addColumn(constants.currentlyUsedByVm(), "120px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return object.getRunningVmName();
             }
         });
-        addColumn(constants.attachedToVms(), "150px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+        addColumn(constants.attachedToVms(), "120px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return HostDeviceColumnHelper.renderVmNamesList(object.getAttachedVmNames());
             }
         });
-        addColumn(constants.iommuGroup(), "150px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+        addColumn(constants.iommuGroup(), "120px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
                 return HostDeviceColumnHelper.renderIommuGroup(object.getIommuGroup());

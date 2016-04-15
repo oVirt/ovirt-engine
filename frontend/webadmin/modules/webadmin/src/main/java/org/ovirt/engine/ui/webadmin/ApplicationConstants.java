@@ -4673,6 +4673,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Product")
     String product();
 
+    @DefaultStringValue("Driver")
+    String driver();
+
     @DefaultStringValue("Product Name")
     String productName();
 

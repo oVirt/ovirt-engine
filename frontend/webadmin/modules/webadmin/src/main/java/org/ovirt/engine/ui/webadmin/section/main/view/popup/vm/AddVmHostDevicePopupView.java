@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -110,6 +112,13 @@ public class AddVmHostDevicePopupView extends AbstractModelBoundPopupView<AddVmH
                 return HostDeviceColumnHelper.renderNameId(
                         hostDevice.getEntity().getProductName(),
                         hostDevice.getEntity().getProductId());
+            }
+        });
+
+        addHostDeviceColumn(hostDeviceTable, constants.driver(), "100px", new AbstractTextColumn<EntityModel<HostDeviceView>>() { //$NON-NLS-1$
+            @Override
+            public String getValue(EntityModel<HostDeviceView> hostDevice) {
+                return Objects.toString(hostDevice.getEntity().getDriver(), "");
             }
         });
 
