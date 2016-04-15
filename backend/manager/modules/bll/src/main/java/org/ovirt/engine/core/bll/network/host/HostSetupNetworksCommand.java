@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -593,6 +594,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                     HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(attachment, network);
                     networkToConfigure.setQos(hostNetworkQos);
                 }
+
+                SwitchType clusterSwitchType = getCluster().getRequiredSwitchTypeForCluster();
+                networkToConfigure.setSwitchType(clusterSwitchType);
 
                 networksToConfigure.add(networkToConfigure);
             }
