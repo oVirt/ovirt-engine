@@ -241,4 +241,9 @@ public class CustomInstanceType implements InstanceType {
         return 0;
     }
 
+    @Override
+    public Guid getMigrationPolicyId() {
+        return null;
+    }
+
 }

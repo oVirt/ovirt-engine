@@ -453,6 +453,10 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableField
     private Boolean migrateCompressed;
 
+    @CopyOnNewVersion
+    @EditableField
+    private Guid migrationPolicyId;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -515,7 +519,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 vmBase.getLargeIconId(),
                 vmBase.getNumOfIoThreads(),
                 vmBase.getConsoleDisconnectAction(),
-                vmBase.getCustomCompatibilityVersion());
+                vmBase.getCustomCompatibilityVersion(),
+                vmBase.getMigrationPolicyId());
     }
 
     public VmBase(
@@ -580,7 +585,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
             Guid largeIconId,
             int numOfIoThreads,
             ConsoleDisconnectAction consoleDisconnectAction,
-            Version customCompatibilityVersion) {
+            Version customCompatibilityVersion,
+            Guid migrationPolicyId) {
         this();
         this.name = name;
         this.id = id;
@@ -644,6 +650,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.numOfIoThreads = numOfIoThreads;
         this.consoleDisconnectAction = consoleDisconnectAction;
         this.customCompatibilityVersion = customCompatibilityVersion;
+        this.migrationPolicyId = migrationPolicyId;
     }
 
     @Override
@@ -1408,5 +1415,13 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public boolean isHostedEngine() {
         return OriginType.HOSTED_ENGINE == getOrigin() || OriginType.MANAGED_HOSTED_ENGINE == getOrigin();
+    }
+
+    public Guid getMigrationPolicyId() {
+        return migrationPolicyId;
+    }
+
+    public void setMigrationPolicyId(Guid migrationPolicyId) {
+        this.migrationPolicyId = migrationPolicyId;
     }
 }

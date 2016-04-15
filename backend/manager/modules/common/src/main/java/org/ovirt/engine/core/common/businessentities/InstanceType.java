@@ -99,6 +99,8 @@ public interface InstanceType extends BusinessEntity<Guid>, Nameable {
 
     int getNumOfIoThreads();
 
+    Guid getMigrationPolicyId();
+
     // TODO: these should be add as well
     // userdefined_properties
     // predefined_properties

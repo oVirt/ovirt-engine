@@ -149,6 +149,9 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             } else if (osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(), getEffectiveCompatibilityVersion())) {
                 getParameters().setBalloonEnabled(true);
             }
+
+            vmStatic.setMigrationPolicyId(instanceType.getMigrationPolicyId());
+
         }
     }
 

@@ -412,6 +412,12 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeEndElement();
         }
 
+        if (vmBase.getMigrationPolicyId() != null) {
+            _writer.writeStartElement(OvfProperties.MIGRATION_POLICY_ID);
+            _writer.writeRaw(String.valueOf(vmBase.getMigrationPolicyId()));
+            _writer.writeEndElement();
+        }
+
         _writer.writeStartElement(OvfProperties.CUSTOM_EMULATED_MACHINE);
         _writer.writeRaw(vmBase.getCustomEmulatedMachine());
         _writer.writeEndElement();

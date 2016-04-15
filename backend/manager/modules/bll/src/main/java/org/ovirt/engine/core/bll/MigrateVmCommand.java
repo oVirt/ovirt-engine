@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.migration.ConvergenceConfig;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -200,10 +201,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Integer maxBandwidth = null;
 
         if (FeatureSupported.migrationPoliciesSupported(getVm().getCompatibilityVersion())) {
-            MigrationPolicy migrationPolicy = convergenceConfigProvider.getMigrationPolicy(getCluster().getMigrationPolicyId());
-            convergenceSchedule = ConvergenceSchedule.from(migrationPolicy.getConfig()).asMap();
+            MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(getCluster().getMigrationPolicyId());
+            convergenceSchedule = ConvergenceSchedule.from(findEffectiveConvergenceConfig(clusterMigrationPolicy)).asMap();
 
-            maxBandwidth = getMaxBandwidth(migrationPolicy);
+            maxBandwidth = getMaxBandwidth(clusterMigrationPolicy);
         }
 
         return new MigrateVDSCommandParameters(getVdsId(),
@@ -295,6 +296,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 .map(NetworkInterface::getSpeed)
                 .map(speed -> speed > 0 ? speed : null)
                 .orElse(null);
+    }
+
+    private ConvergenceConfig findEffectiveConvergenceConfig(MigrationPolicy clusterMigrationPolicy) {
+        Guid overriddenPolicyId = getVm().getMigrationPolicyId();
+        if (overriddenPolicyId == null) {
+            return clusterMigrationPolicy.getConfig();
+        }
+
+        return convergenceConfigProvider.getMigrationPolicy(overriddenPolicyId).getConfig();
     }
 
     @Override

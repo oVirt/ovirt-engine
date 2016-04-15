@@ -723,7 +723,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getLargeIconId(),
                         getParameters().getMasterVm().getNumOfIoThreads(),
                         getParameters().getMasterVm().getConsoleDisconnectAction(),
-                        getParameters().getMasterVm().getCustomCompatibilityVersion()));
+                        getParameters().getMasterVm().getCustomCompatibilityVersion(),
+                        getParameters().getMasterVm().getMigrationPolicyId()));
         updateVmIcons();
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());

@@ -1920,6 +1920,14 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return vmStatic.getMigrateCompressed();
     }
 
+    public Guid getMigrationPolicyId() {
+        return vmStatic.getMigrationPolicyId();
+    }
+
+    public void setMigrationPolicyId(Guid migrationPolicyId) {
+        vmStatic.setMigrationPolicyId(migrationPolicyId);
+    }
+
     public void setMigrateCompressed(Boolean migrateCompressed) {
         vmStatic.setMigrateCompressed(migrateCompressed);
     }

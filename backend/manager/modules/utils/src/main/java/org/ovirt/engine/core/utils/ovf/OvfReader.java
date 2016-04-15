@@ -730,6 +730,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = selectSingleNode(content, OvfProperties.MIGRATION_POLICY_ID);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setMigrationPolicyId(Guid.createGuidFromString(node.innerText));
+            }
+        }
+
         node = selectSingleNode(content, OvfProperties.CUSTOM_EMULATED_MACHINE);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
