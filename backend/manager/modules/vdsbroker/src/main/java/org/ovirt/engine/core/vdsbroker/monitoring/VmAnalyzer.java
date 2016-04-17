@@ -225,7 +225,7 @@ public class VmAnalyzer {
                     vdsmVm.getVmDynamic().getExitMessage(),
                     vdsmVm.getVmDynamic().getExitReason());
             if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal) {
-                handOverVM(dbVm);
+                handOverVm(dbVm);
             }
             break;
 
@@ -655,7 +655,7 @@ public class VmAnalyzer {
     private void proceedDisappearedVm() {
         switch (dbVm.getStatus()) {
         case MigratingFrom:
-            handOverVM(dbVm);
+            handOverVm(dbVm);
             break;
 
         case PoweringDown:
@@ -692,14 +692,11 @@ public class VmAnalyzer {
         }
     }
 
-    private void handOverVM(VM vmToRemove) {
+    private void handOverVm(VM vmToRemove) {
         Guid destinationHostId = vmToRemove.getMigratingToVds();
 
         // when the destination VDS is NonResponsive put the VM to Uknown like the rest of its VMs, else MigratingTo
-        VMStatus newVmStatus =
-                (VDSStatus.NonResponsive == vdsDynamicDao.get(destinationHostId).getStatus())
-                        ? VMStatus.Unknown
-                        : VMStatus.MigratingTo;
+        VMStatus newVmStatus = isVdsNonResponsive(destinationHostId) ? VMStatus.Unknown : VMStatus.MigratingTo;
 
         // handing over the VM to the DST by marking it running on it. it will now be its SRC host.
         vmToRemove.setRunOnVds(destinationHostId);
@@ -717,6 +714,10 @@ public class VmAnalyzer {
         saveDynamic(vmToRemove.getDynamicData());
         saveStatistics();
         saveVmInterfaces();
+    }
+
+    private boolean isVdsNonResponsive(Guid vdsId) {
+        return vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
     }
 
     private boolean inMigrationTo() {
