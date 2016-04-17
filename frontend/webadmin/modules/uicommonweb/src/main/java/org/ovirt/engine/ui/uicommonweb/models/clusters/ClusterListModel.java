@@ -351,6 +351,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
         clusterModel.setOriginalName(cluster.getName());
         clusterModel.getName().setEntity(cluster.getName());
+        clusterModel.getSwitchType().setSelectedItem(cluster.getRequiredSwitchTypeForCluster());
         clusterModel.getEnableOvirtService().setEntity(cluster.supportsVirtService());
         clusterModel.getEnableOvirtService().setIsChangeable(true);
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
@@ -681,6 +682,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity()));
         cluster.setTransparentHugepages(true); //$NON-NLS-1$
         cluster.setCompatibilityVersion(version);
+        cluster.setRequiredSwitchTypeForCluster(model.getSwitchType().getSelectedItem());
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
