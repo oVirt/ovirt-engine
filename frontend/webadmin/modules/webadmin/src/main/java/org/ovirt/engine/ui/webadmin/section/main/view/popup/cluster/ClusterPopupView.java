@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -135,6 +136,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "version.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Version> versionEditor;
+
+    @UiField(provided = true)
+    @Path(value = "switchType.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<SwitchType> switchTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "architecture.selectedItem")
@@ -570,6 +576,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                 return object.toString();
             }
         });
+
+        switchTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<SwitchType>());
 
         architectureEditor = new ListModelListBoxEditor<>(new EnumRenderer<ArchitectureType>() {
             @Override

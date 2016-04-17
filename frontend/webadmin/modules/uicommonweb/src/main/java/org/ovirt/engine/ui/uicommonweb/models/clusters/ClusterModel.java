@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -275,6 +276,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     public void setVersion(ListModel<Version> value) {
         privateVersion = value;
+    }
+
+    private ListModel<SwitchType> switchType;
+
+    public ListModel<SwitchType> getSwitchType() {
+        return switchType;
+    }
+
+    public void setSwitchType(ListModel<SwitchType> switchType) {
+        this.switchType = switchType;
     }
 
     private ListModel<ArchitectureType> privateArchitecture;
@@ -1301,6 +1312,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
 
+        setSwitchType(new ListModel<SwitchType>());
+        initSwitchType();
+
+
         getRngRandomSourceRequired().setEntity(false);
         getRngHwrngSourceRequired().setEntity(false);
 
@@ -1371,6 +1386,29 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }
             }
         }
+    }
+
+    private void initSwitchType() {
+        ListModel<SwitchType> switchType = getSwitchType();
+
+        switchType.setItems(Arrays.asList(SwitchType.values()));
+        switchType.setIsChangeable(false);
+        switchType.setSelectedItem(SwitchType.LEGACY);
+    }
+
+    private void updateSwitchTypeUponVersionChange(Version version) {
+        ListModel<SwitchType> switchType = getSwitchType();
+
+        boolean ovsSupported = isOvsSupported(version);
+        switchType.setIsChangeable(ovsSupported);
+        if (!ovsSupported && switchType.getSelectedItem().equals(SwitchType.OVS)) {
+            switchType.setSelectedItem(SwitchType.LEGACY);
+        }
+    }
+
+    private boolean isOvsSupported(Version version) {
+        AsyncDataProvider instance = AsyncDataProvider.getInstance();
+        return (Boolean) instance.getConfigValuePreConverted(ConfigurationValues.OvsSupported, version.getValue());
     }
 
     boolean isClusterDetached() {
@@ -1742,6 +1780,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getEnableBallooning().setIsChangeable(true);
 
         setRngSourcesCheckboxes(version);
+
+        updateSwitchTypeUponVersionChange(version);
 
         updateFencingPolicyContent(version);
 
