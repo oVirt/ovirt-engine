@@ -29,7 +29,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -37,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
-import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -47,11 +45,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmJobDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -84,10 +80,6 @@ public class VmAnalyzerTest {
     @Mock
     private VmDynamicDao vmDynamicDao;
     @Mock
-    private Cluster cluster;
-    @Mock
-    private ClusterDao clusterDao;
-    @Mock
     private VdsDynamicDao vdsDynamicDao;
     @Mock
     private VdsDynamic srcHost;
@@ -101,8 +93,6 @@ public class VmAnalyzerTest {
     private VDS vdsManagerVds;
     @Mock
     private ResourceManager resourceManager;
-    @Mock
-    private VmJobDao vmJobsDao;
     @Mock
     private VmDao vmDao;
     @Mock
@@ -377,8 +367,6 @@ public class VmAnalyzerTest {
         mockStatistics();
         mockVmDynamic();
         mockVmStatic(true);
-        mockVmJob();
-        mockCluster();
         mockVdsDao();
     }
 
@@ -393,15 +381,6 @@ public class VmAnalyzerTest {
     private void mockVmStatic(boolean stubExists) {
         Mockito.reset(vmStaticDao);
         when(vmStaticDao.get(any(Guid.class))).thenReturn(stubExists ? mock(VmStatic.class) : null);
-    }
-
-    private void mockVmJob() {
-        Mockito.reset(vmJobsDao);
-        when(vmJobsDao.get(any(Guid.class))).thenReturn(mock(VmJob.class));
-    }
-
-    private void mockCluster() {
-        when(clusterDao.get(VmTestPairs.CLUSTER_ID)).thenReturn(cluster);
     }
 
     private void mockVdsDao() {
