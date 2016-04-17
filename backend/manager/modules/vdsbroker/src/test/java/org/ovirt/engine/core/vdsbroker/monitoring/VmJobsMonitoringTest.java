@@ -47,7 +47,7 @@ public class VmJobsMonitoringTest {
     @Captor
     private ArgumentCaptor<Collection<VmJob>> vmJobsToUpdateCaptor;
     @Captor
-    private ArgumentCaptor<List<Guid>> vmJobIdsToRemoveCaptor;
+    private ArgumentCaptor<List<VmJob>> vmJobsToRemoveCaptor;
 
     @Mock
     private VmJob job1FromDb;
@@ -90,10 +90,11 @@ public class VmJobsMonitoringTest {
 
         doNothing().when(vmJobDao).save(any());
         doNothing().when(vmJobDao).updateAllInBatch(any());
+        doNothing().when(vmJobDao).removeAllInBatch(any());
         when(vmJobDao.getAll()).thenReturn(Arrays.asList(job1FromDb, job4FromDb, job2FromDb, job3FromDb));
         doReturn(vmJobDao).when(vmJobsMonitoring).getVmJobDao();
-        doNothing().when(vmJobsMonitoring).removeJobsFromDb(any());
         doReturn(Collections.emptyList()).when(vmJobsMonitoring).getIdsOfDownVms();
+        doNothing().when(vmJobsMonitoring).removeJobsByVmIds(any());
 
         vmJobsMonitoring.init();
     }
@@ -112,8 +113,8 @@ public class VmJobsMonitoringTest {
         verify(vmJobsMonitoring, never()).getExistingJobsForVm(any());
         verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToUpdateCaptor.capture());
         assertTrue(vmJobsToUpdateCaptor.getValue().isEmpty());
-        verify(vmJobsMonitoring, times(1)).removeJobs(vmJobIdsToRemoveCaptor.capture());
-        assertTrue(vmJobIdsToRemoveCaptor.getValue().isEmpty());
+        verify(vmJobsMonitoring, times(1)).removeJobs(vmJobsToRemoveCaptor.capture());
+        assertTrue(vmJobsToRemoveCaptor.getValue().isEmpty());
     }
 
     @Test
@@ -121,8 +122,8 @@ public class VmJobsMonitoringTest {
         vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Arrays.asList(job1FromDb, job2FromDb)));
         verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToUpdateCaptor.capture());
         assertTrue(vmJobsToUpdateCaptor.getValue().isEmpty());
-        verify(vmJobsMonitoring, times(1)).removeJobs(vmJobIdsToRemoveCaptor.capture());
-        assertTrue(vmJobIdsToRemoveCaptor.getValue().isEmpty());
+        verify(vmJobsMonitoring, times(1)).removeJobs(vmJobsToRemoveCaptor.capture());
+        assertTrue(vmJobsToRemoveCaptor.getValue().isEmpty());
     }
 
     @Test

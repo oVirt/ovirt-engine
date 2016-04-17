@@ -20,10 +20,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmJobDao;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,14 +52,14 @@ public class VmJobsMonitoring {
             return;
         }
         List<VmJob> jobsToUpdate = new ArrayList<>();
-        List<Guid> jobIdsToRemove = new ArrayList<>();
+        List<VmJob> jobsToRemove = new ArrayList<>();
         vmIdToJobs.entrySet().forEach(entry -> processVmJobs(
-                entry.getKey(), entry.getValue(), jobsToUpdate, jobIdsToRemove));
+                entry.getKey(), entry.getValue(), jobsToUpdate, jobsToRemove));
         updateJobs(jobsToUpdate);
-        removeJobs(jobIdsToRemove);
+        removeJobs(jobsToRemove);
     }
 
-    private void processVmJobs(Guid vmId, List<VmJob> jobs, List<VmJob> jobsToUpdate, List<Guid> jobIdsToRemove) {
+    private void processVmJobs(Guid vmId, List<VmJob> jobs, List<VmJob> jobsToUpdate, List<VmJob> jobsToRemove) {
         if (jobs == null) {
             // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
             log.debug("No vmJob data returned from VDSM, preserving existing jobs");
@@ -81,7 +79,7 @@ public class VmJobsMonitoring {
                     log.info("VM job '{}': In progress, updating", job.getId());
                 }
             } else {
-                jobIdsToRemove.add(job.getId());
+                jobsToRemove.add(job);
                 log.info("VM job '{}': Deleting", job.getId());
             }
         });
@@ -96,32 +94,17 @@ public class VmJobsMonitoring {
         vmJobsToUpdate.forEach(job -> jobsRepository.put(job.getId(), job));
     }
 
-    void removeJobs(List<Guid> vmJobIdsToRemove) {
-        removeJobsFromDb(vmJobIdsToRemove);
-        vmJobIdsToRemove.forEach(jobsRepository::remove);
-    }
-
-    void removeJobsFromDb(List<Guid> vmJobIdsToRemove) {
-        if (!vmJobIdsToRemove.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                getVmJobDao().removeAll(vmJobIdsToRemove);
-                return null;
-            });
-        }
+    void removeJobs(List<VmJob> vmJobsToRemove) {
+        getVmJobDao().removeAllInBatch(vmJobsToRemove);
+        vmJobsToRemove.stream().map(VmJob::getId).forEach(jobsRepository::remove);
     }
 
     public void removeJobsByVmIds(Collection<Guid> vmIds) {
-        List<Guid> jobIdsToRemove = jobsRepository.values().stream()
+        List<VmJob> jobsToRemove = jobsRepository.values().stream()
                 .filter(job -> vmIds.contains(job.getVmId()))
-                .map(VmJob::getId)
                 .collect(toList());
-        getVmJobDao().removeAll(jobIdsToRemove);
-        jobIdsToRemove.forEach(this::removeJobOfDownVm);
-    }
-
-    private void removeJobOfDownVm(Guid jobId) {
-        jobsRepository.remove(jobId);
-        log.info("VM job '{}' is removed, VM is down", jobId);
+        removeJobs(jobsToRemove);
+        jobsToRemove.forEach(job -> log.info("VM job '{}' was removed, VM is down", job.getId()));
     }
 
     public void addJob(VmJob job) {
@@ -135,10 +118,9 @@ public class VmJobsMonitoring {
     }
 
     void onVmDelete(@Observes @VmDeleted Guid vmId) {
-        jobsRepository.values().stream()
-        .filter(job -> job.getVmId().equals(vmId))
-        .map(VmJob::getId)
-        .forEach(jobsRepository::remove);
+        removeJobs(jobsRepository.values().stream()
+                .filter(job -> job.getVmId().equals(vmId))
+                .collect(toList()));
     }
 
     VmJobDao getVmJobDao() {
