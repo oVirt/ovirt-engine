@@ -226,12 +226,13 @@ public class VmAnalyzer {
             break;
 
         case MigratingFrom:
-            proceedVmBeforeDeletion();
-            clearVm(vdsmVm.getVmDynamic().getExitStatus(),
-                    vdsmVm.getVmDynamic().getExitMessage(),
-                    vdsmVm.getVmDynamic().getExitReason());
-            if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal) {
+            switch (vdsmVm.getVmDynamic().getExitStatus()) {
+            case Normal:
                 handOverVm(dbVm);
+                break;
+
+            case Error:
+                abortVmMigration();
             }
             break;
 
@@ -336,28 +337,23 @@ public class VmAnalyzer {
 
     // TODO Method with Side-Effect - move to VmsMonitoring
     // switch command execution with state change and let a final execution point at #VmsMonitoring crate tasks out of the new state. this can be delegated to some task Q instead of running in-thread
-    private void proceedVmBeforeDeletion() {
-        if (dbVm.getStatus() == VMStatus.MigratingFrom) {
-            // if a VM that was a source host in migration process is now down with normal
-            // exit status that's OK, otherwise..
-            if (vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
-                if (dbVm.getMigratingToVds() != null) {
-                    destroyVmOnDestinationHost();
-                }
-                // set vm status to down if source vm crushed
-                resourceManager.internalSetVmStatus(dbVm,
-                        VMStatus.Down,
-                        vdsmVm.getVmDynamic().getExitStatus(),
-                        vdsmVm.getVmDynamic().getExitMessage(),
-                        vdsmVm.getVmDynamic().getExitReason());
-                saveDynamic(dbVm.getDynamicData());
-                saveStatistics();
-                saveVmInterfaces();
-                auditVmMigrationAbort();
-
-                resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
-            }
+    private void abortVmMigration() {
+        if (dbVm.getMigratingToVds() != null) {
+            destroyVmOnDestinationHost();
         }
+        // set vm status to down if source vm crushed
+        resourceManager.internalSetVmStatus(dbVm,
+                VMStatus.Down,
+                vdsmVm.getVmDynamic().getExitStatus(),
+                vdsmVm.getVmDynamic().getExitMessage(),
+                vdsmVm.getVmDynamic().getExitReason());
+        saveDynamic(dbVm.getDynamicData());
+        saveStatistics();
+        saveVmInterfaces();
+        auditVmMigrationAbort();
+
+        resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+        movedToDown = true;
     }
 
     private void auditVmMigrationAbort() {
