@@ -218,6 +218,9 @@
                                     <e:ListModelListBoxEditor ui:field="versionEditor" label="{constants.clusterPopupVersionLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                                 <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="switchTypeEditor" label="{constants.clusterSwitchTypeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row>
                                     <b:Column size="LG_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" label="{constants.clusterEnableOvirtServiceLabel}" removeFormGroup="true" usePatternFly="true" />
                                         <ge:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" label="{constants.clusterEnableGlusterServiceLabel}" removeFormGroup="true" usePatternFly="true" />

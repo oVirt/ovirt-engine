@@ -606,6 +606,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPopupVersionLabel();
 
+    String clusterSwitchTypeLabel();
+
     String clusterPopupOptimizationTabLabel();
 
     String clusterPopupMemoryOptimizationPanelTitle();
