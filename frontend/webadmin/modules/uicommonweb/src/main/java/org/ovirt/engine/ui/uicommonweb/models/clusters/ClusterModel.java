@@ -2002,25 +2002,30 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             @Override
             public void onSuccess(Object model, Object result) {
                 ClusterModel clusterModel = (ClusterModel) model;
+                @SuppressWarnings("unchecked")
                 ArrayList<Version> versions = (ArrayList<Version>) result;
-                Version selectedVersion = clusterModel.getVersion().getSelectedItem();
-                clusterModel.getVersion().setItems(versions);
-                if (!clusterModel.getIsEdit() && (selectedVersion == null ||
-                        !versions.contains(selectedVersion) ||
+                Version versionToSelect = calculateNewVersionWhichShouldBeSelected(clusterModel, versions);
+
+                clusterModel.getVersion().setItems(versions, versionToSelect);
+            }
+
+            private Version calculateNewVersionWhichShouldBeSelected(ClusterModel clusterModel,
+                    List<Version> versions) {
+                ListModel<Version> version = clusterModel.getVersion();
+                Version selectedVersion = version.getSelectedItem();
+
+                if (!clusterModel.getIsEdit() && (selectedVersion == null || !versions.contains(selectedVersion) ||
                         selectedVersion.compareTo(selectedDataCenter.getCompatibilityVersion()) > 0)) {
-                    if(ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)){
-                        clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
+                    if (ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)) {
+                        return Linq.selectHighestVersion(versions);
+                    } else {
+                        return selectedDataCenter.getCompatibilityVersion();
                     }
-                    else {
-                        clusterModel.getVersion().setSelectedItem(selectedDataCenter.getCompatibilityVersion());
-                    }
-                }
-                else if (clusterModel.getIsEdit()) {
-                    clusterModel.getVersion().setSelectedItem(Linq.firstOrNull(versions,
-                            new Linq.EqualsPredicate(clusterModel.getEntity().getCompatibilityVersion())));
-                }
-                else {
-                    clusterModel.getVersion().setSelectedItem(selectedVersion);
+                } else if (clusterModel.getIsEdit()) {
+                    return Linq.firstOrNull(versions,
+                            new Linq.EqualsPredicate(clusterModel.getEntity().getCompatibilityVersion()));
+                } else {
+                    return selectedVersion;
                 }
             }
         };
