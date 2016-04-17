@@ -75,4 +75,9 @@ public class VmJob implements BusinessEntity<Guid> {
                 jobType
         );
     }
+
+    @Override
+    public String toString() {
+        return "VM Job [" + getId() +"]";
+    }
 }

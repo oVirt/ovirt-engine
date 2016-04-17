@@ -74,14 +74,14 @@ public class VmJobsMonitoring {
                 if (reportedJob.equals(job)) {
                     // Same data, no update needed.  It would be nice if a caching
                     // layer would take care of this for us.
-                    log.info("VM job '{}': In progress (no change)", job.getId());
+                    log.info("{}: In progress (no change)", job);
                 } else {
                     jobsToUpdate.add(reportedJob);
-                    log.info("VM job '{}': In progress, updating", job.getId());
+                    log.info("{}: In progress, updating", job);
                 }
             } else {
                 jobsToRemove.add(job);
-                log.info("VM job '{}': Deleting", job.getId());
+                log.info("{}: Deleting", job);
             }
         });
     }
@@ -107,13 +107,13 @@ public class VmJobsMonitoring {
                 .filter(job -> vmIds.contains(job.getVmId()))
                 .collect(toList());
         removeJobs(jobsToRemove);
-        jobsToRemove.forEach(job -> log.info("VM job '{}' was removed, VM is down", job.getId()));
+        jobsToRemove.forEach(job -> log.info("{} was removed, VM is down", job));
     }
 
     public void addJob(VmJob job) {
         getVmJobDao().save(job);
         jobsRepository.put(job.getId(), job);
-        log.info("Stored placeholder for job id '{}'", job.getId());
+        log.info("Stored placeholder for {}", job);
     }
 
     public VmJob getJobById(Guid jobId) {
