@@ -51,6 +51,7 @@ public class VmJobsMonitoring {
         if (vmIdToJobs.isEmpty()) {
             return;
         }
+
         List<VmJob> jobsToUpdate = new ArrayList<>();
         List<VmJob> jobsToRemove = new ArrayList<>();
         vmIdToJobs.entrySet().forEach(entry -> processVmJobs(
@@ -86,17 +87,19 @@ public class VmJobsMonitoring {
     }
 
     List<VmJob> getExistingJobsForVm(Guid vmId) {
-        return jobsRepository.values().stream().filter(job -> job.getVmId().equals(vmId)).collect(toList());
+        return jobsRepository.values().stream()
+            .filter(job -> job.getVmId().equals(vmId))
+            .collect(toList());
     }
 
-    void updateJobs(Collection<VmJob> vmJobsToUpdate) {
-        getVmJobDao().updateAllInBatch(vmJobsToUpdate);
-        vmJobsToUpdate.forEach(job -> jobsRepository.put(job.getId(), job));
+    void updateJobs(Collection<VmJob> jobsToUpdate) {
+        getVmJobDao().updateAllInBatch(jobsToUpdate);
+        jobsToUpdate.forEach(job -> jobsRepository.put(job.getId(), job));
     }
 
-    void removeJobs(List<VmJob> vmJobsToRemove) {
-        getVmJobDao().removeAllInBatch(vmJobsToRemove);
-        vmJobsToRemove.stream().map(VmJob::getId).forEach(jobsRepository::remove);
+    void removeJobs(List<VmJob> jobsToRemove) {
+        getVmJobDao().removeAllInBatch(jobsToRemove);
+        jobsToRemove.stream().map(VmJob::getId).forEach(jobsRepository::remove);
     }
 
     public void removeJobsByVmIds(Collection<Guid> vmIds) {
