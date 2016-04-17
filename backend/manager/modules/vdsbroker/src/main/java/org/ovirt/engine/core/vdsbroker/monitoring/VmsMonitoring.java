@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -76,7 +76,7 @@ public class VmsMonitoring implements BackendService {
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
-    private VdsDao vdsDao;
+    private VdsDynamicDao vdsDynamicDao;
     @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
     @Inject
@@ -179,7 +179,7 @@ public class VmsMonitoring implements BackendService {
                 vmDynamicDao,
                 vmDao,
                 vmNetworkInterfaceDao,
-                vdsDao,
+                vdsDynamicDao,
                 vdsNumaNodeDao,
                 vmNumaNodeDao);
     }

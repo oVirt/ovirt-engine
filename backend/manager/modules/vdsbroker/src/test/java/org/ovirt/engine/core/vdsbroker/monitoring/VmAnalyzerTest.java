@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmJob;
@@ -47,7 +48,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmJobDao;
@@ -87,11 +88,11 @@ public class VmAnalyzerTest {
     @Mock
     private ClusterDao clusterDao;
     @Mock
-    private VdsDao vdsDao;
+    private VdsDynamicDao vdsDynamicDao;
     @Mock
-    private VDS srcHost;
+    private VdsDynamic srcHost;
     @Mock
-    private VDS dstHost;
+    private VdsDynamic dstHost;
     @Mock
     private VdsManager vdsManager;
     @Mock
@@ -359,7 +360,7 @@ public class VmAnalyzerTest {
                 vmDynamicDao,
                 vmDao,
                 vmNetworkInterfaceDao,
-                vdsDao,
+                vdsDynamicDao,
                 null,
                 null));
         doReturn(vmManager).when(vmAnalyzer).getVmManager();
@@ -404,8 +405,8 @@ public class VmAnalyzerTest {
     }
 
     private void mockVdsDao() {
-        when(vdsDao.get(VmTestPairs.SRC_HOST_ID)).thenReturn(srcHost);
-        when(vdsDao.get(VmTestPairs.DST_HOST_ID)).thenReturn(dstHost);
+        when(vdsDynamicDao.get(VmTestPairs.SRC_HOST_ID)).thenReturn(srcHost);
+        when(vdsDynamicDao.get(VmTestPairs.DST_HOST_ID)).thenReturn(dstHost);
     }
 
     private void mockDstHostStatus(VDSStatus status) {

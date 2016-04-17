@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -36,7 +36,7 @@ public class VmAnalyzerFactory {
     private VmDynamicDao vmDynamicDao;
     private VmDao vmDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
-    private VdsDao vdsDao;
+    private VdsDynamicDao vdsDynamicDao;
     private VdsNumaNodeDao vdsNumaNodeDao;
     private VmNumaNodeDao vmNumaNodeDao;
 
@@ -49,7 +49,7 @@ public class VmAnalyzerFactory {
             VmDynamicDao vmDynamicDao,
             VmDao vmDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao,
-            VdsDao vdsDao,
+            VdsDynamicDao vdsDynamicDao,
             VdsNumaNodeDao vdsNumaNodeDao,
             VmNumaNodeDao vmNumaNodeDao) {
         this.vdsManager = vdsManager;
@@ -60,7 +60,7 @@ public class VmAnalyzerFactory {
         this.vmDynamicDao = vmDynamicDao;
         this.vmDao = vmDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
-        this.vdsDao = vdsDao;
+        this.vdsDynamicDao = vdsDynamicDao;
         this.vdsNumaNodeDao = vdsNumaNodeDao;
         this.vmNumaNodeDao = vmNumaNodeDao;
         initProviders();
@@ -88,7 +88,7 @@ public class VmAnalyzerFactory {
                 vmDynamicDao,
                 vmDao,
                 vmNetworkInterfaceDao,
-                vdsDao,
+                vdsDynamicDao,
                 vdsNumaNodesProvider,
                 vmNumaNodeDao);
     }

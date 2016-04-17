@@ -46,7 +46,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -116,7 +116,7 @@ public class VmAnalyzer {
     private VmDynamicDao vmDynamicDao;
     private VmDao vmDao;
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
-    private VdsDao vdsDao;
+    private VdsDynamicDao vdsDynamicDao;
     private VmNumaNodeDao vmNumaNodeDao;
 
     public VmAnalyzer(
@@ -130,7 +130,7 @@ public class VmAnalyzer {
             VmDynamicDao vmDynamicDao,
             VmDao vmDao,
             VmNetworkInterfaceDao vmNetworkInterfaceDao,
-            VdsDao vdsDao,
+            VdsDynamicDao vdsDynamicDao,
             Supplier<Map<Integer, VdsNumaNode>> vdsNumaNodesProvider,
             VmNumaNodeDao vmNumaNodeDao) {
         this.dbVm = dbVm;
@@ -143,7 +143,7 @@ public class VmAnalyzer {
         this.vmDynamicDao = vmDynamicDao;
         this.vmDao = vmDao;
         this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
-        this.vdsDao = vdsDao;
+        this.vdsDynamicDao = vdsDynamicDao;
         this.vdsNumaNodesProvider = vdsNumaNodesProvider;
         this.vmNumaNodeDao = vmNumaNodeDao;
     }
@@ -710,7 +710,7 @@ public class VmAnalyzer {
 
         // when the destination VDS is NonResponsive put the VM to Uknown like the rest of its VMs, else MigratingTo
         VMStatus newVmStatus =
-                (VDSStatus.NonResponsive == vdsDao.get(destinationHostId).getStatus())
+                (VDSStatus.NonResponsive == vdsDynamicDao.get(destinationHostId).getStatus())
                         ? VMStatus.Unknown
                         : VMStatus.MigratingTo;
 
