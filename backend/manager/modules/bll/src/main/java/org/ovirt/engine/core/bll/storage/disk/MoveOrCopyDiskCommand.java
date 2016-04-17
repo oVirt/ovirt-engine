@@ -39,7 +39,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -178,6 +180,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * Check if destination storage has enough space
      */
     protected boolean validateSpaceRequirements() {
+        if (isUnregisteredDiskExistsForCopyTemplate()) {
+            return true;
+        }
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         if (validate(storageDomainValidator.isDomainWithinThresholds())) {
             getImage().getSnapshots().addAll(getAllImageSnapshots());
@@ -276,6 +281,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void executeCommand() {
+        if (isUnregisteredDiskExistsForCopyTemplate()) {
+            addDiskMapping();
+            return;
+        }
         MoveOrCopyImageGroupParameters p = prepareChildParameters();
         VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                 getImagesActionType(),
@@ -291,6 +300,36 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
+    }
+
+    private void addDiskMapping() {
+        executeInNewTransaction(() -> {
+            addStorageDomainMapForCopiedTemplateDisk();
+            unregisteredDisksDao.removeUnregisteredDisk(getImage().getId(), getParameters().getStorageDomainId());
+            incrementDbGenerationForRelatedEntities();
+            return null;
+        });
+        setSucceeded(true);
+    }
+
+    protected boolean isUnregisteredDiskExistsForCopyTemplate() {
+        if (isTemplate() && getParameters().getOperation() == ImageOperation.Copy) {
+            List<UnregisteredDisk> unregisteredDisks =
+                    unregisteredDisksDao.getByDiskIdAndStorageDomainId(getImage().getId(),
+                            getParameters().getStorageDomainId());
+            if (!unregisteredDisks.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addStorageDomainMapForCopiedTemplateDisk() {
+        getImageStorageDomainMapDao().save
+                (new ImageStorageDomainMap(getParameters().getImageId(),
+                        getParameters().getStorageDomainId(),
+                        getParameters().getQuotaId(),
+                        getImage().getDiskProfileId()));
     }
 
     private void endCommandActions() {
