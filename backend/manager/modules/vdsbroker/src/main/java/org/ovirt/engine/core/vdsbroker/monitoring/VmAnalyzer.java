@@ -15,7 +15,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
@@ -464,7 +463,7 @@ public class VmAnalyzer {
         // if not migrating here and not down
         if (!inMigrationTo() && vdsmVmDynamic.getStatus() != VMStatus.Down) {
             if (dbVm != null) {
-                if (!StringUtils.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
+                if (!Objects.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
                     clientIpChanged = true;
                 }
 
@@ -948,7 +947,7 @@ public class VmAnalyzer {
                 ips.addAll(nic.getIpv4Addresses());
             }
         }
-        return ips.isEmpty() ? null : StringUtils.join(ips, " ");
+        return ips.isEmpty() ? null : String.join(" ", ips);
     }
 
     protected boolean isBalloonWorking(VmBalloonInfo balloonInfo) {
