@@ -1185,4 +1185,31 @@ class OvirtUtils(base.Base):
             ),
         )
 
+    def getDBConfig(self, prefix):
+        return (
+            '{prefix}_DB_HOST="{host}"\n'
+            '{prefix}_DB_PORT="{port}"\n'
+            '{prefix}_DB_USER="{user}"\n'
+            '{prefix}_DB_PASSWORD="{password}"\n'
+            '{prefix}_DB_DATABASE="{database}"\n'
+            '{prefix}_DB_SECURED="{secured}"\n'
+            '{prefix}_DB_SECURED_VALIDATION="{hostValidation}"\n'
+            '{prefix}_DB_DRIVER="org.postgresql.Driver"\n'
+            '{prefix}_DB_URL="{jdbcUrl}"\n'
+        ).format(
+            prefix=prefix,
+            host=_ind_env(self, DEK.HOST),
+            port=_ind_env(self, DEK.PORT),
+            user=_ind_env(self, DEK.USER),
+            password=outil.escape(
+                _ind_env(self, DEK.PASSWORD),
+                ':\\',
+            ),
+            database=_ind_env(self, DEK.DATABASE),
+            secured=_ind_env(self, DEK.SECURED),
+            hostValidation=_ind_env(self, DEK.HOST_VALIDATION),
+            jdbcUrl=self.getJdbcUrl(),
+        )
+
+
 # vim: expandtab tabstop=4 shiftwidth=4
