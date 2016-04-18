@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2015 Red Hat, Inc.
+# Copyright (C) 2016 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ from . import aaakerbldap
 from . import jboss
 from . import java
 from . import database
+from . import dwh_database
 from . import protocols
 from . import appmode
 from . import domain_type
@@ -52,6 +53,7 @@ def createPlugins(context):
     jboss.Plugin(context=context)
     java.Plugin(context=context)
     database.Plugin(context=context)
+    dwh_database.Plugin(context=context)
     protocols.Plugin(context=context)
     appmode.Plugin(context=context)
     domain_type.Plugin(context=context)
