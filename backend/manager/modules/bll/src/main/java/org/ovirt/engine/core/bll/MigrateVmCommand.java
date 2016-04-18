@@ -529,7 +529,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
-        if (getVm() != null && !Objects.equals(getParameters().getTargetClusterId(), getVm().getClusterId())) {
+        if (getParameters().getTargetClusterId() != null &&
+                getVm() != null &&
+                !Objects.equals(getParameters().getTargetClusterId(), getVm().getClusterId())) {
             // additional permissions needed since changing the cluster
             permissionList.addAll(VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getTargetClusterId()));
         }
