@@ -130,7 +130,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = searchInstanceTypes();
             break;
         case ImageType:
-            returnValue = searchVmTemplates();
+            returnValue = searchImageTypes();
             break;
         case Session:
             returnValue = searchSessions();
@@ -227,6 +227,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VmTemplate> searchInstanceTypes() {
+        return genericSearch(getDbFacade().getVmTemplateDao(), true);
+    }
+
+    private List<VmTemplate> searchImageTypes() {
         return genericSearch(getDbFacade().getVmTemplateDao(), true);
     }
 
