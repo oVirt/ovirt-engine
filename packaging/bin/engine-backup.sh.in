@@ -1366,8 +1366,10 @@ __EOF__
 		logdie "Failed restoring ${paths}"
 
 	# Make next engine-setup ask about apache
-	[ -n "${exclude_apache}" ] && \
-		sed -i "/^${APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL}"
+	if [ -n "${exclude_apache}" ]; then
+		local ESC_APACHE_CONFIGURED_LINE=$(echo "${APACHE_CONFIGURED_LINE}" | sed 's;/;\\/;')
+		sed -i "/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL}"
+	fi
 
 	if selinuxenabled; then
 		echo "${paths}" | while read -r path; do
