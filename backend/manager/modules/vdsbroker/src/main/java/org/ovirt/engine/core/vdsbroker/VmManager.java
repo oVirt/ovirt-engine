@@ -27,6 +27,7 @@ public class VmManager {
 
     private Double lastStatusEventTimestamp;
     private Guid lastStatusEventReporterId;
+    private VmStatistics statistics;
 
     private boolean coldReboot;
 
@@ -41,6 +42,7 @@ public class VmManager {
         this.vmId = vmId;
         lock = new ReentrantLock();
         convertOperationProgress = -1;
+        statistics = new VmStatistics();
     }
 
     public void lock() {
@@ -61,6 +63,7 @@ public class VmManager {
 
     public void update(VmStatistics statistics) {
         vmStatisticsDao.update(statistics);
+        setStatistics(statistics);
     }
 
     public void update(VmNetworkStatistics networkStatistics) {
@@ -144,5 +147,13 @@ public class VmManager {
 
     public void setColdReboot(boolean coldReboot) {
         this.coldReboot = coldReboot;
+    }
+
+    public VmStatistics getStatistics() {
+        return statistics;
+    }
+
+    public void setStatistics(VmStatistics statistics) {
+        this.statistics = statistics;
     }
 }

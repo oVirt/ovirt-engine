@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
+import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -341,10 +342,11 @@ public class VmsMonitoring implements BackendService {
     }
 
     private void saveVmStatistics(List<VmAnalyzer> vmAnalyzers) {
-        vmStatisticsDao.updateAllInBatch(vmAnalyzers.stream()
-                .map(VmAnalyzer::getVmStatisticsToSave)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+        Map<Guid, VmStatistics> vmIdToStatistics = vmAnalyzers.stream()
+                .filter(analyzer -> analyzer.getVmStatisticsToSave() != null)
+                .collect(Collectors.toMap(VmAnalyzer::getVmId, VmAnalyzer::getVmStatisticsToSave));
+        vmStatisticsDao.updateAllInBatch(vmIdToStatistics.values());
+        vmIdToStatistics.forEach((vmId, stats) -> resourceManager.getVmManager(vmId).setStatistics(stats));
     }
 
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
