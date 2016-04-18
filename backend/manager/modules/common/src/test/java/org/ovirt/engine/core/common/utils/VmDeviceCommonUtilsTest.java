@@ -26,8 +26,8 @@ import org.ovirt.engine.core.compat.Guid;
 @RunWith(MockitoJUnitRunner.class)
 public class VmDeviceCommonUtilsTest {
 
-    private static final String NIC_1_NAME = new String("nic1");
-    private static final String NIC_2_NAME = new String("nic2");
+    private static final String NIC_1_NAME = "nic1";
+    private static final String NIC_2_NAME = "nic2";
 
     @Mock
     private VM vm;
