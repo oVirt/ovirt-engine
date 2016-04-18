@@ -75,7 +75,6 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     MemorySizeTextBoxLabel<Long> swapFree = new MemorySizeTextBoxLabel<>();
     MemorySizeTextBoxLabel<Float> maxSchedulingMemory = new MemorySizeTextBoxLabel<>();
 
-    BooleanTextBoxLabel liveSnapshotSupport = new BooleanTextBoxLabel(constants.active(), constants.inactive());
     BooleanTextBoxLabel hostDevicePassthroughSupport = new BooleanTextBoxLabel(constants.enabled(), constants.disabled());
 
     @Ignore
@@ -153,7 +152,6 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.liveSnapshotSupportHostGeneral(), liveSnapshotSupport, 2).withAutoPlacement());
     }
 
     @Override

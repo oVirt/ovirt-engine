@@ -299,7 +299,8 @@ public class HostMapper {
         model.setAutoNumaStatus(map(entity.getAutoNumaBalancing(), null));
         model.setNumaSupported(entity.isNumaSupport());
 
-        model.setLiveSnapshotSupport(entity.getLiveSnapshotSupport());
+        // TODO: Temporary workaround until this is removed from the model
+        model.setLiveSnapshotSupport(true);
 
         if (entity.getHostProviderId() != null) {
             model.setExternalHostProvider(new ExternalHostProvider());

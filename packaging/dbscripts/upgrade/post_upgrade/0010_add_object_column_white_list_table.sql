@@ -73,7 +73,6 @@ select fn_db_add_column_to_object_white_list('vds', 'selinux_enforce_mode');
 -- Add new columns for numa feature
 select fn_db_add_column_to_object_white_list('vds', 'auto_numa_balancing');
 select fn_db_add_column_to_object_white_list('vds', 'is_numa_supported');
-select fn_db_add_column_to_object_white_list('vds', 'is_live_snapshot_supported');
 select fn_db_add_column_to_object_white_list('vds', 'protocol');
 
 -- allow query of the host supported emulated machines via the user interface (for VM combobox population)

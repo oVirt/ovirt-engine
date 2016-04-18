@@ -1336,14 +1336,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vdsDynamic.setNumaSupport(numaSupport);
     }
 
-    public void setLiveSnapshotSupport(Boolean value) {
-        vdsDynamic.setLiveSnapshotSupport(value);
-    }
-
-    public Boolean getLiveSnapshotSupport() {
-        return vdsDynamic.getLiveSnapshotSupport();
-    }
-
     public boolean isBalloonEnabled() {
         return balloonEnabled;
     }

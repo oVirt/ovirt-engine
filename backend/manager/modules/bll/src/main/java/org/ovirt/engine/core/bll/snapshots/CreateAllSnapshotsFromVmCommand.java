@@ -31,7 +31,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -684,9 +683,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     protected boolean validateVM(VmValidator vmValidator) {
-        LiveSnapshotValidator validator = new LiveSnapshotValidator(getVds());
-        return (getVm().isDown() || validate(validator.validateSnapshot())) &&
-                validate(vmValidator.vmNotSavingRestoring()) &&
+        return validate(vmValidator.vmNotSavingRestoring()) &&
                 validate(vmValidator.validateVmStatusUsingMatrix(VdcActionType.CreateAllSnapshotsFromVm));
     }
 

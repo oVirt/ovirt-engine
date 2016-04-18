@@ -400,7 +400,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
             entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
-            entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
             entity.setBalloonEnabled(rs.getBoolean("enable_balloon"));
             entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
             entity.setMaintenanceReason(rs.getString("maintenance_reason"));

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -265,11 +264,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     @Override
     protected boolean validate() {
         setStoragePoolId(getVm().getStoragePoolId());
-
-        LiveSnapshotValidator validator = new LiveSnapshotValidator(getVds());
-        if (!validate(validator.validateSnapshot())) {
-            return false;
-        }
 
         if (!isValidParametersList() || !checkImagesStatus() || !validateSpaceRequirements()
                 || !performVmRelatedChecks()) {

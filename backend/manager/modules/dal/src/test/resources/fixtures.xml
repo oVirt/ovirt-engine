@@ -3523,7 +3523,6 @@
         <column>auto_numa_balancing</column>
         <column>is_numa_supported</column>
         <column>supported_rng_sources</column>
-        <column>is_live_snapshot_supported</column>
         <column>online_cpus</column>
         <column>maintenance_reason</column>
         <column>incoming_migrations</column>
@@ -3583,7 +3582,6 @@
             <value>2</value>
             <value>true</value>
             <value>RANDOM</value>
-            <value>true</value>
             <value>0,1,2,3</value>
             <null />
             <value>0</value>
@@ -3644,7 +3642,6 @@
             <value>2</value>
             <value>true</value>
             <value></value>
-            <value>false</value>
             <value>0,2,4</value>
             <null />
             <value>0</value>
@@ -3705,7 +3702,6 @@
             <value>2</value>
             <value>true</value>
             <value>HWRNG</value>
-            <value>false</value>
             <value>0,8,16,24,32</value>
             <null />
             <value>0</value>
@@ -3766,7 +3762,6 @@
             <value>2</value>
             <value>true</value>
             <value>RANDOM</value>
-            <value>true</value>
             <value>0,128</value>
             <null />
             <value>0</value>
@@ -3827,7 +3822,6 @@
             <value>2</value>
             <value>true</value>
             <value>RANDOM,HWRNG</value>
-            <value>true</value>
             <value>0,1,2,3,4,5,6,7,8</value>
             <null />
             <value>0</value>

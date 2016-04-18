@@ -110,8 +110,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private KdumpStatus kdumpStatus;
 
-    private boolean liveSnapshotSupport;
-
     private VdsTransparentHugePagesState transparentHugePagesState;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
@@ -214,7 +212,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         numaNodeList = new ArrayList<>();
         autoNumaBalancing = AutoNumaBalanceStatus.UNKNOWN;
         supportedRngSources = new HashSet<>();
-        liveSnapshotSupport = true;  // usually supported, exceptional case if it isn't.
         additionalFeatures = new HashSet<>();
     }
 
@@ -685,14 +682,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         selinuxEnforceMode = SELinuxMode.fromValue(value);
     }
 
-    public boolean getLiveSnapshotSupport() {
-        return liveSnapshotSupport;
-    }
-
-    public void setLiveSnapshotSupport(boolean liveSnapshotSupport) {
-        this.liveSnapshotSupport = liveSnapshotSupport;
-    }
-
     public List<VdsNumaNode> getNumaNodeList() {
         return numaNodeList;
     }
@@ -830,7 +819,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 numaNodeList,
                 autoNumaBalancing,
                 numaSupport,
-                liveSnapshotSupport,
                 additionalFeatures,
                 maintenanceReason,
                 updateAvailable,
@@ -906,7 +894,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(supportedEmulatedMachines, other.supportedEmulatedMachines)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && Objects.equals(supportedRngSources, other.supportedRngSources)
-                && liveSnapshotSupport == other.liveSnapshotSupport
                 && Objects.equals(maintenanceReason, other.maintenanceReason)
                 && updateAvailable == other.updateAvailable
                 && Objects.equals(additionalFeatures, other.additionalFeatures)

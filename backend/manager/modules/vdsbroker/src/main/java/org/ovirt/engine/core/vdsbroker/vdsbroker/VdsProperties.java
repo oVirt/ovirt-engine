@@ -235,7 +235,6 @@ public final class VdsProperties {
     public static final String launch_paused_param = "launchPaused";
     public static final String session = "session";
     public static final String spiceSslCipherSuite = "spiceSslCipherSuite";
-    public static final String liveSnapshotSupport = "liveSnapshot";
 
     public static final String vm_balloonInfo = "balloonInfo";
     public static final String vm_balloon_cur = "balloon_cur";

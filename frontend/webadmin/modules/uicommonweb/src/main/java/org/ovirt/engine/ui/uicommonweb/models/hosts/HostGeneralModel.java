@@ -468,22 +468,6 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
-    private Boolean liveSnapshotSupport;
-
-    public Boolean getLiveSnapshotSupport() {
-        return liveSnapshotSupport;
-    }
-
-    public void setLiveSnapshotSupport(Boolean value) {
-        if (liveSnapshotSupport == null && value == null) {
-            return;
-        }
-        if (liveSnapshotSupport == null || !liveSnapshotSupport.equals(value)) {
-            liveSnapshotSupport = value;
-            onPropertyChanged(new PropertyChangedEventArgs("LiveSnapshotSupport")); //$NON-NLS-1$
-        }
-    }
-
     private Object automaticLargePage;
 
     public Object getAutomaticLargePage() {
@@ -840,7 +824,6 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setKdumpStatus(EnumTranslator.getInstance().translate(vds.getKdumpStatus()));
         setSelinuxEnforceMode(EnumTranslator.getInstance().translate(vds.getSELinuxEnforceMode()));
 
-        setLiveSnapshotSupport(vds.getLiveSnapshotSupport());
         setHostDevicePassthroughSupport(vds.isHostDevicePassthroughEnabled());
 
         if (!vds.getHighlyAvailableIsConfigured()) {

@@ -255,7 +255,6 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_auto_numa_balancing SMALLINT,
     v_is_numa_supported BOOLEAN,
     v_supported_rng_sources VARCHAR(255),
-    v_is_live_snapshot_supported BOOLEAN,
     v_online_cpus TEXT,
     v_is_update_available BOOLEAN,
     v_is_hostdev_enabled BOOLEAN
@@ -319,7 +318,6 @@ BEGIN
             auto_numa_balancing,
             is_numa_supported,
             supported_rng_sources,
-            is_live_snapshot_supported,
             online_cpus,
             is_update_available,
             is_hostdev_enabled
@@ -380,7 +378,6 @@ BEGIN
             v_auto_numa_balancing,
             v_is_numa_supported,
             v_supported_rng_sources,
-            v_is_live_snapshot_supported,
             v_online_cpus,
             v_is_update_available,
             v_is_hostdev_enabled
@@ -463,7 +460,6 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_auto_numa_balancing SMALLINT,
     v_is_numa_supported BOOLEAN,
     v_supported_rng_sources VARCHAR(255),
-    v_is_live_snapshot_supported BOOLEAN,
     v_online_cpus TEXT,
     v_maintenance_reason TEXT,
     v_is_update_available BOOLEAN,
@@ -530,7 +526,6 @@ BEGIN
             auto_numa_balancing = v_auto_numa_balancing,
             is_numa_supported = v_is_numa_supported,
             supported_rng_sources = v_supported_rng_sources,
-            is_live_snapshot_supported = v_is_live_snapshot_supported,
             online_cpus = v_online_cpus,
             maintenance_reason = v_maintenance_reason,
             is_update_available = v_is_update_available,

@@ -878,12 +878,6 @@ public class VdsBrokerObjectsBuilder {
             vds.setSELinuxEnforceMode(null);
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.liveSnapshotSupport)) {
-            vds.setLiveSnapshotSupport(assignBoolValue(xmlRpcStruct, VdsProperties.liveSnapshotSupport));
-        } else {
-            vds.setLiveSnapshotSupport(true); // for backward compatibility's sake
-        }
-
         updateAdditionalFeatures(vds, xmlRpcStruct);
     }
 
