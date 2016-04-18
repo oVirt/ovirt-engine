@@ -883,11 +883,6 @@ public class VdsBrokerObjectsBuilder {
         } else {
             vds.setLiveSnapshotSupport(true); // for backward compatibility's sake
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.liveMergeSupport)) {
-            vds.setLiveMergeSupport(assignBoolValue(xmlRpcStruct, VdsProperties.liveMergeSupport));
-        } else {
-            vds.setLiveMergeSupport(false);
-        }
 
         updateAdditionalFeatures(vds, xmlRpcStruct);
     }

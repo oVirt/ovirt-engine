@@ -112,8 +112,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean liveSnapshotSupport;
 
-    private boolean liveMergeSupport;
-
     private VdsTransparentHugePagesState transparentHugePagesState;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
@@ -217,7 +215,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         autoNumaBalancing = AutoNumaBalanceStatus.UNKNOWN;
         supportedRngSources = new HashSet<>();
         liveSnapshotSupport = true;  // usually supported, exceptional case if it isn't.
-        liveMergeSupport = true;
         additionalFeatures = new HashSet<>();
     }
 
@@ -696,14 +693,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.liveSnapshotSupport = liveSnapshotSupport;
     }
 
-    public boolean getLiveMergeSupport() {
-        return liveMergeSupport;
-    }
-
-    public void setLiveMergeSupport(boolean liveMergeSupport) {
-        this.liveMergeSupport = liveMergeSupport;
-    }
-
     public List<VdsNumaNode> getNumaNodeList() {
         return numaNodeList;
     }
@@ -842,7 +831,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 autoNumaBalancing,
                 numaSupport,
                 liveSnapshotSupport,
-                liveMergeSupport,
                 additionalFeatures,
                 maintenanceReason,
                 updateAvailable,
@@ -919,7 +907,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && Objects.equals(supportedRngSources, other.supportedRngSources)
                 && liveSnapshotSupport == other.liveSnapshotSupport
-                && liveMergeSupport == other.liveMergeSupport
                 && Objects.equals(maintenanceReason, other.maintenanceReason)
                 && updateAvailable == other.updateAvailable
                 && Objects.equals(additionalFeatures, other.additionalFeatures)

@@ -1344,14 +1344,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         return vdsDynamic.getLiveSnapshotSupport();
     }
 
-    public void setLiveMergeSupport(boolean value) {
-        vdsDynamic.setLiveMergeSupport(value);
-    }
-
-    public boolean getLiveMergeSupport() {
-        return vdsDynamic.getLiveMergeSupport();
-    }
-
     public boolean isBalloonEnabled() {
         return balloonEnabled;
     }

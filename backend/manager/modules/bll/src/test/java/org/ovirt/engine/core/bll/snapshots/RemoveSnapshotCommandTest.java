@@ -150,7 +150,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         prepareForVmValidatorTests();
         spySdValidator();
         cmd.getVm().setStatus(VMStatus.Up);
-        doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
 
         mockDisksList(4);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
@@ -161,7 +160,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         prepareForVmValidatorTests();
         spySdValidator();
         cmd.getVm().setStatus(VMStatus.Up);
-        doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
 
         List<DiskImage> imagesDisks = mockDisksList(4);
         when(storageDomainsValidator.allDomainsHaveSpaceForClonedDisks(imagesDisks)).thenReturn(
@@ -186,18 +184,8 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVmUpHostCapable() {
         prepareForVmValidatorTests();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
         cmd.getVm().setStatus(VMStatus.Up);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
-    }
-
-    @Test
-    public void testValidateVmUpHostNotCapable() {
-        prepareForVmValidatorTests();
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE))
-                .when(vmValidator).vmHostCanLiveMerge();
-        cmd.getVm().setStatus(VMStatus.Up);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE);
     }
 
     @Test

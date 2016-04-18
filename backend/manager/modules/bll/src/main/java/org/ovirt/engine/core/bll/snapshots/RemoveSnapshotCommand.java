@@ -106,15 +106,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected void executeCommand() {
-        if (!getVm().isDown()) {
-            if (!getVm().isQualifiedForSnapshotMerge()) {
-                log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
-                throw new EngineException(EngineError.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
-            } else if (getVm().getRunOnVds() == null ||
-                    !getVdsDao().get(getVm().getRunOnVds()).getLiveMergeSupport()) {
-                log.error("Cannot remove VM snapshot. The host on which VM is running does not support Live Merge");
-                throw new EngineException(EngineError.VM_HOST_CANNOT_LIVE_MERGE);
-            }
+        if (!getVm().isDown() && !getVm().isQualifiedForSnapshotMerge()) {
+            log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
+            throw new EngineException(EngineError.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
         }
 
         final Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
@@ -345,8 +339,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
                 !validateSnapshotType() ||
-                !validate(vmValidator.vmQualifiedForSnapshotMerge()) ||
-                !validate(vmValidator.vmHostCanLiveMerge())) {
+                !validate(vmValidator.vmQualifiedForSnapshotMerge())) {
             return false;
         }
 

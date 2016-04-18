@@ -174,7 +174,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         if (isDiskPlugged()) {
             VmValidator vmValidator = createVmValidator(getVm());
-            if (!validate(vmValidator.vmQualifiedForSnapshotMerge()) || !validate(vmValidator.vmHostCanLiveMerge())) {
+            if (!validate(vmValidator.vmQualifiedForSnapshotMerge())) {
                 return false;
             }
         }

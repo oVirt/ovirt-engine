@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -185,19 +184,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         }
     }
 
-    private boolean liveMergeSupported;
-
-    public boolean isLiveMergeSupported() {
-        return liveMergeSupported;
-    }
-
-    private void setLiveMergeSupported(boolean value) {
-        if (liveMergeSupported != value) {
-            liveMergeSupported = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsLiveMergeSupported")); //$NON-NLS-1$
-        }
-    }
-
     private List<DiskImage> vmDisks;
 
     public List<DiskImage> getVmDisks() {
@@ -276,7 +262,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     @Override
     public void setEntity(VM value) {
         updateIsMemorySnapshotSupported(value);
-        updateIsLiveMergeSupported(value);
         super.setEntity(value);
         updateVmActiveDisks();
     }
@@ -846,7 +831,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
         getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
         getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && !isStateless
-                && (isLiveMergeSupported() ? isVmQualifiedForSnapshotMerge : isVmDown));
+                && isVmQualifiedForSnapshotMerge);
         getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
                 && !isVmImageLocked && !isStateless);
         getCloneTemplateCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
@@ -913,29 +898,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         VM vm = (VM) entity;
 
         setMemorySnapshotSupported(AsyncDataProvider.getInstance().isMemorySnapshotSupported(vm));
-    }
-
-    private void updateIsLiveMergeSupported(Object entity) {
-        if (entity == null) {
-            return;
-        }
-
-        VM vm = (VM) entity;
-
-        if (vm.getRunOnVds() == null) {
-            setLiveMergeSupported(false);
-            return;
-        }
-
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) model;
-                VDS vds = (VDS) returnValue;
-                vmSnapshotListModel.setLiveMergeSupported(vds.getLiveMergeSupport());
-            }
-        });
-        AsyncDataProvider.getInstance().getHostById(query, vm.getRunOnVds());
     }
 
     @Override

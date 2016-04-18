@@ -111,7 +111,6 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
             entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
             entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
-            entity.setLiveMergeSupport(rs.getBoolean("is_live_merge_supported"));
             entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
             entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
             entity.setMaintenanceReason(rs.getString("maintenance_reason"));
@@ -275,7 +274,6 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("supported_rng_sources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()))
                 .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
                 .addValue("is_live_snapshot_supported", vds.getLiveSnapshotSupport())
-                .addValue("is_live_merge_supported", vds.getLiveMergeSupport())
                 .addValue("maintenance_reason", vds.getMaintenanceReason())
                 .addValue("is_update_available", vds.isUpdateAvailable())
                 .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled());

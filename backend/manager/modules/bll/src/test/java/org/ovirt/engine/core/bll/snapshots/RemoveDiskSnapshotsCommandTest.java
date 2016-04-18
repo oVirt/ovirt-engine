@@ -177,7 +177,6 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         cmd.getVm().setStatus(VMStatus.Up);
         doReturn(true).when(cmd).isDiskPlugged();
         doReturn(ValidationResult.VALID).when(vmValidator).vmQualifiedForSnapshotMerge();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
         doReturn(true).when(cmd).validateStorageDomainAvailableSpace();
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
