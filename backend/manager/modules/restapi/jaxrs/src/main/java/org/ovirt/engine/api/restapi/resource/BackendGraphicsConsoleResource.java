@@ -44,7 +44,7 @@ public class BackendGraphicsConsoleResource
     protected org.ovirt.engine.core.common.businessentities.GraphicsType asGraphicsType() {
         String consoleString = HexUtils.hex2string(consoleId);
 
-        GraphicsType type = GraphicsType.valueOf(consoleString);
+        GraphicsType type = GraphicsType.fromValue(consoleString);
         return getMappingLocator().getMapper(GraphicsType.class, org.ovirt.engine.core.common.businessentities.GraphicsType.class).map(type, null);
     }
 
