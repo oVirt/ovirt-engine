@@ -109,9 +109,6 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
         if (from.isSetLibvirtVersion()) {
             to.setLibvirtVersion(adaptIn(from.getLibvirtVersion()));
         }
-        if (from.isSetLiveSnapshotSupport()) {
-            to.setLiveSnapshotSupport(from.isLiveSnapshotSupport());
-        }
         if (from.isSetMaxSchedulingMemory()) {
             to.setMaxSchedulingMemory(from.getMaxSchedulingMemory());
         }

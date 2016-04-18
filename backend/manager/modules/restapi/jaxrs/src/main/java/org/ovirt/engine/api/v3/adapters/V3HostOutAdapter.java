@@ -106,9 +106,8 @@ public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
         if (from.isSetLibvirtVersion()) {
             to.setLibvirtVersion(adaptOut(from.getLibvirtVersion()));
         }
-        if (from.isSetLiveSnapshotSupport()) {
-            to.setLiveSnapshotSupport(from.isLiveSnapshotSupport());
-        }
+        // All hosts support live snapshots now
+        to.setLiveSnapshotSupport(true);
         if (from.isSetMaxSchedulingMemory()) {
             to.setMaxSchedulingMemory(from.getMaxSchedulingMemory());
         }
