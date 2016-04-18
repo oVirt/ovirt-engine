@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -49,7 +48,6 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -73,8 +71,6 @@ public class VmAnalyzerTest {
     private ArgumentCaptor<VDSCommandType> vdsCommandTypeCaptor;
     @Captor
     private ArgumentCaptor<VDSParametersBase> vdsParamsCaptor;
-    @Mock
-    private VmStatisticsDao vmStatisticsDao;
     @Mock
     private VmStaticDao vmStaticDao;
     @Mock
@@ -364,14 +360,9 @@ public class VmAnalyzerTest {
     }
 
     private void stubDaos() {
-        mockStatistics();
         mockVmDynamic();
         mockVmStatic(true);
         mockVdsDao();
-    }
-
-    private void mockStatistics() {
-        when(vmStatisticsDao.get(any(Guid.class))).thenReturn(mock(VmStatistics.class));
     }
 
     private void mockVmDynamic() {
