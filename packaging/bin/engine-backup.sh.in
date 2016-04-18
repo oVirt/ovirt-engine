@@ -189,7 +189,9 @@ load_branding() {
 BACKUP_PATHS="/etc/ovirt-engine
 /etc/ovirt-engine-dwh
 /etc/ovirt-engine-reports
+/etc/ovirt-vmconsole
 /etc/pki/ovirt-engine
+/etc/pki/ovirt-vmconsole
 /etc/ovirt-engine-setup.conf.d
 /var/lib/ovirt-engine-reports/build-conf
 /var/lib/ovirt-engine-reports/ovirt-engine-reports.war/WEB-INF/js.quartz.properties
