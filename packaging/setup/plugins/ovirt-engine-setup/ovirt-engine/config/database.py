@@ -23,7 +23,6 @@ import gettext
 
 from otopi import constants as otopicons
 from otopi import filetransaction, plugin, util
-from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -56,33 +55,11 @@ class Plugin(plugin.PluginBase):
                 mode=0o600,
                 owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
                 enforcePermissions=True,
-                content=(
-                    'ENGINE_DB_HOST="{host}"\n'
-                    'ENGINE_DB_PORT="{port}"\n'
-                    'ENGINE_DB_USER="{user}"\n'
-                    'ENGINE_DB_PASSWORD="{password}"\n'
-                    'ENGINE_DB_DATABASE="{db}"\n'
-                    'ENGINE_DB_SECURED="{secured}"\n'
-                    'ENGINE_DB_SECURED_VALIDATION="{securedValidation}"\n'
-                    'ENGINE_DB_DRIVER="org.postgresql.Driver"\n'
-                    'ENGINE_DB_URL="{jdbcUrl}"\n'
-                ).format(
-                    host=self.environment[oenginecons.EngineDBEnv.HOST],
-                    port=self.environment[oenginecons.EngineDBEnv.PORT],
-                    user=self.environment[oenginecons.EngineDBEnv.USER],
-                    password=outil.escape(
-                        self.environment[oenginecons.EngineDBEnv.PASSWORD],
-                        '"\\$',
-                    ),
-                    db=self.environment[oenginecons.EngineDBEnv.DATABASE],
-                    secured=self.environment[oenginecons.EngineDBEnv.SECURED],
-                    securedValidation=self.environment[
-                        oenginecons.EngineDBEnv.SECURED_HOST_VALIDATION
-                    ],
-                    jdbcUrl=database.OvirtUtils(
-                        plugin=self,
-                        dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
-                    ).getJdbcUrl(),
+                content=database.OvirtUtils(
+                    plugin=self,
+                    dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS
+                ).getDBConfig(
+                    prefix="ENGINE"
                 ),
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
