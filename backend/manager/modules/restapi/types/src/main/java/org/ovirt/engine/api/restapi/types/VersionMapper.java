@@ -29,16 +29,21 @@ public class VersionMapper {
         return model;
     }
 
-    @Mapping(from = org.ovirt.engine.core.compat.Version.class, to = Version.class)
-    public static Version map(org.ovirt.engine.core.compat.Version versionEngine, Version versionApi) {
-        if (versionApi == null) {
-            versionApi = new Version();
-        }
-        versionApi.setMajor(versionEngine.getMajor());
-        versionApi.setMinor(versionEngine.getMinor());
-        versionApi.setBuild(versionEngine.getBuild());
-        versionApi.setRevision(versionEngine.getRevision());
+    public static Version map(org.ovirt.engine.core.compat.Version versionEngine) {
+        Version versionApi = new Version();
+        versionApi.setMajor(versionEngine.getMajor() >= 0 ? versionEngine.getMajor() : null);
+        versionApi.setMinor(versionEngine.getMinor() >= 0 ? versionEngine.getMinor() : null);
+        versionApi.setBuild(versionEngine.getBuild() >= 0 ? versionEngine.getBuild() : null);
+        versionApi.setRevision(versionEngine.getRevision() >= 0 ? versionEngine.getRevision() : null);
         return versionApi;
+    }
+
+    public static org.ovirt.engine.core.compat.Version map(Version versionApi) {
+        return new org.ovirt.engine.core.compat.Version(
+                versionApi.getMajor() != null ? versionApi.getMajor() : -1,
+                versionApi.getMinor() != null ? versionApi.getMinor() : -1,
+                versionApi.getBuild() != null ? versionApi.getBuild() : -1,
+                versionApi.getRevision() != null ? versionApi.getRevision() : -1);
     }
 
     public static Version fromVersionString(String versionString) {

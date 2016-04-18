@@ -7,7 +7,6 @@ import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.QuotaModeType;
 import org.ovirt.engine.api.model.StorageFormat;
-import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -36,9 +35,8 @@ public class DataCenterMapper {
         if (model.isSetStorageFormat()) {
             entity.setStoragePoolFormatType(StorageFormatMapper.map(model.getStorageFormat(), null));
         }
-        if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
-            entity.setCompatibilityVersion(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
-                    model.getVersion().getMinor()));
+        if (model.isSetVersion() && model.getVersion().getMajor() != null && model.getVersion().getMinor() != null) {
+            entity.setCompatibilityVersion(VersionMapper.map(model.getVersion()));
         }
 
         if (model.isSetMacPool() && model.getMacPool().isSetId()) {
@@ -69,9 +67,7 @@ public class DataCenterMapper {
             model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }
         if (entity.getCompatibilityVersion() != null) {
-            model.setVersion(new Version());
-            model.getVersion().setMajor(entity.getCompatibilityVersion().getMajor());
-            model.getVersion().setMinor(entity.getCompatibilityVersion().getMinor());
+            model.setVersion(VersionMapper.map(entity.getCompatibilityVersion()));
         }
         if (entity.getStoragePoolFormatType()!=null) {
             StorageFormat storageFormat = StorageFormatMapper.map(entity.getStoragePoolFormatType(), null);

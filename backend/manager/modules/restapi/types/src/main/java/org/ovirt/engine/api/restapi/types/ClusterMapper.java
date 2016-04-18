@@ -14,7 +14,6 @@ import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.TransparentHugePages;
-import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -48,9 +47,8 @@ public class ClusterMapper {
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
             entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter().getId()));
         }
-        if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
-            entity.setCompatibilityVersion(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
-                    model.getVersion().getMinor()));
+        if (model.isSetVersion() && model.getVersion().getMajor() != null && model.getVersion().getMinor() != null) {
+            entity.setCompatibilityVersion(VersionMapper.map(model.getVersion()));
         }
         if (model.isSetMemoryPolicy()) {
             entity = map(model.getMemoryPolicy(), entity);
@@ -146,9 +144,7 @@ public class ClusterMapper {
             model.setDataCenter(dataCenter);
         }
         if (entity.getCompatibilityVersion() != null) {
-            model.setVersion(new Version());
-            model.getVersion().setMajor(entity.getCompatibilityVersion().getMajor());
-            model.getVersion().setMinor(entity.getCompatibilityVersion().getMinor());
+            model.setVersion(VersionMapper.map(entity.getCompatibilityVersion()));
         }
         model.setMemoryPolicy(map(entity, (MemoryPolicy)null));
         Guid clusterPolicyId = entity.getClusterPolicyId();

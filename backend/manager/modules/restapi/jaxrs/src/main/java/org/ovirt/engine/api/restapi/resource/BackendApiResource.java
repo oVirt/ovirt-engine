@@ -333,7 +333,7 @@ public class BackendApiResource
 
     private Version getVersion() {
         VdcQueryReturnValue result = runQuery(VdcQueryType.GetProductVersion, new VdcQueryParametersBase());
-        return VersionMapper.map((org.ovirt.engine.core.compat.Version) result.getReturnValue(), null);
+        return VersionMapper.map((org.ovirt.engine.core.compat.Version) result.getReturnValue());
     }
 
     public Rsdl getRSDL() throws ClassNotFoundException, IOException {

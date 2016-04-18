@@ -104,6 +104,9 @@ public class VmBaseMapper {
                 entity.setDefaultBootSequence(VmMapper.map(model.getOs().getBoot(), null));
             }
         }
+        if (model.isSetCustomCompatibilityVersion()) {
+            entity.setCustomCompatibilityVersion(VersionMapper.map(model.getCustomCompatibilityVersion()));
+        }
     }
 
     /**
@@ -271,6 +274,10 @@ public class VmBaseMapper {
         MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
         model.setMemoryPolicy(policy);
+
+        if (entity.getCustomCompatibilityVersion() != null) {
+            model.setCustomCompatibilityVersion(VersionMapper.map(entity.getCustomCompatibilityVersion()));
+        }
     }
 
     /**
