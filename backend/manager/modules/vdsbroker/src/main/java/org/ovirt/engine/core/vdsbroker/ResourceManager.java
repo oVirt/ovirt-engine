@@ -47,10 +47,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -92,13 +90,7 @@ public class ResourceManager implements BackendService {
     private VmDao vmDao;
 
     @Inject
-    private VdsDynamicDao hostDynamicDao;
-
-    @Inject
     private VmDynamicDao vmDynamicDao;
-
-    @Inject
-    private VmStatisticsDao vmStatisticsDao;
 
     @Inject
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
@@ -283,7 +275,7 @@ public class ResourceManager implements BackendService {
 
     private void storeVm(VM vm) {
         vmDynamicDao.update(vm.getDynamicData());
-        vmStatisticsDao.update(vm.getStatisticsData());
+        getVmManager(vm.getId()).update(vm.getStatisticsData());
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {
             for (VmNetworkInterface ifc : interfaces) {
