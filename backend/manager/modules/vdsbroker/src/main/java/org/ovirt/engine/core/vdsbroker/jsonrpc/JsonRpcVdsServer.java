@@ -505,8 +505,9 @@ public class JsonRpcVdsServer implements IVdsServer {
             @Override
             public Map<String, Object> call() throws Exception {
                 if (isPolicyReset) {
+                    int connectionId = client.getConnectionId();
                     updateHeartbeatPolicy(client.getClientRetryPolicy().clone(), false);
-                    if (client.isClosed()) {
+                    if (client.isClosed() && client.getConnectionId() == connectionId) {
                         waitUntilCheck(new Predicate<JsonRpcClient>() {
                             @Override
                             public boolean test(JsonRpcClient client) {
@@ -516,14 +517,6 @@ public class JsonRpcVdsServer implements IVdsServer {
                                 "Waiting on losing connection to {}",
                                 "Connection lost for {}");
                     }
-                    waitUntilCheck(new Predicate<JsonRpcClient>() {
-                        @Override
-                        public boolean test(JsonRpcClient client) {
-                            return !client.isClosed();
-                        }
-                    },
-                            "Waiting on opening connection for {}",
-                            "Done reconnecting for {}!");
                 }
                 return new FutureMap(client, request).withResponseKey("status");
             }
