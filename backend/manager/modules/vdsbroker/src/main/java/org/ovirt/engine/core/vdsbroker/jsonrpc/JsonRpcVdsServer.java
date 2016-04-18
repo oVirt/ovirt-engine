@@ -468,16 +468,14 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         final FutureCallable callable = new FutureCallable(() -> {
             if (isPolicyReset) {
+                int connectionId = client.getConnectionId();
                 updateHeartbeatPolicy(client.getClientRetryPolicy().clone(), false);
 
-                if (client.isClosed()) {
+                if (client.isClosed() && client.getConnectionId() == connectionId) {
                     waitUntilCheck(client -> client.isClosed(),
                             "Waiting on losing connection to {}",
                             "Connection lost for {}");
                 }
-                waitUntilCheck(client -> !client.isClosed(),
-                        "Waiting on opening connection for {}",
-                        "Done reconnecting for {}!");
             }
             return new FutureMap(client, request).withResponseKey("status");
         });
