@@ -33,9 +33,6 @@ public abstract class Disk extends BaseDisk {
     private Boolean plugged;
     private Boolean readOnly;
     private String logicalName;
-    private ImageTransferPhase imageTransferPhase;
-    private Long imageTransferBytesSent;
-    private Long imageTransferBytesTotal;
 
 
     /**

@@ -1057,6 +1057,22 @@ public enum ConfigValues {
     @DefaultValueAttribute("60")
     UploadImageUiInactivityTimeoutInSeconds,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("8192")
+    UploadImageChunkSizeKB,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    UploadImageXhrTimeoutInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    UploadImageXhrRetryIntervalInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    UploadImageXhrMaxRetries,
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")

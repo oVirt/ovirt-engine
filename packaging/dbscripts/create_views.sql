@@ -81,7 +81,10 @@ SELECT
         FROM
             storage_domains_ovf_info
         WHERE
-            images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store
+            images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store,
+    image_transfers.phase AS image_transfer_phase,
+    image_transfers.bytes_sent AS image_transfer_bytes_sent,
+    image_transfers.bytes_total AS image_transfer_bytes_total
 FROM
     images
 LEFT
@@ -104,6 +107,8 @@ LEFT
 OUTER JOIN storage_pool_iso_map ON storage_pool_iso_map.storage_id = storage_domain_static.id
 LEFT
 OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
+LEFT
+OUTER JOIN image_transfers ON images.image_group_id = image_transfers.disk_id
 WHERE
     images.image_guid != '00000000-0000-0000-0000-000000000000';
 CREATE
