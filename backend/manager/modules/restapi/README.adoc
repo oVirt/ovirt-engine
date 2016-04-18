@@ -78,6 +78,73 @@ POST /storagedomains/{storagedomain:id}/vms/{vm:id}/import;collapse_snapshots=tr
 </action>
 ----
 
+=== Support skipping LUN status check
+
+Adding support for skipping the LUN status check.
+Checking the status of the LUN is an heavy weight operation
+and this data is not always needed by the user.
+
+The default is `true` for backward compatibility.
+The parameter `report_status` is available both on getting the list of a host storages or a specific host storage:
+
+[source]
+----
+GET /hosts/{host:id}/storage
+GET /hosts/{host:id}/storage/{storage:id}
+----
+
+For example, to skip the LUN status check, set `report_status` to false:
+(The `status` field of the LUN will not be present in the response)
+
+[source]
+----
+GET /hosts/{host:id}/storage/{storage:id};report_status=false
+
+<host_storage id="360014051136c20574f743bdbd28177fd">
+  <logical_units>
+    <logical_unit id="360014051136c20574f743bdbd28177fd">
+      <lun_mapping>0</lun_mapping>
+      <paths>1</paths>
+      <product_id>lun0</product_id>
+      <serial>SLIO-ORG_lun0_1136c205-74f7-43bd-bd28-177fd5ce6993</serial>
+      <size>10737418240</size>
+      <vendor_id>LIO-ORG</vendor_id>
+      <volume_group_id>O9Du7I-RahN-ECe1-dZ1w-nh0b-64io-MNzIBZ</volume_group_id>
+    </logical_unit>
+  </logical_units>
+  <type>iscsi</type>
+  <host id="8bb5ade5-e988-4000-8b93-dbfc6717fe50"/>
+</host_storage>
+
+----
+
+
+For example, to get the LUN status, set `report_status` to true:
+(The `status` field of the LUN will be present in the response)
+
+[source]
+----
+GET /hosts/{host:id}/storage/{storage:id};report_status=true
+
+<host_storage id="360014051136c20574f743bdbd28177fd">
+  <logical_units>
+    <logical_unit id="360014051136c20574f743bdbd28177fd">
+      <lun_mapping>0</lun_mapping>
+      <paths>1</paths>
+      <product_id>lun0</product_id>
+      <serial>SLIO-ORG_lun0_1136c205-74f7-43bd-bd28-177fd5ce6993</serial>
+      <size>10737418240</size>
+      <status>used</status>
+      <vendor_id>LIO-ORG</vendor_id>
+      <volume_group_id>O9Du7I-RahN-ECe1-dZ1w-nh0b-64io-MNzIBZ</volume_group_id>
+    </logical_unit>
+  </logical_units>
+  <type>iscsi</type>
+  <host id="8bb5ade5-e988-4000-8b93-dbfc6717fe50"/>
+</host_storage>
+
+----
+
 == Backwards compatibility breaking changes in version 3 of the API
 
 This section enumerates the backwards compatibility breaking changes

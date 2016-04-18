@@ -2542,8 +2542,22 @@ actions:
   description: get the details of the specified statistics for the host
 - name: /hosts/{host:id}/storage|rel=get
   description: get the list of all logical units and volume groups for the host
+  request:
+    urlparams:
+      report_status:
+        context: matrix
+        type: xs:boolean
+        value: true|false
+        required: false
 - name: /hosts/{host:id}/storage/{storag:id}|rel=get
   description: get the details of the specified logical unit or volume group for the host
+  request:
+      urlparams:
+        report_status:
+          context: matrix
+          type: xs:boolean
+          value: true|false
+          required: false
 - name: /hosts/{host:id}/tags|rel=get
   description: get the list of all tags added to the host
 - name: /hosts/{host:id}/tags/{tag:id}|rel=get

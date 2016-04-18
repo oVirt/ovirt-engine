@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.HostStorages;
@@ -18,6 +19,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendHostStorageResource
     extends AbstractBackendCollectionResource<HostStorage, LUNs>
     implements HostStorageResource {
+
+    private static final String REPORT_STATUS = "report_status";
 
     private String hostId;
 
@@ -55,10 +58,9 @@ public class BackendHostStorageResource
     }
 
     protected List<LUNs> getLogicalUnits() {
-        // The checkStatus is true here for backward compatibility in order to have the LUN status
-        // populated as before. We should deprecate in the future or add an option to pass false
+        boolean reportStatus = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, REPORT_STATUS, true, true);
         return getBackendCollection(VdcQueryType.GetDeviceList,
-                new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN, true, null));
+                new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN, reportStatus, null));
     }
 
     protected HostStorage map(org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
