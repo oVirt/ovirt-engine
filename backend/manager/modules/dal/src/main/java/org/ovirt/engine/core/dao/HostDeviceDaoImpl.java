@@ -47,7 +47,8 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
                 .addValue("physfn", entity.getParentPhysicalFunction())
                 .addValue("total_vfs", entity.getTotalVirtualFunctions())
                 .addValue("net_iface_name", entity.getNetworkInterfaceName())
-                .addValue("driver", entity.getDriver());
+                .addValue("driver", entity.getDriver())
+                .addValue("is_assignable", entity.isAssignable());
     }
 
     @Override
@@ -144,6 +145,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
             device.setParentPhysicalFunction(rs.getString("physfn"));
             device.setTotalVirtualFunctions((Integer) rs.getObject("total_vfs"));
             device.setNetworkInterfaceName(rs.getString("net_iface_name"));
+            device.setAssignable(rs.getBoolean("is_assignable"));
             device.setVmId(getGuid(rs, "vm_id"));
             device.setDriver(rs.getString("driver"));
 

@@ -2373,6 +2373,9 @@ public class VdsBrokerObjectsBuilder {
             if (params.containsKey(VdsProperties.DRIVER)) {
                 device.setDriver(params.get(VdsProperties.DRIVER).toString());
             }
+            if (params.containsKey(VdsProperties.IS_ASSIGNABLE)) {
+                device.setAssignable(assignBoolValue(params, VdsProperties.IS_ASSIGNABLE));
+            }
 
             devices.add(device);
         }

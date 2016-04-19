@@ -8645,6 +8645,7 @@
          <column>vm_id</column>
          <column>net_iface_name</column>
          <column>driver</column>
+         <column>is_assignable</column>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
              <value>computer</value>
@@ -8660,6 +8661,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8676,6 +8678,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8692,6 +8695,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8708,6 +8712,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8724,6 +8729,7 @@
              <null/>
              <null/>
              <value>uhci_hcd</value>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8740,6 +8746,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8756,6 +8763,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8772,6 +8780,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8788,6 +8797,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8804,6 +8814,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8820,6 +8831,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8836,6 +8848,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8852,6 +8865,7 @@
              <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8868,6 +8882,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8884,6 +8899,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8900,6 +8916,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8916,6 +8933,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8932,6 +8950,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8948,6 +8967,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8964,6 +8984,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8980,6 +9001,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -8996,6 +9018,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9012,6 +9035,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9028,6 +9052,7 @@
              <null/>
              <value>enp5s16f4</value>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9044,6 +9069,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9060,6 +9086,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9076,6 +9103,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9092,6 +9120,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9108,6 +9137,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9124,6 +9154,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9140,6 +9171,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9156,6 +9188,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9172,6 +9205,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9188,6 +9222,7 @@
              <null/>
              <null/>
              <null/>
+             <value>true</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9204,6 +9239,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
          <row>
              <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -9220,6 +9256,7 @@
              <null/>
              <null/>
              <null/>
+             <value>false</value>
          </row>
      </table>
 

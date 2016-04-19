@@ -45,6 +45,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
         device.setParentDeviceName(EXISTING_DEVICE_NAME);
         device.setCapability("pci");
         device.setDriver("mock driver");
+        device.setAssignable(true);
 
         return device;
     }

@@ -23,6 +23,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
     private String networkInterfaceName;
     private Guid vmId;
     private String driver;
+    private boolean assignable;
 
     @Override
     public Object getQueryableId() {
@@ -125,6 +126,14 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
         this.totalVirtualFunctions = totalVirtualFunctions;
     }
 
+    public void setAssignable(boolean assignable) {
+        this.assignable = assignable;
+    }
+
+    public boolean isAssignable() {
+        return assignable;
+    }
+
     public void setVmId(Guid vmId) {
         this.vmId = vmId;
     }
@@ -177,6 +186,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 && Objects.equals(totalVirtualFunctions, other.totalVirtualFunctions)
                 && Objects.equals(networkInterfaceName, other.networkInterfaceName)
                 && Objects.equals(driver, other.driver)
+                && Objects.equals(assignable, other.assignable)
                 && Objects.equals(vmId, other.vmId);
     }
 
@@ -194,8 +204,9 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 parentPhysicalFunction,
                 totalVirtualFunctions,
                 networkInterfaceName,
-                vmId,
-                driver
+                driver,
+                assignable,
+                vmId
         );
     }
 
@@ -214,8 +225,9 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 .append("parentPhysicalFunction", parentPhysicalFunction)
                 .append("totalVirtualFunctions", totalVirtualFunctions)
                 .append("networkInterfaceName", networkInterfaceName)
-                .append("vmId", vmId)
                 .append("driver", driver)
+                .append("assignable", assignable)
+                .append("vmId", vmId)
                 .build();
     }
 

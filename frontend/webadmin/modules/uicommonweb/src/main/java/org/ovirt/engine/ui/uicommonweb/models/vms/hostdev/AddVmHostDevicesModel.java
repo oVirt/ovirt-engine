@@ -120,8 +120,8 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
                 Collection<HostDeviceView> fetchedDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 List<EntityModel<HostDeviceView>> models = new ArrayList<>();
                 for (HostDeviceView hostDevice : fetchedDevices) {
-                    // show only devices that are not yet attached
-                    if (!alreadyAttachedDevices.contains(hostDevice.getDeviceName())) {
+                    // show only devices that support assignment and are not yet attached
+                    if (hostDevice.isAssignable() && !alreadyAttachedDevices.contains(hostDevice.getDeviceName())) {
                         models.add(new EntityModel<>(hostDevice));
                     }
                 }
