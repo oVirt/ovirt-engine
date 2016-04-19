@@ -50,6 +50,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -476,7 +477,7 @@ public class ResourceManager implements BackendService {
 
     public VmManager getVmManager(Guid vmId) {
         if (!vmManagers.containsKey(vmId)) {
-            vmManagers.putIfAbsent(vmId, new VmManager(vmId));
+            vmManagers.computeIfAbsent(vmId, guid -> Injector.injectMembers(new VmManager(guid)));
         }
         return vmManagers.get(vmId);
     }

@@ -2,12 +2,13 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
@@ -16,8 +17,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 public class VmManager {
 
-    private final Guid id;
-    private final ReentrantLock lock = new ReentrantLock();
+    private final Guid vmId;
+    private final ReentrantLock lock;
     private Long vmDataChangedTime;
 
     private int convertOperationProgress;
@@ -29,8 +30,16 @@ public class VmManager {
 
     private boolean coldReboot;
 
-    public VmManager(Guid id) {
-        this.id = id;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+
+    VmManager(Guid vmId) {
+        this.vmId = vmId;
+        lock = new ReentrantLock();
         convertOperationProgress = -1;
     }
 
@@ -47,41 +56,25 @@ public class VmManager {
     }
 
     public void update(VmDynamic dynamic) {
-        getVmDynamicDao().update(dynamic);
+        vmDynamicDao.update(dynamic);
     }
 
     public void update(VmStatistics statistics) {
-        getVmStatisticsDao().update(statistics);
+        vmStatisticsDao.update(statistics);
     }
 
     public void update(VmNetworkStatistics networkStatistics) {
-        getVmNetworkStatisticsDao().update(networkStatistics);
+        vmNetworkStatisticsDao.update(networkStatistics);
     }
 
     public void succededToHibernate() {
         TransactionSupport.executeInNewTransaction(() -> {
-                    VmDynamic vmDynamic = getVmDynamicDao().get(id);
+                    VmDynamic vmDynamic = vmDynamicDao.get(vmId);
                     vmDynamic.setStatus(VMStatus.SavingState);
                     update(vmDynamic);
                     return null;
                 }
         );
-    }
-
-    private VmDynamicDao getVmDynamicDao() {
-        return db().getVmDynamicDao();
-    }
-
-    private VmStatisticsDao getVmStatisticsDao() {
-        return db().getVmStatisticsDao();
-    }
-
-    private VmNetworkStatisticsDao getVmNetworkStatisticsDao() {
-        return db().getVmNetworkStatisticsDao();
-    }
-
-    protected DbFacade db() {
-        return DbFacade.getInstance();
     }
 
     public int getConvertOperationProgress() {
