@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -28,7 +28,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.LunDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.slf4j.Logger;
 
 public abstract class StorageHelperBase implements IStorageHelper {
@@ -119,14 +118,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     public static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {
-        Map<StorageType, List<StorageServerConnections>> storageConnectionsForStorageTypeMap =
-                new EnumMap<>(StorageType.class);
-        for (StorageServerConnections lunConnections : lun.getLunConnections()) {
-            MultiValueMapUtils.addToMap(lunConnections.getStorageType(),
-                    lunConnections,
-                    storageConnectionsForStorageTypeMap);
-        }
-        return storageConnectionsForStorageTypeMap;
+        return lun.getLunConnections().stream().collect(Collectors.groupingBy(StorageServerConnections::getStorageType));
     }
 
     protected boolean isActiveStorageDomainAvailable(final StorageType storageType, Guid poolId) {
