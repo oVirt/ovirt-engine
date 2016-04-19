@@ -84,7 +84,6 @@ public class HostSetupNetworksValidator {
     private final VdsDao vdsDao;
     private final BusinessEntityMap<CreateOrUpdateBond> createOrUpdateBondBusinessEntityMap;
     private final VmDao vmDao;
-    private Map<Guid, NetworkAttachment> networkAttachmentsFromParamsByNetworkId;
     private Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
@@ -128,7 +127,6 @@ public class HostSetupNetworksValidator {
 
         existingAttachmentsById = Entities.businessEntitiesById(existingAttachments);
         createOrUpdateBondBusinessEntityMap = new BusinessEntityMap<>(params.getCreateOrUpdateBonds());
-        networkAttachmentsFromParamsByNetworkId = new MapNetworkAttachments(params.getNetworkAttachments()).byNetworkId();
 
         nicLabelByLabel = Entities.entitiesByName(params.getLabels());
 
