@@ -21,6 +21,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
     private Integer totalVirtualFunctions;
     private String networkInterfaceName;
     private Guid vmId;
+    private boolean assignable;
 
     @Override
     public Object getQueryableId() {
@@ -123,6 +124,14 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
         this.totalVirtualFunctions = totalVirtualFunctions;
     }
 
+    public void setAssignable(boolean assignable) {
+        this.assignable = assignable;
+    }
+
+    public boolean isAssignable() {
+        return assignable;
+    }
+
     public void setVmId(Guid vmId) {
         this.vmId = vmId;
     }
@@ -166,6 +175,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 ObjectUtils.objectsEqual(parentPhysicalFunction, other.parentPhysicalFunction) &&
                 ObjectUtils.objectsEqual(totalVirtualFunctions, other.totalVirtualFunctions) &&
                 ObjectUtils.objectsEqual(networkInterfaceName, other.networkInterfaceName) &&
+                ObjectUtils.objectsEqual(assignable, other.assignable) &&
                 ObjectUtils.objectsEqual(vmId, other.vmId);
     }
 
@@ -184,6 +194,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
         result = prime * result + (parentPhysicalFunction == null ? 0 : parentPhysicalFunction.hashCode());
         result = prime * result + (totalVirtualFunctions == null ? 0 : totalVirtualFunctions.hashCode());
         result = prime * result + (networkInterfaceName == null ? 0 : networkInterfaceName.hashCode());
+        result = prime * result + (assignable ? 1 : 0);
         result = prime * result + (vmId == null ? 0 :  vmId.hashCode());
         return result;
     }
@@ -203,6 +214,7 @@ public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, 
                 .append("parentPhysicalFunction", parentPhysicalFunction)
                 .append("totalVirtualFunctions", totalVirtualFunctions)
                 .append("networkInterfaceName", networkInterfaceName)
+                .append("assignable", assignable)
                 .append("vmId", vmId)
                 .build();
     }
