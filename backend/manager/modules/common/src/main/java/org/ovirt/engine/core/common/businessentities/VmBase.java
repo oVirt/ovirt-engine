@@ -50,6 +50,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private List<VmNetworkInterface> interfaces;
 
     @EditableField
+    @EditableHostedEngineField // Editable to make UpdateVMCommand for HE pass. The command does not update these fields
     private ArrayList<DiskImage> diskList;
     private Map<Guid, VmDevice> managedDeviceMap;
     private List<VmDevice> unmanagedDeviceList;
