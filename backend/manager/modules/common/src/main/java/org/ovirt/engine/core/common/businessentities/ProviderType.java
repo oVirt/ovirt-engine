@@ -56,6 +56,6 @@ public enum ProviderType implements Identifiable {
     }
 
     public boolean isReadOnlyAware(){
-        return isAuthUrlAware;
+        return isReadOnlyAware;
     }
 }
