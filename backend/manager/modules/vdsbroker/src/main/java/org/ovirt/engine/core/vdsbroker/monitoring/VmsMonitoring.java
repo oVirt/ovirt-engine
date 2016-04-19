@@ -15,7 +15,6 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -243,13 +242,6 @@ public class VmsMonitoring implements BackendService {
 
             if (vmAnalyzer.isColdRebootVmToRun()) {
                 coldRebootVmsToRun.add(vmAnalyzer.getVmId());
-            }
-
-            // process all vms that their ip changed.
-            if (vmAnalyzer.isClientIpChanged()) {
-                final VmDynamic vmDynamic = vmAnalyzer.getVdsmVm().getVmDynamic();
-                getVdsEventListener().processOnClientIpChange(vmDynamic.getId(),
-                        vmDynamic.getClientIp());
             }
 
             // process all vms that powering up.

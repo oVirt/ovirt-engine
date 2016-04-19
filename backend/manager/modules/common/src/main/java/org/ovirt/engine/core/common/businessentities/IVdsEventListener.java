@@ -30,8 +30,6 @@ public interface IVdsEventListener {
 
     boolean connectHostToDomainsInActiveOrUnknownStatus(VDS vds);
 
-    void processOnClientIpChange(Guid vmId, String newClientIp);
-
     void processOnCpuFlagsChange(Guid vdsId);
 
     void processOnVmPoweringUp(Guid vmId);

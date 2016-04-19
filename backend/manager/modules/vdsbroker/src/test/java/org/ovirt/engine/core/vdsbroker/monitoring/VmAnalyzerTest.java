@@ -222,7 +222,6 @@ public class VmAnalyzerTest {
         // when vm is migrating
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingFrom);
         //then
-        assertTrue(vmAnalyzer.isClientIpChanged());
         verify(resourceManager, never()).internalSetVmStatus(data.dbVm(), VMStatus.MigratingTo);
     }
 

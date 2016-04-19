@@ -74,7 +74,6 @@ public class VmAnalyzer {
     private boolean saveVmInterfaces;
     private boolean movedToDown;
     private boolean rerun;
-    private boolean clientIpChanged;
     private boolean poweringUp;
     private boolean succeededToRun;
     private boolean removeFromAsync;
@@ -464,7 +463,7 @@ public class VmAnalyzer {
         if (!inMigrationTo() && vdsmVmDynamic.getStatus() != VMStatus.Down) {
             if (dbVm != null) {
                 if (!Objects.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
-                    clientIpChanged = true;
+                    auditClientIpChange();
                 }
 
                 logVmStatusTransition();
@@ -533,6 +532,15 @@ public class VmAnalyzer {
                 }
             }
         }
+    }
+
+    public void auditClientIpChange() {
+        final AuditLogableBase event = new AuditLogableBase();
+        event.setVmId(dbVm.getId());
+        event.setUserName(dbVm.getConsoleCurentUserName());
+        String clientIp = vdsmVm.getVmDynamic().getClientIp();
+        auditLogDirector.log(event, clientIp == null || clientIp.isEmpty() ?
+                AuditLogType.VM_CONSOLE_DISCONNECTED : AuditLogType.VM_CONSOLE_CONNECTED);
     }
 
     private void auditVmPausedError(VmDynamic vdsmVmDynamic) {
@@ -986,10 +994,6 @@ public class VmAnalyzer {
 
     public boolean isAutoVmToRun() {
         return autoVmToRun;
-    }
-
-    public boolean isClientIpChanged() {
-        return clientIpChanged;
     }
 
     public VmInternalData getVdsmVm() {

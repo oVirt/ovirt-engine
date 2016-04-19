@@ -18,7 +18,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.AvailableUpdatesFinder;
@@ -55,7 +54,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -352,20 +350,6 @@ public class VdsEventListener implements IVdsEventListener {
                     parameters.setShouldBeLogged(false);
                     return parameters;
                 }).collect(Collectors.toList());
-    }
-
-    @Override
-    public void processOnClientIpChange(final Guid vmId, String newClientIp) {
-        final AuditLogableBase event = new AuditLogableBase();
-        final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
-        event.setVmId(vmId);
-        event.setUserName(vmDynamic.getConsoleCurrentUserName());
-
-        if (StringUtils.isEmpty(newClientIp)) {
-            auditLogDirector.log(event, AuditLogType.VM_CONSOLE_DISCONNECTED);
-        } else {
-            auditLogDirector.log(event, AuditLogType.VM_CONSOLE_CONNECTED);
-        }
     }
 
     @Override
