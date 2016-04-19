@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetDomainListQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
@@ -29,7 +29,7 @@ public class GetDomainListQuery<P extends VdcQueryParametersBase> extends Querie
     }
 
     public Map<String, Object> getDomainList() {
-        return SSOOAuthServiceUtils.getDomainList(
+        return SsoOAuthServiceUtils.getDomainList(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()));
     }
 }

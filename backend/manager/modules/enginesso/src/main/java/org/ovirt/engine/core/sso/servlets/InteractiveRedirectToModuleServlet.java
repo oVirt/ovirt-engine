@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.sso.utils.SSOConstants;
-import org.ovirt.engine.core.sso.utils.SSOUtils;
+import org.ovirt.engine.core.sso.utils.SsoConstants;
+import org.ovirt.engine.core.sso.utils.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +19,14 @@ public class InteractiveRedirectToModuleServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (SSOUtils.isUserAuthenticated(request)) {
+        if (SsoUtils.isUserAuthenticated(request)) {
             log.debug("User is authenticated redirecting to module");
-            SSOUtils.redirectToModule(
+            SsoUtils.redirectToModule(
                     request,
                     response);
         } else {
-            SSOUtils.getSsoSession(request).setReauthenticate(false);
-            response.sendRedirect(request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_FORM_URI);
+            SsoUtils.getSsoSession(request).setReauthenticate(false);
+            response.sendRedirect(request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_FORM_URI);
         }
     }
 }

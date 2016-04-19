@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -86,7 +86,7 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     }
 
     private DbUser getDbUserForPrincipalName(String principalName, String authzName) {
-        Map<String, Object> response = SSOOAuthServiceUtils.fetchPrincipalRecord(
+        Map<String, Object> response = SsoOAuthServiceUtils.fetchPrincipalRecord(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
                 authzName,
                 principalName,
@@ -110,7 +110,7 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     }
 
     private ExtMap loginOnBehalf(DbUser dbUser) {
-        Map<String, Object> response = SSOOAuthServiceUtils.findPrincipalsByIds(
+        Map<String, Object> response = SsoOAuthServiceUtils.findPrincipalsByIds(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
                 dbUser.getDomain(),
                 dbUser.getNamespace(),

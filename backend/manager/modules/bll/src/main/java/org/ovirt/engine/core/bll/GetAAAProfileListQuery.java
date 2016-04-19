@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.aaa.ProfileEntry;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetAAAProfileListQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
@@ -18,7 +18,7 @@ public class GetAAAProfileListQuery<P extends VdcQueryParametersBase> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        Map<String, Object> response = SSOOAuthServiceUtils.getProfileList();
+        Map<String, Object> response = SsoOAuthServiceUtils.getProfileList();
         List<ProfileEntry> names = new ArrayList<>();
         if (response.containsKey("result")) {
             names = ((List<Map<String, Object>>) response.get("result")).stream()

@@ -13,45 +13,45 @@ public class AuthnMessageMapper {
     private static final Map<Integer, String> messagesMap = new HashMap<>();
 
     static {
-        messagesMap.put(Authn.AuthResult.GENERAL_ERROR, SSOConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE);
+        messagesMap.put(Authn.AuthResult.GENERAL_ERROR, SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE);
         messagesMap.put(Authn.AuthResult.CREDENTIALS_INVALID,
-                SSOConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+                SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
         messagesMap.put(Authn.AuthResult.CREDENTIALS_INCORRECT,
-                SSOConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
-        messagesMap.put(Authn.AuthResult.ACCOUNT_LOCKED, SSOConstants.APP_ERROR_USER_ACCOUNT_DISABLED);
-        messagesMap.put(Authn.AuthResult.ACCOUNT_DISABLED, SSOConstants.APP_ERROR_USER_ACCOUNT_DISABLED);
-        messagesMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, SSOConstants.APP_ERROR_USER_ACCOUNT_EXPIRED);
-        messagesMap.put(Authn.AuthResult.TIMED_OUT, SSOConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_TIMED_OUT);
+                SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+        messagesMap.put(Authn.AuthResult.ACCOUNT_LOCKED, SsoConstants.APP_ERROR_USER_ACCOUNT_DISABLED);
+        messagesMap.put(Authn.AuthResult.ACCOUNT_DISABLED, SsoConstants.APP_ERROR_USER_ACCOUNT_DISABLED);
+        messagesMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, SsoConstants.APP_ERROR_USER_ACCOUNT_EXPIRED);
+        messagesMap.put(Authn.AuthResult.TIMED_OUT, SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_TIMED_OUT);
         messagesMap.put(Authn.AuthResult.CREDENTIALS_EXPIRED,
-                SSOConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
+                SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
     }
 
     public static final String mapMessageErrorCode(
-            SSOContext ssoContext,
+            SsoContext ssoContext,
             HttpServletRequest request,
             String profile,
             ExtMap outputMap) {
         int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
         String msg = messagesMap.containsKey(authResult) ?
                 messagesMap.get(authResult) :
-                SSOConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE;
+                SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE;
         boolean changePasswordSupported = false;
         if (authResult == Authn.AuthResult.CREDENTIALS_EXPIRED) {
             if (outputMap.<String> get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL) != null ||
-                    SSOUtils.getSsoContext(request).getSsoProfilesSupportingPasswdChange().contains(profile)) {
+                    SsoUtils.getSsoContext(request).getSsoProfilesSupportingPasswdChange().contains(profile)) {
                 changePasswordSupported = true;
-                msg = SSOConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED;
+                msg = SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED;
             } else {
-                msg = SSOConstants.APP_ERROR_USER_PASSWORD_EXPIRED;
+                msg = SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED;
             }
         }
 
         msg = ssoContext.getLocalizationUtils().localize(
                 msg,
-                (Locale) request.getAttribute(SSOConstants.LOCALE));
+                (Locale) request.getAttribute(SsoConstants.LOCALE));
 
         if (changePasswordSupported) {
-            msg = String.format(msg, request.getContextPath() + SSOConstants.INTERACTIVE_CHANGE_PASSWD_FORM_URI);
+            msg = String.format(msg, request.getContextPath() + SsoConstants.INTERACTIVE_CHANGE_PASSWD_FORM_URI);
         }
         return msg;
     }

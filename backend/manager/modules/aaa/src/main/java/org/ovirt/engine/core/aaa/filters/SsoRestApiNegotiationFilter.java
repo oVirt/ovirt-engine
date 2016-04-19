@@ -28,14 +28,14 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
-import org.ovirt.engine.core.aaa.SSOUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSORestApiNegotiationFilter implements Filter {
+public class SsoRestApiNegotiationFilter implements Filter {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private static final String scope = "ovirt-app-api ovirt-ext=token:login-on-behalf";
@@ -45,7 +45,7 @@ public class SSORestApiNegotiationFilter implements Filter {
      * store their associated profiles in a stack inside the HTTP session,
      * this is the key for that stack.
      */
-    private static final String STACK_ATTR = SSORestApiNegotiationFilter.class.getName() + ".stack";
+    private static final String STACK_ATTR = SsoRestApiNegotiationFilter.class.getName() + ".stack";
 
     private volatile Collection<String> schemes;
     private volatile List<AuthenticationProfile> profiles;
@@ -83,15 +83,15 @@ public class SSORestApiNegotiationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.debug("Entered SSORestApiNegotiationFilter");
+        log.debug("Entered SsoRestApiNegotiationFilter");
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         if ((FiltersHelper.isAuthenticated(req) && FiltersHelper.isSessionValid((HttpServletRequest) request)) ||
                 !EngineLocalConfig.getInstance().getBoolean("ENGINE_RESTAPI_NEGO")) {
-            log.debug("SSORestApiNegotiationFilter Not performing Negotiate Auth");
+            log.debug("SsoRestApiNegotiationFilter Not performing Negotiate Auth");
             chain.doFilter(request, response);
         } else {
-            log.debug("SSORestApiNegotiationFilter performing Negotiate Auth");
+            log.debug("SsoRestApiNegotiationFilter performing Negotiate Auth");
             try {
                 req.setAttribute(FiltersHelper.Constants.REQUEST_SCHEMES_KEY, schemes);
                 HttpSession session = req.getSession(false);
@@ -112,12 +112,12 @@ public class SSORestApiNegotiationFilter implements Filter {
                         session.removeAttribute(STACK_ATTR);
                     }
                     if (authResult.username != null) {
-                        log.debug("SSORestApiNegotiationFilter invoking SSOOAuthServiceUtils.loginOnBehalf for : {}", authResult.username);
-                        Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginOnBehalf(
+                        log.debug("SsoRestApiNegotiationFilter invoking SsoAuthServiceUtils.loginOnBehalf for : {}", authResult.username);
+                        Map<String, Object> jsonResponse = SsoOAuthServiceUtils.loginOnBehalf(
                                 authResult.username, scope, authResult.authRecord);
                         FiltersHelper.isStatusOk(jsonResponse);
-                        log.debug("SSORestApiNegotiationFilter creating user session");
-                        SSOUtils.createUserSession(req, FiltersHelper.getPayloadForToken(
+                        log.debug("SsoRestApiNegotiationFilter creating user session");
+                        SsoUtils.createUserSession(req, FiltersHelper.getPayloadForToken(
                                 (String) jsonResponse.get("access_token")), false);
                         req.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
                                 req.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY));

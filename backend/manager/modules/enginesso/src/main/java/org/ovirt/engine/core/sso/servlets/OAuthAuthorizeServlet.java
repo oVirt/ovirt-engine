@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.sso.utils.InteractiveAuth;
 import org.ovirt.engine.core.sso.utils.OAuthException;
-import org.ovirt.engine.core.sso.utils.SSOConstants;
-import org.ovirt.engine.core.sso.utils.SSOContext;
-import org.ovirt.engine.core.sso.utils.SSOSession;
-import org.ovirt.engine.core.sso.utils.SSOUtils;
+import org.ovirt.engine.core.sso.utils.SsoConstants;
+import org.ovirt.engine.core.sso.utils.SsoContext;
+import org.ovirt.engine.core.sso.utils.SsoSession;
+import org.ovirt.engine.core.sso.utils.SsoUtils;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +28,11 @@ public class OAuthAuthorizeServlet extends HttpServlet {
     private static final long serialVersionUID = -4822437649213489822L;
     private static Logger log = LoggerFactory.getLogger(OAuthAuthorizeServlet.class);
 
-    private SSOContext ssoContext;
+    private SsoContext ssoContext;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        ssoContext = SSOUtils.getSsoContext(config.getServletContext());
+        ssoContext = SsoUtils.getSsoContext(config.getServletContext());
     }
 
     @Override
@@ -41,27 +41,27 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         try {
             log.debug("Entered AuthorizeServlet QueryString: {}, Parameters : {}",
                     request.getQueryString(),
-                    SSOUtils.getRequestParameters(request));
-            String clientId = SSOUtils.getRequestParameter(request, SSOConstants.HTTP_PARAM_CLIENT_ID);
-            String responseType = SSOUtils.getRequestParameter(request, SSOConstants.JSON_RESPONSE_TYPE);
-            String scope = SSOUtils.getScopeRequestParameter(request, "");
-            String state = SSOUtils.getRequestParameter(request, SSOConstants.HTTP_PARAM_STATE, "");
-            String redirectUri = SSOUtils.getParameter(request, SSOConstants.HTTP_PARAM_REDIRECT_URI);
-            SSOUtils.validateClientRequest(request, clientId, null, scope, redirectUri);
+                    SsoUtils.getRequestParameters(request));
+            String clientId = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID);
+            String responseType = SsoUtils.getRequestParameter(request, SsoConstants.JSON_RESPONSE_TYPE);
+            String scope = SsoUtils.getScopeRequestParameter(request, "");
+            String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
+            String redirectUri = SsoUtils.getParameter(request, SsoConstants.HTTP_PARAM_REDIRECT_URI);
+            SsoUtils.validateClientRequest(request, clientId, null, scope, redirectUri);
 
             if (!responseType.equals("code")) {
-                throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
+                throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
                         String.format(
                                 ssoContext.getLocalizationUtils().localize(
-                                        SSOConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
-                                        (Locale) request.getAttribute(SSOConstants.LOCALE)),
+                                        SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
+                                        (Locale) request.getAttribute(SsoConstants.LOCALE)),
                                 responseType,
-                                SSOConstants.JSON_RESPONSE_TYPE));
+                                SsoConstants.JSON_RESPONSE_TYPE));
             }
 
             login(request, response, clientId, scope, state, redirectUri);
         } catch (Exception ex) {
-            SSOUtils.redirectToErrorPage(request, response, ex);
+            SsoUtils.redirectToErrorPage(request, response, ex);
         }
     }
 
@@ -78,29 +78,29 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         // Create the session
         request.getSession(true);
 
-        SSOSession ssoSession = SSOUtils.getSsoSession(request);
+        SsoSession ssoSession = SsoUtils.getSsoSession(request);
         ssoSession.setClientId(clientId);
         ssoSession.setRedirectUri(redirectUri);
         ssoSession.setScope(scope);
         ssoSession.setState(state);
         ssoSession.getHttpSession().setMaxInactiveInterval(-1);
 
-        if (SSOUtils.isUserAuthenticated(request)) {
+        if (SsoUtils.isUserAuthenticated(request)) {
             log.debug("User is authenticated redirecting to interactive-redirect-to-module");
-            redirectUrl = request.getContextPath() + SSOConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
-        } else if (SSOUtils.scopeAsList(scope).contains("ovirt-ext=auth:identity")) {
-            redirectUrl = new URLBuilder(SSOUtils.getRedirectUrl(request))
-                    .addParameter("error_code", SSOConstants.ERR_OVIRT_CODE_NOT_AUTHENTICATED)
-                    .addParameter("error", SSOConstants.ERR_CODE_NOT_AUTHENTICATED_MSG).build();
+            redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
+        } else if (SsoUtils.scopeAsList(scope).contains("ovirt-ext=auth:identity")) {
+            redirectUrl = new URLBuilder(SsoUtils.getRedirectUrl(request))
+                    .addParameter("error_code", SsoConstants.ERR_OVIRT_CODE_NOT_AUTHENTICATED)
+                    .addParameter("error", SsoConstants.ERR_CODE_NOT_AUTHENTICATED_MSG).build();
         } else {
             ssoSession.setAuthStack(getAuthSeq(scope));
             if (ssoSession.getAuthStack().isEmpty()) {
-                throw new OAuthException(SSOConstants.ERR_CODE_ACCESS_DENIED,
+                throw new OAuthException(SsoConstants.ERR_CODE_ACCESS_DENIED,
                         ssoContext.getLocalizationUtils().localize(
-                                SSOConstants.APP_ERROR_NO_VALID_AUTHENTICATION_MECHANISM_FOUND,
-                                (Locale) request.getAttribute(SSOConstants.LOCALE)));
+                                SsoConstants.APP_ERROR_NO_VALID_AUTHENTICATION_MECHANISM_FOUND,
+                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
-            redirectUrl = request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI;
+            redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI;
         }
         log.debug("Redirecting to url: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
@@ -110,7 +110,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         String appAuthSeq = ssoContext.getSsoLocalConfig().getProperty("SSO_AUTH_LOGIN_SEQUENCE");
 
         String authSeq = null;
-        for (String scope : SSOUtils.scopeAsList(scopes)) {
+        for (String scope : SsoUtils.scopeAsList(scopes)) {
             if (scope.startsWith("ovirt-ext=auth:sequence-priority=")) {
                 String[] tokens = scope.trim().split("=", 3);
                 authSeq = tokens[2];

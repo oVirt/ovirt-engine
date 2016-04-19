@@ -17,17 +17,17 @@ public enum NonInteractiveAuth {
         @Override
         public AuthResult doAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
             log.debug("Performing Basic Auth");
-            Credentials credentials = SSOUtils.getUserCredentialsFromHeader(request);
+            Credentials credentials = SsoUtils.getUserCredentialsFromHeader(request);
             AuthResult retVal = new AuthResult();
             if (credentials == null || !credentials.isValid()) {
                 retVal.setStatus(Authn.AuthResult.CREDENTIALS_INVALID);
             } else {
                 retVal.setCredentials(credentials);
                 AuthenticationUtils.handleCredentials(
-                        SSOUtils.getSsoContext(request),
+                        SsoUtils.getSsoContext(request),
                         request,
                         credentials);
-                retVal.setToken((String) request.getAttribute(SSOConstants.HTTP_REQ_ATTR_ACCESS_TOKEN));
+                retVal.setToken((String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN));
                 if (retVal.getToken() != null) {
                     log.debug("Basic authentication succeeded");
                     retVal.setStatus(Authn.AuthResult.SUCCESS);
@@ -47,7 +47,7 @@ public enum NonInteractiveAuth {
         @Override
         public AuthResult doAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
             log.debug("Performing Negotiate Auth");
-            NegotiateAuthUtils negoAuthUtils = SSOUtils.getSsoContext(request).getNegotiateAuthUtils();
+            NegotiateAuthUtils negoAuthUtils = SsoUtils.getSsoContext(request).getNegotiateAuthUtils();
             return negoAuthUtils.doAuth(request, response);
         }
     };

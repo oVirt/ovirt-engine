@@ -47,10 +47,10 @@ public class SessionDataContainerTest {
     private SessionDataContainer container;
 
     @Mock
-    private SessionDataContainer.SSOSessionValidator ssoSessionValidator;
+    private SessionDataContainer.SsoSessionValidator ssoSessionValidator;
 
     @Mock
-    private SSOSessionUtils ssoSessionUtils;
+    private SsoSessionUtils ssoSessionUtils;
 
     @Before
     public void setUpContainer() {

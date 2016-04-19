@@ -14,9 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.sso.utils.AuthenticationException;
 import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
 import org.ovirt.engine.core.sso.utils.Credentials;
-import org.ovirt.engine.core.sso.utils.SSOConstants;
-import org.ovirt.engine.core.sso.utils.SSOContext;
-import org.ovirt.engine.core.sso.utils.SSOUtils;
+import org.ovirt.engine.core.sso.utils.SsoConstants;
+import org.ovirt.engine.core.sso.utils.SsoContext;
+import org.ovirt.engine.core.sso.utils.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +28,11 @@ public class InteractiveAuthServlet extends HttpServlet {
 
     private static Logger log = LoggerFactory.getLogger(InteractiveAuthServlet.class);
 
-    private SSOContext ssoContext;
+    private SsoContext ssoContext;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        ssoContext = SSOUtils.getSsoContext(config.getServletContext());
+        ssoContext = SsoUtils.getSsoContext(config.getServletContext());
     }
 
     @Override
@@ -41,15 +41,15 @@ public class InteractiveAuthServlet extends HttpServlet {
         log.debug("Entered InteractiveAuthServlet");
         try {
             String redirectUrl;
-            if (StringUtils.isEmpty(SSOUtils.getSsoSession(request).getClientId())) {
+            if (StringUtils.isEmpty(SsoUtils.getSsoSession(request).getClientId())) {
                 redirectUrl = ssoContext.getEngineUrl();
             } else {
                 Credentials userCredentials = getUserCredentials(request);
                 try {
-                    if (SSOUtils.isUserAuthenticated(request)) {
+                    if (SsoUtils.isUserAuthenticated(request)) {
                         log.debug("User is authenticated redirecting to {}",
-                                SSOConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI);
-                        redirectUrl = request.getContextPath() + SSOConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
+                                SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI);
+                        redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
                     } else {
                         redirectUrl = authenticateUser(request, response, userCredentials);
                     }
@@ -61,18 +61,18 @@ public class InteractiveAuthServlet extends HttpServlet {
                                 profile,
                                 ex.getMessage());
                         log.debug("Exception", ex);
-                        SSOUtils.getSsoSession(request).setLoginMessage(ex.getMessage());
+                        SsoUtils.getSsoSession(request).setLoginMessage(ex.getMessage());
                     }
                     log.debug("Redirecting to LoginPage");
-                    SSOUtils.getSsoSession(request).setReauthenticate(false);
-                    redirectUrl = request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_FORM_URI;
+                    SsoUtils.getSsoSession(request).setReauthenticate(false);
+                    redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_FORM_URI;
                 }
             }
             if (redirectUrl != null) {
                 response.sendRedirect(redirectUrl);
             }
         } catch (Exception ex) {
-            SSOUtils.redirectToErrorPage(request, response, ex);
+            SsoUtils.redirectToErrorPage(request, response, ex);
         }
     }
 
@@ -83,8 +83,8 @@ public class InteractiveAuthServlet extends HttpServlet {
         if (userCredentials == null || !userCredentials.isValid()) {
             throw new AuthenticationException(
                     ssoContext.getLocalizationUtils().localize(
-                            SSOConstants.APP_ERROR_INVALID_CREDENTIALS,
-                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
+                            SsoConstants.APP_ERROR_INVALID_CREDENTIALS,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         try {
             log.debug("Authenticating user using credentials");
@@ -93,7 +93,7 @@ public class InteractiveAuthServlet extends HttpServlet {
                     ssoContext,
                     request,
                     userCredentials);
-            return request.getContextPath() + SSOConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
+            return request.getContextPath() + SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
         } catch (AuthenticationException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -104,12 +104,12 @@ public class InteractiveAuthServlet extends HttpServlet {
     }
 
     private Credentials getUserCredentials(HttpServletRequest request) throws Exception {
-        String username = SSOUtils.getParameter(request, USERNAME);
-        String password = SSOUtils.getParameter(request, PASSWORD);
-        String profile = SSOUtils.getParameter(request, PROFILE);
+        String username = SsoUtils.getParameter(request, USERNAME);
+        String password = SsoUtils.getParameter(request, PASSWORD);
+        String profile = SsoUtils.getParameter(request, PROFILE);
         Credentials credentials;
         if (StringUtils.isEmpty(username) || password == null || StringUtils.isEmpty(profile)) {
-            credentials = SSOUtils.getSsoSession(request).getTempCredentials();
+            credentials = SsoUtils.getSsoSession(request).getTempCredentials();
         } else {
             credentials = new Credentials(username, password, profile, ssoContext.getSsoProfiles().contains(profile));
         }

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 
@@ -32,7 +32,7 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
     }
 
     private Map<String, Object> findDirectoryGroupById() {
-        return SSOOAuthServiceUtils.findDirectoryGroupById(
+        return SsoOAuthServiceUtils.findDirectoryGroupById(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
                 getParameters().getDomain(),
                 getParameters().getNamespace(),

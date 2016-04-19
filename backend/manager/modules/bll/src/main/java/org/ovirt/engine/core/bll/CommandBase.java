@@ -20,8 +20,8 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.aaa.SSOSessionUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
+import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
@@ -2354,7 +2354,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             // The session may not exists for quartz jobs
             sessionSeqId = getSessionDataContainer().isSessionExists(sessionId)
                     ? getSessionDataContainer().getEngineSessionSeqId(sessionId)
-                    : SSOSessionUtils.EMPTY_SESSION_SEQ_ID;
+                    : SsoSessionUtils.EMPTY_SESSION_SEQ_ID;
         }
         return sessionSeqId;
     }

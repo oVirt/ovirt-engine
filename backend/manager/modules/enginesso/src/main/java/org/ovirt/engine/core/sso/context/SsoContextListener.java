@@ -8,20 +8,20 @@ import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
 import org.ovirt.engine.core.sso.utils.DBUtils;
 import org.ovirt.engine.core.sso.utils.LocalizationUtils;
 import org.ovirt.engine.core.sso.utils.NegotiateAuthUtils;
-import org.ovirt.engine.core.sso.utils.SSOConstants;
-import org.ovirt.engine.core.sso.utils.SSOContext;
-import org.ovirt.engine.core.sso.utils.SSOExtensionsManager;
-import org.ovirt.engine.core.sso.utils.SSOLocalConfig;
+import org.ovirt.engine.core.sso.utils.SsoConstants;
+import org.ovirt.engine.core.sso.utils.SsoContext;
+import org.ovirt.engine.core.sso.utils.SsoExtensionsManager;
+import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
 
-public class SSOContextListener implements ServletContextListener {
+public class SsoContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
         ServletContext ctx = event.getServletContext();
-        SSOLocalConfig localConfig = new SSOLocalConfig();
+        SsoLocalConfig localConfig = new SsoLocalConfig();
 
-        SSOContext ssoContext = new SSOContext();
-        ssoContext.setSsoExtensionsManager(new SSOExtensionsManager(localConfig));
+        SsoContext ssoContext = new SsoContext();
+        ssoContext.setSsoExtensionsManager(new SsoExtensionsManager(localConfig));
         ssoContext.init(localConfig);
         ssoContext.setSsoClientRegistry(DBUtils.getAllSsoClientsInfo());
         ssoContext.setScopeDependencies(DBUtils.getAllSsoScopeDependencies());
@@ -31,8 +31,8 @@ public class SSOContextListener implements ServletContextListener {
         ssoContext.setSsoProfilesSupportingPasswdChange(
                 AuthenticationUtils.getAvailableProfilesSupportingPasswdChange(ssoContext.getSsoExtensionsManager()));
         ssoContext.setNegotiateAuthUtils(new NegotiateAuthUtils(ssoContext.getProfiles()));
-        ssoContext.setLocalizationUtils(new LocalizationUtils(SSOConstants.APP_MESSAGE_FILENAME));
-        ctx.setAttribute(SSOConstants.OVIRT_SSO_CONTEXT, ssoContext);
+        ssoContext.setLocalizationUtils(new LocalizationUtils(SsoConstants.APP_MESSAGE_FILENAME));
+        ctx.setAttribute(SsoConstants.OVIRT_SSO_CONTEXT, ssoContext);
     }
 
     @Override

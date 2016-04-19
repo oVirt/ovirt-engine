@@ -24,7 +24,7 @@
       UuF: Unused field (UUF_UNUSED_FIELD)
      -->
      <Match>
-       <Class name="org.ovirt.engine.ui.frontend.communication.SSOTokenChange" />
+       <Class name="org.ovirt.engine.ui.frontend.communication.SsoTokenChange" />
        <Bug code="UuF"/>
      </Match>
 

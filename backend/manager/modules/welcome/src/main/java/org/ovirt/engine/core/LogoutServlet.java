@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class LogoutServlet extends HttpServlet {
         String error = null;
         String error_code = null;
         try {
-            Map<String, Object> revokeResponse =  SSOOAuthServiceUtils.revoke(
+            Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(
                     (String) request.getSession(true).getAttribute(WelcomeUtils.TOKEN));
             error = (String) revokeResponse.get(WelcomeUtils.ERROR);
             error_code = (String) revokeResponse.get(WelcomeUtils.ERROR_CODE);

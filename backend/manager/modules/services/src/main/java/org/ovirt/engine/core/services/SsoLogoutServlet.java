@@ -11,24 +11,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOLogoutServlet extends HttpServlet {
+public class SsoLogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 9210030009170727847L;
 
-    private static final Logger log = LoggerFactory.getLogger(SSOLogoutServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(SsoLogoutServlet.class);
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        log.debug("Entered SSOLogoutServlet");
+        log.debug("Entered SsoLogoutServlet");
         String token = request.getParameter("token");
         String scope = request.getParameter("scope");
 
-        Map<String, Object> revokeResponse =  SSOOAuthServiceUtils.revoke(token, scope);
+        Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(token, scope);
         String error = (String) revokeResponse.get("error");
         if (StringUtils.isNotEmpty(error)) {
             log.error("Unable to logout user: {}", error);
@@ -43,7 +43,7 @@ public class SSOLogoutServlet extends HttpServlet {
             log.trace("Sending json data {}", jsonPayload);
         }
 
-        log.debug("Exiting SSOLogoutServlet");
+        log.debug("Exiting SsoLogoutServlet");
     }
 
 }

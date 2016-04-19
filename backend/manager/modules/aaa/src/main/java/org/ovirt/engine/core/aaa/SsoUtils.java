@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOUtils {
-    private static final Logger log = LoggerFactory.getLogger(SSOUtils.class);
+public class SsoUtils {
+    private static final Logger log = LoggerFactory.getLogger(SsoUtils.class);
 
     public static String createUserSession(HttpServletRequest req, Map<String, Object> jsonResponse, boolean loginAsAdmin) {
         String engineSessionId = null;

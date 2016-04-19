@@ -46,11 +46,11 @@ import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOUtils {
-    private static Logger log = LoggerFactory.getLogger(SSOUtils.class);
+public class SsoUtils {
+    private static Logger log = LoggerFactory.getLogger(SsoUtils.class);
 
     public static boolean isUserAuthenticated(HttpServletRequest request) {
-        return getSsoSession(request).getStatus() == SSOSession.Status.authenticated;
+        return getSsoSession(request).getStatus() == SsoSession.Status.authenticated;
     }
 
     public static void redirectToModule(HttpServletRequest request,
@@ -58,7 +58,7 @@ public class SSOUtils {
             throws IOException {
         log.debug("Entered redirectToModule");
         try {
-            SSOSession ssoSession = getSsoSession(request);
+            SsoSession ssoSession = getSsoSession(request);
             URLBuilder redirectUrl = new URLBuilder(getRedirectUrl(request).toString())
                     .addParameter("code", ssoSession.getAuthorizationCode());
             String state = ssoSession.getState();
@@ -72,7 +72,7 @@ public class SSOUtils {
             log.debug("Exception", ex);
             throw new RuntimeException(ex);
         } finally {
-            SSOUtils.getSsoSession(request).cleanup();
+            SsoUtils.getSsoSession(request).cleanup();
         }
     }
 
@@ -87,7 +87,7 @@ public class SSOUtils {
         log.debug("Exception", ex);
         redirectToErrorPageImpl(request,
                 response,
-                new OAuthException(SSOConstants.ERR_CODE_SERVER_ERROR, ex.getMessage(), ex));
+                new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, ex.getMessage(), ex));
     }
 
     public static void redirectToErrorPage(HttpServletRequest request,
@@ -103,11 +103,11 @@ public class SSOUtils {
             HttpServletResponse response,
             OAuthException ex) {
         log.debug("Entered redirectToErrorPage");
-        SSOSession ssoSession = null;
+        SsoSession ssoSession = null;
         try {
-            ssoSession = SSOUtils.getSsoSession(request, true);
-            if (ssoSession.getStatus() != SSOSession.Status.authenticated) {
-                ssoSession.setStatus(SSOSession.Status.unauthenticated);
+            ssoSession = SsoUtils.getSsoSession(request, true);
+            if (ssoSession.getStatus() != SsoSession.Status.authenticated) {
+                ssoSession.setStatus(SsoSession.Status.unauthenticated);
             }
             String redirectUrl = new URLBuilder(getRedirectUrl(request))
                     .addParameter("error_code", ex.getCode())
@@ -146,18 +146,18 @@ public class SSOUtils {
 
     public static String[] getClientIdClientSecret(HttpServletRequest request) throws Exception {
         String[] retVal = new String[2];
-        retVal[0] = getParameter(request, SSOConstants.HTTP_PARAM_CLIENT_ID);
-        retVal[1] = getParameter(request, SSOConstants.HTTP_PARAM_CLIENT_SECRET);
+        retVal[0] = getParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID);
+        retVal[1] = getParameter(request, SsoConstants.HTTP_PARAM_CLIENT_SECRET);
         if (StringUtils.isEmpty(retVal[0]) && StringUtils.isEmpty(retVal[1])) {
             retVal = getClientIdClientSecretFromHeader(request);
         }
         if (StringUtils.isEmpty(retVal[0])) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
-                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_ID));
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, SsoConstants.HTTP_PARAM_CLIENT_ID));
         }
         if (StringUtils.isEmpty(retVal[1])) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
-                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_SECRET));
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, SsoConstants.HTTP_PARAM_CLIENT_SECRET));
         }
         return retVal;
     }
@@ -175,7 +175,7 @@ public class SSOUtils {
 
     public static String[] getClientIdClientSecretFromHeader(HttpServletRequest request) {
         String[] retVal = new String[2];
-        String header = request.getHeader(SSOConstants.HEADER_AUTHORIZATION);
+        String header = request.getHeader(SsoConstants.HEADER_AUTHORIZATION);
         if (StringUtils.isNotEmpty(header) && header.startsWith("Basic")) {
             String[] creds = new String(
                     Base64.decodeBase64(header.substring("Basic".length())),
@@ -198,8 +198,8 @@ public class SSOUtils {
     public static String getRequestParameter(HttpServletRequest request, String paramName) throws Exception {
         String value = getParameter(request, paramName);
         if (value == null) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
-                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
         }
         return value;
     }
@@ -236,10 +236,10 @@ public class SSOUtils {
 
     public static String getScopeRequestParameter(HttpServletRequest request, String defaultValue) {
         return resolveScopeWithDependencies(getSsoContext(request),
-                getRequestParameter(request, SSOConstants.HTTP_PARAM_SCOPE, defaultValue));
+                getRequestParameter(request, SsoConstants.HTTP_PARAM_SCOPE, defaultValue));
     }
 
-    public static String resolveScopeWithDependencies(SSOContext context, String scopes) {
+    public static String resolveScopeWithDependencies(SsoContext context, String scopes) {
         Set<String> scopesSet = new TreeSet<>();
         for (String scope : scopeAsList(scopes)) {
             scopesSet.add(scope);
@@ -248,29 +248,29 @@ public class SSOUtils {
         return StringUtils.join(scopesSet, " ");
     }
 
-    public static SSOContext getSsoContext(HttpServletRequest request) {
-        return (SSOContext) request.getServletContext().getAttribute(SSOConstants.OVIRT_SSO_CONTEXT);
+    public static SsoContext getSsoContext(HttpServletRequest request) {
+        return (SsoContext) request.getServletContext().getAttribute(SsoConstants.OVIRT_SSO_CONTEXT);
     }
 
-    public static SSOContext getSsoContext(ServletContext ctx) {
-        return (SSOContext) ctx.getAttribute(SSOConstants.OVIRT_SSO_CONTEXT);
+    public static SsoContext getSsoContext(ServletContext ctx) {
+        return (SsoContext) ctx.getAttribute(SsoConstants.OVIRT_SSO_CONTEXT);
     }
 
-    public static SSOSession getSsoSessionFromRequest(HttpServletRequest request, String token) {
+    public static SsoSession getSsoSessionFromRequest(HttpServletRequest request, String token) {
         return getSsoSession(request, null, token, false);
     }
 
-    public static SSOSession getSsoSession(HttpServletRequest request, String token, boolean mustExist) {
+    public static SsoSession getSsoSession(HttpServletRequest request, String token, boolean mustExist) {
         return getSsoSession(request, null, token, mustExist);
     }
 
-    public static SSOSession getSsoSession(
+    public static SsoSession getSsoSession(
             HttpServletRequest request,
             String clientId,
             String token,
             boolean mustExist) {
         TokenCleanupUtility.cleanupExpiredTokens(request.getServletContext());
-        SSOSession ssoSession = null;
+        SsoSession ssoSession = null;
         if (StringUtils.isNotEmpty(token)) {
             ssoSession = getSsoContext(request).getSsoSession(token);
             if (ssoSession != null) {
@@ -278,43 +278,43 @@ public class SSOUtils {
             }
         }
         if (mustExist && ssoSession == null) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT,
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
                     "The provided authorization grant for the auth code has expired");
         }
         if (StringUtils.isNotEmpty(clientId) &&
                 StringUtils.isNotEmpty(ssoSession.getClientId()) &&
                 !ssoSession.getClientId().equals(clientId)) {
-            throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
-                    SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT);
+            throw new OAuthException(SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                    SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT);
         }
         return ssoSession;
     }
 
-    public static SSOSession getSsoSession(HttpServletRequest request) {
-        SSOSession ssoSession = request.getSession(false) == null ?
-                null : (SSOSession) request.getSession().getAttribute(SSOConstants.OVIRT_SSO_SESSION);
+    public static SsoSession getSsoSession(HttpServletRequest request) {
+        SsoSession ssoSession = request.getSession(false) == null ?
+                null : (SsoSession) request.getSession().getAttribute(SsoConstants.OVIRT_SSO_SESSION);
         if (ssoSession == null) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT, "Session expired please try again.");
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT, "Session expired please try again.");
         }
         return ssoSession;
     }
 
-    public static SSOSession getSsoSession(HttpServletRequest request, boolean mustExist)
+    public static SsoSession getSsoSession(HttpServletRequest request, boolean mustExist)
             throws UnsupportedEncodingException {
-        SSOSession ssoSession = request.getSession(false) == null ?
-                null : (SSOSession) request.getSession().getAttribute(SSOConstants.OVIRT_SSO_SESSION);
+        SsoSession ssoSession = request.getSession(false) == null ?
+                null : (SsoSession) request.getSession().getAttribute(SsoConstants.OVIRT_SSO_SESSION);
         if ((ssoSession == null || StringUtils.isEmpty(ssoSession.getClientId())) && mustExist) {
-            ssoSession = ssoSession == null ? new SSOSession() : ssoSession;
+            ssoSession = ssoSession == null ? new SsoSession() : ssoSession;
             ssoSession.setClientId(getClientId(request));
             ssoSession.setScope(getScopeRequestParameter(request, ""));
-            ssoSession.setState(getRequestParameter(request, SSOConstants.HTTP_PARAM_STATE, ""));
-            ssoSession.setRedirectUri(getParameter(request, SSOConstants.HTTP_PARAM_REDIRECT_URI));
+            ssoSession.setState(getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, ""));
+            ssoSession.setRedirectUri(getParameter(request, SsoConstants.HTTP_PARAM_REDIRECT_URI));
         }
         return ssoSession;
     }
 
     public static Credentials getUserCredentialsFromHeader(HttpServletRequest request) {
-        String header = request.getHeader(SSOConstants.HEADER_AUTHORIZATION);
+        String header = request.getHeader(SsoConstants.HEADER_AUTHORIZATION);
         Credentials credentials = null;
         if (StringUtils.isNotEmpty(header)) {
             String[] creds = new String(
@@ -328,7 +328,7 @@ public class SSOUtils {
         return credentials;
     }
 
-    public static Credentials translateUser(String user, String password, SSOContext ssoContext) {
+    public static Credentials translateUser(String user, String password, SsoContext ssoContext) {
         Credentials credentials = new Credentials();
         String username = user;
         int separator = user.lastIndexOf("@");
@@ -352,7 +352,7 @@ public class SSOUtils {
 
     public static void persistUserPassword(
             HttpServletRequest request,
-            SSOSession ssoSession,
+            SsoSession ssoSession,
             String password) {
         try {
             if (ssoSession.getScopeAsList().contains("ovirt-ext=token:password-access") &&
@@ -366,7 +366,7 @@ public class SSOUtils {
         }
     }
 
-    public static SSOSession persistAuthInfoInContextWithToken(
+    public static SsoSession persistAuthInfoInContextWithToken(
             HttpServletRequest request,
             String password,
             String profileName,
@@ -376,11 +376,11 @@ public class SSOUtils {
         String authCode = generateAuthorizationToken();
         String accessToken = generateAuthorizationToken();
 
-        SSOSession ssoSession = getSsoSession(request, true);
+        SsoSession ssoSession = getSsoSession(request, true);
         ssoSession.setAccessToken(accessToken);
         ssoSession.setAuthorizationCode(authCode);
 
-        request.setAttribute(SSOConstants.HTTP_REQ_ATTR_ACCESS_TOKEN, accessToken);
+        request.setAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN, accessToken);
 
         ssoSession.setActive(true);
         ssoSession.setAuthRecord(authRecord);
@@ -389,7 +389,7 @@ public class SSOUtils {
 
         ssoSession.setPrincipalRecord(principalRecord);
         ssoSession.setProfile(profileName);
-        ssoSession.setStatus(SSOSession.Status.authenticated);
+        ssoSession.setStatus(SsoSession.Status.authenticated);
         ssoSession.setTempCredentials(null);
         ssoSession.setUserId(getUserId(principalRecord));
         try {
@@ -409,8 +409,8 @@ public class SSOUtils {
     public static void validateClientAcceptHeader(HttpServletRequest request) {
         String acceptHeader = request.getHeader("Accept");
         if (StringUtils.isEmpty(acceptHeader) || !acceptHeader.equals("application/json")) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
-                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, "Accept Header"));
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, "Accept Header"));
         }
     }
 
@@ -421,19 +421,19 @@ public class SSOUtils {
             String scope,
             String redirectUri) {
         try {
-            SSOContext ssoContext = getSsoContext(request);
+            SsoContext ssoContext = getSsoContext(request);
             ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
             if (clientInfo == null) {
-                throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
-                        SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
+                throw new OAuthException(SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                        SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
             }
             if (!clientInfo.isTrusted()) {
-                throw new OAuthException(SSOConstants.ERR_CODE_ACCESS_DENIED,
-                        SSOConstants.ERR_CODE_ACCESS_DENIED_MSG);
+                throw new OAuthException(SsoConstants.ERR_CODE_ACCESS_DENIED,
+                        SsoConstants.ERR_CODE_ACCESS_DENIED_MSG);
             }
             if (StringUtils.isNotEmpty(clientSecret) && !EnvelopePBE.check(clientInfo.getClientSecret(), clientSecret)) {
-                throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
-                        String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_SECRET));
+                throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                        String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, SsoConstants.HTTP_PARAM_CLIENT_SECRET));
             }
             if (StringUtils.isNotEmpty(scope)) {
                 validateScope(clientInfo.getScope(), scope);
@@ -449,8 +449,8 @@ public class SSOUtils {
                     }
                 }
                 if (!isValidUri) {
-                    throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
-                            SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
+                    throw new OAuthException(SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                            SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
                 }
             }
         } catch (OAuthException ex) {
@@ -458,13 +458,13 @@ public class SSOUtils {
         } catch (Exception ex) {
             log.error("Internal Server Error: {}", ex.getMessage());
             log.debug("Exception", ex);
-            throw new OAuthException(SSOConstants.ERR_CODE_SERVER_ERROR, ex.getMessage());
+            throw new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, ex.getMessage());
         }
     }
 
     public static void validateRequestScope(HttpServletRequest req, String token, String scope) {
         if (StringUtils.isNotEmpty(scope)) {
-            SSOSession ssoSession = getSsoSessionFromRequest(req, token);
+            SsoSession ssoSession = getSsoSessionFromRequest(req, token);
             if (ssoSession != null && ssoSession.getScope() != null) {
                 validateScope(ssoSession.getScopeAsList(), scope);
             }
@@ -474,8 +474,8 @@ public class SSOUtils {
     public static void validateScope(List<String> scope, String requestScope) {
         List<String> requestedScope = strippedScopeAsList(scopeAsList(requestScope));
         if (!scope.containsAll(requestedScope)) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_SCOPE,
-                    String.format(SSOConstants.ERR_CODE_INVALID_SCOPE_MSG, requestedScope));
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_SCOPE,
+                    String.format(SsoConstants.ERR_CODE_INVALID_SCOPE_MSG, requestedScope));
         }
     }
 
@@ -501,8 +501,8 @@ public class SSOUtils {
         }
         log.debug("Exception", ex);
         Map<String, Object> errorData = new HashMap<>();
-        errorData.put(SSOConstants.ERROR_CODE, ex.getCode());
-        errorData.put(SSOConstants.ERROR, ex.getMessage());
+        errorData.put(SsoConstants.ERROR_CODE, ex.getCode());
+        errorData.put(SsoConstants.ERROR, ex.getMessage());
         sendJsonData(response, errorData);
     }
 
@@ -512,7 +512,7 @@ public class SSOUtils {
             if (ovirtData != null) {
                 Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
                 if (groupIds != null) {
-                    ovirtData.put("group_ids", SSOUtils.prepareGroupMembershipsForJson(groupIds));
+                    ovirtData.put("group_ids", SsoUtils.prepareGroupMembershipsForJson(groupIds));
                 }
             }
             String jsonPayload = getJson(payload);
@@ -555,7 +555,7 @@ public class SSOUtils {
     }
 
     public static void notifyClientsOfLogoutEvent(
-            SSOContext ssoContext,
+            SsoContext ssoContext,
             Set<String> clientIdsForToken,
             String token) throws Exception {
         if (clientIdsForToken != null) {
@@ -566,7 +566,7 @@ public class SSOUtils {
     }
 
     private static void notifyClientOfLogoutEvent(
-            SSOContext ssoContext,
+            SsoContext ssoContext,
             String clientId,
             String token) throws Exception {
         ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
@@ -603,7 +603,7 @@ public class SSOUtils {
     }
 
     private static HttpURLConnection createConnection(
-            SSOLocalConfig config,
+            SsoLocalConfig config,
             ClientInfo clientInfo,
             String url) throws Exception {
         HttpURLConnection connection = new HttpURLConnectionBuilder(url)
@@ -635,7 +635,7 @@ public class SSOUtils {
      *      {@code Authz.GroupRecord.GROUPS} from {@code Collection<ExtMap>} to {@code Collection<String>}
      *   3. Return all referenced group records as a set
      * The whole process needs to be reversed on engine side, see
-     * {@code org.ovirt.engine.core.aaa.SSOOAuthServiceUtils.processGroupMembershipsFromJson()}
+     * {@code org.ovirt.engine.core.aaa.SsoOAuthServiceUtils.processGroupMembershipsFromJson()}
      */
     public static Collection<ExtMap> prepareGroupMembershipsForJson(Collection<ExtMap> groupRecords) {
         Map<String, ExtMap> resolvedGroups = new HashMap<>();

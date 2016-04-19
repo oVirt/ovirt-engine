@@ -19,7 +19,7 @@ import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class SessionDataContainer {
 
-    SSOSessionValidator ssoSessionValidator = new SSOSessionValidator();
+    SsoSessionValidator ssoSessionValidator = new SsoSessionValidator();
 
     @Inject
-    SSOSessionUtils ssoSessionUtils;
+    SsoSessionUtils ssoSessionUtils;
 
     private static class SessionInfo {
         private ConcurrentMap<String, Object> contentOfSession = new ConcurrentHashMap<>();
@@ -149,7 +149,7 @@ public class SessionDataContainer {
         return sessionId;
     }
 
-    public String getSessionIdBySSOAccessToken(String ssoToken) {
+    public String getSessionIdBySsoAccessToken(String ssoToken) {
         String sessionId = null;
         for (SessionInfo sessionInfo : sessionInfoMap.values()) {
             if (sessionInfo.contentOfSession.get(SSO_ACCESS_TOKEN_PARAMETER_NAME).equals(ssoToken)) {
@@ -395,12 +395,12 @@ public class SessionDataContainer {
         sessionInfoMap.remove(sessionId);
     }
 
-    class SSOSessionValidator {
+    class SsoSessionValidator {
         public boolean isSessionValid(String token) {
             boolean isValid = false;
             if (StringUtils.isNotEmpty(token)) {
                 try {
-                    Map<String, Object> response = SSOOAuthServiceUtils.getTokenInfo(token, "ovirt-ext=token-info:validate");
+                    Map<String, Object> response = SsoOAuthServiceUtils.getTokenInfo(token, "ovirt-ext=token-info:validate");
                     if (response.get("error") == null) {
                         isValid = true;
                     }

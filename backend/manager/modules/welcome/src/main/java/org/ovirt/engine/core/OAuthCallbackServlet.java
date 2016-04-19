@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class OAuthCallbackServlet extends HttpServlet {
 
     private String getTokenForAuthCode(HttpServletRequest request, String authCode, String scope, String redirectUri) {
         String token  = null;
-        Map<String, Object> tokenMap = SSOOAuthServiceUtils.getToken(WelcomeUtils.AUTHORIZATION_CODE, authCode, scope, redirectUri);
+        Map<String, Object> tokenMap = SsoOAuthServiceUtils.getToken(WelcomeUtils.AUTHORIZATION_CODE, authCode, scope, redirectUri);
         if (tokenMap.containsKey(WelcomeUtils.ERROR)) {
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, tokenMap.get(WelcomeUtils.ERROR));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, tokenMap.get(WelcomeUtils.ERROR_CODE));

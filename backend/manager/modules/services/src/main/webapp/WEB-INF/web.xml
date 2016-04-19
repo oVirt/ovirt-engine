@@ -46,20 +46,20 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>SSOLogoutServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.SSOLogoutServlet</servlet-class>
+    <servlet-name>SsoLogoutServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.services.SsoLogoutServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>SSOLogoutServlet</servlet-name>
+    <servlet-name>SsoLogoutServlet</servlet-name>
     <url-pattern>/sso-logout</url-pattern>
   </servlet-mapping>
 
   <servlet>
-      <servlet-name>SSOCallbackServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.services.SSOCallbackServlet</servlet-class>
+      <servlet-name>SsoCallbackServlet</servlet-name>
+      <servlet-class>org.ovirt.engine.core.services.SsoCallbackServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-      <servlet-name>SSOCallbackServlet</servlet-name>
+      <servlet-name>SsoCallbackServlet</servlet-name>
       <url-pattern>/sso-callback</url-pattern>
   </servlet-mapping>
 

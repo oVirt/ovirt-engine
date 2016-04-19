@@ -9,8 +9,8 @@ import javax.naming.NamingException;
 import org.jboss.as.domain.management.plugin.AbstractPlugIn;
 import org.jboss.as.domain.management.plugin.Identity;
 import org.jboss.as.domain.management.plugin.ValidatePasswordCredential;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
-import org.ovirt.engine.core.aaa.SSOUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -50,11 +50,11 @@ public class OvirtAuthPlugIn extends AbstractPlugIn {
                         String engineSessionId = null;
                         boolean loginSucceeded = true;
                         try {
-                            Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginWithPassword(
+                            Map<String, Object> jsonResponse = SsoOAuthServiceUtils.loginWithPassword(
                                     username, new String(chars), scope);
                             FiltersHelper.isStatusOk(jsonResponse);
                             token = (String) jsonResponse.get("access_token");
-                            engineSessionId = SSOUtils.createUserSession(null,
+                            engineSessionId = SsoUtils.createUserSession(null,
                                     FiltersHelper.getPayloadForToken(token),
                                     false);
                         } catch (Exception e) {
@@ -69,7 +69,7 @@ public class OvirtAuthPlugIn extends AbstractPlugIn {
                             ).getSucceeded();
                         } finally {
                             if (token != null) {
-                                SSOOAuthServiceUtils.revoke(token, "");
+                                SsoOAuthServiceUtils.revoke(token, "");
                             }
                         }
                     }

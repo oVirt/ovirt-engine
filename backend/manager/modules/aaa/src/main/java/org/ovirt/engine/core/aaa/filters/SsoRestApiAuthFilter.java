@@ -15,16 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
-import org.ovirt.engine.core.aaa.SSOUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.common.constants.SessionConstants;
-import org.ovirt.engine.core.common.queries.GetEngineSessionIdForSSOTokenQueryParameters;
+import org.ovirt.engine.core.common.queries.GetEngineSessionIdForSsoTokenQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSORestApiAuthFilter implements Filter {
+public class SsoRestApiAuthFilter implements Filter {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private static final String scope = "ovirt-app-api";
@@ -38,37 +38,37 @@ public class SSORestApiAuthFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.debug("Entered SSORestApiAuthFilter");
+        log.debug("Entered SsoRestApiAuthFilter");
         HttpServletRequest req = (HttpServletRequest) request;
         if (!FiltersHelper.isAuthenticated(req) || !FiltersHelper.isSessionValid((HttpServletRequest) request)) {
-            log.debug("SSORestApiAuthFilter authenticating with sso");
-            authenticateWithSSO(req, (HttpServletResponse) response);
+            log.debug("SsoRestApiAuthFilter authenticating with sso");
+            authenticateWithSso(req, (HttpServletResponse) response);
         }
         chain.doFilter(request, response);
     }
 
-    protected void authenticateWithSSO(HttpServletRequest req, HttpServletResponse res) throws ServletException {
+    protected void authenticateWithSso(HttpServletRequest req, HttpServletResponse res) throws ServletException {
         String headerValue = req.getHeader(FiltersHelper.Constants.HEADER_AUTHORIZATION);
         if (headerValue != null && (headerValue.startsWith(BASIC) || headerValue.startsWith(BEARER))) {
             try {
                 String token;
                 boolean userSessionExists = false;
                 if (headerValue.startsWith(BASIC)) {
-                    log.debug("SSORestApiAuthFilter authenticating using BASIC header");
-                    Map<String, Object> response = SSOOAuthServiceUtils.authenticate(req, scope);
+                    log.debug("SsoRestApiAuthFilter authenticating using BASIC header");
+                    Map<String, Object> response = SsoOAuthServiceUtils.authenticate(req, scope);
                     FiltersHelper.isStatusOk(response);
                     token = (String) response.get("access_token");
-                    log.debug("SSORestApiAuthFilter successfully authenticated using BASIC header");
+                    log.debug("SsoRestApiAuthFilter successfully authenticated using BASIC header");
                 } else if (headerValue.startsWith(BEARER)) {
-                    log.debug("SSORestApiAuthFilter authenticating using BEARER header");
+                    log.debug("SsoRestApiAuthFilter authenticating using BEARER header");
                     token = headerValue.substring("Bearer".length()).trim();
                     InitialContext ctx = new InitialContext();
                     try {
                         VdcQueryReturnValue queryRetVal = FiltersHelper.getBackend(ctx).runPublicQuery(
-                                VdcQueryType.GetEngineSessionIdForSSOToken,
-                                new GetEngineSessionIdForSSOTokenQueryParameters(token));
+                                VdcQueryType.GetEngineSessionIdForSsoToken,
+                                new GetEngineSessionIdForSsoTokenQueryParameters(token));
                         if (queryRetVal.getSucceeded() && StringUtils.isNotEmpty(queryRetVal.getReturnValue())) {
-                            log.debug("SSORestApiAuthFilter successfully authenticated using BEARER header");
+                            log.debug("SsoRestApiAuthFilter successfully authenticated using BEARER header");
                             req.getSession(true).setAttribute(
                                     SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
                                     queryRetVal.getReturnValue());
@@ -91,7 +91,7 @@ public class SSORestApiAuthFilter implements Filter {
                             !Arrays.asList(scope.trim().split("\\s *")).contains("ovirt-app-api")) {
                         throw new RuntimeException("The required scope ovirt-app-api is not granted.");
                     }
-                    SSOUtils.createUserSession(req, payload, false);
+                    SsoUtils.createUserSession(req, payload, false);
                 }
                 req.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
                         req.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY));

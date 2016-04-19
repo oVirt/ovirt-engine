@@ -18,16 +18,16 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOCallbackServlet extends HttpServlet {
+public class SsoCallbackServlet extends HttpServlet {
 
     private static final long serialVersionUID = 6329289042799650200L;
 
-    private static Logger log = LoggerFactory.getLogger(SSOCallbackServlet.class);
+    private static Logger log = LoggerFactory.getLogger(SsoCallbackServlet.class);
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        log.debug("Calling SSOCallbackServlet with queryString '{}'", request.getQueryString());
+        log.debug("Calling SsoCallbackServlet with queryString '{}'", request.getQueryString());
 
         String event = request.getParameter("event");
         String accessToken = request.getParameter("token");

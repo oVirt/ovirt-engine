@@ -38,8 +38,8 @@
     </filter-mapping>
 
     <filter>
-        <filter-name>SSOLoginFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.SSOLoginFilter</filter-class>
+        <filter-name>SsoLoginFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SsoLoginFilter</filter-class>
         <init-param>
             <param-name>login-url</param-name>
             <param-value>/sso/login?</param-value>
@@ -47,7 +47,7 @@
     </filter>
 
     <filter-mapping>
-        <filter-name>SSOLoginFilter</filter-name>
+        <filter-name>SsoLoginFilter</filter-name>
         <url-pattern>/WebAdmin.html</url-pattern>
     </filter-mapping>
 
@@ -70,7 +70,7 @@
 
     <servlet>
         <servlet-name>login</servlet-name>
-        <servlet-class>org.ovirt.engine.core.aaa.servlet.SSOLoginServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.core.aaa.servlet.SsoLoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>login</servlet-name>
@@ -79,7 +79,7 @@
 
     <servlet>
         <servlet-name>logout</servlet-name>
-        <servlet-class>org.ovirt.engine.core.aaa.servlet.SSOLogoutServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.core.aaa.servlet.SsoLogoutServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>logout</servlet-name>
@@ -87,15 +87,15 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>SSOPostLoginServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.core.aaa.servlet.SSOPostLoginServlet</servlet-class>
+        <servlet-name>SsoPostLoginServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.aaa.servlet.SsoPostLoginServlet</servlet-class>
         <init-param>
             <param-name>login-as-admin</param-name>
             <param-value>true</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-name>SSOPostLoginServlet</servlet-name>
+        <servlet-name>SsoPostLoginServlet</servlet-name>
         <url-pattern>/sso/oauth2-callback</url-pattern>
     </servlet-mapping>
 

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class AuthenticationUtils {
     private static Logger log = LoggerFactory.getLogger(AuthenticationUtils.class);
 
-    public static void loginOnBehalf(SSOContext ssoContext, HttpServletRequest request, String username)
+    public static void loginOnBehalf(SsoContext ssoContext, HttpServletRequest request, String username)
             throws Exception {
         log.debug("Entered AuthenticationUtils.loginOnBehalf");
         int index = username.lastIndexOf("@");
@@ -41,27 +41,27 @@ public class AuthenticationUtils {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(profile)) {
             throw new AuthenticationException(
                     ssoContext.getLocalizationUtils().localize(
-                            SSOConstants.APP_ERROR_PROVIDE_USERNAME_AND_PROFILE,
-                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
+                            SsoConstants.APP_ERROR_PROVIDE_USERNAME_AND_PROFILE,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
 
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
         mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
-        String authRecordJson = SSOUtils.getRequestParameter(request, SSOConstants.HTTP_PARAM_AUTH_RECORD, "");
+        String authRecordJson = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_AUTH_RECORD, "");
         ExtMap authRecord;
         if (StringUtils.isNotEmpty(authRecordJson)) {
             authRecord = mapper.readValue(authRecordJson, ExtMap.class);
         } else {
             authRecord = new ExtMap().mput(Authn.AuthRecord.PRINCIPAL, username);
         }
-        SSOSession ssoSession = login(ssoContext,
+        SsoSession ssoSession = login(ssoContext,
                 request,
                 new Credentials(username,
                         null,
                         profile,
-                        SSOUtils.getSsoContext(request).getSsoProfiles().contains(profile)),
+                        SsoUtils.getSsoContext(request).getSsoProfiles().contains(profile)),
                 authRecord);
         log.info("User {}@{} successfully logged in using login-on-behalf with client id : {} and scopes : {}",
                 username,
@@ -71,25 +71,25 @@ public class AuthenticationUtils {
     }
 
     public static void handleCredentials(
-            SSOContext ssoContext,
+            SsoContext ssoContext,
             HttpServletRequest request,
             Credentials credentials) throws Exception {
         log.debug("Entered AuthenticationUtils.handleCredentials");
         if (StringUtils.isEmpty(credentials.getUsername()) || StringUtils.isEmpty(credentials.getProfile())) {
             throw new AuthenticationException(
                     ssoContext.getLocalizationUtils().localize(
-                            SSOConstants.APP_ERROR_PROVIDE_USERNAME_PASSWORD_AND_PROFILE,
-                            (Locale) request.getAttribute(SSOConstants.LOCALE)));
+                            SsoConstants.APP_ERROR_PROVIDE_USERNAME_PASSWORD_AND_PROFILE,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
-        SSOSession ssoSession = login(ssoContext, request, credentials, null);
+        SsoSession ssoSession = login(ssoContext, request, credentials, null);
         log.info("User {}@{} successfully logged in with scopes: {}",
                 credentials.getUsername(),
                 credentials.getProfile(),
                 ssoSession.getScope());
     }
 
-    private static SSOSession login(
-            SSOContext ssoContext,
+    private static SsoSession login(
+            SsoContext ssoContext,
             HttpServletRequest request,
             Credentials credentials,
             ExtMap authRecord) throws Exception {
@@ -110,7 +110,7 @@ public class AuthenticationUtils {
             );
             if (outputMap.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
                     outputMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-                SSOUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
+                SsoUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
                 log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn failed");
                 throw new AuthenticationException(
                         AuthnMessageMapper.mapMessageErrorCode(
@@ -152,14 +152,14 @@ public class AuthenticationUtils {
                 Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
         ));
         log.debug("AuthenticationUtils.handleCredentials saving data in session data");
-        return SSOUtils.persistAuthInfoInContextWithToken(request,
+        return SsoUtils.persistAuthInfoInContextWithToken(request,
                 credentials.getPassword(),
                 credentials.getProfile(),
                 authRecord,
                 output.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
     }
 
-    public static void changePassword(SSOContext context, HttpServletRequest request, Credentials credentials)
+    public static void changePassword(SsoContext context, HttpServletRequest request, Credentials credentials)
             throws AuthenticationException {
         ExtensionProfile profile = getExtensionProfile(context, credentials.getProfile());
         String user = mapUser(profile, credentials);
@@ -181,7 +181,7 @@ public class AuthenticationUtils {
         );
         if (outputMap.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
                 outputMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-            SSOUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
+            SsoUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
             log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn failed");
             throw new AuthenticationException(
                     AuthnMessageMapper.mapMessageErrorCode(
@@ -193,7 +193,7 @@ public class AuthenticationUtils {
         log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn succeeded");
     }
 
-    public static Map<String, List<String>> getAvailableNamesSpaces(SSOExtensionsManager extensionsManager) {
+    public static Map<String, List<String>> getAvailableNamesSpaces(SsoExtensionsManager extensionsManager) {
         Map<String, List<String>> namespacesMap = new HashMap<>();
         extensionsManager.getExtensionsByService(Authz.class.getName())
                 .forEach(authz -> {
@@ -212,27 +212,27 @@ public class AuthenticationUtils {
         return namespacesMap;
     }
 
-    public static List<Map<String, Object>> getProfileList(SSOExtensionsManager extensionsManager) {
+    public static List<Map<String, Object>> getProfileList(SsoExtensionsManager extensionsManager) {
         return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
                 .map((authn) -> AuthenticationUtils.getProfileEntry(extensionsManager, authn))
                 .collect(Collectors.toList());
     }
 
-    public static List<String> getAvailableProfiles(SSOExtensionsManager extensionsManager) {
+    public static List<String> getAvailableProfiles(SsoExtensionsManager extensionsManager) {
         return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
                 .map(AuthenticationUtils::getProfileName)
                 .collect(Collectors.toList());
     }
 
-    public static List<String> getAvailableProfilesSupportingPasswd(SSOExtensionsManager extensionsManager) {
+    public static List<String> getAvailableProfilesSupportingPasswd(SsoExtensionsManager extensionsManager) {
         return getAvailableProfilesImpl(extensionsManager, Authn.Capabilities.AUTHENTICATE_PASSWORD);
     }
 
-    public static List<String> getAvailableProfilesSupportingPasswdChange(SSOExtensionsManager extensionsManager) {
+    public static List<String> getAvailableProfilesSupportingPasswdChange(SsoExtensionsManager extensionsManager) {
         return getAvailableProfilesImpl(extensionsManager, Authn.Capabilities.CREDENTIALS_CHANGE);
     }
 
-    public static ExtensionProfile getExtensionProfile(SSOContext ssoContext, String profileName) {
+    public static ExtensionProfile getExtensionProfile(SsoContext ssoContext, String profileName) {
         Optional<ExtensionProfile> profile = getExtensionProfileImpl(ssoContext, profileName, null);
         if (!profile.isPresent()) {
             log.debug("AuthenticationUtils.getExtensionProfile authn and authz NOT found for profile {}", profileName);
@@ -242,7 +242,7 @@ public class AuthenticationUtils {
         return profile.get();
     }
 
-    public static ExtensionProfile getExtensionProfileByAuthzName(SSOContext ssoContext, String authzName) {
+    public static ExtensionProfile getExtensionProfileByAuthzName(SsoContext ssoContext, String authzName) {
         Optional<ExtensionProfile> profile = getExtensionProfileImpl(ssoContext, null, authzName);
         if (!profile.isPresent()) {
             log.debug("AuthenticationUtils.getExtensionProfile authn and authz NOT found for authz {}", authzName);
@@ -252,7 +252,7 @@ public class AuthenticationUtils {
         return profile.get();
     }
 
-    private static List<String> getAvailableProfilesImpl(SSOExtensionsManager extensionsManager,
+    private static List<String> getAvailableProfilesImpl(SsoExtensionsManager extensionsManager,
                                                          long capability) {
         return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
                 .filter(a -> (a.getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L)
@@ -266,7 +266,7 @@ public class AuthenticationUtils {
                 .getProperty(Authn.ConfigKeys.PROFILE_NAME);
     }
 
-    private static Map<String, Object> getProfileEntry(SSOExtensionsManager extensionsManager, ExtensionProxy authn) {
+    private static Map<String, Object> getProfileEntry(SsoExtensionsManager extensionsManager, ExtensionProxy authn) {
         Map<String, Object> profileEntry = new HashMap<>();
         profileEntry.put("authn_name", getProfileName(authn));
         ExtensionProxy authz = extensionsManager.getExtensionByName(getAuthzName(authn));
@@ -280,7 +280,7 @@ public class AuthenticationUtils {
                 .getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
     }
 
-    private static Optional<ExtensionProfile> getExtensionProfileImpl(SSOContext ssoContext,
+    private static Optional<ExtensionProfile> getExtensionProfileImpl(SsoContext ssoContext,
                                                                      final String searchProfileName,
                                                                      final String searchAuthzName) {
         return ssoContext.getSsoExtensionsManager().getExtensionsByService(Authn.class.getName()).stream()
@@ -296,7 +296,7 @@ public class AuthenticationUtils {
                 (StringUtils.isNotEmpty(searchAuthzName) && searchAuthzName.equals(getAuthzName(authn)));
     }
 
-    private static ExtensionProfile mapToExtensionProfile(SSOContext ssoContext, ExtensionProxy authn) {
+    private static ExtensionProfile mapToExtensionProfile(SsoContext ssoContext, ExtensionProxy authn) {
         ExtensionProfile profile = new ExtensionProfile();
         String mapperName = authn.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
                 .getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);

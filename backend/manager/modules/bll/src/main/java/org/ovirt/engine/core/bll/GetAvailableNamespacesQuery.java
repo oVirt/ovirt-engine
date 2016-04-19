@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
@@ -21,7 +21,7 @@ public class GetAvailableNamespacesQuery<P extends VdcQueryParametersBase> exten
 
     @Override
     protected void executeQueryCommand() {
-        Map<String, List<String>> namespacesMap = (Map<String, List<String>>) SSOOAuthServiceUtils
+        Map<String, List<String>> namespacesMap = (Map<String, List<String>>) SsoOAuthServiceUtils
                 .getAvailableNamespaces(getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()))
                 .get("result");
         if (namespacesMap != null) {

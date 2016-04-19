@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOLoginFilter implements Filter {
+public class SsoLoginFilter implements Filter {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private String loginUrl;
@@ -26,7 +26,7 @@ public class SSOLoginFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         loginUrl = filterConfig.getInitParameter("login-url");
         if (loginUrl == null) {
-            throw new RuntimeException("No login-url init parameter specified for SSOLoginFilter.");
+            throw new RuntimeException("No login-url init parameter specified for SsoLoginFilter.");
         }
     }
 
@@ -34,7 +34,7 @@ public class SSOLoginFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
 
-        log.debug("Entered SSOLoginFilter");
+        log.debug("Entered SsoLoginFilter");
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         if (req.getSession(false) == null || req.getSession(false).getAttribute(FiltersHelper.Constants.LOGOUT_INPROGRESS) == null) {
@@ -59,7 +59,7 @@ public class SSOLoginFilter implements Filter {
                 chain.doFilter(request, response);
             }
         }
-        log.debug("Exiting SSOLoginFilter");
+        log.debug("Exiting SsoLoginFilter");
     }
 
     @Override

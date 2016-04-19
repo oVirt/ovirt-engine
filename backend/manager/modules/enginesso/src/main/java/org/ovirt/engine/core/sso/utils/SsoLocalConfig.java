@@ -2,12 +2,12 @@ package org.ovirt.engine.core.sso.utils;
 
 import org.ovirt.engine.core.uutils.config.ShellLikeConfd;
 
-public class SSOLocalConfig extends ShellLikeConfd {
+public class SsoLocalConfig extends ShellLikeConfd {
     // Default files for defaults and overridden values:
     private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";
     private static final String VARS_PATH = "/etc/ovirt-engine/engine.conf";
 
-    public SSOLocalConfig() {
+    public SsoLocalConfig() {
         String v;
 
         String defaultsPath = DEFAULTS_PATH;

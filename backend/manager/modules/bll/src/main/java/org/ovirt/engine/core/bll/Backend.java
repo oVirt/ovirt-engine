@@ -638,7 +638,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         case RegisterVds:
         case CheckDBConnection:
         case GetDbUserBySession:
-        case GetEngineSessionIdForSSOToken:
+        case GetEngineSessionIdForSsoToken:
         case ValidateSession:
             return runQueryImpl(actionType, parameters, false);
         case GetConfigurationValue:

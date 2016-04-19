@@ -4,11 +4,11 @@
          version="2.5">
 
     <listener>
-        <listener-class>org.ovirt.engine.core.sso.context.SSOContextListener</listener-class>
+        <listener-class>org.ovirt.engine.core.sso.context.SsoContextListener</listener-class>
     </listener>
 
     <listener>
-        <listener-class>org.ovirt.engine.core.sso.context.SSOSessionListener</listener-class>
+        <listener-class>org.ovirt.engine.core.sso.context.SsoSessionListener</listener-class>
     </listener>
 
     <!-- Application with context parameters -->
@@ -153,12 +153,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>SSOUnauthorizedServlet</servlet-name>
+        <servlet-name>SsoUnauthorizedServlet</servlet-name>
         <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveNextAuthServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>SSOUnauthorizedServlet</servlet-name>
+        <servlet-name>SsoUnauthorizedServlet</servlet-name>
         <url-pattern>/login-unauthorized</url-pattern>
     </servlet-mapping>
 

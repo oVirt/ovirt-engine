@@ -14,12 +14,12 @@ import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOExtensionsManager extends ExtensionsManager {
+public class SsoExtensionsManager extends ExtensionsManager {
     private static final String ENGINE_EXTENSION_ENABLED = "ENGINE_EXTENSION_ENABLED_";
-    private static Logger log = LoggerFactory.getLogger(SSOExtensionsManager.class);
-    private SSOLocalConfig localConfig;
+    private static Logger log = LoggerFactory.getLogger(SsoExtensionsManager.class);
+    private SsoLocalConfig localConfig;
 
-    public SSOExtensionsManager(SSOLocalConfig localConfig) {
+    public SsoExtensionsManager(SsoLocalConfig localConfig) {
         super();
         this.localConfig = localConfig;
         getGlobalContext().put(

@@ -6,8 +6,8 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
-import org.ovirt.engine.core.bll.aaa.SSOSessionUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
+import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
@@ -48,7 +48,7 @@ public class CommonTestMocks {
     @Produces
     private VdsDynamicDao vdsDynamicDao = mock(VdsDynamicDao.class);
     @Produces
-    private SSOSessionUtils ssoSessionUtils = mock(SSOSessionUtils.class);
+    private SsoSessionUtils ssoSessionUtils = mock(SsoSessionUtils.class);
     @Produces
     private JobDao jobDao = mock(JobDao.class);
 

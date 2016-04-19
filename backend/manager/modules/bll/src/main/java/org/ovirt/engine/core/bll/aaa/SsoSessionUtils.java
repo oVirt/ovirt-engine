@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 
-public class SSOSessionUtils {
+public class SsoSessionUtils {
 
     public static final long EMPTY_SESSION_SEQ_ID = -1L;
 

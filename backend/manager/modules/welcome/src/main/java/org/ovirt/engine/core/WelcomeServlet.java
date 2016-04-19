@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
-import org.ovirt.engine.core.aaa.SSOUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -95,7 +95,7 @@ public class WelcomeServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
             ServletException {
         log.debug("Entered WelcomeServlet");
-        SSOUtils.createUniqueStateInSessionIfNotExists(request);
+        SsoUtils.createUniqueStateInSessionIfNotExists(request);
 
         String reauthenticate = (String) request.getSession(true).getAttribute(WelcomeUtils.REAUTHENTICATE);
         if (StringUtils.isEmpty(reauthenticate)) {
@@ -160,7 +160,7 @@ public class WelcomeServlet extends HttpServlet {
         try {
            log.debug("setting request attributes for User Menu");
             if (StringUtils.isNotEmpty(token)) {
-                Map<String, Object> userInfoMap = SSOOAuthServiceUtils.getTokenInfo(token);
+                Map<String, Object> userInfoMap = SsoOAuthServiceUtils.getTokenInfo(token);
                 String username = getCurrentSsoSessionUser(request, userInfoMap);
                 if (StringUtils.isNotEmpty(username)) {
                     request.getSession(true).setAttribute(WelcomeUtils.SSO_USER, username);
@@ -192,13 +192,13 @@ public class WelcomeServlet extends HttpServlet {
     }
 
     public Map<String, Object> isSsoWebappDeployed() {
-        return SSOOAuthServiceUtils.isSsoDeployed();
+        return SsoOAuthServiceUtils.isSsoDeployed();
     }
 
     public boolean isSessionValid(HttpServletRequest request, String token) {
         boolean isValid = false;
         if (StringUtils.isNotEmpty(token)) {
-            Map<String, Object> response = SSOOAuthServiceUtils.getTokenInfo(token, "ovirt-ext=token-info:validate");
+            Map<String, Object> response = SsoOAuthServiceUtils.getTokenInfo(token, "ovirt-ext=token-info:validate");
             isValid = !response.containsKey(WelcomeUtils.ERROR);
             if (response.containsKey(WelcomeUtils.ERROR) &&
                     !WelcomeUtils.ERR_CODE_INVALID_GRANT.equals(response.get(WelcomeUtils.ERROR_CODE))) {

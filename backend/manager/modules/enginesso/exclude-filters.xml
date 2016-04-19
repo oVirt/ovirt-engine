@@ -5,7 +5,7 @@
        <Bug code="DLS"/>
      </Match>
      <Match>
-       <Class name="org.ovirt.engine.core.sso.utils.SSOUtils" />
+       <Class name="org.ovirt.engine.core.sso.utils.SsoUtils" />
        <Bug code="HRS"/>
      </Match>
      <Match>

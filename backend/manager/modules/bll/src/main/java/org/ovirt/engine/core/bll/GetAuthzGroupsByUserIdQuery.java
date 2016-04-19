@@ -9,7 +9,7 @@ import java.util.Map;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -29,7 +29,7 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
     private Collection<AuthzGroup> getDirectoryUser(DbUser dbUser) {
 
         Collection<AuthzGroup> groups = new ArrayList<>();
-        Map<String, Object> response = SSOOAuthServiceUtils.findPrincipalsByIds(
+        Map<String, Object> response = SsoOAuthServiceUtils.findPrincipalsByIds(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
                 dbUser.getDomain(),
                 dbUser.getNamespace(),

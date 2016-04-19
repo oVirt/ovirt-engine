@@ -17,7 +17,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
-import org.ovirt.engine.core.bll.aaa.SSOSessionUtils;
+import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -263,7 +263,7 @@ public class CommandsRepository {
 
         for (Guid cmdId : commandsCache.keySet()) {
             cmdEntity = commandsCache.get(cmdId);
-            if (cmdEntity != null && cmdEntity.getEngineSessionSeqId() != SSOSessionUtils.EMPTY_SESSION_SEQ_ID &&
+            if (cmdEntity != null && cmdEntity.getEngineSessionSeqId() != SsoSessionUtils.EMPTY_SESSION_SEQ_ID &&
                     cmdEntity.getEngineSessionSeqId() == engineSessionSeqId) {
                 cmdIds.add(cmdId);
             }

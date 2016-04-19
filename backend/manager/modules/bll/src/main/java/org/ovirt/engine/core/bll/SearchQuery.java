@@ -19,7 +19,7 @@ import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.QueryData;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
@@ -175,7 +175,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         List<DirectoryUser> results = new ArrayList<>();
-        Map<String, Object> response = SSOOAuthServiceUtils.searchUsers(
+        Map<String, Object> response = SsoOAuthServiceUtils.searchUsers(
                 sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()),
                 getParamsMap(data));
         if (response.containsKey("result")) {
@@ -203,7 +203,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         List<DirectoryGroup> results = new ArrayList<>();
-        Map<String, Object> response = SSOOAuthServiceUtils.searchGroups(
+        Map<String, Object> response = SsoOAuthServiceUtils.searchGroups(
                 sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()),
                 getParamsMap(data));
         if (response.containsKey("result")) {

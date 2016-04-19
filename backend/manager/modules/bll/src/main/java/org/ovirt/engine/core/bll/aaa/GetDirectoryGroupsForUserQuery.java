@@ -9,7 +9,7 @@ import java.util.Map;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -29,7 +29,7 @@ public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> ex
 
         Collection<DirectoryGroup> groups = new ArrayList<>();
 
-        Map<String, Object> response = SSOOAuthServiceUtils.findPrincipalsByIds(
+        Map<String, Object> response = SsoOAuthServiceUtils.findPrincipalsByIds(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
                 dbUser.getDomain(),
                 dbUser.getNamespace(),

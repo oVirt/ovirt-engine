@@ -20,7 +20,7 @@ public class TokenCleanupUtility {
     private static Logger log = LoggerFactory.getLogger(TokenCleanupUtility.class);
 
     public static synchronized void cleanupExpiredTokens(ServletContext ctx) {
-        SSOContext ssoContext = SSOUtils.getSsoContext(ctx);
+        SsoContext ssoContext = SsoUtils.getSsoContext(ctx);
         long currentTime = System.nanoTime();
         if (currentTime - lastCleanup < (ssoContext.getSsoLocalConfig().getLong("SSO_HOUSE_KEEPING_INTERVAL") * 1000000000)) {
             log.debug("Not cleaning up expired tokens");
@@ -30,7 +30,7 @@ public class TokenCleanupUtility {
         log.debug("Cleaning up expired tokens");
         long tokenTimeout = ssoContext.getSsoLocalConfig().getLong("SSO_TOKEN_TIMEOUT") * 1000000000;
 
-        for (Map.Entry<String, SSOSession> entry : ssoContext.getSsoSessions().entrySet()) {
+        for (Map.Entry<String, SsoSession> entry : ssoContext.getSsoSessions().entrySet()) {
             if ((currentTime - entry.getValue().getTokenLastAccess()) > tokenTimeout) {
                 try {
                     cleanupSsoSession(ssoContext, entry.getValue(), entry.getValue().getAssociatedClientIds());
@@ -44,8 +44,8 @@ public class TokenCleanupUtility {
     }
 
     public static void cleanupSsoSession(
-            SSOContext ssoContext,
-            SSOSession ssoSession,
+            SsoContext ssoContext,
+            SsoSession ssoSession,
             Set<String> associateClientIds) throws Exception {
         ssoContext.removeSsoSession(ssoSession.getAccessToken());
         HttpSession existingSession = ssoSession.getHttpSession();
@@ -56,12 +56,12 @@ public class TokenCleanupUtility {
             existingSession.invalidate();
         }
         invokeAuthnLogout(ssoContext, ssoSession);
-        SSOUtils.notifyClientsOfLogoutEvent(ssoContext,
+        SsoUtils.notifyClientsOfLogoutEvent(ssoContext,
                 associateClientIds,
                 ssoSession.getAccessToken());
     }
 
-    private static void invokeAuthnLogout(SSOContext ssoContext, SSOSession ssoSession) throws Exception {
+    private static void invokeAuthnLogout(SsoContext ssoContext, SsoSession ssoSession) throws Exception {
         String profileName = ssoSession.getProfile();
         String principalName = ssoSession.getUserId();
         ExtMap authRecord = null;

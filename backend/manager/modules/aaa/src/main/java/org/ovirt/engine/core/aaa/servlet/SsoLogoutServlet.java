@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -24,14 +24,14 @@ import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOLogoutServlet extends HttpServlet {
+public class SsoLogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 9210030009170727847L;
 
-    private static final Logger log = LoggerFactory.getLogger(SSOLogoutServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(SsoLogoutServlet.class);
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.debug("Entered SSOLogoutServlet");
+        log.debug("Entered SsoLogoutServlet");
         String token = null;
         try {
             String engineSessionId = (String) request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
@@ -66,7 +66,7 @@ public class SSOLogoutServlet extends HttpServlet {
             session.setAttribute(FiltersHelper.Constants.LOGOUT_INPROGRESS, true);
         }
 
-        Map<String, Object> revokeResponse =  SSOOAuthServiceUtils.revoke(token);
+        Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(token);
         String error = (String) revokeResponse.get("error");
         String error_code = (String) revokeResponse.get("error_code");
         if (StringUtils.isNotEmpty(error)) {
@@ -86,7 +86,7 @@ public class SSOLogoutServlet extends HttpServlet {
         }
         log.debug("Redirecting to {}", redirectUri);
         response.sendRedirect(redirectUri);
-        log.debug("Exiting SSOLogoutServlet");
+        log.debug("Exiting SsoLogoutServlet");
     }
 
 }

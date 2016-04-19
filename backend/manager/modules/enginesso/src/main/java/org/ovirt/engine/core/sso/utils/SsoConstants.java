@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.sso.utils;
 
-public class SSOConstants {
+public class SsoConstants {
 
     public static final String LOCALE = "locale";
 

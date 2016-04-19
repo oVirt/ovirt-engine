@@ -16,7 +16,7 @@ public enum InteractiveAuth {
         @Override
         public String getAuthUrl(HttpServletRequest request, HttpServletResponse response) {
             log.debug("Redirecting to Basic Enforce Servlet");
-            return request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_BASIC_ENFORCE_URI;
+            return request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_BASIC_ENFORCE_URI;
         }
     },
     b {
@@ -28,7 +28,7 @@ public enum InteractiveAuth {
         @Override
         public String getAuthUrl(HttpServletRequest request, HttpServletResponse response) {
             log.debug("Redirecting to Basic Auth Servlet");
-            return request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_BASIC_URI;
+            return request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_BASIC_URI;
         }
     },
     I {
@@ -40,7 +40,7 @@ public enum InteractiveAuth {
         @Override
         public String getAuthUrl(HttpServletRequest request, HttpServletResponse response) {
             log.debug("Redirecting to Internal Auth Servlet");
-            return request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_URI;
+            return request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_URI;
         }
     },
     N {
@@ -52,7 +52,7 @@ public enum InteractiveAuth {
         @Override
         public String getAuthUrl(HttpServletRequest request, HttpServletResponse response) {
             log.debug("Redirecting to External Auth Servlet");
-            return request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_NEGOTIATE_URI;
+            return request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_NEGOTIATE_URI;
         }
     };
 

@@ -6,6 +6,6 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
  * Event triggered when SSO token is acquired as part of successful authentication.
  */
 @GenEvent
-public class SSOTokenChange {
+public class SsoTokenChange {
     String token;
 }

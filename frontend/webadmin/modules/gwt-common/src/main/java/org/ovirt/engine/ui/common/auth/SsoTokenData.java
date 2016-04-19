@@ -5,9 +5,9 @@ import org.ovirt.engine.ui.frontend.utils.JsSingleValueStringObject;
 /**
  * Overlay type for {@code ssoToken} global JS object.
  */
-public final class SSOTokenData extends JsSingleValueStringObject {
+public final class SsoTokenData extends JsSingleValueStringObject {
 
-    protected SSOTokenData() {
+    protected SsoTokenData() {
     }
 
     public static String getToken() {

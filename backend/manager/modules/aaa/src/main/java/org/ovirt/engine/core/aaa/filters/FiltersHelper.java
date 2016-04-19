@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HeaderElement;
 import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.message.BasicHeaderValueParser;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -126,13 +126,13 @@ public class FiltersHelper {
             String authCode,
             String scope,
             String redirectUri) throws Exception {
-        Map<String, Object> response = SSOOAuthServiceUtils.getToken("authorization_code", authCode, scope, redirectUri);
+        Map<String, Object> response = SsoOAuthServiceUtils.getToken("authorization_code", authCode, scope, redirectUri);
         FiltersHelper.isStatusOk(response);
         return getPayloadForToken((String) response.get("access_token"));
     }
 
     public static Map<String, Object> getPayloadForToken(String token) throws Exception {
-        Map<String, Object> response = SSOOAuthServiceUtils.getTokenInfo(token);
+        Map<String, Object> response = SsoOAuthServiceUtils.getTokenInfo(token);
         FiltersHelper.isStatusOk(response);
         response.put(SessionConstants.SSO_TOKEN_KEY, token);
         return response;

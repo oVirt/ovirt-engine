@@ -32,7 +32,7 @@ public class TerminateSessionsForTokenCommand<T extends TerminateSessionsForToke
     @Override
     protected void executeCommand() {
         DbUser terminatedUser = sessionDataContainer.getUser(
-                sessionDataContainer.getSessionIdBySSOAccessToken(getParameters().getSsoAccessToken()),
+                sessionDataContainer.getSessionIdBySsoAccessToken(getParameters().getSsoAccessToken()),
                 false);
         if (terminatedUser != null) {
             log.debug("Terminating session for user {}@{}", terminatedUser.getLoginName(), terminatedUser.getDomain());

@@ -24,7 +24,7 @@ import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOPostLoginServlet extends HttpServlet {
+public class SsoPostLoginServlet extends HttpServlet {
     private static final long serialVersionUID = 9210030009170727847L;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -35,12 +35,12 @@ public class SSOPostLoginServlet extends HttpServlet {
     public void init() throws ServletException {
         String strVal = getServletConfig().getInitParameter("login-as-admin");
         if (strVal == null) {
-            throw new RuntimeException("No login-as-admin init parameter specified for SSOPostLoginServlet.");
+            throw new RuntimeException("No login-as-admin init parameter specified for SsoPostLoginServlet.");
         }
         loginAsAdmin = Boolean.parseBoolean(strVal);
         postActionUrl = getServletContext().getInitParameter("post-action-url");
         if (postActionUrl == null) {
-            throw new RuntimeException("No post-action-url init parameter specified for SSOLoginServlet.");
+            throw new RuntimeException("No post-action-url init parameter specified for SsoPostLoginServlet.");
         }
     }
 

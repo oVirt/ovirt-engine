@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.DisplayUncaughtUIExceptions;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
-import org.ovirt.engine.ui.common.auth.SSOTokenData;
+import org.ovirt.engine.ui.common.auth.SsoTokenData;
 import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
 import org.ovirt.engine.ui.common.restapi.EngineSessionTimeoutData;
 import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
+import org.ovirt.engine.ui.frontend.communication.SsoTokenChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
@@ -328,7 +328,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             }
         });
 
-        SSOTokenChangeEvent.fire(eventBus, SSOTokenData.getToken());
+        SsoTokenChangeEvent.fire(eventBus, SsoTokenData.getToken());
 
         // Indicate that the user should be logged in automatically
         user.setAutoLogin(true);

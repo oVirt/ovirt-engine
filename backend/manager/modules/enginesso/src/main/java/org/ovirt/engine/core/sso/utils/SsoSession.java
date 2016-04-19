@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 
-public class SSOSession implements Serializable {
+public class SsoSession implements Serializable {
     private static final long serialVersionUID = 6904401523209679500L;
 
     public enum Status { unauthenticated, inprogress, authenticated}
@@ -42,11 +42,11 @@ public class SSOSession implements Serializable {
     private Set<String> associateClientIds = new TreeSet<>();
     private Stack<InteractiveAuth> authStack;
 
-    public SSOSession() {
+    public SsoSession() {
         this(null);
     }
 
-    public SSOSession(HttpSession httpSession) {
+    public SsoSession(HttpSession httpSession) {
         this.httpSession = httpSession;
         cleanup();
     }
@@ -119,9 +119,9 @@ public class SSOSession implements Serializable {
     }
 
     public void setScope(String scope) {
-        if (scopeAsList == null  && !SSOUtils.strippedScopeAsList(SSOUtils.scopeAsList(scope)).isEmpty()) {
+        if (scopeAsList == null  && !SsoUtils.strippedScopeAsList(SsoUtils.scopeAsList(scope)).isEmpty()) {
             this.scope = scope;
-            this.scopeAsList = StringUtils.isEmpty(scope) ? Collections.<String>emptyList() : SSOUtils.scopeAsList(scope);
+            this.scopeAsList = StringUtils.isEmpty(scope) ? Collections.<String>emptyList() : SsoUtils.scopeAsList(scope);
         }
     }
 

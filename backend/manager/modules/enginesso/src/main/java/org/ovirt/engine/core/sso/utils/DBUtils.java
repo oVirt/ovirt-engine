@@ -41,7 +41,7 @@ public class DBUtils {
                                 .withCertificateLocation(rs.getString("certificate_location"))
                                 .withCallbackPrefix(rs.getString("callback_prefix"))
                                 .withClientNotificationCallback(StringUtils.defaultIfEmpty(rs.getString("notification_callback"), ""))
-                                .withScope(SSOUtils.scopeAsList(rs.getString("scope")))
+                                .withScope(SsoUtils.scopeAsList(rs.getString("scope")))
                                 .withIsTrusted(rs.getBoolean("trusted"))
                                 .withNotificationCallbackProtocol(rs.getString("notification_callback_protocol"))
                                 .withNotificationCallbackVerifyHost(rs.getBoolean("notification_callback_verify_host"))
@@ -75,7 +75,7 @@ public class DBUtils {
             ) {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        map.put(rs.getString("scope"), SSOUtils.scopeAsList(rs.getString("dependencies")));
+                        map.put(rs.getString("scope"), SsoUtils.scopeAsList(rs.getString("dependencies")));
                     }
                 }
             }

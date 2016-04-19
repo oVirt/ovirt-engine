@@ -25,7 +25,7 @@ import org.ovirt.engine.ui.frontend.VdsmErrors;
 import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
-import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
+import org.ovirt.engine.ui.frontend.communication.SsoTokenChangeEvent;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
 import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
@@ -141,7 +141,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
                         String tokenValue = HttpUtils.getHeader(response, "OVIRT-SSO-TOKEN"); //$NON-NLS-1$
                         if (tokenValue != null) {
                             //Login result received.
-                            SSOTokenChangeEvent.fire(eventBus, tokenValue);
+                            SsoTokenChangeEvent.fire(eventBus, tokenValue);
                         }
                         callback.onResponseReceived(request, response);
                     }

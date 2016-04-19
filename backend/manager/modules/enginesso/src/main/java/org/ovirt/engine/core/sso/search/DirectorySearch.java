@@ -19,21 +19,21 @@ import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
 import org.ovirt.engine.core.sso.utils.JsonExtMapMixIn;
-import org.ovirt.engine.core.sso.utils.SSOConstants;
-import org.ovirt.engine.core.sso.utils.SSOContext;
-import org.ovirt.engine.core.sso.utils.SSOUtils;
+import org.ovirt.engine.core.sso.utils.SsoConstants;
+import org.ovirt.engine.core.sso.utils.SsoContext;
+import org.ovirt.engine.core.sso.utils.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum DirectorySearch {
-    GetAvailableNameSpaces(SSOConstants.AVAILABLE_NAMESPACES_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    GetAvailableNameSpaces(SsoConstants.AVAILABLE_NAMESPACES_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return AuthenticationUtils.getAvailableNamesSpaces(ssoContext.getSsoExtensionsManager());
         }
     },
 
-    GetDomainList(SSOConstants.DOMAIN_LIST_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    GetDomainList(SsoConstants.DOMAIN_LIST_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return ssoContext.getSsoExtensionsManager().getExtensionsByService(
                     Authz.class.getName()).stream()
                     .map(AuthzUtils::getName)
@@ -41,57 +41,57 @@ public enum DirectorySearch {
         }
     },
 
-    FetchPrincipalRecord(SSOConstants.FETCH_PRINCIPAL_RECORD_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    FetchPrincipalRecord(SsoConstants.FETCH_PRINCIPAL_RECORD_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             Map<String, Object> params = readParams(request);
             return Arrays.asList(AuthzUtils.fetchPrincipalRecord(
                     ssoContext.getSsoExtensionsManager().getExtensionByName(
-                            (String) params.get(SSOConstants.HTTP_PARAM_DOMAIN)),
-                    (String) params.get(SSOConstants.HTTP_PARAM_PRINCIPAL),
-                    (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING),
-                    (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
+                            (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN)),
+                    (String) params.get(SsoConstants.HTTP_PARAM_PRINCIPAL),
+                    (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
+                    (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
         }
     },
 
-    FindPrincipalById(SSOConstants.FIND_PRINCIPAL_BY_ID_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    FindPrincipalById(SsoConstants.FIND_PRINCIPAL_BY_ID_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return getPrincipalById(ssoContext, readParams(request));
         }
     },
 
-    FindPrincipalsByIds(SSOConstants.FIND_PRINCIPALS_BY_IDS_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    FindPrincipalsByIds(SsoConstants.FIND_PRINCIPALS_BY_IDS_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return getPrincipalsByIds(ssoContext, readParams(request));
         }
     },
 
-    FindDirectoryGroupById(SSOConstants.FIND_DIRECTORY_GROUP_BY_ID_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    FindDirectoryGroupById(SsoConstants.FIND_DIRECTORY_GROUP_BY_ID_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return getDirectoryGroupById(ssoContext, readParams(request));
         }
     },
 
-    ProfileList(SSOConstants.PROFILE_LIST_QUERY, true) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    ProfileList(SsoConstants.PROFILE_LIST_QUERY, true) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return getProfileList(ssoContext);
         }
     },
 
-    SearchUsers(SSOConstants.SEARCH_USERS_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    SearchUsers(SsoConstants.SEARCH_USERS_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return searchDirectoryUsers(ssoContext, readParams(request));
         }
     },
 
-    SearchGroups(SSOConstants.SEARCH_GROUPS_QUERY, false) {
-        public Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    SearchGroups(SsoConstants.SEARCH_GROUPS_QUERY, false) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return searchDirectoryGroups(ssoContext, readParams(request));
         }
     };
 
     private static Map<String, Object> readParams(HttpServletRequest request) throws Exception {
         return initMapper().readValue(
-                SSOUtils.getRequestParameter(request, SSOConstants.HTTP_PARAM_PARAMS),
+                SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_PARAMS),
                 HashMap.class);
     }
 
@@ -112,11 +112,11 @@ public enum DirectorySearch {
         this.isPublicQuery = isPublicQuery;
     }
 
-    public Object executeQuery(SSOContext ssoContext, HttpServletRequest request) throws Exception {
+    public Object executeQuery(SsoContext ssoContext, HttpServletRequest request) throws Exception {
         return execute(ssoContext, request);
     }
 
-    public abstract Object execute(SSOContext ssoContext, HttpServletRequest request) throws Exception;
+    public abstract Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception;
 
     public String getName() {
         return name;
@@ -126,7 +126,7 @@ public enum DirectorySearch {
         return isPublicQuery;
     }
 
-    private static List<ExtMap> searchDirectoryGroups(SSOContext ssoContext, Map<String, Object> params) {
+    private static List<ExtMap> searchDirectoryGroups(SsoContext ssoContext, Map<String, Object> params) {
         log.debug("Entered searchDirectoryGroups");
         String authzName = (String) params.get("authz");
         String query = (String) params.get("query");
@@ -144,56 +144,56 @@ public enum DirectorySearch {
         return results;
     }
 
-    private static List<ExtMap> getPrincipalById(SSOContext ssoContext, Map<String, Object> params) {
+    private static List<ExtMap> getPrincipalById(SsoContext ssoContext, Map<String, Object> params) {
         List<ExtMap> users = new ArrayList<>();
         final ExtensionProxy extension = ssoContext.getSsoExtensionsManager().getExtensionByName(
-                (String) params.get(SSOConstants.HTTP_PARAM_DOMAIN));
-        String searchNamespace = (String) params.get(SSOConstants.HTTP_PARAM_NAMESPACE);
+                (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN));
+        String searchNamespace = (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE);
         for (String namespace : StringUtils.isEmpty(searchNamespace)
-                ? getNamespaces(ssoContext, (String) params.get(SSOConstants.HTTP_PARAM_DOMAIN))
+                ? getNamespaces(ssoContext, (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN))
                 : Arrays.asList(searchNamespace)) {
             users.addAll(AuthzUtils.findPrincipalsByIds(
                     extension,
                     namespace,
-                    Arrays.asList((String) params.get(SSOConstants.HTTP_PARAM_ID)),
-                    (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING),
-                    (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
+                    Arrays.asList((String) params.get(SsoConstants.HTTP_PARAM_ID)),
+                    (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
+                    (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
         }
         return users;
     }
 
-    private static List<ExtMap> getDirectoryGroupById(SSOContext ssoContext, Map<String, Object> params) {
+    private static List<ExtMap> getDirectoryGroupById(SsoContext ssoContext, Map<String, Object> params) {
         List<ExtMap> groups = new ArrayList<>();
         final ExtensionProxy extension = ssoContext.getSsoExtensionsManager().getExtensionByName(
-                (String) params.get(SSOConstants.HTTP_PARAM_DOMAIN));
-        String searchNamespace = (String) params.get(SSOConstants.HTTP_PARAM_NAMESPACE);
+                (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN));
+        String searchNamespace = (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE);
         for (String namespace : StringUtils.isEmpty(searchNamespace)
-                ? getNamespaces(ssoContext, (String) params.get(SSOConstants.HTTP_PARAM_DOMAIN))
+                ? getNamespaces(ssoContext, (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN))
                 : Arrays.asList(searchNamespace)) {
             groups.addAll(AuthzUtils.findGroupRecordsByIds(
                     extension,
                     namespace,
-                    Arrays.asList((String) params.get(SSOConstants.HTTP_PARAM_ID)),
-                    (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING),
-                    (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
+                    Arrays.asList((String) params.get(SsoConstants.HTTP_PARAM_ID)),
+                    (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
+                    (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
         }
         return groups;
     }
 
-    private static List<ExtMap> getPrincipalsByIds(SSOContext ssoContext, Map<String, Object> params) {
+    private static List<ExtMap> getPrincipalsByIds(SsoContext ssoContext, Map<String, Object> params) {
         return AuthzUtils.findPrincipalsByIds(
-                ssoContext.getSsoExtensionsManager().getExtensionByName((String) params.get(SSOConstants.HTTP_PARAM_DOMAIN)),
-                (String) params.get(SSOConstants.HTTP_PARAM_NAMESPACE),
-                (Collection<String>) params.get(SSOConstants.HTTP_PARAM_IDS),
-                (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING),
-                (boolean) params.get(SSOConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE));
+                ssoContext.getSsoExtensionsManager().getExtensionByName((String) params.get(SsoConstants.HTTP_PARAM_DOMAIN)),
+                (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE),
+                (Collection<String>) params.get(SsoConstants.HTTP_PARAM_IDS),
+                (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
+                (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE));
     }
 
-    private static List<Map<String, Object>> getProfileList(SSOContext ssoContext) {
+    private static List<Map<String, Object>> getProfileList(SsoContext ssoContext) {
         return AuthenticationUtils.getProfileList(ssoContext.getSsoExtensionsManager());
     }
 
-    private static List<ExtMap> searchDirectoryUsers(SSOContext ssoContext, Map<String, Object> params) {
+    private static List<ExtMap> searchDirectoryUsers(SsoContext ssoContext, Map<String, Object> params) {
         log.debug("Entered searchDirectoryUsers");
         String authzName = (String) params.get("authz");
         String query = (String) params.get("query");
@@ -213,13 +213,13 @@ public enum DirectorySearch {
         return results;
     }
 
-    private static List<String> getNamespaces(SSOContext ssoContext, String authzName) {
+    private static List<String> getNamespaces(SsoContext ssoContext, String authzName) {
         Map<String, List<String>> namespacesMap = AuthenticationUtils.getAvailableNamesSpaces(
                 ssoContext.getSsoExtensionsManager());
         return namespacesMap.get(authzName);
     }
 
-    private static List<String> getNamespaces(SSOContext ssoContext, String namespace, String authz) {
+    private static List<String> getNamespaces(SsoContext ssoContext, String namespace, String authz) {
         log.debug("Entered getNamespaces");
         List<String> namespaces;
         if (StringUtils.isNotEmpty(namespace)) {

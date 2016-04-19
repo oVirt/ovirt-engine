@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class SwitchUserServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            SSOOAuthServiceUtils.revoke((String) request.getSession(true).getAttribute(WelcomeUtils.TOKEN));
+            SsoOAuthServiceUtils.revoke((String) request.getSession(true).getAttribute(WelcomeUtils.TOKEN));
             HttpSession session = request.getSession();
             if (session != null) {
                 session.invalidate();

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
-import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent.SSOTokenChangeHandler;
+import org.ovirt.engine.ui.frontend.communication.SsoTokenChangeEvent;
+import org.ovirt.engine.ui.frontend.communication.SsoTokenChangeEvent.SsoTokenChangeHandler;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -245,11 +245,11 @@ public class ReportInit {
             ssoTokenHandlerRegistration.removeHandler();
         }
         // Register to listen for session id acquired events.
-        ssoTokenHandlerRegistration = eventBus.addHandler(SSOTokenChangeEvent.getType(),
-                new SSOTokenChangeHandler() {
+        ssoTokenHandlerRegistration = eventBus.addHandler(SsoTokenChangeEvent.getType(),
+                new SsoTokenChangeHandler() {
 
                     @Override
-                    public void onSSOTokenChange(SSOTokenChangeEvent event) {
+                    public void onSsoTokenChange(SsoTokenChangeEvent event) {
                         ReportInit.this.ssoToken = event.getToken();
                         if (ReportInit.this.ssoToken == null) { //This should not happen
                             //This will make the login continue, just the reports will be broken.

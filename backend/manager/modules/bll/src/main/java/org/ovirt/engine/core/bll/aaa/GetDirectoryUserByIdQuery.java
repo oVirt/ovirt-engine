@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.DirectoryUser;
-import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 
@@ -31,7 +31,7 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
     }
 
     public Map<String, Object> findDirectoryUserById() {
-        return SSOOAuthServiceUtils.findDirectoryUserById(
+        return SsoOAuthServiceUtils.findDirectoryUserById(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
                 getParameters().getDomain(),
                 getParameters().getNamespace(),

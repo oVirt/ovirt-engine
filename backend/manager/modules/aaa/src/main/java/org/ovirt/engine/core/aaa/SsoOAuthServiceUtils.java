@@ -36,8 +36,8 @@ import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOOAuthServiceUtils {
-    private static final Logger log = LoggerFactory.getLogger(SSOOAuthServiceUtils.class);
+public class SsoOAuthServiceUtils {
+    private static final Logger log = LoggerFactory.getLogger(SsoOAuthServiceUtils.class);
 
     private static final String authzSearchScope = "ovirt-ext=token-info:authz-search";
     private static final String publicAuthzSearchScope = "ovirt-ext=token-info:public-authz-search";
@@ -163,7 +163,7 @@ public class SSOOAuthServiceUtils {
             if (ovirtData != null) {
                 Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
                 if (groupIds != null) {
-                    ovirtData.put("group_ids", SSOOAuthServiceUtils.processGroupMembershipsFromJson(groupIds));
+                    ovirtData.put("group_ids", SsoOAuthServiceUtils.processGroupMembershipsFromJson(groupIds));
                 }
             }
             return jsonData;
@@ -353,7 +353,7 @@ public class SSOOAuthServiceUtils {
                 FiltersHelper.copy(input, os);
             }
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(SSOOAuthServiceUtils.class.getClassLoader());
+            Thread.currentThread().setContextClassLoader(SsoOAuthServiceUtils.class.getClassLoader());
             try {
                 return new JsonObjectDeserializer().deserialize(
                         new String(os.toByteArray(), StandardCharsets.UTF_8.name()),
@@ -397,7 +397,7 @@ public class SSOOAuthServiceUtils {
      * Currently jackson doesn't provide a way how to serialize graphs with cyclic references between nodes, which
      * may happen if those cyclic dependencies exists among nested groups which is a user member of. So in order to
      * deserialize from JSON successfully we have to revert changes done in
-     * {@code org.ovirt.engine.core.sso.utils.SSOUtils.prepareGroupMembershipsForJson()}
+     * {@code org.ovirt.engine.core.sso.utils.SsoUtils.prepareGroupMembershipsForJson()}
      */
     public static List<ExtMap> processGroupMembershipsFromJson(Collection<ExtMap> jsonGroupMemberships) {
         Map<String, ExtMap> groupsCache = jsonGroupMemberships.stream()

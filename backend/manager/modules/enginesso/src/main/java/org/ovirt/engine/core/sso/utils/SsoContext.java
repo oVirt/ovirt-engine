@@ -16,24 +16,24 @@ import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SSOContext implements Serializable{
+public class SsoContext implements Serializable{
     private static final long serialVersionUID = 2059075681091705372L;
 
-    private SSOLocalConfig ssoLocalConfig;
-    private SSOExtensionsManager ssoExtensionsManager;
+    private SsoLocalConfig ssoLocalConfig;
+    private SsoExtensionsManager ssoExtensionsManager;
     private NegotiateAuthUtils negotiateAuthUtils;
     private LocalizationUtils localizationUtils;
     private List<String> ssoProfiles;
     private List<String> ssoProfilesSupportingPasswd;
     private List<String> ssoProfilesSupportingPasswdChange;
     private Map<String, ClientInfo> ssoClientRegistry;
-    private Map<String, SSOSession> ssoSessions = new ConcurrentHashMap<>();
+    private Map<String, SsoSession> ssoSessions = new ConcurrentHashMap<>();
     private Map<String, AuthenticationProfile> profiles = null;
     private Map<String, List<String>> scopeDependenciesMap = new HashMap<>();
     private String engineUrl;
-    private static final Logger log = LoggerFactory.getLogger(SSOContext.class);
+    private static final Logger log = LoggerFactory.getLogger(SsoContext.class);
 
-    public void init(SSOLocalConfig ssoLocalConfig) {
+    public void init(SsoLocalConfig ssoLocalConfig) {
         this.ssoLocalConfig = ssoLocalConfig;
         engineUrl = ssoLocalConfig.getProperty("SSO_ENGINE_URL");
         createProfiles();
@@ -81,15 +81,15 @@ public class SSOContext implements Serializable{
         return Collections.unmodifiableCollection(profiles.values());
     }
 
-    public SSOLocalConfig getSsoLocalConfig() {
+    public SsoLocalConfig getSsoLocalConfig() {
         return ssoLocalConfig;
     }
 
-    public SSOExtensionsManager getSsoExtensionsManager() {
+    public SsoExtensionsManager getSsoExtensionsManager() {
         return ssoExtensionsManager;
     }
 
-    public void setSsoExtensionsManager(SSOExtensionsManager ssoExtensionsManager) {
+    public void setSsoExtensionsManager(SsoExtensionsManager ssoExtensionsManager) {
         this.ssoExtensionsManager = ssoExtensionsManager;
     }
 
@@ -129,11 +129,11 @@ public class SSOContext implements Serializable{
         this.negotiateAuthUtils = negotiateAuthUtils;
     }
 
-    public SSOSession getSsoSession(String token) {
+    public SsoSession getSsoSession(String token) {
         return ssoSessions.get(token);
     }
 
-    public void registerSsoSession(SSOSession ssoSession) {
+    public void registerSsoSession(SsoSession ssoSession) {
         ssoSessions.put(ssoSession.getAccessToken(), ssoSession);
     }
 
@@ -147,7 +147,7 @@ public class SSOContext implements Serializable{
 
     public String getTokenForAuthCode(String authCode) {
         String token = null;
-        for (Map.Entry<String, SSOSession> entry : ssoSessions.entrySet()) {
+        for (Map.Entry<String, SsoSession> entry : ssoSessions.entrySet()) {
             if (entry.getValue().getAuthorizationCode().equals(authCode)) {
                 token = entry.getKey();
                 break;
@@ -156,7 +156,7 @@ public class SSOContext implements Serializable{
         return token;
     }
 
-    public Map<String, SSOSession> getSsoSessions() {
+    public Map<String, SsoSession> getSsoSessions() {
         return ssoSessions;
     }
 

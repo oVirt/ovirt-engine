@@ -61,20 +61,20 @@ limitations under the License.
     </filter-mapping>
 
     <filter>
-        <filter-name>SSORestApiAuthFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.SSORestApiAuthFilter</filter-class>
+        <filter-name>SsoRestApiAuthFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiAuthFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>SSORestApiAuthFilter</filter-name>
+        <filter-name>SsoRestApiAuthFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <filter>
-        <filter-name>SSORestApiNegotiationFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.SSORestApiNegotiationFilter</filter-class>
+        <filter-name>SsoRestApiNegotiationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiNegotiationFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>SSORestApiNegotiationFilter</filter-name>
+        <filter-name>SsoRestApiNegotiationFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 

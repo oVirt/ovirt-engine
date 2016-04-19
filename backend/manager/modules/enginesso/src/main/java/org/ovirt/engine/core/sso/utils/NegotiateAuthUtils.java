@@ -129,16 +129,16 @@ public class NegotiateAuthUtils {
                                 Authz.InvokeKeys.QUERY_FLAGS,
                                 Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
                         ));
-                        SSOSession ssoSession = SSOUtils.persistAuthInfoInContextWithToken(req,
+                        SsoSession ssoSession = SsoUtils.persistAuthInfoInContextWithToken(req,
                                 null,
                                 profile.getName(),
                                 authRecord,
                                 outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
                         log.info("User {}@{} successfully logged in with scopes : {} ",
-                                SSOUtils.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
+                                SsoUtils.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
                                 profile.getName(),
                                 ssoSession.getScope());
-                        token = (String) req.getAttribute(SSOConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
+                        token = (String) req.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
                         stack.clear();
                         break;
 
