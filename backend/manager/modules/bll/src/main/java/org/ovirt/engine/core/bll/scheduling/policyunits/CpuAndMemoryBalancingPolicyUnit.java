@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -53,9 +54,12 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
-        if (hosts == null || hosts.size() < 2) {
-            int hostCount = hosts == null ? 0 : hosts.size();
-            log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hostCount);
+
+        Objects.requireNonNull(hosts);
+        Objects.requireNonNull(cluster);
+
+        if (hosts.size() < 2) {
+            log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hosts.size());
             return null;
         }
 

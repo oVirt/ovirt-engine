@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -47,13 +48,15 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
             Map<String, String> parameters,
             ArrayList<String> messages) {
 
+        Objects.requireNonNull(hosts);
+        Objects.requireNonNull(cluster);
+
         log.debug("Started HA reservation balancing method for cluster '{}'", cluster.getName());
         if (!cluster.supportsHaReservation()) {
             return null;
         }
-        if (hosts == null || hosts.size() < 2) {
-            int hostCount = hosts == null ? 0 : hosts.size();
-            log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hostCount);
+        if (hosts.size() < 2) {
+            log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hosts.size());
             return null;
         }
 

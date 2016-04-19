@@ -102,7 +102,7 @@ public class AffinityRulesEnforcer {
                 // Test whether any migration is possible, this uses current AffinityGroup settings
                 // and so won't allow more breakage
                 boolean canMove = schedulingManager.canSchedule(cluster, candidateVm,
-                        new ArrayList<>(), new ArrayList<>(), null, new ArrayList<>());
+                        Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), new ArrayList<>());
 
                 if (canMove) {
                     log.debug("VM {} is a viable candidate for solving affinity group violation situation.",
