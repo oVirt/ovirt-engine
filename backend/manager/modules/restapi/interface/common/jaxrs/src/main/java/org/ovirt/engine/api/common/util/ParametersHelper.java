@@ -61,15 +61,18 @@ public class ParametersHelper {
      * @param uri the object that gives access to the URI information, may be {@code null} in which case it will be
      *     completely ignored
      * @param name the name of the parameter
-     * @return the value of the parameter, may be empty, or {@code null} if there isno such parameter in the request
+     * @return the value of the parameter, may be empty, or {@code null} if there is no such parameter in the request
      */
     public static String getParameter(HttpHeaders headers, UriInfo uri, String name) {
         // Check if there is a query parameter providing the value:
         if (uri != null) {
             MultivaluedMap<String, String> parameters = uri.getQueryParameters();
             if (MapUtils.isNotEmpty(parameters)) {
-                String value = parameters.getFirst(name);
-                if (value != null) {
+                if (parameters.containsKey(name)) {
+                    String value = parameters.getFirst(name);
+                    if (value == null) {
+                        value = "";
+                    }
                     return value;
                 }
             }
@@ -83,8 +86,11 @@ public class ParametersHelper {
                 if (last != null) {
                     MultivaluedMap<String, String> parameters = last.getMatrixParameters();
                     if (MapUtils.isNotEmpty(parameters)) {
-                        String value = parameters.getFirst(name);
-                        if (value != null) {
+                        if (parameters.containsKey(name)) {
+                            String value = parameters.getFirst(name);
+                            if (value == null) {
+                                value = "";
+                            }
                             return value;
                         }
                     }
