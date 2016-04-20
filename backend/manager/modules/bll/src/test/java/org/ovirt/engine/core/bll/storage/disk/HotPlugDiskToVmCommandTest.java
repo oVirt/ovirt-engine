@@ -103,6 +103,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
 
         doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
+        doReturn(vmDao).when(command).getVmDao();
+        doReturn(diskDao).when(command).getDiskDao();
 
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
@@ -118,8 +120,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Test
     public void validateFailedVMHasNotDisk() throws Exception {
         mockVmStatusUp();
-        doReturn(diskDao).when(command).getDiskDao();
-        when(diskDao.get(diskImageGuid)).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
@@ -190,7 +190,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     private void mockNullVm() {
-        doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(null);
         createVirtIODisk();
     }
@@ -203,13 +202,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         vm.setVmOs(8);
         vm.setId(vmId);
         vm.setRunOnVds(Guid.newGuid());
-        doReturn(vmDao).when(command).getVmDao();
-        mockVMDao(vm);
-        return vm;
-    }
-
-    private void mockVMDao(VM vm) {
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+        return vm;
     }
 
     /**
@@ -247,7 +241,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         DiskImage disk = getDiskImage();
         disk.setActive(true);
         disk.setDiskInterface(DiskInterface.IDE);
-        doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
@@ -261,7 +254,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         DiskImage disk = getDiskImage();
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setActive(true);
-        doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
