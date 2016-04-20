@@ -64,10 +64,10 @@ public class SSORestApiAuthFilter implements Filter {
                     token = headerValue.substring("Bearer".length()).trim();
                     InitialContext ctx = new InitialContext();
                     try {
-                        VdcQueryReturnValue queryRetVal = FiltersHelper.getBackend(ctx).runQuery(
+                        VdcQueryReturnValue queryRetVal = FiltersHelper.getBackend(ctx).runPublicQuery(
                                 VdcQueryType.GetEngineSessionIdForSSOToken,
                                 new GetEngineSessionIdForSSOTokenQueryParameters(token));
-                        if (queryRetVal.getSucceeded()) {
+                        if (queryRetVal.getSucceeded() && StringUtils.isNotEmpty(queryRetVal.getReturnValue())) {
                             log.debug("SSORestApiAuthFilter successfully authenticated using BEARER header");
                             req.getSession(true).setAttribute(
                                     SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
