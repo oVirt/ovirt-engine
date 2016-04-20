@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -59,6 +60,15 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     public AddVmFromSnapshotCommand(T params) {
         this(params, null);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        VM vm = getVmDao().get(getVmIdFromSnapshot());
+        VmHandler.updateDisksFromDb(vm);
+        boolean isCinderDisksExist = !ImagesHandler.filterDisksBasedOnCinder(vm.getDiskList()).isEmpty();
+        getParameters().setUseCinderCommandCallback(isCinderDisksExist);
     }
 
     @Override
@@ -282,5 +292,10 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     public VmValidator createVmValidator(VM vm) {
         return new VmValidator(vm);
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 }
