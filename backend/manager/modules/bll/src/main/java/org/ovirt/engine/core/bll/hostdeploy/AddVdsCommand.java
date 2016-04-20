@@ -179,7 +179,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setActivateHost(getParameters().getActivateHost());
-            installVdsParameters.setNetworkProviderId(getParameters().getNetworkProviderId());
+            installVdsParameters.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
             installVdsParameters.setNetworkMappings(getParameters().getNetworkMappings());
             installVdsParameters.setEnableSerialConsole(getParameters().getEnableSerialConsole());
             Map<String, String> values = new HashMap<>();
@@ -332,8 +332,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return false;
         }
 
-        if (params.getNetworkProviderId() != null
-                && !validateNetworkProviderProperties(params.getNetworkProviderId(),
+        if (params.getVdsStaticData().getOpenstackNetworkProviderId() != null
+                && !validateNetworkProviderProperties(params.getVdsStaticData().getOpenstackNetworkProviderId(),
                         params.getNetworkMappings())) {
             return false;
         }
