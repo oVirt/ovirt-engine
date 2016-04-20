@@ -13,21 +13,31 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
 
+    private static final String DEFAULT_MGMT_NETWORK_QOS_NAME = "Default-Mgmt-Net-QoS";
+    private static final String DEFAULT_MGMT_NETWORK_QOS_DESC = "Default management network QoS";
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
+
+    @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
 
     public AddEmptyStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -69,17 +79,45 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     }
 
     private void addDefaultNetworks() {
+        final Guid dataCenterId = getStoragePool().getId();
+        Guid defaultQosId = createDefaultManagementNetworkQos(dataCenterId);
+
         Network net = new Network();
         net.setId(Guid.newGuid());
         net.setName(managementNetworkUtil.getDefaultManagementNetworkName());
         net.setDescription(AddClusterCommand.DefaultNetworkDescription);
-        net.setDataCenterId(getStoragePool().getId());
+        net.setDataCenterId(dataCenterId);
         net.setVmNetwork(true);
+        net.setQosId(defaultQosId);
+
         getNetworkDao().save(net);
+
         NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
         VnicProfile profile = NetworkHelper.createVnicProfile(net);
         getVnicProfileDao().save(profile);
         NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(), profile.getId(), true);
+    }
+
+    private Guid createDefaultManagementNetworkQos(Guid dataCenterId) {
+        final HostNetworkQos hostNetworkQos = new HostNetworkQos();
+        hostNetworkQos.setStoragePoolId(dataCenterId);
+        hostNetworkQos.setName(DEFAULT_MGMT_NETWORK_QOS_NAME);
+        hostNetworkQos.setDescription(DEFAULT_MGMT_NETWORK_QOS_DESC);
+
+        hostNetworkQos.setOutAverageLinkshare(50);
+
+        final QosParametersBase<HostNetworkQos> hostNetworkQosParameters = new QosParametersBase<>();
+        hostNetworkQosParameters.setQos(hostNetworkQos);
+
+        final VdcReturnValueBase returnValue =
+                runInternalAction(VdcActionType.AddHostNetworkQos, hostNetworkQosParameters);
+        if (returnValue.getSucceeded()) {
+            return returnValue.getActionReturnValue();
+        } else {
+            propagateFailure(returnValue);
+            throw new RuntimeException(
+                    String.format("Failed to create default network QoS: %s", returnValue.getDescription()));
+        }
     }
 
     @Override
