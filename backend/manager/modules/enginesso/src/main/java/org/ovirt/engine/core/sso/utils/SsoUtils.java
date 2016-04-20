@@ -446,7 +446,9 @@ public class SsoUtils {
             }
             if (StringUtils.isNotEmpty(redirectUri) &&
                     ssoContext.getSsoLocalConfig().getBoolean("SSO_CALLBACK_PREFIX_CHECK")) {
-                List<String> allowedPrefixes = scopeAsList(clientInfo.getCallbackPrefix());
+                List<String> allowedPrefixes = new ArrayList<>(scopeAsList(clientInfo.getCallbackPrefix()));
+                scopeAsList(ssoContext.getSsoLocalConfig().getProperty("SSO_ALTERNATE_ENGINE_FQDNS"))
+                        .forEach(fqdn -> allowedPrefixes.add(String.format("https://%s", fqdn)));
                 boolean isValidUri = false;
                 for (String allowedPrefix : allowedPrefixes) {
                     if (redirectUri.toLowerCase().startsWith(allowedPrefix.toLowerCase())) {

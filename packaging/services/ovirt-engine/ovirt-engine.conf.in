@@ -341,6 +341,11 @@ SSO_CALLBACK_CONNECT_TIMEOUT=0
 # The URL of the engine
 SSO_ENGINE_URL="http://${ENGINE_FQDN}${ENGINE_URI}"
 
+# Alternate FQDNs that can be used to access engine. A space separated list of alternate names that can be used to
+# access engine. Example: SSO_ALTERNATE_ENGINE_FQDNS="alias1.example.com alias2.example.com". It's possible to also
+# add IP addresses of engine host, but using IP addresses instead of DNS names is not considered to be a good practice.
+SSO_ALTERNATE_ENGINE_FQDNS=""
+
 #
 # Comma separated list of supported versions of the API. When the user
 # selects a version of the API that isn't in this list the server will
