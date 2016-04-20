@@ -100,8 +100,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     private boolean validateNetworkProviderConfiguration() {
         return !getParameters().isInstallHost()
-                || getParameters().getNetworkProviderId() == null
-                || validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
+                || getParameters().getVdsStaticData().getOpenstackNetworkProviderId() == null
+                || validateNetworkProviderProperties(getParameters().getVdsStaticData().getOpenstackNetworkProviderId(),
                         getParameters().getNetworkMappings());
     }
 
@@ -132,8 +132,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             }
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
             tempVar.setActivateHost(getParameters().getActivateHost());
-            tempVar.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
-            tempVar.setNetworkProviderId(getParameters().getNetworkProviderId());
+            tempVar.setRebootAfterInstallation(getParameters()
+                    .isRebootAfterInstallation());
+            tempVar.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
             tempVar.setNetworkMappings(getParameters().getNetworkMappings());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
             ArrayList<VdcReturnValueBase> resultList = runInternalMultipleActions(

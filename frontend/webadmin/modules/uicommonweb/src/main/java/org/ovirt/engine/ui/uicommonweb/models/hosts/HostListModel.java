@@ -935,7 +935,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
             Provider<?> networkProvider = model.getNetworkProviders().getSelectedItem();
             if (networkProvider != null) {
-                parameters.setNetworkProviderId(networkProvider.getId());
+                parameters.getVdsStaticData().setOpenstackNetworkProviderId(networkProvider.getId());
                 parameters.setNetworkMappings(model.getInterfaceMappings().getEntity());
             }
 
@@ -1347,7 +1347,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
         if (networkProvider != null) {
-            param.setNetworkProviderId(networkProvider.getId());
+            param.getVdsStaticData().setOpenstackNetworkProviderId(networkProvider.getId());
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 

@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.compat.Guid;
 
 public class VdsOperationActionParameters extends VdsActionParameters {
     private static final long serialVersionUID = 4156122527623908516L;
@@ -30,7 +29,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     private AuthenticationMethod authMethod;
 
-    private Guid networkProviderId;
     private String networkMappings;
 
     public enum AuthenticationMethod {
@@ -142,14 +140,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public void setRebootAfterInstallation(boolean rebootAfterInstallation) {
         this.rebootAfterInstallation = rebootAfterInstallation;
-    }
-
-    public Guid getNetworkProviderId() {
-        return networkProviderId;
-    }
-
-    public void setNetworkProviderId(Guid networkProviderId) {
-        this.networkProviderId = networkProviderId;
     }
 
     public String getNetworkMappings() {
