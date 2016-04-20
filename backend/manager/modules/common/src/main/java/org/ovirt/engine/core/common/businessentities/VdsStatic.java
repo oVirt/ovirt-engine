@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -112,6 +113,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableField
     private Guid hostProviderId;
+
+    @EditableField
+    private Guid openstackNetworkProviderId;
 
     public boolean isAutoRecoverable() {
         return autoRecoverable;
@@ -335,6 +339,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         return hostProviderId;
     }
 
+    public Guid getOpenstackNetworkProviderId() {
+        return openstackNetworkProviderId;
+    }
+
+    public void setOpenstackNetworkProviderId(Guid openstackNetworkProviderId) {
+        this.openstackNetworkProviderId = openstackNetworkProviderId;
+    }
+
     /**
      * Converts a PM Options string to a map.
      *
@@ -367,27 +379,26 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (hostName == null ? 0 : hostName.hashCode());
-        result = prime * result + (consoleAddress == null ? 0 : consoleAddress.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (int) (otpValidity ^ (otpValidity >>> 32));
-        result = prime * result + (pmEnabled ? 1231 : 1237);
-        result = prime * result + (pmKdumpDetection ? 1 : 0);
-        result = prime * result + port;
-        result = prime * result + (protocol == null ? 0 : protocol.hashCode());
-        result = prime * result + sshPort;
-        result = prime * result + (sshUsername == null ? 0 : sshUsername.hashCode());
-        result = prime * result + (serverSslEnabled == null ? 0 : serverSslEnabled.hashCode());
-        result = prime * result + (uniqueId == null ? 0 : uniqueId.hashCode());
-        result = prime * result + (vdsGroupId == null ? 0 : vdsGroupId.hashCode());
-        result = prime * result + (vdsStrength == null ? 0 : vdsStrength.hashCode());
-        result = prime * result + (vdsType == null ? 0 : vdsType.hashCode());
-        result = prime * result + (disablePowerManagementPolicy ? 0 : 1);
-        result = prime * result + (hostProviderId == null ? 0 : hostProviderId.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                hostName,
+                consoleAddress,
+                name,
+                otpValidity,
+                pmEnabled,
+                pmKdumpDetection,
+                port,
+                protocol,
+                sshPort,
+                sshUsername,
+                serverSslEnabled,
+                uniqueId,
+                vdsStrength,
+                vdsType,
+                disablePowerManagementPolicy,
+                hostProviderId,
+                openstackNetworkProviderId
+        );
     }
 
     @Override
@@ -417,6 +428,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && vdsType == other.vdsType
                 && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint))
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
-                && ObjectUtils.objectsEqual(hostProviderId, other.hostProviderId);
+                && ObjectUtils.objectsEqual(hostProviderId, other.hostProviderId)
+                && Objects.equals(openstackNetworkProviderId, other.openstackNetworkProviderId);
     }
 }

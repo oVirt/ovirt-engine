@@ -436,7 +436,8 @@ Create or replace FUNCTION InsertVdsStatic(
     v_ssh_port INTEGER,
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
-    v_host_provider_id UUID)
+    v_host_provider_id UUID,
+    v_openstack_network_provider_id UUID)
 RETURNS VOID
 
    AS $procedure$
@@ -445,10 +446,10 @@ BEGIN
       BEGIN
          INSERT INTO vds_static(vds_id,host_name, free_text_comment, vds_unique_id, port, protocol, vds_group_id, vds_name, server_SSL_enabled,
                                vds_type,vds_strength,pm_enabled, pm_proxy_preferences, pm_detect_kdump, vds_spm_priority, sshKeyFingerprint, console_address,
-                               ssh_port, ssh_username, disable_auto_pm, host_provider_id)
+                               ssh_port, ssh_username, disable_auto_pm, host_provider_id, openstack_network_provider_id)
 			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_vds_unique_id, v_port, v_protocol, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
                                v_vds_type,v_vds_strength,v_pm_enabled, v_pm_proxy_preferences, v_pm_detect_kdump, v_vds_spm_priority, v_sshKeyFingerprint,
-                               v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm, v_host_provider_id);
+                               v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm, v_host_provider_id, v_openstack_network_provider_id);
       END;
    end if;
    RETURN;
@@ -480,13 +481,13 @@ Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
     v_ssh_port INTEGER,
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
-    v_host_provider_id UUID)
+    v_host_provider_id UUID,
+    v_openstack_network_provider_id UUID)
 RETURNS VOID
 
 	--The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
 BEGIN
-
    BEGIN
       UPDATE vds_static
       SET host_name = v_host_name, free_text_comment = v_free_text_comment,vds_unique_id = v_vds_unique_id,
@@ -494,7 +495,7 @@ BEGIN
       vds_type = v_vds_type, _update_date = LOCALTIMESTAMP,vds_strength = v_vds_strength,
       pm_enabled = v_pm_enabled, pm_proxy_preferences = v_pm_proxy_preferences, pm_detect_kdump = v_pm_detect_kdump,
       otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority, sshKeyFingerprint = v_sshKeyFingerprint, host_provider_id = v_host_provider_id,
-      console_address = v_console_address, ssh_port = v_ssh_port, ssh_username = v_ssh_username, disable_auto_pm = v_disable_auto_pm
+      console_address = v_console_address, ssh_port = v_ssh_port, ssh_username = v_ssh_username, disable_auto_pm = v_disable_auto_pm, openstack_network_provider_id = v_openstack_network_provider_id
       WHERE vds_id = v_vds_id;
    END;
 

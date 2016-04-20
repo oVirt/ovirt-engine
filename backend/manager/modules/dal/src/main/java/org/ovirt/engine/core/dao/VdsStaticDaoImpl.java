@@ -96,7 +96,8 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .addValue("ssh_port", vds.getSshPort())
                 .addValue("ssh_username", vds.getSshUsername())
                 .addValue("disable_auto_pm", vds.isDisablePowerManagementPolicy())
-                .addValue("host_provider_id", vds.getHostProviderId());
+                .addValue("host_provider_id", vds.getHostProviderId())
+                .addValue("openstack_network_provider_id", vds.getOpenstackNetworkProviderId());
     }
 
     @Override
@@ -146,6 +147,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
             entity.setConsoleAddress(rs.getString("console_address"));
             entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
             entity.setHostProviderId(getGuid(rs, "host_provider_id"));
+            entity.setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
 
             return entity;
         }
