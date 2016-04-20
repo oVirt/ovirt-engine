@@ -29,7 +29,7 @@ public class TemplateMapper extends VmBaseMapper {
         mapVmBaseModelToEntity(entity, model);
 
         if (model.isSetInitialization()) {
-            entity.setVmInit(InitializationMapper.map(model.getInitialization(), new VmInit()));
+            entity.setVmInit(InitializationMapper.map(model.getInitialization(), entity.getVmInit()));
         }
 
         if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
@@ -62,7 +62,7 @@ public class TemplateMapper extends VmBaseMapper {
         mapVmBaseModelToEntity(staticVm, model);
 
         if (model.isSetInitialization()) {
-            staticVm.setVmInit(InitializationMapper.map(model.getInitialization(), new VmInit()));
+            staticVm.setVmInit(InitializationMapper.map(model.getInitialization(), staticVm.getVmInit()));
         }
 
         if (model.isSetDomain() && model.getDomain().isSetName()) {

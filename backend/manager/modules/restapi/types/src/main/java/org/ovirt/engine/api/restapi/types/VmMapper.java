@@ -218,7 +218,7 @@ public class VmMapper extends VmBaseMapper {
             staticVm.setQuotaId(GuidUtils.asGuid(vm.getQuota().getId()));
         }
         if (vm.isSetInitialization()) {
-            staticVm.setVmInit(InitializationMapper.map(vm.getInitialization(), new VmInit()));
+            staticVm.setVmInit(InitializationMapper.map(vm.getInitialization(), staticVm.getVmInit()));
         }
         // The Domain is now set to VmInit
         // we only set it for backward compatibility,

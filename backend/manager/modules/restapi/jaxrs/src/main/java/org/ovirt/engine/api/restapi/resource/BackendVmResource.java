@@ -88,7 +88,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
-import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -422,7 +422,8 @@ public class BackendVmResource
     }
 
     private RunVmOnceParams createRunVmOnceParams(Vm vm) {
-        RunVmOnceParams params = map(vm, map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true), new Vm()),
+        VM entity = getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true);
+        RunVmOnceParams params = map(vm, map(map(entity, new Vm()),
                 new RunVmOnceParams(guid)));
         if (vm.isSetPlacementPolicy()) {
             Set<Guid> hostsGuidsSet = parent.validateAndUpdateHostsInPlacementPolicy(vm.getPlacementPolicy());
@@ -435,7 +436,7 @@ public class BackendVmResource
             if (vm.getInitialization().isSetCloudInit()) {
                 params.setInitializationType(InitializationType.CloudInit);
             }
-            params.setVmInit(InitializationMapper.map(vm.getInitialization(), new VmInit()));
+            params.setVmInit(InitializationMapper.map(vm.getInitialization(), entity.getVmInit()));
         }
 
         return params;
