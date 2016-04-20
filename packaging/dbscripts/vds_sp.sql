@@ -603,7 +603,8 @@ CREATE OR REPLACE FUNCTION InsertVdsStatic (
     v_ssh_port INT,
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
-    v_host_provider_id UUID
+    v_host_provider_id UUID,
+    v_openstack_network_provider_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -635,7 +636,8 @@ BEGIN
             ssh_port,
             ssh_username,
             disable_auto_pm,
-            host_provider_id
+            host_provider_id,
+            openstack_network_provider_id
             )
         VALUES (
             v_vds_id,
@@ -658,7 +660,8 @@ BEGIN
             v_ssh_port,
             v_ssh_username,
             v_disable_auto_pm,
-            v_host_provider_id
+            v_host_provider_id,
+            v_openstack_network_provider_id
             );
     END;
 END IF;
@@ -689,7 +692,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsStatic (
     v_ssh_port INT,
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
-    v_host_provider_id UUID
+    v_host_provider_id UUID,
+    v_openstack_network_provider_id UUID
     )
 RETURNS VOID
     --The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -715,6 +719,7 @@ BEGIN
             vds_spm_priority = v_vds_spm_priority,
             sshKeyFingerprint = v_sshKeyFingerprint,
             host_provider_id = v_host_provider_id,
+            openstack_network_provider_id = v_openstack_network_provider_id,
             console_address = v_console_address,
             ssh_port = v_ssh_port,
             ssh_username = v_ssh_username,

@@ -114,6 +114,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableField
     private Guid hostProviderId;
 
+    @EditableField
+    private Guid openstackNetworkProviderId;
+
     private String certificateSubject;
 
     public boolean isAutoRecoverable() {
@@ -338,6 +341,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         return hostProviderId;
     }
 
+    public Guid getOpenstackNetworkProviderId() {
+        return openstackNetworkProviderId;
+    }
+
+    public void setOpenstackNetworkProviderId(Guid openstackNetworkProviderId) {
+        this.openstackNetworkProviderId = openstackNetworkProviderId;
+    }
+
     public String getCertificateSubject() {
         if (certificateSubject == null && getHostName() != null) {
             setCertificateSubject(CertificateSubjectHelper.getCertificateSubject(getHostName()));
@@ -369,7 +380,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 vdsStrength,
                 vdsType,
                 disablePowerManagementPolicy,
-                hostProviderId
+                hostProviderId,
+                openstackNetworkProviderId
         );
     }
 
@@ -400,6 +412,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && vdsType == other.vdsType
                 && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint)
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
-                && Objects.equals(hostProviderId, other.hostProviderId);
+                && Objects.equals(hostProviderId, other.hostProviderId)
+                && Objects.equals(openstackNetworkProviderId, other.openstackNetworkProviderId);
     }
 }
