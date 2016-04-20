@@ -56,6 +56,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     protected static final List<String> DISK_HOTPLUGGABLE_INTERFACES = Arrays.asList("VirtIO_SCSI", "VirtIO");
 
     private DiskImage disk = new DiskImage();
+    private VmDevice vmDevice;
 
     @Mock
     private VmDao vmDao;
@@ -257,7 +258,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
-        mockVmDevice(false);
     }
 
     protected DiskImage getDiskImage() {
@@ -275,11 +275,11 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
       */
     protected void createDiskWrongPlug(boolean plugged) {
         createVirtIODisk();
-        mockVmDevice(plugged);
+        vmDevice.setIsPlugged(plugged);
     }
 
     protected void mockVmDevice(boolean plugged) {
-        VmDevice vmDevice = new VmDevice();
+        vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId());
         vmDevice.setIsPlugged(plugged);
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
