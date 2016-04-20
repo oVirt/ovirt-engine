@@ -141,7 +141,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSuccessFailedDiskInterfaceUnsupported() {
+    public void validateFailedDiskInterfaceUnsupported() {
         mockVmStatusUp();
         cretaeVirtIODisk();
         initStorageDomain();
