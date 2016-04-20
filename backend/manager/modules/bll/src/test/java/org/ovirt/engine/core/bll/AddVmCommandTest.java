@@ -218,7 +218,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void canAddVm() {
-        ArrayList<String> reasons = new ArrayList<>();
+        List<String> reasons = new ArrayList<>();
         final int domainSizeGB = 20;
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB);
         cmd.postConstruct();

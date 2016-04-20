@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -180,24 +179,14 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
 
     private void addUpdatedVm() {
-        VdcActionType action = getParameters().getVmPoolId() == null ? VdcActionType.AddVm : VdcActionType.AddVmAndAttachToPool;
-        runInternalAction(action,
-                buildAddVmParameters(action),
+        runInternalAction(VdcActionType.AddVm,
+                buildAddVmParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
     }
 
-    private AddVmParameters buildAddVmParameters(VdcActionType action) {
-        AddVmParameters addVmParams;
-        if (action == VdcActionType.AddVmAndAttachToPool) {
-            addVmParams = new AddVmAndAttachToPoolParameters(getParameters().getVmStaticData(),
-                    getParameters().getVmPoolId(),
-                    getParameters().getVmStaticData().getName(),
-                    new HashMap<>());
-        }
-        else {
-            addVmParams = new AddVmParameters(getParameters().getVmStaticData());
-        }
-
+    private AddVmParameters buildAddVmParameters() {
+        AddVmParameters addVmParams = new AddVmParameters(getParameters().getVmStaticData());
+        addVmParams.setPoolId(getParameters().getVmPoolId());
         addVmParams.setDiskInfoDestinationMap(new HashMap<>());
         addVmParams.setConsoleEnabled(deviceExists(VmDeviceGeneralType.CONSOLE));
         addVmParams.setBalloonEnabled(deviceExists(VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON));
@@ -280,4 +269,5 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     protected void endWithFailure() {
         // nothing to do
     }
+
 }

@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -28,7 +29,7 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -198,8 +199,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         for (int i=0; i<getParameters().getVmsCount(); i++) {
             String currentVmName = generateUniqueVmName();
             VdcReturnValueBase returnValue =
-                    runInternalAction(VdcActionType.AddVmAndAttachToPool,
-                            buildAddVmAndAttachToPoolParameters(poolId, currentVmName),
+                    runInternalAction(VdcActionType.AddVm,
+                            buildAddVmParameters(poolId, currentVmName),
                             createAddVmStepContext(currentVmName));
 
             if (returnValue != null && !returnValue.getSucceeded() && !returnValue.getValidationMessages().isEmpty()) {
@@ -236,7 +237,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return currentVmName;
     }
 
-    private AddVmAndAttachToPoolParameters buildAddVmAndAttachToPoolParameters(Guid poolId, String vmName) {
+    private AddVmParameters buildAddVmParameters(Guid poolId, String vmName) {
         VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
         currVm.setName(vmName);
 
@@ -246,10 +247,15 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             currVm.setLargeIconId(iconIds.getLarge());
         }
 
-        AddVmAndAttachToPoolParameters parameters = new AddVmAndAttachToPoolParameters(
-                currVm, poolId, vmName, diskInfoDestinationMap);
-        parameters.setSessionId(getParameters().getSessionId());
-        parameters.setParentCommand(VdcActionType.AddVmPoolWithVms);
+        AddVmParameters parameters = new AddVmParameters(currVm);
+        parameters.setPoolId(poolId);
+        parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
+        if (StringUtils.isEmpty(getParameters().getSessionId())) {
+            parameters.setParametersCurrentUser(getCurrentUser());
+        } else {
+            parameters.setSessionId(getParameters().getSessionId());
+        }
+        parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         // check if device is enabled or we need to override it to true
         parameters.setSoundDeviceEnabled(Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled())
@@ -530,6 +536,5 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     public String getVmsCount() {
         return String.valueOf(getParameters().getVmsCount());
     }
-
 
 }

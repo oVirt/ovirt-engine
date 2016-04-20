@@ -155,16 +155,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
         storageDomainId = value;
     }
 
-    private boolean privateDontAttachToDefaultTag;
-
-    public boolean getDontAttachToDefaultTag() {
-        return privateDontAttachToDefaultTag;
-    }
-
-    public void setDontAttachToDefaultTag(boolean value) {
-        privateDontAttachToDefaultTag = value;
-    }
-
     public VM getVm() {
         if (vm == null) {
             vm = new VM();
@@ -318,4 +308,5 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
         return graphicsDevices;
     }
+
 }

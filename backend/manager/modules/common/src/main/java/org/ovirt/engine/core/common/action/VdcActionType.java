@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
 public enum VdcActionType {
     Unknown(0, QuotaDependency.NONE),
+
     // Vm Commands
     AddVm(1, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     AddVmFromTemplate(2, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
@@ -62,6 +63,7 @@ public enum VdcActionType {
     ImportVmFromOva(49, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ConvertOva(50, QuotaDependency.NONE),
     CancelConvertVm(51, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
@@ -79,6 +81,7 @@ public enum VdcActionType {
     SetNonOperationalVds(117, QuotaDependency.NONE),
     AddVdsSpmId(119, QuotaDependency.NONE),
     ForceSelectSPM(120, QuotaDependency.NONE),
+
     // Fencing (including RestartVds above)
     StartVds(121, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
     StopVds(122, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
@@ -139,6 +142,7 @@ public enum VdcActionType {
     RemoveVmTemplateInterface(221, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
     UpdateVmTemplateInterface(222, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
     AddVmTemplateFromSnapshot(240, ActionGroup.CREATE_TEMPLATE, QuotaDependency.BOTH),
+
     // ImagesCommands
     TryBackToSnapshot(204, QuotaDependency.NONE),
     RestoreFromSnapshot(205, QuotaDependency.STORAGE),
@@ -169,15 +173,16 @@ public enum VdcActionType {
     DestroyImage(239, QuotaDependency.STORAGE),
     MergeExtend(241, QuotaDependency.STORAGE),
     DestroyImageCheck(242, QuotaDependency.NONE),
+
     // VmPoolCommands
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
     UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION, QuotaDependency.STORAGE),
-    AddVmAndAttachToPool(306, QuotaDependency.NONE),
     RemoveVmPool(307, ActionGroup.DELETE_VM_POOL, QuotaDependency.NONE),
     DetachUserFromVmFromPool(312, QuotaDependency.NONE),
     AddVmToPool(313, QuotaDependency.NONE),
     RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS, QuotaDependency.CLUSTER),
+
     // UserAndGroupsCommands
     LogoutSession(408, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
@@ -188,10 +193,12 @@ public enum VdcActionType {
     AddGroup(420, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     LoginOnBehalf(424, false, QuotaDependency.NONE),
     CreateUserSession(425, ActionGroup.LOGIN, false, QuotaDependency.NONE),
+
     // UserProfile
     AddUserProfile(421, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
     UpdateUserProfile(422, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
     RemoveUserProfile(423, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
+
     // Tags
     AddTag(501, false, QuotaDependency.NONE),
     RemoveTag(502, false, QuotaDependency.NONE),

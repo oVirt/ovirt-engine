@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
+import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -313,7 +314,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return _vmDisks;
     }
 
-    protected boolean canAddVm(ArrayList<String> reasons, Collection<StorageDomain> destStorages) {
+    protected boolean canAddVm(List<String> reasons, Collection<StorageDomain> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
         if (!canAddVm(reasons, vmStaticFromParams.getName(), getStoragePoolId(), vmStaticFromParams.getPriority())) {
             return false;
@@ -887,37 +888,42 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void executeVmCommand() {
         VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
-        ArrayList<String> errorMessages = new ArrayList<>();
-        if (canAddVm(errorMessages, destStorages.values())) {
+        List<String> errorMessages = new ArrayList<>();
+        if (!canAddVm(errorMessages, destStorages.values())) {
+            log.error("Failed to add VM. The reasons are: {}", String.join(",", errorMessages));
+            return;
+        }
+
+        TransactionSupport.executeInNewTransaction(() -> {
+            addVmStatic();
+            addVmDynamic();
+            addVmNetwork();
+            addVmNumaNodes();
+            addVmStatistics();
+            addActiveSnapshot();
+            addVmPermission();
+            addVmInit();
+            addVmRngDevice();
+            getCompensationContext().stateChanged();
+            return null;
+        });
+
+        if (addVmImages()) {
             TransactionSupport.executeInNewTransaction(() -> {
-                addVmStatic();
-                addVmDynamic();
-                addVmNetwork();
-                addVmNumaNodes();
-                addVmStatistics();
-                addActiveSnapshot();
-                addVmPermission();
-                addVmInit();
-                addVmRngDevice();
-                getCompensationContext().stateChanged();
+                copyVmDevices();
+                addDiskPermissions();
+                addVmPayload();
+                updateSmartCardDevices();
+                addVmWatchdog();
+                addGraphicsDevice();
+                setActionReturnValue(getVm().getId());
+                setSucceeded(true);
                 return null;
             });
+        }
 
-            if (addVmImages()) {
-                TransactionSupport.executeInNewTransaction(() -> {
-                    copyVmDevices();
-                    addDiskPermissions();
-                    addVmPayload();
-                    updateSmartCardDevices();
-                    addVmWatchdog();
-                    addGraphicsDevice();
-                    setActionReturnValue(getVm().getId());
-                    setSucceeded(true);
-                    return null;
-                });
-            }
-        } else {
-            log.error("Failed to add vm . The reasons are: {}", StringUtils.join(errorMessages, ','));
+        if (getParameters().getPoolId() != null) {
+            addVmToPool();
         }
     }
 
@@ -1216,6 +1222,21 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         createParams.setParentParameters(getParameters());
         createParams.setVmSnapshotId(getVmSnapshotId());
         return createParams;
+    }
+
+    private void addVmToPool() {
+        AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(), getVmId());
+        parameters.setShouldBeLogged(false);
+        VdcReturnValueBase result = runInternalActionWithTasksContext(
+                VdcActionType.AddVmToPool,
+                parameters);
+        setSucceeded(result.getSucceeded());
+        if (!result.getSucceeded()) {
+            log.error("Error adding VM {} to Pool {}", getVmId(), getParameters().getPoolId());
+            getReturnValue().setFault(result.getFault());
+            return;
+        }
+        addVmPermission();
     }
 
     @Override
@@ -1657,4 +1678,5 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     public CommandCallback getCallback() {
         return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
+
 }
