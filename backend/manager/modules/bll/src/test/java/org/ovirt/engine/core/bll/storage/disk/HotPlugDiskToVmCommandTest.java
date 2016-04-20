@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
@@ -21,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -92,10 +91,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Test
     public void validateFailedVMNotFound() throws Exception {
         mockNullVm();
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
@@ -103,10 +99,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockVmStatusUp();
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(null);
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
@@ -115,11 +108,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockInterfaceList();
         when(osRepository.getOsName(0)).thenReturn("RHEL6");
         createNotVirtIODisk();
-
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
     }
 
     @Test
@@ -127,10 +116,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockVmStatusUp();
         mockInterfaceList();
         cretaeDiskWrongPlug(true);
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
     }
 
     @Test
@@ -142,10 +128,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         when(osRepository.getOsName(15)).thenReturn("RHEL3x64");
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(Collections.<String>emptySet());
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
     }
 
     @Test
@@ -154,8 +137,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockInterfaceList();
         cretaeVirtIODisk();
         initStorageDomain();
-        assertTrue(command.validate());
-        assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -165,10 +147,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         initStorageDomain();
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
     @Before
