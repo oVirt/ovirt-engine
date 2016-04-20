@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -73,6 +72,13 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     @Spy
     private DiskValidator diskValidator = new DiskValidator(disk);
+
+    @Mock
+    private SnapshotsValidator snapshotsValidator;
+
+    @Mock
+    private StorageDomainValidator storageDomainValidator;
+
     @Mock
     protected OsRepository osRepository;
 
@@ -88,13 +94,14 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockVds();
         mockVmDevice(false);
         when(command.getActionType()).thenReturn(getCommandActionType());
-        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+
         doReturn(storageDomainValidator).when(command).getStorageDomainValidator(any(StorageDomain.class));
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
+
         doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
 
         doReturn(diskValidator).when(command).getDiskValidator(disk);
