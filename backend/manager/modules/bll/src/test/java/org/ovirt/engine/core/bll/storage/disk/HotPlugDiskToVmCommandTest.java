@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -94,7 +93,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         command = spy(createCommand());
         mockVds();
         mockVmDevice(false);
-        when(command.getActionType()).thenReturn(getCommandActionType());
 
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
@@ -184,10 +182,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
         return new HotPlugDiskToVmCommand<>(createParameters(), null);
-    }
-
-    protected VdcActionType getCommandActionType() {
-        return VdcActionType.HotPlugDiskToVm;
     }
 
     private void mockNullVm() {

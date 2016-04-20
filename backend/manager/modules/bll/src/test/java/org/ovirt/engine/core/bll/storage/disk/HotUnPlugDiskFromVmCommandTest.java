@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
@@ -20,11 +19,6 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
     @Override
     protected HotUnPlugDiskFromVmCommand<HotPlugDiskToVmParameters> createCommand() {
         return new HotUnPlugDiskFromVmCommand<>(createParameters(), null);
-    }
-
-    @Override
-    protected VdcActionType getCommandActionType() {
-        return VdcActionType.HotUnPlugDiskFromVm;
     }
 
     @Override
