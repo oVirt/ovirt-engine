@@ -185,6 +185,7 @@ class Plugin(plugin.PluginBase):
                         '"https://localhost:{port}/ovirt-engine/sso"\n'
                         'ENGINE_SSO_SERVICE_SSL_VERIFY_HOST=false\n'
                         'ENGINE_SSO_SERVICE_SSL_VERIFY_CHAIN=true\n'
+                        'SSO_ALTERNATE_ENGINE_FQDNS=""\n'
                         'SSO_ENGINE_URL='
                         '"{engine_url_scheme}://{fqdn}:'
                         '{engine_url_port}/ovirt-engine/"\n'
