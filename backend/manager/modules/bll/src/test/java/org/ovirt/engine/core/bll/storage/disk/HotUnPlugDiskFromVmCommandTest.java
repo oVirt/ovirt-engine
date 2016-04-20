@@ -22,7 +22,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
     public void validateFailedWrongPlugStatus() throws Exception {
         mockVmStatusUp();
         mockInterfaceList();
-        cretaeDiskWrongPlug(false);
+        createDiskWrongPlug(false);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
     }
 
@@ -37,7 +37,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
     }
 
     @Override
-    protected void cretaeVirtIODisk() {
+    protected void createVirtIODisk() {
         DiskImage disk = getDiskImage();
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setActive(true);

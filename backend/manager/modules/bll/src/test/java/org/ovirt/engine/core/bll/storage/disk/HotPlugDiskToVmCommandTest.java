@@ -136,7 +136,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     public void validateFailedWrongPlugStatus() throws Exception {
         mockVmStatusUp();
         mockInterfaceList();
-        cretaeDiskWrongPlug(true);
+        createDiskWrongPlug(true);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
     }
 
@@ -145,7 +145,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockInterfaceList();
         VM vm = mockVmStatusUp();
         vm.setVmOs(15); // rhel3x64
-        cretaeVirtIODisk();
+        createVirtIODisk();
         when(osRepository.getOsName(15)).thenReturn("RHEL3x64");
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(Collections.<String>emptySet());
@@ -156,7 +156,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     public void validateSuccess() {
         mockVmStatusUp();
         mockInterfaceList();
-        cretaeVirtIODisk();
+        createVirtIODisk();
         initStorageDomain();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -164,7 +164,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Test
     public void validateFailedDiskInterfaceUnsupported() {
         mockVmStatusUp();
-        cretaeVirtIODisk();
+        createVirtIODisk();
         initStorageDomain();
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
@@ -192,7 +192,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     private void mockNullVm() {
         doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(null);
-        cretaeVirtIODisk();
+        createVirtIODisk();
     }
 
     /**
@@ -257,7 +257,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     /**
      * The following method will create a VirtIO disk , which is marked as unplugged
      */
-    protected void cretaeVirtIODisk() {
+    protected void createVirtIODisk() {
         DiskImage disk = getDiskImage();
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setActive(true);
@@ -281,8 +281,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
       * The following method will create a VirtIO disk with provided plug option
       * @param plugged - the value which will be set to plug field
       */
-    protected void cretaeDiskWrongPlug(boolean plugged) {
-        cretaeVirtIODisk();
+    protected void createDiskWrongPlug(boolean plugged) {
+        createVirtIODisk();
         mockVmDevice(plugged);
     }
 
