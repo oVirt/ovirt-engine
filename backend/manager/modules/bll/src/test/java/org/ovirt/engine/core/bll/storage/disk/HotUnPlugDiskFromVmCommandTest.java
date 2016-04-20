@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -9,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.HashSet;
 
 import org.junit.Test;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -24,10 +23,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
         mockVmStatusUp();
         mockInterfaceList();
         cretaeDiskWrongPlug(false);
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
     }
 
     @Override
