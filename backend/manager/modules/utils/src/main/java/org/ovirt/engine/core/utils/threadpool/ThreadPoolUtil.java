@@ -59,6 +59,9 @@ public class ThreadPoolUtil {
 
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
+            if (t != null) {
+                log.error("Execution of task failed", t);
+            }
             super.afterExecute(r, t);
             CorrelationIdTracker.clean();
         }
