@@ -56,7 +56,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     protected static final List<String> DISK_HOTPLUGGABLE_INTERFACES = Arrays.asList("VirtIO_SCSI", "VirtIO");
 
     private DiskImage disk = new DiskImage();
-    private VmDevice vmDevice;
+    protected VmDevice vmDevice;
 
     @Mock
     private VmDao vmDao;
