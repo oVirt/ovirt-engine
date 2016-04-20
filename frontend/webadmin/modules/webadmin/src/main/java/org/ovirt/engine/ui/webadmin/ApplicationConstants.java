@@ -3675,6 +3675,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("vCenter")
     String vCenter();
 
+    @DefaultStringValue("Datacenter can be a hierarchy path such as: folder/datacenter")
+    String vCenterInfo();
+
     @DefaultStringValue("ESXi")
     String esxi();
 

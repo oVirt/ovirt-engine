@@ -5,8 +5,10 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.VerticalSplitTable;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -16,6 +18,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -31,11 +35,13 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -52,6 +58,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmsPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    protected interface Style extends CssResource {
+        String vcenterContentStyle();
+    }
+
+    @UiField
+    protected Style style;
 
     @UiField(provided = true)
     @Path("dataCenters.selectedItem")
@@ -98,10 +111,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @WithElementId
     ListModelListBoxEditor<Provider<VmwareVmProviderProperties>> vmwareProvidersEditor;
 
-    @UiField
     @Path("vCenter.entity")
     @WithElementId("vCenter")
-    StringEntityModelTextBoxEditor vCenterEditor;
+    StringEntityModelTextBoxOnlyEditor vCenterEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo vCenterEditorWithInfo;
 
     @UiField
     @Path("esx.entity")
@@ -194,6 +210,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     StringEntityModelLabelEditor exportDomainDescription;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Inject
     public ImportVmsPopupView(EventBus eventBus) {
@@ -231,6 +248,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
             }
         });
 
+        vCenterEditor = new StringEntityModelTextBoxOnlyEditor();
+        EnableableFormLabel label = new EnableableFormLabel();
+        label.setPaddingLeft(5);
+        label.setText(constants.vCenter());
+        vCenterEditorWithInfo = new EntityModelWidgetWithInfo(label, vCenterEditor);
+        vCenterEditorWithInfo.setExplanation(templates.italicText(constants.vCenterInfo()));
+
         externalVms = new EntityModelCellTable<>(true, false, true);
         importedVms = new EntityModelCellTable<>(true, false, true);
         vmsTable =
@@ -244,12 +268,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         dataCentersEditor.setLabel(constants.dataCenter());
         importSourcesEditor.setLabel(constants.importSource());
         vmwareProvidersEditor.setLabel(constants.externalProviderLabel());
+        vCenterEditor.setWrapperStyleName(style.vcenterContentStyle());
 
         exportDomainName.setLabel(constants.nameLabel());
         exportDomainPath.setLabel(constants.pathStorageGeneral());
         exportDomainDescription.setLabel(constants.descriptionLabel());
 
-        vCenterEditor.setLabel(constants.vCenter());
         esxEditor.setLabel(constants.esxi());
         vmwareDatacenterEditor.setLabel(constants.vmwareDataCenter());
         vmwareClusterEditor.setLabel(constants.vmwareCluster());

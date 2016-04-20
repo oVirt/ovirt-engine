@@ -7,9 +7,14 @@
 	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
-	<ui:style>
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView.Style">
 		.sourcePropertyStyle {
 			width: 390px;
+		}
+
+		.vcenterContentStyle {
+			display: inline-block;
+			float: right;
 		}
 
 		.generalSectionStyle {
@@ -81,8 +86,8 @@
 
 				<g:FlowPanel ui:field="vmwarePanel" visible="false" addStyleNames="{style.vmwareSectionStyle}">
 					<g:HorizontalPanel>
-					    <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-					    <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					    <w:EntityModelWidgetWithInfo ui:field="vCenterEditorWithInfo" addStyleNames="{style.sourcePropertyStyle}" />
+					    <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" addStyleNames="{style.sourcePropertyStyle}" />
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
 					    <ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
