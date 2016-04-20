@@ -82,7 +82,21 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> command;
 
     @Before
-    public void setup() {
+    public void setUp() {
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        command = spy(createCommand());
+        mockVds();
+        mockVmDevice(false);
+        when(command.getActionType()).thenReturn(getCommandActionType());
+        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(storageDomainValidator).when(command).getStorageDomainValidator(any(StorageDomain.class));
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
+        doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
+
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vm);
@@ -148,23 +162,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
-    }
-
-    @Before
-    public void initializeCommand() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        command = spy(createCommand());
-        mockVds();
-        mockVmDevice(false);
-        when(command.getActionType()).thenReturn(getCommandActionType());
-        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
-        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(storageDomainValidator).when(command).getStorageDomainValidator(any(StorageDomain.class));
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
-        doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
     }
 
     private void initStorageDomain() {
