@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.businessentities.VmBlockJob;
 import org.ovirt.engine.core.common.businessentities.VmJobState;
 import org.ovirt.engine.core.common.businessentities.VmJobType;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.MergeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -38,20 +40,35 @@ public class MergeCommand<T extends MergeParameters>
 
     @Override
     public void executeCommand() {
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.Merge,
-                createVDSParameters());
+        boolean mergeRunning = false;
+        try {
+            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.Merge,
+                    createVDSParameters());
 
-        if (vdsReturnValue.getSucceeded()) {
-            Guid jobId = (Guid) vdsReturnValue.getReturnValue();
-            persistBlockJobPlaceholder(jobId);
-            getParameters().setVmJobId(jobId);
-            // setSucceeded to indicate executeCommand success; doPolling will check commandStatus
-            setSucceeded(true);
-            persistCommand(getParameters().getParentCommand(), true);
-            log.debug("Merge started successfully");
-        } else {
-            log.error("Failed to start Merge on VDS");
-            setCommandStatus(CommandStatus.FAILED);
+            if (vdsReturnValue.getSucceeded()) {
+                Guid jobId = (Guid) vdsReturnValue.getReturnValue();
+                persistBlockJobPlaceholder(jobId);
+                getParameters().setVmJobId(jobId);
+                persistCommand(getParameters().getParentCommand(), true);
+                log.debug("Merge started successfully");
+                mergeRunning = true;
+            } else {
+                log.error("Failed to start Merge on VDS");
+            }
+        } catch (EngineException e) {
+            log.error("Engine exception thrown while sending merge command", e);
+            if (e.getErrorCode() == EngineError.imageErr || e.getErrorCode() == EngineError.mergeErr) {
+                // In this case, we are not certain whether merge is currently running or
+                // whether one of the relevant volumes already removed from the chain. In these cases,
+                // we want to verify the current state; therefore, we consider the merge to be running.
+                mergeRunning = true;
+            }
+        } finally {
+            if (mergeRunning) {
+                setSucceeded(true);
+            } else {
+                setCommandStatus(CommandStatus.FAILED);
+            }
         }
     }
 

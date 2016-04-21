@@ -10,6 +10,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class MergeStatusCommand<T extends MergeParameters>
         extends CommandBase<T> {
     private static final Logger log = LoggerFactory.getLogger(MergeStatusCommand.class);
@@ -69,16 +71,25 @@ public class MergeStatusCommand<T extends MergeParameters>
             setCommandStatus(CommandStatus.FAILED);
             return;
         }
+        if (!images.contains(getParameters().getBaseImage().getImageId())) {
+            // If the base image isn't found in qemu chain, it means that the image was already deleted.
+            // In this case, we will not allow PULL merge but rather ask the user to check if the parent
+            // snapshot contains illegal volume(s). If so, that snapshot must be deleted before deleting
+            // other snapshots
+            addCustomValue("SnapshotName", getSnapshotDao().get(getParameters().getBaseImage().getSnapshotId()).getDescription());
+            addCustomValue("BaseVolumeId", getParameters().getBaseImage().getImageId().toString());
+            auditLog(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_BASE_IMAGE_NOT_FOUND);
+            setCommandStatus(CommandStatus.FAILED);
+            return;
+        }
 
         imagesToRemove.removeAll(images);
         log.info("Successfully removed volume(s): {}", imagesToRemove);
 
-        // Direction: base exists => backwards merge (commit); else (top exists) => forward merge (rebase)
-        VmBlockJobType jobType = images.contains(getParameters().getBaseImage().getImageId())
-                ? VmBlockJobType.COMMIT : VmBlockJobType.PULL;
-        log.info("Volume merge type '{}'", jobType.name());
+        // For now, only COMMIT type is supported
+        log.info("Volume merge type '{}'", VmBlockJobType.COMMIT.name());
 
-        MergeStatusReturnValue returnValue = new MergeStatusReturnValue(jobType, imagesToRemove);
+        MergeStatusReturnValue returnValue = new MergeStatusReturnValue(VmBlockJobType.COMMIT, imagesToRemove);
         getReturnValue().setActionReturnValue(returnValue);
         setSucceeded(true);
         persistCommand(getParameters().getParentCommand(), true);
