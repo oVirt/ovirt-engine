@@ -94,7 +94,7 @@ select fn_db_add_config_value('PopulateDirectLUNDiskDescriptionWithLUNId','4','g
 -- Host time drift
 select fn_db_add_config_value('EnableHostTimeDrift','false','general');
 -- list of os/remote-viewer minimal version supported by ovirt. Format: "linux:3.0;windows:2.5"
-select fn_db_add_config_value('RemoteViewerSupportedVersions','','general');
+select fn_db_add_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-128;rhev-win32:2.0-128;rhel7:2.0-6;rhel6:2.0-14','general');
 -- url which should be shown when the version check does not pass
 select fn_db_add_config_value('RemoteViewerNewerVersionUrl','${console_client_resources_url}','general');
 --Handling Enable Spice Root Certification Validation
@@ -787,6 +787,9 @@ select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep
 
 -- automatically switch SPICE Plugin to Native
 select fn_db_update_default_config_value('ClientModeSpiceDefault','Plugin','Native','general',false);
+
+-- Enforce minimal remote-viewer version
+select fn_db_update_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-128;rhev-win32:2.0-128;rhel7:2.0-6;rhel6:2.0-14','general');
 
 ------------------------------------------------------------------------------------
 --                  SCALE
