@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
     private static final long serialVersionUID = -7480866662740734452L;
 
-    private Double cpu_sysField;
     private List<VmJob> vmJobs;
     // NOT PERSISTED
     private VmBalloonInfo vmBalloonInfo;
@@ -26,29 +25,41 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private List<Integer> cpuUsageHistory;
     private List<Integer> networkUsageHistory;
 
+    private Double cpuSys;
+    private Double cpuUser;
+    private Double elapsedTime;
+    private Double roundedElapsedTime;
+    private Integer usageMemPercent;
+    private Integer migrationProgressPercent;
+    private String disksUsage;
+    private Integer usageNetworkPercent;
+    private Guid vmId;
+    private ArrayList<VmNetworkInterface> interfaceStatistics;
+    private Integer usageCpuPercent;
+
     public VmStatistics() {
-        cpu_sysField = 0.0;
-        cpu_userField = 0.0;
-        elapsed_timeField = 0.0;
-        roundedElapsedTimeField = 0.0;
-        vm_guidField = Guid.Empty;
+        cpuSys = 0.0;
+        cpuUser = 0.0;
+        elapsedTime = 0.0;
+        roundedElapsedTime = 0.0;
+        vmId = Guid.Empty;
         vNumaNodeStatisticsList = new ArrayList<>();
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
-                cpu_sysField,
-                cpu_userField,
-                elapsed_timeField,
-                interfaceStatisticsField,
-                roundedElapsedTimeField,
-                usage_cpu_percentField,
-                usage_mem_percentField,
-                usage_network_percentField,
+                cpuSys,
+                cpuUser,
+                elapsedTime,
+                interfaceStatistics,
+                roundedElapsedTime,
+                usageCpuPercent,
+                usageMemPercent,
+                usageNetworkPercent,
                 migrationProgressPercent,
                 disksUsage,
-                vm_guidField,
+                vmId,
                 cpuUsageHistory,
                 networkUsageHistory,
                 memoryUsageHistory,
@@ -65,17 +76,17 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
             return false;
         }
         VmStatistics other = (VmStatistics) obj;
-        return Objects.equals(cpu_sysField, other.cpu_sysField)
-                && Objects.equals(cpu_userField, other.cpu_userField)
-                && Objects.equals(elapsed_timeField, other.elapsed_timeField)
-                && Objects.equals(interfaceStatisticsField, other.interfaceStatisticsField)
-                && Objects.equals(roundedElapsedTimeField, other.roundedElapsedTimeField)
-                && Objects.equals(usage_cpu_percentField, other.usage_cpu_percentField)
-                && Objects.equals(usage_mem_percentField, other.usage_mem_percentField)
+        return Objects.equals(cpuSys, other.cpuSys)
+                && Objects.equals(cpuUser, other.cpuUser)
+                && Objects.equals(elapsedTime, other.elapsedTime)
+                && Objects.equals(interfaceStatistics, other.interfaceStatistics)
+                && Objects.equals(roundedElapsedTime, other.roundedElapsedTime)
+                && Objects.equals(usageCpuPercent, other.usageCpuPercent)
+                && Objects.equals(usageMemPercent, other.usageMemPercent)
                 && Objects.equals(migrationProgressPercent, other.migrationProgressPercent)
-                && Objects.equals(usage_network_percentField, other.usage_network_percentField)
+                && Objects.equals(usageNetworkPercent, other.usageNetworkPercent)
                 && Objects.equals(disksUsage, other.disksUsage)
-                && Objects.equals(vm_guidField, other.vm_guidField)
+                && Objects.equals(vmId, other.vmId)
                 && Objects.equals(cpuUsageHistory, other.cpuUsageHistory)
                 && Objects.equals(networkUsageHistory, other.networkUsageHistory)
                 && Objects.equals(memoryUsageHistory, other.memoryUsageHistory)
@@ -83,45 +94,39 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     }
 
     public Double getCpuSys() {
-        return this.cpu_sysField;
+        return this.cpuSys;
     }
 
-    public void setCpuSys(Double value) {
-        this.cpu_sysField = value;
+    public void setCpuSys(Double cpuSys) {
+        this.cpuSys = cpuSys;
     }
-
-    private Double cpu_userField;
 
     public Double getCpuUser() {
-        return this.cpu_userField;
+        return this.cpuUser;
     }
 
-    public void setCpuUser(Double value) {
-        this.cpu_userField = value;
+    public void setCpuUser(Double cpuUser) {
+        this.cpuUser = cpuUser;
     }
-
-    private Double elapsed_timeField;
 
     public Double getElapsedTime() {
-        return this.elapsed_timeField;
+        return this.elapsedTime;
     }
 
-    public void setElapsedTime(Double value) {
-        this.elapsed_timeField = value;
-        setRoundedElapsedTime(value);
+    public void setElapsedTime(Double elapsedTime) {
+        this.elapsedTime = elapsedTime;
+        setRoundedElapsedTime(elapsedTime);
     }
-
-    private Double roundedElapsedTimeField;
 
     public Double getRoundedElapsedTime() {
-        return this.roundedElapsedTimeField;
+        return this.roundedElapsedTime;
     }
 
     public void setRoundedElapsedTime(Double value) {
         final int SEC_IN_MIN = 60;
         final int SEC_IN_HOUR = SEC_IN_MIN * 60;
         final int SEC_IN_DAY = SEC_IN_HOUR * 24;
-        this.roundedElapsedTimeField = value;
+        this.roundedElapsedTime = value;
         if (value != null) {
             if (getRoundedElapsedTime() == null) {
                 this.setRoundedElapsedTime(value);
@@ -139,27 +144,21 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     }
 
-    private Integer usage_cpu_percentField;
-
     public Integer getUsageCpuPercent() {
-        return this.usage_cpu_percentField;
+        return this.usageCpuPercent;
     }
 
-    public void setUsageCpuPercent(Integer value) {
-        this.usage_cpu_percentField = value;
+    public void setUsageCpuPercent(Integer usageCpuPercent) {
+        this.usageCpuPercent = usageCpuPercent;
     }
-
-    private Integer usage_mem_percentField;
 
     public Integer getUsageMemPercent() {
-        return this.usage_mem_percentField;
+        return this.usageMemPercent;
     }
 
-    public void setUsageMemPercent(Integer value) {
-        this.usage_mem_percentField = value;
+    public void setUsageMemPercent(Integer usageMemPercent) {
+        this.usageMemPercent = usageMemPercent;
     }
-
-    private Integer migrationProgressPercent;
 
     public Integer getMigrationProgressPercent() {
         return migrationProgressPercent;
@@ -169,8 +168,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.migrationProgressPercent = migrationProgressPercent;
     }
 
-    private String disksUsage;
-
     /**
      * Field for history db, not intended to be accessible to clients.
      */
@@ -178,40 +175,34 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         return disksUsage;
     }
 
-    public void setDisksUsage(String value) {
-        disksUsage = value;
+    public void setDisksUsage(String disksUsage) {
+        this.disksUsage = disksUsage;
     }
-
-    private Integer usage_network_percentField;
 
     public Integer getUsageNetworkPercent() {
-        return this.usage_network_percentField;
+        return this.usageNetworkPercent;
     }
 
-    public void setUsageNetworkPercent(Integer value) {
-        this.usage_network_percentField = value;
+    public void setUsageNetworkPercent(Integer usageNetworkPercent) {
+        this.usageNetworkPercent = usageNetworkPercent;
     }
-
-    private Guid vm_guidField;
-
-    private ArrayList<VmNetworkInterface> interfaceStatisticsField;
 
     public ArrayList<VmNetworkInterface> getInterfaceStatistics() {
-        return this.interfaceStatisticsField;
+        return this.interfaceStatistics;
     }
 
-    public void setInterfaceStatistics(ArrayList<VmNetworkInterface> value) {
-        this.interfaceStatisticsField = value;
+    public void setInterfaceStatistics(ArrayList<VmNetworkInterface> interfaceStatistics) {
+        this.interfaceStatistics = interfaceStatistics;
     }
 
     @Override
     public Guid getId() {
-        return vm_guidField;
+        return vmId;
     }
 
     @Override
     public void setId(Guid id) {
-        this.vm_guidField = id;
+        this.vmId = id;
     }
 
     @Override
