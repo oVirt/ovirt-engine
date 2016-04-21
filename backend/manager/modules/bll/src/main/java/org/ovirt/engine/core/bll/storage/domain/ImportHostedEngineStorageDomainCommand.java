@@ -181,6 +181,13 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
             public Void runInTransaction() {
                 StorageServerConnections connection = heStorageDomain.getStorageStaticData().getConnection();
                 connection.setId(Guid.newGuid().toString());
+                if (heStorageDomain.getStorageType() == StorageType.GLUSTERFS) {
+                    // The use of the vfs type is mainly used for posix Storage Domains, usually,
+                    // adding a posix SD will have a defined vfs type configured by the user,
+                    // for this specific Gluster Storage Domain the user does not indicate the vfs type,
+                    // and that is the reason why it is done only for Gluster
+                    connection.setVfsType(StorageType.GLUSTERFS.name().toLowerCase());
+                }
                 storageServerConnectionDao.save(connection);
                 // make sure the storage domain object is full for the rest of the flow
                 heStorageDomain.setStorage(connection.getId());
