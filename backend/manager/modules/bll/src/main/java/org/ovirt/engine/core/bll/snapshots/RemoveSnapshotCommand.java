@@ -366,14 +366,17 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      * @return True if there is enough space in all relevant storage domains. False otherwise.
      */
     protected boolean validateStorageDomains() {
-        List<DiskImage> disksList = getSnapshotsDummiesForStorageAllocations();
+        List<DiskImage> disksList = getDisksListForStorageAllocations();
         MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
         return validate(storageDomainsValidator.allDomainsExistAndActive())
                 && validate(storageDomainsValidator.allDomainsWithinThresholds())
                 && validate(storageDomainsValidator.allDomainsHaveSpaceForClonedDisks(disksList));
     }
 
-    protected List<DiskImage> getSnapshotsDummiesForStorageAllocations() {
+    protected List<DiskImage> getDisksListForStorageAllocations() {
+        if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
+            return ImagesHandler.getDisksDummiesForStorageAllocations(getSourceImages());
+        }
         return ImagesHandler.getSnapshotsDummiesForStorageAllocations(getSourceImages());
     }
 

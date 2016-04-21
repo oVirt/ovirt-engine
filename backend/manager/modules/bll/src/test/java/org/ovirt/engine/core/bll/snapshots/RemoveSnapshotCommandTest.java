@@ -233,7 +233,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
             disksList.add(image);
         }
         doReturn(disksList).when(cmd).getSourceImages();
-        doReturn(disksList).when(cmd).getSnapshotsDummiesForStorageAllocations();
+        doReturn(disksList).when(cmd).getDisksListForStorageAllocations();
         return disksList;
     }
 }
