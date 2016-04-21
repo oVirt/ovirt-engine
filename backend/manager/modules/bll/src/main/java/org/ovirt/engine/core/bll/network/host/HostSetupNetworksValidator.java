@@ -157,7 +157,7 @@ public class HostSetupNetworksValidator {
         vr = skipValidation(vr) ? vr : new NetworkMtuValidator(networkBusinessEntityMap).validateMtu(
             attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateCustomProperties();
-        vr = skipValidation(vr) ? vr : validateQos(attachmentsToConfigure);
+        vr = skipValidation(vr) ? vr : validateQosOverriddenInterfaces();
         vr = skipValidation(vr) ? vr : validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : unmanagedNetworkValidator.validate(params, existingInterfaces, networkBusinessEntityMap);
 
@@ -225,14 +225,6 @@ public class HostSetupNetworksValidator {
                 || attachment.isOverrideConfiguration();
     }
 
-    private ValidationResult validateQos(Collection<NetworkAttachment> attachmentsToConfigure) {
-        ValidationResult vr = ValidationResult.VALID;
-
-        vr = skipValidation(vr) ? vr : validateQosOverriddenInterfaces();
-        vr = skipValidation(vr) ? vr : validateQosNotPartiallyConfigured(attachmentsToConfigure);
-        return vr;
-    }
-
     private ValidationResult attachmentsDontReferenceSameNetworkDuplicately(Collection<NetworkAttachment> attachments) {
         return new NetworkAttachmentsValidator(attachments, networkBusinessEntityMap, networkExclusivenessValidator)
             .verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately();
@@ -278,36 +270,6 @@ public class HostSetupNetworksValidator {
 
     private Network getNetworkByNetworkId(Guid networkId) {
         return networkBusinessEntityMap.get(networkId);
-    }
-
-    /**
-     * Ensure that either none or all of the networks on a single interface have QoS configured on them.
-     */
-    ValidationResult validateQosNotPartiallyConfigured(Collection<NetworkAttachment> attachmentsToConfigure) {
-        Set<String> someSubInterfacesHaveQos = new HashSet<>();
-        Set<String> notAllSubInterfacesHaveQos = new HashSet<>();
-
-        // first map which interfaces have some QoS configured on them, and which interfaces lack some QoS configuration
-        for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
-            Network network = getNetworkRelatedToAttachment(networkAttachment);
-            if (NetworkUtils.qosConfiguredOnInterface(networkAttachment, network)) {
-                someSubInterfacesHaveQos.add(networkAttachment.getNicName());
-            } else {
-                notAllSubInterfacesHaveQos.add(networkAttachment.getNicName());
-            }
-        }
-
-        // if any base interface has some sub-interfaces with QoS and some without - this is a partial configuration
-        for (String ifaceName : someSubInterfacesHaveQos) {
-            if (notAllSubInterfacesHaveQos.contains(ifaceName)) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS,
-                    ReplacementUtils.createSetVariableString(
-                        "ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS_LIST",
-                        ifaceName));
-            }
-        }
-
-        return ValidationResult.VALID;
     }
 
     private ValidationResult validateNetworkExclusiveOnNics(Collection<NetworkAttachment> attachmentsToConfigure) {

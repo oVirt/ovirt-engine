@@ -1295,32 +1295,6 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateQosNotPartiallyConfiguredWhenNotUpdatingAttachments() {
-        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .build();
-
-        Collection<NetworkAttachment> networkAttachments = Collections.emptyList();
-        assertThat(validator.validateQosNotPartiallyConfigured(networkAttachments), isValid());
-    }
-
-    @Test
-    public void testValidateQosNotPartiallyConfiguredWhenBothHasQos() {
-        testValidateQosNotPartiallyConfigured(true, true, isValid());
-    }
-
-    @Test
-    public void testValidateQosNotPartiallyConfiguredWhenNoneHasQos() {
-        testValidateQosNotPartiallyConfigured(true, true, isValid());
-    }
-
-    @Test
-    public void testValidateQosNotPartiallyConfiguredWhenOnlyOneHasQos() {
-        testValidateQosNotPartiallyConfigured(true,
-            false,
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS));
-    }
-
-    @Test
     public void testValidateBondModesForLabeledVmNetwork() {
         for (BondMode bondMode : BondMode.values()) {
             validateBondModeForLabeledVmNetwork(bondMode);
@@ -1477,39 +1451,6 @@ public class HostSetupNetworksValidatorTest {
                     ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkName)
             ));
         }
-    }
-
-    private void testValidateQosNotPartiallyConfigured(boolean networkAttachment1HasQos,
-        boolean networkAttachment2HasQos,
-        Matcher<ValidationResult> matcher) {
-        VdsNetworkInterface baseNic = createNic("baseNic");
-        VdsNetworkInterface vlanNic1 = createVlanNic(baseNic, "vlanNic1", 10);
-        VdsNetworkInterface vlanNic2 = createVlanNic(baseNic, "vlanNic2", 11);
-        Network network1 = createNetworkWithName("network1");
-        Network network2 = createNetworkWithName("network2");
-        NetworkAttachment networkAttachment1 = createNetworkAttachment(network1, baseNic);
-        NetworkAttachment networkAttachment2 = createNetworkAttachment(network2, baseNic);
-        HostNetworkQos qos = createHostNetworkQos(10, 10, 10);
-
-
-        if (networkAttachment1HasQos) {
-            networkAttachment1.setHostNetworkQos(qos);
-        }
-
-        if (networkAttachment2HasQos) {
-            networkAttachment2.setHostNetworkQos(qos);
-        }
-
-        Collection<NetworkAttachment> networkAttachments = Arrays.asList(networkAttachment1, networkAttachment2);
-
-
-        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
-            .addNetworks(network1, network2)
-            .addExistingInterfaces(baseNic, vlanNic1, vlanNic2)
-            .build();
-
-
-        assertThat(validator.validateQosNotPartiallyConfigured(networkAttachments), matcher);
     }
 
     private HostSetupNetworksValidator createValidatorForTestingValidateQosOverridden(Network network) {
