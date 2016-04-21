@@ -232,14 +232,13 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     /**
      * The following method will create a disk which is not VirtIO
      */
-    private DiskImage createNotVirtIODisk() {
+    private void createNotVirtIODisk() {
         DiskImage disk = getDiskImage();
         disk.setActive(true);
         disk.setDiskInterface(DiskInterface.IDE);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
-        return disk;
     }
 
     /**
