@@ -1161,12 +1161,22 @@ class OvirtUtils(base.Base):
         if not _ind_env(self, DEK.NEW_DATABASE):
             self._checkDbConf(environment=dbenv, name=name)
 
-    def getJdbcUrl(self):
+    def replaced_localhost(self, replacement=None):
+        return (
+            replacement
+            if (
+                replacement and
+                _ind_env(self, DEK.HOST) == 'localhost'
+            )
+            else _ind_env(self, DEK.HOST)
+        )
+
+    def getJdbcUrl(self, localhost_replacement=None):
         return (
             'jdbc:postgresql://{host}:{port}/{database}'
             '?{jdbcTlsOptions}'
         ).format(
-            host=_ind_env(self, DEK.HOST),
+            host=self.replaced_localhost(localhost_replacement),
             port=_ind_env(self, DEK.PORT),
             database=_ind_env(self, DEK.DATABASE),
             jdbcTlsOptions='&'.join(
@@ -1185,7 +1195,7 @@ class OvirtUtils(base.Base):
             ),
         )
 
-    def getDBConfig(self, prefix):
+    def getDBConfig(self, prefix, localhost_replacement=None):
         return (
             '{prefix}_DB_HOST="{host}"\n'
             '{prefix}_DB_PORT="{port}"\n'
@@ -1198,7 +1208,7 @@ class OvirtUtils(base.Base):
             '{prefix}_DB_URL="{jdbcUrl}"\n'
         ).format(
             prefix=prefix,
-            host=_ind_env(self, DEK.HOST),
+            host=self.replaced_localhost(localhost_replacement),
             port=_ind_env(self, DEK.PORT),
             user=_ind_env(self, DEK.USER),
             password=outil.escape(
@@ -1208,7 +1218,7 @@ class OvirtUtils(base.Base):
             database=_ind_env(self, DEK.DATABASE),
             secured=_ind_env(self, DEK.SECURED),
             hostValidation=_ind_env(self, DEK.HOST_VALIDATION),
-            jdbcUrl=self.getJdbcUrl(),
+            jdbcUrl=self.getJdbcUrl(localhost_replacement),
         )
 
 
