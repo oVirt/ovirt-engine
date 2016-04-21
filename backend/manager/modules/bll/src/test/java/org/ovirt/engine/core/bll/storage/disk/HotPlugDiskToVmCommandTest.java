@@ -108,6 +108,9 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vm);
+
+        when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
+                any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
     }
 
     @Test
@@ -233,32 +236,26 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
      * The following method will create a disk which is not VirtIO
      */
     private void createNotVirtIODisk() {
-        DiskImage disk = getDiskImage();
-        disk.setActive(true);
+        DiskImage disk = mockDiskImage();
         disk.setDiskInterface(DiskInterface.IDE);
-        when(diskDao.get(diskImageGuid)).thenReturn(disk);
-        when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
-                any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
     }
 
     /**
      * The following method will create a VirtIO disk , which is marked as unplugged
      */
     protected void createVirtIODisk() {
-        DiskImage disk = getDiskImage();
+        DiskImage disk = mockDiskImage();
         disk.setDiskInterface(DiskInterface.VirtIO);
-        disk.setActive(true);
-        when(diskDao.get(diskImageGuid)).thenReturn(disk);
-        when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
-                any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
     }
 
-    protected DiskImage getDiskImage() {
+    private DiskImage mockDiskImage() {
         disk.setImageId(diskImageGuid);
         ArrayList<Guid> storageIdList = new ArrayList<>();
         storageIdList.add(storageDomainId);
         disk.setStorageIds(storageIdList);
         disk.setStoragePoolId(storagePoolId);
+        disk.setActive(true);
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
     }
 
