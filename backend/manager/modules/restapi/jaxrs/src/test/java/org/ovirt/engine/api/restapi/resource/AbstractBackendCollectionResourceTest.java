@@ -163,6 +163,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         if (!(query == null || "".equals(query))) {
             query = QUERY;
         }
+        expect(queries.containsKey("search")).andReturn(query != null).anyTimes();
         expect(queries.getFirst("search")).andReturn(query).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
         return uriInfo;

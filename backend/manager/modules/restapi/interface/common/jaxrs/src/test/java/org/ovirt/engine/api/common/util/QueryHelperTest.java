@@ -89,6 +89,7 @@ public class QueryHelperTest extends Assert {
         UriInfo uriInfo = createMock(UriInfo.class);
         expect(uriInfo.getPathSegments()).andReturn(Collections.emptyList()).anyTimes();
         MultivaluedMap<String, String> queries = createMock(MultivaluedMap.class);
+        expect(queries.containsKey("search")).andReturn(true).anyTimes();
         expect(queries.getFirst("search")).andReturn(QUERY).anyTimes();
         expect(queries.isEmpty()).andReturn(false).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();

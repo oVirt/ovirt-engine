@@ -179,6 +179,7 @@ public class BackendVmCdromResourceTest
     protected UriInfo setUpChangeCdUriQueryExpectations() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         MultivaluedMap<String, String> queries = control.createMock(MultivaluedMap.class);
+        expect(queries.containsKey("current")).andReturn(true).anyTimes();
         expect(queries.getFirst("current")).andReturn("true").anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
         return uriInfo;
