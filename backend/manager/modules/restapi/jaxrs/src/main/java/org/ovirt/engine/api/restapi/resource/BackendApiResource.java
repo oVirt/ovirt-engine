@@ -641,7 +641,6 @@ public class BackendApiResource
 
     @Override
     public AffinityLabelsResource getAffinityLabelsResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendAffinityLabelsResource());
     }
 }

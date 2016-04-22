@@ -260,12 +260,6 @@ public class BackendVmResource
     }
 
     @Override
-    public AssignedAffinityLabelsResource getAffinityLabelsResource() {
-        // TODO: Implement this.
-        return null;
-    }
-
-    @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
                                                              VdcQueryType.GetPermissionsForObject,
@@ -745,5 +739,10 @@ public class BackendVmResource
     @Override
     public VmHostDevicesResource getHostDevicesResource() {
         return inject(new BackendVmHostDevicesResource(guid));
+    }
+
+    @Override
+    public AssignedAffinityLabelsResource getAffinityLabelsResource() {
+        return inject(new BackendAssignedAffinityLabelsResource(id, VM::new));
     }
 }
