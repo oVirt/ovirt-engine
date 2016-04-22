@@ -6,18 +6,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -27,6 +23,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -64,7 +61,6 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
-import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -78,9 +74,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters>
         implements QuotaStorageDependent {
 
-    private static final Pattern VALIDATE_MAC_ADDRESS =
-            Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
-
     /**
      * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
      * domain.
@@ -88,13 +81,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
 
     @Inject
-    private MacPoolPerDc poolPerDc;
-
-    @Inject
     private VmTemplateDao vmTemplateDao;
 
     private Version effectiveCompatibilityVersion;
-    private MacPool macPool;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
 
@@ -222,7 +211,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         }
 
-        if (!validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVmTemplate().getInterfaces()))) {
+        if (!validate(new ImportValidator().validateMacAddress(Entities.upcast(getVmTemplate().getInterfaces())))) {
             return false;
         }
 
@@ -313,38 +302,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         return true;
-    }
-
-    protected boolean validateMacAddress(List<VmNic> ifaces) {
-        int freeMacs = 0;
-        for (VmNic iface : ifaces) {
-            if (!StringUtils.isEmpty(iface.getMacAddress())) {
-                if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID,
-                            String.format("$IfaceName %1$s", iface.getName()),
-                            String.format("$MacAddress %1$s", iface.getMacAddress()));
-                }
-            }
-            else {
-                freeMacs++;
-            }
-        }
-        if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
-            return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
-        }
-        return true;
-    }
-
-    /**
-     * This method exist not to do caching, but to deal with init being called from constructor in class hierarchy.
-     * init method is not called via Postconstruct, but from constructor, meaning, that in tests we're unable
-     * pro inject 'poolPerDc' soon enough.
-     **/
-    protected MacPool getMacPool() {
-        if (macPool == null) {
-            macPool = poolPerDc.poolForDataCenter(getStoragePoolId());
-        }
-        return macPool;
     }
 
     protected List<DiskImage> getImages() {
