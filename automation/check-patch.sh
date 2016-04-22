@@ -1,6 +1,11 @@
 #!/bin/bash -xe
 
 BUILD_UT=0
+
+if git show --pretty="format:" --name-only | egrep -q "\.(xml|java)$"; then
+    BUILD_UT=1
+fi
+
 SUFFIX=".git$(git rev-parse --short HEAD)"
 MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
