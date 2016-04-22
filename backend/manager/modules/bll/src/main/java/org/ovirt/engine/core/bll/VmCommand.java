@@ -127,7 +127,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             int osId,
             Version clusterVersion,
             int monitorsNumber,
-            List<VmNic> interfaces,
+            List<? extends VmNic> interfaces,
             List<T> disks,
             boolean virtioScsiEnabled,
             boolean hasWatchdog,

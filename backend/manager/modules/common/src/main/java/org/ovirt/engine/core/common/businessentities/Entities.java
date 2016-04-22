@@ -104,15 +104,6 @@ public class Entities {
         return sb.toString();
     }
 
-    public static <B, G extends B> List<B> upcast(List<G> entities) {
-        List<B> baseEntities = new ArrayList<>(entities.size());
-        for (G entity : entities) {
-            baseEntities.add(entity);
-        }
-
-        return baseEntities;
-    }
-
     public static <E extends BusinessEntity<I>, I extends Serializable> List<I> getIds(List<E> entities) {
         List<I> ids = new ArrayList<>(entities.size());
         for (E entity : entities) {

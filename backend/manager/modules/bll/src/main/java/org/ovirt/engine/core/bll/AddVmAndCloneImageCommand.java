@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -333,9 +332,9 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     }
 
     @Override
-    protected List<VmNic> getVmInterfaces() {
+    protected List<? extends VmNic> getVmInterfaces() {
         if (_vmInterfaces == null) {
-            _vmInterfaces = Entities.<VmNic, VmNetworkInterface> upcast(getVmFromConfiguration().getInterfaces());
+            _vmInterfaces = getVmFromConfiguration().getInterfaces();
         }
         return _vmInterfaces;
     }

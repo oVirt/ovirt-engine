@@ -282,9 +282,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return _vmSnapshotId;
     }
 
-    protected List<VmNic> _vmInterfaces;
+    protected List<? extends VmNic> _vmInterfaces;
 
-    protected List<VmNic> getVmInterfaces() {
+    protected List<? extends VmNic> getVmInterfaces() {
         if (_vmInterfaces == null) {
             List<VmNic> vmNetworkInterfaces = getVmNicDao().getAllForTemplate(vmInterfacesSourceId);
             _vmInterfaces = vmNetworkInterfaces == null ? new ArrayList<>() : vmNetworkInterfaces;
@@ -1054,7 +1054,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void addVmNetwork() {
-        List<VmNic> nics = getVmInterfaces();
+        List<? extends VmNic> nics = getVmInterfaces();
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(macPool);
         vmInterfaceManager.sortVmNics(nics, getVmInterfaceDevices());
 

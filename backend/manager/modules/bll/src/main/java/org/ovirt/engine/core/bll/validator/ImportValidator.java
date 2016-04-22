@@ -90,7 +90,7 @@ public class ImportValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateMacAddress(List<VmNic> ifaces) {
+    public ValidationResult validateMacAddress(List<? extends VmNic> ifaces) {
         int freeMacs = 0;
         for (VmNic iface : ifaces) {
             if (!StringUtils.isEmpty(iface.getMacAddress())) {
