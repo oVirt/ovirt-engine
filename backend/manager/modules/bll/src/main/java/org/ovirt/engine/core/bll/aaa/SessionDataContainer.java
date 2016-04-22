@@ -33,7 +33,9 @@ import org.slf4j.LoggerFactory;
 public class SessionDataContainer {
 
     SSOSessionValidator ssoSessionValidator = new SSOSessionValidator();
-    SSOSessionUtils ssoSessionUtils = new SSOSessionUtils();
+
+    @Inject
+    SSOSessionUtils ssoSessionUtils;
 
     private static class SessionInfo {
         private ConcurrentMap<String, Object> contentOfSession = new ConcurrentHashMap<>();
