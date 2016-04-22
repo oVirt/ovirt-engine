@@ -29,6 +29,7 @@ import javax.ws.rs.Path;
 
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.AffinityGroup;
+import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.Balance;
@@ -115,6 +116,14 @@ import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
+import org.ovirt.engine.api.resource.AffinityLabelHostResource;
+import org.ovirt.engine.api.resource.AffinityLabelHostsResource;
+import org.ovirt.engine.api.resource.AffinityLabelResource;
+import org.ovirt.engine.api.resource.AffinityLabelVmResource;
+import org.ovirt.engine.api.resource.AffinityLabelVmsResource;
+import org.ovirt.engine.api.resource.AffinityLabelsResource;
+import org.ovirt.engine.api.resource.AssignedAffinityLabelResource;
+import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -452,6 +461,7 @@ public class LinkHelper {
         TYPES.put(StorageConnectionExtension.class, map);
 
         map = new LocationByParentMap(org.ovirt.engine.api.resource.HostResource.class, org.ovirt.engine.api.resource.HostsResource.class);
+        map.add(AffinityLabelHostResource.class, AffinityLabelHostsResource.class, AffinityLabel.class);
         TYPES.put(Host.class, map);
 
         map = new LocationByParentMap(HostNicResource.class, HostNicsResource.class, Host.class);
@@ -544,7 +554,8 @@ public class LinkHelper {
 
         map = new LocationByParentMap(VmResource.class, VmsResource.class);
         map.add(StorageDomainVmResource.class, StorageDomainVmsResource.class, StorageDomain.class);
-//        map.add(SnapshotResource.class, SnapshotsResource.class, Snapshot.class);
+        map.add(AffinityLabelVmResource.class, AffinityLabelVmsResource.class, AffinityLabel.class);
+        //        map.add(SnapshotResource.class, SnapshotsResource.class, Snapshot.class);
         TYPES.put(Vm.class, map);
 
         map = new LocationByParentMap(VmPoolResource.class, VmPoolsResource.class);
@@ -609,6 +620,12 @@ public class LinkHelper {
         map = new LocationByParentMap(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, Host.class);
         map.add(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, HostNic.class);
         TYPES.put(NetworkAttachment.class, map);
+
+        map = new LocationByParentMap(AffinityLabelResource.class, AffinityLabelsResource.class);
+        map.add(AssignedAffinityLabelResource.class, AssignedAffinityLabelsResource.class, Vm.class);
+        map.add(AssignedAffinityLabelResource.class, AssignedAffinityLabelsResource.class, Host.class);
+        map.add(AffinityLabelResource.class, AffinityLabelsResource.class, NO_PARENT);
+        TYPES.put(AffinityLabel.class, map);
 
         map = new LocationByParentMap(UnmanagedNetworkResource.class, UnmanagedNetworksResource.class, Host.class);
         TYPES.put(UnmanagedNetwork.class, map);

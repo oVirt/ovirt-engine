@@ -635,12 +635,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    public AssignedAffinityLabelsResource getAffinityLabelsResource() {
-        // TODO: Implement this.
-        return null;
-    }
-
-    @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
                                                              VdcQueryType.GetPermissionsForObject,
@@ -730,5 +724,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public KatelloErrataResource getKatelloErrataResource() {
         return inject(new BackendHostKatelloErrataResource(id));
+    }
+
+    @Override
+    public AssignedAffinityLabelsResource getAffinityLabelsResource() {
+        return inject(new BackendAssignedAffinityLabelsResource(id, VDS::new));
     }
 }
