@@ -6,6 +6,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
+import org.ovirt.engine.core.bll.aaa.SSOSessionUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.EngineSessionDao;
+import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -45,6 +47,10 @@ public class CommonTestMocks {
     private HostDeviceManager hostDeviceManager = mock(HostDeviceManager.class);
     @Produces
     private VdsDynamicDao vdsDynamicDao = mock(VdsDynamicDao.class);
+    @Produces
+    private SSOSessionUtils ssoSessionUtils = mock(SSOSessionUtils.class);
+    @Produces
+    private JobDao jobDao = mock(JobDao.class);
 
     public static Class<?>[] commonClasses() {
         return new Class<?>[] {
