@@ -41,7 +41,7 @@ public class SSHDialog implements Closeable {
         /**
          * Disconnect session.
          */
-        public void close() throws IOException;
+        void close() throws IOException;
     }
 
     /**
@@ -52,7 +52,7 @@ public class SSHDialog implements Closeable {
          * Set control interface.
          * @param control control.
          */
-        public void setControl(SSHDialog.Control control);
+        void setControl(SSHDialog.Control control);
 
         /**
          * Set streams to process.
@@ -61,20 +61,20 @@ public class SSHDialog implements Closeable {
          *
          * Streams are null when sink is removed from session.
          */
-        public void setStreams(InputStream incoming, OutputStream outgoing);
+        void setStreams(InputStream incoming, OutputStream outgoing);
 
         /**
          * Start processing.
          * Usually a thread will be created to process streams.
          * This guarantee to be called after setStreams().
          */
-        public void start();
+        void start();
 
         /**
          * Stop processing.
          * Called before streams are set to null.
          */
-        public void stop();
+        void stop();
     }
 
     private static final Logger log = LoggerFactory.getLogger(SSHDialog.class);
