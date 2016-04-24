@@ -38,7 +38,7 @@ public class ImportUtils {
         if (Version.v4_0.lessOrEquals(clusterVersion)) {
             if (removeVideoDevice(VmDeviceType.VNC, VmDeviceType.CIRRUS, vmBase.getManagedDeviceMap())) {
                 vmBase.setDefaultDisplayType(DisplayType.vga);
-                addVideoDevice(vmBase);
+                VmDeviceCommonUtils.addVideoDevice(vmBase);
             }
         }
 
@@ -70,18 +70,6 @@ public class ImportUtils {
             }
         }
         return false;
-    }
-
-    private static void addVideoDevice(VmBase vmBase) {
-        VmDevice vmDevice = new VmDevice();
-        vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
-        vmDevice.setType(VmDeviceGeneralType.VIDEO);
-        vmDevice.setDevice(vmBase.getDefaultDisplayType().getDefaultVmDeviceType().getName());
-        vmDevice.setIsManaged(true);
-        vmDevice.setIsPlugged(true);
-        vmDevice.setIsReadOnly(false);
-        vmDevice.setAddress("");
-        vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
     }
 
     private static List<VmDevice> getDevicesOfType(VmDeviceGeneralType type, Map<Guid, VmDevice> managedDevicesMap) {

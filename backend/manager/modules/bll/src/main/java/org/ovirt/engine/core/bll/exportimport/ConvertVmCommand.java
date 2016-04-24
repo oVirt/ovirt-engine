@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -216,9 +217,11 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     protected void endSuccessfully() {
         getReturnValue().setEndActionTryAgain(false);
         try {
-            VM vm = readVmFromOvf(getOvfOfConvertedVm());
-            updateBootDiskFlag(vm);
-            addImportedDevices(vm);
+            if (getParameters().getOriginType() != OriginType.KVM) {
+                VM vm = readVmFromOvf(getOvfOfConvertedVm());
+                updateBootDiskFlag(vm);
+                addImportedDevices(vm);
+            }
             setSucceeded(true);
         } catch (EngineException e) {
             log.info("failed to add devices to converted vm");

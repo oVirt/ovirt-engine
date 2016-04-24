@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -87,6 +88,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -233,6 +235,7 @@ public class VdsBrokerObjectsBuilder {
         vmStatic.setNumOfSockets(parseIntVdsProperty(xmlRpcStruct.get(VdsProperties.num_of_cpus)));
         vmStatic.setCustomCpuName((String) xmlRpcStruct.get(VdsProperties.cpu_model));
         vmStatic.setCustomEmulatedMachine((String) xmlRpcStruct.get(VdsProperties.emulatedMachine));
+        addGraphicsDeviceFromExternalProvider(vmStatic, xmlRpcStruct);
 
         if (xmlRpcStruct.containsKey(VdsProperties.vm_disks)) {
             for (Object disk : (Object[]) xmlRpcStruct.get(VdsProperties.vm_disks)) {
@@ -258,12 +261,44 @@ public class VdsBrokerObjectsBuilder {
         return vmStatic;
     }
 
+    /**
+     *  libvirt video: "vga", "cirrus", "vmvga", "xen", "vbox", "qxl"
+     *  ovirt video: "vga", "cirrus", "qxl"
+     *  libvirt grahics: sdl, vnc, spice, rdp or desktop
+     *  ovirt graphics: cirrus, spice, vnc
+     *  try to add the displaytype and graphics if ovirt support the channels
+     */
+    private static void addGraphicsDeviceFromExternalProvider(VmStatic vmStatic, Map<String, Object> xmlRpcStruct) {
+        Object graphicsName = xmlRpcStruct.get(VdsProperties.GRAPHICS_DEVICE);
+        Object videoName =  xmlRpcStruct.get(VdsProperties.VIDEO_DEVICE);
+        if (graphicsName == null || videoName == null) {
+            return;
+        }
+        try {
+            vmStatic.setDefaultDisplayType(DisplayType.valueOf(videoName.toString()));
+        } catch (IllegalArgumentException ex) {
+            log.error("Illegal video name '{}'.", videoName.toString());
+            return;
+        }
+        GraphicsType graphicsType = GraphicsType.fromString(graphicsName.toString());
+        if (graphicsType == null) {
+            log.error("Illegal graphics name '{}'.", graphicsName.toString());
+            return;
+        }
+
+        VmDeviceCommonUtils.addGraphicsDevice(vmStatic, graphicsType.getCorrespondingDeviceType());
+        VmDeviceCommonUtils.addVideoDevice(vmStatic);
+    }
+
     private static DiskImage buildDiskImageFromExternalProvider(Map<String, Object> map) {
         DiskImage image = new DiskImage();
         image.setDiskAlias((String) map.get(VdsProperties.Alias));
         image.setSize(Long.parseLong((String) map.get(VdsProperties.DISK_VIRTUAL_SIZE)));
         image.setActualSizeInBytes(Long.parseLong((String) map.get(VdsProperties.DISK_ALLOCATION)));
         image.setId(Guid.newGuid());
+        if (map.containsKey(VdsProperties.Format)) {
+            image.setvolumeFormat(VolumeFormat.valueOf(((String) map.get(VdsProperties.Format)).toUpperCase()));
+        }
 
         return image;
     }

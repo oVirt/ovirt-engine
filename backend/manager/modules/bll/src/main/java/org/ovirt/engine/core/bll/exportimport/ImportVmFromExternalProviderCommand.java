@@ -222,6 +222,9 @@ implements QuotaStorageDependent {
 
     @Override
     protected void processImages() {
+        if (getVm().getOrigin() == OriginType.KVM && !getVm().getImages().isEmpty()) {
+            getVm().getImages().get(0).setBoot(true);
+        }
         ArrayList<Guid> diskIds = new ArrayList<>();
         for (DiskImage image : getVm().getImages()) {
             Guid diskId = createDisk(image);
@@ -301,6 +304,15 @@ implements QuotaStorageDependent {
         convert();
 
         setSucceeded(true);
+    }
+
+    @Override
+    protected void addVmToDb() {
+        super.addVmToDb();
+        if (getVm().getOrigin() == OriginType.KVM) {
+            ImportUtils.updateGraphicsDevices(getVm().getStaticData(), getStoragePool().getCompatibilityVersion());
+            getVmDeviceDao().saveAll(getVm().getStaticData().getManagedDeviceMap().values());
+        }
     }
 
     protected void convert() {

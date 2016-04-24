@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -411,4 +413,23 @@ public class VmDeviceCommonUtils {
 
         return false;
     }
+
+    public static void addVideoDevice(VmBase vmBase) {
+        VmDevice vmDevice = new VmDevice();
+        vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
+        vmDevice.setType(VmDeviceGeneralType.VIDEO);
+        vmDevice.setDevice(vmBase.getDefaultDisplayType().getDefaultVmDeviceType().getName());
+        vmDevice.setIsManaged(true);
+        vmDevice.setIsPlugged(true);
+        vmDevice.setIsReadOnly(false);
+        vmDevice.setAddress("");
+        vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
+    }
+
+    public static void addGraphicsDevice(VmBase vmBase, VmDeviceType vmDeviceType)  {
+        GraphicsDevice graphicsDevice = new GraphicsDevice(vmDeviceType);
+        graphicsDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
+        vmBase.getManagedDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
+    }
+
 }

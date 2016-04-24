@@ -198,6 +198,8 @@ public final class VdsProperties {
     public static final String VIDEO_RAM = "ram";
     public static final String VIDEO_VRAM = "vram";
     public static final String VIDEO_VGAMEM = "vgamem";
+    public static final String VIDEO_DEVICE = "video";
+    public static final String GRAPHICS_DEVICE = "graphics";
 
     // vm configuration (i.e. VmStatic)
     public static final String mem_size_mb = "memSize";
