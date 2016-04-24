@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -182,9 +184,19 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getHostName(),
                 getDestinationVds().getPort());
 
-        return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, getDestinationVdsId(),
-                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getClusterCompatibilityVersion(),
-                getMaximumMigrationDowntime(), getAutoConverge(), getMigrateCompressed(), getDestinationVds().getConsoleAddress());
+        return new MigrateVDSCommandParameters(getVdsId(),
+                getVmId(),
+                srcVdsHost,
+                getDestinationVdsId(),
+                dstVdsHost,
+                MigrationMethod.ONLINE,
+                isTunnelMigrationUsed(),
+                getMigrationNetworkIp(),
+                getVds().getClusterCompatibilityVersion(),
+                getMaximumMigrationDowntime(),
+                getAutoConverge(),
+                getMigrateCompressed(),
+                getDestinationVds().getConsoleAddress());
     }
 
     @Override
@@ -278,25 +290,49 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         if (migrationNetwork != null) {
 
-            // assure migration network is active on source host
-            if (getMigrationNetworkAddress(getVds().getId(), migrationNetwork.getName()) == null) {
-                return null;
+            final String migrationDestinationIpv4Address =
+                    findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv4Address);
+            if (migrationDestinationIpv4Address != null) {
+                return migrationDestinationIpv4Address;
             }
-
-            // find migration IP address on destination host
-            return getMigrationNetworkAddress(getDestinationVds().getId(), migrationNetwork.getName());
+            final String migrationDestinationIpv6Address =
+                    findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv6Address);
+            if (migrationDestinationIpv6Address != null) {
+                return migrationDestinationIpv6Address;
+            }
         }
 
         return null;
     }
 
-    private String getMigrationNetworkAddress(Guid hostId, String migrationNetworkName) {
+    private String findValidMigrationIpAddress(Network migrationNetwork,
+            Function<VdsNetworkInterface, String> ipAddressGetter) {
+
+        // assure migration network is active on source host
+        final String migrationSourceIpAddress = getMigrationNetworkAddress(getVds().getId(),
+                migrationNetwork.getName(),
+                ipAddressGetter);
+        if (StringUtils.isNotEmpty(migrationSourceIpAddress)) {
+            // find migration IP address on destination host
+            final String migrationDestinationIpAddress = getMigrationNetworkAddress(getDestinationVds().getId(),
+                    migrationNetwork.getName(),
+                    ipAddressGetter);
+            if (StringUtils.isNotEmpty(migrationDestinationIpAddress)) {
+                return migrationDestinationIpAddress;
+            }
+        }
+        return null;
+    }
+
+    private String getMigrationNetworkAddress(Guid hostId,
+            String migrationNetworkName,
+            Function<VdsNetworkInterface, String> ipAddressGetter) {
         final List<VdsNetworkInterface> nics =
                 getDbFacade().getInterfaceDao().getAllInterfacesForVds(hostId);
 
         for (VdsNetworkInterface nic : nics) {
             if (migrationNetworkName.equals(nic.getNetworkName()) && migrationInterfaceUp(nic, nics)) {
-                return nic.getIpv4Address();
+                return ipAddressGetter.apply(nic);
             }
         }
 
