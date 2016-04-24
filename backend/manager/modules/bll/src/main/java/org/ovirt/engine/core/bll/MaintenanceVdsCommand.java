@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -178,7 +179,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (_isInternal) {
-            if (getSucceeded() && !haMaintenanceFailed) {
+            if (isSucceededWithHA()) {
                 return AuditLogType.VDS_MAINTENANCE;
             } else if (getSucceeded()) {
                 return AuditLogType.VDS_MAINTENANCE_MANUAL_HA;
@@ -186,9 +187,11 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 return AuditLogType.VDS_MAINTENANCE_FAILED;
             }
         } else {
-            if (getSucceeded() && !haMaintenanceFailed) {
+            if (isSucceededWithReasonGiven()){
                 addCustomValue("Reason", getVds().getMaintenanceReason());
                 return AuditLogType.USER_VDS_MAINTENANCE;
+            } else if(isSucceededWithoutReasonGiven()) {
+                return AuditLogType.USER_VDS_MAINTENANCE_WITHOUT_REASON;
             } else if (getSucceeded()) {
                 return AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA;
             } else {
@@ -251,5 +254,17 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         } else {
             return super.getCallback();
         }
+    }
+
+    private boolean isSucceededWithHA() {
+        return getSucceeded() && !haMaintenanceFailed;
+    }
+
+    private boolean isSucceededWithReasonGiven(){
+        return isSucceededWithHA() && StringUtils.isNotEmpty(getVds().getMaintenanceReason());
+    }
+
+    private boolean isSucceededWithoutReasonGiven(){
+        return isSucceededWithHA() && !haMaintenanceFailed && StringUtils.isEmpty(getVds().getMaintenanceReason());
     }
 }

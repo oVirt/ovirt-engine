@@ -96,6 +96,7 @@ public enum AuditLogType {
             AuditLogTimeInterval.MINUTE.getValue() * 15),
     VDS_NO_SELINUX_ENFORCEMENT(25, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue()),
     USER_VDS_MAINTENANCE(600), // When VDS is transferred to
+    USER_VDS_MAINTENANCE_WITHOUT_REASON(620),
     CPU_FLAGS_NX_IS_MISSING(601, AuditLogSeverity.WARNING),
     // maintenance mode
     USER_VDS_MAINTENANCE_MIGRATION_FAILED(602, AuditLogSeverity.WARNING),
