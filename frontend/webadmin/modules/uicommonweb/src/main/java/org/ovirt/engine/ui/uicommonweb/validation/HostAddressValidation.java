@@ -12,7 +12,7 @@ public class HostAddressValidation extends BaseI18NValidation {
         this.acceptEmptyInput = acceptEmptyInput;
         this.supportIpv6 = supportIpv6;
 
-        // BaseI18NValidation c'tor calls composeRegex() prior the members of this class are initiailized.
+        // BaseI18NValidation c'tor calls composeRegex() prior the members of this class are initialized.
         // Thus it has to be called here again.
         setExpression(composeRegex());
     }
@@ -23,7 +23,7 @@ public class HostAddressValidation extends BaseI18NValidation {
 
     @Override
     public ValidationResult validate(Object value) {
-        if (acceptEmptyInput && (value == null || (value instanceof String && value.equals("")))) {
+        if (acceptEmptyInput && (value == null || (value instanceof String && value.equals(EMPTY_STRING)))) {
             return new ValidationResult();
         }
         return super.validate(value instanceof String ? ((String) value).trim() : value);
@@ -34,36 +34,20 @@ public class HostAddressValidation extends BaseI18NValidation {
         return start() + hostnameOrIp() + end();
     }
 
-    protected String hostnameOrIp() {
-        return "(?:" + ip() + "|" + fqdn() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    private String hostnameOrIp() {
+        return "(?:" + ip() + "|" + ValidationUtils.FQDN_PATTERN + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     private String ip() {
         if (supportIpv6) {
-            return ipv4() + "|" + ipv6(); //$NON-NLS-1$
+            return ValidationUtils.IPV4_PATTERN_NON_EMPTY + "|" + getIpv6Pattern(); //$NON-NLS-1$
         } else {
-            return ipv4();
+            return ValidationUtils.IPV4_PATTERN_NON_EMPTY;
         }
     }
 
-    private String ipv4() {
-        return "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"; //$NON-NLS-1$
-    }
-
-    private String ipv6() {
+    protected String getIpv6Pattern() {
         return ValidationUtils.IPV6_PATTERN;
-    }
-
-    protected String fqdn() {
-        return "([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*"; //$NON-NLS-1$
-    }
-
-    protected String start() {
-        return "^"; //$NON-NLS-1$
-    }
-
-    protected String end() {
-        return "$"; //$NON-NLS-1$
     }
 
     @Override

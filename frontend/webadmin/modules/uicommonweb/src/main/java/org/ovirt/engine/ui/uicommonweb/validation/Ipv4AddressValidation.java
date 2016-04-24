@@ -1,10 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class Ipv4AddressValidation extends RegexValidation {
-    private static final String IP_ADDRESS_REGEX =
-            "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"; //$NON-NLS-1$
     public Ipv4AddressValidation() {
         this(false);
     }
@@ -17,7 +16,7 @@ public class Ipv4AddressValidation extends RegexValidation {
         } else {
             setMessage(ConstantsManager.getInstance().getConstants().thisFieldMustContainIpv4AddressInFormatMsg());
         }
-        setExpression("^" + IP_ADDRESS_REGEX + "$" + empty); //$NON-NLS-1$ $NON-NLS-2$
+        setExpression(start() + ValidationUtils.IPV4_PATTERN_NON_EMPTY + end() + empty);
 
     }
 }

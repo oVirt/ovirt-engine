@@ -38,6 +38,16 @@ public class HostWithProtocolAndPortAddressValidationTest {
     }
 
     @Test
+    public void fullCorrectWithIpv4() {
+        assertTrue(new TestableHostWithProtocolAndPortAddressValidation().validate("someProtocol://1.2.3.4:666").getSuccess()); //$NON-NLS-1$
+    }
+
+    @Test
+    public void fullCorrectWithIpv6() {
+        assertTrue(new TestableHostWithProtocolAndPortAddressValidation().validate("someProtocol://[1:2:3:4:5:6:7:8]:666").getSuccess()); //$NON-NLS-1$
+    }
+
+    @Test
     public void hostnameTooLongPort() {
         assertFalse(new TestableHostWithProtocolAndPortAddressValidation().validate("someHostname:655359").getSuccess()); //$NON-NLS-1$
     }

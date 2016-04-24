@@ -59,7 +59,7 @@ public class UrlValidation implements IValidation {
     }
 
     protected HostAddressValidation getHostValidation() {
-        return new HostAddressValidation();
+        return new UriHostAddressValidation();
     }
 
 }

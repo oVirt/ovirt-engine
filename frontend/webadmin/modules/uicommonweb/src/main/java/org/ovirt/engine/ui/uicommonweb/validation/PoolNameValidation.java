@@ -3,22 +3,12 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class PoolNameValidation extends I18NNameValidation {
+public class PoolNameValidation extends BaseI18NValidation {
 
     @Override
     protected String composeRegex() {
         return or(start() + oneOrMore(nonNumberMaskCharacter()) + numberMask() + zeroOrMore(nonNumberMaskCharacter()) + end(),
                 start() + zeroOrMore(nonNumberMaskCharacter()) + numberMask() + oneOrMore(nonNumberMaskCharacter()) + end());
-    }
-
-    @Override
-    protected String start() {
-        return "^"; //$NON-NLS-1$
-    }
-
-    @Override
-    protected String end() {
-        return "$"; //$NON-NLS-1$
     }
 
     protected String numberMask() {

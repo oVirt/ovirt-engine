@@ -43,8 +43,13 @@ public class LinuxMountPointValidationTest {
     }
 
     @Test
-    public void validWithIP() {
+    public void validWithIpv4() {
         assertValid("1.2.3.4:/path/to/dir"); // $NON-NLS-1$
+    }
+
+    @Test
+    public void validWithIpv6() {
+        assertValid("[1::2]:/path/to/dir"); // $NON-NLS-1$
     }
 
     @Test
@@ -87,6 +92,11 @@ public class LinuxMountPointValidationTest {
         assertInvalid("1.2.3.4:"); // $NON-NLS-1$
     }
 
+    @Test
+    public void invalidIpv6NotWrappedByBrackets() {
+        assertInvalid("1:2:3:4:5:6:7:8:/path/to/dir"); // $NON-NLS-1$
+    }
+
     /* Helper Methods */
 
     private void assertValid(String path) {
@@ -100,4 +110,5 @@ public class LinuxMountPointValidationTest {
     private boolean pathToBool(String path) {
         return validation.validate(path).getSuccess();
     }
+
 }

@@ -11,14 +11,21 @@ import com.google.gwt.regexp.shared.RegExp;
  */
 public class UriAuthority {
 
-    private static final RegExp PATTERN_AUTHORITY = RegExp.compile("^([^:]*)(?::(\\d*))?$", "i"); //$NON-NLS-1$ $NON-NLS-2$
+    private static final String NON_IPV6_ADDRESS_PATTERN = "[^:]+"; //$NON-NLS-1$
+    private static final String IPV6_ADDRESS_PATTERN = "\\[.+\\]"; //$NON-NLS-1$
+    private static final String AUTHORITY_PATTERN =
+            "^(" + NON_IPV6_ADDRESS_PATTERN + //$NON-NLS-1$
+                    "|" + IPV6_ADDRESS_PATTERN + ")(?::(\\d*))?$"; //$NON-NLS-1$ $NON-NLS-2$
+    private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+    private static final String COLON = ":"; //$NON-NLS-1$
+    private static final RegExp AUTHORITY_REGEXP = RegExp.compile(AUTHORITY_PATTERN, "i"); //$NON-NLS-1$
 
     private boolean valid;
     private String host;
     private String port;
 
     public UriAuthority(String authority) {
-        MatchResult matcher = PATTERN_AUTHORITY.exec(authority == null ? "" : authority); //$NON-NLS-1$
+        MatchResult matcher = AUTHORITY_REGEXP.exec(authority == null ? EMPTY_STRING : authority);
         valid = matcher != null;
         if (valid) {
             setHost(matcher.getGroup(1));
@@ -31,10 +38,10 @@ public class UriAuthority {
             return null;
         }
 
-        String authority = ""; //$NON-NLS-1$
+        String authority = EMPTY_STRING;
         authority += host;
         if (!port.isEmpty()) {
-            authority += ':' + port;
+            authority += COLON + port;
         }
         return authority;
     }
@@ -48,7 +55,7 @@ public class UriAuthority {
     }
 
     public void setHost(String host) {
-        this.host = (host == null) ? "" : host; //$NON-NLS-1$
+        this.host = (host == null) ? EMPTY_STRING : host;
     }
 
     public String getPort() {
@@ -56,7 +63,6 @@ public class UriAuthority {
     }
 
     public void setPort(String port) {
-        this.port = (port == null) ? "" : port; //$NON-NLS-1$
+        this.port = (port == null) ? EMPTY_STRING : port;
     }
-
 }

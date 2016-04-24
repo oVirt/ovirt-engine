@@ -29,14 +29,6 @@ public class BrickMountPointValidation extends BaseI18NValidation {
         return "/(.*?/)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)"; //$NON-NLS-1$
     }
 
-    protected String start() {
-        return "^"; //$NON-NLS-1$
-    }
-
-    protected String end() {
-        return "$"; //$NON-NLS-1$
-    }
-
     @Override
     protected String composeMessage() {
         return ConstantsManager.getInstance().getConstants().invalidMountPointMsg();

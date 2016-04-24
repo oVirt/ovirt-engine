@@ -1,11 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class HostWithProtocolAndPortAddressValidation extends HostAddressValidation {
+public class HostWithProtocolAndPortAddressValidation extends BaseI18NValidation {
     @Override
     protected String composeRegex() {
-        return start() + protocol() + hostnameOrIp() + port() + end();
+        return start() + protocol() + ValidationUtils.HOSTNAME_FOR_URI + port() + end();
     }
 
     private String protocol() {

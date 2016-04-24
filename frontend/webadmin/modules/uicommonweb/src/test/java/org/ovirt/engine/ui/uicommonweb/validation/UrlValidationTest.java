@@ -21,7 +21,7 @@ public class UrlValidationTest {
     @Spy
     private UrlValidation urlValidation;
 
-    private class TestableHostValidation extends HostAddressValidation {
+    private class TestableHostValidation extends UriHostAddressValidation {
         @Override
         protected String composeMessage() {
             return null;
@@ -63,6 +63,10 @@ public class UrlValidationTest {
                 { "ftp://www.redhat.com", false }, //$NON-NLS-1$
                 { "ftp://192.168.0.1", false }, //$NON-NLS-1$
 
+                { "http://1.2.3.4:666", true }, //$NON-NLS-1$
+                { "http://1.2.3.4", true }, //$NON-NLS-1$
+                { "http://[1:2:3:4:5:6:7:8]", true }, //$NON-NLS-1$
+                { "http://[1:2:3:4:5:6:7:8]:666", true }, //$NON-NLS-1$
                 { "http://www.redhat.com", true }, //$NON-NLS-1$
                 { "http://www.redhat.com/main", true }, //$NON-NLS-1$
                 { "http://www.redhat.com/main/index.html", true }, //$NON-NLS-1$

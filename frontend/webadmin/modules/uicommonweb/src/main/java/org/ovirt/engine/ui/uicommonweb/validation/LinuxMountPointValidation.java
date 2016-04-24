@@ -1,15 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class LinuxMountPointValidation extends HostAddressValidation {
+public class LinuxMountPointValidation extends BaseI18NValidation {
 
     @Override
     protected String composeRegex() {
-        return start() + hostnameOrIp() + path() + end();
+        return start() + ValidationUtils.HOSTNAME_FOR_URI + path() + end();
     }
 
-    protected String path() {
+    private String path() {
         return "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)"; //$NON-NLS-1$
     }
 
@@ -17,5 +18,4 @@ public class LinuxMountPointValidation extends HostAddressValidation {
     protected String composeMessage() {
         return ConstantsManager.getInstance().getConstants().nfsMountPashIsIllegalMsg();
     }
-
 }

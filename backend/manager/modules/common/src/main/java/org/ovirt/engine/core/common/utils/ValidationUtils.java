@@ -32,6 +32,11 @@ public class ValidationUtils {
                     IPV6_ADDRESS_BLOCK + "(?::" + IPV6_ADDRESS_BLOCK + ")*)?)";
     private static final String IPV6_STD_PATTERN = "(?:" + IPV6_ADDRESS_BLOCK + ":){7}" + IPV6_ADDRESS_BLOCK;
     public static final String IPV6_PATTERN = "(?:" + IPV6_STD_PATTERN + "|" + IPV6_HEX_COMPRESSED_PATTERN + ")";
+    public static final String IPV6_FOR_URI = "\\[" + IPV6_PATTERN + "\\]";
+    public static final String FQDN_PATTERN =
+            "([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*";
+    public static final String HOSTNAME_FOR_URI =
+            "(?:" + FQDN_PATTERN + "|" + IPV4_PATTERN + "|" + IPV6_FOR_URI + ")";
 
     public static final String SUBNET_PREFIX_PATTERN = "(?:3[0-2]|[12]?[0-9])";
     public static final String CIDR_FORMAT_PATTERN = "^" + IPV4_PATTERN_NON_EMPTY + "/" + SUBNET_PREFIX_PATTERN + "$";

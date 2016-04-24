@@ -19,18 +19,6 @@ public class I18NNameValidation extends BaseI18NValidation {
         return "^["; //$NON-NLS-1$
     }
 
-    protected String letters() {
-        return allUtfLetters();
-    }
-
-    protected String numbers() {
-        return "0-9"; //$NON-NLS-1$
-    }
-
-    protected String specialCharacters() {
-        return "._-"; //$NON-NLS-1$
-    }
-
     protected String end() {
         return "]+$"; //$NON-NLS-1$
     }

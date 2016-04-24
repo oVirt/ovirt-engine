@@ -22,4 +22,16 @@ public abstract class BaseI18NValidation extends RegexValidation {
         return "\u0041-\u005A\u0061-\u007A"; //$NON-NLS-1$
     }
 
+    protected String letters() {
+        return allUtfLetters();
+    }
+
+    protected String numbers() {
+        return "0-9"; //$NON-NLS-1$
+    }
+
+    protected String specialCharacters() {
+        return "._-"; //$NON-NLS-1$
+    }
+
 }
