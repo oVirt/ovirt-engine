@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidNFSMountPoint;
 
 /**
@@ -13,16 +14,20 @@ import org.ovirt.engine.core.common.validation.annotation.ValidNFSMountPoint;
  */
 public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMountPoint, String> {
 
-    private static final String IP =
-            "((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|";
-
-    private static final String FQDN = "(?=^.{1,254}$)(^(((?!-)[a-zA-Z0-9-]{1,63}(?<!-))|((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\\.)+[a-zA-Z0-9]{2,63})))";
+    private static final String FQDN =
+            "(?=^.{1,254}$)(^(((?!-)[a-zA-Z0-9-]{1,63}(?<!-))|((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\\.)+[a-zA-Z0-9]{2,63}))";
 
     private static final String PATH = "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)";
 
-    private static final String LINUX_MOUNT_POINT = IP + FQDN + PATH;
-
+    private static final String LINUX_MOUNT_POINT = String.format("(?:%s|%s|%s)%s",
+            ValidationUtils.IPV4_PATTERN_NON_EMPTY,
+            ValidationUtils.IPV6_FOR_URI,
+            FQDN,
+            PATH);
     private static final String ASCII = "[\\p{ASCII}]*";
+
+    private static final Pattern LINUX_MOUNT_POINT_PATTERN = Pattern.compile(LINUX_MOUNT_POINT);
+    private static final Pattern ASCII_PATTERN = Pattern.compile(ASCII);
 
     @Override
     public void initialize(ValidNFSMountPoint constraintAnnotation) {
@@ -30,7 +35,7 @@ public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMoun
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext context) {
-        return Pattern.matches(LINUX_MOUNT_POINT, name) && Pattern.matches(ASCII, name);
+        return LINUX_MOUNT_POINT_PATTERN.matcher(name).matches() && ASCII_PATTERN.matcher(name).matches();
     }
 
 }
