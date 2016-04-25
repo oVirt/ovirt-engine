@@ -37,7 +37,7 @@ public class ImportUtils {
 
         if (Version.v4_0.lessOrEquals(clusterVersion)) {
             if (removeVideoDevice(VmDeviceType.VNC, VmDeviceType.CIRRUS, vmBase.getManagedDeviceMap())) {
-                vmBase.setDefaultDisplayType(DisplayType.qxl);
+                vmBase.setDefaultDisplayType(DisplayType.vga);
                 addVideoDevice(vmBase);
             }
         }
