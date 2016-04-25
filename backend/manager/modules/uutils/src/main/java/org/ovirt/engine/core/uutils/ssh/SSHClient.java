@@ -45,16 +45,16 @@ public class SSHClient implements Closeable {
 
     private static final Logger log = LoggerFactory.getLogger(SSHClient.class);
 
-    private SshClient _client;
-    private ClientSession _session;
-    private long _softTimeout = 10000;
-    private long _hardTimeout = 0;
-    private String _user;
-    private String _password;
-    private KeyPair _keyPair;
-    private String _host;
-    private int _port = DEFAULT_SSH_PORT;
-    private PublicKey _hostKey;
+    private SshClient client;
+    private ClientSession session;
+    private long softTimeout = 10000;
+    private long hardTimeout = 0;
+    private String user;
+    private String password;
+    private KeyPair keyPair;
+    private String host;
+    private int port = DEFAULT_SSH_PORT;
+    private PublicKey hostKey;
 
     /**
      * Create the client.
@@ -127,7 +127,7 @@ public class SSHClient implements Closeable {
      * default is 10 seconds.
      */
     public void setSoftTimeout(long softTimeout) {
-        _softTimeout = softTimeout;
+        this.softTimeout = softTimeout;
     }
 
     /**
@@ -139,7 +139,7 @@ public class SSHClient implements Closeable {
      * The timeout is evaluate at softTimeout intervals.
      */
     public void setHardTimeout(long hardTimeout) {
-        _hardTimeout = hardTimeout;
+        this.hardTimeout = hardTimeout;
     }
 
     /**
@@ -147,7 +147,7 @@ public class SSHClient implements Closeable {
      * @param user user.
      */
     public void setUser(String user) {
-        _user = user;
+        this.user = user;
     }
 
     /**
@@ -155,7 +155,7 @@ public class SSHClient implements Closeable {
      * @param password password.
      */
     public void setPassword(String password) {
-        _password = password;
+        this.password = password;
     }
 
     /**
@@ -163,7 +163,7 @@ public class SSHClient implements Closeable {
      * @param keyPair key pair.
      */
     public void setKeyPair(KeyPair keyPair) {
-        _keyPair = keyPair;
+        this.keyPair = keyPair;
     }
 
     /**
@@ -172,9 +172,9 @@ public class SSHClient implements Closeable {
      * @param port port.
      */
     public void setHost(String host, int port) {
-        _host = host;
-        _port = port;
-        _hostKey = null;
+        this.host = host;
+        this.port = port;
+        hostKey = null;
     }
 
     /**
@@ -199,7 +199,7 @@ public class SSHClient implements Closeable {
      * @return host as set by setHost()
      */
     public String getHost() {
-        return _host;
+        return host;
     }
 
     /**
@@ -207,7 +207,7 @@ public class SSHClient implements Closeable {
      * @return port.
      */
     public int getPort() {
-        return _port;
+        return port;
     }
 
     /**
@@ -215,7 +215,7 @@ public class SSHClient implements Closeable {
      * @return timeout.
      */
     public long getHardTimeout() {
-        return _hardTimeout;
+        return hardTimeout;
     }
 
     /**
@@ -223,7 +223,7 @@ public class SSHClient implements Closeable {
      * @return timeout.
      */
     public long getSoftTimeout() {
-        return _softTimeout;
+        return softTimeout;
     }
 
     /**
@@ -231,23 +231,23 @@ public class SSHClient implements Closeable {
      * @return user.
      */
     public String getUser() {
-        return _user;
+        return user;
     }
 
     public String getDisplayHost() {
         StringBuilder ret = new StringBuilder(100);
-        if (_host == null) {
+        if (host == null) {
             ret.append("N/A");
         }
         else {
-            if (_user != null) {
-                ret.append(_user);
+            if (user != null) {
+                ret.append(user);
                 ret.append("@");
             }
-            ret.append(_host);
-            if (_port != DEFAULT_SSH_PORT) {
+            ret.append(host);
+            if (port != DEFAULT_SSH_PORT) {
                 ret.append(":");
-                ret.append(_port);
+                ret.append(port);
             }
         }
         return ret.toString();
@@ -258,7 +258,7 @@ public class SSHClient implements Closeable {
      * @return host key.
      */
     public PublicKey getHostKey() {
-        return _hostKey;
+        return hostKey;
     }
 
     /**
@@ -269,9 +269,9 @@ public class SSHClient implements Closeable {
         log.debug("Connecting '{}'", this.getDisplayHost());
 
         try {
-            _client = createSshClient();
+            client = createSshClient();
 
-            _client.setServerKeyVerifier(
+            client.setServerKeyVerifier(
                 new ServerKeyVerifier() {
                     @Override
                     public boolean verifyServerKey(
@@ -279,16 +279,16 @@ public class SSHClient implements Closeable {
                         SocketAddress remoteAddress,
                         PublicKey serverKey
                     ) {
-                        _hostKey = serverKey;
+                        hostKey = serverKey;
                         return true;
                     }
                 }
             );
 
-            _client.start();
+            client.start();
 
-            ConnectFuture cfuture = _client.connect(_host, _port);
-            if (!cfuture.await(_softTimeout)) {
+            ConnectFuture cfuture = client.connect(host, port);
+            if (!cfuture.await(softTimeout)) {
                 throw new TimeLimitExceededException(
                     String.format(
                         "SSH connection timed out connecting to '%1$s'",
@@ -297,17 +297,17 @@ public class SSHClient implements Closeable {
                 );
             }
 
-            _session = cfuture.getSession();
+            session = cfuture.getSession();
 
             /*
              * Wait for authentication phase so
              * we have host key.
              */
-            int stat = _session.waitFor(
+            int stat = session.waitFor(
                     ClientSession.CLOSED |
                     ClientSession.WAIT_AUTH |
                     ClientSession.TIMEOUT,
-                _softTimeout
+                softTimeout
             );
             if ((stat & ClientSession.CLOSED) != 0) {
                 throw new IOException(
@@ -343,11 +343,11 @@ public class SSHClient implements Closeable {
 
         try {
             AuthFuture afuture;
-            if (_keyPair != null) {
-                afuture = _session.authPublicKey(_user, _keyPair);
+            if (keyPair != null) {
+                afuture = session.authPublicKey(user, keyPair);
             }
-            else if (_password != null) {
-                afuture = _session.authPassword(_user, _password);
+            else if (password != null) {
+                afuture = session.authPassword(user, password);
             }
             else {
                 throw new AuthenticationException(
@@ -357,7 +357,7 @@ public class SSHClient implements Closeable {
                     )
                 );
             }
-            if (!afuture.await(_softTimeout)) {
+            if (!afuture.await(softTimeout)) {
                 throw new TimeLimitExceededException(
                     String.format(
                         "SSH authentication timed out connecting to '%1$s'",
@@ -370,7 +370,7 @@ public class SSHClient implements Closeable {
                     String.format(
                         "SSH authentication to '%1$s' failed. Please verify provided credentials. %2$s",
                         this.getDisplayHost(),
-                            _keyPair == null ?
+                            keyPair == null ?
                             "Make sure host is configured for password authentication" :
                             "Make sure key is authorized at host"
                     )
@@ -392,13 +392,13 @@ public class SSHClient implements Closeable {
      */
     public void close() throws IOException {
         try {
-            if (_session != null) {
-                _session.close(true);
-                _session = null;
+            if (session != null) {
+                session.close(true);
+                session = null;
             }
-            if (_client != null) {
-                _client.stop();
-                _client = null;
+            if (client != null) {
+                client.stop();
+                client = null;
             }
         }
         catch (Exception e) {
@@ -423,18 +423,18 @@ public class SSHClient implements Closeable {
 
         log.debug("Executing: '{}'", command);
 
-        InputStream _xin = null;
-        OutputStream _xout = null;
-        OutputStream _xerr = null;
+        InputStream xin = null;
+        OutputStream xout = null;
+        OutputStream xerr = null;
 
         if (in == null) {
-            _xin = in = new ByteArrayInputStream(new byte[0]);
+            xin = in = new ByteArrayInputStream(new byte[0]);
         }
         if (out == null) {
-            _xout = out = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+            xout = out = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         }
         if (err == null) {
-            _xerr = err = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+            xerr = err = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         }
 
         /*
@@ -442,22 +442,22 @@ public class SSHClient implements Closeable {
          */
         ClientChannel channel = null;
         try (
-            final InputStream _xxin = _xin;
-            final OutputStream _xxout = _xout;
-            final OutputStream _xxerr = _xerr;
+            final InputStream xxin = xin;
+            final OutputStream xxout = xout;
+            final OutputStream xxerr = xerr;
             final ProgressInputStream iin = new ProgressInputStream(in);
             final ProgressOutputStream iout = new ProgressOutputStream(out);
             final ProgressOutputStream ierr = new ProgressOutputStream(err);
         ) {
-            channel = _session.createExecChannel(command);
+            channel = session.createExecChannel(command);
             channel.setIn(iin);
             channel.setOut(iout);
             channel.setErr(ierr);
             channel.open();
 
             long hardEnd = 0;
-            if (_hardTimeout != 0) {
-                hardEnd = System.currentTimeMillis() + _hardTimeout;
+            if (hardTimeout != 0) {
+                hardEnd = System.currentTimeMillis() + hardTimeout;
             }
 
             boolean hardTimeout = false;
@@ -468,7 +468,7 @@ public class SSHClient implements Closeable {
                         ClientChannel.CLOSED |
                         ClientChannel.EOF |
                         ClientChannel.TIMEOUT,
-                    _softTimeout
+                    softTimeout
                 );
 
                 hardTimeout = hardEnd != 0 && System.currentTimeMillis() >= hardEnd;
@@ -509,7 +509,7 @@ public class SSHClient implements Closeable {
                     ClientChannel.EXIT_STATUS |
                     ClientChannel.EXIT_SIGNAL |
                     ClientChannel.TIMEOUT,
-                _softTimeout
+                softTimeout
             );
 
             if ((stat & ClientChannel.EXIT_SIGNAL) != 0) {

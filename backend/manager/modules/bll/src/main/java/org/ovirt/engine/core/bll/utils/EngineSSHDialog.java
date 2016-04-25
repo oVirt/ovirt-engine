@@ -37,10 +37,10 @@ public class EngineSSHDialog extends SSHDialog {
      * @return fingerprint.
      */
     public String getHostFingerprint() throws Exception {
-        if (_client == null) {
+        if (client == null) {
             throw new ConnectException("SSH is not connected");
         }
-        return ((EngineSSHClient)_client).getHostFingerprint();
+        return ((EngineSSHClient) client).getHostFingerprint();
     }
 
     /**

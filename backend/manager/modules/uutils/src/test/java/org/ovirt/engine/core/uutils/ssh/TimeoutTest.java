@@ -61,25 +61,25 @@ public class TimeoutTest {
 
     @Test(expected=TimeLimitExceededException.class)
     public void testConnectTimeout() throws Exception {
-        SSHClient _client = spy(client);
+        SSHClient client = spy(this.client);
         SshClient ssh = spy(SshClient.setUpDefaultClient());
         ConnectFuture future = mock(ConnectFuture.class);
 
-        doReturn(ssh).when(_client).createSshClient();
+        doReturn(ssh).when(client).createSshClient();
         doReturn(future).when(ssh).connect(anyString(), anyInt());
         when(future.await(anyLong())).thenReturn(false);
 
-        _client.connect();
+        client.connect();
     }
 
     @Test(expected=TimeLimitExceededException.class)
     public void testPasswordTimeout() throws Exception {
-        SSHClient _client = spy(client);
+        SSHClient client = spy(this.client);
         SshClient ssh = spy(SshClient.setUpDefaultClient());
         ConnectFuture future = mock(ConnectFuture.class);
         ClientSession session = mock(ClientSession.class);
 
-        doReturn(ssh).when(_client).createSshClient();
+        doReturn(ssh).when(client).createSshClient();
         doReturn(future).when(ssh).connect(anyString(), anyInt());
         when(future.await(anyLong())).thenReturn(true);
         when(future.getSession()).thenReturn(session);
@@ -88,7 +88,7 @@ public class TimeoutTest {
         when(authFuture.await(anyLong())).thenReturn(false);
         when(session.authPassword(anyString(), anyString())).thenReturn(authFuture);
 
-        _client.connect();
-        _client.authenticate();
+        client.connect();
+        client.authenticate();
     }
 }

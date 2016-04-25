@@ -45,43 +45,43 @@ public class SSHDialogTest {
     private static class Sink
     implements Runnable, SSHDialog.Sink {
 
-        private SSHDialog.Control _control;
-        private BufferedReader _incoming;
-        private PrintWriter _outgoing;
-        private List<String> _expect;
-        private List<String> _send;
-        private Throwable _throwable;
-        private Thread _thread;
+        private SSHDialog.Control control;
+        private BufferedReader incoming;
+        private PrintWriter outgoing;
+        private List<String> expect;
+        private List<String> send;
+        private Throwable throwable;
+        private Thread thread;
 
         public Sink(String[] expect, String[] send) {
-            _expect = new LinkedList<>(Arrays.asList(expect));
-            _send = new LinkedList<>(Arrays.asList(send));
-            _thread = new Thread(this);
+            this.expect = new LinkedList<>(Arrays.asList(expect));
+            this.send = new LinkedList<>(Arrays.asList(send));
+            thread = new Thread(this);
         }
 
         public void exception() throws Throwable {
-            if (_throwable != null) {
-                throw _throwable;
+            if (throwable != null) {
+                throw throwable;
             }
-            assertTrue(_expect.size() == 0);
-            assertTrue(_send.size() == 0);
+            assertTrue(expect.size() == 0);
+            assertTrue(send.size() == 0);
         }
 
         @Override
         public void setControl(SSHDialog.Control control) {
-            _control = control;
+            this.control = control;
         }
 
         @Override
         public void setStreams(InputStream incoming, OutputStream outgoing) {
-            _incoming = incoming == null ? null : new BufferedReader(
+            this.incoming = incoming == null ? null : new BufferedReader(
                 new InputStreamReader(
                     incoming,
                     StandardCharsets.UTF_8
                 ),
                 BUFFER_SIZE
             );
-            _outgoing = outgoing == null ? null : new PrintWriter(
+            this.outgoing = outgoing == null ? null : new PrintWriter(
                 new OutputStreamWriter(
                     outgoing,
                     StandardCharsets.UTF_8
@@ -92,46 +92,46 @@ public class SSHDialogTest {
 
         @Override
         public void start() {
-            _thread.start();
+            thread.start();
         }
 
         @Override
         public void stop() {
-            if (_thread != null) {
-                _thread.interrupt();
+            if (thread != null) {
+                thread.interrupt();
                 while(true) {
                     try {
-                        _thread.join();
+                        thread.join();
                         break;
                     }
                     catch (InterruptedException e) {}
                 }
-                _thread = null;
+                thread = null;
             }
         }
 
         public void run()  {
             try {
-                while (_expect.size() > 0) {
-                    assertEquals(_expect.remove(0), _incoming.readLine());
-                    if (_send.size() > 0) {
-                        String tosend = _send.remove(0);
+                while (expect.size() > 0) {
+                    assertEquals(expect.remove(0), incoming.readLine());
+                    if (send.size() > 0) {
+                        String tosend = send.remove(0);
                         if (tosend != null) {
                             for (String s : tosend.split("\n")) {
-                                _outgoing.println(s);
+                                outgoing.println(s);
                             }
                         }
                     }
                 }
             }
             catch (Throwable t) {
-                if (_throwable == null) {
-                    _throwable = t;
+                if (throwable == null) {
+                    throwable = t;
                 }
             }
             finally {
                 try {
-                    _control.close();
+                    control.close();
                 }
                 catch (IOException e) {
                     throw new RuntimeException(e);
@@ -140,15 +140,15 @@ public class SSHDialogTest {
         }
     }
 
-    private static String s_host;
-    private static String s_user;
-    private static String s_password;
-    private static KeyPair s_keyPair;
-    private static int s_port;
+    private static String sshHost;
+    private static String sshUser;
+    private static String sshPassword;
+    private static KeyPair sshKeyPair;
+    private static int sshPort;
 
-    private static SSHD s_sshd;
+    private static SSHD sshd;
 
-    private SSHDialog _sshdialog;
+    private SSHDialog sshDialog;
 
     private static KeyPair getKeyPair(String p12, String alias, String password) throws KeyStoreException {
 
@@ -205,38 +205,38 @@ public class SSHDialogTest {
     public static void init() throws IOException {
         assumeTrue(SystemUtils.IS_OS_UNIX);
 
-        s_host = System.getProperty("ssh-host");
-        if (s_host == null) {
-            s_host = "localhost";
-            s_user = "root";
-            s_password = "password";
+        sshHost = System.getProperty("ssh-host");
+        if (sshHost == null) {
+            sshHost = "localhost";
+            sshUser = "root";
+            sshPassword = "password";
             try {
-                s_keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+                sshKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
             }
             catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
 
-            s_sshd = new SSHD();
-            s_sshd.setUser(
-                s_user,
-                s_password,
-                s_keyPair.getPublic()
+            sshd = new SSHD();
+            sshd.setUser(
+                sshUser,
+                sshPassword,
+                sshKeyPair.getPublic()
             );
             try {
-                    s_sshd.start();
+                    sshd.start();
             }
             catch(IOException e) {
                     throw new RuntimeException(e);
             }
-            s_port = s_sshd.getPort();
+            sshPort = sshd.getPort();
         }
         else {
-            s_port = Integer.parseInt(System.getProperty("ssh-test-port", "22"));
-            s_user = System.getProperty("ssh-test-user", "root");
-            s_password = System.getProperty("ssh-test-password", "password");
+            sshPort = Integer.parseInt(System.getProperty("ssh-test-port", "22"));
+            sshUser = System.getProperty("ssh-test-user", "root");
+            sshPassword = System.getProperty("ssh-test-password", "password");
             try {
-                s_keyPair = getKeyPair(
+                sshKeyPair = getKeyPair(
                     System.getProperty("ssh-test-p12", "src/test/resources/key.p12"),
                     System.getProperty("ssh-test-p12-alias", "1"),
                     System.getProperty("ssh-test-p12-password", "NoSoup4U")
@@ -247,32 +247,32 @@ public class SSHDialogTest {
             }
         }
 
-        System.out.println("Key fingerprint is: " + OpenSSHUtils.getKeyString(s_keyPair.getPublic(), "test"));
+        System.out.println("Key fingerprint is: " + OpenSSHUtils.getKeyString(sshKeyPair.getPublic(), "test"));
     }
 
     @AfterClass
     public static void terminate() throws Exception {
-        if (s_sshd != null) {
-            s_sshd.stop();
+        if (sshd != null) {
+            sshd.stop();
         }
     }
 
     @Before
     public void setUp() {
-        _sshdialog = new SSHDialog();
-        _sshdialog.setHost(s_host, s_port);
-        _sshdialog.setPassword(s_password);
-        _sshdialog.setKeyPair(s_keyPair);
-        _sshdialog.setSoftTimeout(10*1000);
-        _sshdialog.setHardTimeout(30*1000);
+        sshDialog = new SSHDialog();
+        sshDialog.setHost(sshHost, sshPort);
+        sshDialog.setPassword(sshPassword);
+        sshDialog.setKeyPair(sshKeyPair);
+        sshDialog.setSoftTimeout(10*1000);
+        sshDialog.setHardTimeout(30*1000);
     }
 
     @After
     public void tearDown() {
         try {
-            if (_sshdialog != null) {
-                _sshdialog.close();
-                _sshdialog = null;
+            if (sshDialog != null) {
+                sshDialog.close();
+                sshDialog = null;
             }
         }
         catch (IOException e) {
@@ -282,32 +282,32 @@ public class SSHDialogTest {
 
     @Test
     public void testKeyPair() throws Exception {
-        _sshdialog.connect();
-        _sshdialog.authenticate();
+        sshDialog.connect();
+        sshDialog.authenticate();
     }
 
     @Test
     public void testPassword() throws Exception {
-        _sshdialog.setKeyPair(null);
-        _sshdialog.connect();
-        _sshdialog.authenticate();
+        sshDialog.setKeyPair(null);
+        sshDialog.connect();
+        sshDialog.authenticate();
     }
 
     @Test(expected=AuthenticationException.class)
     public void testWrongKeyPair() throws Exception {
-        _sshdialog.setKeyPair(
+        sshDialog.setKeyPair(
             KeyPairGenerator.getInstance("RSA").generateKeyPair()
         );
-        _sshdialog.connect();
-        _sshdialog.authenticate();
+        sshDialog.connect();
+        sshDialog.authenticate();
     }
 
     @Test(expected=AuthenticationException.class)
     public void testWrongPassword() throws Exception {
-        _sshdialog.setKeyPair(null);
-        _sshdialog.setPassword("bad");
-        _sshdialog.connect();
-        _sshdialog.authenticate();
+        sshDialog.setKeyPair(null);
+        sshDialog.setPassword("bad");
+        sshDialog.connect();
+        sshDialog.authenticate();
     }
 
     @Test
@@ -324,9 +324,9 @@ public class SSHDialogTest {
                     "text2"
                 }
             );
-            _sshdialog.connect();
-            _sshdialog.authenticate();
-            _sshdialog.executeCommand(
+            sshDialog.connect();
+            sshDialog.authenticate();
+            sshDialog.executeCommand(
                 sink,
                 "cat",
                 new InputStream[] {start}
@@ -344,10 +344,10 @@ public class SSHDialogTest {
             new String[] {
             }
         );
-        _sshdialog.setSoftTimeout(1*1000);
-        _sshdialog.connect();
-        _sshdialog.authenticate();
-        _sshdialog.executeCommand(
+        sshDialog.setSoftTimeout(1*1000);
+        sshDialog.connect();
+        sshDialog.authenticate();
+        sshDialog.executeCommand(
             sink,
             "cat",
             null
@@ -369,9 +369,9 @@ public class SSHDialogTest {
                     "text2"
                 }
             );
-            _sshdialog.connect();
-            _sshdialog.authenticate();
-            _sshdialog.executeCommand(
+            sshDialog.connect();
+            sshDialog.authenticate();
+            sshDialog.executeCommand(
                 sink,
                 "echo message >&2 && cat",
                 new InputStream[] {start}
@@ -411,9 +411,9 @@ public class SSHDialogTest {
             expect.toArray(new String[0]),
             send.toArray(new String[0])
         );
-        _sshdialog.connect();
-        _sshdialog.authenticate();
-        _sshdialog.executeCommand(
+        sshDialog.connect();
+        sshDialog.authenticate();
+        sshDialog.executeCommand(
             sink,
             "echo start && sleep 4 && cat",
             null
@@ -424,44 +424,44 @@ public class SSHDialogTest {
     private static class ReaderSink
     implements Runnable, SSHDialog.Sink {
 
-        private SSHDialog.Control _control;
-        private BufferedReader _incoming;
-        private PrintWriter _outgoing;
-        private Throwable _throwable;
-        private Thread _thread;
-        private int _delay;
-        private String _last;
+        private SSHDialog.Control control;
+        private BufferedReader incoming;
+        private PrintWriter outgoing;
+        private Throwable throwable;
+        private Thread thread;
+        private int delay;
+        private String last;
 
         public ReaderSink(int delay) {
-            _thread = new Thread(this);
-            _delay = delay;
+            thread = new Thread(this);
+            this.delay = delay;
         }
 
         public String getLast() {
-            return _last;
+            return last;
         }
 
         public void exception() throws Throwable {
-            if (_throwable != null) {
-                throw _throwable;
+            if (throwable != null) {
+                throw throwable;
             }
         }
 
         @Override
         public void setControl(SSHDialog.Control control) {
-            _control = control;
+            this.control = control;
         }
 
         @Override
         public void setStreams(InputStream incoming, OutputStream outgoing) {
-            _incoming = incoming == null ? null : new BufferedReader(
+            this.incoming = incoming == null ? null : new BufferedReader(
                 new InputStreamReader(
                     incoming,
                     StandardCharsets.UTF_8
                 ),
                 BUFFER_SIZE
             );
-            _outgoing = outgoing == null ? null : new PrintWriter(
+            this.outgoing = outgoing == null ? null : new PrintWriter(
                 new OutputStreamWriter(
                     outgoing,
                     StandardCharsets.UTF_8
@@ -472,39 +472,39 @@ public class SSHDialogTest {
 
         @Override
         public void start() {
-            _thread.start();
+            thread.start();
         }
 
         @Override
         public void stop() {
-            if (_thread != null) {
+            if (thread != null) {
                 while(true) {
                     try {
-                        _thread.join();
+                        thread.join();
                         break;
                     }
                     catch (InterruptedException e) {}
                 }
-                _thread = null;
+                thread = null;
             }
         }
 
         public void run()  {
             try {
                 String l;
-                while ((l = _incoming.readLine()) != null) {
-                    _last = l;
-                    Thread.sleep(_delay);
+                while ((l = incoming.readLine()) != null) {
+                    last = l;
+                    Thread.sleep(delay);
                 }
             }
             catch (Throwable t) {
-                if (_throwable == null) {
-                    _throwable = t;
+                if (throwable == null) {
+                    throwable = t;
                 }
             }
             finally {
                 try {
-                    _control.close();
+                    control.close();
                 }
                 catch (IOException e) {
                     throw new RuntimeException(e);
@@ -516,11 +516,11 @@ public class SSHDialogTest {
     @Test
     public void testDelay() throws Throwable {
         ReaderSink sink = new ReaderSink(10);
-        _sshdialog.setSoftTimeout(60*1000);
-        _sshdialog.setHardTimeout(60*1000);
-        _sshdialog.connect();
-        _sshdialog.authenticate();
-        _sshdialog.executeCommand(
+        sshDialog.setSoftTimeout(60*1000);
+        sshDialog.setHardTimeout(60*1000);
+        sshDialog.connect();
+        sshDialog.authenticate();
+        sshDialog.executeCommand(
             sink,
             "x=0;while [ $x -lt 100 ]; do echo line$x; x=$(($x+1)); done",
             null

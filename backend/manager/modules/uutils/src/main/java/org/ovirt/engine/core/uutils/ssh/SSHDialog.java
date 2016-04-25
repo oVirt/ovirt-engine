@@ -79,15 +79,15 @@ public class SSHDialog implements Closeable {
 
     private static final Logger log = LoggerFactory.getLogger(SSHDialog.class);
 
-    private String _host;
-    private int _port;
-    private String _user = "root";
-    private KeyPair _keyPair;
-    private String _password;
-    private long _softTimeout = 0;
-    private long _hardTimeout = 0;
+    private String host;
+    private int port;
+    private String user = "root";
+    private KeyPair keyPair;
+    private String password;
+    private long softTimeout = 0;
+    private long hardTimeout = 0;
 
-    protected SSHClient _client;
+    protected SSHClient client;
 
     /**
      * Get SSH Client.
@@ -115,11 +115,11 @@ public class SSHDialog implements Closeable {
      * @return public key or null.
      */
     public PublicKey getPublicKey() {
-        if (_keyPair == null) {
+        if (keyPair == null) {
             return null;
         }
         else {
-            return _keyPair.getPublic();
+            return keyPair.getPublic();
         }
     }
 
@@ -127,11 +127,11 @@ public class SSHDialog implements Closeable {
      * Get host public key.
      */
     public PublicKey getHostKey() throws IOException {
-        if (_client == null) {
+        if (client == null) {
             throw new IOException("Cannot acquire host key, session is disconnected");
         }
 
-        PublicKey hostKey = _client.getHostKey();
+        PublicKey hostKey = client.getHostKey();
         if (hostKey == null) {
             throw new IOException("Unable to retrieve host key");
         }
@@ -145,8 +145,8 @@ public class SSHDialog implements Closeable {
      * @param port port.
      */
     public void setHost(String host, int port) {
-        _host = host;
-        _port = port;
+        this.host = host;
+        this.port = port;
     }
 
     /**
@@ -162,7 +162,7 @@ public class SSHDialog implements Closeable {
      * @param user user.
      */
     public void setUser(String user) {
-        _user = user;
+        this.user = user;
     }
 
     /**
@@ -171,7 +171,7 @@ public class SSHDialog implements Closeable {
      * is used.
      */
     public void setPassword(String password) {
-        _password = password;
+        this.password = password;
     }
 
     /**
@@ -181,7 +181,7 @@ public class SSHDialog implements Closeable {
      * @param keyPair key pair.
      */
     public void setKeyPair(KeyPair keyPair) {
-        _keyPair = keyPair;
+        this.keyPair = keyPair;
     }
 
     /**
@@ -190,7 +190,7 @@ public class SSHDialog implements Closeable {
      * @param timeout timeout in milliseconds.
      */
     public void setSoftTimeout(long timeout) {
-        _softTimeout = timeout;
+        softTimeout = timeout;
     }
 
     /**
@@ -199,16 +199,16 @@ public class SSHDialog implements Closeable {
      * @param timeout timeout in milliseconds.
      */
     public void setHardTimeout(long timeout) {
-        _hardTimeout = timeout;
+        hardTimeout = timeout;
     }
 
     /**
      * Disconnect session.
      */
     public void close() throws IOException {
-        if (_client != null) {
-            _client.close();
-            _client = null;
+        if (client != null) {
+            client.close();
+            client = null;
         }
     }
 
@@ -219,35 +219,35 @@ public class SSHDialog implements Closeable {
     public void connect() throws Exception {
         log.debug(
             "connect enter ({}:{}, {}, {})",
-            _host,
-            _port,
-            _hardTimeout,
-            _softTimeout
+            host,
+            port,
+            hardTimeout,
+            softTimeout
         );
 
         try {
-            if (_client != null) {
+            if (client != null) {
                 throw new IOException("Already connected");
             }
 
-            _client = getSSHClient();
-            if (_hardTimeout != 0) {
-                _client.setHardTimeout(_hardTimeout);
+            client = getSSHClient();
+            if (hardTimeout != 0) {
+                client.setHardTimeout(hardTimeout);
             }
-            if (_softTimeout != 0) {
-                _client.setSoftTimeout(_softTimeout);
+            if (softTimeout != 0) {
+                client.setSoftTimeout(softTimeout);
             }
-            _client.setHost(_host, _port);
+            client.setHost(host, port);
 
             log.debug("connecting");
-            _client.setUser(_user);
-            _client.connect();
+            client.setUser(user);
+            client.connect();
         }
         catch(Exception e) {
-            if (_client != null) {
+            if (client != null) {
                 log.debug(
                     "Could not connect to host '{}'",
-                    _client.getDisplayHost()
+                    client.getDisplayHost()
                 );
             }
             else {
@@ -264,9 +264,9 @@ public class SSHDialog implements Closeable {
      * Authenticate.
      */
     public void authenticate() throws Exception {
-        _client.setPassword(_password);
-        _client.setKeyPair(_keyPair);
-        _client.authenticate();
+        client.setPassword(password);
+        client.setKeyPair(keyPair);
+        client.authenticate();
     }
 
     /**
@@ -281,7 +281,7 @@ public class SSHDialog implements Closeable {
         InputStream[] initial
     ) throws Exception {
 
-        log.info("SSH execute '{}' '{}'", _client.getDisplayHost(), command);
+        log.info("SSH execute '{}' '{}'", client.getDisplayHost(), command);
 
         try (
             final PipedInputStream pinStdin = new PipedInputStream(BUFFER_SIZE);
@@ -304,8 +304,8 @@ public class SSHDialog implements Closeable {
                     new Control() {
                         @Override
                         public void close() throws IOException {
-                            if (_client != null) {
-                                _client.close();
+                            if (client != null) {
+                                client.close();
                             }
                         }
                     }
@@ -314,7 +314,7 @@ public class SSHDialog implements Closeable {
                 sink.start();
 
                 try {
-                    _client.executeCommand(
+                    client.executeCommand(
                         command,
                         new SequenceInputStream(Collections.enumeration(stdinList)),
                         poutStdout,
@@ -345,7 +345,7 @@ public class SSHDialog implements Closeable {
             catch (Exception e) {
                 log.error(
                     "SSH error running command {}:'{}': {}",
-                    _client.getDisplayHost(),
+                    client.getDisplayHost(),
                     command,
                     e.getMessage()
                 );
@@ -369,7 +369,7 @@ public class SSHDialog implements Closeable {
         String file1,
         String file2
     ) throws Exception {
-        _client.sendFile(file1, file2);
+        client.sendFile(file1, file2);
     }
 
     /**
@@ -380,6 +380,6 @@ public class SSHDialog implements Closeable {
         String file1,
         String file2
     ) throws Exception {
-        _client.receiveFile(file1, file2);
+        client.receiveFile(file1, file2);
     }
 }

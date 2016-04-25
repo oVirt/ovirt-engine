@@ -11,33 +11,33 @@ import java.io.OutputStream;
  * any mean of monitoring progress.
  */
 class ProgressOutputStream extends FilterOutputStream {
-    private int _index;
+    private int index;
 
     public ProgressOutputStream(OutputStream out) {
         super(out);
-        _index = 0;
+        index = 0;
     }
 
     @Override
     public void write(byte[] b, int off, int len)
     throws IOException {
         out.write(b, off, len);
-        _index += len;
+        index += len;
     }
 
     @Override
     public void write(int b)
     throws IOException {
         out.write(b);
-        _index++;
+        index++;
     }
 
     public boolean wasProgress() {
-        if (_index == 0) {
+        if (index == 0) {
             return false;
         }
         else {
-            _index = 0;
+            index = 0;
             return true;
         }
     }

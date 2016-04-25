@@ -20,52 +20,52 @@ import org.apache.sshd.server.shell.ProcessShellFactory;
 public class SSHD {
 
     static class MyPasswordAuthenticator implements PasswordAuthenticator {
-        String _user;
-        String _password;
+        String user;
+        String password;
 
         public MyPasswordAuthenticator(String user, String password) {
-            _user = user;
-            _password = password;
+            this.user = user;
+            this.password = password;
         }
 
         @Override
         public boolean authenticate(String user, String password, ServerSession session) {
-            return _user.equals(user) && _password.equals(password);
+            return this.user.equals(user) && this.password.equals(password);
         }
     }
 
     static class MyPublickeyAuthenticator implements PublickeyAuthenticator {
-        String _user;
-        PublicKey _key;
+        String user;
+        PublicKey key;
 
         public MyPublickeyAuthenticator(String user, PublicKey key) {
-            _user = user;
-            _key = key;
+            this.user = user;
+            this.key = key;
         }
 
         @Override
         public boolean authenticate(String user, PublicKey key, ServerSession session) {
-            return _user.equals(user) && _key.equals(key);
+            return this.user.equals(user) && this.key.equals(key);
         }
     }
 
     static class MyKeyPairProvider implements KeyPairProvider {
-        KeyPair _keyPair;
+        KeyPair keyPair;
 
         public MyKeyPairProvider(KeyPair keyPair) {
-            _keyPair = keyPair;
+            this.keyPair = keyPair;
         }
 
         @Override
         public KeyPair loadKey(String type) {
-            return _keyPair;
+            return keyPair;
         }
 
         /* >=0.10 */
         //@Override
         public Iterable<KeyPair> loadKeys() {
             List<KeyPair> ret = new LinkedList<>();
-            ret.add(_keyPair);
+            ret.add(keyPair);
             return ret;
         }
 
@@ -75,22 +75,22 @@ public class SSHD {
         }
     }
 
-    KeyPair _keyPair;
-    String _user;
-    String _userPassword;
-    PublicKey _userKey;
-    SshServer _sshd;
+    KeyPair keyPair;
+    String user;
+    String userPassword;
+    PublicKey userKey;
+    SshServer sshd;
 
     public SSHD() {
         try {
-            _keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+            keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
         }
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        _sshd = SshServer.setUpDefaultServer();
-        _sshd.setKeyPairProvider(new MyKeyPairProvider(_keyPair));
-        _sshd.setShellFactory(
+        sshd = SshServer.setUpDefaultServer();
+        sshd.setKeyPairProvider(new MyKeyPairProvider(keyPair));
+        sshd.setShellFactory(
             new ProcessShellFactory(
                 new String[] {
                     "/bin/sh",
@@ -98,7 +98,7 @@ public class SSHD {
                 }
             )
         );
-        _sshd.setCommandFactory(
+        sshd.setCommandFactory(
             new CommandFactory() {
                 @Override
                 public Command createCommand(String command) {
@@ -115,27 +115,27 @@ public class SSHD {
     }
 
     public int getPort() {
-        return _sshd.getPort();
+        return sshd.getPort();
     }
 
     public PublicKey getKey() {
-        return _keyPair.getPublic();
+        return keyPair.getPublic();
     }
 
     public void setUser(String user, String password, PublicKey key) {
-        _sshd.setPasswordAuthenticator(new MyPasswordAuthenticator(user, password));
-        _sshd.setPublickeyAuthenticator(new MyPublickeyAuthenticator(user, key));
+        sshd.setPasswordAuthenticator(new MyPasswordAuthenticator(user, password));
+        sshd.setPublickeyAuthenticator(new MyPublickeyAuthenticator(user, key));
     }
 
     public void start() throws IOException {
-        _sshd.start();
+        sshd.start();
     }
 
     public void stop() {
-        while (_sshd != null) {
+        while (sshd != null) {
             try {
-                _sshd.stop(true);
-                _sshd = null;
+                sshd.stop(true);
+                sshd = null;
             }
             catch (InterruptedException e) {}
         }

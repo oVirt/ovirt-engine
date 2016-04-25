@@ -22,8 +22,8 @@ import org.junit.Test;
  * Authentication and sanity.
  */
 public class BasicTest {
-    static final String hello_command = "echo test";
-    static final String hello_result = "test\n";
+    static final String helloCommand = "echo test";
+    static final String helloResult = "test\n";
     SSHClient client;
 
     @BeforeClass
@@ -63,7 +63,7 @@ public class BasicTest {
         client.setPassword(TestCommon.password+"A");
         client.connect();
         client.authenticate();
-        client.executeCommand(hello_command, null, null, null);
+        client.executeCommand(helloCommand, null, null, null);
     }
 
     @Test(expected=AuthenticationException.class)
@@ -73,7 +73,7 @@ public class BasicTest {
         client.setKeyPair(badKeyPair);
         client.connect();
         client.authenticate();
-        client.executeCommand(hello_command, null, null, null);
+        client.executeCommand(helloCommand, null, null, null);
     }
 
     @Test
@@ -83,8 +83,8 @@ public class BasicTest {
             client.setPassword(TestCommon.password);
             client.connect();
             client.authenticate();
-            client.executeCommand(hello_command, null, out, null);
-            assertEquals(hello_result, new String(out.toByteArray(), "UTF-8"));
+            client.executeCommand(helloCommand, null, out, null);
+            assertEquals(helloResult, new String(out.toByteArray(), "UTF-8"));
         }
     }
 
@@ -94,8 +94,8 @@ public class BasicTest {
             client.setKeyPair(TestCommon.keyPair);
             client.connect();
             client.authenticate();
-            client.executeCommand(hello_command, null, out, null);
-            assertEquals(hello_result, new String(out.toByteArray(), "UTF-8"));
+            client.executeCommand(helloCommand, null, out, null);
+            assertEquals(helloResult, new String(out.toByteArray(), "UTF-8"));
         }
     }
 
