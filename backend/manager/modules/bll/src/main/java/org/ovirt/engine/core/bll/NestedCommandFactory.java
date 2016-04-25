@@ -13,10 +13,12 @@ public class NestedCommandFactory {
 
     public CommandBase<?> createWrappedCommand(CommandContext commandContext, VdcActionType actionType,
             VdcActionParametersBase parameter, boolean isInternal) {
-        return isInternal ?
+        CommandBase<?> command = isInternal ?
                 CommandsFactory.createCommand(actionType, parameter,
                         commandContext != null ? commandContext.clone().withoutCompensationContext() : null) :
                 CommandsFactory.createCommand(actionType, parameter);
+        command.setInternalExecution(isInternal);
+        return command;
     }
 
     public void prepareCommandForMonitoring(CommandContext commandContext, CommandBase<?> command) {
