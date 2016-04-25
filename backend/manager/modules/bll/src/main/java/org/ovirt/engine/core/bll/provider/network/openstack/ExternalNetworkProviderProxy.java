@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.provider.network.openstack;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
@@ -17,8 +18,12 @@ public class ExternalNetworkProviderProxy extends BaseNetworkProviderProxy<Opens
 
     @Override
     protected void setClientTokenProvider(Quantum client) {
-        OpenStackTokenProvider tokenProvider = new ExternalNetworkTokenProvider(provider);
-        client.setTokenProvider(tokenProvider);
+        if (StringUtils.isEmpty(provider.getAdditionalProperties().getTenantName())) {
+            OpenStackTokenProvider tokenProvider = new ExternalNetworkTokenProvider(provider);
+            client.setTokenProvider(tokenProvider);
+        } else {
+            super.setClientTokenProvider(client);
+        }
     }
 
     @Override

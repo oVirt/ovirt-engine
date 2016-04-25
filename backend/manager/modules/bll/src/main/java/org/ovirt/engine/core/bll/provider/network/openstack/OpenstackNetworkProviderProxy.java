@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 
-import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
-import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.Subnet;
 
@@ -18,16 +16,6 @@ public class OpenstackNetworkProviderProxy extends BaseNetworkProviderProxy<Open
 
     public OpenstackNetworkProviderProxy(Provider<OpenstackNetworkProviderProperties> provider) {
         super(provider);
-    }
-
-    @Override
-    protected void setClientTokenProvider(Quantum client) {
-        String tenantName = provider.getAdditionalProperties().getTenantName();
-        KeystoneTokenProvider keystoneTokenProvider =
-                new KeystoneTokenProvider(provider.getAuthUrl(),
-                        provider.getUsername(),
-                        provider.getPassword());
-        client.setTokenProvider(keystoneTokenProvider.getProviderByTenant(tenantName));
     }
 
     @Override
