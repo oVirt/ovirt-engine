@@ -8,7 +8,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
@@ -45,13 +44,10 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         if (entity.getAdditionalProperties() != null) {
             switch (entity.getType()) {
             case EXTERNAL_NETWORK:
-                ExternalNetworkProviderProperties externalNetworkProperties =
-                    (ExternalNetworkProviderProperties) entity.getAdditionalProperties();
-                readOnly = externalNetworkProperties.getReadOnly();
-                break;
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties =
                         (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
+                readOnly = networkProperties.getReadOnly();
                 tenantName = networkProperties.getTenantName();
                 pluginType = networkProperties.getPluginType();
                 agentConfiguration = networkProperties.getAgentConfiguration();
@@ -144,11 +140,9 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         private AdditionalProperties mapAdditionalProperties(ResultSet rs, Provider<?> entity) throws SQLException {
             switch (entity.getType()) {
             case EXTERNAL_NETWORK:
-                ExternalNetworkProviderProperties externalNetworkProperties = new ExternalNetworkProviderProperties();
-                externalNetworkProperties.setReadOnly(rs.getBoolean("read_only"));
-                return externalNetworkProperties;
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
+                networkProperties.setReadOnly(rs.getBoolean("read_only"));
                 networkProperties.setTenantName(rs.getString("tenant_name"));
                 networkProperties.setPluginType(rs.getString("plugin_type"));
                 networkProperties.setAgentConfiguration(SerializationFactory.getDeserializer()

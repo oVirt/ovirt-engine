@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
@@ -38,7 +38,7 @@ import com.woorea.openstack.quantum.model.Port.Binding;
 import com.woorea.openstack.quantum.model.Subnet;
 import com.woorea.openstack.quantum.model.Subnets;
 
-public abstract class BaseNetworkProviderProxy<P extends AdditionalProperties> implements NetworkProviderProxy {
+public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProviderProperties> implements NetworkProviderProxy {
 
     private static final List<String> DEFAULT_SECURITY_GROUP = null;
 
@@ -77,7 +77,6 @@ public abstract class BaseNetworkProviderProxy<P extends AdditionalProperties> i
     }
 
     protected abstract void setClientTokenProvider(Quantum client);
-
 
     @Override
     public String add(Network network) {
@@ -307,6 +306,7 @@ public abstract class BaseNetworkProviderProxy<P extends AdditionalProperties> i
         if (port.getSecurityGroups() != null && !port.getSecurityGroups().isEmpty()) {
             runtimeProperties.put("security_groups", StringUtils.join(port.getSecurityGroups(), ','));
         }
+
         return runtimeProperties;
     }
 

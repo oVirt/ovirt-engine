@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -66,7 +66,7 @@ public class ProviderValidatorTest {
     public void testValidateReadOnlyActions() {
 
         String providerName = "providerName";
-        ExternalNetworkProviderProperties additionalProperties = new ExternalNetworkProviderProperties();
+        OpenstackNetworkProviderProperties additionalProperties = new OpenstackNetworkProviderProperties();
         additionalProperties.setReadOnly(true);
         Provider<AdditionalProperties> provider = new Provider<> ();
         provider.setAdditionalProperties(additionalProperties);

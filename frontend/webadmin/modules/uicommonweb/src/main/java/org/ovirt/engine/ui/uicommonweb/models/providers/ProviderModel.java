@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -244,7 +244,7 @@ public class ProviderModel extends Model {
 
                 getReadOnly().setIsAvailable(isReadOnlyAware);
                 if (isReadOnlyAware){
-                    ExternalNetworkProviderProperties properties = (ExternalNetworkProviderProperties) provider.getAdditionalProperties();
+                    OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
                         getReadOnly().setEntity(properties != null ? properties.getReadOnly() : false);
                 }
 
@@ -393,7 +393,7 @@ public class ProviderModel extends Model {
         if (isTypeOpenStackNetwork()) {
             getNeutronAgentModel().flush(provider);
         } else if (isExternalNetwork()){
-            ExternalNetworkProviderProperties properties = new ExternalNetworkProviderProperties();
+            OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
             boolean isReadOnly = readOnly.getEntity();
             properties.setReadOnly(isReadOnly);
             provider.setAdditionalProperties(properties);

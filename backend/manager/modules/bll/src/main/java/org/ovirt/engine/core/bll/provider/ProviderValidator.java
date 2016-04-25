@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.provider;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -52,7 +52,7 @@ public class ProviderValidator {
         if (provider.getType() != ProviderType.EXTERNAL_NETWORK){
             return ValidationResult.VALID;
         }
-        boolean isReadOnly = ((ExternalNetworkProviderProperties) provider.getAdditionalProperties()).getReadOnly();
+        boolean isReadOnly = ((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).getReadOnly();
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_PROVIDER_IS_READ_ONLY,
                 getProviderNameReplacement()).when(isReadOnly);
     }

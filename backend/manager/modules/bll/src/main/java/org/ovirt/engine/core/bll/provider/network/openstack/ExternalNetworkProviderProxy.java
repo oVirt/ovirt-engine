@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.provider.network.openstack;
 
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import com.woorea.openstack.base.client.OpenStackTokenProvider;
 import com.woorea.openstack.quantum.Quantum;
 
-public class ExternalNetworkProviderProxy extends BaseNetworkProviderProxy<ExternalNetworkProviderProperties> {
-    public ExternalNetworkProviderProxy(Provider<ExternalNetworkProviderProperties> provider) {
+public class ExternalNetworkProviderProxy extends BaseNetworkProviderProxy<OpenstackNetworkProviderProperties> {
+    public ExternalNetworkProviderProxy(Provider<OpenstackNetworkProviderProperties> provider) {
         super(provider);
     }
 

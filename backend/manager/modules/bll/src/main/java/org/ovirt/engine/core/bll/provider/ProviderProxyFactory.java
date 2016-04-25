@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.provider.network.openstack.OpenstackNetworkProv
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.bll.provider.vms.VmwareVmProviderProxy;
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -35,7 +34,7 @@ public class ProviderProxyFactory {
     public <P extends ProviderProxy<?>> P create(Provider<?> provider) {
         switch (provider.getType()) {
         case EXTERNAL_NETWORK:
-            return (P) new ExternalNetworkProviderProxy((Provider<ExternalNetworkProviderProperties>) provider);
+            return (P) new ExternalNetworkProviderProxy((Provider<OpenstackNetworkProviderProperties>) provider);
 
         case FOREMAN:
             return (P) new ForemanHostProviderProxy(provider);

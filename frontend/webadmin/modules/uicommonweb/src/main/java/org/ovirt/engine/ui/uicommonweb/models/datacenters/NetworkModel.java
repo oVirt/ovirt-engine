@@ -9,7 +9,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -259,8 +259,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     private boolean isExternalNetworkProviderReadOnly(Provider provider) {
         if (provider.getType()==ProviderType.EXTERNAL_NETWORK){
-            ExternalNetworkProviderProperties properties =
-                    (ExternalNetworkProviderProperties) provider.getAdditionalProperties();
+            OpenstackNetworkProviderProperties properties =
+                    (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
             if (properties.getReadOnly()){
                 return true;
             }

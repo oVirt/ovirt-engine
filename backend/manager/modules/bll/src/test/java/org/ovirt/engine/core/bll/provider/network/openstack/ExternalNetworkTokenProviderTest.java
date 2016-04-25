@@ -17,7 +17,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 
 import com.woorea.openstack.keystone.Keystone;
@@ -57,7 +57,7 @@ public class ExternalNetworkTokenProviderTest {
 
     @Before
     public void setUp() {
-        Provider<ExternalNetworkProviderProperties> provider = new Provider<>();
+        Provider<OpenstackNetworkProviderProperties> provider = new Provider<>();
         provider.setAuthUrl(AUTH_URL);
         provider.setUsername(USERNAME);
         provider.setPassword(PASSWORD);

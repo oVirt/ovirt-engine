@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -115,7 +115,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
 
     private void setCommandExecutionAllowedForProvider(Provider provider){
         if (provider.getType() == ProviderType.EXTERNAL_NETWORK){
-            ExternalNetworkProviderProperties properties = (ExternalNetworkProviderProperties) provider.getAdditionalProperties();
+            OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
             if (properties != null && properties.getReadOnly()){
                 setCommandExecutionAllowed(false);
                 return;

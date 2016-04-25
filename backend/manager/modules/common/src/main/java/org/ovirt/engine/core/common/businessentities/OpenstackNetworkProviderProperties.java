@@ -13,6 +13,16 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
 
     private AgentConfiguration agentConfiguration;
 
+    private Boolean readOnly;
+
+    public Boolean getReadOnly(){
+        return readOnly;
+    }
+
+    public void setReadOnly(Boolean entity) {
+        this.readOnly = entity;
+    }
+
     public String getPluginType() {
         return pluginType;
     }

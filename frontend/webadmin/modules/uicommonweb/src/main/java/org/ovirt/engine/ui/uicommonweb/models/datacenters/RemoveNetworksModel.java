@@ -8,7 +8,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -127,8 +127,8 @@ public class RemoveNetworksModel extends ConfirmationModel {
 
         for (Provider provider : providers) {
             if (externalProviderIds.contains(provider.getId())) {
-                ExternalNetworkProviderProperties properties =
-                        (ExternalNetworkProviderProperties) provider.getAdditionalProperties();
+                OpenstackNetworkProviderProperties properties =
+                        (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
                 if (properties.getReadOnly()) {
                     // If any of the providers is read only, abort
                     return true;

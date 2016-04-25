@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.provider.network.openstack;
 
-import org.ovirt.engine.core.common.businessentities.ExternalNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 
 import com.woorea.openstack.base.client.OpenStackTokenProvider;
@@ -11,10 +11,10 @@ import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 
 public class ExternalNetworkTokenProvider implements OpenStackTokenProvider {
 
-    private final Provider<ExternalNetworkProviderProperties> provider;
+    private final Provider<OpenstackNetworkProviderProperties> provider;
     private Access access;
 
-    public ExternalNetworkTokenProvider(Provider<ExternalNetworkProviderProperties> provider) {
+    public ExternalNetworkTokenProvider(Provider<OpenstackNetworkProviderProperties> provider) {
         this.provider = provider;
     }
 
