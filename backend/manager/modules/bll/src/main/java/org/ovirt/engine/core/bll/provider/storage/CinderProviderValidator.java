@@ -97,7 +97,7 @@ public class CinderProviderValidator extends ProviderValidator {
     }
 
     public ValidationResult isCinderAlreadyExists() {
-        List<Provider<?>> cinderProvidersFromDB = getProviderDao().getAllByType(ProviderType.OPENSTACK_VOLUME);
+        List<Provider<?>> cinderProvidersFromDB = getProviderDao().getAllByTypes(ProviderType.OPENSTACK_VOLUME);
         for (Provider cinderProviderFromDB : cinderProvidersFromDB) {
             if (provider.getUrl().equals(cinderProviderFromDB.getUrl())) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CINDER_ALREADY_EXISTS);

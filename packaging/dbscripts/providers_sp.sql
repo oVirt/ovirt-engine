@@ -117,14 +117,14 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetAllFromProvidersByType (v_provider_type VARCHAR(32))
-RETURNS SETOF providers STABLE AS $PROCEDURE$
+CREATE OR REPLACE FUNCTION GetAllFromProvidersByTypes(v_provider_types varchar[])
+RETURNS SETOF providers AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM providers
-    WHERE provider_type = v_provider_type;
+    WHERE provider_type = ANY(v_provider_types);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

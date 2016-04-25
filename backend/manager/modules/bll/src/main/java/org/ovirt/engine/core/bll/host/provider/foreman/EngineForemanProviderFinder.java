@@ -28,7 +28,7 @@ public class EngineForemanProviderFinder {
             return null;
         }
 
-        List<Provider<?>> hostProviders = dbFacade.getProviderDao().getAllByType(ProviderType.FOREMAN);
+        List<Provider<?>> hostProviders = dbFacade.getProviderDao().getAllByTypes(ProviderType.FOREMAN);
         HostProviderProxy proxy;
         for (Provider<?> provider : hostProviders) {
             proxy = ProviderProxyFactory.getInstance().create(provider);

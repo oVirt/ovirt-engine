@@ -22,9 +22,9 @@ public interface ProviderDao extends GenericDao<Provider<?>, Guid>, SearchDao<Pr
     /**
      * Query for the providers by type.
      *
-     * @param providerType
-     *            The type of the provider.
+     * @param providerTypes
+     *            The types of the provider.
      * @return All providers of that type, or <code>null</code> if none exist found.
      */
-    List<Provider<?>> getAllByType(ProviderType providerType);
+    List<Provider<?>> getAllByTypes(ProviderType ... providerTypes);
 }

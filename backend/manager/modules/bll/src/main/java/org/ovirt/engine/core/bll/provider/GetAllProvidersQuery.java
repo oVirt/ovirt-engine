@@ -12,11 +12,12 @@ public class GetAllProvidersQuery<P extends GetAllProvidersParameters> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        ProviderType providerType = getParameters().getProviderType();
-        if (providerType == null) {
+        ProviderType[] providerTypes = getParameters().getProviderTypes();
+
+        if (providerTypes == null) {
             setReturnValue(getDbFacade().getProviderDao().getAll());
         } else {
-            setReturnValue(getDbFacade().getProviderDao().getAllByType(providerType));
+            setReturnValue(getDbFacade().getProviderDao().getAllByTypes(providerTypes));
         }
     }
 }

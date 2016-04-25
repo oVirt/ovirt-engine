@@ -2,6 +2,8 @@ package org.ovirt.engine.core.dao.provider;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -165,10 +167,14 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
     }
 
     @Override
-    public List<Provider<?>> getAllByType(ProviderType providerType) {
-        return getCallsHandler().executeReadList("GetAllFromProvidersByType",
+    public List<Provider<?>> getAllByTypes(ProviderType ... providerTypes) {
+        if (providerTypes == null) {
+            return Collections.emptyList();
+        }
+        return getCallsHandler().executeReadList("GetAllFromProvidersByTypes",
                                                  ProviderRowMapper.INSTANCE,
-                                                 getCustomMapSqlParameterSource().addValue("provider_type", providerType.toString()));
+                                                 getCustomMapSqlParameterSource().addValue("provider_types", createArrayOf("varchar",
+                                                         Arrays.stream(providerTypes).map(ProviderType::name).toArray())));
     }
 
     public List<Provider<?>> getAllWithQuery(String query) {
