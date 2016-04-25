@@ -2,13 +2,13 @@ package org.ovirt.engine.core.bll.numa.vm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -25,7 +25,7 @@ public class SetVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
     @Override
     protected void doInit() {
         // Store old numa node ids for deletion
-        oldNumaNodeIds = Entities.getIds(getVmNumaNodesForValidation());
+        oldNumaNodeIds = getVmNumaNodesForValidation().stream().map(VmNumaNode::getId).collect(Collectors.toList());
         // Set new numa nodes for validation
         setVmNumaNodesForValidation(getParameters().getVmNumaNodeList());
     }

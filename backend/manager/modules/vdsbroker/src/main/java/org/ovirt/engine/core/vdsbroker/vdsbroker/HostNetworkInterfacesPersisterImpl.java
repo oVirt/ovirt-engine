@@ -56,7 +56,7 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
 
     private void updateModifiedInterfaces() {
         List<VdsNetworkInterface> nicsForUpdate = getNicsForUpdate();
-        List<Guid> updateNicsIds = Entities.getIds(nicsForUpdate);
+        List<Guid> updateNicsIds = nicsForUpdate.stream().map(VdsNetworkInterface::getId).collect(Collectors.toList());
 
         if (!nicsForUpdate.isEmpty()) {
             interfaceDao.massClearNetworkFromNics(updateNicsIds);

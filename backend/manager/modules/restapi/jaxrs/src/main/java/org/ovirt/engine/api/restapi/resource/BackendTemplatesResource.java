@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
@@ -218,7 +219,7 @@ public class BackendTemplatesResource
         if (includeData) {
             // Fill VmInit for entities - the search query no join the VmInit to Templates
             IdsQueryParameters params = new IdsQueryParameters();
-            List<Guid> ids = Entities.getIds(entities);
+            List<Guid> ids = entities.stream().map(VmTemplate::getId).collect(Collectors.toList());
             params.setId(ids);
             VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
             if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {

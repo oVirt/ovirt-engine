@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUsageComparator;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -118,7 +117,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             return null;
         }
 
-        List<Guid> destinationHostsKeys = Entities.getIds(destinationHosts);
+        List<Guid> destinationHostsKeys = destinationHosts.stream().map(VDS::getId).collect(Collectors.toList());
         return new Pair<>(destinationHostsKeys, vmToMigrate.getId());
     }
 

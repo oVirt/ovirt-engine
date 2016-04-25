@@ -8,13 +8,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -152,7 +150,8 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
      */
     protected List<LUNs> filterLUNsThatBelongToExistingStorageDomains(List<LUNs> luns) {
         List<StorageDomain> existingStorageDomains = getStorageDomainDao().getAll();
-        final List<Guid> existingStorageDomainIDs = Entities.getIds(existingStorageDomains);
+        final Set<Guid> existingStorageDomainIDs =
+                existingStorageDomains.stream().map(StorageDomain::getId).collect(Collectors.toSet());
 
         return luns.stream().filter(lun -> !existingStorageDomainIDs.contains(lun.getStorageDomainId()))
                 .collect(Collectors.toList());
@@ -202,7 +201,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<StorageDomain> storageDomains = new ArrayList<>();
 
         // Get existing PhysicalVolumes.
-        List<String> existingLunIds = Entities.getIds(getLunDao().getAll());
+        Set<String> existingLunIds = getLunDao().getAll().stream().map(LUNs::getId).collect(Collectors.toSet());
 
         for (String vgID : vgIDs) {
             VDSReturnValue returnValue;
@@ -217,8 +216,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
             }
 
             ArrayList<LUNs> luns = (ArrayList<LUNs>) returnValue.getReturnValue();
-            List<String> lunIdsOnStorage = Entities.getIds(luns);
-            if (CollectionUtils.containsAny(lunIdsOnStorage, existingLunIds)) {
+            if (luns.stream().anyMatch(l -> existingLunIds.contains(l.getId()))) {
                 log.info("There are existing luns in the system which are part of VG id '{}'", vgID);
                 continue;
             }

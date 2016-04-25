@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -158,7 +158,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     public static boolean unregisterLibvirtSecrets(
             StorageDomain storageDomain, VDS vds, List<LibvirtSecret> libvirtSecrets) {
-        List<Guid> libvirtSecretsUuids = Entities.getIds(libvirtSecrets);
+        List<Guid> libvirtSecretsUuids = libvirtSecrets.stream().map(LibvirtSecret::getId).collect(Collectors.toList());
         if (!libvirtSecrets.isEmpty()) {
             VDSReturnValue returnValue;
             try {

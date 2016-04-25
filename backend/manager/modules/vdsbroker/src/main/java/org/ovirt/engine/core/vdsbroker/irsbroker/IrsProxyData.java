@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SpmStatus;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
@@ -253,8 +253,9 @@ public class IrsProxyData {
         // Note - this method is used as it returns only hosts from VIRT supported clusters
         // (we use the domain monitoring results only from those clusters hosts).
         // every change to it should be inspected carefully.
-        return Entities.getIds(DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatuses(storagePoolId,
-                vdsConnectedToPoolStatuses));
+        return DbFacade.getInstance().getVdsDao()
+                .getAllForStoragePoolAndStatuses(storagePoolId, vdsConnectedToPoolStatuses).stream().map(VDS::getId)
+                .collect(Collectors.toSet());
     }
 
     @SuppressWarnings("unchecked")
