@@ -367,7 +367,9 @@ public class ProviderModel extends Model {
     private boolean validateConnectionSettings() {
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
+        if (getType().getSelectedItem().isTenantRequired()) {
+            getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
+        }
         getAuthUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
