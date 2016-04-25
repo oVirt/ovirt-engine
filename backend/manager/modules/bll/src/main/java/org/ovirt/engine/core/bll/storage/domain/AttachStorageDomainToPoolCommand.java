@@ -8,7 +8,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -145,7 +143,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                     returnValue.getExceptionString());
                         }
                     }
-                    createDefaultDiskProfile();
+                    if (getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
+                        createDefaultDiskProfile();
+                    }
                 }
 
                 runVdsCommand(VDSCommandType.AttachStorageDomain,
@@ -203,22 +203,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         setSucceeded(true);
     }
 
-    /**
-     * Creating default disk profile for existing storage domain.
-     */
-    private void createDefaultDiskProfile() {
-        if (getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
-            final DiskProfile diskProfile =
-                    DiskProfileHelper.createDiskProfile(getStorageDomain().getId(),
-                            getStorageDomainName());
-            executeInNewTransaction(() -> {
-                getDiskProfileDao().save(diskProfile);
-                getCompensationContext().snapshotNewEntity(diskProfile);
-                getCompensationContext().stateChanged();
-                return null;
-            });
-        }
-    }
+
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {

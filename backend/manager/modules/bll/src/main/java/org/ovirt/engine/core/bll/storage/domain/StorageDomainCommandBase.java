@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
@@ -25,7 +26,9 @@ import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.pool.RefreshStoragePoolAndDisconnectAsyncOperationFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -34,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -482,5 +486,20 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected EventQueue getEventQueue() {
         return eventQueue;
+    }
+
+    /**
+     * Creates default disk profile for existing storage domain.
+     */
+    protected void createDefaultDiskProfile() {
+        executeInNewTransaction(() -> {
+            final DiskProfile diskProfile =
+                    DiskProfileHelper.createDiskProfile(getStorageDomain().getId(), getStorageDomainName());
+            DiskProfileParameters diskProfileParameters = new DiskProfileParameters(diskProfile, true);
+            runInternalAction(VdcActionType.AddDiskProfile, diskProfileParameters);
+            getCompensationContext().snapshotNewEntity(diskProfile);
+            getCompensationContext().stateChanged();
+            return null;
+        });
     }
 }

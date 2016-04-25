@@ -14,4 +14,7 @@ public class DiskProfileParameters extends ProfileParametersBase<DiskProfile> {
         super(diskProfile);
     }
 
+    public DiskProfileParameters(DiskProfile diskProfile, boolean addPermissions) {
+        super(diskProfile, addPermissions);
+    }
 }
