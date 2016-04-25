@@ -64,6 +64,10 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         Guid childCmdId;
     }
 
+    public UploadImageCommand(T parameters) {
+        super(parameters);
+    }
+
     public UploadImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -80,12 +84,16 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
 
         log.info("Creating {} image", getUploadType());
         createImage();
+        log.info("nnnnnnnnnnnnnnnnnnnnnxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         setActionReturnValue(getCommandId());
+        log.info("xxxxxxxxxxxxxxxxxxxxxxxxggggggggggggggggggggxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         setSucceeded(true);
+        log.info("ggggggggxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         // The callback will poll for createImage() completion and resume the initialization
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
+        log.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         ImageTransfer entity = getImageTransferDao().get(getCommandId());
         if (entity == null || entity.getPhase() == null) {
             log.error("Image Upload status entity corrupt or missing from database"
@@ -105,10 +113,12 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
             return;
         }
 
+        log.info("xxxxxxxxxxxxxxxxxaaaaaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         executeStateHandler(entity, ts, childCmdId);
     }
 
     public void executeStateHandler(ImageTransfer entity, long timestamp, Guid childCmdId) {
+        log.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxmmmmmmmmmmmmmmmmxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         StateContext context = new StateContext();
         context.entity = entity;
         context.iterationTimestamp = timestamp;
@@ -118,6 +128,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         // as well as updating the entity to reflect transitions.
         switch (entity.getPhase()) {
         case INITIALIZING:
+            log.info("xxxxxxxxxxxxxxxxxxxoooooooooooooooooooooxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
             handleInitializing(context);
             break;
         case RESUMING:
@@ -159,8 +170,10 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         switch (CommandCoordinatorUtil.getCommandStatus(context.childCmdId)) {
         case NOT_STARTED:
         case ACTIVE:
+            log.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             log.info("Waiting for {} to be added for image transfer command '{}'",
                     getUploadType(), getCommandId());
+            log.info("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
             return;
         case SUCCEEDED:
             break;
@@ -171,6 +184,7 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
             return;
         }
 
+        log.info("aaaaaabbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         VdcReturnValueBase addDiskRetVal = CommandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
         if (addDiskRetVal == null || !addDiskRetVal.getSucceeded()) {
             log.error("Failed to add {} (command status was success, but return value was failed)"
@@ -180,13 +194,16 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
             return;
         }
 
+        log.info("aaaaaabbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxiaaaaaaaaaaaaaaaaaaaaa");
         Guid createdId = addDiskRetVal.getActionReturnValue();
         DiskImage createdDiskImage = (DiskImage) getDiskDao().get(createdId);
         getParameters().setImageId(createdId);
         persistCommand(getParameters().getParentCommand(), true);
         setImage(createdDiskImage);
+        log.info("aaaaaabbbbbbbbbbbxxxxxxxxxxxxxxxxxxxxxxiaaaaaaaaaaaaaaaaaaaaa");
         log.info("Successfully added {} for image transfer command '{}'",
                 getUploadDescription(), getCommandId());
+        log.info("aaaaaabbbbbbbbbbbxxxxxxxxxxxxxxxxxxxxxxiaaaaaaaaaaaaaaaaaaaaa");
 
         ImageTransferUpdates updates = new ImageTransferUpdates();
         updates.setDiskId(createdId);
@@ -195,7 +212,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         // The image will remain locked until the upload command has completed.
         lockImage();
 
+        log.info("aaaaaabbbbbbbbbnnnnnnnnnnnnnnnnnnnnnnnnnnbbxxxxxxxxxxxxxxxxxxxxxxiaaaaaaaaaaaaaaaaaaaaa");
         boolean initSessionSuccess = startImageTransferSession();
+        log.info("aaaa,,,,,,,,,,,,aabbbbbbbbbnnnnnnnnnnnnnnnnnnnnnnnnnnbbxxxxxxxxxxxxxxxxxxxxxxiaaaaaaaaaaaaaaaaaaaaa");
         updateEntityPhase(initSessionSuccess ? ImageTransferPhase.TRANSFERRING
                 : ImageTransferPhase.PAUSED_SYSTEM);
         log.info("Returning from proceedCommandExecution after starting transfer session"

@@ -28,6 +28,10 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturnForXmlRpc;
 @NonTransactiveCommandAttribute
 public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends UploadImageCommand<T> implements QuotaStorageDependent {
 
+    public UploadDiskImageCommand(T parameters) {
+        super(parameters);
+    }
+
     public UploadDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

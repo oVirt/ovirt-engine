@@ -15,6 +15,10 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 
 public class UploadImageStatusCommand<T extends UploadImageStatusParameters> extends CommandBase<T> {
 
+    public UploadImageStatusCommand(T parameters) {
+        super(parameters);
+    }
+
     public UploadImageStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
