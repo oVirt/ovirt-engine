@@ -42,8 +42,7 @@ public class SSHDialogTest {
 
     private static final int BUFFER_SIZE = 10 * 1024;
 
-    private static class Sink
-    implements Runnable, SSHDialog.Sink {
+    private static class Sink implements Runnable, SSHDialog.Sink {
 
         private SSHDialog.Control control;
         private BufferedReader incoming;
@@ -75,19 +74,15 @@ public class SSHDialogTest {
         @Override
         public void setStreams(InputStream incoming, OutputStream outgoing) {
             this.incoming = incoming == null ? null : new BufferedReader(
-                new InputStreamReader(
-                    incoming,
-                    StandardCharsets.UTF_8
-                ),
-                BUFFER_SIZE
-            );
+                    new InputStreamReader(
+                            incoming,
+                            StandardCharsets.UTF_8),
+                    BUFFER_SIZE);
             this.outgoing = outgoing == null ? null : new PrintWriter(
-                new OutputStreamWriter(
-                    outgoing,
-                    StandardCharsets.UTF_8
-                ),
-                true
-            );
+                    new OutputStreamWriter(
+                            outgoing,
+                            StandardCharsets.UTF_8),
+                    true);
         }
 
         @Override
@@ -99,18 +94,18 @@ public class SSHDialogTest {
         public void stop() {
             if (thread != null) {
                 thread.interrupt();
-                while(true) {
+                while (true) {
                     try {
                         thread.join();
                         break;
+                    } catch (InterruptedException e) {
                     }
-                    catch (InterruptedException e) {}
                 }
                 thread = null;
             }
         }
 
-        public void run()  {
+        public void run() {
             try {
                 while (expect.size() > 0) {
                     assertEquals(expect.remove(0), incoming.readLine());
@@ -123,17 +118,14 @@ public class SSHDialogTest {
                         }
                     }
                 }
-            }
-            catch (Throwable t) {
+            } catch (Throwable t) {
                 if (throwable == null) {
                     throwable = t;
                 }
-            }
-            finally {
+            } finally {
                 try {
                     control.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -159,46 +151,37 @@ public class SSHDialogTest {
             KeyStore ks = KeyStore.getInstance("PKCS12");
             ks.load(in, password.toCharArray());
 
-            entry = (KeyStore.PrivateKeyEntry)ks.getEntry(
-                alias,
-                new KeyStore.PasswordProtection(
-                    password.toCharArray()
-                )
-            );
-        }
-        catch (Exception e) {
+            entry = (KeyStore.PrivateKeyEntry) ks.getEntry(
+                    alias,
+                    new KeyStore.PasswordProtection(
+                            password.toCharArray()));
+        } catch (Exception e) {
             throw new KeyStoreException(
-                String.format(
-                    "Failed to get certificate entry from key store: %1$s/%2$s",
-                    p12,
-                    alias
-                ),
-                e
-            );
-        }
-        finally {
+                    String.format(
+                            "Failed to get certificate entry from key store: %1$s/%2$s",
+                            p12,
+                            alias),
+                    e);
+        } finally {
             if (in != null) {
                 try {
                     in.close();
+                } catch (IOException e) {
                 }
-                catch(IOException e) {}
             }
         }
 
         if (entry == null) {
             throw new KeyStoreException(
-                String.format(
-                    "Bad key store: %1$s/%2$s",
-                    p12,
-                    alias
-                )
-            );
+                    String.format(
+                            "Bad key store: %1$s/%2$s",
+                            p12,
+                            alias));
         }
 
         return new KeyPair(
-            entry.getCertificate().getPublicKey(),
-            entry.getPrivateKey()
-        );
+                entry.getCertificate().getPublicKey(),
+                entry.getPrivateKey());
     }
 
     @BeforeClass
@@ -212,37 +195,31 @@ public class SSHDialogTest {
             sshPassword = "password";
             try {
                 sshKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-            }
-            catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
 
             sshd = new SSHD();
             sshd.setUser(
-                sshUser,
-                sshPassword,
-                sshKeyPair.getPublic()
-            );
+                    sshUser,
+                    sshPassword,
+                    sshKeyPair.getPublic());
             try {
-                    sshd.start();
-            }
-            catch(IOException e) {
-                    throw new RuntimeException(e);
+                sshd.start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             sshPort = sshd.getPort();
-        }
-        else {
+        } else {
             sshPort = Integer.parseInt(System.getProperty("ssh-test-port", "22"));
             sshUser = System.getProperty("ssh-test-user", "root");
             sshPassword = System.getProperty("ssh-test-password", "password");
             try {
                 sshKeyPair = getKeyPair(
-                    System.getProperty("ssh-test-p12", "src/test/resources/key.p12"),
-                    System.getProperty("ssh-test-p12-alias", "1"),
-                    System.getProperty("ssh-test-p12-password", "NoSoup4U")
-                );
-            }
-            catch (KeyStoreException e) {
+                        System.getProperty("ssh-test-p12", "src/test/resources/key.p12"),
+                        System.getProperty("ssh-test-p12-alias", "1"),
+                        System.getProperty("ssh-test-p12-password", "NoSoup4U"));
+            } catch (KeyStoreException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -263,8 +240,8 @@ public class SSHDialogTest {
         sshDialog.setHost(sshHost, sshPort);
         sshDialog.setPassword(sshPassword);
         sshDialog.setKeyPair(sshKeyPair);
-        sshDialog.setSoftTimeout(10*1000);
-        sshDialog.setHardTimeout(30*1000);
+        sshDialog.setSoftTimeout(10 * 1000);
+        sshDialog.setHardTimeout(30 * 1000);
     }
 
     @After
@@ -274,8 +251,7 @@ public class SSHDialogTest {
                 sshDialog.close();
                 sshDialog = null;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -293,16 +269,15 @@ public class SSHDialogTest {
         sshDialog.authenticate();
     }
 
-    @Test(expected=AuthenticationException.class)
+    @Test(expected = AuthenticationException.class)
     public void testWrongKeyPair() throws Exception {
         sshDialog.setKeyPair(
-            KeyPairGenerator.getInstance("RSA").generateKeyPair()
-        );
+                KeyPairGenerator.getInstance("RSA").generateKeyPair());
         sshDialog.connect();
         sshDialog.authenticate();
     }
 
-    @Test(expected=AuthenticationException.class)
+    @Test(expected = AuthenticationException.class)
     public void testWrongPassword() throws Exception {
         sshDialog.setKeyPair(null);
         sshDialog.setPassword("bad");
@@ -314,68 +289,62 @@ public class SSHDialogTest {
     public void testSimple() throws Throwable {
         try (final InputStream start = new ByteArrayInputStream("start\n".getBytes("UTF-8"))) {
             Sink sink = new Sink(
-                new String[] {
-                    "start",
-                    "text1",
-                    "text2"
-                },
-                new String[] {
-                    "text1",
-                    "text2"
-                }
-            );
+                    new String[] {
+                            "start",
+                            "text1",
+                            "text2"
+                    },
+                    new String[] {
+                            "text1",
+                            "text2"
+                    });
             sshDialog.connect();
             sshDialog.authenticate();
             sshDialog.executeCommand(
-                sink,
-                "cat",
-                new InputStream[] {start}
-            );
+                    sink,
+                    "cat",
+                    new InputStream[] { start });
             sink.exception();
         }
     }
 
-    @Test(expected=TimeLimitExceededException.class)
+    @Test(expected = TimeLimitExceededException.class)
     public void testTimeout() throws Throwable {
         Sink sink = new Sink(
-            new String[] {
-                "start"
-            },
-            new String[] {
-            }
-        );
-        sshDialog.setSoftTimeout(1*1000);
+                new String[] {
+                        "start"
+                },
+                new String[] {
+                });
+        sshDialog.setSoftTimeout(1 * 1000);
         sshDialog.connect();
         sshDialog.authenticate();
         sshDialog.executeCommand(
-            sink,
-            "cat",
-            null
-        );
+                sink,
+                "cat",
+                null);
         sink.exception();
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void testStderr() throws Throwable {
         try (final InputStream start = new ByteArrayInputStream("start\n".getBytes("UTF-8"))) {
             Sink sink = new Sink(
-                new String[] {
-                    "start",
-                    "text1",
-                    "text2"
-                },
-                new String[] {
-                    "text1",
-                    "text2"
-                }
-            );
+                    new String[] {
+                            "start",
+                            "text1",
+                            "text2"
+                    },
+                    new String[] {
+                            "text1",
+                            "text2"
+                    });
             sshDialog.connect();
             sshDialog.authenticate();
             sshDialog.executeCommand(
-                sink,
-                "echo message >&2 && cat",
-                new InputStream[] {start}
-            );
+                    sink,
+                    "echo message >&2 && cat",
+                    new InputStream[] { start });
             sink.exception();
         }
     }
@@ -387,42 +356,38 @@ public class SSHDialogTest {
         final int FACTOR = 5;
 
         StringBuilder longText = new StringBuilder();
-        for (int i=0;i<NUM/FACTOR;i++) {
+        for (int i = 0; i < NUM / FACTOR; i++) {
             longText.append(LINE).append("\n");
         }
 
         List<String> expect = new LinkedList<>();
         expect.add("start");
-        for (int i=0;i<NUM;i++) {
+        for (int i = 0; i < NUM; i++) {
             expect.add(LINE);
         }
 
         List<String> send = new LinkedList<>();
-        for (int i=0;i<NUM;i++) {
-            if (i % (NUM/FACTOR) == 0) {
+        for (int i = 0; i < NUM; i++) {
+            if (i % (NUM / FACTOR) == 0) {
                 send.add(longText.toString());
-            }
-            else {
+            } else {
                 send.add(null);
             }
         }
 
         Sink sink = new Sink(
-            expect.toArray(new String[0]),
-            send.toArray(new String[0])
-        );
+                expect.toArray(new String[0]),
+                send.toArray(new String[0]));
         sshDialog.connect();
         sshDialog.authenticate();
         sshDialog.executeCommand(
-            sink,
-            "echo start && sleep 4 && cat",
-            null
-        );
+                sink,
+                "echo start && sleep 4 && cat",
+                null);
         sink.exception();
     }
 
-    private static class ReaderSink
-    implements Runnable, SSHDialog.Sink {
+    private static class ReaderSink implements Runnable, SSHDialog.Sink {
 
         private SSHDialog.Control control;
         private BufferedReader incoming;
@@ -455,19 +420,15 @@ public class SSHDialogTest {
         @Override
         public void setStreams(InputStream incoming, OutputStream outgoing) {
             this.incoming = incoming == null ? null : new BufferedReader(
-                new InputStreamReader(
-                    incoming,
-                    StandardCharsets.UTF_8
-                ),
-                BUFFER_SIZE
-            );
+                    new InputStreamReader(
+                            incoming,
+                            StandardCharsets.UTF_8),
+                    BUFFER_SIZE);
             this.outgoing = outgoing == null ? null : new PrintWriter(
-                new OutputStreamWriter(
-                    outgoing,
-                    StandardCharsets.UTF_8
-                ),
-                true
-            );
+                    new OutputStreamWriter(
+                            outgoing,
+                            StandardCharsets.UTF_8),
+                    true);
         }
 
         @Override
@@ -478,35 +439,32 @@ public class SSHDialogTest {
         @Override
         public void stop() {
             if (thread != null) {
-                while(true) {
+                while (true) {
                     try {
                         thread.join();
                         break;
+                    } catch (InterruptedException e) {
                     }
-                    catch (InterruptedException e) {}
                 }
                 thread = null;
             }
         }
 
-        public void run()  {
+        public void run() {
             try {
                 String l;
                 while ((l = incoming.readLine()) != null) {
                     last = l;
                     Thread.sleep(delay);
                 }
-            }
-            catch (Throwable t) {
+            } catch (Throwable t) {
                 if (throwable == null) {
                     throwable = t;
                 }
-            }
-            finally {
+            } finally {
                 try {
                     control.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -516,15 +474,14 @@ public class SSHDialogTest {
     @Test
     public void testDelay() throws Throwable {
         ReaderSink sink = new ReaderSink(10);
-        sshDialog.setSoftTimeout(60*1000);
-        sshDialog.setHardTimeout(60*1000);
+        sshDialog.setSoftTimeout(60 * 1000);
+        sshDialog.setHardTimeout(60 * 1000);
         sshDialog.connect();
         sshDialog.authenticate();
         sshDialog.executeCommand(
-            sink,
-            "x=0;while [ $x -lt 100 ]; do echo line$x; x=$(($x+1)); done",
-            null
-        );
+                sink,
+                "x=0;while [ $x -lt 100 ]; do echo line$x; x=$(($x+1)); done",
+                null);
         sink.exception();
         assertEquals("line99", sink.getLast());
     }

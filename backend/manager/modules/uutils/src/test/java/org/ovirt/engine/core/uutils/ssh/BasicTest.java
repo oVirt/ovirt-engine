@@ -52,21 +52,20 @@ public class BasicTest {
                 client.close();
                 client = null;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Test(expected=AuthenticationException.class)
+    @Test(expected = AuthenticationException.class)
     public void testWrongPassword() throws Exception {
-        client.setPassword(TestCommon.password+"A");
+        client.setPassword(TestCommon.password + "A");
         client.connect();
         client.authenticate();
         client.executeCommand(helloCommand, null, null, null);
     }
 
-    @Test(expected=AuthenticationException.class)
+    @Test(expected = AuthenticationException.class)
     public void testWrongKey() throws Exception {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         KeyPair badKeyPair = generator.generateKeyPair();
@@ -77,8 +76,7 @@ public class BasicTest {
     }
 
     @Test
-    public void testPassword()
-    throws Exception {
+    public void testPassword() throws Exception {
         try (final ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500)) {
             client.setPassword(TestCommon.password);
             client.connect();

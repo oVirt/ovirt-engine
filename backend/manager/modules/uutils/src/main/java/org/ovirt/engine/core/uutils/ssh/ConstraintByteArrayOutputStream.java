@@ -12,7 +12,8 @@ public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
     /**
      * Constructor.
      *
-     * @param max soft limit of buffer.
+     * @param max
+     *            soft limit of buffer.
      */
     public ConstraintByteArrayOutputStream(int max) {
         super();
@@ -32,8 +33,7 @@ public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
     public void write(int b) {
         if (count < max) {
             super.write(b);
-        }
-        else {
+        } else {
             truncated = true;
         }
     }
@@ -47,8 +47,7 @@ public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
     public void write(byte[] b, int off, int len) {
         if (count < max) {
             super.write(b, off, len);
-        }
-        else {
+        } else {
             truncated = true;
         }
     }

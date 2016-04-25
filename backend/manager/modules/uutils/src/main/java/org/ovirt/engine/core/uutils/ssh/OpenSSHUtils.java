@@ -28,12 +28,12 @@ public class OpenSSHUtils {
     private static final String SSH_RSA = "ssh-rsa";
     private static final String MD5 = "MD5";
 
-    private OpenSSHUtils () {
+    private OpenSSHUtils() {
         // No instances allowed.
     }
 
     private static byte[] getByteArrayOfData(DataInputStream dataInputStream) throws IOException {
-        byte [] contents = new byte[dataInputStream.readInt()];
+        byte[] contents = new byte[dataInputStream.readInt()];
         if (dataInputStream.read(contents, 0, contents.length) != contents.length) {
             throw new IOException("Invalid ASN1 array");
         }
@@ -50,11 +50,9 @@ public class OpenSSHUtils {
             throw new GeneralSecurityException("Unsupported SSH public key");
         }
 
-
         try (
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(words[1]));
-            DataInputStream dataInputStream = new DataInputStream(inputStream)
-        ) {
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(words[1]));
+                DataInputStream dataInputStream = new DataInputStream(inputStream)) {
             if (!Arrays.equals(getByteArrayOfData(dataInputStream), SSH_RSA.getBytes(StandardCharsets.UTF_8))) {
                 throw new GeneralSecurityException("Unsupported SSH public key");
             }
@@ -63,11 +61,9 @@ public class OpenSSHUtils {
             byte[] modulusBytes = getByteArrayOfData(dataInputStream);
 
             return KeyFactory.getInstance("RSA").generatePublic(
-                new RSAPublicKeySpec(
-                    new BigInteger(modulusBytes),
-                    new BigInteger(exponentBytes)
-                )
-            );
+                    new RSAPublicKeySpec(
+                            new BigInteger(modulusBytes),
+                            new BigInteger(exponentBytes)));
         }
     }
 
@@ -76,9 +72,9 @@ public class OpenSSHUtils {
      *
      * Note that only RSA keys are supported at the moment.
      *
-     * @param key the public key to convert
-     * @return an array of bytes that can with the representation of
-     *   the public key
+     * @param key
+     *            the public key to convert
+     * @return an array of bytes that can with the representation of the public key
      */
     public static byte[] getKeyBytes(final PublicKey key) {
         // We only support RSA at the moment:
@@ -125,25 +121,23 @@ public class OpenSSHUtils {
             }
 
             return keyBytes;
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             log.error("Error while serializing public key, will return null.", exception);
             return null;
         }
     }
 
     /**
-     * Convert a public key to the SSH format used in the
-     * <code>authorized_keys</code> files.
+     * Convert a public key to the SSH format used in the <code>authorized_keys</code> files.
      *
      * Note that only RSA keys are supported at the moment.
      *
-     * @param key the public key to convert
-     * @param alias the alias to be appended at the end of the line, if
-     *   it is <code>null</code> nothing will be appended
-     * @return an string that can be directly written to the
-     *   <code>authorized_keys</code> file or <code>null</code> if the
-     *   conversion can't be performed for whatever the reason
+     * @param key
+     *            the public key to convert
+     * @param alias
+     *            the alias to be appended at the end of the line, if it is <code>null</code> nothing will be appended
+     * @return an string that can be directly written to the <code>authorized_keys</code> file or <code>null</code> if
+     *         the conversion can't be performed for whatever the reason
      */
     public static String getKeyString(final PublicKey key, String alias) {
         // Get the serialized version of the key:
@@ -161,7 +155,8 @@ public class OpenSSHUtils {
         }
 
         // Return the generated SSH public key:
-        final StringBuilder buffer = new StringBuilder(SSH_RSA.length() + 1 + encoding.length() + (alias != null? 1 + alias.length(): 0) + 1);
+        final StringBuilder buffer = new StringBuilder(
+                SSH_RSA.length() + 1 + encoding.length() + (alias != null ? 1 + alias.length() : 0) + 1);
         buffer.append(SSH_RSA);
         buffer.append(" ");
         buffer.append(encoding);
@@ -178,7 +173,8 @@ public class OpenSSHUtils {
         return keyString;
     }
 
-    public static final boolean checkKeyFingerprint(String expected, final PublicKey key, StringBuilder actual) throws Exception {
+    public static final boolean checkKeyFingerprint(String expected, final PublicKey key, StringBuilder actual)
+            throws Exception {
         String digest = expected.split(":", 2)[0];
         try {
             if (digest.length() == 2) {
@@ -186,7 +182,7 @@ public class OpenSSHUtils {
                 digest = MD5;
                 expected = digest + ":" + expected;
             }
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             // ignore
         }
 
@@ -231,10 +227,9 @@ public class OpenSSHUtils {
                 fingerprint = s.toString();
             } else {
                 fingerprint = String.format(
-                    "%s:%s",
-                    digest.toUpperCase().replace("-", ""),
-                    new Base64(0).encodeToString(md.digest()).replaceAll("=", "")
-                );
+                        "%s:%s",
+                        digest.toUpperCase().replace("-", ""),
+                        new Base64(0).encodeToString(md.digest()).replaceAll("=", ""));
             }
 
             if (log.isDebugEnabled()) {
@@ -252,9 +247,8 @@ public class OpenSSHUtils {
     }
 
     /*
-     * commons-codec <= 1.4 has Base64.isArrayByteBase64, but it is deprecated;
-     * commons-codec >= 1.5 has Base64.isBase64 which works on byte[], but
-     * it treats whitespace as valid. So, we roll out our own version.
+     * commons-codec <= 1.4 has Base64.isArrayByteBase64, but it is deprecated; commons-codec >= 1.5 has Base64.isBase64
+     * which works on byte[], but it treats whitespace as valid. So, we roll out our own version.
      */
     private static boolean isBase64(byte[] octects) {
         for (int i = 0; i < octects.length; i++) {
@@ -267,15 +261,13 @@ public class OpenSSHUtils {
 
     public static boolean isPublicKeyValid(String publicKey) {
         int i = publicKey.indexOf("\n");
-        if (i != -1 && i != publicKey.length()-1) {
+        if (i != -1 && i != publicKey.length() - 1) {
             return false;
         }
 
         /*
-         * An OpenSSH public key consists of:
-         * [mandatory] The key type
-         * [mandatory] A chunk of PEM-encoded data (PEM is a specific type of Base64 encoding)
-         * [optional] A comment
+         * An OpenSSH public key consists of: [mandatory] The key type [mandatory] A chunk of PEM-encoded data (PEM is a
+         * specific type of Base64 encoding) [optional] A comment
          */
         String[] words = publicKey.split("\\s+", 3);
 
@@ -284,8 +276,8 @@ public class OpenSSHUtils {
         }
 
         /*
-         * As per http://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html
-         * these character class are US-ASCII only.
+         * As per http://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html these character class are
+         * US-ASCII only.
          */
         if (!words[0].matches("^[\\p{Alpha}\\p{Digit}-]*$")) {
             return false;

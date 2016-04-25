@@ -22,8 +22,7 @@ import org.slf4j.LoggerFactory;
 /**
  * SSH dialog to be used with SSHClient class.
  *
- * Easy processing of stdin/stdout of SSHClient session.
- * Provided the limitations of the SSH implementation this is the
+ * Easy processing of stdin/stdout of SSHClient session. Provided the limitations of the SSH implementation this is the
  * ease the usage of the session.
  *
  * The implementation is a wrapper around SSHClient's executeCommand().
@@ -34,8 +33,7 @@ public class SSHDialog implements Closeable {
     private static final int DEFAULT_SSH_PORT = 22;
 
     /**
-     * Control interface.
-     * Callback for the sink.
+     * Control interface. Callback for the sink.
      */
     public interface Control {
         /**
@@ -50,29 +48,32 @@ public class SSHDialog implements Closeable {
     public interface Sink {
         /**
          * Set control interface.
-         * @param control control.
+         *
+         * @param control
+         *            control.
          */
         void setControl(SSHDialog.Control control);
 
         /**
          * Set streams to process.
-         * @param incoming incoming stream.
-         * @param outgoing outgoing stream.
          *
-         * Streams are null when sink is removed from session.
+         * @param incoming
+         *            incoming stream.
+         * @param outgoing
+         *            outgoing stream.
+         *
+         *            Streams are null when sink is removed from session.
          */
         void setStreams(InputStream incoming, OutputStream outgoing);
 
         /**
-         * Start processing.
-         * Usually a thread will be created to process streams.
-         * This guarantee to be called after setStreams().
+         * Start processing. Usually a thread will be created to process streams. This guarantee to be called after
+         * setStreams().
          */
         void start();
 
         /**
-         * Stop processing.
-         * Called before streams are set to null.
+         * Stop processing. Called before streams are set to null.
          */
         void stop();
     }
@@ -90,8 +91,7 @@ public class SSHDialog implements Closeable {
     protected SSHClient client;
 
     /**
-     * Get SSH Client.
-     * Used for mocking.
+     * Get SSH Client. Used for mocking.
      */
     protected SSHClient getSSHClient() {
         return new SSHClient();
@@ -104,21 +104,20 @@ public class SSHDialog implements Closeable {
     protected void finalize() {
         try {
             close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             log.error("Finalize exception", e);
         }
     }
 
     /**
      * Get session public key.
+     *
      * @return public key or null.
      */
     public PublicKey getPublicKey() {
         if (keyPair == null) {
             return null;
-        }
-        else {
+        } else {
             return keyPair.getPublic();
         }
     }
@@ -141,8 +140,11 @@ public class SSHDialog implements Closeable {
 
     /**
      * Set host to connect to.
-     * @param host host.
-     * @param port port.
+     *
+     * @param host
+     *            host.
+     * @param port
+     *            port.
      */
     public void setHost(String host, int port) {
         this.host = host;
@@ -151,7 +153,9 @@ public class SSHDialog implements Closeable {
 
     /**
      * Set host to connect to.
-     * @param host host.
+     *
+     * @param host
+     *            host.
      */
     public void setHost(String host) {
         setHost(host, DEFAULT_SSH_PORT);
@@ -159,44 +163,46 @@ public class SSHDialog implements Closeable {
 
     /**
      * Set user to use.
-     * @param user user.
+     *
+     * @param user
+     *            user.
      */
     public void setUser(String user) {
         this.user = user;
     }
 
     /**
-     * Set password to use.
-     * If both password and key pair are set key pair
-     * is used.
+     * Set password to use. If both password and key pair are set key pair is used.
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
     /**
-     * Set key pair.
-     * If both password and key pair are set key pair
-     * is used.
-     * @param keyPair key pair.
+     * Set key pair. If both password and key pair are set key pair is used.
+     *
+     * @param keyPair
+     *            key pair.
      */
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
     }
 
     /**
-     * Set soft timeout.
-     * Soft timeout is reset when there is session activity.
-     * @param timeout timeout in milliseconds.
+     * Set soft timeout. Soft timeout is reset when there is session activity.
+     *
+     * @param timeout
+     *            timeout in milliseconds.
      */
     public void setSoftTimeout(long timeout) {
         softTimeout = timeout;
     }
 
     /**
-     * Set hard timeout.
-     * Hard timeout is maximum duration of session.
-     * @param timeout timeout in milliseconds.
+     * Set hard timeout. Hard timeout is maximum duration of session.
+     *
+     * @param timeout
+     *            timeout in milliseconds.
      */
     public void setHardTimeout(long timeout) {
         hardTimeout = timeout;
@@ -213,17 +219,15 @@ public class SSHDialog implements Closeable {
     }
 
     /**
-     * Connect to host.
-     * After connection host fingerprint can be acquired.
+     * Connect to host. After connection host fingerprint can be acquired.
      */
     public void connect() throws Exception {
         log.debug(
-            "connect enter ({}:{}, {}, {})",
-            host,
-            port,
-            hardTimeout,
-            softTimeout
-        );
+                "connect enter ({}:{}, {}, {})",
+                host,
+                port,
+                hardTimeout,
+                softTimeout);
 
         try {
             if (client != null) {
@@ -242,18 +246,14 @@ public class SSHDialog implements Closeable {
             log.debug("connecting");
             client.setUser(user);
             client.connect();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             if (client != null) {
                 log.debug(
-                    "Could not connect to host '{}'",
-                    client.getDisplayHost()
-                );
-            }
-            else {
+                        "Could not connect to host '{}'",
+                        client.getDisplayHost());
+            } else {
                 log.debug(
-                    "Could not connect to host"
-                );
+                        "Could not connect to host");
             }
             log.debug("Exception", e);
             throw e;
@@ -271,88 +271,79 @@ public class SSHDialog implements Closeable {
 
     /**
      * Execute command.
-     * @param sink sink to use.
-     * @param command command to execute.
-     * @param initial initial input streams to send to host before dialog begins.
+     *
+     * @param sink
+     *            sink to use.
+     * @param command
+     *            command to execute.
+     * @param initial
+     *            initial input streams to send to host before dialog begins.
      */
     public void executeCommand(
-        Sink sink,
-        String command,
-        InputStream[] initial
-    ) throws Exception {
+            Sink sink,
+            String command,
+            InputStream[] initial) throws Exception {
 
         log.info("SSH execute '{}' '{}'", client.getDisplayHost(), command);
 
         try (
-            final PipedInputStream pinStdin = new PipedInputStream(BUFFER_SIZE);
-            final OutputStream poutStdin = new PipedOutputStream(pinStdin);
-            final PipedInputStream pinStdout = new PipedInputStream(BUFFER_SIZE);
-            final OutputStream poutStdout = new PipedOutputStream(pinStdout);
-            final ByteArrayOutputStream stderr = new ConstraintByteArrayOutputStream(1024);
-        ) {
+                final PipedInputStream pinStdin = new PipedInputStream(BUFFER_SIZE);
+                final OutputStream poutStdin = new PipedOutputStream(pinStdin);
+                final PipedInputStream pinStdout = new PipedInputStream(BUFFER_SIZE);
+                final OutputStream poutStdout = new PipedOutputStream(pinStdout);
+                final ByteArrayOutputStream stderr = new ConstraintByteArrayOutputStream(1024)) {
             try {
                 List<InputStream> stdinList;
                 if (initial == null) {
                     stdinList = new LinkedList<>();
-                }
-                else {
+                } else {
                     stdinList = new LinkedList<>(Arrays.asList(initial));
                 }
                 stdinList.add(pinStdin);
 
                 sink.setControl(
-                    new Control() {
-                        @Override
-                        public void close() throws IOException {
-                            if (client != null) {
-                                client.close();
+                        new Control() {
+                            @Override
+                            public void close() throws IOException {
+                                if (client != null) {
+                                    client.close();
+                                }
                             }
-                        }
-                    }
-                );
+                        });
                 sink.setStreams(pinStdout, poutStdin);
                 sink.start();
 
                 try {
                     client.executeCommand(
-                        command,
-                        new SequenceInputStream(Collections.enumeration(stdinList)),
-                        poutStdout,
-                        stderr
-                    );
-                }
-                catch (Exception e) {
+                            command,
+                            new SequenceInputStream(Collections.enumeration(stdinList)),
+                            poutStdout,
+                            stderr);
+                } catch (Exception e) {
                     if (stderr.size() == 0) {
                         throw e;
                     }
 
                     log.error(
-                        "Swallowing exception as preferring stderr",
-                        e
-                    );
-                }
-                finally {
+                            "Swallowing exception as preferring stderr",
+                            e);
+                } finally {
                     if (stderr.size() > 0) {
                         throw new RuntimeException(
-                            String.format(
-                                "Unexpected error during execution: %1$s",
-                                new String(stderr.toByteArray(), StandardCharsets.UTF_8)
-                            )
-                        );
+                                String.format(
+                                        "Unexpected error during execution: %1$s",
+                                        new String(stderr.toByteArray(), StandardCharsets.UTF_8)));
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.error(
-                    "SSH error running command {}:'{}': {}",
-                    client.getDisplayHost(),
-                    command,
-                    e.getMessage()
-                );
+                        "SSH error running command {}:'{}': {}",
+                        client.getDisplayHost(),
+                        command,
+                        e.getMessage());
                 log.error("Exception", e);
                 throw e;
-            }
-            finally {
+            } finally {
                 sink.stop();
                 sink.setStreams(null, null);
             }
@@ -362,24 +353,20 @@ public class SSHDialog implements Closeable {
     }
 
     /**
-     * Send file.
-     * Send file using the embedded SSHClient.
+     * Send file. Send file using the embedded SSHClient.
      */
     public void sendFile(
-        String file1,
-        String file2
-    ) throws Exception {
+            String file1,
+            String file2) throws Exception {
         client.sendFile(file1, file2);
     }
 
     /**
-     * Recieve file.
-     * Receive file using the embedded SSHClient.
+     * Recieve file. Receive file using the embedded SSHClient.
      */
     public void receiveFile(
-        String file1,
-        String file2
-    ) throws Exception {
+            String file1,
+            String file2) throws Exception {
         client.receiveFile(file1, file2);
     }
 }

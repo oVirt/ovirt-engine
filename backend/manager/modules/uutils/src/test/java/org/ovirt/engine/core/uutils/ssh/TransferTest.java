@@ -32,11 +32,10 @@ public class TransferTest {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("MD5");
-        }
-        catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        try (InputStream is =  new FileInputStream(file)) {
+        try (InputStream is = new FileInputStream(file)) {
             byte[] buffer = new byte[1024];
             int n;
             while ((n = is.read(buffer)) != -1) {
@@ -56,13 +55,12 @@ public class TransferTest {
         SecureRandom random;
         try {
             random = SecureRandom.getInstance("SHA1PRNG");
-        }
-        catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
         try (OutputStream os = new FileOutputStream(local1)) {
             byte[] buffer = new byte[1000];
-            for (long i=0;i<TestCommon.largeTestFileSize / buffer.length;i++) {
+            for (long i = 0; i < TestCommon.largeTestFileSize / buffer.length; i++) {
                 random.nextBytes(buffer);
                 os.write(buffer);
             }
@@ -100,12 +98,12 @@ public class TransferTest {
         if (client != null) {
             try {
                 client.executeCommand(String.format("rm -f '%1$s'", remote), null, null, null);
+            } catch (Exception e) {
             }
-            catch(Exception e) {}
             try {
                 client.close();
+            } catch (Exception e) {
             }
-            catch(Exception e) {}
             client = null;
         }
         if (local2 != null) {
@@ -121,38 +119,37 @@ public class TransferTest {
         client.sendFile(local1.getAbsolutePath(), remote);
         client.receiveFile(remote, local2.getAbsolutePath());
         assertArrayEquals(
-            digestFile(local1),
-            digestFile(local2)
-        );
+                digestFile(local1),
+                digestFile(local2));
     }
 
-    @Test(expected=FileNotFoundException.class)
+    @Test(expected = FileNotFoundException.class)
     public void testSendInvalidSource() throws Exception {
-        client.sendFile(local1.getAbsolutePath()+"A", remote);
+        client.sendFile(local1.getAbsolutePath() + "A", remote);
     }
 
-    @Test(expected=IOException.class)
+    @Test(expected = IOException.class)
     public void testRecieveInvalidSource() throws Exception {
-        client.receiveFile(remote+"A", local2.getAbsolutePath());
+        client.receiveFile(remote + "A", local2.getAbsolutePath());
     }
 
-    @Test(expected=IOException.class)
+    @Test(expected = IOException.class)
     public void testSendInvalidDestination() throws Exception {
         client.sendFile(local1.getAbsolutePath(), "/none/exist/path/file");
     }
 
-    @Test(expected=IOException.class)
+    @Test(expected = IOException.class)
     public void testRecieveInvalidDestination() throws Exception {
         client.receiveFile("/none/exist/path/file", local2.getAbsolutePath());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSendInvalidFile() throws Exception {
-        client.sendFile(local1.getAbsolutePath(), remote+"'");
+        client.sendFile(local1.getAbsolutePath(), remote + "'");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testRecieveInvalidFile() throws Exception {
-        client.receiveFile(remote+"'", local2.getAbsolutePath());
+        client.receiveFile(remote + "'", local2.getAbsolutePath());
     }
 }

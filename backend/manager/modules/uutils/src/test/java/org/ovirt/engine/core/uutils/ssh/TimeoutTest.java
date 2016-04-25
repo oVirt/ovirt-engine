@@ -53,13 +53,12 @@ public class TimeoutTest {
                 client.close();
                 client = null;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Test(expected=TimeLimitExceededException.class)
+    @Test(expected = TimeLimitExceededException.class)
     public void testConnectTimeout() throws Exception {
         SSHClient client = spy(this.client);
         SshClient ssh = spy(SshClient.setUpDefaultClient());
@@ -72,7 +71,7 @@ public class TimeoutTest {
         client.connect();
     }
 
-    @Test(expected=TimeLimitExceededException.class)
+    @Test(expected = TimeLimitExceededException.class)
     public void testPasswordTimeout() throws Exception {
         SSHClient client = spy(this.client);
         SshClient ssh = spy(SshClient.setUpDefaultClient());

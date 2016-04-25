@@ -16,11 +16,10 @@ public class ConstraintByteArrayOutputStreamTest {
         int limit = 1000;
         ByteArrayOutputStream os = new ConstraintByteArrayOutputStream(limit);
         byte[] buffer = new byte[100];
-        for (int i = 0;i<limit*5/buffer.length;i++) {
+        for (int i = 0; i < limit * 5 / buffer.length; i++) {
             os.write(buffer);
         }
         assertTrue(os.size() >= limit);
-        assertTrue(os.size() < limit*3/2);
+        assertTrue(os.size() < limit * 3 / 2);
     }
 }
-

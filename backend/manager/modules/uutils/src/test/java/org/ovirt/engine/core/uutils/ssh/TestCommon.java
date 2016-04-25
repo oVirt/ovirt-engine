@@ -53,53 +53,49 @@ public class TestCommon {
         host = System.getProperty("ssh-host");
 
         if (host == null) {
-                System.out.println("WARNING: using internal daemon");
-                try {
-                    keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-                }
-                catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
-                }
-                host = "localhost";
-                user = "root";
-                password = "password";
-                sshd = new SSHD();
-                sshd.setUser(user, password, keyPair.getPublic());
-                try {
-                        sshd.start();
-                }
-                catch(IOException e) {
-                        throw new RuntimeException(e);
-                }
-                port = sshd.getPort();
-        }
-        else {
-                port = Integer.parseInt(System.getProperty("ssh-test-port", "22"));
-                user = System.getProperty("ssh-test-user", "root");
-                password = System.getProperty("ssh-test-password", "password");
-                String p12 = System.getProperty("ssh-test-p12");
-                String p12_password = System.getProperty("ssh-test-p12-password", "password");
+            System.out.println("WARNING: using internal daemon");
+            try {
+                keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+            host = "localhost";
+            user = "root";
+            password = "password";
+            sshd = new SSHD();
+            sshd.setUser(user, password, keyPair.getPublic());
+            try {
+                sshd.start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            port = sshd.getPort();
+        } else {
+            port = Integer.parseInt(System.getProperty("ssh-test-port", "22"));
+            user = System.getProperty("ssh-test-user", "root");
+            password = System.getProperty("ssh-test-password", "password");
+            String p12 = System.getProperty("ssh-test-p12");
+            String p12_password = System.getProperty("ssh-test-p12-password", "password");
 
-                FileInputStream fis = null;
-                try {
-                    KeyStore keyStore = KeyStore.getInstance("PKCS12");
-                    fis = new FileInputStream(p12);
-                    keyStore.load(fis, p12_password.toCharArray());
-                    KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry)keyStore.getEntry("1", new KeyStore.PasswordProtection(p12_password.toCharArray()));
-                    keyPair = new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
-                }
-                catch(Throwable t) {
-                    throw new RuntimeException(t);
-                }
-                finally {
-                    if (fis != null) {
-                        try {
-                            fis.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
+            FileInputStream fis = null;
+            try {
+                KeyStore keyStore = KeyStore.getInstance("PKCS12");
+                fis = new FileInputStream(p12);
+                keyStore.load(fis, p12_password.toCharArray());
+                KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) keyStore.getEntry("1",
+                        new KeyStore.PasswordProtection(p12_password.toCharArray()));
+                keyPair = new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
+            } catch (Throwable t) {
+                throw new RuntimeException(t);
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        // ignore
                     }
                 }
+            }
         }
 
         largeTestFileSize = Long.parseLong(System.getProperty("ssh-test-large-file-size", "50000000"));
@@ -119,23 +115,23 @@ public class TestCommon {
     /**
      * main.
      *
-     * @param args arguments.
+     * @param args
+     *            arguments.
      *
-     * Use system properities to alternate behvaior.
+     *            Use system properities to alternate behvaior.
      */
-    public static void main (String [] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
 
         initialize();
 
         JUnitCore core = new JUnitCore();
         core.addListener(new TextListener(System.out));
         Result result = core.run(
-            ConstraintByteArrayOutputStreamTest.class,
-            BasicTest.class,
-            CommandTest.class,
-            TimeoutTest.class,
-            TransferTest.class
-        );
+                ConstraintByteArrayOutputStreamTest.class,
+                BasicTest.class,
+                CommandTest.class,
+                TimeoutTest.class,
+                TransferTest.class);
         System.exit(result.wasSuccessful() ? 0 : 1);
     }
 }

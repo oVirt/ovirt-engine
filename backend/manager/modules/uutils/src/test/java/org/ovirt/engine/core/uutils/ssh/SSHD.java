@@ -62,7 +62,7 @@ public class SSHD {
         }
 
         /* >=0.10 */
-        //@Override
+        // @Override
         public Iterable<KeyPair> loadKeys() {
             List<KeyPair> ret = new LinkedList<>();
             ret.add(keyPair);
@@ -84,34 +84,29 @@ public class SSHD {
     public SSHD() {
         try {
             keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
         sshd = SshServer.setUpDefaultServer();
         sshd.setKeyPairProvider(new MyKeyPairProvider(keyPair));
         sshd.setShellFactory(
-            new ProcessShellFactory(
-                new String[] {
-                    "/bin/sh",
-                    "-i"
-                }
-            )
-        );
-        sshd.setCommandFactory(
-            new CommandFactory() {
-                @Override
-                public Command createCommand(String command) {
-                    return new ProcessShellFactory(
+                new ProcessShellFactory(
                         new String[] {
-                            "/bin/sh",
-                            "-c",
-                            command
-                        }
-                    ).create();
-                }
-            }
-        );
+                                "/bin/sh",
+                                "-i"
+                        }));
+        sshd.setCommandFactory(
+                new CommandFactory() {
+                    @Override
+                    public Command createCommand(String command) {
+                        return new ProcessShellFactory(
+                                new String[] {
+                                        "/bin/sh",
+                                        "-c",
+                                        command
+                                }).create();
+                    }
+                });
     }
 
     public int getPort() {
@@ -136,13 +131,12 @@ public class SSHD {
             try {
                 sshd.stop(true);
                 sshd = null;
+            } catch (InterruptedException e) {
             }
-            catch (InterruptedException e) {}
         }
     }
 
-
-    public static void main(String [] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 
         SSHD sshd = new SSHD();

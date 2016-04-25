@@ -7,8 +7,7 @@ import java.io.InputStream;
 /**
  * Monitor progress of output stream.
  *
- * The underlying ssh library does not provide
- * any mean of monitoring progress.
+ * The underlying ssh library does not provide any mean of monitoring progress.
  */
 public class ProgressInputStream extends FilterInputStream {
     private int index;
@@ -19,8 +18,7 @@ public class ProgressInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte[] b, int off, int len)
-    throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         int ret = in.read(b, off, len);
         if (ret != -1) {
             index += ret;
@@ -29,8 +27,7 @@ public class ProgressInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read()
-    throws IOException {
+    public int read() throws IOException {
         int ret = in.read();
         if (ret != -1) {
             index++;
@@ -41,8 +38,7 @@ public class ProgressInputStream extends FilterInputStream {
     public boolean wasProgress() {
         if (index == 0) {
             return false;
-        }
-        else {
+        } else {
             index = 0;
             return true;
         }
