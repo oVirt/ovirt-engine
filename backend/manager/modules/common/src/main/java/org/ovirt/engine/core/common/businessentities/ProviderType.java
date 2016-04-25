@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
  * The provider type determines what external provider is used.
  */
 public enum ProviderType implements Identifiable {
-    OPENSTACK_NETWORK(0, true, true, false, true, VdcObjectType.Network),
+    OPENSTACK_NETWORK(0, true, true, true, true, VdcObjectType.Network),
     FOREMAN(1, false, false, false, false, VdcObjectType.VDS),
     OPENSTACK_IMAGE(2, true, true, false, true, VdcObjectType.Storage),
     OPENSTACK_VOLUME(3, true, true, false, true, VdcObjectType.Storage),

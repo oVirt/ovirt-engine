@@ -392,13 +392,10 @@ public class ProviderModel extends Model {
         provider.setDescription(description.getEntity());
         provider.setUrl(url.getEntity());
 
-        if (isTypeOpenStackNetwork()) {
+        if (isTypeOpenStackNetwork() || isExternalNetwork()) {
             getNeutronAgentModel().flush(provider);
-        } else if (isExternalNetwork()){
-            OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
-            boolean isReadOnly = readOnly.getEntity();
-            properties.setReadOnly(isReadOnly);
-            provider.setAdditionalProperties(properties);
+            OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+            properties.setReadOnly(readOnly.getEntity());
         } else if (isTypeOpenStackImage()) {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         } else if (isTypeOpenStackVolume()) {

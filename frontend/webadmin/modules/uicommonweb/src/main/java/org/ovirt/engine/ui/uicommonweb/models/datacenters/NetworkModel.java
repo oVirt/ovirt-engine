@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -258,13 +257,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     private boolean isExternalNetworkProviderReadOnly(Provider provider) {
-        if (provider.getType()==ProviderType.EXTERNAL_NETWORK){
-            OpenstackNetworkProviderProperties properties =
-                    (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-            if (properties.getReadOnly()){
-                return true;
-            }
+        OpenstackNetworkProviderProperties properties =
+                (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+        if (properties.getReadOnly()){
+            return true;
         }
+
         return false;
     }
 

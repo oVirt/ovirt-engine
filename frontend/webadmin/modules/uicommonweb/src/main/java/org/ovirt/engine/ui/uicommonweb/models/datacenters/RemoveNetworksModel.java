@@ -92,7 +92,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
             return;
         }
         // We do not have details about whether the provider is read-only, so a query to the backend must be made
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(ProviderType.EXTERNAL_NETWORK),
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(ProviderType.EXTERNAL_NETWORK, ProviderType.OPENSTACK_NETWORK),
                 createProviderReadOnlyCallback(externalProviderIds));
     }
 
