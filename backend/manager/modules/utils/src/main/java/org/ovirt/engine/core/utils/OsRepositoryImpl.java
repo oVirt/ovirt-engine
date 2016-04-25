@@ -11,6 +11,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
@@ -324,7 +325,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
         String displayAndGraphicsLine = getValueByVersion(idToUnameLookup.get(osId), "devices.display.protocols", version); // todo - use different key?
         for (String displayAndGraphics : displayAndGraphicsLine.split(",")) {
-            Pair<String, String> pair = parseGraphicsAndDisplayPair(displayAndGraphics);
+            Pair<String, String> pair = parseSlashSeparatedPair(displayAndGraphics);
             if (pair != null) {
                 GraphicsType graphics = GraphicsType.fromString(pair.getFirst());
                 DisplayType display = DisplayType.valueOf(pair.getSecond());
@@ -336,8 +337,8 @@ public enum OsRepositoryImpl implements OsRepository {
         return graphicsAndDisplays;
     }
 
-    private Pair<String, String> parseGraphicsAndDisplayPair(String displayAndGraphicsString) {
-        List<String> splitted = trimElements(displayAndGraphicsString.split("/"));
+    private static Pair<String, String> parseSlashSeparatedPair(String slashSeparatedString) {
+        List<String> splitted = trimElements(slashSeparatedString.split("/"));
 
         return (splitted.size() == 2)
             ? new Pair<>(splitted.get(0), splitted.get(1))
@@ -403,8 +404,18 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public String getCdInterface(int osId, Version version) {
-        return getValueByVersion(idToUnameLookup.get(osId), "devices.cdInterface", version);
+    public String getCdInterface(int osId, Version version, ChipsetType chipset) {
+        String line = getValueByVersion(idToUnameLookup.get(osId), "devices.cdInterface", version);
+        String defaultInterface = null;
+        for (String element : line.split(",")) {
+            Pair<String, String> pair = parseSlashSeparatedPair(element);
+            if (pair == null) {
+                defaultInterface = element.trim().toLowerCase();
+            } else if (chipset != null && chipset.getChipsetName().equalsIgnoreCase(pair.getFirst())) {
+                return pair.getSecond().toLowerCase();
+            }
+        }
+        return defaultInterface;
     }
 
     @Override
@@ -575,7 +586,7 @@ public enum OsRepositoryImpl implements OsRepository {
      * is not added empty values.
      */
 
-    private List<String> trimElements(String... elements) {
+    private static List<String> trimElements(String... elements) {
         List<String> list = new ArrayList<>(elements.length);
         for (String e : elements) {
             e = e.trim();

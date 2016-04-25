@@ -14,6 +14,7 @@ import java.util.prefs.Preferences;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
@@ -34,7 +35,7 @@ public class OsRepositoryImplTest {
     public static final String PATH_TO_SYSPREP = "/path/to/sysprep";
     public static final String SOME_PRODUCT_KEY = "some-product-key";
     public static final String SOUND_DEVICE = "ac97";
-    public static final String CD_INTERFACE = "ide";
+    public static final String CD_INTERFACE = "ide,q35/sata";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -230,7 +231,9 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testGetCdInterface() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null).equals(CD_INTERFACE));
+        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null, null).equals("ide"));
+        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.I440FX).equals("ide"));
+        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.Q35).equals("sata"));
     }
 
     @Test

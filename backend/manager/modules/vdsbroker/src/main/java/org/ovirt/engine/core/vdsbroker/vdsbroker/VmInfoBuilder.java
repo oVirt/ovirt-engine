@@ -13,6 +13,7 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -190,7 +191,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addCdDetails(vm.getVmPayload(), struct, vm);
             addDevice(struct, vm.getVmPayload(), "");
         }
-        // check first if CD was given as a parameter
+        // check first if CD was given as a RunOnce parameter
         if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
@@ -218,13 +219,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                                     VmDeviceGeneralType.DISK,
                                     VmDeviceType.CDROM.getName());
             for (VmDevice vmDevice : vmDevices) {
-                // skip unamanged devices (handled separtely)
+                // skip unmanaged devices (handled separately)
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
-                // The Payload is loaded in via RunVmCommand to VM.Payload
-                // and its handled at the beginning of the method, so no
-                // need to add the device again
+                // The Payload is loaded in via RunVmCommand to VM.
+                // Payload and its device are handled at the beginning of
+                // the method, so no need to add the device again,
                 if (VmPayload.isPayload(vmDevice.getSpecParams())) {
                     continue;
                 }
@@ -867,18 +868,21 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private static void addCdDetails(VmDevice vmDevice, Map<String, Object> struct, VM vm) {
-        OsRepository osRepository = getOsRepository();
-
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
 
-        String cdInterface = osRepository.getCdInterface(vm.getOs(), vm.getCompatibilityVersion());
+        String cdInterface = getOsRepository().getCdInterface(
+                vm.getOs(),
+                vm.getCompatibilityVersion(),
+                ChipsetType.fromMachineType(vm.getEmulatedMachine()));
 
         if ("scsi".equals(cdInterface)) {
             struct.put(VdsProperties.Index, "0"); // SCSI unit 0 is reserved by VDSM to CDROM
             struct.put(VdsProperties.Address, createAddressForScsiDisk(0, 0));
         } else if ("ide".equals(cdInterface)) {
             struct.put(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
+        } else if ("sata".equals(cdInterface)) {
+            struct.put(VdsProperties.Index, "0"); // SATA slot 0 is reserved by VDSM to CDROM
         }
 
         struct.put(VdsProperties.INTERFACE, cdInterface);
@@ -896,7 +900,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             struct.put(VdsProperties.Path, isPayload ? "" : path);
         }
         if (isPayload) {
-            String cdInterface = osRepository.getCdInterface(vm.getOs(), vm.getCompatibilityVersion());
+            String cdInterface = osRepository.getCdInterface(
+                    vm.getOs(),
+                    vm.getCompatibilityVersion(),
+                    ChipsetType.fromMachineType(vm.getEmulatedMachine()));
 
             if ("scsi".equals(cdInterface)) {
                 struct.put(VdsProperties.Index, "1"); // SCSI unit 1 is reserved for payload
@@ -904,6 +911,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             } else if ("ide".equals(cdInterface)) {
                 // 3 is magic number for payload - we are using it as hdd
                 struct.put(VdsProperties.Index, "3");
+            } else if ("sata".equals(cdInterface)) {
+                struct.put(VdsProperties.Index, "1"); // SATA slot 1 is reserved for payload
             }
         }
         struct.put(VdsProperties.SpecParams, specParams);

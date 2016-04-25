@@ -107,7 +107,7 @@ void audioValue() : {} {
 }
 
 void cdInterfaceValue() : {} {
-    valueSpecifier() ("ide" | "scsi")
+    valueSpecifier() <CHIPSET_CD_INTERFACE_TYPE> (<COMMA> (<WS>)* <CHIPSET_CD_INTERFACE_TYPE> )*
 }
 
 void hardwareInterfacesValue() : {} {
@@ -164,6 +164,18 @@ void valueSpecifier() : {} {
 |   < DISPLAY_TYPE
     :
     ("qxl" | "cirrus" | "vga")
+    >
+|   < CHIPSET_CD_INTERFACE_TYPE
+    :
+    ((<CHIPSET_TYPE>) "/")? (<CD_INTERFACE_TYPE>)
+    >
+|   < CHIPSET_TYPE
+    :
+    ("i440fx" | "q35")
+    >
+|   < CD_INTERFACE_TYPE
+    :
+    ("ide" | "scsi" | "sata")
     >
 |   < BUS_WIDTH : ("32" | "64") >
 |   < INT : (<DIGIT>)+ >

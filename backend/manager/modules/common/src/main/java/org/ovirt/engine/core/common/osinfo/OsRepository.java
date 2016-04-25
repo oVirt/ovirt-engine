@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
@@ -190,9 +191,10 @@ public interface OsRepository {
     int getMaxPciDevices(int osId, Version version);
 
     /**
-     * @return a specific Cd Interface for the given os.
+     * @param chipset the VM's chipset or null, if chipset is not defined
+     * @return a specific CD interface for the given OS and chipset.
      */
-    String getCdInterface(int osId, Version version);
+    String getCdInterface(int osId, Version version, ChipsetType chipset);
 
     /**
      * @return if there is floppy support in the given os
