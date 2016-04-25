@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
@@ -1798,7 +1799,8 @@ public class VdsBrokerObjectsBuilder {
             auditLogDirector.log(createHostNetworkAuditLog(networkName, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
         } else if (interfaces.size() > 1) {
             AuditLogableBase logable = createHostNetworkAuditLog(networkName, vds);
-            logable.addCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
+            logable.addCustomValue("Interfaces",
+                    interfaces.stream().map(VdsNetworkInterface::getName).collect(Collectors.joining(",")));
             auditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
         }
     }

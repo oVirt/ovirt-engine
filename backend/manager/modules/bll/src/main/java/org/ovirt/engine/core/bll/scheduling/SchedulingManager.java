@@ -18,12 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
@@ -38,7 +38,6 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -903,7 +902,8 @@ public class SchedulingManager implements BackendService {
                         logable.setClusterId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
 
-                        String failedHostsStr = StringUtils.join(Entities.objectNames(returnedFailedHosts), ", ");
+                        String failedHostsStr =
+                                returnedFailedHosts.stream().map(VDS::getName).collect(Collectors.joining(", "));
 
                         logable.addCustomValue("Hosts", failedHostsStr);
                         AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION, auditLogDirector);

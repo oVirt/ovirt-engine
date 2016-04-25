@@ -7,15 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -96,7 +95,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
                 List<VDS> vdsList = entry.getValue();
                 log.error("Failed to refresh device " + lunId + " Not all VDS are seeing the same size " +
                         "VDS :" + vdsList);
-                String vdsListString = StringUtils.join(Entities.objectNames(vdsList), ", ");
+                String vdsListString = vdsList.stream().map(VDS::getName).collect(Collectors.joining(", "));
                 failedVds.add("LUN : " + lunId + "VDS: " + vdsListString);
             }
 

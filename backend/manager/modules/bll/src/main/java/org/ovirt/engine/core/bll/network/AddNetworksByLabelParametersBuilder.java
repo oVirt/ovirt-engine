@@ -4,12 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -51,7 +50,7 @@ public class AddNetworksByLabelParametersBuilder extends HostSetupNetworksParame
             addAttachmentToParameters(nicToConfigure, network, parameters);
         }
 
-        parameters.setNetworkNames(StringUtils.join(Entities.objectNames(networksToAdd), ", "));
+        parameters.setNetworkNames(networksToAdd.stream().map(Network::getName).collect(Collectors.joining(", ")));
 
         return parameters;
     }

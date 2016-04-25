@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -77,7 +78,8 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
         // reported nic is not present there, it must be reported nic to create.
         List<VdsNetworkInterface> nicsForUpdate = getNicsForUpdate();
 
-        Set<String> nicsNamesForUpdate = Entities.objectNames(nicsForUpdate);
+        Set<String> nicsNamesForUpdate =
+                nicsForUpdate.stream().map(VdsNetworkInterface::getName).collect(Collectors.toSet());
         for (VdsNetworkInterface reportedNic : reportedNics) {
             String nicName = reportedNic.getName();
             if (!nicsNamesForUpdate.contains(nicName)) {

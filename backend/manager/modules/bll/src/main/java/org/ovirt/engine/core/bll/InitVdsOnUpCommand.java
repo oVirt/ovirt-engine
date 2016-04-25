@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -169,7 +168,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             Map<String, String> customLogValues = new HashMap<>();
             customLogValues.put("StoragePoolName", getStoragePoolName());
             if (problematicDomains != null && !problematicDomains.isEmpty()) {
-                customLogValues.put("StorageDomainNames", StringUtils.join(Entities.objectNames(problematicDomains), ", "));
+                customLogValues.put("StorageDomainNames",
+                        problematicDomains.stream().map(StorageDomainStatic::getName).collect(Collectors.joining(", ")));
             }
             setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE, customLogValues);
             return false;

@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -142,7 +141,7 @@ public class UpdateHostNetworkQosCommand extends UpdateQosCommandBase<HostNetwor
      * @return comma separated list of network names.
      */
     private String getNetworkNames(List<Network> networks) {
-        return StringUtils.join(Entities.objectNames(networks), ", ");
+        return networks.stream().map(Network::getName).collect(Collectors.joining(", "));
     }
 
     /**

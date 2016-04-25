@@ -8,9 +8,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -51,7 +49,8 @@ final class ManageLabeledNetworksParametersBuilderImpl extends HostSetupNetworks
         final Collection<Network> affectedNetworks =
                 Stream.concat(labeledNetworksToBeAdded.stream(), labeledNetworksToBeRemoved.stream())
                         .collect(Collectors.toList());
-        combinedParams.setNetworkNames(StringUtils.join(Entities.objectNames(affectedNetworks), ", "));
+        combinedParams.setNetworkNames
+                (affectedNetworks.stream().map(Network::getName).collect(Collectors.joining(", ")));
         return combinedParams;
     }
 

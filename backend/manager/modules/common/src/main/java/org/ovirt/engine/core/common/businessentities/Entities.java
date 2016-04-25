@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * General utility class for common entities functions
@@ -40,20 +38,6 @@ public class Entities {
             return map;
         } else {
             return Collections.emptyMap();
-        }
-    }
-
-    public static <E extends Nameable> Set<String> objectNames(Collection<E> entities) {
-        if (entities != null && !entities.isEmpty()) {
-            Set<String> names = new HashSet<>();
-            for (E e : entities) {
-                if (e != null) {
-                    names.add(e.getName());
-                }
-            }
-            return names;
-        } else {
-            return Collections.emptySet();
         }
     }
 
