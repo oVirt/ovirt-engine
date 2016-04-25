@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -133,9 +134,8 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         for (int row = 0; row < table.getRowCount(); row++) {
             if (table.getVisibleItem(row).equals(model)) {
                 TableRowElement tableRowElement = table.getRowElement(row);
-                Element input = tableRowElement.getElementsByTagName("input").getItem(0); //$NON-NLS-1$
-                input.setPropertyBoolean("disabled", true); //$NON-NLS-1$
-                updateInputTitle(grayOutReasons, input);
+                tableRowElement.setPropertyBoolean("disabled", true); //$NON-NLS-1$
+                updateInputTitle(grayOutReasons, tableRowElement);
             }
         }
     }
@@ -145,7 +145,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         for (String reason : grayOutReasons) {
             title.append(reason).append(constants.space());
         }
-        TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(title.toString()), input);
+        TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(title.toString()), input, Placement.LEFT);
     }
 
     protected void updateSelectedLunWarning(LunModel lunModel) {
