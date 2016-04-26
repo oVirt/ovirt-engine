@@ -2,28 +2,27 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveSnapshotSingleDiskLiveCommandCallback extends CommandCallback {
-    @Override
-    public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).proceedCommandExecution();
-    }
+public class RemoveSnapshotSingleDiskLiveCommandCallback extends SerialChildCommandsExecutionCallback {
+
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).onFailed();
+        getRemoveSnapshotCommand(cmdId).onFailed();
+        super.onFailed(cmdId, childCmdIds);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).onSucceeded();
+        getRemoveSnapshotCommand(cmdId).onSucceeded();
+        super.onSucceeded(cmdId, childCmdIds);
     }
 
-    private RemoveSnapshotSingleDiskLiveCommand<RemoveSnapshotSingleDiskParameters> getCommand(Guid cmdId) {
+    protected RemoveSnapshotSingleDiskLiveCommand<RemoveSnapshotSingleDiskParameters> getRemoveSnapshotCommand(Guid cmdId) {
         return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

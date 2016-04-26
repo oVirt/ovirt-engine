@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleDiskParameters>
-        extends RemoveSnapshotSingleDiskCommandBase<T> {
+        extends RemoveSnapshotSingleDiskCommandBase<T> implements SerialChildExecutingCommand {
     private static final Logger log = LoggerFactory.getLogger(RemoveSnapshotSingleDiskLiveCommand.class);
 
     public RemoveSnapshotSingleDiskLiveCommand(T parameters, CommandContext cmdContext) {
@@ -51,7 +51,27 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         setSucceeded(true); // Allow runAction to succeed
     }
 
-    public void proceedCommandExecution() {
+    @Override
+    public void handleFailure() {
+        log.error("Command id: '{} failed child command status for step '{}'",
+                getCommandId(),
+                getParameters().getCommandStep());
+    }
+
+    @Override
+    public boolean ignoreChildCommandFailure() {
+        if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
+            // It's possible that the image was destroyed already if this is retry of Live
+            // Merge for the given volume.  Proceed to check if the image is present.
+            log.warn("Child command '{}' failed, proceeding to verify", getParameters().getCommandStep());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+
         // Steps are executed such that:
         //  a) all logic before the command runs is idempotent
         //  b) the command is the last action in the step
@@ -66,63 +86,11 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         // Upon recovery or after invoking a new child command, our map may be missing an entry
         syncChildCommandList();
         Guid currentChildId = getCurrentChildId();
-
         VdcReturnValueBase vdcReturnValue = null;
+
         if (currentChildId != null) {
-            switch (CommandCoordinatorUtil.getCommandStatus(currentChildId)) {
-            case ACTIVE:
-            case NOT_STARTED:
-                log.info("Waiting on Live Merge command step '{}' to complete",
-                        getParameters().getCommandStep());
-                return;
-
-            case ENDED_SUCCESSFULLY:
-            case SUCCEEDED:
-                CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
-                if (cmdEntity.isCallbackEnabled() && !cmdEntity.isCallbackNotified()) {
-                    log.info("Waiting on Live Merge command step '{}' to finalize",
-                            getParameters().getCommandStep());
-                    return;
-                }
-
-                vdcReturnValue = CommandCoordinatorUtil.getCommandReturnValue(currentChildId);
-                if (vdcReturnValue != null && vdcReturnValue.getSucceeded()) {
-                    log.debug("Child command '{}' succeeded",
-                            getParameters().getCommandStep());
-                    getParameters().setCommandStep(getParameters().getNextCommandStep());
-                    break;
-                } else {
-                    log.error("Child command '{}' failed: {}",
-                            getParameters().getCommandStep(),
-                            vdcReturnValue != null
-                                    ? vdcReturnValue.getExecuteFailedMessages()
-                                    : "null return value"
-                    );
-                    setCommandStatus(CommandStatus.FAILED);
-                    return;
-                }
-
-            case FAILED:
-            case ENDED_WITH_FAILURE:
-            case EXECUTION_FAILED:
-                if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
-                    // It's possible that the image was destroyed already if this is retry of Live
-                    // Merge for the given volume.  Proceed to check if the image is present.
-                    log.warn("Child command '{}' failed, proceeding to verify", getParameters().getCommandStep());
-                    getParameters().setCommandStep(getParameters().getNextCommandStep());
-                    break;
-                }
-                log.error("Failed child command status for step '{}'",
-                        getParameters().getCommandStep());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
-
-            case UNKNOWN:
-                log.error("Unknown child command status for step '{}'",
-                        getParameters().getCommandStep());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
-            }
+            vdcReturnValue = CommandCoordinatorUtil.getCommandReturnValue(currentChildId);
+            getParameters().setCommandStep(getParameters().getNextCommandStep());
         }
 
         log.info("Executing Live Merge command step '{}'", getParameters().getCommandStep());
@@ -166,6 +134,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         if (nextCommand != null) {
             CommandCoordinatorUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
             // Add the child, but wait, it's a race!  child will start, task may spawn, get polled, and we won't have the child id
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -460,4 +431,5 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     public CommandCallback getCallback() {
         return new RemoveSnapshotSingleDiskLiveCommandCallback();
     }
+
 }
