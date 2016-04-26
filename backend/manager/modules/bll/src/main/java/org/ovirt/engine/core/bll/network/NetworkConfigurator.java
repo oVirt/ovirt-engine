@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -94,23 +95,24 @@ public class NetworkConfigurator {
         }
     }
 
-    private String getIpv4AddressOfNetwork(String networkName) {
-        return resolveHostManagementNetworkAddress(networkName, VdsNetworkInterface::getIpv4Address);
+    String getIpv4AddressOfNetwork(String networkName) {
+        return resolveHostNetworkAddress(networkName, VdsNetworkInterface::getIpv4Address);
     }
 
-    private String getIpv6AddressOfNetwork(String networkName) {
-        return resolveHostManagementNetworkAddress(networkName, VdsNetworkInterface::getIpv6Address);
+    String getIpv6AddressOfNetwork(String networkName) {
+        return resolveHostNetworkAddress(networkName, VdsNetworkInterface::getIpv6Address);
     }
 
-    private String resolveHostManagementNetworkAddress(String managementNetworkName,
+    private String resolveHostNetworkAddress(String networkName,
             Function<VdsNetworkInterface, String> ipFunction) {
-        if (managementNetworkName == null) {
+        if (networkName == null) {
             return null;
         }
         return host.getInterfaces()
                 .stream()
-                .filter(new InterfaceByNetworkNamePredicate(managementNetworkName))
+                .filter(new InterfaceByNetworkNamePredicate(networkName))
                 .map(ipFunction)
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
     }
