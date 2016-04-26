@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.dashboard;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -118,39 +117,26 @@ public class DashboardDataServlet extends HttpServlet {
 
     private Inventory lookupInventory() throws DashboardDataException {
         Inventory inventory = new Inventory();
-        try {
-            inventory.setDc(InventoryHelper.getDcInventoryStatus(engineDataSource));
-            inventory.setCluster(InventoryHelper.getClusterInventoryStatus(engineDataSource));
-            inventory.setHost(InventoryHelper.getHostInventoryStatus(engineDataSource));
-            inventory.setStorage(InventoryHelper.getStorageInventoryStatus(engineDataSource));
-            inventory.setVm(InventoryHelper.getVmInventorySummary(engineDataSource));
-            inventory.setEvent(EventHelper.getEventStatus(engineDataSource));
-        } catch (SQLException e) {
-            throw new DashboardDataException(e);
-        }
+        inventory.setDc(InventoryHelper.getDcInventoryStatus(engineDataSource));
+        inventory.setCluster(InventoryHelper.getClusterInventoryStatus(engineDataSource));
+        inventory.setHost(InventoryHelper.getHostInventoryStatus(engineDataSource));
+        inventory.setStorage(InventoryHelper.getStorageInventoryStatus(engineDataSource));
+        inventory.setVm(InventoryHelper.getVmInventorySummary(engineDataSource));
+        inventory.setEvent(EventHelper.getEventStatus(engineDataSource));
         return inventory;
     }
 
     private HeatMapData lookupClusterUtilization() throws DashboardDataException {
         HeatMapData utilization = new HeatMapData();
-        try {
-            //Heat Map
-            HeatMapHelper.getCpuAndMemory(utilization, dwhDataSource);
-            utilization.setStorage(HeatMapHelper.getStorage(dwhDataSource));
-        } catch (SQLException e) {
-            throw new DashboardDataException(e);
-        }
+        HeatMapHelper.getCpuAndMemory(utilization, dwhDataSource);
+        utilization.setStorage(HeatMapHelper.getStorage(dwhDataSource));
         return utilization;
     }
 
     private GlobalUtilization lookupGlobalUtilization() throws DashboardDataException {
         GlobalUtilization utilization = new GlobalUtilization();
-        try {
-            HourlySummaryHelper.getCpuMemSummary(utilization, dwhDataSource);
-            utilization.setStorage(HourlySummaryHelper.getStorageSummary(dwhDataSource));
-        } catch (SQLException e) {
-            throw new DashboardDataException(e);
-        }
+        HourlySummaryHelper.getCpuMemSummary(utilization, dwhDataSource);
+        utilization.setStorage(HourlySummaryHelper.getStorageSummary(dwhDataSource));
         return utilization;
     }
 

@@ -4,6 +4,8 @@ import javax.servlet.ServletException;
 
 public class DashboardDataException extends ServletException {
 
+    private static final long serialVersionUID = -1770163683937623625L;
+
     public DashboardDataException() {
         super();
     }

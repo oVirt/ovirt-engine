@@ -1,22 +1,19 @@
 package org.ovirt.engine.ui.frontend.server.dashboard;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.ClusterDwhDAO;
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainDwhDAO;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.ClusterDwhDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainDwhDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.models.ClusterResourceAverage;
 import org.ovirt.engine.ui.frontend.server.dashboard.models.StorageDomainAverage;
 
 public class HeatMapHelper {
 
-
-    public static void getCpuAndMemory(HeatMapData utilization, DataSource dataSource) throws SQLException,
-            DashboardDataException {
-        ClusterDwhDAO dao = new ClusterDwhDAO(dataSource);
+    public static void getCpuAndMemory(HeatMapData utilization, DataSource dataSource) throws DashboardDataException {
+        ClusterDwhDao dao = new ClusterDwhDao(dataSource);
         List<ClusterResourceAverage> averages = dao.getClusterCpuAndMemoryAverage();
         List<HeatMapBlock> cpu = new ArrayList<>();
         List<HeatMapBlock> memory = new ArrayList<>();
@@ -28,12 +25,13 @@ public class HeatMapHelper {
         utilization.setMemory(memory);
     }
 
-    public static List<HeatMapBlock> getStorage(DataSource dwhDataSource) throws SQLException, DashboardDataException {
+    public static List<HeatMapBlock> getStorage(DataSource dwhDataSource) throws DashboardDataException {
         List<HeatMapBlock> nodes = new ArrayList<>();
-        StorageDomainDwhDAO dao = new StorageDomainDwhDAO(dwhDataSource);
+        StorageDomainDwhDao dao = new StorageDomainDwhDao(dwhDataSource);
         for (StorageDomainAverage data: dao.getStorageAverage()) {
             nodes.add(new HeatMapBlock(data.getName(), data.getValue()));
         }
         return nodes;
     }
+
 }

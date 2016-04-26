@@ -1,14 +1,13 @@
 package org.ovirt.engine.ui.frontend.server.dashboard;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.HostDwhDAO;
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainDwhDAO;
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.VmDwhDAO;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.HostDwhDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainDwhDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.VmDwhDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.models.ResourceUsage;
 import org.ovirt.engine.ui.frontend.server.dashboard.models.ResourcesTotal;
 import org.ovirt.engine.ui.frontend.server.dashboard.models.VmStorage;
@@ -16,7 +15,7 @@ import org.ovirt.engine.ui.frontend.server.dashboard.models.VmStorage;
 public class HourlySummaryHelper {
 
     public static void getCpuMemSummary(GlobalUtilization utilization, DataSource dataSource)
-            throws SQLException, DashboardDataException {
+            throws DashboardDataException {
         GlobalUtilizationResourceSummary cpuSummary = new GlobalUtilizationCpuSummary();
         GlobalUtilizationResourceSummary memSummary = new GlobalUtilizationResourceSummary();
         getTotalCpuMemCount(cpuSummary, memSummary, dataSource);
@@ -29,9 +28,8 @@ public class HourlySummaryHelper {
     }
 
     private static void getVirtualCpuMemCount(GlobalUtilizationResourceSummary cpuSummary,
-            GlobalUtilizationResourceSummary memSummary,
-            DataSource dwhDataSource) throws SQLException, DashboardDataException {
-        VmDwhDAO dao = new VmDwhDAO(dwhDataSource);
+            GlobalUtilizationResourceSummary memSummary, DataSource dwhDataSource) throws DashboardDataException {
+        VmDwhDao dao = new VmDwhDao(dwhDataSource);
         ResourcesTotal resourcesTotal = dao.getVirtualCpuMemCount();
         cpuSummary.setVirtualTotal(resourcesTotal.getCpuTotal());
         cpuSummary.setVirtualUsed(resourcesTotal.getCpuUsed());
@@ -40,9 +38,8 @@ public class HourlySummaryHelper {
     }
 
     private static void getTotalCpuMemCount(GlobalUtilizationResourceSummary cpuSummary,
-            GlobalUtilizationResourceSummary memSummary,
-            DataSource dwhDataSource) throws SQLException, DashboardDataException {
-        HostDwhDAO dao = new HostDwhDAO(dwhDataSource);
+            GlobalUtilizationResourceSummary memSummary, DataSource dwhDataSource) throws DashboardDataException {
+        HostDwhDao dao = new HostDwhDao(dwhDataSource);
         ResourcesTotal total = dao.getTotalCpuMemCount();
         cpuSummary.setPhysicalTotal(total.getCpuTotal());
         //Transform MB to GB.
@@ -50,11 +47,10 @@ public class HourlySummaryHelper {
     }
 
     private static void getHourlyCpuMemUsage(GlobalUtilizationResourceSummary cpuSummary,
-            GlobalUtilizationResourceSummary memSummary, DataSource dataSource) throws SQLException,
-            DashboardDataException {
+            GlobalUtilizationResourceSummary memSummary, DataSource dataSource) throws DashboardDataException {
         List<HistoryNode> cpuHistory = new ArrayList<>();
         List<HistoryNode> memHistory = new ArrayList<>();
-        HostDwhDAO dao = new HostDwhDAO(dataSource);
+        HostDwhDao dao = new HostDwhDao(dataSource);
         List<ResourceUsage> history = dao.getHourlyCpuMemUsage();
         for (ResourceUsage item: history) {
             cpuHistory.add(new HistoryNode(item.getEpoch(), item.getCpuValue()));
@@ -67,21 +63,20 @@ public class HourlySummaryHelper {
         memSummary.setHistory(memHistory);
     }
 
-    public static GlobalUtilizationResourceSummary getStorageSummary(DataSource dataSource) throws SQLException,
-            DashboardDataException {
+    public static GlobalUtilizationResourceSummary getStorageSummary(DataSource dataSource)
+            throws DashboardDataException {
         GlobalUtilizationResourceSummary result = new GlobalUtilizationResourceSummary(new StorageUtilization());
         result.setPhysicalTotal(getTotalStorageCount(dataSource));
-        result.setHistory(getHourlyStorageHistory(result, dataSource));
+        result.setHistory(getHourlyStorageHistory(dataSource));
         result.setUsed(getLast5MinutesStorageAverage(dataSource));
         getVirtualStorageCount(result, dataSource);
         UtilizationHelper.populateStorageUtilization(result.getUtilization(), dataSource);
         return result;
     }
 
-    private static List<HistoryNode> getHourlyStorageHistory(GlobalUtilizationResourceSummary entity,
-            DataSource dwhDataSource) throws SQLException, DashboardDataException {
+    private static List<HistoryNode> getHourlyStorageHistory(DataSource dwhDataSource) throws DashboardDataException {
         List<HistoryNode> history = new ArrayList<>();
-        StorageDomainDwhDAO dao = new StorageDomainDwhDAO(dwhDataSource);
+        StorageDomainDwhDao dao = new StorageDomainDwhDao(dwhDataSource);
         List<ResourceUsage> usageList = dao.getHourlyStorageHistory();
         for (ResourceUsage usage: usageList) {
             //Transform GB to TB.
@@ -90,22 +85,21 @@ public class HourlySummaryHelper {
         return history;
     }
 
-    private static double getLast5MinutesStorageAverage(DataSource dwhDataSource) throws SQLException,
-            DashboardDataException {
-        StorageDomainDwhDAO dao = new StorageDomainDwhDAO(dwhDataSource);
+    private static double getLast5MinutesStorageAverage(DataSource dwhDataSource) throws DashboardDataException {
+        StorageDomainDwhDao dao = new StorageDomainDwhDao(dwhDataSource);
         //Transform GB to TB.
         return dao.getLast5MinutesStorageAverage() / 1024;
     }
 
-    private static Double getTotalStorageCount(DataSource dwhDataSource) throws SQLException, DashboardDataException {
-        StorageDomainDwhDAO dao = new StorageDomainDwhDAO(dwhDataSource);
+    private static Double getTotalStorageCount(DataSource dwhDataSource) throws DashboardDataException {
+        StorageDomainDwhDao dao = new StorageDomainDwhDao(dwhDataSource);
         //Transform GB to TB.
         return dao.getTotalStorageCount() / 1024;
     }
 
     private static void getVirtualStorageCount(GlobalUtilizationResourceSummary storageSummary,
-            DataSource dwhDataSource) throws SQLException, DashboardDataException {
-        VmDwhDAO dao = new VmDwhDAO(dwhDataSource);
+            DataSource dwhDataSource) throws DashboardDataException {
+        VmDwhDao dao = new VmDwhDao(dwhDataSource);
         VmStorage storageCount = dao.getVirtualStorageCount();
         storageSummary.setVirtualUsed(storageCount.getUsed());
         storageSummary.setVirtualTotal(storageCount.getTotal());

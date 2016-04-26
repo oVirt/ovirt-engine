@@ -1,14 +1,12 @@
 package org.ovirt.engine.ui.frontend.server.dashboard;
 
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.ClusterEngineDAO;
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.DataCenterDAO;
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.HostEngineDAO;
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainEngineDAO;
-import org.ovirt.engine.ui.frontend.server.dashboard.dao.VmEngineDAO;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.ClusterEngineDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.DataCenterDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.HostEngineDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainEngineDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.VmEngineDao;
 
 public class InventoryHelper {
     /**
@@ -16,12 +14,10 @@ public class InventoryHelper {
      * @param engineDataSource The data source to use.
      * @return An {@code InventoryStatus} object containing the status counts mapped from the original status to
      * the Up/Down/Error status.
-     * @throws SQLException when there is an issue with the query or database.
      * @throws DashboardDataException If there is a problem reading the query properties
      */
-    public static InventoryStatus getDcInventoryStatus(DataSource engineDataSource) throws SQLException,
-            DashboardDataException {
-        DataCenterDAO dao = new DataCenterDAO(engineDataSource);
+    public static InventoryStatus getDcInventoryStatus(DataSource engineDataSource) throws DashboardDataException {
+        DataCenterDao dao = new DataCenterDao(engineDataSource);
         return dao.getDcInventoryStatus();
     }
 
@@ -29,12 +25,10 @@ public class InventoryHelper {
      * Get the status information for the clusters. Since there are no cluster statuses, they are always 'UP'
      * @param engineDataSource The data source to use.
      * @return An {@code InventoryStatus} object containing the status counts.
-     * @throws SQLException when there is an issue with the query or database.
      * @throws DashboardDataException If there is a problem reading the query properties
      */
-    public static InventoryStatus getClusterInventoryStatus(DataSource engineDataSource) throws SQLException,
-            DashboardDataException {
-        ClusterEngineDAO dao = new ClusterEngineDAO(engineDataSource);
+    public static InventoryStatus getClusterInventoryStatus(DataSource engineDataSource) throws DashboardDataException {
+        ClusterEngineDao dao = new ClusterEngineDao(engineDataSource);
         return dao.getClusterInventorySummary();
     }
 
@@ -43,12 +37,10 @@ public class InventoryHelper {
      * @param engineDataSource The data source to use.
      * @return An {@code InventoryStatus} object containing the status counts mapped from the original status to
      * the Up/Down/Error status.
-     * @throws SQLException when there is an issue with the query or database.
      * @throws DashboardDataException If there is a problem reading the query properties
      */
-    public static InventoryStatus getHostInventoryStatus(DataSource engineDataSource) throws SQLException,
-            DashboardDataException {
-        HostEngineDAO dao = new HostEngineDAO(engineDataSource);
+    public static InventoryStatus getHostInventoryStatus(DataSource engineDataSource) throws DashboardDataException {
+        HostEngineDao dao = new HostEngineDao(engineDataSource);
         return dao.getHostInventoryStatus();
     }
 
@@ -57,12 +49,10 @@ public class InventoryHelper {
      * @param engineDataSource The data source to use.
      * @return An {@code InventoryStatus} object containing the status counts mapped from the original status to
      * the Up/Down/Error status.
-     * @throws SQLException when there is an issue with the query or database.
      * @throws DashboardDataException If there is a problem reading the query properties
      */
-    public static InventoryStatus getStorageInventoryStatus(DataSource engineDataSource) throws SQLException,
-            DashboardDataException {
-        StorageDomainEngineDAO dao = new StorageDomainEngineDAO(engineDataSource);
+    public static InventoryStatus getStorageInventoryStatus(DataSource engineDataSource) throws DashboardDataException {
+        StorageDomainEngineDao dao = new StorageDomainEngineDao(engineDataSource);
         return dao.getStorageInventoryStatus();
     }
 
@@ -71,12 +61,11 @@ public class InventoryHelper {
      * @param engineDataSource The data source to use.
      * @return An {@code InventoryStatus} object containing the status counts mapped from the original status to
      * the Up/Down/Error status.
-     * @throws SQLException when there is an issue with the query or database.
      * @throws DashboardDataException If there is a problem reading the query properties
      */
-    public static InventoryStatus getVmInventorySummary(DataSource engineDataSource) throws SQLException,
-            DashboardDataException {
-        VmEngineDAO dao = new VmEngineDAO(engineDataSource);
+    public static InventoryStatus getVmInventorySummary(DataSource engineDataSource) throws DashboardDataException {
+        VmEngineDao dao = new VmEngineDao(engineDataSource);
         return dao.getVmInventoryStatus();
     }
+
 }
