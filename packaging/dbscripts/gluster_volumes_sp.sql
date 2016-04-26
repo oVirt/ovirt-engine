@@ -742,6 +742,21 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION UpdateGlusterVolumeBrickUnSyncedEntries (
+    v_id UUID,
+    v_unsynced_entries integer,
+    v_unsynced_entries_history text
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE gluster_volume_bricks
+    SET unsynced_entries = v_unsynced_entries,
+        unsynced_entries_history = v_unsynced_entries_history,
+        _update_date = LOCALTIMESTAMP
+    WHERE id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION UpdateGlusterVolumeStatusByName (
     v_cluster_id UUID,
     v_vol_name VARCHAR(1000),

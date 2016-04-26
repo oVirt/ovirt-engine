@@ -1165,6 +1165,25 @@ public enum ConfigValues {
     @DefaultValueAttribute("300")
     GlusterRefreshRateHeavy,
 
+    /**
+     * Refresh rate (in seconds) for gluster self heal info . 'gluster self heal info' command will be used to fetch
+     * heal info, and it adds a considerable overhead on the GlusterFS processes.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("600")
+    GlusterRefreshRateHealInfo,
+
+    /**
+     * Defines the number of history values storable by the engine for unsynced entries in gluster brick
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("40")
+    GlusterUnSyncedEntriesHistoryLimit,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterSelfHealMonitoringSupported,
+
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")

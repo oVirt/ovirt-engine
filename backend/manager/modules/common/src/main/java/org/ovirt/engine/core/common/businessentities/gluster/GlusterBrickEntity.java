@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
@@ -8,6 +11,8 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.AddBrick;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
@@ -53,9 +58,17 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
 
     private GlusterAsyncTask asyncTask;
 
+    private Integer unSyncedEntries;
+
+    private List<Integer> unSyncedEntriesTrend;
+
+    private Double selfHealEta;
+
     public GlusterBrickEntity() {
         status = GlusterStatus.DOWN;
         asyncTask = new GlusterAsyncTask();
+        unSyncedEntriesTrend = Collections.emptyList();
+        selfHealEta = 0D;
     }
 
     public Guid getVolumeId() {
@@ -141,7 +154,10 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
                 brickDirectory,
                 brickOrder,
                 status,
-                asyncTask
+                asyncTask,
+                unSyncedEntries,
+                unSyncedEntriesTrend,
+                selfHealEta
         );
     }
 
@@ -161,6 +177,9 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
                 && Objects.equals(brickDirectory, other.brickDirectory)
                 && Objects.equals(brickOrder, other.brickOrder)
                 && Objects.equals(asyncTask, other.asyncTask)
+                && Objects.equals(unSyncedEntries, other.unSyncedEntries)
+                && Objects.equals(unSyncedEntriesTrend, other.unSyncedEntriesTrend)
+                && Objects.equals(selfHealEta, other.selfHealEta)
                 && status == other.status;
     }
 
@@ -171,6 +190,8 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
         setServerName(brick.getServerName());
         setBrickDirectory(brick.getBrickDirectory());
         setBrickOrder(brick.getBrickOrder());
+        setUnSyncedEntries(brick.unSyncedEntries);
+        setUnSyncedEntriesTrend(brick.getUnSyncedEntriesTrend());
         setStatus(brick.getStatus());
     }
 
@@ -246,4 +267,61 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
         return getQualifiedName();
     }
 
+    public List<Integer> getUnSyncedEntriesTrend() {
+        return unSyncedEntriesTrend;
+    }
+
+    public void setUnSyncedEntriesTrend(List<Integer> unSyncedEntriesTrend) {
+        this.unSyncedEntriesTrend = unSyncedEntriesTrend;
+        setSelfHealEta(calculateSelfHealEta());
+    }
+
+    public Integer getUnSyncedEntries() {
+        return unSyncedEntries;
+    }
+
+    public void setUnSyncedEntries(Integer unSyncedEntries) {
+        this.unSyncedEntries = unSyncedEntries;
+    }
+
+    public Double getSelfHealEta() {
+        return selfHealEta;
+    }
+
+    private void setSelfHealEta(Double value) {
+        this.selfHealEta = value;
+    }
+
+    private Double calculateSelfHealEta() {
+        if (this.getUnSyncedEntries() == null || this.getUnSyncedEntriesTrend() == null
+                || this.getUnSyncedEntriesTrend().size() < 2) {
+            return 0D;
+        }
+
+        // Calculate Heal rate between each entries in the unsynced entries list and calculate the average heal rate.
+        List<Double> healRates = new ArrayList<>();
+        for (int index = 0; index < this.getUnSyncedEntriesTrend().size() - 1; index++) {
+            Integer entries = this.unSyncedEntriesTrend.get(index);
+            Integer entriesRemaining = this.unSyncedEntriesTrend.get(index + 1);
+            // -1 is added when fetching heal info fails. We can ignore them for heal rate calculation.
+            if (entries >= 0 && entriesRemaining >= 0) {
+                double healRate = ((double) entries - entriesRemaining)
+                        / (Config.<Integer> getValue(ConfigValues.GlusterRefreshRateHealInfo));
+                if (healRate > 0) {
+                healRates.add(healRate);
+                }
+            }
+        }
+
+        if (healRates.isEmpty()) {
+            return 0D;
+        }
+
+        Double healRateSum = 0D;
+        for (Double healRate : healRates) {
+            healRateSum += healRate;
+        }
+        Double healRateAvg = healRateSum / healRates.size();
+        return this.getUnSyncedEntries() / healRateAvg;
+    }
 }

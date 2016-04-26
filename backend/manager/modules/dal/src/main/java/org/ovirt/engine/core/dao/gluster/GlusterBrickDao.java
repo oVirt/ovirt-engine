@@ -62,4 +62,6 @@ public interface GlusterBrickDao extends Dao, MassOperationsDao<GlusterBrickEnti
     public void updateBrickNetworkId(Guid brickId, Guid networkId);
 
     public List<GlusterBrickEntity> getAllByClusterAndNetworkId(Guid clusterId, Guid networkId);
+
+    public void updateUnSyncedEntries(List<GlusterBrickEntity> bricks);
 }

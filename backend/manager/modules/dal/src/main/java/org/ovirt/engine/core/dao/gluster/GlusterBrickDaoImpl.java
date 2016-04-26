@@ -2,7 +2,9 @@ package org.ovirt.engine.core.dao.gluster;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Named;
@@ -161,8 +163,28 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
 
             brick.setNetworkId(getGuid(rs, "network_id"));
             brick.setNetworkAddress(rs.getString("interface_address"));
+            brick.setUnSyncedEntries(
+                    (rs.getObject("unsynced_entries") != null) ? rs.getInt("unsynced_entries") : null);
+            brick.setUnSyncedEntriesTrend(asIntList((String) rs.getObject("unsynced_entries_history")));
             return brick;
         }
+    }
+
+    private static List<Integer> asIntList(String str) {
+        if (str == null || "".equals(str)) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> res = new ArrayList<>();
+        for (String s : StringUtils.split(str, ",")) {
+            try {
+                res.add(Integer.parseInt(s));
+            } catch (NumberFormatException e) {
+                // add nothing if malformed
+            }
+        }
+
+        return res;
     }
 
     @Override
@@ -232,7 +254,10 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
                                         entity.getAsyncTask().getTaskId() != null ? entity.getAsyncTask()
                                                 .getTaskId()
                                                 .toString()
-                                                : "");
+                                                : "")
+                                .addValue("unsynced_entries", entity.getUnSyncedEntries())
+                                .addValue("unsynced_entries_history",
+                                        StringUtils.join(entity.getUnSyncedEntriesTrend(), ","));
 
                 return paramValue;
             }
@@ -324,6 +349,11 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
 
     private MapSqlParameterSource createBrickIdParams(Guid brickId) {
         return getCustomMapSqlParameterSource().addValue("brick_id", brickId);
+    }
+
+    @Override
+    public void updateUnSyncedEntries(List<GlusterBrickEntity> bricks) {
+        getCallsHandler().executeStoredProcAsBatch("UpdateGlusterVolumeBrickUnSyncedEntries", bricks, getBatchMapper());
     }
 
 }
