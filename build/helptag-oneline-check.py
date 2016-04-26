@@ -89,8 +89,8 @@ def main():
     args = parser.parse_args()
 
     ret = 1
-    if (not args.sourcefile.endswith('.java')
-            or not os.path.isfile(args.sourcefile)):
+    if (not args.sourcefile.endswith('.java') or
+            not os.path.isfile(args.sourcefile)):
         sys.stderr.write(
             'ERROR: help tags file not found. Check ' + args.sourcefile
         )
