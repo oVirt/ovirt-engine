@@ -58,7 +58,7 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
     private String diskDescription;
 
     /**
-     * A boolean indiaction whether the disk is shareable.
+     * A boolean indication whether the disk is shareable.
      */
     private boolean shareable;
 
