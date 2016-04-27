@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.osinfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,19 +16,19 @@ import org.ovirt.engine.core.compat.Version;
  */
 public interface OsRepository {
 
-    public static final int DEFAULT_X86_OS = 0;
-    public static final int DEFAULT_PPC_OS = 1001;
+    int DEFAULT_X86_OS = 0;
+    int DEFAULT_PPC_OS = 1001;
 
     /*
      * This value is used to enable the auto selection of an appropriate OS when
      * the user does not set a OS in the REST API.
      */
-    public static final int AUTO_SELECT_OS = -1;
+    int AUTO_SELECT_OS = -1;
 
     /**
      * @return all loaded os ids
      */
-    public ArrayList<Integer> getOsIds();
+    List<Integer> getOsIds();
 
     /**
      * Every configured OS a both a unique id and a name. The unique name
@@ -39,132 +37,132 @@ public interface OsRepository {
      * @return mapping of the osId to the unique OS name.
      *
      */
-    public HashMap<Integer, String> getUniqueOsNames();
+    Map<Integer, String> getUniqueOsNames();
 
     /**
      * @return map of osId to the the os name
      */
-    public HashMap<Integer, String> getOsNames();
+    Map<Integer, String> getOsNames();
 
-    public String getOsName(int osId);
+    String getOsName(int osId);
 
     /**
      * OS families are basically windows,linux and other.
      */
-    public String getOsFamily(int osId);
+    String getOsFamily(int osId);
 
     /**
      * @return a list of OSs who's {@link OsRepository#getOsFamily(int)} returns "linux"
      */
-    public ArrayList<Integer> getLinuxOss();
+    List<Integer> getLinuxOss();
 
-    public ArrayList<Integer> get64bitOss();
+    List<Integer> get64bitOss();
 
     /**
      * @return a list of OSs who's {@link OsRepository#getOsFamily(int)} returns "windows"
      */
-    public ArrayList<Integer> getWindowsOss();
+    List<Integer> getWindowsOss();
 
     /**
      * @return map of osId to the the os architecture
      */
-    public HashMap<Integer, ArchitectureType> getOsArchitectures();
+    Map<Integer, ArchitectureType> getOsArchitectures();
 
     /**
      * Get the architecture from OS
      * @param osId - OS id
      */
-    public ArchitectureType getArchitectureFromOS(int osId);
+    ArchitectureType getArchitectureFromOS(int osId);
 
     /**
      * @return minimum RAM in mb
      */
-    public int getMinimumRam(int osId, Version version);
+    int getMinimumRam(int osId, Version version);
 
     /**
      * @return maximum RAM in mb
      */
-    public int getMaximumRam(int osId, Version version);
+    int getMaximumRam(int osId, Version version);
 
     /**
      * @return The supported graphics and display pairs for the given OS and cluster compatbility version
      */
-    public List<Pair<GraphicsType, DisplayType>> getGraphicsAndDisplays(int osId, Version version);
+    List<Pair<GraphicsType, DisplayType>> getGraphicsAndDisplays(int osId, Version version);
 
      /**
       * @return map (osId -> compatibility version -> list of (graphics, display) pairs) for all OSs and
       * compatibility versions
      */
-    public Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> getGraphicsAndDisplays();
+    Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> getGraphicsAndDisplays();
 
      /**
       * @return Multiplier to apply in `vram' video RAM parameter computation.  0 to use default `vram' value.
      */
-    public int getVramMultiplier(int osId);
+    int getVramMultiplier(int osId);
 
     /**
      * @return map (osId -> compatibility version -> Boolean) that indicates balloon disabled for all OSs and
      * compatibility versions
      */
-    public Map<Integer, Map<Version, Boolean>> getBalloonSupportMap();
+    Map<Integer, Map<Version, Boolean>> getBalloonSupportMap();
 
     /**
      * Checks if is recommended enable the OS balloon.
      * @return an boolean
      */
-    public boolean isBalloonEnabled(int osId, Version version);
+    boolean isBalloonEnabled(int osId, Version version);
 
     /**
      * Checks if that OS network devices support hotplug.
      * @return an boolean
      */
-    public boolean hasNicHotplugSupport(int osId, Version version);
+    boolean hasNicHotplugSupport(int osId, Version version);
 
     /**
      * @return a map that contain an pair (OS id and version) with the hotplug support.
      */
-    public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap();
+    Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap();
 
     /**
      * @return a map that contain an pair (OS id and version) with the disk hotpluggable interfaces.
      */
-    public Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap();
+    Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap();
 
     /**
      * this is Windows OSs specific path to the sysprep file
      */
-    public String getSysprepPath(int osId, Version version);
+    String getSysprepPath(int osId, Version version);
 
     /**
      * this is Windows OSs specific file name sysprep in the floppy,
      * ie: sysprep.inf for xp and 2003 and Unattend.xml for the new sysprep xml files
      */
-    public String getSysprepFileName(int osId, Version version);
+    String getSysprepFileName(int osId, Version version);
 
     /**
      * this Windows OSs specific product key
      */
-    public String getProductKey(int osId, Version version);
+    String getProductKey(int osId, Version version);
 
     /**
      * a convenience method the for  family type "linux"
      */
-    public boolean isLinux(int osId);
+    boolean isLinux(int osId);
 
     /**
      * a convenience method the for  family type "windows"
      */
-    public boolean isWindows(int osId);
+    boolean isWindows(int osId);
 
     /**
      * @return list of supported disk interface devices
      */
-    ArrayList<String> getDiskInterfaces(int osId, Version version);
+    List<String> getDiskInterfaces(int osId, Version version);
 
     /**
      * @return list of supported network devices
      */
-    ArrayList<String> getNetworkDevices(int osId, Version version);
+    List<String> getNetworkDevices(int osId, Version version);
 
     /**
      * @return set of disk hotpluggable interfaces
@@ -174,7 +172,7 @@ public interface OsRepository {
     /**
      * @return list of supported watch dog models
      */
-    ArrayList<String> getWatchDogModels(int osId, Version version);
+    List<String> getWatchDogModels(int osId, Version version);
 
     /**
      * @return set of supported VmWatchdogTypes
@@ -189,7 +187,7 @@ public interface OsRepository {
     /**
      * @return the maximum allowed number of PCI devices
      */
-    public int getMaxPciDevices(int osId, Version version);
+    int getMaxPciDevices(int osId, Version version);
 
     /**
      * @return a specific Cd Interface for the given os.
@@ -223,19 +221,19 @@ public interface OsRepository {
      * Checks if is recommended enable the HyperV optimizations
      * @return an boolean
      */
-    public boolean isHypervEnabled(int osId, Version version);
+    boolean isHypervEnabled(int osId, Version version);
 
     /**
      * Some Operating Systems don't support certain CPUs. As a result of working
      * with one,the guest OS might stop working, blue-screen, oops, or other well known red lights.
      * @return unsupported cpus mapping of {osId, version}->{set of cpu ids} ; cpu id is lower-case
      */
-    public Map<Pair<Integer, Version>, Set<String>> getUnsupportedCpus();
+    Map<Pair<Integer, Version>, Set<String>> getUnsupportedCpus();
 
     /**
      * Stripped version of getUnsupportedCpus.
      */
-    public Set<String> getUnsupportedCpus(int osId, Version version);
+    Set<String> getUnsupportedCpus(int osId, Version version);
 
     /**
      * Some Operating Systems don't support certain CPUs. As a result of working
@@ -243,7 +241,7 @@ public interface OsRepository {
      * @param cpuId cpu id as being specified in vdc_options, <bold>case insensitive</bold>
      * @return true if the cpu supported otherwise false
      */
-    public boolean isCpuSupported(int osId, Version version, String cpuId);
+    boolean isCpuSupported(int osId, Version version, String cpuId);
 
     /**
      * @return a map that contain an pair (OS id and version) with the sound device support.

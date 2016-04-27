@@ -16,8 +16,7 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.api.model.OperatingSystemInfo;
@@ -42,9 +41,9 @@ public class BackendOperatingSystemsResource
     public OperatingSystemInfos list() {
         OsRepository repository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         final Map<Integer, VmIconIdSizePair> iconDefaults = getIconDefaults();
-        ArrayList<Integer> ids = repository.getOsIds();
-        HashMap<Integer, String> uniqueNames = repository.getUniqueOsNames();
-        HashMap<Integer, String> names = repository.getOsNames();
+        List<Integer> ids = repository.getOsIds();
+        Map<Integer, String> uniqueNames = repository.getUniqueOsNames();
+        Map<Integer, String> names = repository.getOsNames();
         OperatingSystemInfos collection = new OperatingSystemInfos();
         for (Integer id : ids) {
             OperatingSystemInfo model = new OperatingSystemInfo();

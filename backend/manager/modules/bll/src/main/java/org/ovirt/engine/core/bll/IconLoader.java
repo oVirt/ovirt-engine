@@ -53,7 +53,7 @@ public class IconLoader {
     }
 
     private void loadIconsToDatabase() {
-        final HashMap<Integer, String> osIdToOsNameMap =
+        final Map<Integer, String> osIdToOsNameMap =
                 SimpleDependencyInjector.getInstance().get(OsRepository.class).getUniqueOsNames();
         for (Map.Entry<Integer, String> entry : osIdToOsNameMap.entrySet()) {
             final VmIconIdSizePair iconIdPair = ensureIconsInDatabase(entry.getValue());

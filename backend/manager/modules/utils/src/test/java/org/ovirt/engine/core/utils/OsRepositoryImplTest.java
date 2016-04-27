@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -131,7 +130,7 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testGetNetworkDevices() throws Exception {
-        ArrayList<String> networkDevices = OsRepositoryImpl.INSTANCE.getNetworkDevices(777, null);
+        List<String> networkDevices = OsRepositoryImpl.INSTANCE.getNetworkDevices(777, null);
         assertTrue(networkDevices.size() == 2);
         for (String device : NETWORK_DEVICES.split(",")) {
             assertTrue(networkDevices.contains(device));
@@ -149,7 +148,7 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testGetWatchDogModels() throws Exception {
-        ArrayList<String> watchDogModels = OsRepositoryImpl.INSTANCE.getWatchDogModels(777, null);
+        List<String> watchDogModels = OsRepositoryImpl.INSTANCE.getWatchDogModels(777, null);
         assertTrue(watchDogModels.size() == 2);
         for (String model : WATCH_DOG_MODELS.split(",")) {
             assertTrue(watchDogModels.contains(model.trim()));

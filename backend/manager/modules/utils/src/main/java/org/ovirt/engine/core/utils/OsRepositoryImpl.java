@@ -44,7 +44,7 @@ public enum OsRepositoryImpl implements OsRepository {
      */
     private Map<Integer, String> idToUnameLookup;
     private Map<String, Integer> backwardCompatibleNamesToIds;
-    private static HashMap<ArchitectureType, Integer> defaultOsMap = new HashMap<>(2);
+    private static Map<ArchitectureType, Integer> defaultOsMap = new HashMap<>(2);
 
     static {
         defaultOsMap.put(ArchitectureType.x86_64, DEFAULT_X86_OS);
@@ -117,19 +117,19 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public ArrayList<Integer> getOsIds() {
+    public List<Integer> getOsIds() {
         return new ArrayList<>(idToUnameLookup.keySet());
     }
 
     @Override
-    public HashMap<Integer, String> getUniqueOsNames() {
+    public Map<Integer, String> getUniqueOsNames() {
         // return a defensive copy to avoid modification of this map.
         return new HashMap<>(idToUnameLookup);
     }
 
     @Override
-    public HashMap<Integer, String> getOsNames() {
-        HashMap<Integer, String> osNames = new HashMap<>();
+    public Map<Integer, String> getOsNames() {
+        Map<Integer, String> osNames = new HashMap<>();
         for (int osId : getOsIds()) {
             String name = getValueByVersion(idToUnameLookup.get(osId), "name", null);
             if (name != null) {
@@ -183,8 +183,8 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public ArrayList<Integer> getLinuxOss() {
-        ArrayList<Integer> oss = new ArrayList<>();
+    public List<Integer> getLinuxOss() {
+        List<Integer> oss = new ArrayList<>();
         for (int osId : getOsIds()) {
             if (getOsFamily(osId).equalsIgnoreCase("linux")) {
                 oss.add(osId);
@@ -194,8 +194,8 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public ArrayList<Integer> get64bitOss() {
-        ArrayList<Integer> oss = new ArrayList<>();
+    public List<Integer> get64bitOss() {
+        List<Integer> oss = new ArrayList<>();
         for (int osId : getOsIds()) {
             String bus = getValueByVersion(idToUnameLookup.get(osId), "bus", null);
             if ("64".equalsIgnoreCase(bus)) {
@@ -206,8 +206,8 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public ArrayList<Integer> getWindowsOss() {
-        ArrayList<Integer> oss = new ArrayList<>();
+    public List<Integer> getWindowsOss() {
+        List<Integer> oss = new ArrayList<>();
         for (int osId : getOsIds()) {
             if (isWindows(osId)) {
                 oss.add(osId);
@@ -217,8 +217,8 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public HashMap<Integer, ArchitectureType> getOsArchitectures() {
-        HashMap<Integer, ArchitectureType> osArchitectures = new HashMap<>();
+    public Map<Integer, ArchitectureType> getOsArchitectures() {
+        Map<Integer, ArchitectureType> osArchitectures = new HashMap<>();
         for (int osId : getOsIds()) {
             String architecture = getValueByVersion(idToUnameLookup.get(osId), "cpuArchitecture", null);
 
@@ -241,14 +241,14 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public ArrayList<String> getDiskInterfaces(int osId, Version version) {
+    public List<String> getDiskInterfaces(int osId, Version version) {
         String devices =
                 getValueByVersion(idToUnameLookup.get(osId), "devices.diskInterfaces", version);
         return trimElements(devices.split(","));
     }
 
     @Override
-    public ArrayList<String> getNetworkDevices(int osId, Version version) {
+    public List<String> getNetworkDevices(int osId, Version version) {
         String devices =
                 getValueByVersion(idToUnameLookup.get(osId), "devices.network", version);
         return trimElements(devices.split(","));
@@ -263,7 +263,7 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public ArrayList<String> getWatchDogModels(int osId, Version version) {
+    public List<String> getWatchDogModels(int osId, Version version) {
         String models = getValueByVersion(idToUnameLookup.get(osId),
                 "devices.watchdog.models",
                 version);
@@ -337,7 +337,7 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     private Pair<String, String> parseGraphicsAndDisplayPair(String displayAndGraphicsString) {
-        ArrayList<String> splitted = trimElements(displayAndGraphicsString.split("/"));
+        List<String> splitted = trimElements(displayAndGraphicsString.split("/"));
 
         return (splitted.size() == 2)
             ? new Pair<>(splitted.get(0), splitted.get(1))
@@ -427,7 +427,7 @@ public enum OsRepositoryImpl implements OsRepository {
         Set<Version> versionsWithNull = new HashSet<>(Version.ALL);
         versionsWithNull.add(null);
 
-        HashMap<Pair<Integer, Version>, Set<String>> unsupportedCpus = new HashMap<>();
+        Map<Pair<Integer, Version>, Set<String>> unsupportedCpus = new HashMap<>();
 
         for (int osId : getOsIds()) {
             for (Version version : versionsWithNull) {
@@ -575,8 +575,8 @@ public enum OsRepositoryImpl implements OsRepository {
      * is not added empty values.
      */
 
-    private ArrayList<String> trimElements(String... elements) {
-        ArrayList<String> list = new ArrayList<>(elements.length);
+    private List<String> trimElements(String... elements) {
+        List<String> list = new ArrayList<>(elements.length);
         for (String e : elements) {
             e = e.trim();
             if (e.length() > 0) {
