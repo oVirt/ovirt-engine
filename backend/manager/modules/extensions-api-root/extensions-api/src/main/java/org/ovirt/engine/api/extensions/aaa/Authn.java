@@ -16,6 +16,8 @@ public class Authn {
      * Configuration keys for the extension configuration.
      */
     public static class ConfigKeys {
+        /** Profile is the default profile for login page. */
+        public static final String DEFAULT_PROFILE = "ovirt.engine.aaa.authn.default.profile";
         /** Profile name. */
         public static final String PROFILE_NAME = "ovirt.engine.aaa.authn.profile.name";
         /** Authorization extension name. */

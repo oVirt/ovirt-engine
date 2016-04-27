@@ -218,6 +218,15 @@ public class AuthenticationUtils {
                 .collect(Collectors.toList());
     }
 
+    public static String getDefaultProfile(SsoExtensionsManager extensionsManager) {
+        Optional<ExtensionProxy> defaultExtension =  extensionsManager.getExtensionsByService(Authn.class.getName())
+                .stream()
+                .filter(a -> Boolean.valueOf(a.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
+                                .getProperty(Authn.ConfigKeys.DEFAULT_PROFILE)))
+                .findFirst();
+        return defaultExtension.isPresent() ? getProfileName(defaultExtension.get()) : null;
+    }
+
     public static List<String> getAvailableProfiles(SsoExtensionsManager extensionsManager) {
         return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
                 .map(AuthenticationUtils::getProfileName)

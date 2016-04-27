@@ -23,6 +23,7 @@ public class SsoContext implements Serializable{
     private SsoExtensionsManager ssoExtensionsManager;
     private NegotiateAuthUtils negotiateAuthUtils;
     private LocalizationUtils localizationUtils;
+    private String ssoDefaultProfile;
     private List<String> ssoProfiles;
     private List<String> ssoProfilesSupportingPasswd;
     private List<String> ssoProfilesSupportingPasswdChange;
@@ -91,6 +92,14 @@ public class SsoContext implements Serializable{
 
     public void setSsoExtensionsManager(SsoExtensionsManager ssoExtensionsManager) {
         this.ssoExtensionsManager = ssoExtensionsManager;
+    }
+
+    public String getSsoDefaultProfile() {
+        return ssoDefaultProfile;
+    }
+
+    public void setSsoDefaultProfile(String ssoDefaultProfile) {
+        this.ssoDefaultProfile = ssoDefaultProfile;
     }
 
     public List<String> getSsoProfiles() {

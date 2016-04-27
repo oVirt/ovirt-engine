@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.sso.servlets;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 
 import javax.servlet.ServletConfig;
@@ -65,6 +66,10 @@ public class InteractiveAuthServlet extends HttpServlet {
                     }
                     log.debug("Redirecting to LoginPage");
                     SsoUtils.getSsoSession(request).setReauthenticate(false);
+                    if (StringUtils.isNotEmpty(ssoContext.getSsoDefaultProfile()) &&
+                            Arrays.stream(request.getCookies()).noneMatch(c -> c.getName().equals("profile"))) {
+                        response.addCookie(new Cookie("profile", ssoContext.getSsoDefaultProfile()));
+                    }
                     redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_FORM_URI;
                 }
             }
