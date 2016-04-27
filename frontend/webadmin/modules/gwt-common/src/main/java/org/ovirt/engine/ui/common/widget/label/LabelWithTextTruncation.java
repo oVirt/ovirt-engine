@@ -50,7 +50,7 @@ public class LabelWithTextTruncation extends Composite implements IsEditor<LeafV
             return;
         }
 
-        if (ElementUtils.detectOverflowUsingScrollWidth(label.getElement())) {
+        if (ElementUtils.detectHorizontalOverflow(label.getElement())) {
             tooltip.setText(getText());
         } else {
             tooltip.setText(null);

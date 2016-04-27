@@ -180,7 +180,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
     protected void onLoad() {
         super.onLoad();
 
-        while (ElementUtils.detectOverflowUsingScrollWidth(getElement())) {
+        while (ElementUtils.detectHorizontalOverflow(getElement())) {
             titleLabel.getElement().getStyle().setWidth(titleLabel.getElement().getClientWidth() - 1, Unit.PX);
         }
     }

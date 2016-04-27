@@ -151,7 +151,7 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
      * Returns {@code true} when the content of the given {@code parent} element overflows its area.
      */
     protected boolean contentOverflows(Element parent) {
-        return parent != null && (ElementUtils.detectOverflowUsingScrollWidth(parent) || ElementUtils.detectOverflowUsingClientHeight(parent));
+        return parent != null && (ElementUtils.detectHorizontalOverflow(parent) || ElementUtils.detectVerticalOverflow(parent));
     }
 
 }

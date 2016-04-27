@@ -145,7 +145,7 @@ public class AlertManager {
 
         // Use tooltip in case the textual content overflows
         Element messageDivElement = alertPanel.getMessageAt(0).getElement();
-        if (ElementUtils.detectOverflowUsingScrollWidth(messageDivElement)) {
+        if (ElementUtils.detectHorizontalOverflow(messageDivElement)) {
             SafeHtml tooltipContent = SafeHtmlUtils.fromString(messageDivElement.getInnerText());
             TooltipMixin.addTooltipToElement(tooltipContent, alertPanel.getElement(), Placement.BOTTOM);
         }
