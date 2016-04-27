@@ -1,6 +1,6 @@
-
 /* LoginPopupView.ui.xml:
 These classes allow you to modify the logo used in the login form. */
+
 .obrand_loginFormLogoImage {
     background-image: url(images/ovirt_login_middle_logo.png);
     width: 440px;
@@ -9,11 +9,14 @@ These classes allow you to modify the logo used in the login form. */
     display: block;
 }
 
+
 /* SimpleDialogPanel:
 These classes allow you to modify the header of all the popup windows
 in the user portal and web admin. The border is defined in gwt-common.css */
 
+
 /* left */
+
 .obrand_dialogHeaderLeftPanel {
     position: absolute;
     left: 5px;
@@ -22,7 +25,9 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     background: url(images/dialog/dialog_header_TL.png);
 }
 
+
 /* center */
+
 .obrand_dialogHeaderCenterPanel {
     position: absolute;
     background: url(images/dialog/dialog_header_background_repetitive.png) repeat-x;
@@ -50,7 +55,9 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     padding-right: 5px;
 }
 
+
 /* right */
+
 .obrand_dialogHeaderRightPanel {
     background-image: url(images/dialog/dialog_header_TR.png);
     width: 27px;
@@ -64,15 +71,19 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     /* currently not used. */
 }
 
+
 /* SimpleDialogPanel.ui.xml:
 This class allows you to change the default icon on popup windows.
 Currently no icon for most windows. */
+
 .obrand_dialogLogoImage {
     border: 0px;
 }
 
+
 /* ErrorPopupView.ui.xml:
 This class allows you to change the error icon on the error popup window. */
+
 .obrand_dialogLogoErrorImage {
     background: url(images/dialog/error.png);
     background-repeat: no-repeat;
@@ -82,9 +93,11 @@ This class allows you to change the error icon on the error popup window. */
     border: 0px;
 }
 
+
 /* DialogTab.ui.xml:
 This class allows you to change the active tab on the left of some of the
 popup windows, for instance for creating a new VM */
+
 .obrand_active {
     background-color: #82AA32;
     color: white;
@@ -92,7 +105,9 @@ popup windows, for instance for creating a new VM */
     border: 1px solid #345B7A;
 }
 
+
 /* VmDiskPopupWidget.ui.xml */
+
 .obrand_topPanel {
     background-color: #688B21;
 }
@@ -101,33 +116,28 @@ popup windows, for instance for creating a new VM */
     background-color: #82AA32;
 }
 
+
 /* LoginSectionView.ui.xml:
    app logo, positioned in the top right of login screen */
+
 .obrand_loginPageLogoImage {
-    background-image: url(images/ovirt_top_right_logo.png);
-    width: 98px;
-    height: 39px;
+    background-image: url(images/eayun-logo.png);
+    width: 171px;
+    height: 60px;
     border: 0px;
     display: block;
+    padding-right: 0px;
+    margin-right: 25px;
 }
 
-.obrand_loginPageLogoImageLink {
-    display: block;
-    float: right;
-    margin-right: 64px;
-    margin-top: 50px;
-    margin-bottom: 70px;
-    position: relative;
-    text-align: center;
-}
 
-/* LoginSectionView.ui.xml:
-   background image */
+/*background image */
+
 .obrand_loginPageBackground {
-    background-image: url(images/ovirt_bg.png);
+    background-image: url('images/background-official.png');
     background-color: #282d33;
-    background-size: auto;
-    background-repeat: repeat-x;
+    background-size: cover;
+    background-repeat: no-repeat;
     background-position: 50% 0;
     position: absolute;
     bottom: 0;
@@ -135,14 +145,11 @@ popup windows, for instance for creating a new VM */
     right: 0;
     top: 0;
 }
-@media (min-width: 768px) {
-    .obrand_loginPageBackground {
-        background-size: 100% auto;
-     }
-}
+
 
 /* HeaderView.ui.xml:
 logo used in the application header */
+
 .obrand_headerLogoImage {
     background-image: url(images/ovirt_top_logo.png);
     width: 264px;
@@ -150,3 +157,46 @@ logo used in the application header */
     border: 0px;
     display: block;
 }
+
+
+/*The footer's css*/
+
+.logo-modal-footer {
+    background-color: rgba(50, 50, 50, 0.9);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+.logo-modal-footer .footer-container {
+    padding: 20px 10px 16px 10px;
+}
+.logo-modal-footer .footer-container div {
+    float: left;
+}
+.logo-modal-footer .logo-image {
+    width: 171px;
+    height: 60px;
+    border: none;
+    margin-right: 25px;
+}
+
+.logo-modal-footer .product-description {
+    border-left: 1px solid rgba(43, 43, 43, 0.7);
+    padding-left: 25px;
+}
+
+.logo-modal-footer .product-description p {
+    font-weight: bold;
+    font-family: serif;
+    color: #fff;
+    font-size: 18px;
+    margin: 0px;
+    text-align: left
+}
+
+
+

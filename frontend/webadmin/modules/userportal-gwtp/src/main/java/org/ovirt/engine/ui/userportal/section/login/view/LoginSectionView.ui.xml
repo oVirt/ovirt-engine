@@ -6,18 +6,17 @@
         @external obrand_loginPageLogoImage;
             .obrand_loginPageLogoImage {
         }
-
+        
         @external obrand_loginPageLogoImageLink;
             .obrand_loginPageLogoImageLink {
         }
-
+        
         @external obrand_loginPageBackground;
             .obrand_loginPageBackground {
         }
     </ui:style>
 
     <g:HTMLPanel addStyleNames="obrand_loginPageBackground">
-        <g:Anchor ui:field="vendorUrl" styleName="obrand_loginPageLogoImageLink obrand_loginPageLogoImage" />
         <g:SimplePanel ui:field="loginFormPanel" />
     </g:HTMLPanel>
 

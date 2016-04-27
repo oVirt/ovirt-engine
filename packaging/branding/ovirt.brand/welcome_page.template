@@ -1,10 +1,19 @@
-<div class="col-sm-3 col-md-3 col-lg-3 login">
-    <div class="welcome-section-title">{portal_title}</div>
-    <div class="welcome-link"><a id="WelcomePage_userportal" href="userportal/?locale={userLocale}">{portal_user_portal}</a></div>
-    <div class="welcome-link"><a id="WelcomePage_webadmin" href="webadmin/?locale={userLocale}">{portal_admin}</a></div>
-    <div class="welcome-link"><a id="WelcomePage_reports" href="services/reports-redirect">{portal_reports}</a></div>
+<div class="col-sm-2 col-md-2 col-lg-2"></div>
+<div class="col-sm-4 col-md-4 col-lg-4 portal-link-container">
+    <div class="portal-link user-portal">
+    <a id="WelcomePage_userportal" href="userportal/?locale={userLocale}">
+        <div class="user-portal-image"></div>
+        <p class="portal-words">{portal_user_portal}</p>
+    </a>
 </div>
-<div class="col-sm-4 col-md-4 col-lg-3 details">
-    <div class="welcome-section-title"><span class="">{downloads_title}</div>
-    <div class="welcome-link"><a id="WelcomePage_ccr" href="{console_client_resources_url}" target="_blank">{console_client_resources}</a></div>
 </div>
+<div class="col-sm-4 col-md-4 col-lg-4 portal-link-container">
+    <div class="portal-link admin-portal">
+        <a id="WelcomePage_webadmin" href="webadmin/?locale={userLocale}">
+            <div class="admin-portal-image"></div>
+	    <p class="portal-words">{portal_admin}</p>
+        </a>
+    </div>
+ </div>
+<div class="col-sm-2 col-md-2 col-lg-2"></div>
+       

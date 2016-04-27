@@ -4,16 +4,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.ModalHeader;
+import org.gwtbootstrap3.client.ui.constants.ColumnOffset;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
-import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.utils.VisibleLocalesInfoData;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.PatternflyUiCommandButton;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxWithIconEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelIconEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxIconEditor;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
@@ -44,8 +45,8 @@ public abstract class AbstractLoginFormView extends AbstractView {
     }
 
     public interface Style extends CssResource {
-        String labelDefault();
         String loginMessageError();
+
         String informationMessage();
     }
 
@@ -55,6 +56,9 @@ public abstract class AbstractLoginFormView extends AbstractView {
 
     @UiField
     public Style style;
+
+    @UiField
+    public ModalHeader modalHeader;
 
     @UiField(provided = true)
     @Ignore
@@ -67,17 +71,17 @@ public abstract class AbstractLoginFormView extends AbstractView {
     @UiField(provided = true)
     @Path("userName.entity")
     @WithElementId("userName")
-    public StringEntityModelTextBoxEditor userNameEditor;
+    public StringEntityModelIconEditor userNameEditor;
 
     @UiField
     @Path("password.entity")
     @WithElementId("password")
-    public StringEntityModelPasswordBoxEditor passwordEditor;
+    public StringEntityModelPasswordBoxIconEditor passwordEditor;
 
     @UiField
     @Path("profile.selectedItem")
     @WithElementId("profile")
-    public ListModelListBoxEditor<String> profileEditor;
+    public ListModelListBoxWithIconEditor<String> profileEditor;
 
     @UiField
     @WithElementId
@@ -94,8 +98,9 @@ public abstract class AbstractLoginFormView extends AbstractView {
     public AbstractLoginFormView(EventBus eventBus) {
         initLocalizationEditor();
 
-        // We need this code because resetAndFocus is called when userNameEditor is Disabled
-        userNameEditor = new StringEntityModelTextBoxEditor() {
+        // We need this code because resetAndFocus is called when userNameEditor
+        // is Disabled
+        userNameEditor = new StringEntityModelIconEditor() {
             @Override
             public void setEnabled(boolean enabled) {
                 super.setEnabled(enabled);
@@ -108,25 +113,22 @@ public abstract class AbstractLoginFormView extends AbstractView {
     }
 
     protected void setStyles() {
+
+        informationMessagePanel.removeIcon();
+        informationMessagePanel.setVisible(false);
+        informationMessagePanel.setWidgetColumnSize(ColumnSize.XS_12);
+        informationMessagePanel.getWidget().addStyleName("text-center");//$NON-NLS-1$
+
+        errorMessagePanel.removeIcon();
         errorMessagePanel.setVisible(false);
         errorMessagePanel.setType(Type.DANGER);
-        informationMessagePanel.setVisible(false);
-        passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
+        // column-offset = 1
+        errorMessagePanel.getWidget().addStyleName(ColumnOffset.XS_1.getCssName());
+        // column-size=10
+        errorMessagePanel.setWidgetColumnSize(ColumnSize.XS_10);
 
-        userNameEditor.addLabelStyleName(ColumnSize.SM_3.getCssName());
-        userNameEditor.addLabelStyleName(Styles.CONTROL_LABEL);
-        userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
-        userNameEditor.addContentWidgetContainerStyleName(ColumnSize.SM_9.getCssName());
+        modalHeader.remove(0);
 
-        passwordEditor.addLabelStyleName(ColumnSize.SM_3.getCssName());
-        passwordEditor.addLabelStyleName(Styles.CONTROL_LABEL);
-        userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
-        passwordEditor.addContentWidgetContainerStyleName(ColumnSize.SM_9.getCssName());
-
-        profileEditor.addLabelStyleName(ColumnSize.SM_3.getCssName());
-        profileEditor.addLabelStyleName(Styles.CONTROL_LABEL);
-        userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
-        profileEditor.addContentWidgetContainerStyleName(ColumnSize.SM_9.getCssName());
     }
 
     private void initLocalizationEditor() {
@@ -151,7 +153,8 @@ public abstract class AbstractLoginFormView extends AbstractView {
             }
         }
 
-        // When no available locale matches the current locale, select the first available locale
+        // When no available locale matches the current locale, select the first
+        // available locale
         if (!foundDefaultLocale && localeNames.length > 0) {
             setSelectedLocale(0);
         }
@@ -187,8 +190,10 @@ public abstract class AbstractLoginFormView extends AbstractView {
     }
 
     public void setErrorMessages(List<SafeHtml> messages) {
-        errorMessagePanel.setMessages(messages, style.loginMessageError(), style.labelDefault(),
-                style.informationMessage(), PatternflyConstants.TEMP_LINK_COLOR);
+        errorMessagePanel.setMessages(messages,
+                style.loginMessageError(),
+                style.informationMessage(),
+                PatternflyConstants.TEMP_LINK_COLOR);
         errorMessagePanel.setVisible(true);
     }
 
@@ -211,13 +216,12 @@ public abstract class AbstractLoginFormView extends AbstractView {
      * Force fire change events on the login form fields.
      * </p>
      * <p>
-     * Our editors/models don't get populated from forms unless a change event fires on the form
-     * (usually on blur when a user types in a value and tabs away).
+     * Our editors/models don't get populated from forms unless a change event fires on the form (usually on blur when a
+     * user types in a value and tabs away).
      * </p>
      * <p>
-     * For the login form, there are third-party SSO applications that "paste" credentials
-     * into the form. We want to allow those to work by forcing change events on the form
-     * when the form is submitted.
+     * For the login form, there are third-party SSO applications that "paste" credentials into the form. We want to
+     * allow those to work by forcing change events on the form when the form is submitted.
      * </p>
      */
     public void fireChangeEventsOnFields() {
