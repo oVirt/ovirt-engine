@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginFormPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
@@ -110,9 +111,8 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
     }
 
     void localize() {
-        userNameEditor.setLabel(constants.loginFormUserNameLabel());
-        passwordEditor.setLabel(constants.loginFormPasswordLabel());
-        profileEditor.setLabel(constants.loginFormProfileLabel());
+        userNameEditor.setPlaceHolder(constants.loginFormUserNameLabel());
+        passwordEditor.setPlaceHolder(constants.loginFormPasswordLabel());
         connectAutomaticallyEditor.setLabel(constants.loginFormConnectAutomaticallyLabel());
         loginButton.setLabel(constants.loginButtonLabel());
         motdHeaderLabel.setText(constants.motdHeaderLabel());

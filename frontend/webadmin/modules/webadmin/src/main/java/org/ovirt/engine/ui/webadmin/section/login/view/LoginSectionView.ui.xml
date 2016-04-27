@@ -17,7 +17,6 @@
     </ui:style>
 
     <g:HTMLPanel addStyleNames="obrand_loginPageBackground">
-        <g:Anchor ui:field="vendorUrl" styleName="obrand_loginPageLogoImageLink obrand_loginPageLogoImage" />
         <g:SimplePanel ui:field="loginFormPanel" />
     </g:HTMLPanel>
 

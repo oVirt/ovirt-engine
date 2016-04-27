@@ -1,0 +1,75 @@
+/*login page common css*/
+
+.login-modal-content {
+    border-radius: 4px;
+    background-color: rgba(100, 100, 100, 0.7);
+    margin-top: 10%;
+    width: 600px;
+}
+
+.login-modal-content .login-modal-body {
+    padding: 20px 30px 50px 30px;
+    border-radius: 0px 0px 4px 4px;
+}
+
+.login-modal-content .login-modal-body-form {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.login-modal-content .login-modal-header {
+    padding: 10px 50px;
+    background-color: #222;
+    border-radius: 4px 4px 0px 0px;
+    border: 0px;
+    font-size: 13;
+    background-color: rgba(70, 70, 70, 0.7);
+    min-height: 36px;
+    height: 100%;
+}
+.login-modal-content .login-modal-header .login-info-alert{
+    padding: 5px !important;
+    margin-bottom: 0px !important;
+    font-family: inherit;
+    font-weight: 600;
+    background-color: #BDEDFF;
+}
+
+.login-modal-content .login-modal-body-form .login-word {
+    color: #fff;
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.login-modal-content .login-modal-body-form .login-localebox{
+    margin-top: 4px;
+}
+
+.login-modal-content .login-modal-body-form .login-btn {
+    background-color: #00b6ec;
+    border-color: transparent;
+}
+.inner-addon{
+	position: relative;
+}
+.inner-addon-icon{
+	position: absolute;
+    padding: 10px;
+    border: none;
+    pointer-events: none;
+ }
+.left-addon-icon{
+	left:0px !important;
+}
+.inner-addon-input-pull-left{
+	padding-left: 30px !important;
+}
+.user-icon-color{
+    color: #00b6ec;
+}
+.psw-icon-color{
+    color: #feb902;
+}
+.prf-icon-color{
+    color: #ff8a00;
+}

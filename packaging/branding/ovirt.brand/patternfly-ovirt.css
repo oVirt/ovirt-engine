@@ -1,7 +1,7 @@
 /*
-   This CSS file overrides classes in PatternFly. Only classes already
-   defined in PatternFly should be placed in here.
-*/
+ *    This CSS file overrides classes in PatternFly. Only classes already
+ *       defined in PatternFly should be placed in here.
+ *       */
 
 .login-pf .container {
   background-color: rgba(0, 0, 0, 0.25);
@@ -161,5 +161,83 @@
   .navbar-pf .navbar-utility > li.open > a {
     border-left-color: #74808c;
   }
+}
+
+/*
+ *  * custom bootstrap modifications for login page */
+
+.modal-content {
+  border-radius: 6px;
+  background-color: rgba(100,100,100,0.7);
+}
+
+.alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+h4, .h4 {
+  font-size: 18px;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #428bca;
+  border-color: #357ebd;
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.gwt-CheckBox label {
+  font-size: 14px;
 }
 

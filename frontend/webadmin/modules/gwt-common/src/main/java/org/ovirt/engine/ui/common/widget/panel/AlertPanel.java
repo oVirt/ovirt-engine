@@ -161,6 +161,7 @@ public class AlertPanel extends Composite {
         }
     }
 
+    @Override
     public Alert getWidget() {
         return (Alert) super.getWidget();
     }
@@ -169,4 +170,7 @@ public class AlertPanel extends Composite {
         return (HTMLPanel) messagePanel.getWidget(index);
     }
 
+    public void removeIcon(){
+        icon.setVisible(false);
+    }
 }

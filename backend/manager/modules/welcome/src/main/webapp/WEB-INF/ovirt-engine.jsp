@@ -15,18 +15,28 @@
 </head>
 <body onload="pageLoaded()">
     <div class="obrand_loginPageBackground">
-        <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
-             <span class="obrand_loginPageLogoImage"></span>
-        </a>
+  
+	<nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-right download-link-container">
+            <div class="download-link">
+                <a id="WelcomePage_ccr" href="/eayunVirt" target="_blank">
+                    <div class="media">
+                        <div class="pull-left">
+                            <div class="download-link-image"></div>
+                        </div>
+                        <div class="media-body download-text-container">
+                            <h4>下载</h4>
+                            <p>控制台客户资源</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </nav>
         <div class="login-pf">
             <div class="container">
                 <div class="row">
-
-                    <div class="col-sm-12">
-                        <div id="brand">
-                            <div class="obrand_loginFormLogoImage"></div>
-                        </div>
-                    </div>
+                
                     <noscript>
                         <div class="well col-sm-11 well-sm" id="well-error">
                             <span class="label label-default" id="well-error-label">
@@ -37,21 +47,32 @@
                         <div style="clear: both;"></div>
                     </noscript>
 
-                    <div class="col-sm-12 welcome-title-wrapper">
-                        <span class="welcome-title"><fmt:message key="obrand.welcome.welcome.text" /></span>
-                        <script type="text/JavaScript">
-                        <!--
-                        document.write('<span class="version-text"><fmt:message key="obrand.welcome.version"><fmt:param value="${requestScope[\'version\']}" /> </fmt:message></span>')
-                        //-->
-                        </script>
-                    </div>
-
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" id="sections">
                         ${requestScope['sections'].toString()}
                     </div>
 
-                    <div style="clear: both;"></div>
-                    <div class="col-sm-12 locale-div">
+                    <div style="clear: both;">
+
+                    </div>
+                </div>
+			    </div>
+			   </div>
+			  
+			  <div class="logo-modal-footer">
+				     <div class="footer-container">
+				          <div class="col-sm-9">
+				            <div class="logo-image">
+			             		 <a class="obrand_loginPageLogoImage" href="{obrand.common.vendor_url}">
+			           			</a>
+			              </div>
+			              
+			              <div class="hidden-xs product-description">
+			                <p class="description">开放式虛拟化管理者</p>
+			                <p class="description">open virtualization manager</p>
+			              </div>
+			              </div>
+			            
+			          <div class="col-sm-3 language-menu-container">
                         <select class="gwt-ListBox obrand_locale_list_box" onchange="localeSelected(this)" id="localeBox">
                             <c:forEach items="${requestScope['localeKeys']}" var="localeKey">
                                 <c:choose>
@@ -65,10 +86,17 @@
                                 </c:choose>
                             </c:forEach>
                         </select>
-                    </div>
-                </div>
+                      </div>
+			        </div>
+			      </div>
             </div>
-        </div>
-    </div>
+        
+    
 </body>
+<script type="text/javascript">
+function view(){
+	var sec = document.getElementById("sections");
+	window.alert(sec.innerHTML);
+}
+</script>
 </html>

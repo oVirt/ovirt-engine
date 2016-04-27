@@ -15,9 +15,6 @@
 </head>
 <body>
 <div class="obrand_loginPageBackground">
-        <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
-             <span class="obrand_loginPageLogoImage"></span>
-        </a>
         <div class="login-pf">
             <div class="container">
                 <div class="row">
