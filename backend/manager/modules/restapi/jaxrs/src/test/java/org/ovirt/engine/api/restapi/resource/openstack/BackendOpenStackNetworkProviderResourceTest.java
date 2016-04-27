@@ -22,10 +22,12 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
+import org.ovirt.engine.api.model.OpenStackNetworkProviderType;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -161,6 +163,7 @@ public class BackendOpenStackNetworkProviderResourceTest
     private OpenStackNetworkProvider getModel(int index) {
         OpenStackNetworkProvider model = new OpenStackNetworkProvider();
         model.setName(NAMES[index]);
+        model.setType(OpenStackNetworkProviderType.NEUTRON);
         model.setDescription(DESCRIPTIONS[index]);
         return model;
     }
@@ -171,6 +174,7 @@ public class BackendOpenStackNetworkProviderResourceTest
         expect(provider.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(provider.getName()).andReturn(NAMES[index]).anyTimes();
         expect(provider.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        expect(provider.getType()).andReturn(ProviderType.OPENSTACK_NETWORK).anyTimes();
         return provider;
     }
 

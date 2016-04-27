@@ -20,6 +20,7 @@ import org.ovirt.engine.api.model.AgentConfiguration;
 import org.ovirt.engine.api.model.MessageBrokerType;
 import org.ovirt.engine.api.model.NetworkPluginType;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
+import org.ovirt.engine.api.model.OpenStackNetworkProviderType;
 import org.ovirt.engine.api.restapi.types.AbstractInvertibleMappingTest;
 import org.ovirt.engine.api.restapi.types.MappingTestHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -32,6 +33,7 @@ public class OpenStackNetworkProviderMapperTest
 
     @Override
     protected OpenStackNetworkProvider postPopulate(OpenStackNetworkProvider model) {
+        model.setType(OpenStackNetworkProviderType.NEUTRON);
         model.setPluginType(MappingTestHelper.shuffle(NetworkPluginType.class));
         AgentConfiguration agentConfiguration = model.getAgentConfiguration();
         agentConfiguration.setBrokerType(MappingTestHelper.shuffle(MessageBrokerType.class));
@@ -51,6 +53,7 @@ public class OpenStackNetworkProviderMapperTest
         assertNull(transform.getPassword());
         assertEquals(model.getTenantName(), transform.getTenantName());
         assertEquals(model.getPluginType(), transform.getPluginType());
+        assertEquals(model.getType(), transform.getType());
         verify(model.getAgentConfiguration(), transform.getAgentConfiguration());
     }
 

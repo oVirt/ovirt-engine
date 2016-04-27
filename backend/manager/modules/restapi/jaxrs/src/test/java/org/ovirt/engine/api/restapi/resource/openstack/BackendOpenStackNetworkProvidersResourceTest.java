@@ -57,6 +57,7 @@ public class BackendOpenStackNetworkProvidersResourceTest extends
         expect(provider.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(provider.getName()).andReturn(NAMES[index]).anyTimes();
         expect(provider.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        expect(provider.getType()).andReturn(ProviderType.OPENSTACK_NETWORK).anyTimes();
         return provider;
     }
 }

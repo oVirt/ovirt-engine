@@ -23,6 +23,7 @@ import org.ovirt.engine.api.model.AgentConfiguration;
 import org.ovirt.engine.api.model.MessageBrokerType;
 import org.ovirt.engine.api.model.NetworkPluginType;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
+import org.ovirt.engine.api.model.OpenStackNetworkProviderType;
 import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.model.Property;
 import org.ovirt.engine.api.restapi.types.Mapping;
@@ -39,7 +40,9 @@ public class OpenStackNetworkProviderMapper {
             Provider<OpenstackNetworkProviderProperties> template) {
         Provider<OpenstackNetworkProviderProperties> entity =
              template != null? template: new Provider<>();
-        entity.setType(ProviderType.OPENSTACK_NETWORK);
+        if (model.isSetType()) {
+            entity.setType(mapProviderType(model.getType()));
+        }
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -92,6 +95,7 @@ public class OpenStackNetworkProviderMapper {
     public static OpenStackNetworkProvider map(Provider<OpenstackNetworkProviderProperties> entity,
             OpenStackNetworkProvider template) {
         OpenStackNetworkProvider model = template != null? template: new OpenStackNetworkProvider();
+        model.setType(mapProviderType(entity.getType()));
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }
@@ -236,5 +240,25 @@ public class OpenStackNetworkProviderMapper {
         default:
             throw new IllegalArgumentException("Unknown message broker type \"" + entity + "\"");
         }
+    }
+
+    private static ProviderType mapProviderType(OpenStackNetworkProviderType type) {
+        switch (type) {
+        case NEUTRON:
+            return ProviderType.OPENSTACK_NETWORK;
+        case EXTERNAL:
+            return ProviderType.EXTERNAL_NETWORK;
+        }
+        throw new IllegalArgumentException("Unknown network provider type \"" + type.name() + "\"");
+    }
+
+    private static OpenStackNetworkProviderType mapProviderType(ProviderType type) {
+        switch (type) {
+        case OPENSTACK_NETWORK:
+            return OpenStackNetworkProviderType.NEUTRON;
+        case EXTERNAL_NETWORK:
+            return OpenStackNetworkProviderType.EXTERNAL;
+        }
+        throw new IllegalArgumentException("Provider type not allowed: \"" + type.name() + "\"");
     }
 }
