@@ -19,6 +19,7 @@ import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.api.extensions.aaa.Mapping;
 import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.aaa.AuthType;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
@@ -131,6 +132,19 @@ public class BasicAuthenticationFilter implements Filter {
         if (userProfile == null || userProfile.profile == null) {
             log.error("Cannot obtain profile for user {}", user);
         } else {
+            if(userProfile.profile.getMapper() != null) {
+                userProfile.userName = userProfile.profile.getMapper().invoke(
+                    new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Mapping.InvokeCommands.MAP_USER
+                    ).mput(
+                        Mapping.InvokeKeys.USER,
+                        userProfile.userName
+                    ),
+                    true
+                ).<String>get(Mapping.InvokeKeys.USER, userProfile.userName);
+            }
+
             ExtMap outputMap = userProfile.profile.getAuthn().invoke(new ExtMap().mput(
                     Base.InvokeKeys.COMMAND,
                     Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS
