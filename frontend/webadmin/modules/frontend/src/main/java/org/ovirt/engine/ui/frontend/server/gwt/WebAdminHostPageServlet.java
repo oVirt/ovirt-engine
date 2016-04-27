@@ -14,11 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.BooleanNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -42,8 +39,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     protected static final String ATTR_ENGINE_REPORTS_DASHBOARD_URL = "ENGINE_REPORTS_DASHBOARD_URL"; //$NON-NLS-1$
     protected static final String ATTR_ENGINE_REPORTS_RIGHTCLICK_URL = "ENGINE_REPORTS_RIGHTCLICK_URL"; //$NON-NLS-1$
     protected static final String ATTR_ENGINE_REPORTS_BASE_URL = "ENGINE_REPORTS_BASE_URL"; //$NON-NLS-1$
-    protected static final String ATTR_DISPLAY_SUPPORTED_BROWSER_WARNING
-        = "DISPLAY_SUPPORTED_BROWSER_WARNING"; //$NON-NLS-1$
 
     protected String reportRedirectUrl;
     protected String reportRightClickRedirectUrl;
@@ -92,9 +87,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
                 getReportInit(reportRedirectUrl.substring(reportBaseUrl.length()),
                 reportRightClickRedirectUrl.substring(reportBaseUrl.length())));
 
-        request.setAttribute(ATTR_DISPLAY_SUPPORTED_BROWSER_WARNING,
-                getDisplaySupportedBrowserWarning() ? BooleanNode.TRUE : BooleanNode.FALSE);
-
         super.doGet(request, response);
     }
 
@@ -125,7 +117,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         // Update based on report URL parameters.
         digest.update(request.getAttribute(ATTR_ENGINE_REPORTS_BASE_URL).toString().getBytes());
 
-        digest.update(request.getAttribute(ATTR_DISPLAY_SUPPORTED_BROWSER_WARNING).toString().getBytes());
         return digest;
     }
 
@@ -133,10 +124,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         return (Integer) runPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode,
                         ConfigCommon.defaultConfigurationVersion), sessionId);
-    }
-
-    protected Boolean getDisplaySupportedBrowserWarning() {
-        return Config.<Boolean> getValue(ConfigValues.DisplaySupportedBrowserWarning);
     }
 
     protected ObjectNode getApplicationModeObject(Integer applicationMode) {

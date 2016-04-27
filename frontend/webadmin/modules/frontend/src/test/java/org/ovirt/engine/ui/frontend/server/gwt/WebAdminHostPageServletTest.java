@@ -48,8 +48,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     public static MockConfigRule mcr =
     new MockConfigRule(
             mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()),
-            mockConfig(ConfigValues.DisplayUncaughtUIExceptions, Boolean.TRUE),
-            mockConfig(ConfigValues.DisplaySupportedBrowserWarning, Boolean.TRUE));
+            mockConfig(ConfigValues.DisplayUncaughtUIExceptions, Boolean.TRUE));
 
     @Mock
     private ObjectNode mockApplicationModeObject;
@@ -68,7 +67,6 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE)).thenReturn(mockApplicationModeObject);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS)).thenReturn(mockPluginDefinitionsArray);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_ENGINE_REPORTS_BASE_URL)).thenReturn("");
-        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_DISPLAY_SUPPORTED_BROWSER_WARNING)).thenReturn(Boolean.TRUE);
     }
 
     @Override

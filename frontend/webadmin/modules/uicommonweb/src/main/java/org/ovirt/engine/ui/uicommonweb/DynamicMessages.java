@@ -112,10 +112,4 @@ public interface DynamicMessages {
      */
     String applicationDocTitle();
 
-    /**
-     * Get the URL to the document explaining which browsers are fully compatible with the application.
-     * @return The URL to the documentation.
-     */
-    String compatibleBrowserDocsUrl();
-
 }

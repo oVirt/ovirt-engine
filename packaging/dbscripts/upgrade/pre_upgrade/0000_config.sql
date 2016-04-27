@@ -201,10 +201,7 @@ select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 select fn_db_add_config_value('CertificationValidityCheckTimeInHours','24','general');
 
 select fn_db_add_config_value('MaxIoThreadsPerVm','127','general');
--- Display browser not in tier 1 support to user.
-select fn_db_add_config_value('DisplaySupportedBrowserWarning', 'true', 'general');
 
--- Display browser not in tier 1 support to user.
 select fn_db_add_config_value('DisplayUncaughtUIExceptions', 'true', 'general');
 
 -- by default use no proxy

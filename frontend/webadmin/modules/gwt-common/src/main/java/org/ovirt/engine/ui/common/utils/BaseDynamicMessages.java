@@ -43,7 +43,6 @@ public class BaseDynamicMessages implements DynamicMessages {
         CONSOLE_CLIENT_RESOURCES("console_client_resources"), //$NON-NLS-1$
         CONSOLE_CLIENT_RESOURCES_URL("console_client_resources_url"), //$NON-NLS-1$
         VENDOR_URL("vendor_url"), //$NON-NLS-1$
-        COMPATIBLE_BROWSER_DOC_URL("compatible_browser_doc_url"), //$NON-NLS-1$
         DOC("doc"); //$NON-NLS-1$
 
         private final String value;
@@ -265,10 +264,5 @@ public class BaseDynamicMessages implements DynamicMessages {
     @Override
     public final String applicationDocTitle() {
         return getString(DynamicMessageKey.DOC);
-    }
-
-    @Override
-    public final String compatibleBrowserDocsUrl() {
-        return getString(DynamicMessageKey.COMPATIBLE_BROWSER_DOC_URL);
     }
 }

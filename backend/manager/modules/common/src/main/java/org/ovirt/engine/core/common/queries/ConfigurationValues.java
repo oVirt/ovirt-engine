@@ -88,7 +88,6 @@ public enum ConfigurationValues {
     HostDevicePassthroughCapabilities,
     MaxIoThreadsPerVm(ConfigAuthType.User),
     DisplayUncaughtUIExceptions,
-    DisplaySupportedBrowserWarning,
     MigrationPoliciesSupported(ConfigAuthType.User),
     UploadImageUiInactivityTimeoutInSeconds(ConfigAuthType.User),
     UploadImageChunkSizeKB,

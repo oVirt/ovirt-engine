@@ -1840,10 +1840,6 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    DisplaySupportedBrowserWarning,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
     MigrationPoliciesSupported,
 
     @TypeConverterAttribute(String.class)
