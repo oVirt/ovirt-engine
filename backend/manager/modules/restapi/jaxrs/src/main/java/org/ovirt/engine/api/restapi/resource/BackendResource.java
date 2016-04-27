@@ -276,6 +276,10 @@ public class BackendResource extends BaseBackendResource {
         }
     }
     private void setCorrelationId(VdcActionParametersBase params) {
+        if (httpHeaders == null) {
+            return;
+        }
+
         List<String> correlationIds = httpHeaders.getRequestHeader(CORRELATION_ID);
         if (correlationIds != null && correlationIds.size() > 0) {
             params.setCorrelationId(correlationIds.get(0));

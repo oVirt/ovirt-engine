@@ -41,6 +41,10 @@ public class ExpectationHelper {
      */
     public static Set<String> getExpectations(HttpHeaders headers) {
         Set<String> expectations = new HashSet<>();
+        if (headers == null) {
+            return expectations;
+        }
+
         for (String header : HEADERS) {
             List<String> values = headers.getRequestHeader(header);
             if (values != null) {
