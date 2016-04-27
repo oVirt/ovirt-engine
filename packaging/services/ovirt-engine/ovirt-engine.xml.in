@@ -266,7 +266,7 @@
           <pool>
             <min-pool-size>{{ config.getinteger('ENGINE_DB_MIN_CONNECTIONS') }}</min-pool-size>
             <max-pool-size>{{ config.getinteger('ENGINE_DB_MAX_CONNECTIONS') }}</max-pool-size>
-            <prefill>true</prefill>
+            <prefill>false</prefill>
           </pool>
           <security>
             <user-name><![CDATA[{{ config.get('DWH_DB_USER') }}]]></user-name>
