@@ -101,7 +101,7 @@ public class BackendVmPoolsResourceTest extends
                 new Object[] { GUIDS[1] },
                 getTemplateEntity());
 
-        setUpGetConsoleExpectations(new int[]{1});
+        setUpGetConsoleExpectations(1);
 
         setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
                 IdQueryParameters.class,
@@ -115,7 +115,7 @@ public class BackendVmPoolsResourceTest extends
                 new Object[] { GUIDS[1] },
                 new ArrayList<>());
 
-        setUpGetRngDeviceExpectations(new int[] {0});
+        setUpGetRngDeviceExpectations(0);
 
         setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
              VmPoolParametersBase.class,
@@ -152,8 +152,8 @@ public class BackendVmPoolsResourceTest extends
                 new Object[] { NAMES[1], GUIDS[2] },
                 getTemplateEntity());
 
-        setUpGetConsoleExpectations(new int[] { 1 });
-        setUpGetRngDeviceExpectations(new int[] {0});
+        setUpGetConsoleExpectations(1);
+        setUpGetRngDeviceExpectations(0);
 
         setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
                 IdQueryParameters.class,

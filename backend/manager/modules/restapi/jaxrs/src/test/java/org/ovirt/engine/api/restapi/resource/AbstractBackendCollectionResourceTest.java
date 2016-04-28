@@ -260,7 +260,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
             expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
             expect(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                                     eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
-                                                  addSession(new String[]{}),
+                                                  addSession(),
                                                   addSession(new Object[]{})))).andReturn(monitorResult);
         }
         expect(backend.runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))))

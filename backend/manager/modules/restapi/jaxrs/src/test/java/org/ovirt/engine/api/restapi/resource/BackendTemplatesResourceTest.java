@@ -66,10 +66,10 @@ public class BackendTemplatesResourceTest
                 setUpVm(GUIDS[1]));
         setUpGetEntityExpectations(0);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
-        setUpGetSoundcardExpectations(new int[]{0, 0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetVirtioScsiExpectations(0, 0);
+        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
@@ -117,10 +117,10 @@ public class BackendTemplatesResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0});
-        setUpGetVirtioScsiExpectations(new int[]{0});
-        setUpGetSoundcardExpectations(new int[]{0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetConsoleExpectations(0, 0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0, 0);
+        setUpGetRngDeviceExpectations(0);
         setUpGetBallooningExpectations(new Integer[] {0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
@@ -154,9 +154,9 @@ public class BackendTemplatesResourceTest
 
     public void testAdd() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetSoundcardExpectations(new int[]{0});
-        setUpGetBallooningExpectations(new Integer[]{0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetBallooningExpectations(0, 0);
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                 IdQueryParameters.class,
@@ -213,11 +213,11 @@ public class BackendTemplatesResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{2, 0, 2});
-        setUpGetVirtioScsiExpectations(new int[]{2, 2});
-        setUpGetSoundcardExpectations(new int[]{2, 2, 0});
-        setUpGetRngDeviceExpectations(new int[]{2, 2});
-        setUpGetBallooningExpectations(new Integer[]{2, 2});
+        setUpGetConsoleExpectations(2, 0, 2);
+        setUpGetVirtioScsiExpectations(2, 2);
+        setUpGetSoundcardExpectations(2, 2, 0);
+        setUpGetRngDeviceExpectations(2, 2);
+        setUpGetBallooningExpectations(2, 2);
 
             setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                        IdQueryParameters.class,
@@ -263,10 +263,10 @@ public class BackendTemplatesResourceTest
 
         setUpGetEntityExpectations(0);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[] {0, 0, 0});
-        setUpGetVirtioScsiExpectations(new int[] {0, 0});
-        setUpGetSoundcardExpectations(new int[] {0, 0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetVirtioScsiExpectations(0, 0);
+        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
@@ -310,11 +310,11 @@ public class BackendTemplatesResourceTest
 
         setUpGetEntityExpectations(0);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
-        setUpGetSoundcardExpectations(new int[]{0, 0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
-        setUpGetBallooningExpectations(new Integer[]{0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetVirtioScsiExpectations(0, 0);
+        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetRngDeviceExpectations(0, 0);
+        setUpGetBallooningExpectations(0, 0);
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -355,11 +355,11 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations(0);
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
-        setUpGetSoundcardExpectations(new int[]{0, 0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
-        setUpGetBallooningExpectations(new Integer[]{0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetVirtioScsiExpectations(0, 0);
+        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetRngDeviceExpectations(0, 0);
+        setUpGetBallooningExpectations(0, 0);
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
@@ -405,11 +405,11 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations(0);
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
-        setUpGetSoundcardExpectations(new int[]{0, 0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
-        setUpGetBallooningExpectations(new Integer[] {0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetVirtioScsiExpectations(0, 0);
+        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetRngDeviceExpectations(0, 0);
+        setUpGetBallooningExpectations(0, 0);
 
         setUpGetEntityExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
@@ -468,8 +468,8 @@ public class BackendTemplatesResourceTest
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
 
-        setUpGetConsoleExpectations(new int[] {0});
-        setUpGetSoundcardExpectations(new int[] {0});
+        setUpGetConsoleExpectations(0);
+        setUpGetSoundcardExpectations(0);
 
         super.doTestBadAdd(valid, success, detail);
     }
@@ -491,9 +491,9 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddUploadIcon() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetSoundcardExpectations(new int[]{0});
-        setUpGetBallooningExpectations(new Integer[]{0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetBallooningExpectations(0, 0);
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                 IdQueryParameters.class,
@@ -530,9 +530,9 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddUseExistingIcons() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetSoundcardExpectations(new int[]{0});
-        setUpGetBallooningExpectations(new Integer[]{0, 0});
+        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetBallooningExpectations(0, 0);
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                 IdQueryParameters.class,

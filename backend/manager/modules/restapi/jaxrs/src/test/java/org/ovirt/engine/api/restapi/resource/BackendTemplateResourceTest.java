@@ -111,10 +111,10 @@ public class BackendTemplateResourceTest
             List<String> populates = new ArrayList<>();
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
-            setUpGetConsoleExpectations(new int[]{0});
-            setUpGetVirtioScsiExpectations(new int[]{0});
-            setUpGetSoundcardExpectations(new int[]{0});
-            setUpGetRngDeviceExpectations(new int [] {0});
+            setUpGetConsoleExpectations(0);
+            setUpGetVirtioScsiExpectations(0);
+            setUpGetSoundcardExpectations(0);
+            setUpGetRngDeviceExpectations(0);
         }
         setUpGetGraphicsExpectations(1);
         control.replay();
@@ -205,10 +205,10 @@ public class BackendTemplateResourceTest
 
     protected void setUpUpdateExpectations() throws Exception {
         setUpGetEntityExpectations(2);
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[]{0});
-        setUpGetSoundcardExpectations(new int[]{0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetConsoleExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetRngDeviceExpectations(0);
     }
 
     protected void setUpGetGraphicsExpectations(int times) throws Exception {

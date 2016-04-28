@@ -186,11 +186,11 @@ public class BackendVmResourceTest
             List<String> populates = new ArrayList<>();
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
-            setUpGetConsoleExpectations(new int[]{0});
-            setUpGetVirtioScsiExpectations(new int[]{0});
-            setUpGetSoundcardExpectations(new int[]{0});
-            setUpGetRngDeviceExpectations(new int[]{0});
-            setUpGetVmOvfExpectations(new int[]{0});
+            setUpGetConsoleExpectations(0);
+            setUpGetVirtioScsiExpectations(0);
+            setUpGetSoundcardExpectations(0);
+            setUpGetRngDeviceExpectations(0);
+            setUpGetVmOvfExpectations(0);
         }
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0, 1);
@@ -228,11 +228,11 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVmOvfExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[] {0});
-        setUpGetSoundcardExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[] { 0 });
+        setUpGetConsoleExpectations(0);
+        setUpGetVmOvfExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetRngDeviceExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
@@ -253,11 +253,11 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVmOvfExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[] {0});
-        setUpGetSoundcardExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetConsoleExpectations(0);
+        setUpGetVmOvfExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetRngDeviceExpectations(0);
 
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
@@ -278,11 +278,11 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
-        setUpGetConsoleExpectations(new int[] { 0 });
-        setUpGetVmOvfExpectations(new int[] { 0 });
-        setUpGetVirtioScsiExpectations(new int[] { 0 });
-        setUpGetSoundcardExpectations(new int[] { 0 });
-        setUpGetRngDeviceExpectations(new int[] { 0 });
+        setUpGetConsoleExpectations(0);
+        setUpGetVmOvfExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetRngDeviceExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
@@ -302,11 +302,11 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVmOvfExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[] {0});
-        setUpGetSoundcardExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetConsoleExpectations(0);
+        setUpGetVmOvfExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetRngDeviceExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[]{},
@@ -437,11 +437,11 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVmOvfExpectations(new int[] { 0 });
-        setUpGetVirtioScsiExpectations(new int[] { 0 });
-        setUpGetSoundcardExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[] { 0 });
+        setUpGetConsoleExpectations(0);
+        setUpGetVmOvfExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0);
+        setUpGetRngDeviceExpectations(0);
         setUpGetGraphicsExpectations(1);
     }
 

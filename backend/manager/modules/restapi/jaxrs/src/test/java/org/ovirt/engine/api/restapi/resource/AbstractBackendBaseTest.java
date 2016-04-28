@@ -585,7 +585,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
             expect(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                     eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
-                            addSession(new String[]{}),
+                            addSession(),
                             addSession(new Object[]{})))).andReturn(monitorResult);
         }
     }
@@ -601,8 +601,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
             expect(monitorResult.getReturnValue()).andReturn(jobMock).anyTimes();
             expect(backend.runQuery(eq(VdcQueryType.GetJobByJobId),
                     eqQueryParams(IdQueryParameters.class,
-                            addSession(new String[]{"Id"}),
-                            addSession(new Object[]{jobId})))).andReturn(monitorResult);
+                            addSession("Id"),
+                            addSession(jobId)))).andReturn(monitorResult);
         }
     }
 

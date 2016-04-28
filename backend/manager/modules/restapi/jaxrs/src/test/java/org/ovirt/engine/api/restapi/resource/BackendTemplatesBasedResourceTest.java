@@ -98,9 +98,9 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
 
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
-        setUpGetSoundcardExpectations(new int[]{0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
+        setUpGetVirtioScsiExpectations(0, 0);
+        setUpGetSoundcardExpectations(0, 0);
+        setUpGetRngDeviceExpectations(0, 0);
         setUpGetEntityExpectations(0);
     }
 
@@ -110,10 +110,10 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
             List<String> populates = new ArrayList<>();
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
-            setUpGetConsoleExpectations(new int[]{0, 1, 2});
-            setUpGetVirtioScsiExpectations(new int[] {0, 1, 2});
-            setUpGetSoundcardExpectations(new int[] {0, 1, 2});
-            setUpGetRngDeviceExpectations(new int[] {0, 1, 2});
+            setUpGetConsoleExpectations(0, 1, 2);
+            setUpGetVirtioScsiExpectations(0, 1, 2);
+            setUpGetSoundcardExpectations(0, 1, 2);
+            setUpGetRngDeviceExpectations(0, 1, 2);
             setUpGetBallooningExpectations(3);
         }
 
