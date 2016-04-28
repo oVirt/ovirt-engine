@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTest {
 
     private static final double STORAGE_SIZE_GB_USAGE = 20.0;
-    private static final Long STORAGE_SIZE_GB = new Long(10);
+    private static final Long STORAGE_SIZE_GB = 10L;
     protected static final Guid QUOTA_ID = GUIDS[0];
     protected static final Guid DATACENTER_ID = GUIDS[1];
     protected static final Guid STORAGE_ID_1 = GUIDS[2];
