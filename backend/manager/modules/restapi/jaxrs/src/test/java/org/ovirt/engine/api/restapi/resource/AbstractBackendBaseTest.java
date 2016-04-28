@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -488,11 +489,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected List<String> mockl10n(List<String> errors) {
-        ArrayList<String> ret = new ArrayList<>();
-        for (String error : errors) {
-            ret.add(mockl10n(error));
-        }
-        return ret;
+        return errors.stream().map(this::mockl10n).collect(Collectors.toList());
     }
 
     protected String mockl10n(String s) {

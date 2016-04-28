@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -160,10 +162,7 @@ public class BackendUsersResourceTest
         assertEquals(DirectoryEntryIdUtils.encode(DOMAIN), model.getDomain().getId());
         assertTrue(model.isSetGroups());
         assertEquals(PARSED_GROUPS.length, model.getGroups().getGroups().size());
-        HashSet<String> groupNames = new HashSet<>();
-        for (Group group : model.getGroups().getGroups()) {
-            groupNames.add(group.getName());
-        }
+        Set<String> groupNames = model.getGroups().getGroups().stream().map(Group::getName).collect(Collectors.toSet());
         assertEquals(new HashSet<>(Arrays.asList(PARSED_GROUPS)), groupNames);
         verifyLinks(model);
     }
