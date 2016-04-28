@@ -142,7 +142,7 @@ public class BackendVmDisksResourceTest
         return collection.list().getDisks();
     }
 
-    static Disk getModel(int index) {
+    static Disk getModel() {
         Disk model = new Disk();
         model.setFormat(DiskFormat.COW);
         model.setInterface(org.ovirt.engine.api.model.DiskInterface.VIRTIO);
@@ -218,7 +218,7 @@ public class BackendVmDisksResourceTest
             new Object[] { DISK_ID },
             asList(getEntity(0))
         );
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.setId(DISK_ID.toString()); //means this is an existing disk --> attach
         model.setProvisionedSize(1024 * 1024L);
         Response response = collection.add(model);
@@ -229,7 +229,7 @@ public class BackendVmDisksResourceTest
     public void testAttachDiskSnapshot() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         Guid snapshotId = Guid.newGuid();
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.setSnapshot(new Snapshot());
         model.getSnapshot().setId(snapshotId.toString());
         model.setId(DISK_ID.toString()); //means this is an existing disk --> attach
@@ -278,7 +278,7 @@ public class BackendVmDisksResourceTest
             new Object[] { DISK_ID },
             asList(getEntity(0))
         );
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.setProvisionedSize(1024 * 1024L);
 
         Response response = collection.add(model);
@@ -293,7 +293,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddDiskWithJobId() throws Exception {
 
-        Disk model = getModel(0);
+        Disk model = getModel();
 
         setUriInfo(setUpBasicUriExpectations());
 
@@ -306,7 +306,7 @@ public class BackendVmDisksResourceTest
 
         setUpGetDiskExpectations();
         setCommonExpectations(model);
-        Response response = collection.add(getModel(0));
+        Response response = collection.add(getModel());
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
         verifyModel((Disk)response.getEntity(), 0);
@@ -316,7 +316,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddDiskWithStepId() throws Exception {
 
-        Disk model = getModel(0);
+        Disk model = getModel();
 
         setUriInfo(setUpBasicUriExpectations());
 
@@ -329,7 +329,7 @@ public class BackendVmDisksResourceTest
 
         setUpGetDiskExpectations();
         setCommonExpectations(model);
-        Response response = collection.add(getModel(0));
+        Response response = collection.add(getModel());
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
         verifyModel((Disk)response.getEntity(), 0);
@@ -385,7 +385,7 @@ public class BackendVmDisksResourceTest
 
     @Test
     public void testAddDisk() throws Exception {
-        testAddDiskImpl(getModel(0));
+        testAddDiskImpl(getModel());
     }
 
     private void testAddDiskImpl(Disk model) {
@@ -437,7 +437,7 @@ public class BackendVmDisksResourceTest
             new Object[] { DISK_ID },
             asList(getEntity(0))
         );
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
         model.setProvisionedSize(1024 * 1024L);
@@ -490,7 +490,7 @@ public class BackendVmDisksResourceTest
             new Object[] { DISK_ID },
             asList(getEntity(0))
         );
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.setStorageDomains(new StorageDomains());
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[3].toString());
@@ -532,7 +532,7 @@ public class BackendVmDisksResourceTest
                 success
             )
         );
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.setProvisionedSize(1024 * 1024L);
 
         try {
@@ -559,7 +559,7 @@ public class BackendVmDisksResourceTest
 
     @Test
     public void testAddIncompleteParameters2() throws Exception {
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.setProvisionedSize(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -648,7 +648,7 @@ public class BackendVmDisksResourceTest
     }
 
     private Disk createIscsiLunDisk() {
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.setLunStorage(new HostStorage());
         model.getLunStorage().setType(StorageType.ISCSI);
         model.getLunStorage().setLogicalUnits(new LogicalUnits());
