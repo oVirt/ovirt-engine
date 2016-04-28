@@ -267,7 +267,7 @@ public class BackendVmResourceTest
                                            true,
                                            true));
 
-        verifyModelClearingPayloads(resource.update(getModelClearingPayloads(0)), 0);
+        verifyModelClearingPayloads(resource.update(getModelClearingPayloads()), 0);
     }
 
     @Test
@@ -338,7 +338,7 @@ public class BackendVmResourceTest
         assertNull(model.getPayloads());
     }
 
-    static Vm getModelClearingPayloads(int index) {
+    static Vm getModelClearingPayloads() {
         Vm model = getModel(0);
         model.setPayloads(new Payloads());
 
