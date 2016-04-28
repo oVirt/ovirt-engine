@@ -15,6 +15,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -57,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters> extends BaseImagesCommand<T>
-        implements TaskHandlerCommand<RemoveDiskSnapshotsParameters> {
+        implements TaskHandlerCommand<RemoveDiskSnapshotsParameters> , SerialChildExecutingCommand {
 
     private static final Logger log = LoggerFactory.getLogger(RemoveDiskSnapshotsCommand.class);
     private List<DiskImage> images;
@@ -239,7 +241,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     public CommandCallback getCallback() {
         // Handle first execution based on vm status, and recovery based on isLiveMerge (VM may be down)
         if (isLiveMerge()) {
-            return new RemoveDiskSnapshotsCommandCallback();
+            return new SerialChildCommandsExecutionCallback();
         } else if (getParameters().isUseCinderCommandCallback()) {
             return new ConcurrentChildCommandsExecutionCallback();
         }
@@ -261,7 +263,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         setSucceeded(true);
     }
 
-    public void startNextLiveMerge(int completedChildren) {
+    @Override
+    public boolean performNextOperation(int completedChildren) {
+
+        if (completedChildren == getParameters().getImageIds().size()) {
+            return false;
+        }
+
         if (completedChildren == 0) {
             // Lock all disk images in advance
             ImagesHandler.updateAllDiskImageSnapshotsStatus(getImageGroupId(), ImageStatus.LOCKED);
@@ -285,6 +293,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 VdcActionType.RemoveSnapshotSingleDiskLive,
                 parameters,
                 cloneContextAndDetachFromParent());
+
+        return true;
     }
 
     /**
@@ -596,4 +606,5 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     private boolean isFirstTaskHandler() {
         return getParameters().getExecutionIndex() == 0;
     }
+
 }
