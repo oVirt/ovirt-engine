@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.HostDevice;
@@ -40,7 +40,7 @@ public class BackendVmHostDeviceResourceTest
                 VdcActionType.RemoveVmHostDevices,
                 VmHostDevicesParameters.class,
                 new String[] { "VmId", "DeviceNames" },
-                new Object[] { VM_ID, Arrays.asList(DEVICE_NAME) },
+                new Object[] { VM_ID, Collections.singletonList(DEVICE_NAME)},
                 true, true);
 
         verifyRemove(resource.remove());

@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -108,7 +108,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] {GUIDS[3]},
-                Arrays.asList(storagePool));
+                Collections.singletonList(storagePool));
         setUpEntityQueryExpectations(VdcQueryType.GetUnregisteredDisk,
                 GetUnregisteredDiskQueryParameters.class,
                 new String[] {"DiskId", "StorageDomainId", "StoragePoolId"},
@@ -205,7 +205,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] {GUIDS[3]},
-                Arrays.asList(storagePool));
+                Collections.singletonList(storagePool));
 
         List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {

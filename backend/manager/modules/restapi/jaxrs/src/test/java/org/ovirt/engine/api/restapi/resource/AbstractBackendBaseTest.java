@@ -206,7 +206,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
         PathSegment segment = control.createMock(PathSegment.class);
         expect(segment.getMatrixParameters()).andReturn(matrixParams).anyTimes();
-        expect(mockUriInfo.getPathSegments()).andReturn(Arrays.asList(segment)).anyTimes();
+        expect(mockUriInfo.getPathSegments()).andReturn(Collections.singletonList(segment)).anyTimes();
         return mockUriInfo;
     }
 

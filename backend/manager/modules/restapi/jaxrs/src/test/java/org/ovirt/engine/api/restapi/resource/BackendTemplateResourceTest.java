@@ -6,7 +6,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -217,7 +217,7 @@ public class BackendTemplateResourceTest
                     IdQueryParameters.class,
                     new String[]{"Id"},
                     new Object[]{GUIDS[i]},
-                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+                    Collections.singletonList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
     }
 

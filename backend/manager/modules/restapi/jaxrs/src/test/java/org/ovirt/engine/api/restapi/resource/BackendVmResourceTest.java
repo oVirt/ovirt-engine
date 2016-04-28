@@ -8,7 +8,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verif
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
@@ -1346,7 +1345,7 @@ public class BackendVmResourceTest
                     IdQueryParameters.class,
                     new String[] {},
                     new Object[] {},
-                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+                    Collections.singletonList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
     }
 

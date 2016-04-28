@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.easymock.IMocksControl;
@@ -98,7 +98,7 @@ public class GlusterTestHelper {
         expect(brickProps.getMntOptions()).andReturn(BRICK_MNT_OPT).anyTimes();
         expect(brickProps.getPort()).andReturn(BRICK_PORT).anyTimes();
         expect(brickDetails.getBrickProperties()).andReturn(brickProps).anyTimes();
-        List<BrickDetails> brickDetailsList = Arrays.asList(brickDetails);
+        List<BrickDetails> brickDetailsList = Collections.singletonList(brickDetails);
         expect(entity.getBrickDetails()).andReturn(brickDetailsList).anyTimes();
         return entity;
     }

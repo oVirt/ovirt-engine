@@ -5,7 +5,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1636,7 +1636,7 @@ public class BackendVmsResourceTest
                     IdQueryParameters.class,
                     new String[] {},
                     new Object[] {},
-                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+                    Collections.singletonList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
     }
 
