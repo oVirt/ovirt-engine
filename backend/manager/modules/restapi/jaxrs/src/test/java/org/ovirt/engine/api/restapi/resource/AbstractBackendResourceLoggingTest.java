@@ -3,17 +3,11 @@ package org.ovirt.engine.api.restapi.resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 
 public abstract class AbstractBackendResourceLoggingTest extends Assert {
-
-    @After
-    public void tearDown() {
-    }
-
     private void setFinalStatic(Field field, Object newValue) throws Exception {
         field.setAccessible(true);
 
