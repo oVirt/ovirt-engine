@@ -76,7 +76,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
-        Disk model = getModel(0);
+        Disk model = getModel();
         setUpCreationExpectations(VdcActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {"StorageDomainId"},
@@ -114,7 +114,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new String[] {"DiskId", "StorageDomainId", "StoragePoolId"},
                 new Object[] {GUIDS[0], GUIDS[3], storagePoolId},
                 getEntity(0));
-        Disk model = getModel(0);
+        Disk model = getModel();
         org.ovirt.engine.core.common.businessentities.storage.Disk imageToRegister = new DiskMapper().map(model, getEntity(0));
 
         // imageToRegister.setDiskAlias("alias");
@@ -147,7 +147,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
         setUpCreationExpectations(VdcActionType.AddDisk,
@@ -241,7 +241,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
 
     }
 
-    static Disk getModel(int index) {
+    static Disk getModel() {
         Disk model = new Disk();
         model.setProvisionedSize(1024 * 1024L);
         model.setFormat(DiskFormat.COW);
