@@ -1261,11 +1261,6 @@ public class BackendVmsResourceTest
         }
     }
 
-//    @Test
-//    public void testIsConsoleAddedInList() {
-//
-//    }
-
     @Test
     public void testAddIncompleteParameters() throws Exception {
         Vm model = new Vm();
