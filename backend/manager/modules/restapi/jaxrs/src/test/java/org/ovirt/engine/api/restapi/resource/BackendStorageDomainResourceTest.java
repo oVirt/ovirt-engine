@@ -221,6 +221,7 @@ public class BackendStorageDomainResourceTest
         }
     }
 
+    @Test
     public void testRemoveWithHostId() throws Exception {
         setUpGetEntityExpectations();
         UriInfo uriInfo = setUpActionExpectations(
