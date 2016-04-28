@@ -262,7 +262,7 @@ public class BackendTemplateDiskResourceTest
                     NameQueryParameters.class,
                     new String[] { "Name" },
                     new Object[] { NAMES[2] },
-                    getStorageDomainStaticEntity(0));
+                    getStorageDomainStaticEntity());
         }
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
@@ -282,14 +282,13 @@ public class BackendTemplateDiskResourceTest
         return setUpStorageDomainEntityExpectations(entity, index, StorageType.NFS);
     }
 
-    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStaticEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStaticEntity() {
         org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity =
                 control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
-        return setUpStorageDomainEntityExpectations(entity, index, StorageType.NFS);
+        return setUpStorageDomainEntityExpectations(entity, StorageType.NFS);
     }
 
     static org.ovirt.engine.core.common.businessentities.StorageDomainStatic setUpStorageDomainEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity,
-            int index,
             StorageType storageType) {
         expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();
         expect(entity.getStorageName()).andReturn(NAMES[2]).anyTimes();
