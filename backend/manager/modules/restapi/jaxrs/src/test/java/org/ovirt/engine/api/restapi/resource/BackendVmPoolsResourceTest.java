@@ -31,11 +31,6 @@ public class BackendVmPoolsResourceTest extends
     }
 
     @Override
-    protected void init() {
-        super.init();
-    }
-
-    @Override
     protected List<VmPool> getCollection() {
         return collection.list().getVmPools();
     }
