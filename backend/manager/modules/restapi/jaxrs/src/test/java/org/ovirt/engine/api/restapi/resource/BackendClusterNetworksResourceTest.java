@@ -28,7 +28,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations(1, null);
+        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
@@ -57,7 +57,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpClusterExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetClusterExpectations(1, null);
+        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
@@ -82,7 +82,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         model.setName("orcus");
         model.setDescription(DESCRIPTIONS[0]);
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations(1, null);
+        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpClusterExpectations(CLUSTER_ID);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
@@ -100,7 +100,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         Network model = new Network();
         model.setId("11111111-1111-1111-1111-111111111111");
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations(1, null);
+        setUpGetClusterExpectations(1);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpClusterExpectations(CLUSTER_ID);
         setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
@@ -161,7 +161,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         }
     }
 
-    protected void setUpGetClusterExpectations(int times, Object failure) {
+    protected void setUpGetClusterExpectations(int times) {
         while (times-- > 0) {
             Cluster cluster = new Cluster();
             cluster.setStoragePoolId(GUIDS[2]);
