@@ -32,7 +32,7 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
         QuotaStorageLimits storageLimits = collection.list();
         assertStorageLimitsFound(storageLimits, 1);
         QuotaStorageLimit storageLimit = storageLimits.getQuotaStorageLimits().get(0);
-        assertEquals(storageLimit.getLimit(), STORAGE_SIZE_GB);
+        assertEquals(STORAGE_SIZE_GB, storageLimit.getLimit());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
         assertStorageLimitsFound(list, 2);
         for (QuotaStorageLimit storageLimit : list.getQuotaStorageLimits()) {
             if (storageLimit.getStorageDomain().getId().equals(STORAGE_ID_1.toString())) {
-                assertEquals(storageLimit.getLimit(), STORAGE_SIZE_GB);
+                assertEquals(STORAGE_SIZE_GB, storageLimit.getLimit());
             }
             if (storageLimit.getStorageDomain().getId().equals(STORAGE_ID_2.toString())) {
                 assertTrue(storageLimit.getUsage() == STORAGE_SIZE_GB_USAGE);

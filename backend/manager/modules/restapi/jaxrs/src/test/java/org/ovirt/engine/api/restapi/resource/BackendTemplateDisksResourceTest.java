@@ -150,7 +150,7 @@ public class BackendTemplateDisksResourceTest
         for (Disk disk : disks) {
             assertNotNull(disk.getStorageDomains());
             List<StorageDomain> storageDomains = disk.getStorageDomains().getStorageDomains();
-            assertEquals(storageDomains.size(), 1);
+            assertEquals(1, storageDomains.size());
             assertEquals(storageDomains.get(0).getId(), GUIDS[0].toString());
         }
         verifyCollection(disks);

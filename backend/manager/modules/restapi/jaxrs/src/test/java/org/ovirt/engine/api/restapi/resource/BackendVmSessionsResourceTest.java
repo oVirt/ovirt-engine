@@ -47,7 +47,7 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
                 new Object[] { GUIDS[0] }, getEntity(0));
         control.replay();
         Sessions sessions = resource.list();
-        assertEquals(sessions.getSessions().size(), 2);
+        assertEquals(2, sessions.getSessions().size());
         assertNotNull(sessions.getSessions().get(0).getVm());
         assertNotNull(sessions.getSessions().get(1).getVm());
         assertNotNull(sessions.getSessions().get(0).getId());

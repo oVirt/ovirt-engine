@@ -39,7 +39,7 @@ public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<
         resource.setParent(getCollectionResourceMock());
         control.replay();
         Hook hook = resource.get();
-        assertEquals(hook.getEventName(), EVENT_2_NAME);
+        assertEquals(EVENT_2_NAME, hook.getEventName());
     }
 
     private Hooks getHooks() {

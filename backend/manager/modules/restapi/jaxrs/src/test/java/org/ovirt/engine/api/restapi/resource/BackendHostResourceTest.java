@@ -548,7 +548,7 @@ public class BackendHostResourceTest
         action.setFenceType(FenceType.STATUS.value());
         verifyActionResponse(resource.fence(action));
         PowerManagementStatus status = PowerManagementStatus.fromValue(action.getPowerManagement().getStatus().getState());
-        assertTrue(status.equals(PowerManagementStatus.ON));
+        assertEquals(PowerManagementStatus.ON, status);
     }
 
     @Test
@@ -572,7 +572,7 @@ public class BackendHostResourceTest
         Action actionReturned = (Action)response.getEntity();
         assertEquals(actionReturned.getStatus().getState(), CreationStatus.FAILED.value());
         assertNotNull(actionReturned.getFault());
-        assertEquals(actionReturned.getFault().getReason(), "some_error");
+        assertEquals("some_error", actionReturned.getFault().getReason());
     }
 
     @Test

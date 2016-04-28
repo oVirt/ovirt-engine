@@ -56,6 +56,6 @@ public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Ho
         control.replay();
         Hooks hooks = resource.list();
         assertNotNull(hooks.getHooks());
-        assertEquals(hooks.getHooks().size(), 4);
+        assertEquals(4, hooks.getHooks().size());
     }
 }

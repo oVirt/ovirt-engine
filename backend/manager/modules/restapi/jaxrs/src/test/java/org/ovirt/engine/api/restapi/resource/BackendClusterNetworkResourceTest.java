@@ -165,13 +165,13 @@ public class BackendClusterNetworkResourceTest
     }
     protected void verifyUpdate(Network model) {
         assertTrue(model.isSetDisplay());
-        assertEquals(model.isDisplay(), true);
+        assertEquals(true, model.isDisplay());
         assertTrue(model.isSetUsages());
         assertNotNull(model.getUsages().getUsages());
         assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY.value()));
         assertTrue(model.getUsages().getUsages().contains(NetworkUsage.MIGRATION.value()));
         assertTrue(model.isSetRequired());
-        assertEquals(model.isRequired(), true);
+        assertEquals(true, model.isRequired());
    }
 
 

@@ -134,7 +134,7 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
         assertEquals(minor, version.getMinor().intValue());
         assertEquals(current, version.isCurrent());
         assertNotNull(version.getCpus());
-        assertTrue(version.getCpus().getCpus().size() == 1);
+        assertEquals(1, version.getCpus().getCpus().size());
         verifyCPU(version.getCpus().getCpus().get(0), cpuName, cpuLevel);
         assertNotNull(version.getPowerManagement());
         assertEquals(1, version.getPowerManagement().getAgents().size());
@@ -181,7 +181,7 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
             assertNotNull(vmAffinities);
         }
         else {
-            assertEquals(null, vmAffinities);
+            assertNull(vmAffinities);
         }
     }
 

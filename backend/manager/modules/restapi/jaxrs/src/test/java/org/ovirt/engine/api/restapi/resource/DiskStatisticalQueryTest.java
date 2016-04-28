@@ -24,7 +24,7 @@ public class DiskStatisticalQueryTest {
     @Test
     public void testQuery() {
         List<Statistic> statistics = query.getStatistics(getDisk());
-        assertEquals(statistics.size(), 5);
+        assertEquals(5, statistics.size());
         for (Statistic statistic : statistics) {
             verifyStatistic(statistic);
         }
@@ -48,19 +48,19 @@ public class DiskStatisticalQueryTest {
 
     private void verifyStatistic(Statistic statistic) {
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_READ.getName())) {
-            assertEquals(statistic.getValues().getValues().get(0).getDatum().intValue(), READ_RATE);
+            assertEquals(READ_RATE, statistic.getValues().getValues().get(0).getDatum().intValue());
         }
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_WRITE.getName())) {
-            assertEquals(statistic.getValues().getValues().get(0).getDatum().intValue(), WRITE_RATE);
+            assertEquals(WRITE_RATE, statistic.getValues().getValues().get(0).getDatum().intValue());
         }
         if (statistic.getName().equals(DiskStatisticalQuery.READ_LATENCY.getName())) {
-            assertEquals(statistic.getValues().getValues().get(0).getDatum().doubleValue(), READ_LATENCY, EPSILON);
+            assertEquals(READ_LATENCY, statistic.getValues().getValues().get(0).getDatum().doubleValue(), EPSILON);
         }
         if (statistic.getName().equals(DiskStatisticalQuery.WRITE_LATENCY.getName())) {
-            assertEquals(statistic.getValues().getValues().get(0).getDatum().doubleValue(), WRITE_LATENCY, EPSILON);
+            assertEquals(WRITE_LATENCY, statistic.getValues().getValues().get(0).getDatum().doubleValue(), EPSILON);
         }
         if (statistic.getName().equals(DiskStatisticalQuery.FLUSH_LATENCY.getName())) {
-            assertEquals(statistic.getValues().getValues().get(0).getDatum().doubleValue(), FLUSH_LATENCY, EPSILON);
+            assertEquals(FLUSH_LATENCY, statistic.getValues().getValues().get(0).getDatum().doubleValue(), EPSILON);
         }
     }
 }

@@ -1294,7 +1294,7 @@ public class BackendVmResourceTest
     private void verifyCertificate(Vm model) {
         assertNotNull(model.getDisplay());
         assertNotNull(model.getDisplay().getCertificate());
-        assertEquals(model.getDisplay().getCertificate().getSubject(), CERTIFICATE);
+        assertEquals(CERTIFICATE, model.getDisplay().getCertificate().getSubject());
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStatic(int idx) {

@@ -47,7 +47,7 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
 
         List<StorageConnectionExtension> retCollection = getCollection();
         assertNotNull(retCollection);
-        assertEquals(retCollection.size(), numOfEntitiesInList);
+        assertEquals(numOfEntitiesInList, retCollection.size());
     }
 
     @Test

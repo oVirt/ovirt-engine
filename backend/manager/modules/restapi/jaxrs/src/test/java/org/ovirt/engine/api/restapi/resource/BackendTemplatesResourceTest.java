@@ -244,7 +244,7 @@ public class BackendTemplatesResourceTest
             Response response = collection.add(getModel(2));
             assertEquals(201, response.getStatus());
             assertTrue(response.getEntity() instanceof Template);
-            assertEquals(((Template) response.getEntity()).getVersion().getVersionName(), VERSION_NAME);
+            assertEquals(VERSION_NAME, ((Template) response.getEntity()).getVersion().getVersionName());
             assertEquals(((Template) response.getEntity()).getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
             verifyModel((Template)response.getEntity(), 2);
     }
@@ -653,12 +653,12 @@ public class BackendTemplatesResourceTest
 
         for (Template template : collection) {
             if(template.getId().equals(GUIDS[2].toString())) {
-                 assertEquals(template.getVersion().getVersionName(), VERSION_NAME);
-                 assertEquals(template.getVersion().getVersionNumber(), new Integer(2));
+                 assertEquals(VERSION_NAME, template.getVersion().getVersionName());
+                 assertEquals(new Integer(2), template.getVersion().getVersionNumber());
                  assertEquals(template.getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
             } else {
                 assertFalse(template.getVersion().isSetVersionName());
-                assertEquals(template.getVersion().getVersionNumber(), new Integer(1));
+                assertEquals(new Integer(1), template.getVersion().getVersionNumber());
                 assertEquals(template.getVersion().getBaseTemplate().getId(), template.getId());
             }
         }

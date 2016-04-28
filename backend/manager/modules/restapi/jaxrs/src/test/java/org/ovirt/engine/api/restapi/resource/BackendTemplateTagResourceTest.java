@@ -82,7 +82,7 @@ public class BackendTemplateTagResourceTest
         }
         catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
-            assertEquals(wae.getResponse().getStatus(), 404);
+            assertEquals(404, wae.getResponse().getStatus());
         }
     }
 

@@ -32,7 +32,7 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
         QuotaClusterLimits clusterLimits = collection.list();
         assertClusterLimitsFound(clusterLimits, 1);
         QuotaClusterLimit clusterLimit = clusterLimits.getQuotaClusterLimits().get(0);
-        assertEquals(clusterLimit.getVcpuLimit().intValue(), 20);
+        assertEquals(20, clusterLimit.getVcpuLimit().intValue());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
         assertClusterLimitsFound(list, 2);
         for (QuotaClusterLimit clusterLimit: list.getQuotaClusterLimits()) {
             if (clusterLimit.getCluster().getId().equals(CLUSTER_ID_1.toString())) {
-                assertEquals(clusterLimit.getVcpuLimit().longValue(), CPU_NUMBER);
+                assertEquals(CPU_NUMBER, clusterLimit.getVcpuLimit().longValue());
             }
             if (clusterLimit.getCluster().getId().equals(CLUSTER_ID_2.toString())) {
                 assertTrue(clusterLimit.getVcpuUsage() == VIRTUAL_CPU_USAGE);

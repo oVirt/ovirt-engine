@@ -68,7 +68,7 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     protected void verifyModel(Event model, int index) {
         assertNotNull(model);
         assertEquals(model.getId(), String.valueOf(LOG_IDS[index]));
-        assertEquals(model.getSeverity(), LogSeverity.ALERT);
+        assertEquals(LogSeverity.ALERT, model.getSeverity());
         assertEquals(model.getDescription(), MESSAGES[index]);
         assertEquals(model.getOrigin(), ORIGIN_NAMES[index]);
         assertEquals(model.getCustomId(), CUSTOMER_EVENT_IDS[index]);

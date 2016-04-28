@@ -396,12 +396,12 @@ public class BackendApiResourceTest extends EasyMockSupport {
 
     private static void assertContainsBlankTemplate(SpecialObjects objs) {
         assertNotNull(objs.getBlankTemplate());
-        assertEquals(objs.getBlankTemplate().getHref(), BLANK_TEMPLATE_HREF);
+        assertEquals(BLANK_TEMPLATE_HREF, objs.getBlankTemplate().getHref());
     }
 
     private static void assertContainsRootTag(SpecialObjects objs) {
         assertNotNull(objs.getRootTag());
-        assertEquals(objs.getRootTag().getHref(), ROOT_TAG_HREF);
+        assertEquals(ROOT_TAG_HREF, objs.getRootTag().getHref());
     }
 
     protected UriInfo setUpUriInfo() {
