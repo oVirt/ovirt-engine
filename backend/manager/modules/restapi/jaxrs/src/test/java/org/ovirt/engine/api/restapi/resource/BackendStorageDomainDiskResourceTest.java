@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.ws.rs.WebApplicationException;
@@ -138,9 +139,7 @@ public class BackendStorageDomainDiskResourceTest
         entity.setPropagateErrors(PropagateErrors.On);
         ArrayList<Guid> storages = new ArrayList<>();
         if (!noSD) {
-            for (int i = 0; i < GUIDS.length; i++) {
-                storages.add(GUIDS[i]);
-            }
+            storages.addAll(Arrays.asList(GUIDS));
         }
         entity.setStorageIds(storages);
         return setUpStatisticalEntityExpectations(entity);
