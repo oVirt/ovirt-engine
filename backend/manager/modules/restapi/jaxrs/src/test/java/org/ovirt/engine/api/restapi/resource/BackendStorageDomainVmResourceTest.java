@@ -474,7 +474,7 @@ public class BackendStorageDomainVmResourceTest
     @Override
     protected void verifyModel(Vm model, int index) {
         super.verifyModel(model, index);
-        verifyModelSpecific(model, index);
+        verifyModelSpecific(model);
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStatic(int idx) {

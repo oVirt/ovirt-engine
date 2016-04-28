@@ -132,7 +132,7 @@ public class BackendStorageDomainVmsResourceTest
 
     protected void verifyModel(Vm model, int index) {
         super.verifyModel(model, index);
-        verifyModelSpecific(model, index);
+        verifyModelSpecific(model);
     }
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {

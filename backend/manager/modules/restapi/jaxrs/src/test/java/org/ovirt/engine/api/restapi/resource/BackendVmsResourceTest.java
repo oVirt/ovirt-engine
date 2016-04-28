@@ -1444,10 +1444,10 @@ public class BackendVmsResourceTest
     @Override
     protected void verifyModel(Vm model, int index) {
         super.verifyModel(model, index);
-        verifyModelSpecific(model, index);
+        verifyModelSpecific(model);
     }
 
-    static void verifyModelSpecific(Vm model, int index) {
+    static void verifyModelSpecific(Vm model) {
         assertNotNull(model.getCluster());
         assertNotNull(model.getCluster().getId());
         assertNotNull(model.getCpu());
