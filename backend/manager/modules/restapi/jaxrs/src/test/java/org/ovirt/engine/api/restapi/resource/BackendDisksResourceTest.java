@@ -72,7 +72,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getStorageDomains().get(0));
-        Disk model = getModel(0);
+        Disk model = getModel();
         setUpCreationExpectations(VdcActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {"StorageDomainId"},
@@ -108,7 +108,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getStorageDomains().get(0));
-        Disk model = getModel(0);
+        Disk model = getModel();
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
         setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
@@ -146,7 +146,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         return sds;
     }
 
-    static Disk getModel(int index) {
+    static Disk getModel() {
         Disk model = new Disk();
         model.setProvisionedSize(1024 * 1024L);
         model.setFormat(DiskFormat.COW);
