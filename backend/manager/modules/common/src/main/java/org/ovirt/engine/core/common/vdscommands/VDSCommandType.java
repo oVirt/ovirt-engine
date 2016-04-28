@@ -170,6 +170,7 @@ public enum VDSCommandType {
     PauseGlusterVolumeGeoRepSession("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterVolumeAdvancedDetails("org.ovirt.engine.core.vdsbroker.gluster"),
     GlusterVolumesList("org.ovirt.engine.core.vdsbroker.gluster"),
+    GetGlusterVolumeHealInfo("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterVolumeProfileInfo("org.ovirt.engine.core.vdsbroker.gluster"),
     EnableGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     DisableGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),

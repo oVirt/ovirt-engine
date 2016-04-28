@@ -447,4 +447,6 @@ public interface VdsServerConnector {
     public Map<String, Object> teardownImage(String sdID, String spID, String imageID, String volumeID);
 
     public Map<String, Object> verifyUntrustedVolume(String sdID, String spID, String imageID, String volumeID);
+
+    public Map<String, Object> glusterVolumeHealInfo(String volumeName);
 }

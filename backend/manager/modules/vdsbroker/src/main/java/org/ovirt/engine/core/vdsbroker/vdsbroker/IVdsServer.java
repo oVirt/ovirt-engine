@@ -26,6 +26,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotCreateReturn
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
@@ -292,6 +293,8 @@ public interface IVdsServer {
     GlusterVolumesListReturnForXmlRpc glusterVolumesList(Guid clusterId);
 
     GlusterVolumesListReturnForXmlRpc glusterVolumeInfo(Guid clusterId, String volumeName);
+
+    GlusterVolumesHealInfoReturnForXmlRpc glusterVolumeHealInfo(String volumeName);
 
     GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName, boolean nfs);
 

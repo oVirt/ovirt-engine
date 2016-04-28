@@ -34,6 +34,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotCreateReturn
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
@@ -1272,6 +1273,18 @@ public class VdsServerWrapper implements IVdsServer {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumesList(volumeName);
             GlusterVolumesListReturnForXmlRpc wrapper =
                     new GlusterVolumesListReturnForXmlRpc(clusterId, xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumesHealInfoReturnForXmlRpc glusterVolumeHealInfo(String volumeName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeHealInfo(volumeName);
+            GlusterVolumesHealInfoReturnForXmlRpc wrapper =
+                    new GlusterVolumesHealInfoReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
