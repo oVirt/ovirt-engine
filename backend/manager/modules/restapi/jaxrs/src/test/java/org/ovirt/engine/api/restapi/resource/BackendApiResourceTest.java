@@ -58,7 +58,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
     protected static final String BASE_PATH = "/ovirt-engine/api";
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
     protected static final String SESSION_ID = Guid.newGuid().toString();
-    private static String USER_FILTER_HEADER = "filter";
+    private static final String USER_FILTER_HEADER = "filter";
 
     protected static final int MAJOR = 11;
     protected static final int MINOR = 0;
