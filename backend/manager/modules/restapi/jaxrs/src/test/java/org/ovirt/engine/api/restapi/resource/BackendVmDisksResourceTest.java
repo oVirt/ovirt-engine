@@ -449,7 +449,7 @@ public class BackendVmDisksResourceTest
         assertNull(((Disk)response.getEntity()).getCreationStatus());
     }
 
-    private List getStorageDomains() {
+    private List<org.ovirt.engine.core.common.businessentities.StorageDomain> getStorageDomains() {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<>();
         sds.add(getStorageDomain(GUIDS[2]));
         return sds;

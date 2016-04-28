@@ -137,7 +137,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         assertNull(((Disk)response.getEntity()).getCreationStatus());
     }
 
-    private List getStorageDomains() {
+    private List<org.ovirt.engine.core.common.businessentities.StorageDomain> getStorageDomains() {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<>();
         org.ovirt.engine.core.common.businessentities.StorageDomain sd = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setStorageName("Storage_Domain_1");
