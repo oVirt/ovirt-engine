@@ -33,7 +33,7 @@ public class BackendFilesResourceTest
 
     @Test
     public void testGet() throws Exception {
-        BackendFileResource resource = new BackendFileResource(NAMES[0].toString(), collection);
+        BackendFileResource resource = new BackendFileResource(NAMES[0], collection);
         collection.setUriInfo(setUpUriExpectations(null));
         setUpQueryExpectations("", null);
         verifyModel(resource.get(), 0);
@@ -206,8 +206,8 @@ public class BackendFilesResourceTest
 
     @Override
     protected void verifyModel(File model, int index) {
-        assertEquals(NAMES[index].toString(), model.getId());
-        assertEquals(NAMES[index].toString(), model.getName());
+        assertEquals(NAMES[index], model.getId());
+        assertEquals(NAMES[index], model.getName());
         assertNotNull(model.getStorageDomain());
         assertEquals(GUIDS[0].toString(), model.getStorageDomain().getId());
         verifyLinks(model);

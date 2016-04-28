@@ -84,7 +84,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
         Job model = new Job();
-        model.setDescription(DESCRIPTIONS[0].toString());
+        model.setDescription(DESCRIPTIONS[0]);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Job);

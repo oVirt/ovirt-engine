@@ -48,7 +48,7 @@ public class BackendRolesResourceTest
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
         Role model = new Role();
-        model.setName(NAMES[0].toString());
+        model.setName(NAMES[0]);
         model.setPermits(new Permits());
         model.getPermits().getPermits().add(new Permit());
         model.getPermits().getPermits().get(0).setId(""+ActionGroup.CREATE_VM.getId());
@@ -64,7 +64,7 @@ public class BackendRolesResourceTest
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         Role model = new Role();
-        model.setName(NAMES[0].toString());
+        model.setName(NAMES[0]);
         model.setPermits(new Permits());
         model.getPermits().getPermits().add(new Permit());
         model.getPermits().getPermits().get(0).setId("1234");
@@ -81,7 +81,7 @@ public class BackendRolesResourceTest
     @Test
     public void testAddIncompleteParametersNoPermits() throws Exception {
         Role model = new Role();
-        model.setName(NAMES[0].toString());
+        model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {

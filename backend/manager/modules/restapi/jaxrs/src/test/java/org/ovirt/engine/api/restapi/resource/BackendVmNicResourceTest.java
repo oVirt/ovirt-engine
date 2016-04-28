@@ -437,10 +437,10 @@ public class BackendVmNicResourceTest
 
     private void verifyModelSpecific(Nic model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(NAMES[index].toString(), model.getName());
+        assertEquals(NAMES[index], model.getName());
         assertTrue(model.isSetVm());
         assertEquals(VM_ID.toString(), model.getVm().getId());
         assertTrue(model.isSetMac());
-        assertEquals(ADDRESSES[2].toString(), model.getMac().getAddress());
+        assertEquals(ADDRESSES[2], model.getMac().getAddress());
     }
 }

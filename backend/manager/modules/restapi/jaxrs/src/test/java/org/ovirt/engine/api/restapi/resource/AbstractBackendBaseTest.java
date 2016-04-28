@@ -79,7 +79,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     /**
      * External identifier of a non existing user or group.
      */
-    protected static final String NON_EXISTANT_EXTERNAL_ID = DirectoryEntryIdUtils.encode("10".toString());
+    protected static final String NON_EXISTANT_EXTERNAL_ID = DirectoryEntryIdUtils.encode("10");
 
     protected static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     protected static final String[] NAMES = { "sedna", "eris", "orcus" };

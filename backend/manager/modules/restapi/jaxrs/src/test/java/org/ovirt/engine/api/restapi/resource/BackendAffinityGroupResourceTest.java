@@ -103,8 +103,8 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 control.createMock(org.ovirt.engine.core.common.scheduling.AffinityGroup.class);
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index].toString()).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index].toString()).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getClusterId()).andReturn(CLUSTER_ID).anyTimes();
         expect(entity.isEnforcing()).andReturn((GUIDS[index].hashCode() & 1) == 0).anyTimes();
         expect(entity.isPositive()).andReturn((GUIDS[index].hashCode() & 1) == 1).anyTimes();

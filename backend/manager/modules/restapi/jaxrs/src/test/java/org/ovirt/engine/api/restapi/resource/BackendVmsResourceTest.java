@@ -567,7 +567,7 @@ public class BackendVmsResourceTest
                 getEntity(2));
         Vm model = getModel(2);
         model.setTemplate(new Template());
-        model.getTemplate().setName(NAMES[1].toString());
+        model.getTemplate().setName(NAMES[1]);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
@@ -890,7 +890,7 @@ public class BackendVmsResourceTest
         Hosts hosts = new Hosts();
         for (int i =0; i < NAMES.length; i++){
             Host newHost = new Host();
-            newHost.setName(NAMES[i].toString());
+            newHost.setName(NAMES[i]);
             hosts.getHosts().add(newHost);
         }
         model.getPlacementPolicy().setHosts(hosts);

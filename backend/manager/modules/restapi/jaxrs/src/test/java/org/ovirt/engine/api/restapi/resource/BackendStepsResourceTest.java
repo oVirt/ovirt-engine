@@ -97,7 +97,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
         job.setId(GUIDS[1].toString());
         job.setDescription(DESCRIPTIONS[1]);
         model.setJob(job);
-        model.setDescription(DESCRIPTIONS[0].toString());
+        model.setDescription(DESCRIPTIONS[0]);
         Status status = new Status();
         status.setState("started");
         model.setStatus(status);

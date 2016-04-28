@@ -170,7 +170,7 @@ public class BackendNetworksResourceTest
             if (n1.getId().equals(n2.getId())) {
                 return 0;
             } else {
-                return n1.getId().toString().compareTo(n2.getId().toString());
+                return n1.getId().compareTo(n2.getId());
             }
         }
     }
