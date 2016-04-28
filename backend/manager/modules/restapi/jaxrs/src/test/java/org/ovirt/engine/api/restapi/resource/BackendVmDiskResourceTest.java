@@ -338,8 +338,6 @@ public class BackendVmDiskResourceTest
         expect(entity.getWriteLatency()).andReturn(40.0).times(2);
         expect(entity.getFlushLatency()).andReturn(50.0).times(2);
         expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
-        List<DiskImage> ifaces = new ArrayList<>();
-        ifaces.add(entity);
         setUpGetEntityExpectations(1, entity);
         control.replay();
         return entity;
