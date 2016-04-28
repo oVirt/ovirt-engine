@@ -75,7 +75,7 @@ public class BackendClusterNetworkResourceTest
                                            true,
                                            true));
 
-        verifyUpdate(resource.update(getModel(0)), 0);
+        verifyUpdate(resource.update(getModel(0)));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class BackendClusterNetworkResourceTest
         network.setDisplay(true);
         return network;
     }
-    protected void verifyUpdate(Network model, int index) {
+    protected void verifyUpdate(Network model) {
         assertTrue(model.isSetDisplay());
         assertEquals(model.isDisplay(), true);
         assertTrue(model.isSetUsages());
