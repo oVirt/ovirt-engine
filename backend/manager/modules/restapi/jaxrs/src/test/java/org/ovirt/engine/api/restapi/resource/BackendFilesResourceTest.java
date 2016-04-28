@@ -136,8 +136,7 @@ public class BackendFilesResourceTest
         Fault fault = (Fault) wae.getResponse().getEntity();
         assertEquals(reason, fault.getReason());
         assertNotNull(fault.getDetail());
-        assertTrue("expected detail to include: " + t.getMessage(),
-                   fault.getDetail().indexOf(t.getMessage()) != -1);
+        assertTrue("expected detail to include: " + t.getMessage(), fault.getDetail().contains(t.getMessage()));
     }
 
     @Test

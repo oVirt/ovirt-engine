@@ -83,7 +83,7 @@ public class TestHelper {
     }
 
     private static boolean topLevel(String name) {
-        return name.indexOf(".") == -1;
+        return !name.contains(".");
     }
 
     private static String superField(String name) {

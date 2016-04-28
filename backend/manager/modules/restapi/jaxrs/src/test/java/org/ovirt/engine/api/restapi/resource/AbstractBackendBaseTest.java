@@ -535,8 +535,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         Fault fault = (Fault) wae.getResponse().getEntity();
         assertEquals(reason, fault.getReason());
         assertNotNull(fault.getDetail());
-        assertTrue("expected detail to include: " + t.getMessage(),
-                fault.getDetail().indexOf(t.getMessage()) != -1);
+        assertTrue("expected detail to include: " + t.getMessage(), fault.getDetail().contains(t.getMessage()));
     }
 
     protected void verifyIncompleteException(WebApplicationException wae, String type, String method, String... fields) {
