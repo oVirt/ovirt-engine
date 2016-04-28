@@ -279,7 +279,7 @@ public final class VdsProperties {
     public static final String cpuShares = "cpuShares";
     public static final String hiberVolHandle = "hiberVolHandle";
     public static final String pauseCode = "pauseCode";
-    public static final String KeyboardLayout = "keyboardLayout";
+    public static final String KeyboardMap = "keyMap";
     public static final String TabletEnable = "tabletEnable";
     public static final String PitReinjection = "pitReinjection";
     public static final String InitrdUrl = "initrd";

@@ -108,14 +108,7 @@ public abstract class VmInfoBuilderBase {
         if(vm.getEmulatedMachine() != null) {
             createInfo.put(VdsProperties.emulatedMachine, vm.getEmulatedMachine());
         }
-        // send cipher suite and spice secure channels parameters only if ssl
-        // enabled.
-        if (Config.<Boolean> getValue(ConfigValues.SSLEnabled)) {
-            createInfo.put(VdsProperties.spiceSslCipherSuite,
-                    Config.<String> getValue(ConfigValues.CipherSuite));
-            createInfo.put(VdsProperties.SpiceSecureChannels, Config.<String> getValue(
-                    ConfigValues.SpiceSecureChannels, compatibilityVersion));
-        }
+
         createInfo.put(VdsProperties.kvmEnable, vm.getKvmEnable().toString()
                 .toLowerCase());
         createInfo.put(VdsProperties.acpiEnable, vm.getAcpiEnable().toString()
@@ -146,15 +139,6 @@ public abstract class VmInfoBuilderBase {
                     vm.getHibernationVolHandle());
         }
 
-        String keyboardLayout = vm.getDynamicData().getVncKeyboardLayout();
-        if (keyboardLayout == null) {
-            keyboardLayout = vm.getDefaultVncKeyboardLayout();
-            if (keyboardLayout == null) {
-                keyboardLayout = Config.<String> getValue(ConfigValues.VncKeyboardLayout);
-            }
-        }
-
-        createInfo.put(VdsProperties.KeyboardLayout, keyboardLayout);
         if (osRepository.isLinux(vm.getVmOsId())) {
             createInfo.put(VdsProperties.PitReinjection, "false");
         }
@@ -165,20 +149,36 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.transparent_huge_pages,
                 vm.isTransparentHugePages() ? "true" : "false");
 
-        // ensure compatibility with VDSM <= 4.16
-        addVmSpiceOptions(vm.getGraphicsInfos(), createInfo);
-
         if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion())) {
             createInfo.put(VdsProperties.hypervEnable, "true");
         }
     }
 
-    protected void addVmSpiceOptions(Map<GraphicsType, GraphicsInfo> infos, Map<String, Object> params) {
+    protected void addVmGraphicsOptions(Map<GraphicsType, GraphicsInfo> infos, Map<String, Object> params) {
         if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
             params.put(VdsProperties.spiceFileTransferEnable,
                     Boolean.toString(vm.isSpiceFileTransferEnabled()));
             params.put(VdsProperties.spiceCopyPasteEnable,
                     Boolean.toString(vm.isSpiceCopyPasteEnabled()));
+
+            if (Config.<Boolean>getValue(ConfigValues.SSLEnabled)) {
+                params.put(VdsProperties.spiceSslCipherSuite,
+                        Config.<String>getValue(ConfigValues.CipherSuite));
+                params.put(VdsProperties.SpiceSecureChannels, Config.<String>getValue(
+                        ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString()));
+            }
+        }
+
+        if (infos != null && infos.containsKey(GraphicsType.VNC)) {
+            String keyboardLayout = vm.getDynamicData().getVncKeyboardLayout();
+            if (keyboardLayout == null) {
+                keyboardLayout = vm.getDefaultVncKeyboardLayout();
+                if (keyboardLayout == null) {
+                    keyboardLayout = Config.<String> getValue(ConfigValues.VncKeyboardLayout);
+                }
+            }
+
+            params.put(VdsProperties.KeyboardMap, keyboardLayout);
         }
     }
 

@@ -113,28 +113,18 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         boolean graphicsOverriden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
 
         Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
-        Map<String, Object> specParamsFromVm = buildVmGraphicsSpecParamsFromVm(infos);
+
+        Map<String, Object> specParamsFromVm = null;
+        if (infos != null) {
+            specParamsFromVm = new HashMap();
+            addVmGraphicsOptions(infos, specParamsFromVm);
+        }
 
         if (graphicsOverriden) {
             buildVmGraphicsDevicesOverriden(infos, specParamsFromVm);
         } else {
             buildVmGraphicsDevicesFromDb(specParamsFromVm);
         }
-    }
-
-    /**
-     * Some vm-level settings need to be translated as graphic device specParams.
-     * This information must take precedence over that stored on the DB - because these parameters aren't expected
-     * to be stored in the DB at all!
-     */
-    private Map<String, Object> buildVmGraphicsSpecParamsFromVm(Map<GraphicsType, GraphicsInfo> infos) {
-        Map<String, Object> specParamsFromVm = null;
-        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
-            // harmless if added to VNC devices. Just noise.
-            specParamsFromVm = new HashMap();
-            addVmSpiceOptions(infos, specParamsFromVm);
-        }
-        return specParamsFromVm;
     }
 
     /**
