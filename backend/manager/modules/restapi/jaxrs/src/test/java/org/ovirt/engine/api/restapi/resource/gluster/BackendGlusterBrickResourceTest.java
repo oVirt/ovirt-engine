@@ -186,7 +186,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         List<String> populateValue = new ArrayList<>();
         populateValue.add("true");
         expect(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).andReturn(populateValue).anyTimes();
-        setupParentPopulateExpectations(notFound);
+        setupParentPopulateExpectations();
     }
 
     private void setupEntityExpectationAdvancedDetails(int times, boolean notFound, boolean hasBrickDetails) throws Exception {
@@ -212,7 +212,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         }
     }
 
-    private void setupParentPopulateExpectations(boolean notFound) {
+    private void setupParentPopulateExpectations() {
        expect(bricksResourceMock.populateAdvancedDetails(isA(GlusterBrick.class), isA(GlusterBrickEntity.class))).andDelegateTo(
                 new BackendGlusterBricksResource() {
 
