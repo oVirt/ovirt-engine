@@ -154,10 +154,10 @@ public class BackendVmPoolResourceTest
     @Override
     protected void verifyModel(VmPool model, int index) {
         super.verifyModel(model, index);
-        verifyModelSpecific(model, index);
+        verifyModelSpecific(model);
     }
 
-    static void verifyModelSpecific(VmPool model, int index) {
+    static void verifyModelSpecific(VmPool model) {
         assertNotNull(model.getCluster());
         assertNotNull(model.getCluster().getId());
     }
