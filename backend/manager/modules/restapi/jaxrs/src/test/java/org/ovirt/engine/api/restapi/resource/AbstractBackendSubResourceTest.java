@@ -71,10 +71,10 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
     }
 
     protected void verifyActionResponse(Response r, String baseUri, boolean async) throws Exception {
-        verifyActionResponse(r, baseUri, async, null, null);
+        verifyActionResponse(r, baseUri, async, null);
     }
 
-    protected void verifyActionResponse(Response r, String baseUri, boolean async, String reason, String detailExerpt) throws Exception {
+    protected void verifyActionResponse(Response r, String baseUri, boolean async, String reason) throws Exception {
         assertEquals("unexpected status", async ? 202 : 200, r.getStatus());
         Object entity = r.getEntity();
         assertTrue("expect Action response entity", entity instanceof Action);

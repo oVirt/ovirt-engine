@@ -305,7 +305,7 @@ public class BackendHostResourceTest
                                            asList(new AsyncTaskStatus(asyncStatus))));
 
         Response response = resource.activate(new Action());
-        verifyActionResponse(response, "hosts/" + GUIDS[0], true, null, null);
+        verifyActionResponse(response, "hosts/" + GUIDS[0], true, null);
         Action action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus().getState());

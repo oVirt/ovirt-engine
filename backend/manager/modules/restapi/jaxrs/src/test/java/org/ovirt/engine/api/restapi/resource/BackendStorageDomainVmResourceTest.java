@@ -356,7 +356,7 @@ public class BackendStorageDomainVmResourceTest
         action.setCluster(cluster);
 
         Response response = resource.doImport(action);
-        verifyActionResponse(response, URL_BASE, true, null, null);
+        verifyActionResponse(response, URL_BASE, true, null);
         action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus().getState());

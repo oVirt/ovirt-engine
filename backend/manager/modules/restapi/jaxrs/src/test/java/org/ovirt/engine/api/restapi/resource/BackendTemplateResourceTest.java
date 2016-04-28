@@ -441,7 +441,7 @@ public class BackendTemplateResourceTest
         action.setStorageDomain(storageDomain);
 
         Response response = resource.export(action);
-        verifyActionResponse(response, "templates/" + GUIDS[0], true, null, null);
+        verifyActionResponse(response, "templates/" + GUIDS[0], true, null);
         action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus().getState());

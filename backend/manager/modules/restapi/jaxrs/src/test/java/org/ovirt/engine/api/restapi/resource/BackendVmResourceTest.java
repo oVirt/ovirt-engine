@@ -729,7 +729,7 @@ public class BackendVmResourceTest
                                                 asList(new AsyncTaskStatus(asyncStatus))));
 
         Response response = resource.suspend(new Action());
-        verifyActionResponse(response, "vms/" + GUIDS[0], true, null, null);
+        verifyActionResponse(response, "vms/" + GUIDS[0], true, null);
         Action action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus().getState());

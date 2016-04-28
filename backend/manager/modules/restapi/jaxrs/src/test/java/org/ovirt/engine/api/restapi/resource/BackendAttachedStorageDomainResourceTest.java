@@ -120,7 +120,6 @@ public class BackendAttachedStorageDomainResourceTest
             response,
             "datacenters/" + DATA_CENTER_ID + "/storagedomains/" + STORAGE_DOMAIN_ID,
             true,
-            null,
             null
         );
         Action action = (Action) response.getEntity();
