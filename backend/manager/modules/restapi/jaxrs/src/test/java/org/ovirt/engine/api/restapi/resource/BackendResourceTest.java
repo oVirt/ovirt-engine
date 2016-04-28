@@ -40,7 +40,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     @Test
     public void testQueryWithoutFilter() throws Exception {
         resource.setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(false, true);
+        setUpGetEntityExpectations(false);
         control.replay();
         resource.get();
     }
@@ -58,7 +58,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
 
     @Test
     public void testActionWithCorrelationId() throws Exception {
-        setUpGetEntityExpectations(false, false);
+        setUpGetEntityExpectations(false);
         expect(httpHeaders.getRequestHeader("Correlation-Id")).andReturn(asList("Some-Correlation-id")).anyTimes();
         resource.setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
@@ -73,7 +73,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
 
     @Test(expected = MalformedIdException.class)
     public void testBadGuidValidation() throws Exception {
-        setUpGetEntityExpectations(false, false);
+        setUpGetEntityExpectations(false);
         Host host = new Host();
         host.setCluster(new Cluster());
         host.getCluster().setId("!!!");
@@ -124,7 +124,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         }
     }
 
-    protected void setUpGetEntityExpectations(boolean filter, boolean getCertInfo) throws Exception {
+    protected void setUpGetEntityExpectations(boolean filter) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
                 IdQueryParameters.class,
                 new String[] { "Id", "Filtered" },
