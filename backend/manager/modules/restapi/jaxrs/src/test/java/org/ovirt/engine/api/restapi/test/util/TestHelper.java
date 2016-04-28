@@ -78,7 +78,6 @@ public class TestHelper {
             }
             return matches(value, getMethod(clz, name, value).invoke(instance));
         } catch (Exception e) {
-            System.out.println(e);
             return false;
         }
     }
