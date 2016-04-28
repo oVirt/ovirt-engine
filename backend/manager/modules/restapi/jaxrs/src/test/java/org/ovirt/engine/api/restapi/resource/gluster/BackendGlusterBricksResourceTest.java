@@ -475,7 +475,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                     GlusterVolumeAdvancedDetailsParameters.class,
                     new String[] { "ClusterId", "VolumeId", "BrickId", "DetailRequired" },
                     new Object[] { clusterId, volumeId, GUIDS[times], true },
-                    notFound ? null : helper.getVolumeAdvancedDetailsEntity(times));
+                    notFound ? null : helper.getVolumeAdvancedDetailsEntity());
         }
     }
 

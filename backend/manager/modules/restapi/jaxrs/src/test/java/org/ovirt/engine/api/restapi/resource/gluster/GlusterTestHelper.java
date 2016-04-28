@@ -90,7 +90,7 @@ public class GlusterTestHelper {
         return volumesList.get(index);
     }
 
-    protected GlusterVolumeAdvancedDetails getVolumeAdvancedDetailsEntity(int index) {
+    protected GlusterVolumeAdvancedDetails getVolumeAdvancedDetailsEntity() {
         GlusterVolumeAdvancedDetails entity = control.createMock(GlusterVolumeAdvancedDetails.class);
 
         BrickDetails brickDetails = control.createMock(BrickDetails.class);
