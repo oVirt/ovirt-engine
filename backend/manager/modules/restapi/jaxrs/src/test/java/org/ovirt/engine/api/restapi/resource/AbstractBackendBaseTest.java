@@ -559,18 +559,14 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected String[] addSession(String... names) {
         String[] ret = new String[names.length + 1];
-        for (int i = 0; i < names.length; i++) {
-            ret[i] = names[i];
-        }
+        System.arraycopy(names, 0, ret, 0, names.length);
         ret[names.length] = "SessionId";
         return ret;
     }
 
     protected Object[] addSession(Object... values) {
         Object[] ret = new Object[values.length + 1];
-        for (int i = 0; i < values.length; i++) {
-            ret[i] = values[i];
-        }
+        System.arraycopy(values, 0, ret, 0, values.length);
         ret[values.length] = SESSION_ID;
         return ret;
     }
