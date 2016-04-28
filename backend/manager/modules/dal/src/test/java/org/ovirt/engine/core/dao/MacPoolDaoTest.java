@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -28,22 +27,6 @@ public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoo
         final List<String> allMacsForMacPool = dao.getAllMacsForMacPool(FixturesTool.NON_DEFAULT_MAC_POOL);
 
         assertThat(allMacsForMacPool.containsAll(Arrays.asList("00:1a:4a:16:87:da", "00:1a:4a:16:87:d9")), is(true));
-    }
-
-    @Test
-    public void testMacPoolGetByDataCenterIdExist() throws Exception {
-        final MacPool macPool = dao.getByDataCenterId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-
-        assertThat(macPool, notNullValue());
-        assertThat(macPool.getId(), is(FixturesTool.NON_DEFAULT_MAC_POOL));
-    }
-
-    @Test
-    public void testGetByDataCenterId() throws Exception {
-        final Guid notExistingRecordGuid = Guid.newGuid();
-        final MacPool macPool = dao.getByDataCenterId(notExistingRecordGuid);
-
-        assertThat(macPool, nullValue());
     }
 
     @Override

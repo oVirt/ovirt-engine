@@ -10,6 +10,4 @@ public interface MacPoolDao extends GenericDao<MacPool, Guid> {
     MacPool getDefaultPool();
 
     List<String> getAllMacsForMacPool(Guid macPoolId);
-
-    MacPool getByDataCenterId(Guid id);
 }

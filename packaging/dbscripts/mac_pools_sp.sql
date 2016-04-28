@@ -71,19 +71,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetMacPoolByDataCenterId (v_id UUID)
-RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT mp.*
-    FROM mac_pools mp
-    INNER JOIN storage_pool sp
-        ON sp.mac_pool_id = mp.id
-    WHERE sp.id = v_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetAllFromMacPools ()
 RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
 BEGIN
