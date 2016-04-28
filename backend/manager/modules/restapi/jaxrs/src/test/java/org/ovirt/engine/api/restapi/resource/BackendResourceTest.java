@@ -91,7 +91,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
 
     @Test
     public void testUpdateCantDo() throws Exception {
-        setUpGetEntityWithNoCertificateInfoExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations();
 
         resource.setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
@@ -109,7 +109,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         }
     }
 
-    private void setUpGetEntityWithNoCertificateInfoExpectations(int times) throws Exception {
+    private void setUpGetEntityWithNoCertificateInfoExpectations() throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations(1, false, getEntity(0));
     }
 
