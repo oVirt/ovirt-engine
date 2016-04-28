@@ -122,11 +122,6 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
 
     private void verifyCapabilities(VersionCaps capabilities) {
         assertNotNull(capabilities);
-        //        assertEquals(2, capabilities.getVersions().size());
-        //        verifyVersion(capabilities.getVersions().get(0), 1, 5, false, "bar", 0, false, false, false);
-        //        verifyVersion(capabilities.getVersions().get(1), 10, 3, true, "foo", 15, true, true, true);
-        //        verifyPermits(capabilities);
-        //        verifySchedulingPolicies(capabilities);
     }
 
     private void verifyVersion(VersionCaps version,
