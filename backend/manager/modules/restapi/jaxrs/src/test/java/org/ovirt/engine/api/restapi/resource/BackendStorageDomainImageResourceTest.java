@@ -25,8 +25,6 @@ public class BackendStorageDomainImageResourceTest extends AbstractBackendSubRes
     protected static final Guid STORAGE_POOL_ID = GUIDS[2];
     protected static final Guid DESTINATION_DOMAIN_ID = GUIDS[3];
 
-    protected static BackendVmDisksResource collection;
-
     public BackendStorageDomainImageResourceTest() {
         super(new BackendStorageDomainImageResource(IMAGE_ID.toString(),
                 new BackendStorageDomainImagesResource(DOMAIN_ID)));

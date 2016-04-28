@@ -42,14 +42,11 @@ import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -388,15 +385,6 @@ public class BackendVmDiskResourceTest
         return setUpEntityExpectations(control.createMock(DiskImage.class), index);
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.storage.Disk> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
-        return entities;
-
-    }
-
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
@@ -534,23 +522,6 @@ public class BackendVmDiskResourceTest
 
     private void verifyActionResponse(Response r) throws Exception {
         verifyActionResponse(r, "vms/" + VM_ID + "/disks/" + DISK_ID, false);
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
-        return setUpStorageDomainEntityExpectations(entity, index, StorageType.NFS);
-    }
-
-    static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomainEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity,
-            int index,
-            StorageType storageType) {
-        expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();
-        expect(entity.getStorageName()).andReturn(NAMES[2]).anyTimes();
-        expect(entity.getStatus()).andReturn(StorageDomainStatus.Active).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(entity.getStorageType()).andReturn(storageType).anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
-        return entity;
     }
 
     private Action setUpMoveParams(boolean byName) {

@@ -3,8 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
 
-import java.util.ArrayList;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -16,12 +14,10 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolResourceTest
         extends AbstractBackendSubResourceTest<VmPool, org.ovirt.engine.core.common.businessentities.VmPool, BackendVmPoolResource> {
@@ -144,16 +140,6 @@ public class BackendVmPoolResourceTest
                                               Object[] values,
                                               Object taskReturn) {
         return setUpActionExpectations(task, clz, names, values, true, true, taskReturn, null, true);
-    }
-
-    protected UriInfo setUpActionExpectations(VdcActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
-                                              String[] names,
-                                              Object[] values,
-                                              ArrayList<Guid> asyncTasks,
-                                              ArrayList<AsyncTaskStatus> asyncStatuses) {
-        String uri = "vmpools/" + GUIDS[0] + "/action";
-        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
     }
 
     private void verifyTestAllocateVmActionResponse(Response r) throws Exception {

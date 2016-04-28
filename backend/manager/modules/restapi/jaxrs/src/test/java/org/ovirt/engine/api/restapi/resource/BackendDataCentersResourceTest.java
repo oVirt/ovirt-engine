@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class BackendDataCentersResourceTest
@@ -52,16 +51,6 @@ public class BackendDataCentersResourceTest
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }
-
-
-    private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { entityId },
-                returnNull ? null : getEntity(0));
-    }
-
 
     @Test
     public void testAddDataCenter() throws Exception {
@@ -188,17 +177,5 @@ public class BackendDataCentersResourceTest
         assertEquals(1, model.getSupportedVersions().getVersions().size());
         assertEquals(2, model.getSupportedVersions().getVersions().get(0).getMajor().intValue());
         assertEquals(3, model.getSupportedVersions().getVersions().get(0).getMinor().intValue());
-    }
-
-    protected void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(GUIDS[0], false);
-    }
-
-    protected void setUpVersionExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetAvailableStoragePoolVersions,
-                                   IdQueryParameters.class,
-                                   new String[] { "Id" },
-                                   new Object[] { GUIDS[0] },
-                                   getVersions());
     }
 }

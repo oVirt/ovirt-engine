@@ -215,11 +215,6 @@ public class BackendAttachedStorageDomainsResourceTest
         return setUpEntityExpectations(entity, index, StorageType.NFS);
     }
 
-    protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index, StorageType storageType) {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
-        return setUpEntityExpectations(entity, index, storageType);
-    }
-
     private static org.ovirt.engine.core.common.businessentities.StorageDomainStatic setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity,
             int index,
             StorageType storageType) {

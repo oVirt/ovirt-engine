@@ -10,10 +10,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -115,21 +113,6 @@ public class BackendTemplateDisksResourceTest
     @Override
     protected List<Disk> getCollection() {
         return collection.list().getDisks();
-    }
-
-    static Disk getModel(int index) {
-        Disk model = new Disk();
-        model.setFormat(DiskFormat.COW);
-        model.setInterface(org.ovirt.engine.api.model.DiskInterface.VIRTIO);
-        model.setSparse(true);
-        model.setBootable(false);
-        model.setShareable(false);
-        model.setPropagateErrors(true);
-        model.setStorageDomains(new StorageDomains());
-        model.getStorageDomains().getStorageDomains().add(new StorageDomain());
-        model.getStorageDomains().getStorageDomains().get(0).setId(GUIDS[2].toString());
-        model.setProvisionedSize(1000000000L);
-        return model;
     }
 
     @Override

@@ -214,31 +214,12 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
                 queryResult);
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetCpuProfileById,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[index] },
-                    notFound ? null : getEntity(index));
-        }
-    }
-
     static CpuProfile getModel(int index) {
         CpuProfile model = new CpuProfile();
         model.setId(GUIDS[index].toString());
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         return model;
-    }
-
-    protected List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
-
-        return entities;
     }
 
     @Override

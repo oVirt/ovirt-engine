@@ -27,13 +27,6 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
 
     public AbstractBackendStorageDomainContentsResource(Guid storageDomainId,
                                                         Class<R> modelType,
-                                                        Class<Q> entityType) {
-        super(modelType, entityType);
-        this.storageDomainId = storageDomainId;
-    }
-
-    public AbstractBackendStorageDomainContentsResource(Guid storageDomainId,
-                                                        Class<R> modelType,
                                                         Class<Q> entityType,
                                                         String... subCollections) {
         super(modelType, entityType, subCollections);

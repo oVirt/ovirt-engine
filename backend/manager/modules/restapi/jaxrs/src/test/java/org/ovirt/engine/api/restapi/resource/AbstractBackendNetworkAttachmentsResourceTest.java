@@ -167,25 +167,6 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         return new org.ovirt.engine.api.model.NetworkAttachment();
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetNetworkAttachmentById,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[index] },
-                    notFound ? null : getEntity(index));
-        }
-    }
-
-    protected List<NetworkAttachment> getEntityList() {
-        List<NetworkAttachment> entities = new ArrayList<>();
-        for (int i = 0; i < GUIDS.length; i++) {
-            entities.add(getEntity(i));
-        }
-
-        return entities;
-    }
-
     @Override
     protected List<org.ovirt.engine.api.model.NetworkAttachment> getCollection() {
         return collection.list().getNetworkAttachments();

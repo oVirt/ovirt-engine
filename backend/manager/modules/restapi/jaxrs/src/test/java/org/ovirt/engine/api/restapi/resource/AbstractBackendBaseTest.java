@@ -80,7 +80,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
      */
     protected static final String NON_EXISTANT_EXTERNAL_ID = DirectoryEntryIdUtils.encode("10".toString());
 
-    protected static final Guid NON_EXISTANT_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     protected static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     protected static final String[] NAMES = { "sedna", "eris", "orcus" };
     protected static final String[] DESCRIPTIONS = { "top notch entity", "a fine example",
@@ -307,12 +306,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
             boolean valid, boolean success, String errorMessage) {
         return setUpActionExpectations(task, clz, names, values, valid, success, null, true, errorMessage);
-    }
-
-    protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean valid, boolean success, boolean reply, String errorMessage) {
-        return setUpActionExpectations(task, clz, names, values, valid, success, null, reply, errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
@@ -547,14 +540,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
         assertNotNull(fault.getDetail());
         assertTrue("expected detail to include: " + t.getMessage(),
                 fault.getDetail().indexOf(t.getMessage()) != -1);
-    }
-
-    protected void verifyFault(Response response, String detail) {
-        assertEquals(BAD_REQUEST, response.getStatus());
-        assertTrue(response.getEntity() instanceof Fault);
-        Fault fault = (Fault) response.getEntity();
-        assertEquals(BACKEND_FAILED_SERVER_LOCALE, fault.getReason());
-        assertEquals(asList(mockl10n(detail)).toString(), fault.getDetail());
     }
 
     protected void verifyIncompleteException(WebApplicationException wae, String type, String method, String... fields) {

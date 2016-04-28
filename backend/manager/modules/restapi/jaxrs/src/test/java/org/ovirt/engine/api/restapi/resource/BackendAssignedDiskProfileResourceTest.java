@@ -2,9 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
@@ -145,27 +142,10 @@ public class BackendAssignedDiskProfileResourceTest
         }
     }
 
-    static DiskProfile getModel(int index) {
-        DiskProfile model = new DiskProfile();
-        model.setId(GUIDS[index].toString());
-        model.setName(NAMES[index]);
-        model.setDescription(DESCRIPTIONS[index]);
-        return model;
-    }
-
     @Override
     protected org.ovirt.engine.core.common.businessentities.profiles.DiskProfile getEntity(int index) {
         return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class),
                 index);
-    }
-
-    protected List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
-
-        return entities;
     }
 
     static org.ovirt.engine.core.common.businessentities.profiles.DiskProfile setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity,

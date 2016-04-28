@@ -4,9 +4,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResourceTest.setUpEntityExpectations;
 
-import java.net.URI;
-import java.util.ArrayList;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -25,7 +22,6 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -213,26 +209,9 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz,
-            String[] names,
-            Object[] values,
-            ArrayList<Guid> asyncTasks,
-            ArrayList<AsyncTaskStatus> asyncStatuses) {
-        String uri = "glustervolumes/" + GUIDS[0] + "/action";
-        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
-    }
-
     private void verifyActionResponse(Response r) throws Exception {
         verifyActionResponse(r, "glustervolumes/" + GUIDS[0], false);
     }
-
-    private UriInfo setUpVolumeUriExpectations() {
-        UriInfo uriInfo = control.createMock(UriInfo.class);
-        expect(uriInfo.getBaseUri()).andReturn(URI.create(URI_BASE + "glustervolumes/" + GUIDS[0])).anyTimes();
-        return uriInfo;
-    }
-
 
     @Override
     protected GlusterVolumeEntity getEntity(int index) {

@@ -13,7 +13,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -28,7 +27,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
-import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -45,14 +43,12 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
@@ -71,7 +67,6 @@ public class BackendVmsResourceTest
         extends AbstractBackendCollectionResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendVmsResource> {
 
     private static final String DEFAULT_TEMPLATE_ID = Guid.Empty.toString();
-    private static final String PAYLOAD_COMTENT = "payload";
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
 
     private OsRepository osRepository;
@@ -929,12 +924,6 @@ public class BackendVmsResourceTest
                 getClusterEntity());
     }
 
-    private VdsStatic getStaticHost() {
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setId(GUIDS[2]);
-        return vdsStatic;
-    }
-
     @Test
     public void testAddWithStorageDomain() throws Exception {
         setUpAddVm();
@@ -1191,13 +1180,6 @@ public class BackendVmsResourceTest
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
-    }
-
-    private VmPayload getPayloadModel() {
-        VmPayload payload = new VmPayload();
-        payload.setDeviceType(VmDeviceType.CDROM);
-        payload.getFiles().put("payloadFile", new String(Base64.decodeBase64(PAYLOAD_COMTENT)));
-        return payload;
     }
 
     private void setUpGetCertuficateExpectations(int times) throws Exception {
@@ -1556,18 +1538,6 @@ public class BackendVmsResourceTest
     private Snapshot map(org.ovirt.engine.core.common.businessentities.Snapshot entity, Snapshot template) {
         return getMapper(org.ovirt.engine.core.common.businessentities.Snapshot.class, Snapshot.class).map(entity,
                 template);
-    }
-
-    private ArrayList<DiskImageBase> mapDisks(Disks disks) {
-        ArrayList<DiskImageBase> diskImages = null;
-        if (disks!=null && disks.isSetDisks()) {
-            diskImages = new ArrayList<>();
-            for (Disk disk : disks.getDisks()) {
-                DiskImage diskImage = (DiskImage)DiskMapper.map(disk, null);
-                diskImages.add(diskImage);
-            }
-        }
-        return diskImages;
     }
 
     protected void setUpGetPayloadExpectations(int times) throws Exception {

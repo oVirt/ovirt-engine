@@ -18,7 +18,6 @@ public class BackendIscsiBondsResourceTest
 
     protected static final Guid ISCSI_BOND_ID = GUIDS[1];
     protected static final Guid DATA_CENTER_ID = GUIDS[2];
-    static Guid PARENT_GUID = GUIDS[2];
 
     public BackendIscsiBondsResourceTest() {
         super(new BackendIscsiBondsResource(DATA_CENTER_ID.toString()), null, "");
@@ -76,17 +75,6 @@ public class BackendIscsiBondsResourceTest
         iscsiBond.setId(ISCSI_BOND_ID.toString());
         iscsiBond.setName(NAMES[0]);
         return iscsiBond;
-    }
-
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetIscsiBondsByStoragePoolId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { DATA_CENTER_ID },
-                    setUpIscsiBonds(),
-                    failure);
-        }
     }
 
     @Override

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
@@ -24,8 +23,6 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -142,17 +139,6 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
 
     private void setUpCallParentRemoveExpectations() {
         expect(bricksResourceMock.remove(anyObject(Action.class))).andReturn(Response.ok().build()).once();
-    }
-
-    protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz,
-            String[] names,
-            Object[] values) {
-        return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
-    }
-
-    private void verifyActionResponse(Response r) throws Exception {
-        verifyActionResponse(r, "bricks/" + brickId, false);
     }
 
     @Override

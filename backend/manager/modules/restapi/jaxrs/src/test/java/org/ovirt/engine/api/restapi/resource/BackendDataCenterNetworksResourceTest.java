@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -10,7 +8,6 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -117,11 +114,5 @@ public class BackendDataCenterNetworksResourceTest
                                          getEntityList(),
                                          failure);
         }
-    }
-
-    protected StoragePool setUpStoragePool(Guid id) {
-        StoragePool pool = control.createMock(StoragePool.class);
-        expect(pool.getId()).andReturn(id).anyTimes();
-        return pool;
     }
 }

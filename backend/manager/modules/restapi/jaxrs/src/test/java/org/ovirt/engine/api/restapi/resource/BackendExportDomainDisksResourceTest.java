@@ -9,16 +9,11 @@ import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.DiskFormat;
-import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.model.StorageDomains;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -40,7 +35,6 @@ public class BackendExportDomainDisksResourceTest
     extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendExportDomainDisksResource> {
 
     private static final Guid TEMPLATE_ID = GUIDS[1];
-    private static final Guid DISK_ID = GUIDS[2];
     private static final Guid DATA_CENTER_ID = GUIDS[0];
     private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length-1];
 
@@ -99,31 +93,6 @@ public class BackendExportDomainDisksResourceTest
         return entity;
     }
 
-    private Object getStorageDomains() {
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<>();
-        org.ovirt.engine.core.common.businessentities.StorageDomain sd =
-                new org.ovirt.engine.core.common.businessentities.StorageDomain();
-        sd.setStorageName("Storage_Domain_1");
-        sd.setId(GUIDS[2]);
-        sds.add(sd);
-        return sds;
-    }
-
-    static Disk getModel(int index) {
-        Disk model = new Disk();
-        model.setProvisionedSize(1024 * 1024L);
-        model.setFormat(DiskFormat.COW);
-        model.setInterface(org.ovirt.engine.api.model.DiskInterface.IDE);
-        model.setSparse(true);
-        model.setBootable(false);
-        model.setShareable(false);
-        model.setPropagateErrors(true);
-        model.setStorageDomains(new StorageDomains());
-        model.getStorageDomains().getStorageDomains().add(new StorageDomain());
-        model.getStorageDomains().getStorageDomains().get(0).setId(GUIDS[2].toString());
-        return model;
-    }
-
     @Override
     protected void verifyModel(Disk model, int index) {
         verifyModelSpecific(model, index);
@@ -158,10 +127,6 @@ public class BackendExportDomainDisksResourceTest
                                      new Object[] { STORAGE_DOMAIN_ID },
                                      setUpStorageDomain(domainType),
                                      failure);
-    }
-
-    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId) throws Exception {
-        setUpGetEntityExpectations(domainType, getStoragePoolsByStorageDomainId, null);
     }
 
     protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, Object failure) throws Exception {
@@ -245,18 +210,5 @@ public class BackendExportDomainDisksResourceTest
         VmTemplate vm = setUpEntityExpectations(control.createMock(VmTemplate.class), index);
         org.easymock.EasyMock.expect(vm.getDiskTemplateMap()).andReturn(getDiskMap()).anyTimes();
         return vm;
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
-        org.ovirt.engine.core.common.businessentities.StorageDomain dom =
-                new org.ovirt.engine.core.common.businessentities.StorageDomain();
-        dom.setId(GUIDS[idx]);
-        return dom;
-    }
-
-    protected Cluster getCluster(int idx) {
-        Cluster cluster = new Cluster();
-        cluster.setId(GUIDS[idx]);
-        return cluster;
     }
 }

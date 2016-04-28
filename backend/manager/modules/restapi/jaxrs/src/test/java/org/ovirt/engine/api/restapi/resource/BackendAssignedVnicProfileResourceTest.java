@@ -2,13 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -64,26 +60,9 @@ public class BackendAssignedVnicProfileResourceTest
         }
     }
 
-    static VnicProfile getModel(int index) {
-        VnicProfile model = new VnicProfile();
-        model.setId(GUIDS[index].toString());
-        model.setName(NAMES[index]);
-        model.setDescription(DESCRIPTIONS[index]);
-        return model;
-    }
-
     @Override
     protected org.ovirt.engine.core.common.businessentities.network.VnicProfileView getEntity(int index) {
         return setUpEntityExpectations(control.createMock(VnicProfileView.class), index);
-    }
-
-    protected List<VnicProfileView> getEntityList() {
-        List<VnicProfileView> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
-
-        return entities;
     }
 
     static VnicProfileView setUpEntityExpectations(VnicProfileView entity, int index) {

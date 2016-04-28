@@ -2,9 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
@@ -145,27 +142,10 @@ public class BackendAssignedCpuProfileResourceTest
         }
     }
 
-    static CpuProfile getModel(int index) {
-        CpuProfile model = new CpuProfile();
-        model.setId(GUIDS[index].toString());
-        model.setName(NAMES[index]);
-        model.setDescription(DESCRIPTIONS[index]);
-        return model;
-    }
-
     @Override
     protected org.ovirt.engine.core.common.businessentities.profiles.CpuProfile getEntity(int index) {
         return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.profiles.CpuProfile.class),
                 index);
-    }
-
-    protected List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
-
-        return entities;
     }
 
     static org.ovirt.engine.core.common.businessentities.profiles.CpuProfile setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.profiles.CpuProfile entity,

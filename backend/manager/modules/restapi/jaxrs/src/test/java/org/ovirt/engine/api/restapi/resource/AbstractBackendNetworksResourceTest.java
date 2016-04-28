@@ -34,17 +34,6 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
         return entities;
     }
 
-    protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index,
-            boolean isDisplay,
-            boolean isMigration,
-            boolean isRequired) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class),
-                isDisplay,
-                isMigration,
-                isRequired,
-                index);
-    }
-
     @Override
     protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();

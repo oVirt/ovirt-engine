@@ -477,12 +477,6 @@ public class BackendStorageDomainVmResourceTest
         verifyModelSpecific(model, index);
     }
 
-    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
-        org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
-        dom.setId(GUIDS[idx]);
-        return dom;
-    }
-
     protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStatic(int idx) {
         org.ovirt.engine.core.common.businessentities.StorageDomainStatic dom =
                 new org.ovirt.engine.core.common.businessentities.StorageDomainStatic();

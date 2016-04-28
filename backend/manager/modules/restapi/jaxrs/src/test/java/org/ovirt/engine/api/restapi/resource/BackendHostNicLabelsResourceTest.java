@@ -24,7 +24,6 @@ public class BackendHostNicLabelsResourceTest
     public static Guid nicId = Guid.newGuid();
     public static String hostId = Guid.newGuid().toString();
     public static final String[] LABELS = { "lbl1", "lbl2", "lbl3" };
-    private static final String NON_EXISTANT_LABEL = "xxx";
 
     public BackendHostNicLabelsResourceTest() {
         super(new BackendHostNicLabelsResource(nicId, hostId), null, "");

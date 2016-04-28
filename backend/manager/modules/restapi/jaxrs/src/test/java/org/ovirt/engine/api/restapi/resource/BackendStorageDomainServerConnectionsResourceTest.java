@@ -10,23 +10,15 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageDomainServerConnectionsResource> {
-    protected static final org.ovirt.engine.api.model.StorageType[] STORAGE_TYPES = {
-        org.ovirt.engine.api.model.StorageType.NFS,
-        org.ovirt.engine.api.model.StorageType.LOCALFS,
-        org.ovirt.engine.api.model.StorageType.POSIXFS,
-        org.ovirt.engine.api.model.StorageType.ISCSI };
-
     protected static final StorageType[] STORAGE_TYPES_MAPPED = {
             StorageType.NFS,
             StorageType.LOCALFS,
@@ -122,28 +114,5 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
         }
 
         return entity;
-    }
-
-     StorageConnection getModel(int index) {
-        StorageConnection model = new StorageConnection();
-        model.setType(STORAGE_TYPES[index]);
-        if ( index == 0 || index == 3 ) {
-            model.setAddress("1.1.1.1");
-        }
-        Host host = new Host();
-        host.setId(GUIDS[1].toString());
-        model.setHost(host);
-        if (index == 0 || index == 1) {
-            model.setPath("/data1");
-        }
-        return model;
-    }
-
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionById,
-                StorageServerConnectionQueryParametersBase.class,
-                new String[] { "ServerConnectionId" },
-                new Object[] { GUIDS[3].toString() },
-                getEntity(3));
     }
 }

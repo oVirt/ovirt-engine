@@ -15,8 +15,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -35,8 +33,6 @@ public class BackendExportDomainDiskResourceTest
     private static final Guid DISK_ID = GUIDS[2];
     private static final Guid DATA_CENTER_ID = GUIDS[0];
     private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length-1];
-
-    private static final String URL_BASE = "storagedomains/" + STORAGE_DOMAIN_ID + "/templates/" + TEMPLATE_ID;
 
     public BackendExportDomainDiskResourceTest() {
         super(new BackendExportDomainDiskResource(DISK_ID.toString(),
@@ -170,17 +166,5 @@ public class BackendExportDomainDiskResourceTest
         VmTemplate vm = setUpEntityExpectations(control.createMock(VmTemplate.class), index);
         org.easymock.EasyMock.expect(vm.getDiskTemplateMap()).andReturn(getDiskMap()).anyTimes();
         return vm;
-    }
-
-    protected StorageDomain getStorageDomain(int idx) {
-        StorageDomain dom = new StorageDomain();
-        dom.setId(GUIDS[idx]);
-        return dom;
-    }
-
-    protected Cluster getCluster(int idx) {
-        Cluster cluster = new Cluster();
-        cluster.setId(GUIDS[idx]);
-        return cluster;
     }
 }

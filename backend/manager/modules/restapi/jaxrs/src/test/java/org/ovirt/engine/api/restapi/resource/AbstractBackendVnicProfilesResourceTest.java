@@ -214,31 +214,12 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
                 queryResult);
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVnicProfileById,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[index] },
-                    notFound ? null : getEntity(index));
-        }
-    }
-
     static VnicProfile getModel(int index) {
         VnicProfile model = new VnicProfile();
         model.setId(GUIDS[index].toString());
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         return model;
-    }
-
-    protected List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
-
-        return entities;
     }
 
     @Override

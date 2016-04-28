@@ -177,14 +177,6 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         return collection.list().getTags();
     }
 
-    static Tag getModel(int index) {
-        Tag model = new Tag();
-        model.setId(GUIDS[index].toString());
-        model.setName(NAMES[index]);
-        model.setDescription(DESCRIPTIONS[index]);
-        return model;
-    }
-
     @Override
     protected void verifyModel(Tag model, int index) {
         super.verifyModel(model, index);

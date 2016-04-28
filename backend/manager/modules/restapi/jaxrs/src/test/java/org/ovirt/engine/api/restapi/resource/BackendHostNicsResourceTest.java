@@ -27,7 +27,6 @@ public class BackendHostNicsResourceTest
     extends AbstractBackendCollectionResourceTest<HostNic, VdsNetworkInterface, BackendHostNicsResource> {
 
     public static final Guid PARENT_GUID = GUIDS[0];
-    public static final Guid NETWORK_GUID = new Guid("33333333-3333-3333-3333-333333333333");
     public static final String NETWORK_NAME = "skynet";
     public static final Ipv4BootProtocol IPV4_BOOT_PROTOCOL = Ipv4BootProtocol.STATIC_IP;
     public static final Ipv6BootProtocol IPV6_BOOT_PROTOCOL = Ipv6BootProtocol.AUTOCONF;
@@ -89,20 +88,6 @@ public class BackendHostNicsResourceTest
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
-    }
-
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
-        setUpEntityQueryExpectations(times, null);
-    }
-
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                         IdQueryParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { PARENT_GUID },
-                                         setUpInterfaces());
-        }
     }
 
     @Override
@@ -184,13 +169,6 @@ public class BackendHostNicsResourceTest
         statistics.setVdsId(id);
         statistics.setStatus(null);
         entity.setStatistics(statistics);
-        return entity;
-    }
-
-    public static org.ovirt.engine.core.common.businessentities.network.Network getNetwork() {
-        org.ovirt.engine.core.common.businessentities.network.Network entity = new org.ovirt.engine.core.common.businessentities.network.Network();
-        entity.setId(NETWORK_GUID);
-        entity.setName(NETWORK_NAME);
         return entity;
     }
 

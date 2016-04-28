@@ -64,12 +64,10 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -347,10 +345,6 @@ public class BackendVmResourceTest
         return model;
     }
 
-    protected Cluster getClusterEntity() {
-        return new Cluster();
-    }
-
     @Test
     public void testUpdateVmPolicySingleHostName() throws Exception {
         setUpUdpateVm();
@@ -449,12 +443,6 @@ public class BackendVmResourceTest
         setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[] { 0 });
         setUpGetGraphicsExpectations(1);
-    }
-
-    private VdsStatic getStaticHost() {
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setId(GUIDS[2]);
-        return vdsStatic;
     }
 
     @Test
@@ -1307,13 +1295,6 @@ public class BackendVmResourceTest
         assertNotNull(model.getDisplay());
         assertNotNull(model.getDisplay().getCertificate());
         assertEquals(model.getDisplay().getCertificate().getSubject(), CERTIFICATE);
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
-        org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
-        dom.setId(GUIDS[idx]);
-        dom.setStorageName(NAMES[idx]);
-        return dom;
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStatic(int idx) {

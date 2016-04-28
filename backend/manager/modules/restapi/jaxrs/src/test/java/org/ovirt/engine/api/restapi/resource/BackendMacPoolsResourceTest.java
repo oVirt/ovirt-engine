@@ -26,7 +26,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendMacPoolsResourceTest
         extends AbstractBackendCollectionResourceTest<MacPool, org.ovirt.engine.core.common.businessentities.MacPool, BackendMacPoolsResource> {
 
-    protected static final Guid MAC_POOL_ID = GUIDS[0];
     private VdcQueryType listQueryType;
     private Class<? extends VdcQueryParametersBase> listQueryParamsClass;
 
@@ -216,15 +215,6 @@ public class BackendMacPoolsResourceTest
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         return model;
-    }
-
-    protected List<org.ovirt.engine.core.common.businessentities.MacPool> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.MacPool> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
-
-        return entities;
     }
 
     @Override

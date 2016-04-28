@@ -99,10 +99,6 @@ public class BackendClusterNetworksResource
         return new AttachNetworkToClusterParameter(getCluster(), entity);
     }
 
-    protected String[] getRequiredAddFields() {
-        return new String[] { "id" };
-    }
-
     @Override
     public Network addParents(Network network) {
         network.setCluster(new org.ovirt.engine.api.model.Cluster());

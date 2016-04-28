@@ -29,7 +29,6 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -154,39 +153,6 @@ public class BackendInstanceTypeNicsResourceTest
         assertEquals(ADDRESSES[2].toString(), model.getMac().getAddress());
     }
 
-    protected void setGetNetworksQueryExpectations(int times) throws Exception {
-        while (times-- > 0) {
-            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
-            org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
-            network.setId(GUIDS[0]);
-            network.setName("orcus");
-            networks.add(network);
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[0] },
-                    networks);
-        }
-    }
-
-    protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { INSTANCE_TYPE_ID },
-                    getListOfVmGuestAgentInterfaces());
-        }
-    }
-
-    @SuppressWarnings("serial")
-    private Object getListOfVmGuestAgentInterfaces() {
-        VmGuestAgentInterface iface = new VmGuestAgentInterface();
-        iface.setMacAddress(ADDRESSES[2]);
-        List<VmGuestAgentInterface> list = new ArrayList<>();
-        list.add(iface);
-        return list;
-    }
     @Test
     public void testAddNic() throws Exception {
         setUriInfo(setUpBasicUriExpectations());

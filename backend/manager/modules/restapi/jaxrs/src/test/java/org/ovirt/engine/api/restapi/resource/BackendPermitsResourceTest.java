@@ -85,13 +85,6 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
         return ActionGroup.forValue(index);
     }
 
-    static Permit getModel(int index) {
-        Permit model = new Permit();
-        model.setId(Integer.toString(index));
-        model.setName(ActionGroup.forValue(index).toString());
-        return model;
-    }
-
     @Override
     protected void verifyModel(Permit model, int index) {
         assertEquals(Integer.toString(index + 1), model.getId());

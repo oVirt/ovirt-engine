@@ -109,14 +109,6 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         return GUIDS[2];
     }
 
-    protected ArrayList<DbUser> getUsers() {
-        ArrayList<DbUser> users = new ArrayList<>();
-        for (int i=0; i < NAMES.length; i++) {
-            users.add(getUserByIdx(i));
-        }
-        return users;
-    }
-
     protected DbUser getUserByIdx(int idx) {
         DbUser user = new DbUser();
         user.setId(GUIDS[idx]);
@@ -158,19 +150,6 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                      failure);
 
         control.replay();
-    }
-
-    protected void setUpGetEntityExpectations(
-            int times,
-            Guid entityId,
-            org.ovirt.engine.core.common.businessentities.Permission permission) throws Exception {
-        while (times-->0) {
-            setUpGetEntityExpectations(VdcQueryType.GetPermissionById,
-                                       IdQueryParameters.class,
-                                       new String[] { "Id" },
-                                       new Object[] { entityId },
-                                       permission);
-        }
     }
 
     @Override

@@ -32,14 +32,6 @@ public class BackendRolesResourceTest
     public void testQuery() throws Exception {
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetRoleById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                getEntity(0));
-    }
-
     @Test
     public void testAddRole() throws Exception {
         setUriInfo(setUpBasicUriExpectations());

@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.HostNic;
@@ -172,12 +171,6 @@ public class BackendHostNicResourceTest
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      setUpInterfaces());
-    }
-
-    protected void verifyActionResponse(Response r) throws Exception {
-        verifyActionResponse(r,
-                             "hosts/" + PARENT_GUID.toString() + "/nics/" + NIC_ID.toString(),
-                             false);
     }
 
     protected void setGetVdsQueryExpectations(int times) throws Exception {

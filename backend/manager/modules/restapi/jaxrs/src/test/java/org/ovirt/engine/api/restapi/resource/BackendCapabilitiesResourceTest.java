@@ -3,8 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.ws.rs.core.UriInfo;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
@@ -44,14 +42,6 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
 
     public BackendCapabilitiesResourceTest() {
         resource = new BackendCapabilitiesResource();
-    }
-
-    protected BackendCapabilitiesResourceTest(BackendCapabilitiesResource resource) {
-        this.resource = resource;
-    }
-
-    protected void setUriInfo(UriInfo uriInfo) {
-        resource.setUriInfo(uriInfo);
     }
 
     @Ignore

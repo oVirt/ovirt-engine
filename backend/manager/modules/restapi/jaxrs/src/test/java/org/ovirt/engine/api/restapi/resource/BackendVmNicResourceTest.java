@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -211,39 +210,6 @@ public class BackendVmNicResourceTest
         }
     }
 
-    protected void setGetVmQueryExpectations(int times) throws Exception {
-        while (times-- > 0) {
-            VM vm = new VM();
-            vm.setClusterId(GUIDS[0]);
-            setUpEntityQueryExpectations(
-                VdcQueryType.GetVmByVmId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { VM_ID },
-                vm
-            );
-        }
-    }
-
-    protected void setGetNetworksQueryExpectations(int times) throws Exception {
-        ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
-        org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
-        network.setId(GUIDS[0]);
-        network.setName("orcus");
-        networks.add(network);
-        setGetNetworksQueryExpectations(times, networks);
-    }
-
-    protected void setGetNetworksQueryExpectations(int times, List<org.ovirt.engine.core.common.businessentities.network.Network> networks) throws Exception {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[0] },
-                    networks);
-        }
-    }
-
     protected VmNetworkInterface setUpStatisticalExpectations() throws Exception {
         VmNetworkStatistics stats = control.createMock(VmNetworkStatistics.class);
         VmNetworkInterface entity = control.createMock(VmNetworkInterface.class);
@@ -312,12 +278,6 @@ public class BackendVmNicResourceTest
         network.setId(GUIDS[0].toString());
 
         return nic;
-    }
-
-    protected VmNetworkInterface getEntity(int index, String networkName) {
-        return setUpEntityExpectations(control.createMock(VmNetworkInterface.class),
-                control.createMock(VmNetworkStatistics.class),
-                index, networkName);
     }
 
     @Override

@@ -138,21 +138,6 @@ public class BackendVmNicsResourceTest
         assertEquals(ADDRESSES[2].toString(), model.getMac().getAddress());
     }
 
-    protected void setGetNetworksQueryExpectations(int times) throws Exception {
-        while (times-- > 0) {
-            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
-            org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
-            network.setId(GUIDS[0]);
-            network.setName("orcus");
-            networks.add(network);
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[0] },
-                    networks);
-        }
-    }
-
     protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,

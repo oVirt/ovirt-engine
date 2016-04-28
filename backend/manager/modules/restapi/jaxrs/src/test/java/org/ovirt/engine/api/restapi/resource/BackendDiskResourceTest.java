@@ -29,8 +29,6 @@ public class BackendDiskResourceTest
 
     protected static final Guid DISK_ID = GUIDS[1];
 
-    protected static BackendVmDisksResource collection;
-
     public BackendDiskResourceTest() {
         super(new BackendDiskResource(DISK_ID.toString()));
     }

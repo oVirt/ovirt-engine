@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -571,13 +570,6 @@ public class BackendStorageDomainsResourceTest
         }
         cnx.setStorageType(STORAGE_TYPES_MAPPED[index]);
         return cnx;
-    }
-
-    protected VDS setUpVDS(int index) {
-        VDS vds = new VDS();
-        vds.setId(GUIDS[index]);
-        vds.setVdsName(NAMES[index]);
-        return vds;
     }
 
     protected VdsStatic setUpVDStatic(int index) {

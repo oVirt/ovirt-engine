@@ -121,19 +121,6 @@ public class BackendStorageDomainResourceTest
         return entity;
     }
 
-    private org.ovirt.engine.core.common.businessentities.StorageDomain getIscsiEntity() {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity =
-                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
-        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
-        expect(entity.getStorageDomainType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data)
-                .anyTimes();
-        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI)
-                .anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
-        return entity;
-    }
-
     @Test
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
@@ -409,11 +396,5 @@ public class BackendStorageDomainResourceTest
 
     private void verifyActionResponse(Response response) throws Exception {
         verifyActionResponse(response, "storagedomains/" + GUIDS[0], false);
-    }
-
-    protected void verifyModelResponse(StorageDomain model, int index) {
-        assertNotNull(model);
-        assertEquals(GUIDS[index].toString(), model.getId());
-        verifyLinks(model);
     }
 }
