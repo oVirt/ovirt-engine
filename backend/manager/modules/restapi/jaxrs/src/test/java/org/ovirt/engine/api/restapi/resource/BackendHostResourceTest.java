@@ -239,7 +239,7 @@ public class BackendHostResourceTest
     }
 
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
-        setUpGetEntityWithNoCertificateInfoExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
@@ -258,7 +258,7 @@ public class BackendHostResourceTest
     @Test
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityWithNoCertificateInfoExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations();
         control.replay();
 
         Host model = getModel(1);
@@ -429,7 +429,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testInstall() throws Exception {
-        setUpGetEntityWithNoCertificateInfoExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
@@ -465,7 +465,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testManualFence() throws Exception {
-        setUpGetEntityWithNoCertificateInfoExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations();
 
         setUriInfo(setUpActionExpectations(VdcActionType.FenceVdsManualy,
                                            FenceVdsManualyParameters.class,
@@ -744,7 +744,7 @@ public class BackendHostResourceTest
         }
     }
 
-    private void setUpGetEntityWithNoCertificateInfoExpectations(int times) throws Exception {
+    private void setUpGetEntityWithNoCertificateInfoExpectations() throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations(1, false, getEntity(0));
     }
 
