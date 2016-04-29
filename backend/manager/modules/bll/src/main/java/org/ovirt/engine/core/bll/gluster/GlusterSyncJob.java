@@ -139,14 +139,6 @@ public class GlusterSyncJob extends GlusterJob {
      * from the engine DB, and also invoke the corresponding VDS command.
      */
     private void refreshServerData(Cluster cluster, VDS upServer, List<VDS> existingServers) {
-        if (cluster.supportsVirtService()) {
-            // If the cluster supports virt service as well, we should not be removing any servers from it, even if they
-            // have been removed from the Gluster cluster using the Gluster cli, as they could potentially be used for
-            // running VMs
-            log.debug("As cluster '{}' supports virt service as well, it's servers will not be synced with glusterfs",
-                    cluster.getName());
-            return;
-        }
 
         acquireLock(cluster.getId());
 
@@ -156,7 +148,7 @@ public class GlusterSyncJob extends GlusterJob {
         try {
             List<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
             if (fetchedServers != null) {
-                syncServers(cluster.getId(), existingServers, fetchedServers);
+                syncServers(cluster, existingServers, fetchedServers);
             }
         } catch(Exception e) {
             log.error("Error while refreshing server data for cluster '{}' from database: {}",
@@ -168,46 +160,55 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void syncServers(Guid clusterId, List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
+    private void syncServers(Cluster cluster, List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
         log.debug("Existing servers list returned '{}' comparing with fetched servers '{}'", existingServers, fetchedServers);
 
         boolean serverRemoved = false;
-        Network glusterNetwork = findGlusterNetwork(clusterId);
+        Network glusterNetwork = findGlusterNetwork(cluster.getId());
         for (VDS server : existingServers) {
-
-            if (isRemovableStatus(server.getStatus())) {
-                GlusterServerInfo glusterServer = findGlusterServer(server, fetchedServers);
-                if (glusterServer == null) {
-                    log.info("Server '{}' has been removed directly using the gluster CLI. Removing it from engine as well.",
-                            server.getName());
-                    logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
-                    try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
-                        removeServerFromDb(server);
-                        // if last but one server, reset alternate probed address for last server
-                        checkAndResetKnownAddress(existingServers, server);
-                        // remove the server from resource manager
-                        runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
-                        serverRemoved = true;
-                    } catch (Exception e) {
-                        log.error("Error while removing server '{}' from database: {}",
-                                server.getName(),
-                                e.getMessage());
-                        log.debug("Exception", e);
-                    }
+            GlusterServerInfo glusterServer = findGlusterServer(server, fetchedServers);
+            if (isRemovableStatus(server.getStatus()) && glusterServer == null) {
+                if (cluster.supportsVirtService()) {
+                    // If the cluster supports virt service as well, we should not be removing any servers from it, even
+                    // if they
+                    // have been removed from the Gluster cluster using the Gluster cli, as they could potentially be
+                    // used for
+                    // running VMs
+                    log.debug("As cluster '{}' supports virt service as well, server '{}' detected as removed from glusterfs will not be removed from engine",
+                            cluster.getName(),
+                            server.getHostName());
+                    continue;
                 }
-                else if (server.getStatus() == VDSStatus.Up && glusterServer.getStatus() == PeerStatus.DISCONNECTED) {
-                    // check gluster is running, if down then move the host to Non-Operational
-                    VDSReturnValue returnValue =
-                            runVdsCommand(VDSCommandType.GlusterServersList,
-                                    new VdsIdVDSCommandParametersBase(server.getId()));
-                    if (!returnValue.getSucceeded()) {
-                        setNonOperational(server);
-                    }
-                } else {
-                    // check if all interfaces with gluster network have been peer probed.
-                    peerProbeAlternateInterfaces(glusterNetwork, server);
+                log.info("Server '{}' has been removed directly using the gluster CLI. Removing it from engine as well.",
+                        server.getName());
+                logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
+                try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
+                    removeServerFromDb(server);
+                    // if last but one server, reset alternate probed address for last server
+                    checkAndResetKnownAddress(existingServers, server);
+                    // remove the server from resource manager
+                    runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
+                    serverRemoved = true;
+                } catch (Exception e) {
+                    log.error("Error while removing server '{}' from database: {}",
+                            server.getName(),
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
+            } else if (server.getStatus() == VDSStatus.Up && glusterServer.getStatus() == PeerStatus.DISCONNECTED) {
+                // check gluster is running, if down then move the host to Non-Operational
+                VDSReturnValue returnValue =
+                        runVdsCommand(VDSCommandType.GlusterServersList,
+                                new VdsIdVDSCommandParametersBase(server.getId()));
+                if (!returnValue.getSucceeded() &&  !cluster.supportsVirtService() ) {
+                    // TBD: should this done if virt service is enabled?
+                   setNonOperational(server);
+                }
+            } else {
+                // check if all interfaces with gluster network have been peer probed.
+                peerProbeAlternateInterfaces(glusterNetwork, server);
             }
+
         }
         if (serverRemoved) {
             log.info("Servers detached using gluster CLI is removed from engine after inspecting the Gluster servers"
@@ -249,6 +250,8 @@ public class GlusterSyncJob extends GlusterJob {
                     if (peerProbed) {
                         getGlusterServerDao().addKnownAddress(host.getId(), iface.getIpv4Address());
                     }
+                } else {
+                    log.warn("probe could not be done for server '{}' as no alternate UP server found", host.getHostName());
                 }
             }
         }
