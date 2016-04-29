@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -46,6 +48,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDetailsVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -1061,4 +1064,110 @@ public class GlusterSyncJob extends GlusterJob {
         getVdsDynamicDao().remove(server.getId());
     }
 
+    /**
+     * Refreshes self heal info from GlusterFS. This method is scheduled less frequently as it uses the 'volume
+     * heal info' command, that adds significant overhead on Gluster processes, and hence should not be invoked too
+     * frequently.
+     */
+    @OnTimerMethodAnnotation("refreshSelfHealInfo")
+    public void refreshSelfHealInfo() {
+        log.debug("Refreshing Gluster Self Heal Data");
+
+        for (Cluster cluster : getClusterDao().getAll()) {
+            if (supportsGlusterSelfHealMonitoring(cluster)) {
+                try {
+                    refreshSelfHealData(cluster);
+                } catch (Exception e) {
+                    log.error("Error while refreshing Gluster self heal data of cluster '{}': {}",
+                            cluster.getName(),
+                            e.getMessage());
+                    log.debug("Exception", e);
+                }
+            }
+        }
+
+        log.debug("Refreshing Gluster Self Heal data is completed");
+    }
+
+    /**
+     * Refresh self heal information for the given cluster. It is made public so that it can be called from BLL Command
+     * directly.
+     */
+    public void refreshSelfHealData(Cluster cluster) {
+
+        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        if (upServer == null) {
+            log.debug("No server UP in cluster '{}'. Can't refresh self heal data at this point.", cluster.getName());
+            return;
+        }
+
+        for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(cluster.getId())) {
+            log.debug("Refreshing self heal status for volume '{}' of cluster '{}'",
+                    volume.getName(),
+                    cluster.getName());
+            // self heal info can be fetched only for started volumes
+            if (volume.isOnline()) {
+                try {
+                    refreshSelfHealData(upServer, volume);
+                } catch (Exception e) {
+                    log.error("Error while refreshing brick statuses for volume '{}' of cluster '{}': {}",
+                            volume.getName(),
+                            cluster.getName(),
+                            e.getMessage());
+                    log.debug("Exception", e);
+                }
+            }
+        }
+    }
+
+    private void refreshSelfHealData(VDS upServer, GlusterVolumeEntity volume) {
+        Integer usageHistoryLimit = Config.getValue(ConfigValues.GlusterUnSyncedEntriesHistoryLimit);
+        Map<Guid, Integer> healInfo = getGlusterVolumeHealInfo(upServer, volume.getName());
+        for (GlusterBrickEntity brick : volume.getBricks()) {
+            brick.setUnSyncedEntries(healInfo.get(brick.getId()));
+            brick.setUnSyncedEntriesTrend(
+                    addToHistory(brick.getUnSyncedEntriesTrend(), healInfo.get(brick.getId()), usageHistoryLimit));
+        }
+
+        getBrickDao().updateUnSyncedEntries(volume.getBricks());
+    }
+
+    private List<Integer> addToHistory(List<Integer> current, Integer newValue, int limit) {
+        if (newValue == null) {
+            //Store -1 instead of Null so that we can maintain the fixed time interval between each entries.
+            newValue = -1;
+        }
+
+        if (current == null || current.isEmpty()) {
+            return Arrays.asList(newValue);
+        }
+
+        if (limit == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> res = new ArrayList<>(current);
+        res.add(newValue);
+        if (limit >= res.size()) {
+            return res;
+        }
+
+        return res.subList(res.size() - limit, res.size());
+    }
+
+    private Map<Guid, Integer> getGlusterVolumeHealInfo(VDS upServer, String volumeName) {
+        VDSReturnValue result = runVdsCommand(VDSCommandType.GetGlusterVolumeHealInfo,
+                new GlusterVolumeVDSParameters(upServer.getId(), volumeName));
+
+        if(result.getSucceeded()){
+            return (Map<Guid, Integer>) result.getReturnValue();
+        }else{
+            return Collections.emptyMap();
+        }
+    }
+
+    private boolean supportsGlusterSelfHealMonitoring(Cluster cluster) {
+        return cluster.supportsGlusterService()
+                && GlusterFeatureSupported.glusterSelfHealMonitoring(cluster.getCompatibilityVersion());
+    }
 }
