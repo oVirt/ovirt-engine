@@ -91,4 +91,8 @@ public class ServerCpu implements Serializable {
                 && Objects.equals(privateVdsVerbData, other.privateVdsVerbData);
     }
 
+    @Override
+    public String toString() {
+        return "ServerCpu [" + privateCpuName + "]";
+    }
 }

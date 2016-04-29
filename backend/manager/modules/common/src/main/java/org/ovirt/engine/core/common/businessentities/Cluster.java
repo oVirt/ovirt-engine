@@ -610,4 +610,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 && Objects.equals(migrationPolicyId, other.migrationPolicyId);
     }
 
+    @Override
+    public String toString() {
+        return "Cluster [" + name + "]";
+    }
 }
