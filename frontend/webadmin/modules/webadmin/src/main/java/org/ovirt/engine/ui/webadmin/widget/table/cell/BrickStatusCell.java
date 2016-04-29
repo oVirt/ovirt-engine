@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -46,7 +47,13 @@ public class BrickStatusCell extends AbstractCell<GlusterBrickEntity> {
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(templates.statusTemplate(statusImageHtml, id, status.toString()));
+        if (brick.getUnSyncedEntries() > 0) {
+            SafeHtml alertImageHtml =
+                    SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
+            sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id, status.toString()));
+        } else {
+            sb.append(templates.statusTemplate(statusImageHtml, id, status.toString()));
+        }
     }
 
 }

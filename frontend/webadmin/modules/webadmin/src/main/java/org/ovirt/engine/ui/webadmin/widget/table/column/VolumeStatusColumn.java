@@ -6,14 +6,17 @@ import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeStatusCell;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, GlusterVolumeEntity> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     public VolumeStatusColumn() {
         super(new VolumeStatusCell());
@@ -52,6 +55,11 @@ public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, Glus
             break;
         default:
             tooltip = constants.down();
+        }
+
+        if ((status == VolumeStatus.UP || status == VolumeStatus.SOME_BRICKS_DOWN)
+                && GlusterVolumeUtils.isHealingRequired(volume)) {
+            tooltip = messages.needsGlusterHealingWithVolumeStatus(tooltip);
         }
 
         return SafeHtmlUtils.fromSafeConstant(tooltip);

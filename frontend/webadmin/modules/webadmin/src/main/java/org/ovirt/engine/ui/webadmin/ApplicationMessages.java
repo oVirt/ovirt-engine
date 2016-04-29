@@ -124,4 +124,13 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("Only available in compatibility version(s): {0}")
     String onlyAvailableInCompatibilityVersions(String versions);
+
+    @DefaultMessage("{0} unsynced entries present")
+    String unSyncedEntriesPresent(double unSyncedEntries);
+
+    @DefaultMessage("{0}, {1} unsynced entries present")
+    String brickStatusWithUnSyncedEntriesPresent(String brickStatus, double unSyncedEntries);
+
+    @DefaultMessage("{0}, Unsynced entries present - Needs healing")
+    String needsGlusterHealingWithVolumeStatus(String volumeStatus);
 }

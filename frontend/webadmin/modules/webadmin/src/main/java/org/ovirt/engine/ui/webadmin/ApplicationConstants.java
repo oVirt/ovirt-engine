@@ -3163,6 +3163,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Activities")
     String activitiesOnVolume();
 
+    @DefaultStringValue("Self-Heal Info")
+    String healInfo();
+
     @DefaultStringValue("Status")
     String statusVolume();
 
@@ -4837,4 +4840,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Bond is in link aggregation mode (mode 4) but no partner mac has been reported for it.")
     String bondInMode4HasNoPartnerMac();
+
+    @DefaultStringValue("OK")
+    String GlusterSelfHealOk();
+
 }

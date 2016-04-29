@@ -6,14 +6,17 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.BrickStatusCell;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, GlusterBrickEntity> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     public BrickStatusColumn() {
         super(new BrickStatusCell());
@@ -50,6 +53,10 @@ public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, Gluste
             break;
         default:
             tooltip = constants.down();
+        }
+
+        if (brick.getStatus() != GlusterStatus.DOWN && brick.getUnSyncedEntries() > 0) {
+            tooltip = messages.brickStatusWithUnSyncedEntriesPresent(tooltip, brick.getUnSyncedEntries());
         }
 
         return SafeHtmlUtils.fromSafeConstant(tooltip);

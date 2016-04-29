@@ -42,6 +42,15 @@ public class GlusterVolumeUtils {
         return downCount;
     }
 
+    public static boolean isHealingRequired(GlusterVolumeEntity volume) {
+        for (GlusterBrickEntity brick : volume.getBricks()) {
+            if (brick.getUnSyncedEntries() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static enum VolumeStatus {
         UP,
         SOME_BRICKS_DOWN,
