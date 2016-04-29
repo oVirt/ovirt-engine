@@ -198,7 +198,9 @@ class Plugin(plugin.PluginBase):
                     ).format(
                         client_id=self.client_id,
                         client_secret=client_secret,
-                        fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
+                        fqdn=(
+                            "${ENGINE_FQDN}"
+                        ),
                         port=engine_port,
                         devenv=(
                             (

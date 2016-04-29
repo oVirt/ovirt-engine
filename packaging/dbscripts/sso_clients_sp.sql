@@ -124,3 +124,18 @@ BEGIN
 END;$PROCEDURE$
 
 LANGUAGE plpgsql;
+
+-- Updates the client callback prefix for the given client
+CREATE OR REPLACE FUNCTION update_oauth_client_callback_prefix (
+    v_client_id VARCHAR(128),
+    v_callback_prefix VARCHAR(1024) DEFAULT NULL
+    )
+RETURNS VOID AS $PROCEDURE$
+
+BEGIN
+    UPDATE sso_clients
+    SET callback_prefix = v_callback_prefix
+    WHERE client_id = v_client_id;
+END;$PROCEDURE$
+
+LANGUAGE plpgsql;

@@ -27,6 +27,7 @@ from . import engine
 from . import misc
 from . import pki
 from . import protocols
+from . import sso
 from . import tools
 from . import uninstall
 
@@ -38,6 +39,7 @@ def createPlugins(context):
     misc.Plugin(context=context)
     pki.Plugin(context=context)
     protocols.Plugin(context=context)
+    sso.Plugin(context=context)
     tools.Plugin(context=context)
     uninstall.Plugin(context=context)
 
