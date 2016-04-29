@@ -1778,12 +1778,12 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllMigrationNetworkInterfacesInCluster (v_cluster_id UUID)
-RETURNS SETOF migration_network_interfaces STABLE AS $PROCEDURE$
+RETURNS SETOF active_migration_network_interfaces STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT *
-    FROM migration_network_interfaces
+    FROM active_migration_network_interfaces
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

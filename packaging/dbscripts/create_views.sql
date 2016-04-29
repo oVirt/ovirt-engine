@@ -3610,10 +3610,11 @@ WHERE network_cluster.network_id = network.id
       AND network_cluster.migration
       AND network.qos_id = qos.id;
 
-CREATE OR REPLACE VIEW migration_network_interfaces AS
+CREATE OR REPLACE VIEW active_migration_network_interfaces AS
 
 SELECT vds_interface_view.*
 FROM vds_interface_view,
+    vds_dynamic,
     network_attachments,
     network,
     network_cluster
@@ -3621,7 +3622,11 @@ WHERE vds_interface_view.id = network_attachments.nic_id
       AND network_attachments.network_id = network.id
       AND network.id = network_cluster.network_id
       AND network_cluster.migration
-      AND network_cluster.cluster_id = vds_interface_view.cluster_id;
+      AND network_cluster.cluster_id = vds_interface_view.cluster_id
+      AND vds_dynamic.vds_id = vds_interface_view.vds_id
+      AND vds_dynamic.status IN (3, 9)         -- Up, PreparingForMaintenance
+      AND vds_interface_view.iface_status = 1; -- Up
+
 
 CREATE OR REPLACE VIEW vm_host_device_view AS
 
