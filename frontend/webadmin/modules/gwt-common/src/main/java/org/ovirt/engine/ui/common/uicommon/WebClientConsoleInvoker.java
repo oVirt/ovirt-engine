@@ -19,14 +19,16 @@ public class WebClientConsoleInvoker {
     private final boolean useSsl;
     private final String host;
     private final String port;
+    private final String consoleTitle;
 
-    public WebClientConsoleInvoker(String clientPage, WebsocketProxyConfig proxyConfig, String host, Integer port, String password, boolean useSsl) {
+    public WebClientConsoleInvoker(String clientPage, WebsocketProxyConfig proxyConfig, String host, Integer port, String password, boolean useSsl, String consoleTitle) {
         this.clientPage = clientPage;
         this.proxyConfig = proxyConfig;
         this.host = host;
         this.password = password;
         this.useSsl = useSsl;
         this.port = (port == null) ? null : port.toString();
+        this.consoleTitle = consoleTitle;
     }
 
     public void invokeClient() {
@@ -87,7 +89,8 @@ public class WebClientConsoleInvoker {
         return Window.Location.getProtocol() + "//" + Window.Location.getHost() + //$NON-NLS-1$
             "/" + clientPage + //$NON-NLS-1$
             "?host=" + proxyConfig.getProxyHost() + //$NON-NLS-1$
-            "&port=" + proxyConfig.getProxyPort(); //$NON-NLS-1$
+            "&port=" + proxyConfig.getProxyPort() + //$NON-NLS-1$
+            "&title=" + consoleTitle;               //$NON-NLS-1$
     }
 
     private boolean isClientBrowserSupported() {

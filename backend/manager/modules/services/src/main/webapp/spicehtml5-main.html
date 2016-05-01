@@ -97,6 +97,9 @@
                 }
 
                 try {
+                    // If title is sent as a parameter in the url, set the window title accordingly
+                    document.title = spice_query_var('title', 'Spice Javascript client');
+
                     var host = spice_query_var('host', window.location.hostname);
                     var port = spice_query_var('port', window.location.port);
                     var password = evt.data.password;

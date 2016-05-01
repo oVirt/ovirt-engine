@@ -323,6 +323,7 @@ public class SpiceConsoleModel extends ConsoleModel {
                         // overriding global server settings by frontend settings
                         configuredOptions.setRemapCtrlAltDelete(options.isRemapCtrlAltDelete());
                         configuredOptions.setTitle(getClientTitle());
+                        configuredOptions.setVmName(getEntity().getName());
                         configuredOptions.setAdminConsole(getConfigurator().getSpiceAdminConsole()
                                                           ? true
                                                           : !getEntity().getHasSpiceDriver());

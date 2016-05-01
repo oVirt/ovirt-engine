@@ -19,6 +19,7 @@ public class ConsoleOptions implements Serializable{
     private Integer port;
     private String ticket;
     private String title;
+    private String vmName;
     private boolean remapCtrlAltDelete;
     private String toggleFullscreenHotKey;
     private String releaseCursorHotKey;
@@ -89,6 +90,14 @@ public class ConsoleOptions implements Serializable{
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getVmName() {
+        return vmName;
+    }
+
+    public void setVmName(String vmName) {
+        this.vmName = vmName;
     }
 
     public String getHost() {

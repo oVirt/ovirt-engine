@@ -10,13 +10,15 @@ public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
     private static final String CLIENT_PAGE = BaseContextPathData.getRelativePath()
             + "services/spicehtml5-main.html"; //$NON-NLS-1$
 
+    private static final String SPICEHTML5_TITLE_SUFFIX = " - Spice Javascript Client"; //$NON-NLS-1$
+
     private WebsocketProxyConfig config;
 
     @Override
     public void invokeClient() {
         boolean sslTarget = consoleOptions.getRawSecurePort() != -1;
         int port = sslTarget ? consoleOptions.getSecurePort() : consoleOptions.getPort();
-        WebClientConsoleInvoker invoker = new WebClientConsoleInvoker(CLIENT_PAGE, getConfig(), getOptions().getHost(), port, getOptions().getTicket(), sslTarget);
+        WebClientConsoleInvoker invoker = new WebClientConsoleInvoker(CLIENT_PAGE, getConfig(), getOptions().getHost(), port, getOptions().getTicket(), sslTarget, getOptions().getVmName() + SPICEHTML5_TITLE_SUFFIX);
         invoker.invokeClient();
     }
 

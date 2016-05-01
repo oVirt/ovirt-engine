@@ -10,6 +10,8 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
     private static final String CLIENT_PAGE = BaseContextPathData.getRelativePath()
             + "services/novnc-main.html"; //$NON-NLS-1$
 
+    private static final String NOVNC_TITLE_SUFFIX = " - noVNC"; //$NON-NLS-1$
+
     private WebsocketProxyConfig config;
 
     @Override
@@ -17,7 +19,7 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
             WebClientConsoleInvoker invoker =
                     new WebClientConsoleInvoker(CLIENT_PAGE, getConfig(),
                             getOptions().getHost(), getOptions().getPort(),
-                            getOptions().getTicket(), false);
+                            getOptions().getTicket(), false, getOptions().getVmName() + NOVNC_TITLE_SUFFIX);
         invoker.invokeClient();
     }
 

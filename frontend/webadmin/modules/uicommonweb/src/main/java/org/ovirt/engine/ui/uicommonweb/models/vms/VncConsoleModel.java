@@ -108,6 +108,7 @@ public class VncConsoleModel extends ConsoleModel {
                 configuredOptions.setRemapCtrlAltDelete(vncImpl.getOptions().isRemapCtrlAltDelete());
                 vncImpl.setOptions(configuredOptions);
                 vncImpl.getOptions().setTitle(getClientTitle());
+                vncImpl.getOptions().setVmName(getEntity().getName());
                 if (vncImpl instanceof HasForeignMenuData) {
                     setForeignMenuData((HasForeignMenuData) vncImpl);
                 }
