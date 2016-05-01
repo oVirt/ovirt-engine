@@ -2163,3 +2163,62 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetAllNetworkFilters ()
+RETURNS SETOF network_filter STABLE
+AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM network_filter;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetAllSupportedNetworkFiltersByVersion (v_version VARCHAR(40))
+RETURNS SETOF network_filter STABLE
+AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM network_filter
+    WHERE v_version >= version;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetNetworkFilterById (v_filter_id UUID)
+RETURNS SETOF network_filter STABLE
+AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM network_filter
+    WHERE filter_id = v_filter_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetMinimalSupportedVersionByNetworkFilterName (v_filter_name VARCHAR(50))
+RETURNS SETOF VARCHAR(40) STABLE
+AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT version
+    FROM network_filter
+    WHERE filter_name = v_filter_name;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetNetworkFilterByName (v_filter_name VARCHAR(50))
+RETURNS SETOF network_filter STABLE
+AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM network_filter
+    WHERE filter_name like v_filter_name;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

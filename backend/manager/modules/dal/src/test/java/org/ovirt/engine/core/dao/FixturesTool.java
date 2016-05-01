@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 /**
  * A utility class for Dao testing which maps the fixtures entities to constants, for easy testing.
@@ -647,6 +648,18 @@ public class FixturesTool {
     public static final Guid NETWORK_ATTACHMENT_NIC2 = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9df");
 
     public static final Guid NETWORK_ATTACHMENT_HOST = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
+
+    public static final Guid NETWORK_FILTER = new Guid("c477a4cc-f00e-45be-b61f-224766437091");
+
+    public static final String NETWORK_FILTER_NAME = "TEST_NETWORK_FILTER";
+
+    public static final Version NETWORK_FILTER_VERSION = new Version("4.0");
+
+    public static final Guid OVIRT_NO_FILTER_NETWORK_FILTER = new Guid("22510576-a243-468e-bc37-d68f16130b02");
+
+    public static final String OVIRT_NO_FILTER_NETWORK_FILTER_NAME = "ovirt-no-filter";
+
+    public static final Version OVIRT_NO_FILTER_MINIMAL_SUPPORTED_VERSION = new Version("3.0");
 
     /**
      * Gluster Hook ID(s)

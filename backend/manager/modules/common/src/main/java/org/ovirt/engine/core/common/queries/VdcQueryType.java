@@ -157,6 +157,10 @@ public enum VdcQueryType implements Serializable {
     GetClusterFeaturesByVersionAndCategory,
     GetClusterFeaturesByClusterId,
     GetClusterEditWarnings,
+    GetAllNetworkFilters,
+    GetAllSupportedNetworkFiltersByVersion,
+    GetNetworkFilterById,
+    GetMinimalSupportedVersionByNetworkFilterName,
 
     // Certificate
     GetCACertificate(VdcQueryAuthType.User),

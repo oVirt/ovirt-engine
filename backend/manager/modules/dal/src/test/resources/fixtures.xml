@@ -1703,6 +1703,22 @@
         </row>
     </table>
 
+    <table name="network_filter">
+        <column>filter_id</column>
+        <column>filter_name</column>
+        <column>version</column>
+        <row>
+            <value>c477a4cc-f00e-45be-b61f-224766437091</value>
+            <value>TEST_NETWORK_FILTER</value>
+            <value>4.0</value>
+        </row>
+        <row>
+            <value>22510576-a243-468e-bc37-d68f16130b02</value>
+            <value>ovirt-no-filter</value>
+            <value>3.0</value>
+        </row>
+    </table>
+
     <table name="vnic_profiles">
         <column>id</column>
         <column>name</column>
