@@ -768,8 +768,7 @@ parseArgs() {
 				exit 0
 			;;
 			*)
-				usage
-				exit 1
+				die "Unknown option '${x}'. Please see '--help' for details."
 			;;
 		esac
 	done
