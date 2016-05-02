@@ -79,7 +79,7 @@ public class NetworkFilterDaoImpl extends DefaultReadDao<NetworkFilter, Guid>imp
         return networkFilterRowMapper;
     }
 
-    private class NetworkFilterRowMapper implements RowMapper<NetworkFilter> {
+    private static class NetworkFilterRowMapper implements RowMapper<NetworkFilter> {
 
         @Override
         public NetworkFilter mapRow(ResultSet rs, int rowNum) throws SQLException {
