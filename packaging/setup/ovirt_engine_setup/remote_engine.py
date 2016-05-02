@@ -81,11 +81,17 @@ class RemoteEngine(base.Base):
         file_name,
         content,
         inp_env_key=None,
+        uid=None,
+        gid=None,
+        mode=None,
     ):
         return self._style.copy_to_engine(
             file_name=file_name,
             content=content,
             inp_env_key=inp_env_key,
+            uid=uid,
+            gid=gid,
+            mode=mode,
         )
 
     def cleanup(self):

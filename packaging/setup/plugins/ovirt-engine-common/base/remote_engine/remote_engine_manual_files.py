@@ -94,7 +94,15 @@ class Plugin(plugin.PluginBase):
                 res = f.read()
             return res
 
-        def copy_to_engine(self, file_name, content, inp_env_key):
+        def copy_to_engine(
+                self,
+                file_name,
+                content,
+                inp_env_key,
+                uid=None,
+                gid=None,
+                mode=None,
+        ):
             fname = self.environment.get(inp_env_key)
             with (
                 open(fname, 'w') if fname
@@ -110,6 +118,31 @@ class Plugin(plugin.PluginBase):
                     file_name=file_name,
                 )
             )
+            if uid and gid:
+                self.dialog.note(
+                    text=_(
+                        'Please make {file_name} on the engine server owned '
+                        'by uid:gid {uid}:{gid}.\n'
+                        'You can do this by running there:\n'
+                        '# chown {uid}:{gid} {file_name}\n'
+                    ).format(
+                        file_name=file_name,
+                        uid=uid,
+                        gid=gid,
+                    )
+                )
+            if mode:
+                self.dialog.note(
+                    text=_(
+                        'Please set the mode bits of {file_name} on the '
+                        'engine server to {mode}.\n'
+                        'You can do this by running there:\n'
+                        '# chmod {mode} {file_name}\n'
+                    ).format(
+                        file_name=file_name,
+                        mode=oct(mode),
+                    )
+                )
             self._tempfiles.append(fname)
 
         def cleanup(self):

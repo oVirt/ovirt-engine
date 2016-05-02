@@ -63,6 +63,9 @@ class RemoteEngineBase(base.Base):
         file_name,
         content,
         inp_env_key=None,
+        uid=None,
+        gid=None,
+        mode=None,
     ):
         pass
 

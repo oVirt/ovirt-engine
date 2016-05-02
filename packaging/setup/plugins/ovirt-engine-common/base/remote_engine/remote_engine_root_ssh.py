@@ -254,7 +254,10 @@ class Plugin(plugin.PluginBase):
             self,
             file_name,
             content,
-            inp_env_key=None
+            inp_env_key=None,
+            uid=None,
+            gid=None,
+            mode=None,
         ):
             self.logger.debug(
                 'Copying data to remote engine %s:%s' %
@@ -271,6 +274,10 @@ class Plugin(plugin.PluginBase):
             finally:
                 if f:
                     f.close()
+            if uid and gid:
+                sf.chown(file_name, uid, gid)
+            if mode:
+                sf.chmod(file_name, mode)
 
         def cleanup(self):
             if self._client:
