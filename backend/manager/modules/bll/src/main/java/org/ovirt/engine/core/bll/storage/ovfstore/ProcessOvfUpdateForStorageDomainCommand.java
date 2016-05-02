@@ -336,10 +336,6 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     }
 
     @Override
-    public void handleFailure() {
-    }
-
-    @Override
     public boolean performNextOperation(int completedChildCount) {
         if (getParameters().getOvfUpdateStep() == OvfUpdateStep.OVF_STORES_CREATION) {
             setOvfUpdateStep(OvfUpdateStep.OVF_UPLOAD);

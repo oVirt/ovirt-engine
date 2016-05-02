@@ -137,8 +137,4 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         removeCinderVolume(completedChildCount, getParameters().getRemovedVolume().getStorageIds().get(0));
         return true;
     }
-
-    @Override public void handleFailure() {
-    }
-
 }
