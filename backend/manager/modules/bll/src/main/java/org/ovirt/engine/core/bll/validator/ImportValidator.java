@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -12,6 +11,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ImportParameters;
@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
-import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -105,38 +104,9 @@ public class ImportValidator {
         return ValidationResult.VALID;
     }
 
-    protected ValidationResult checkIfDisksExist(Iterable<DiskImage> disksList, Map<Guid, Guid> imageToDestinationDomainMap) {
-        Map<Guid, List<Guid>> alreadyRetrieved = new HashMap<>();
-        for (DiskImage disk : disksList) {
-            Guid targetStorageDomainId = imageToDestinationDomainMap.get(disk.getId());
-            List<Guid> imagesOnStorageDomain = alreadyRetrieved.get(targetStorageDomainId);
-
-            if (imagesOnStorageDomain == null) {
-                VDSReturnValue returnValue = runVdsCommand(
-                        VDSCommandType.GetImagesList,
-                        new GetImagesListVDSCommandParameters(targetStorageDomainId, params.getStoragePoolId())
-                );
-
-                if (returnValue.getSucceeded()) {
-                    imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
-                    alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
-                } else {
-                    return new ValidationResult(EngineMessage.ERROR_GET_IMAGE_LIST,
-                            String.format("$sdName %1$s", getStorageDomain(targetStorageDomainId).getName()));
-                }
-            }
-
-            if (imagesOnStorageDomain.contains(disk.getId())) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
-            }
-        }
-
-        return ValidationResult.VALID;
-    }
-
     public ValidationResult verifyDisks(Iterable<DiskImage> imageList, Map<Guid, Guid> imageToDestinationDomainMap) {
         if (!params.isImportAsNewEntity() && !params.isImagesExistOnTargetStorageDomain()) {
-            return checkIfDisksExist(imageList, imageToDestinationDomainMap);
+            return new DiskImagesValidator(imageList).diskImagesOnStorage(imageToDestinationDomainMap);
         }
 
         return ValidationResult.VALID;

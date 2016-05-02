@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -34,9 +35,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -198,31 +196,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     }
 
     private boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
-        Map<Guid, List<Guid>> alreadyRetrieved = new HashMap<>();
-        for (DiskImage disk : disksList) {
-            Guid targetStorageDomainId = imageToDestinationDomainMap.get(disk.getId());
-            List<Guid> imagesOnStorageDomain = alreadyRetrieved.get(targetStorageDomainId);
-
-            if (imagesOnStorageDomain == null) {
-                VDSReturnValue returnValue = runVdsCommand(
-                        VDSCommandType.GetImagesList,
-                        new GetImagesListVDSCommandParameters(targetStorageDomainId, getStoragePoolId())
-                );
-
-                if (returnValue.getSucceeded()) {
-                    imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
-                    alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
-                } else {
-                    return failValidation(EngineMessage.ERROR_GET_IMAGE_LIST,
-                            String.format("$sdName %1$s", getStorageDomain(targetStorageDomainId).getName()));
-                }
-            }
-
-            if (imagesOnStorageDomain.contains(disk.getId())) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
-            }
-        }
-        return true;
+        return validate(new DiskImagesValidator(disksList).diskImagesOnStorage(imageToDestinationDomainMap));
     }
 
     @Override

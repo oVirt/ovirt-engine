@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -16,10 +18,14 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -186,6 +192,41 @@ public class DiskImagesValidator {
     }
 
     /**
+     * checks that the given disks do not exist on the target storage domains
+     * @param disksList list of the disks for check
+     * @param imageToDestinationDomainMap map containing the destination domain for each of the disks
+     * @return validation result indicating whether the disks don't exist on the target storage domains
+     */
+    public ValidationResult diskImagesOnStorage(Map<Guid, Guid> imageToDestinationDomainMap) {
+        Map<Guid, List<Guid>> domainImages = new HashMap<>();
+        for (DiskImage diskImage : diskImages) {
+            Guid targetStorageDomainId = imageToDestinationDomainMap.get(diskImage.getId());
+            List<Guid> imagesOnStorageDomain = domainImages.get(targetStorageDomainId);
+
+            if (imagesOnStorageDomain == null) {
+                VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
+                        VDSCommandType.GetImagesList,
+                        new GetImagesListVDSCommandParameters(targetStorageDomainId, diskImage.getStoragePoolId())
+                );
+
+                if (returnValue.getSucceeded()) {
+                    imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
+                    domainImages.put(targetStorageDomainId, imagesOnStorageDomain);
+                } else {
+                    return new ValidationResult(EngineMessage.ERROR_GET_IMAGE_LIST,
+                            String.format("$sdName %1$s", getStorageDomainStaticDao().get(targetStorageDomainId).getName()));
+                }
+            }
+
+            if (imagesOnStorageDomain.contains(diskImage.getId())) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
      * Checks that each of the disks has at least one domain in valid status in the given map
      * @param validDomainsForDisk Map containing valid domains for each disk
      * @param storageDomains Map containing the storage domain objects
@@ -258,5 +299,9 @@ public class DiskImagesValidator {
 
     protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
+    }
+
+    protected StorageDomainStaticDao getStorageDomainStaticDao() {
+        return getDbFacade().getStorageDomainStaticDao();
     }
 }
