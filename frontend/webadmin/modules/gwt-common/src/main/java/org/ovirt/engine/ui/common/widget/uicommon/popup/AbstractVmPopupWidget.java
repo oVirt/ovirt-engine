@@ -170,6 +170,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String totalVcpusStyle();
 
         String threadsPerCoreStyle();
+
+        String labelToCoupleLabel();
+
+        String labelToCoupleLabelDisabled();
     }
 
     @UiField
@@ -188,6 +192,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "quota.selectedItem")
     @WithElementId("quota")
     public ListModelTypeAheadListBoxEditor<Quota> quotaEditor;
+
+    @UiField
+    @Ignore
+    public Label cpuPinningLabel;
 
     @UiField
     @Ignore
@@ -1534,6 +1542,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hideAlwaysHiddenFields();
         decorateDetachableFields();
         enableNumaSupport(model);
+
+        cpuPinningLabel.setStyleName(model.getCpuPinning().getIsChangable() ? style.labelToCoupleLabel() : style.labelToCoupleLabelDisabled());
     }
 
     private void enableNumaSupport(final UnitVmModel model) {
@@ -1694,6 +1704,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
                 customCpu.setNullReplacementString(getDefaultCpuTypeLabel());
+            }
+        });
+
+        object.getCpuPinning().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                    cpuPinningLabel.setStyleName(object.getCpuPinning().getIsChangable() ? style.labelToCoupleLabel() : style.labelToCoupleLabelDisabled());
+                }
             }
         });
     }

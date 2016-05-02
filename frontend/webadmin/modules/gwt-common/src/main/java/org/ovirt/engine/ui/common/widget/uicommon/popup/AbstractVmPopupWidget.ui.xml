@@ -332,14 +332,22 @@
             width: 100%;
         }
 
-        .labelToCoupleLabel {
-            color: gray;
+        .labelToCoupleLabel, .labelToCoupleLabelDisabled {
             font-family: Verdana, sans-serif;
             font-size: 13px;
             line-height: 30px;
             padding: 0 5px;
             float: left;
         }
+
+        .labelToCoupleLabelDisabled {
+            color: gray;
+        }
+
+        .labelToCoupleLabel {
+            color: black;
+        }
+
 
         .labelToCoupleCouple {
             float: right;
@@ -700,7 +708,7 @@
                             </g:FlowPanel>
 
                             <g:FlowPanel ui:field="cpuPinningPanel" addStyleNames="{style.labelToCouple}">
-                                <g:Label text="{constants.cpuPinningLabel}" addStyleNames="{style.labelToCoupleLabel}"/>
+                                <g:Label ui:field="cpuPinningLabel" text="{constants.cpuPinningLabel}"/>
                                 <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
                                     <d:InfoIcon ui:field="cpuPinningInfo" addStyleNames="{style.labelToCoupleCoupleLeft} avmpw_infoIcon_pfly_fix"/>
                                     <ge:StringEntityModelTextBoxOnlyEditor ui:field="cpuPinning" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetContainerStyleName="{style.cpuPinningTextBox} avmpw_cpuPinningTextBox_pfly_fix" label="{constants.cpuPinningLabel}"/>
