@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -631,7 +631,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
                 VnicProfile vnicProfile = profileModel.getProfile();
                 vnicProfile.setNetworkId(networkGuid);
-                VnicProfileParameters parameters = new VnicProfileParameters(vnicProfile);
+                AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile);
                 parameters.setPublicUse(profileModel.getPublicUse().getEntity());
                 paramlist.add(parameters);
             }

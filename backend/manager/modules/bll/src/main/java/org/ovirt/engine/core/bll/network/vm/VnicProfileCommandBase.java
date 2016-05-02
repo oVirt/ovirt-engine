@@ -40,6 +40,18 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
         return getParameters().getVnicProfile();
     }
 
+    protected void setNetworkFilterId(Guid networkFilterId){
+        getVnicProfile().setNetworkFilterId(networkFilterId);
+    }
+
+    protected Guid getNetworkId(){
+        return getNetwork().getId();
+    }
+
+    protected Guid getNetworkFilterId(){
+        return getVnicProfile().getNetworkFilterId();
+    }
+
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__TYPE__VNIC_PROFILE);

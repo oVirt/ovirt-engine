@@ -11,6 +11,8 @@ public class NetworkFilter implements IVdcQueryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 479750365026775507L;
 
+    public static final String VDSM_NO_MAC_SPOOFING = "vdsm-no-mac-spoofing";
+
     private String name;
     /**
      * Assuming libvirt's backward compatibility support, {@code version} infer to the minimal version this filter is being first supported

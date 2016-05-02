@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
+import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -43,7 +43,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
 
     @Override
     protected VdcActionParametersBase getActionParameters() {
-        VnicProfileParameters parameters = new VnicProfileParameters(getProfile());
+        AddVnicProfileParameters parameters = new AddVnicProfileParameters(getProfile());
         parameters.setPublicUse(getPublicUse().getEntity());
         return parameters;
     }

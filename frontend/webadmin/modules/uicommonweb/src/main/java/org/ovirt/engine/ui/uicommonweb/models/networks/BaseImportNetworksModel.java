@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -307,7 +307,7 @@ public class BaseImportNetworksModel extends Model {
         VnicProfile vnicProfile = new VnicProfile();
         vnicProfile.setName(network.getName());
         vnicProfile.setNetworkId(network.getId());
-        VnicProfileParameters parameters = new VnicProfileParameters(vnicProfile);
+        AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile);
         parameters.setPublicUse(publicUse);
         Frontend.getInstance().runAction(VdcActionType.AddVnicProfile, parameters, new IFrontendActionAsyncCallback() {
 

@@ -16,8 +16,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.VnicProfile;
+import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -44,7 +44,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
         setUriInfo(setUpBasicUriExpectations());
         setUpNetworkQueryExpectations();
         setUpCreationExpectations(VdcActionType.AddVnicProfile,
-                VnicProfileParameters.class,
+                AddVnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},
                 true,
@@ -79,7 +79,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
 
     private void doTestBadAddVnicProfile(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddVnicProfile,
-                VnicProfileParameters.class,
+                AddVnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},
                 valid,
