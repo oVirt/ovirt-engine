@@ -43,19 +43,19 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
         switch (protocol) {
         case SPICE: // unsupported since 4.0, to be removed in 4.1
             if ((clientAgentType.os.equalsIgnoreCase("Windows") //$NON-NLS-1$
-                    && clientAgentType.browser.equalsIgnoreCase("Explorer") //$NON-NLS-1$
+                    && clientAgentType.isIE()
                     && (clientAgentType.version >= 7.0))
                     || clientAgentType.isIE11()) {
                 return true;
             } else if (clientAgentType.os.equalsIgnoreCase("Linux") //$NON-NLS-1$
-                    && clientAgentType.browser.equalsIgnoreCase("Firefox") //$NON-NLS-1$
+                    && clientAgentType.isFirefox()
                     && (clientAgentType.version >= 2.0)) {
                 return true;
             }
             return false;
         case RDP:
             if ((clientAgentType.os.equalsIgnoreCase("Windows")//$NON-NLS-1$
-                    && clientAgentType.browser.equalsIgnoreCase("Explorer")//$NON-NLS-1$
+                    && clientAgentType.isIE()
                     && (clientAgentType.version >= 7.0))
                     || clientAgentType.isIE11()) {
                 return true;

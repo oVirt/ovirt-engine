@@ -49,7 +49,7 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
     @Override
     public void onValueChange(ValueChangeEvent<String> event) {
         super.onValueChange(event);
-        if ("firefox".equalsIgnoreCase(clientAgentType.getBrowser())) { //$NON-NLS-1$
+        if (clientAgentType.isFirefox()) {
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                 @Override
                 public void execute() {

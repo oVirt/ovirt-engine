@@ -35,6 +35,10 @@ public class ClientAgentType {
         return isIE() && version <= 8.0f;
     }
 
+    public boolean isFirefox() {
+        return "firefox".equalsIgnoreCase(browser); //$NON-NLS-1$
+    }
+
     public native String getBrowser() /*-{
         var data = this.@org.ovirt.engine.ui.common.uicommon.ClientAgentType::getDataBrowser()();
         var z = this.@org.ovirt.engine.ui.common.uicommon.ClientAgentType::searchString(Ljava/lang/Object;)(data);
