@@ -1671,18 +1671,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return "VM [" + getName() + "]";
     }
 
-    /**
-     * Returns the required size for saving all the memory used by this VM.
-     * it is useful for determining the size to be allocated in the storage when hibernating
-     * VM or taking a snapshot with memory.
-     *
-     * @return - Memory size for allocation in bytes.
-     */
-    @JsonIgnore
-    public long getTotalMemorySizeInBytes() {
-        return (long) (getVmMemSizeMb() + 200 + (64 * getNumOfMonitors())) * 1024 * 1024;
-    }
-
     ///////////////////////////////////////////////
     /// Utility methods that check the VM state ///
     ///////////////////////////////////////////////

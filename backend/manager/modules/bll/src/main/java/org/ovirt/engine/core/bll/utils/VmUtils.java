@@ -40,4 +40,17 @@ public class VmUtils {
         int iothreadsOverhead = 8 * vm.getNumOfIoThreads();
         return vmRam + pageTable + videoRam + fixedOverhead + cpuOverhead + iothreadsOverhead;
     }
+
+    /**
+     * Returns the required size for saving all the memory used by this VM.
+     * It is useful for determining the size to be allocated in the storage when hibernating
+     * VM or taking a snapshot with memory.
+     *
+     * @param vm The VM to compute the memory size for.
+     * @return - Memory size for allocation in bytes.
+     */
+    public static long getSnapshotMemorySizeInBytes(VM vm) {
+        long videoRam = (long)VideoDeviceSettings.totalVideoRAMSizeMb(vm);
+        return (vm.getVmMemSizeMb() + 200 + videoRam) * 1024 * 1024;
+    }
 }

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -174,7 +175,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         List<DiskImage> memoryDisksList = null;
         if (getParameters().isSaveMemory()) {
-            memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.METADATA_SIZE_IN_BYTES);
+            memoryDisksList = MemoryUtils.createDiskDummies(VmUtils.getSnapshotMemorySizeInBytes(getVm()),
+                    MemoryUtils.METADATA_SIZE_IN_BYTES);
             if (Guid.Empty.equals(getStorageDomainIdForVmMemory(memoryDisksList))) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }

@@ -30,7 +30,9 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -57,6 +59,9 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     private VM vm;
 
     @Mock
+    private VmStatic vmStatic;
+
+    @Mock
     private DiskImagesValidator diskImagesValidator;
 
     @Mock
@@ -74,6 +79,8 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "");
         cmd = spy(new CreateAllSnapshotsFromVmCommand<>(params, null));
         doReturn(true).when(vm).isManagedVm();
+        doReturn(DisplayType.vga).when(vmStatic).getDefaultDisplayType();
+        doReturn(vmStatic).when(vm).getStaticData();
         doReturn(vm).when(cmd).getVm();
         doReturn(vmValidator).when(cmd).createVmValidator();
         doReturn(snapshotsValidator).when(cmd).createSnapshotValidator();

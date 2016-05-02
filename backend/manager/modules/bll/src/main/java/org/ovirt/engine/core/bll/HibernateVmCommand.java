@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -72,7 +73,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     public Guid getStorageDomainId() {
         if (cachedStorageDomainId == null) {
             List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(
-                    getVm().getTotalMemorySizeInBytes(),
+                    VmUtils.getSnapshotMemorySizeInBytes(getVm()),
                     MemoryUtils.METADATA_SIZE_IN_BYTES);
             StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                     getStoragePoolId(), diskDummiesForMemSize,

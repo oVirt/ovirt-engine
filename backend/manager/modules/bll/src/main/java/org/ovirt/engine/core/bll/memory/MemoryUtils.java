@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -126,7 +127,7 @@ public class MemoryUtils {
 
     public static DiskImage createMemoryDisk(VM vm, StorageType storageType) {
         DiskImage image = new DiskImage();
-        image.setSize(vm.getTotalMemorySizeInBytes());
+        image.setSize(VmUtils.getSnapshotMemorySizeInBytes(vm));
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
         image.setvolumeFormat(VolumeFormat.RAW);
         image.setDiskInterface(DiskInterface.VirtIO);

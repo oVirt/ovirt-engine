@@ -34,6 +34,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -489,7 +490,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
         List<DiskImage> memoryDisksList =
-                MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.METADATA_SIZE_IN_BYTES);
+                MemoryUtils.createDiskDummies(VmUtils.getSnapshotMemorySizeInBytes(getVm()),
+                        MemoryUtils.METADATA_SIZE_IN_BYTES);
         StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                 getParameters().getStoragePoolId(), memoryDisksList, getVmDisksDummies(), getVm());
         disksList.addAll(memoryDisksList);
