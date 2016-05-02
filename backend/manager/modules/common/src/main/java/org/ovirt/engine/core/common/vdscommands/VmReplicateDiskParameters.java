@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmReplicateDiskParameters extends VdsAndVmIDVDSParametersBase {
@@ -67,5 +68,15 @@ public class VmReplicateDiskParameters extends VdsAndVmIDVDSParametersBase {
     private Guid targetStorageDomainId;
     private Guid imageGroupId;
     private Guid imageId;
+
+    @Override
+    protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
+        return super.appendAttributes(tsb)
+                .append("storagePoolId", getStoragePoolId())
+                .append("srcStorageDomainId", getSrcStorageDomainId())
+                .append("targetStorageDomainId", getTargetStorageDomainId())
+                .append("imageGroupId", getImageGroupId())
+                .append("imageId", getImageId());
+    }
 
 }
