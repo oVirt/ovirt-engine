@@ -5,15 +5,12 @@ import org.ovirt.engine.ui.common.view.AbstractLoginFormView;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginFormPresenterWidget;
-import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.inject.Inject;
@@ -35,12 +32,9 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    private final static ApplicationMessages messages = AssetProvider.getMessages();
-
     @Inject
     public LoginFormView(EventBus eventBus,
-            ApplicationDynamicMessages dynamicMessages,
-            InternalConfiguration intConf) {
+            ApplicationDynamicMessages dynamicMessages) {
         super(eventBus);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -48,12 +42,6 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         setStyles();
         driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-
-        if (!intConf.isCurrentBrowserSupported()) {
-            informationMessagePanel.addMessage(SafeHtmlUtils.fromSafeConstant(
-                    messages.browserNotSupported(dynamicMessages.compatibleBrowserDocsUrl())));
-            informationMessagePanel.setVisible(true);
-        }
     }
 
     private void localize() {
