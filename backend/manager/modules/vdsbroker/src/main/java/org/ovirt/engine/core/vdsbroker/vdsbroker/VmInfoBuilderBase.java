@@ -13,7 +13,6 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -31,6 +30,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
@@ -72,15 +72,7 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
 
         if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
-            if (osRepository.get64bitOss().contains(vm.getOs())) {
-                ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
-                        ConfigValues.VMPpc64BitMaxMemorySizeInMB :
-                        ConfigValues.VM64BitMaxMemorySizeInMB;
-                createInfo.put(VdsProperties.maxMemSize,
-                        Config.getValue(config, vm.getCompatibilityVersion().getValue()));
-            } else {
-                createInfo.put(VdsProperties.maxMemSize, Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB));
-            }
+            createInfo.put(VdsProperties.maxMemSize, VmCommonUtils.maxMemorySizeWithHotplugInMb(vm));
             createInfo.put(VdsProperties.maxMemSlots, Config.getValue(ConfigValues.MaxMemorySlots));
         }
 

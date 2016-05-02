@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
@@ -15,19 +17,19 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VideoDeviceSettings {
 
-    private interface VideoRAMSettings {
+    private interface VideoSettings {
         /**
-         * Returns video device spec params.
+         * Returns video device settings such as the number of heads or RAM sizes.
          *
-         * @return a map of device parameters
+         * @return a map of device settings
          */
-        public abstract Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase);
+        public abstract Map<String, Integer> getVideoDeviceSettings(VmBase vmBase);
     }
 
     /**
      * Video settings for clusters 3.6 and newer (they may change in future versions).
      */
-    private static class VgamemVideoRAMSettings implements VideoRAMSettings {
+    private static class VgamemVideoSettings implements VideoSettings {
 
         // Displays up to 4 Mpix fit into this; higher resolutions are currently
         // not supported by the drivers.
@@ -36,45 +38,45 @@ public class VideoDeviceSettings {
         private static final int RAM_MULTIPLIER = 4;
 
         @Override
-        public Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
+        public Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
             if (vmBase.getDefaultDisplayType() == DisplayType.qxl) {
-                return getQxlVideoDeviceSpecParams(vmBase);
+                return getQxlVideoDeviceSettings(vmBase);
             } else {
-                return getVgaVideoDeviceSpecParams();
+                return getVgaVideoDeviceSettings();
             }
         }
 
         /**
-         * Returns video device spec params for QXL devices.
+         * Returns video device settings for QXL devices.
          *
-         * @return a map of device parameters
+         * @return a map of device settings
          */
-        private Map<String, Object> getQxlVideoDeviceSpecParams(VmBase vmBase) {
+        private Map<String, Integer> getQxlVideoDeviceSettings(VmBase vmBase) {
             // Things are likely to completely change in future, so let's keep this
             // computation as simple as possible for now.
-            Map<String, Object> specParams = new HashMap<>();
+            Map<String, Integer> settings = new HashMap<>();
             int heads = vmBase.getSingleQxlPci() ? vmBase.getNumOfMonitors() : 1;
             int vgamem = BASE_RAM_SIZE * heads;
             int vramMultiplier = getVramMultiplier(vmBase);
             int vram = vramMultiplier == 0 ? DEFAULT_VRAM_SIZE : vramMultiplier * vgamem;
-            specParams.put(VdsProperties.VIDEO_HEADS, String.valueOf(heads));
-            specParams.put(VdsProperties.VIDEO_VGAMEM, String.valueOf(vgamem));
-            specParams.put(VdsProperties.VIDEO_RAM, String.valueOf(RAM_MULTIPLIER * vgamem));
-            specParams.put(VdsProperties.VIDEO_VRAM, String.valueOf(vram));
-            return specParams;
+            settings.put(VdsProperties.VIDEO_HEADS, heads);
+            settings.put(VdsProperties.VIDEO_VGAMEM, vgamem);
+            settings.put(VdsProperties.VIDEO_RAM, RAM_MULTIPLIER * vgamem);
+            settings.put(VdsProperties.VIDEO_VRAM, vram);
+            return settings;
         }
 
         /**
-         * Returns video device spec params for VGA and Cirrus devices.
+         * Returns video device settings for VGA and Cirrus devices.
          *
-         * @return a map of device parameters
+         * @return a map of device settings
          */
-        private Map<String, Object> getVgaVideoDeviceSpecParams() {
+        private Map<String, Integer> getVgaVideoDeviceSettings() {
             // No multihead, no special driver requirements, the base value should
             // just work.  Except for high resolutions on Wayland (requires twice
             // as much video RAM as other systems due to page flipping); not likely
             // to be used with vga or cirrus so we don't care about that here.
-            return Collections.singletonMap(VdsProperties.VIDEO_VRAM, String.valueOf(BASE_RAM_SIZE));
+            return Collections.singletonMap(VdsProperties.VIDEO_VRAM, BASE_RAM_SIZE);
         }
 
         private int getVramMultiplier(VmBase vmBase) {
@@ -88,24 +90,28 @@ public class VideoDeviceSettings {
      * Not necesessarily correct but this is what the engine used to send to the hosts,
      * so it's best to reuse the values in order not to break old setups.
      */
-    private static class LegacyVideoRAMSettings implements VideoRAMSettings {
+    private static class LegacyVideoSettings implements VideoSettings {
 
         private static final int BASE_RAM_SIZE = 65536; // KB
         private static final int VRAM_SIZE = 32768; // KB
 
         @Override
-        public Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
-            Map<String, Object> specParams = new HashMap<>();
+        public Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
+            Map<String, Integer> settings = new HashMap<>();
             boolean singleQxlPci = vmBase.getSingleQxlPci();
             int numOfMonitors = vmBase.getNumOfMonitors();
             int heads = singleQxlPci ? numOfMonitors : 1;
-            specParams.put(VdsProperties.VIDEO_HEADS, String.valueOf(heads));
-            specParams.put(VdsProperties.VIDEO_VRAM, String.valueOf(VRAM_SIZE));
+            settings.put(VdsProperties.VIDEO_HEADS, heads);
+            settings.put(VdsProperties.VIDEO_VRAM, VRAM_SIZE);
             if (singleQxlPci) {
-                specParams.put(VdsProperties.VIDEO_RAM, String.valueOf(BASE_RAM_SIZE * heads));
+                settings.put(VdsProperties.VIDEO_RAM, BASE_RAM_SIZE * heads);
             }
-            return specParams;
+            return settings;
         }
+    }
+
+    private static Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
+        return selectVideoSettings(vmBase).getVideoDeviceSettings(vmBase);
     }
 
     /**
@@ -114,16 +120,29 @@ public class VideoDeviceSettings {
      * @return a map of device parameters
      */
     public static Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
-        return selectVideoRAMSettings(vmBase).getVideoDeviceSpecParams(vmBase);
+        return getVideoDeviceSettings(vmBase).entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> String.valueOf(e.getValue())));
     }
 
-    private static VideoRAMSettings selectVideoRAMSettings(VmBase vmBase) {
+    private static VideoSettings selectVideoSettings(VmBase vmBase) {
         Version vmVersion = vmBase.getCustomCompatibilityVersion();
         Supplier<Version> clusterVersionSupplier = () -> ClusterUtils.getCompatibilityVersion(vmBase);
         if (CompatibilityVersionUtils.getEffective(vmVersion, clusterVersionSupplier).greaterOrEquals(Version.v3_6)) {
-            return new VgamemVideoRAMSettings();
+            return new VgamemVideoSettings();
         } else {
-            return new LegacyVideoRAMSettings();
+            return new LegacyVideoSettings();
         }
+    }
+
+    /**
+     * Returns total video RAM size to be allocated for the given VM.
+     *
+     * @param vm the VM to compute the video RAM size for
+     * @return size of the video RAM in MiB
+     */
+    public static int totalVideoRAMSizeMb(VM vm) {
+        Map<String, Integer> settings = getVideoDeviceSettings(vm.getStaticData());
+        return (settings.getOrDefault(VdsProperties.VIDEO_RAM, 0) +
+                settings.getOrDefault(VdsProperties.VIDEO_VRAM, 0) + 1023) / 1024;
     }
 }

@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.common.utils;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 
 public class VmCommonUtils {
 
@@ -34,6 +38,23 @@ public class VmCommonUtils {
     public static boolean isMemoryToBeHotplugged(VM source, VM destination, boolean memoryUnplugSupported) {
         return source.getMemSizeMb() < destination.getMemSizeMb()
                 || memoryUnplugSupported && source.getMemSizeMb() > destination.getMemSizeMb();
+    }
+
+    /**
+     * Return total maximum possible memory size for the given VM, including hotplugged memory.
+     *
+     * @param vm current configuration of the VM
+     * @return the total possible memory size with hotplug
+     */
+    public static int maxMemorySizeWithHotplugInMb(VM vm) {
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+        if (osRepository.get64bitOss().contains(vm.getOs())) {
+            ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
+                ConfigValues.VMPpc64BitMaxMemorySizeInMB :
+                ConfigValues.VM64BitMaxMemorySizeInMB;
+            return Config.getValue(config, vm.getCompatibilityVersion().getValue());
+        }
+        return Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB);
     }
 
 }
