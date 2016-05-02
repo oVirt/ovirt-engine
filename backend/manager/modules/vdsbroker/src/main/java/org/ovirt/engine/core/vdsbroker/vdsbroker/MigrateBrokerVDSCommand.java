@@ -57,6 +57,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.MIGRATION_CONVERGENCE_SCHEDULE, parameters.getConvergenceSchedule());
         }
 
+        if (parameters.isEnableGuestEvents() != null) {
+            migrationInfo.put(VdsProperties.ENABLE_GUEST_EVENTS, parameters.isEnableGuestEvents());
+        }
+
         return migrationInfo;
     }
 }

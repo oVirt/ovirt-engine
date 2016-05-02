@@ -20,6 +20,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Boolean migrateCompressed;
     private String consoleAddress;
     private Integer maxBandwidth;
+    private Boolean enableGuestEvents;
 
     private Map<String, Object> convergenceSchedule;
 
@@ -27,7 +28,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                                        String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
                                        String dstQemu, Version clusterVersion, int migrationDowntime,
                                        Boolean autoConverge, Boolean migrateCompressed, String consoleAddress,
-                                       Integer maxBandwidth, Map<String, Object> convergenceSchedule) {
+                                       Integer maxBandwidth, Map<String, Object> convergenceSchedule, Boolean enableGuestEvents) {
         super(vdsId, vmId);
         this.srcHost = srcHost;
         this.dstVdsId = dstVdsId;
@@ -42,6 +43,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.consoleAddress = consoleAddress;
         this.maxBandwidth = maxBandwidth;
         this.convergenceSchedule = convergenceSchedule;
+        this.enableGuestEvents = enableGuestEvents;
     }
 
     public String getSrcHost() {
@@ -124,6 +126,14 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.maxBandwidth = maxBandwidth;
     }
 
+    public Boolean isEnableGuestEvents() {
+        return enableGuestEvents;
+    }
+
+    public void setEnableGuestEvents(Boolean enableGuestEvents) {
+        this.enableGuestEvents = enableGuestEvents;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -137,6 +147,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("migrateCompressed", getMigrateCompressed())
                 .append("consoleAddress", getConsoleAddress())
                 .append("maxBandwidth", getMaxBandwidth())
+                .append("enableGuestEvents", isEnableGuestEvents())
                 .append("convergenceSchedule", getConvergenceSchedule());
     }
 }

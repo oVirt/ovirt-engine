@@ -15,6 +15,12 @@ public class MigrationPolicy implements Serializable, Nameable {
 
     private int maxMigrations;
 
+    private boolean autoConvergence;
+
+    private boolean migrationCompression;
+
+    private boolean enableGuestEvents;
+
     private ConvergenceConfig config;
 
     public MigrationPolicy() {}
@@ -64,5 +70,29 @@ public class MigrationPolicy implements Serializable, Nameable {
 
     public void setConfig(ConvergenceConfig config) {
         this.config = config;
+    }
+
+    public boolean isAutoConvergence() {
+        return autoConvergence;
+    }
+
+    public void setAutoConvergence(boolean autoConvergence) {
+        this.autoConvergence = autoConvergence;
+    }
+
+    public boolean isMigrationCompression() {
+        return migrationCompression;
+    }
+
+    public void setMigrationCompression(boolean migrationCompression) {
+        this.migrationCompression = migrationCompression;
+    }
+
+    public boolean isEnableGuestEvents() {
+        return enableGuestEvents;
+    }
+
+    public void setEnableGuestEvents(boolean enableGuestEvents) {
+        this.enableGuestEvents = enableGuestEvents;
     }
 }

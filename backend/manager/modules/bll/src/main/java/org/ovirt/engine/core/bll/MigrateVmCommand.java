@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.migration.ConvergenceConfig;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -200,11 +199,19 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Map<String, Object> convergenceSchedule = null;
         Integer maxBandwidth = null;
 
+        Boolean autoConverge = getAutoConverge();
+        Boolean migrateCompressed = getMigrateCompressed();
+        Boolean enableGuestEvents = null;
+
         if (FeatureSupported.migrationPoliciesSupported(getVm().getCompatibilityVersion())) {
             MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(getCluster().getMigrationPolicyId());
-            convergenceSchedule = ConvergenceSchedule.from(findEffectiveConvergenceConfig(clusterMigrationPolicy)).asMap();
+            MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
+            convergenceSchedule = ConvergenceSchedule.from(effectiveMigrationPolicy.getConfig()).asMap();
 
             maxBandwidth = getMaxBandwidth(clusterMigrationPolicy);
+            autoConverge = effectiveMigrationPolicy.isAutoConvergence();
+            migrateCompressed = effectiveMigrationPolicy.isMigrationCompression();
+            enableGuestEvents = effectiveMigrationPolicy.isEnableGuestEvents();
         }
 
         return new MigrateVDSCommandParameters(getVdsId(),
@@ -217,11 +224,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getMigrationNetworkIp(),
                 getVds().getClusterCompatibilityVersion(),
                 getMaximumMigrationDowntime(),
-                getAutoConverge(),
-                getMigrateCompressed(),
+                autoConverge,
+                migrateCompressed,
                 getDestinationVds().getConsoleAddress(),
                 maxBandwidth,
-                convergenceSchedule);
+                convergenceSchedule,
+                enableGuestEvents);
     }
 
     /**
@@ -298,13 +306,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 .orElse(null);
     }
 
-    private ConvergenceConfig findEffectiveConvergenceConfig(MigrationPolicy clusterMigrationPolicy) {
+    private MigrationPolicy findEffectiveConvergenceConfig(MigrationPolicy clusterMigrationPolicy) {
         Guid overriddenPolicyId = getVm().getMigrationPolicyId();
         if (overriddenPolicyId == null) {
-            return clusterMigrationPolicy.getConfig();
+            return clusterMigrationPolicy;
         }
 
-        return convergenceConfigProvider.getMigrationPolicy(overriddenPolicyId).getConfig();
+        return convergenceConfigProvider.getMigrationPolicy(overriddenPolicyId);
     }
 
     @Override
