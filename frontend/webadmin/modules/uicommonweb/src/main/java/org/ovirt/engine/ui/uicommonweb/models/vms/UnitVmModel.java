@@ -1433,6 +1433,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setAttachedToInstanceType(new EntityModel<>(true));
         setStorageDomain(new NotChangableForVmInPoolListModel<StorageDomain>());
         setName(new NotChangableForVmInPoolEntityModel<String>());
+        getName().getEntityChangedEvent().addListener(this);
         setNumOfMonitors(new NotChangableForVmInPoolListModel<Integer>());
         setAllowConsoleReconnect(new NotChangableForVmInPoolEntityModel<Boolean>());
         setVmId(new NotChangableForVmInPoolEntityModel<String>());
@@ -1944,6 +1945,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 } else {
                     getCustomCpu().setIsChangeable(true);
                 }
+            } else if (sender == getName()) {
+                autoSetHostname();
             }
         }
     }
@@ -1963,6 +1966,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getSysprepEnabled().setEntity(getIsWindowsOS());
             // for the "other" also use cloud init
             getCloudInitEnabled().setEntity(!getIsWindowsOS());
+            autoSetHostname();
+        }
+    }
+
+    private void autoSetHostname() {
+        if(getVmInitEnabled().getEntity()) {
+            getVmInitModel().autoSetHostname(getName().getEntity());
         }
     }
 

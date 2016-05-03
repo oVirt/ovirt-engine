@@ -210,6 +210,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 }
 
                 updateConsoleDevice(template.getId());
+
+                toggleAutoSetVmHostname();
                 getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
                 getModel().getVmInitModel().init(template);
                 getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
@@ -246,5 +248,10 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override public int getMaxNameLength() {
         return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
+    }
+
+    private void toggleAutoSetVmHostname() {
+        // always switch off auto setting of hostname for a template
+        getModel().getVmInitModel().disableAutoSetHostname();
     }
 }

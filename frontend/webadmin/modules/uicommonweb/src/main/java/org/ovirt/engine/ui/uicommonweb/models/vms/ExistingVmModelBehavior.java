@@ -62,6 +62,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
 
+        toggleAutoSetVmHostname();
         getModel().getVmInitEnabled().setEntity(getVm().getVmInit() != null);
         getModel().getVmInitModel().init(getVm().getStaticData());
         getModel().getVmType().setIsChangeable(true);
@@ -354,6 +355,13 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getCdAttached().setEntity(hasCd);
 
         updateCdImage();
+    }
+
+    private void toggleAutoSetVmHostname() {
+        if (getVm().getVmInit() != null && vm.getName() != null
+                && !vm.getName().equals(getVm().getVmInit().getHostname())) {
+            getModel().getVmInitModel().disableAutoSetHostname();
+        }
     }
 
     private void addCpuListeners() {

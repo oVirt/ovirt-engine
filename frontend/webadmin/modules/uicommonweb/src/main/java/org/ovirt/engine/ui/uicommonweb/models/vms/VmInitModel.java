@@ -644,6 +644,8 @@ public class VmInitModel extends Model {
 
             initNetworks(vmInit);
         }
+
+        addHostnameListeners();
     }
 
     private void initNetworks(VmInit vmInit) {
@@ -946,6 +948,10 @@ public class VmInitModel extends Model {
                 cloudInitPasswordSetChanged();
             } else if (sender == getSysprepPasswordSet()) {
                 sysprepPasswordSetChanged();
+            } else if (sender == getHostname()) {
+                disableAutoSetHostname();
+            } else if (sender == getWindowsHostname()) {
+                disableAutoSetHostname();
             }
         }
     }
@@ -1086,5 +1092,31 @@ public class VmInitModel extends Model {
                                                                                   }
                                                                               }
                                                                           }));
+    }
+
+    /**
+     * Do not automatically change guest's hostname when the user already did manually
+     */
+    private boolean canAutoSetHostname = true;
+    private boolean disableOnHostnameChanged = false;
+
+    public void autoSetHostname(String hostName) {
+        if (canAutoSetHostname) {
+            disableOnHostnameChanged = true;
+            getWindowsHostname().setEntity(hostName);
+            getHostname().setEntity(hostName);
+            disableOnHostnameChanged = false;
+        }
+    }
+
+    public void disableAutoSetHostname() {
+        if (!disableOnHostnameChanged) {
+            canAutoSetHostname = false;
+        }
+    }
+
+    private void addHostnameListeners() {
+        getHostname().getEntityChangedEvent().addListener(this);
+        getWindowsHostname().getEntityChangedEvent().addListener(this);
     }
 }

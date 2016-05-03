@@ -152,6 +152,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
                     getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
 
+                    toggleAutoSetVmHostname();
                     getModel().getVmInitModel().init(vmBase);
                     getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
 
@@ -290,4 +291,10 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     public IValidation getNameAllowedCharactersIValidation() {
         return new PoolNameValidation();
     }
+
+    private void toggleAutoSetVmHostname() {
+        // always switch off auto setting of hostname for pool VMs
+        getModel().getVmInitModel().disableAutoSetHostname();
+    }
+
 }
