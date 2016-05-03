@@ -773,6 +773,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
         }
 
+        if (!validateMemoryAlignment(getParameters().getVmStaticData())) {
+            return false;
+        }
+
         if (isVirtioScsiEnabled())  {
             // Verify OS compatibility
             if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),

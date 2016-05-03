@@ -105,6 +105,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Minimum memory size is {0} MB.")
     String minMemSizeIs(int minMemSize);
 
+    @DefaultMessage("Memory size on {0} architecture must be multiple of {1}.")
+    String memSizeMultipleOf(String architectureName, int multiplier);
+
     @DefaultMessage("Name must contain only alphanumeric characters, \"-\", \"_\" or \".\". Maximum length: {0}.")
     String nameMustConataionOnlyAlphanumericChars(int maxLen);
 

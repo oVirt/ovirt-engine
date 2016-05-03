@@ -3688,6 +3688,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The CPU type of the cluster is unknown. Its possible to change the cluster cpu or set a different one per VM.")
     String CPU_TYPE_UNKNOWN();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Memory size must be multiple of 256 on '${clusterArch}' architecture.")
+    String MEMORY_SIZE_NOT_MULTIPLE_OF_256_ON_PPC();
+
     @DefaultStringValue("Cannot ${action} ${type}. This operation is not supported for external networks.")
     String ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK();
 

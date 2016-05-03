@@ -630,6 +630,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
         }
 
+        if (!validateMemoryAlignment(getParameters().getVmStaticData())) {
+            return false;
+        }
+
         if (getInstanceTypeId() != null && getInstanceType() == null) {
             // invalid instance type
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST);

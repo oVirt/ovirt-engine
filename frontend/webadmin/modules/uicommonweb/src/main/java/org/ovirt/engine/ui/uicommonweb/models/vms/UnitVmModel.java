@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -2909,6 +2910,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (getMemSize().getIsValid()) {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
+        validateMemoryAlignment(getMemSize());
 
         if (getIoThreadsEnabled().getEntity()) {
             getNumOfIoThreads().validateEntity(new IValidation[] {new NotNullIntegerValidation(1, AsyncDataProvider.getInstance().getMaxIoThreadsPerVm())});
@@ -3027,6 +3029,28 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         model.setIsValid(isValid);
+    }
+
+    private void validateMemoryAlignment(EntityModel<Integer> model) {
+        if (!model.getIsValid()) {
+            return;
+        }
+
+        int memSize = model.getEntity();
+
+        DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null) {
+            return;
+        }
+        Cluster cluster = dataCenterWithCluster.getCluster();
+        ArchitectureType architectureFamily = cluster.getArchitecture().getFamily();
+
+        if (architectureFamily == ArchitectureType.ppc && memSize % 256 != 0) {
+            model.getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .memSizeMultipleOf(architectureFamily.toString(), 256));
+            model.setIsValid(false);
+        }
     }
 
     private NotChangableForVmInPoolListModel<EntityModel<VmPoolType>> poolType;

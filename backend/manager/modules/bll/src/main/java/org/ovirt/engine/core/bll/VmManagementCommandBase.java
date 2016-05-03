@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -121,6 +122,14 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfileForUser(getParameters().getVm().getStaticData(),
                 getUserId()));
+    }
+
+    protected boolean validateMemoryAlignment(VmStatic vmStaticData) {
+        if (getCluster().getArchitecture().getFamily() == ArchitectureType.ppc && vmStaticData.getMemSizeMb() % 256 != 0) {
+            return failValidation(EngineMessage.MEMORY_SIZE_NOT_MULTIPLE_OF_256_ON_PPC,
+                    String.format("$%s %s", "clusterArch", getCluster().getArchitecture()));
+        }
+        return true;
     }
 
     protected void updateParametersVmFromInstanceType() {
