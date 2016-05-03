@@ -481,6 +481,12 @@ public enum VdcQueryType implements Serializable {
     // migration profiles
     GetAllMigrationPolicies,
 
+    // Labels
+    GetAllLabels,
+    GetLabelById,
+    GetLabelsByIds,
+    GetLabelByEntityId,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 
