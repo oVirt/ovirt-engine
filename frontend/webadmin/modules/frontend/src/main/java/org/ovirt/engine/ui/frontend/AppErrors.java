@@ -589,6 +589,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG();
 
+    String VAR__TYPE__GLUSTER_GEOREP_SESSION();
+
     String VAR__TYPE__HOST_DEVICES();
 
     String VAR__TYPE__USER_PROFILE();
