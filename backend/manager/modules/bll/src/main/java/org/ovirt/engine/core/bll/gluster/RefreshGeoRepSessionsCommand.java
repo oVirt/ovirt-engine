@@ -21,6 +21,8 @@ public class RefreshGeoRepSessionsCommand<T extends GlusterVolumeParameters> ext
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__REFRESH);
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addValidationMessageVariable("volumeName", getGlusterVolumeName());
+        addValidationMessageVariable("cluster", getClusterName());
     }
 
     @Override
