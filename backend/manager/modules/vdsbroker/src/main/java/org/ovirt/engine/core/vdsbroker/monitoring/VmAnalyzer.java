@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static org.ovirt.engine.core.utils.ObjectIdentityChecker.getChangedFields;
 
 import java.lang.reflect.Field;
@@ -794,7 +797,8 @@ public class VmAnalyzer {
     }
 
     private void updateInterfaceStatistics() {
-        if (vdsmVm.getVmStatistics().getInterfaceStatistics() == null) {
+        List<VmNetworkInterface> ifsStats = vdsmVm.getVmStatistics().getInterfaceStatistics();
+        if (ifsStats == null || ifsStats.isEmpty()) {
             return;
         }
 
@@ -804,16 +808,14 @@ public class VmAnalyzer {
 
         NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder();
 
-        for (VmNetworkInterface ifStats : vdsmVm.getVmStatistics().getInterfaceStatistics()) {
+        for (VmNetworkInterface ifStats : ifsStats) {
             boolean firstTime = !macs.contains(ifStats.getMacAddress());
 
-            VmNetworkInterface vmIface = null;
-            for (VmNetworkInterface tempIf : dbVm.getInterfaces()) {
-                if (tempIf.getMacAddress().equals(ifStats.getMacAddress())) {
-                    vmIface = tempIf;
-                    break;
-                }
-            }
+            VmNetworkInterface vmIface = dbVm.getInterfaces().stream()
+                    .filter(iface -> iface.getMacAddress().equals(ifStats.getMacAddress()))
+                    .findFirst()
+                    .orElse(null);
+
             if (vmIface == null) {
                 continue;
             }
@@ -826,13 +828,13 @@ public class VmAnalyzer {
             if (firstTime) {
                 statsBuilder.updateExistingInterfaceStatistics(vmIface, ifStats);
             } else {
-                vmIface.getStatistics().setReceiveRate(Math.max(vmIface.getStatistics().getReceiveRate(),
+                vmIface.getStatistics().setReceiveRate(max(vmIface.getStatistics().getReceiveRate(),
                         ifStats.getStatistics().getReceiveRate()));
-                vmIface.getStatistics().setReceiveDropRate(Math.max(vmIface.getStatistics().getReceiveDropRate(),
+                vmIface.getStatistics().setReceiveDropRate(max(vmIface.getStatistics().getReceiveDropRate(),
                         ifStats.getStatistics().getReceiveDropRate()));
-                vmIface.getStatistics().setTransmitRate(Math.max(vmIface.getStatistics().getTransmitRate(),
+                vmIface.getStatistics().setTransmitRate(max(vmIface.getStatistics().getTransmitRate(),
                         ifStats.getStatistics().getTransmitRate()));
-                vmIface.getStatistics().setTransmitDropRate(Math.max(vmIface.getStatistics().getTransmitDropRate(),
+                vmIface.getStatistics().setTransmitDropRate(max(vmIface.getStatistics().getTransmitDropRate(),
                         ifStats.getStatistics().getTransmitDropRate()));
             }
             vmIface.setVmId(dbVm.getId());
@@ -843,8 +845,8 @@ public class VmAnalyzer {
                 double rx_percent = vmIface.getStatistics().getReceiveRate();
                 double tx_percent = vmIface.getStatistics().getTransmitRate();
 
-                dbVm.setUsageNetworkPercent(Math.max(dbVm.getUsageNetworkPercent(),
-                        (int) Math.max(rx_percent, tx_percent)));
+                dbVm.setUsageNetworkPercent(max(dbVm.getUsageNetworkPercent(),
+                        (int) max(rx_percent, tx_percent)));
             }
 
             if (firstTime) {
@@ -852,10 +854,7 @@ public class VmAnalyzer {
             }
         }
 
-        Integer maxPercent = 100;
-        dbVm.setUsageNetworkPercent((dbVm.getUsageNetworkPercent() > maxPercent) ?
-                maxPercent :
-                dbVm.getUsageNetworkPercent());
+        dbVm.setUsageNetworkPercent(min(dbVm.getUsageNetworkPercent(), 100));
         Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
         dbVm.addNetworkUsageHistory(dbVm.getUsageNetworkPercent(), usageHistoryLimit);
     }
@@ -953,8 +952,8 @@ public class VmAnalyzer {
     }
 
     protected boolean isBalloonWorking(VmBalloonInfo balloonInfo) {
-        return Math.abs(balloonInfo.getBalloonLastMemory() - balloonInfo.getBalloonTargetMemory())
-                > Math.abs(balloonInfo.getCurrentMemory() - balloonInfo.getBalloonTargetMemory());
+        return abs(balloonInfo.getBalloonLastMemory() - balloonInfo.getBalloonTargetMemory())
+                > abs(balloonInfo.getCurrentMemory() - balloonInfo.getBalloonTargetMemory());
     }
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
