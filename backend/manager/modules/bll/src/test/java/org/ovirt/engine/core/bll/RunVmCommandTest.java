@@ -45,6 +45,7 @@ import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -67,6 +68,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -96,6 +98,9 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Mock
     private VmDao vmDao;
+
+    @Mock
+    private SnapshotDao snapshotDAO;
 
     @Mock
     private StoragePoolDao spDao;
@@ -328,6 +333,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
         doNothing().when(command).updateCurrentCd(any(String.class));
+        doReturn(snapshotDAO).when(command).getSnapshotDao();
+        when(snapshotDAO.exists(any(Guid.class), any(SnapshotStatus.class))).thenReturn(false);
         return vm;
     }
 
@@ -471,6 +478,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(vm).when(command).getVm();
         final RunVmParams params = new RunVmParams();
         params.setRunAsStateless(true);
+        doReturn(false).when(command).isStatelessSnapshotExistsForVm();
         doReturn(params).when(command).getParameters();
         doNothing().when(command).fetchVmDisksFromDb();
         assertEquals(RunVmFlow.CREATE_STATELESS_IMAGES, command.getFlow());
@@ -487,6 +495,20 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isInternalExecution();
         doReturn(true).when(command).isStatelessSnapshotExistsForVm();
         doReturn(false).when(command).isVmPartOfManualPool();
+        assertEquals(RunVmFlow.REMOVE_STATELESS_IMAGES, command.getFlow());
+    }
+
+    @Test
+    public void testFlowOnStatelessWithStatelessSnapshot() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        vm.getDiskList().add(new DiskImage());
+        doReturn(vm).when(command).getVm();
+        final RunVmParams params = new RunVmParams();
+        params.setRunAsStateless(true);
+        doReturn(params).when(command).getParameters();
+        doReturn(true).when(command).isStatelessSnapshotExistsForVm();
+        doNothing().when(command).fetchVmDisksFromDb();
         assertEquals(RunVmFlow.REMOVE_STATELESS_IMAGES, command.getFlow());
     }
 

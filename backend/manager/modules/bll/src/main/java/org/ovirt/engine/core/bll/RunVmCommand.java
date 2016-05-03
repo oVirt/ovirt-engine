@@ -399,6 +399,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 return setFlow(RunVmFlow.RUN);
             }
 
+            if (isStatelessSnapshotExistsForVm()) {
+                log.error("VM '{}' ({}) already contains stateless snapshot, removing it",
+                        getVm().getName(), getVm().getId());
+                return setFlow(RunVmFlow.REMOVE_STATELESS_IMAGES);
+            }
+
             return setFlow(RunVmFlow.CREATE_STATELESS_IMAGES);
         }
 
@@ -422,7 +428,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             break;
 
         case CREATE_STATELESS_IMAGES:
-            statelessVmTreatment();
+            createVmStatelessImages();
             break;
 
         case RESUME_HIBERNATE:
@@ -472,38 +478,29 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return IsoDomainListSyncronizer.getInstance();
     }
 
-    private void statelessVmTreatment() {
+    private void createVmStatelessImages() {
         warnIfNotAllDisksPermitSnapshots();
 
-        if (isStatelessSnapshotExistsForVm()) {
-            log.error(
-                    "VM '{}' ({}) already contains stateless snapshot, removing it",
-                    getVm().getName(), getVm().getId());
-            removeVmStatlessImages();
+        log.info("Creating stateless snapshot for VM '{}' ({})",
+                getVm().getName(), getVm().getId());
+        CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
+
+        VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
+                createAllSnapshotsFromVmParameters,
+                createContextForStatelessSnapshotCreation());
+
+        // setting lock to null in order not to release lock twice
+        setLock(null);
+        setSucceeded(vdcReturnValue.getSucceeded());
+        if (vdcReturnValue.getSucceeded()) {
+            getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
         } else {
-            log.info("Creating stateless snapshot for VM '{}' ({})",
-                    getVm().getName(), getVm().getId());
-            CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
-
-            VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    createAllSnapshotsFromVmParameters,
-                    createContextForStatelessSnapshotCreation());
-
-            // setting lock to null in order not to release lock twice
-            setLock(null);
-            setSucceeded(vdcReturnValue.getSucceeded());
-
-            if (vdcReturnValue.getSucceeded()) {
-
-                getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-            } else {
-                if (areDisksLocked(vdcReturnValue)) {
-                    throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
-                }
-                getReturnValue().setFault(vdcReturnValue.getFault());
-                log.error("Failed to create stateless snapshot for VM '{}' ({})",
-                        getVm().getName(), getVm().getId());
+            if (areDisksLocked(vdcReturnValue)) {
+                throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
+            getReturnValue().setFault(vdcReturnValue.getFault());
+            log.error("Failed to create stateless snapshot for VM '{}' ({})",
+                    getVm().getName(), getVm().getId());
         }
     }
 
