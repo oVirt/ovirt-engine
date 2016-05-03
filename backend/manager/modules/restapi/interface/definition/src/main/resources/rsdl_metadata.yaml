@@ -3104,7 +3104,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+      - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
         description: copy the specified disk attached to the template to a specific storage domain
     headers:
       Filter: {value: true|false, required: false}
