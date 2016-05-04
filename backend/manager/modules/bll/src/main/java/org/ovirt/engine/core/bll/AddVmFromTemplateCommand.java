@@ -18,16 +18,12 @@ import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
-import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -102,37 +98,22 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     }
 
     @Override
-    protected boolean addVmImages() {
-        if (getVmTemplate().getDiskTemplateMap().size() > 0) {
-            if (getVm().getStatus() != VMStatus.Down) {
-                log.error("Cannot add images. VM is not Down");
-                throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
-            }
-            VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
-            Collection<DiskImage> templateDisks = getVmTemplate().getDiskTemplateMap().values();
-            List<DiskImage> diskImages = ImagesHandler.filterImageDisks(templateDisks, true, false, true);
-            for (DiskImage disk : diskImages) {
-                VdcReturnValueBase result = runInternalActionWithTasksContext(
-                        VdcActionType.CreateCloneOfTemplate,
-                        buildCreateCloneOfTemplateParameters(disk)
-                );
-
-                // if couldn't create snapshot then stop the transaction and the command
-                if (!result.getSucceeded()) {
-                    throw new EngineException(result.getFault().getError());
-                }
-                getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-                DiskImage newImage = result.getActionReturnValue();
-                getSrcDiskIdToTargetDiskIdMapping().put(disk.getId(), newImage.getId());
-            }
-
-            // Clone volumes for Cinder disk templates
-            addVmCinderDisks(templateDisks);
-        }
-        return true;
+    protected VdcActionType getDiskCreationCommandType() {
+        return VdcActionType.CreateCloneOfTemplate;
     }
 
-    private CreateCloneOfTemplateParameters buildCreateCloneOfTemplateParameters(DiskImage disk) {
+    @Override
+    protected void lockVM() {
+        VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
+    }
+
+    @Override
+    protected Collection<DiskImage> getImagesToCheckDestinationStorageDomains() {
+        return getVmTemplate().getDiskTemplateMap().values();
+    }
+
+    @Override
+    protected CreateCloneOfTemplateParameters buildDiskCreationParameters(DiskImage disk) {
         DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(disk.getId());
         CreateCloneOfTemplateParameters params = new CreateCloneOfTemplateParameters(disk.getImageId(),
                 getParameters().getVmStaticData().getId(), diskInfo);

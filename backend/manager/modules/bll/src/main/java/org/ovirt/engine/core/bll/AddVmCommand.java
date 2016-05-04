@@ -1147,13 +1147,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 log.error("Cannot add images. VM is not Down");
                 throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
-            VmHandler.lockVm(getVmId());
+            lockVM();
             Collection<DiskImage> templateDisks = getImagesToCheckDestinationStorageDomains();
             List<DiskImage> diskImages = ImagesHandler.filterImageDisks(templateDisks, true, false, true);
             for (DiskImage image : diskImages) {
                 VdcReturnValueBase result = runInternalActionWithTasksContext(
-                        VdcActionType.CreateSnapshotFromTemplate,
-                        buildCreateSnapshotFromTemplateParameters(image));
+                        getDiskCreationCommandType(),
+                        buildDiskCreationParameters(image));
 
                 /**
                  * if couldn't create snapshot then stop the transaction and the command
@@ -1173,7 +1173,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
-    private CreateSnapshotFromTemplateParameters buildCreateSnapshotFromTemplateParameters(DiskImage image) {
+    protected VdcActionType getDiskCreationCommandType() {
+        return VdcActionType.CreateSnapshotFromTemplate;
+    }
+
+    protected void lockVM() {
+        VmHandler.lockVm(getVmId());
+    }
+
+    protected CreateSnapshotFromTemplateParameters buildDiskCreationParameters(DiskImage image) {
         CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                 image.getImageId(), getParameters().getVmStaticData().getId());
         tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(image.getId()).getStorageIds().get(0));
