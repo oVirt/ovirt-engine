@@ -78,7 +78,7 @@ public final class VdcEventNotificationUtils {
         addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.IRS_DISK_SPACE_LOW);
         addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
         addEventNotificationEntry(EventNotificationEntity.Storage,
-                AuditLogType.NUNBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
+                AuditLogType.NUMBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
         // GLUSTER
         addEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_CREATE);
         addEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_CREATE_FAILED);
