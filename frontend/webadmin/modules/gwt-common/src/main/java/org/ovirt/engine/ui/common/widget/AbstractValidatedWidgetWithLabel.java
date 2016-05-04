@@ -303,6 +303,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
         if (enabled) {
             getFormLabel().getElement().replaceClassName(OvirtCss.LABEL_DISABLED, OvirtCss.LABEL_ENABLED);
+            setWidgetTooltip("");
         } else {
             getFormLabel().getElement().replaceClassName(OvirtCss.LABEL_ENABLED, OvirtCss.LABEL_DISABLED);
         }
