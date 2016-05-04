@@ -10,6 +10,7 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
     private Boolean plugDiskToVm;
     private boolean shouldRemainIllegalOnFailedExecution;
     private boolean skipDomainCheck;
+    private Guid vdsId;
 
     public AddDiskParameters() {
         storageDomainId = Guid.Empty;
@@ -58,5 +59,13 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
 
     public void setSkipDomainCheck(boolean skipDomainCheck) {
         this.skipDomainCheck = skipDomainCheck;
+    }
+
+    public Guid getVdsId() {
+        return vdsId;
+    }
+
+    public void setVdsId(Guid vdsId) {
+        this.vdsId = vdsId;
     }
 }
