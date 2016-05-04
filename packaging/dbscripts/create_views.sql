@@ -2552,18 +2552,22 @@ SELECT vnic_profiles.id AS id,
     vnic_profiles.custom_properties AS custom_properties,
     vnic_profiles.description AS description,
     vnic_profiles.network_filter_id AS network_filter_id,
+    network_filter.filter_name AS network_filter_name,
     network.name AS network_name,
     qos.name AS network_qos_name,
     storage_pool.name AS data_center_name,
     storage_pool.compatibility_version AS compatibility_version,
     storage_pool.id AS data_center_id
+
 FROM vnic_profiles
 INNER JOIN network
     ON vnic_profiles.network_id = network.id
 LEFT JOIN qos
     ON vnic_profiles.network_qos_id = qos.id
 INNER JOIN storage_pool
-    ON network.storage_pool_id = storage_pool.id;
+    ON network.storage_pool_id = storage_pool.id
+LEFT JOIN network_filter
+    ON vnic_profiles.network_filter_id = network_filter.filter_id;
 
 ----------------------------------------------
 -- Query Permissions

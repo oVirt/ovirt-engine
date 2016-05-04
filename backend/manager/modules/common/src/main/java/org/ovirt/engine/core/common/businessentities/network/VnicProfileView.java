@@ -11,6 +11,7 @@ public class VnicProfileView extends VnicProfile {
     private String networkQosName;
     private String dataCenterName;
     private Version compatibilityVersion;
+    private String networkFilterName;
 
     public static final VnicProfileView EMPTY = new VnicProfileView();
 
@@ -46,6 +47,14 @@ public class VnicProfileView extends VnicProfile {
         this.compatibilityVersion = compatibilityVersion;
     }
 
+    public String getNetworkFilterName() {
+        return networkFilterName;
+    }
+
+    public void setNetworkFilterName(String networkFilterName) {
+        this.networkFilterName = networkFilterName;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -53,7 +62,8 @@ public class VnicProfileView extends VnicProfile {
                 compatibilityVersion,
                 dataCenterName,
                 networkName,
-                networkQosName
+                networkQosName,
+                networkFilterName
         );
     }
 
@@ -70,6 +80,7 @@ public class VnicProfileView extends VnicProfile {
                 && Objects.equals(compatibilityVersion, other.compatibilityVersion)
                 && Objects.equals(dataCenterName, other.dataCenterName)
                 && Objects.equals(networkName, other.networkName)
-                && Objects.equals(networkQosName, other.networkQosName);
+                && Objects.equals(networkQosName, other.networkQosName)
+                && Objects.equals(networkFilterName, other.networkFilterName);
     }
 }
