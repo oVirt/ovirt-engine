@@ -2,12 +2,14 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,7 +19,7 @@ public class HostInterfaceForm extends Composite {
     private final Grid grid;
 
     @SuppressWarnings("unchecked")
-    public HostInterfaceForm(final HostInterfaceListModel listModel) {
+    public HostInterfaceForm(final HostInterfaceListModel listModel, final VDS vds) {
         grid = new Grid(1, 4);
         grid.getColumnFormatter().setWidth(0, "230px"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(1, "200px"); //$NON-NLS-1$
@@ -29,7 +31,7 @@ public class HostInterfaceForm extends Composite {
 
         List<HostInterfaceLineModel> interfaceLineModels = (List<HostInterfaceLineModel>) listModel.getItems();
         if (interfaceLineModels != null) {
-            showModels(interfaceLineModels);
+            showModels(interfaceLineModels, vds);
         }
 
         listModel.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -37,7 +39,7 @@ public class HostInterfaceForm extends Composite {
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 HostInterfaceListModel model = (HostInterfaceListModel) sender;
                 List<HostInterfaceLineModel> interfaceLineModels = (List<HostInterfaceLineModel>) model.getItems();
-                showModels(interfaceLineModels);
+                showModels(interfaceLineModels, vds);
             }
         });
 
@@ -47,7 +49,7 @@ public class HostInterfaceForm extends Composite {
                 String propName = args.propertyName;
                 if ("isSelectionAvailable".equals(propName)) { //$NON-NLS-1$
                     if (listModel.getItems() != null) {
-                        showModels((List<HostInterfaceLineModel>) listModel.getItems());
+                        showModels((List<HostInterfaceLineModel>) listModel.getItems(), vds);
                     }
                 }
             }
@@ -62,8 +64,8 @@ public class HostInterfaceForm extends Composite {
         return panel;
     }
 
-    BondPanel createBondPanel(HostInterfaceLineModel lineModel) {
-        BondPanel panel = new BondPanel(lineModel);
+    BondPanel createBondPanel(HostInterfaceLineModel lineModel, VDS vds) {
+        BondPanel panel = new BondPanel(lineModel, vds);
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         return panel;
@@ -85,14 +87,14 @@ public class HostInterfaceForm extends Composite {
         return panel;
     }
 
-    void showModels(List<HostInterfaceLineModel> interfaceLineModels) {
+    void showModels(List<HostInterfaceLineModel> interfaceLineModels, VDS vds) {
         this.setVisible(true);
         grid.resizeRows(interfaceLineModels.size());
         int row = 0;
 
         for (HostInterfaceLineModel lineModel : interfaceLineModels) {
             setGridWidget(row, 0, createInterfacePanel(lineModel));
-            setGridWidget(row, 1, createBondPanel(lineModel));
+            setGridWidget(row, 1, createBondPanel(lineModel, vds));
             setGridWidget(row, 2, createVLanPanel(lineModel));
             setGridWidget(row, 3, createStatisticsPanel(lineModel));
             row++;

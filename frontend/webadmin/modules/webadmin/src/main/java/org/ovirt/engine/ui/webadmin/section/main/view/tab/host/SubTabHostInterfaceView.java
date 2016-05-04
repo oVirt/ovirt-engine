@@ -138,7 +138,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
         // TODO(vszocs) possible performance optimization: don't create HostInterfaceForm upon each selection
-        hostInterfaceForm = new HostInterfaceForm(getDetailModel());
+        hostInterfaceForm = new HostInterfaceForm(getDetailModel(), selectedItem);
         contentPanel.remove(contentPanel.getWidgetCount() - 1);
         contentPanel.add(hostInterfaceForm);
     }

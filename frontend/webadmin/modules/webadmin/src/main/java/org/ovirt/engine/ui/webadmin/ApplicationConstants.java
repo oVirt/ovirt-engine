@@ -4825,4 +4825,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Custom Properties")
     String customPropertiesTabLabel();
+
+    @DefaultStringValue("Bond is in link aggregation mode (mode 4) but no partner mac has been reported for it.")
+    String bondInMode4HasNoPartnerMac();
 }

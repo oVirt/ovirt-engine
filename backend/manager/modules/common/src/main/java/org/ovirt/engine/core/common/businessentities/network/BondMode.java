@@ -49,7 +49,7 @@ public enum BondMode {
         return isValidForVmNetwork;
     }
 
-    static BondMode parseBondMode(String bondOptions){
+    public static BondMode parseBondMode(String bondOptions){
         return bondOptions == null ? null : getBondMode(findMode(bondOptions));
     }
 

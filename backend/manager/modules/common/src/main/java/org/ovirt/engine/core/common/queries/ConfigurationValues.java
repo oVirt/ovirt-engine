@@ -94,7 +94,8 @@ public enum ConfigurationValues {
     UploadImageXhrTimeoutInSeconds,
     UploadImageXhrRetryIntervalInSeconds,
     UploadImageXhrMaxRetries,
-    MigrationPolicies;
+    MigrationPolicies,
+    AdPartnerMacSupported;
 
     public static enum ConfigAuthType {
         Admin,
