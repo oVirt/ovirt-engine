@@ -204,6 +204,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 if (getModel().getSelectedCluster() != null) {
                     updateCpuProfile(getModel().getSelectedCluster().getId(), template.getCpuProfileId());
                 }
+                provisioning_SelectedItemChanged();
             }
         });
     }
@@ -256,8 +257,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         boolean provisioning = getModel().getProvisioning().getEntity();
         getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
         getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
-        getModel().getDisksAllocationModel().setIsVolumeTypeAvailable(true);
-        getModel().getDisksAllocationModel().setIsVolumeTypeChangable(provisioning);
+        getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
+        getModel().getDisksAllocationModel().setIsVolumeFormatChangeable(provisioning);
+        getModel().getDisksAllocationModel().setIsThinProvisioning(!provisioning);
         getModel().getDisksAllocationModel().setIsAliasChangable(true);
 
         initStorageDomains();

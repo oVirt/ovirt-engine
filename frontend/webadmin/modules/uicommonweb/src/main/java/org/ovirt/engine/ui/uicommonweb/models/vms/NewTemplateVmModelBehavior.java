@@ -70,8 +70,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
         disksAllocationModel.setIsVolumeFormatAvailable(true);
+        disksAllocationModel.setIsVolumeFormatChangeable(true);
         disksAllocationModel.setIsAliasChangable(true);
         disksAllocationModel.setContainer(getModel());
+        disksAllocationModel.setIsThinProvisioning(false);
 
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {

@@ -45,6 +45,8 @@ public class DisksAllocationModel extends EntityModel {
     protected static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private static final String VOLUME_TYPE = "VOLUME_TYPE";  //$NON-NLS-1$
+    private static final String VOLUME_FORMAT = "VOLUME_FORMAT";  //$NON-NLS-1$
+    private static final String THIN_PROVISIONING = "THIN_PROVISIONING";  //$NON-NLS-1$
 
     private final IEventListener<EventArgs> storageDomainEventListener = new IEventListener<EventArgs>() {
         @Override
@@ -113,6 +115,7 @@ public class DisksAllocationModel extends EntityModel {
                     DiskModel diskModel = diskModelsMap.get(entry.getKey());
                     diskModel.getVolumeType().setSelectedItem(entry.getValue().getVolumeType());
                     diskModel.getVolumeFormat().setSelectedItem(entry.getValue().getVolumeFormat());
+                    updateStorageDomainsAvailability();
                 }
             }
         }), new ArrayList<>(diskModelsMap.keySet()));
@@ -157,9 +160,11 @@ public class DisksAllocationModel extends EntityModel {
         return quotaEnforcementType;
     }
 
-    private boolean volumeFormatAvailable;
+    private boolean isVolumeFormatAvailable;
+    private boolean isVolumeFormatChangeable;
     private boolean isVolumeTypeAvailable;
     private boolean isVolumeTypeChangable;
+    private boolean isThinProvisioning;
     private boolean isAliasChangable;
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainNameAvailable;
@@ -265,7 +270,9 @@ public class DisksAllocationModel extends EntityModel {
     @Override
     protected void onPropertyChanged(PropertyChangedEventArgs e) {
         super.onPropertyChanged(e);
-        if (e.propertyName.equals("Disks") || e.propertyName.equals(VOLUME_TYPE)) { //$NON-NLS-1$
+        if (e.propertyName.equals("Disks") || e.propertyName.equals(VOLUME_TYPE) //$NON-NLS-1$
+                || e.propertyName.equals(VOLUME_FORMAT)
+                || e.propertyName.equals(THIN_PROVISIONING)) {
             updateStorageDomainsAvailability();
             updateQuotaAvailability();
         }
@@ -281,7 +288,17 @@ public class DisksAllocationModel extends EntityModel {
             diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
             diskModel.getVolumeType().setIsAvailable(isVolumeTypeAvailable);
             diskModel.getVolumeType().setIsChangeable(isVolumeTypeChangable);
+            diskModel.getVolumeFormat().setIsAvailable(isVolumeFormatAvailable);
+            diskModel.getVolumeFormat().setIsChangeable(isVolumeFormatChangeable);
             diskModel.getAlias().setIsChangeable(isAliasChangable);
+
+            boolean isCinder = diskModel.getDisk().getDiskStorageType() == DiskStorageType.CINDER;
+            if (isCinder) {
+                diskModel.getVolumeFormat().setIsChangeable(false);
+                diskModel.getVolumeFormat().setSelectedItem(VolumeFormat.RAW);
+            } else if (isThinProvisioning) {
+                diskModel.getVolumeFormat().setSelectedItem(VolumeFormat.COW);
+            }
         }
     }
 
@@ -378,11 +395,11 @@ public class DisksAllocationModel extends EntityModel {
     }
 
     public void setIsVolumeFormatAvailable(boolean isVolumeFormatAvailable) {
-        this.volumeFormatAvailable = isVolumeFormatAvailable;
+        this.isVolumeFormatAvailable = isVolumeFormatAvailable;
     }
 
     public boolean getIsVolumeFormatAvailable() {
-        return volumeFormatAvailable;
+        return isVolumeFormatAvailable;
     }
 
     public boolean getIsAliasChangable() {
@@ -393,10 +410,24 @@ public class DisksAllocationModel extends EntityModel {
         this.isAliasChangable = isAliasChangable;
     }
 
+    public void setIsThinProvisioning(boolean isThinProvisioning) {
+        if (this.isThinProvisioning != isThinProvisioning) {
+            this.isThinProvisioning = isThinProvisioning;
+            onPropertyChanged(new PropertyChangedEventArgs(THIN_PROVISIONING));
+        }
+    }
+
     public void setIsVolumeTypeChangable(boolean isVolumeTypeChangable) {
         if (this.isVolumeTypeChangable != isVolumeTypeChangable) {
             this.isVolumeTypeChangable = isVolumeTypeChangable;
             onPropertyChanged(new PropertyChangedEventArgs(VOLUME_TYPE));
+        }
+    }
+
+    public void setIsVolumeFormatChangeable(boolean isVolumeFormatChangeable) {
+        if (this.isVolumeFormatChangeable != isVolumeFormatChangeable) {
+            this.isVolumeFormatChangeable = isVolumeFormatChangeable;
+            onPropertyChanged(new PropertyChangedEventArgs(VOLUME_FORMAT));
         }
     }
 

@@ -664,6 +664,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     ListModel volumeTypes = new ListModel();
                     volumeTypes.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
                     diskModel.setVolumeType(volumeTypes);
+                    ListModel volumeFormats = new ListModel();
+                    volumeFormats.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeFormat())), cinderDisk.getVolumeFormat());
+                    diskModel.setVolumeFormat(volumeFormats);
                     break;
             }
 
