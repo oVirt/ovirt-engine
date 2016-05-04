@@ -38,7 +38,6 @@ class Plugin(plugin.PluginBase):
         def __init__(self, plugin):
             super(Plugin._ManualFiles, self).__init__(plugin=plugin)
             self._plugin = plugin
-            self._tempfiles = []
 
         @property
         def plugin(self):
@@ -143,19 +142,15 @@ class Plugin(plugin.PluginBase):
                         mode=oct(mode),
                     )
                 )
-            self._tempfiles.append(fname)
-
-        def cleanup(self):
-            for f in self._tempfiles:
-                if f is not None:
-                    try:
-                        os.unlink(f.name)
-                    except OSError:
-                        self.logger.debug(
-                            "Failed to delete '%s'",
-                            f.name,
-                            exc_info=True,
-                        )
+            self.dialog.queryString(
+                name='PROMPT_REMOTE_ENGINE_MANUAL_COPY_FILES',
+                note="Please press Enter to continue: ",
+                prompt=True,
+                default='y'  # Allow enter without any value
+            )
+            if not fname:
+                # Remove temporary file
+                os.unlink(inpfile.name)
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
