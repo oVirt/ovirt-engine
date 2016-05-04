@@ -34,9 +34,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
     protected void executeCommand() {
         List<DiskImage> imageTemplates = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(
                 getVmTemplateId()), false, false, true);
-        boolean noImagesRemovedYet = true;
         for (DiskImage template : imageTemplates) {
-            // get disk
             // remove this disk in all domain that were sent
             for (Guid domain : (Collection<Guid>)CollectionUtils.intersection(getParameters().getStorageDomainsList(), template.getStorageIds())) {
                 ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getImageId(),
@@ -56,12 +54,6 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 } else {
-                    if (noImagesRemovedYet) {
-                        setSucceeded(false);
-                        getReturnValue().setFault(vdcReturnValue.getFault());
-                        return;
-                    }
-
                     log.error("Can't remove image id '{}' for template id '{}' from domain id '{}' due to: {}.",
                             template.getImageId(), getVmTemplateId(), domain,
                             vdcReturnValue.getFault().getMessage());
@@ -69,7 +61,6 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
 
                 DbFacade.getInstance().getImageStorageDomainMapDao().remove(
                         new ImageStorageDomainMapId(template.getImageId(), domain));
-                noImagesRemovedYet = false;
             }
 
             DiskImage diskImage = DbFacade.getInstance().getDiskImageDao().get(template.getImageId());
