@@ -84,6 +84,3 @@ packaging/dbscripts/*.log
 # jrebel plugin integration for IDE
 # #########################
 *rebel.xml
-
-# zanata cache
-.zanata-cache/
