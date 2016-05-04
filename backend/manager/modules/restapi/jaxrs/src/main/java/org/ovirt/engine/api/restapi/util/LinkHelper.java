@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.ws.rs.Path;
@@ -354,76 +355,120 @@ public class LinkHelper {
     /**
      * A map describing every possible collection
      */
-    private static ModelToCollectionsMap TYPES = new ModelToCollectionsMap();
+    private static EntityLocationMap TYPES = new EntityLocationMap();
 
     /**
      * A map for caching relevant resource methods for each class
      */
     private static ConcurrentMap<Class<?>, List<Method>> methodCache = new ConcurrentHashMap<>();
 
-    static {
-        ParentToCollectionMap map;
+    /**
+     * This class serves as a key to a map which stores values of 'Path' annotations
+     * found in Service interfaces. A 'collection' service (e.g: VmsService) along
+     * with a single-entity Service (e.g: VmService) identify a location on the API
+     * tree, which may be associated with a value of a 'Path' annotation.
+     */
+    private static class PathKey {
+        private Class<?> service;
+        private Class<?> parentService;
+        public PathKey(Class<?> service, Class<?> parentService) {
+            super();
+            this.service = service;
+            this.parentService = parentService;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof PathKey) {
+                PathKey key = (PathKey)obj;
+                return equals(service, key.service) && equals(parentService, key.parentService);
+            } else {
+                return false;
+            }
+        }
+        private boolean equals(Class<?> class1, Class<?> class2) {
+            return Objects.equals(class1, class2);
+        }
 
-        map = new ParentToCollectionMap(TemplateCdromResource.class, TemplateCdromsResource.class, Template.class);
+        @Override
+        public int hashCode() {
+            if (service==null && parentService==null) {
+                return 0;
+            }
+            if (service==null) {
+                return parentService.hashCode();
+            }
+            if (parentService==null) {
+                return service.hashCode();
+            }
+            return 997 * (service.hashCode()) ^ 991 * (parentService.hashCode()); //large primes!
+        }
+    }
+
+    private static ConcurrentMap<PathKey, String> pathCache = new ConcurrentHashMap<>();
+
+    static {
+        LocationByParentMap map;
+
+        map = new LocationByParentMap(TemplateCdromResource.class, TemplateCdromsResource.class, Template.class);
         map.add(VmCdromResource.class, VmCdromsResource.class, Vm.class);
         TYPES.put(Cdrom.class, map);
 
-        map = new ParentToCollectionMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class);
+        map = new LocationByParentMap(GraphicsConsoleResource.class, GraphicsConsolesResource.class);
         map.add(VmGraphicsConsoleResource.class, GraphicsConsolesResource.class, Vm.class);
         map.add(GraphicsConsoleResource.class, GraphicsConsolesResource.class, Template.class);
         map.add(GraphicsConsoleResource.class, GraphicsConsolesResource.class, InstanceType.class);
         TYPES.put(GraphicsConsole.class, map);
 
-        map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, Vm.class);
+        map = new LocationByParentMap(VmApplicationResource.class, VmApplicationsResource.class, Vm.class);
         TYPES.put(Application.class, map);
 
-        map = new ParentToCollectionMap(VmReportedDeviceResource.class, VmReportedDevicesResource.class, Vm.class);
+        map = new LocationByParentMap(VmReportedDeviceResource.class, VmReportedDevicesResource.class, Vm.class);
         TYPES.put(ReportedDevice.class, map);
 
-        map = new ParentToCollectionMap(ClusterResource.class, ClustersResource.class);
+        map = new LocationByParentMap(ClusterResource.class, ClustersResource.class);
         TYPES.put(Cluster.class, map);
 
-        map = new ParentToCollectionMap(DataCenterResource.class, DataCentersResource.class);
+        map = new LocationByParentMap(DataCenterResource.class, DataCentersResource.class);
         TYPES.put(DataCenter.class, map);
 
-        map = new ParentToCollectionMap(MacPoolResource.class, MacPoolsResource.class);
+        map = new LocationByParentMap(MacPoolResource.class, MacPoolsResource.class);
         TYPES.put(MacPool.class, map);
 
-        map = new ParentToCollectionMap(DiskResource.class, DisksResource.class);
+        map = new LocationByParentMap(DiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, Vm.class);
         map.add(TemplateDiskResource.class, TemplateDisksResource.class, Template.class);
         TYPES.put(Disk.class, map);
 
-        map = new ParentToCollectionMap(DiskSnapshotResource.class, DiskSnapshotsResource.class, StorageDomain.class);
+        map = new LocationByParentMap(DiskSnapshotResource.class, DiskSnapshotsResource.class, StorageDomain.class);
         TYPES.put(DiskSnapshot.class, map);
 
-        map = new ParentToCollectionMap(StorageServerConnectionExtensionResource.class, StorageServerConnectionExtensionsResource.class, Host.class);
+        map = new LocationByParentMap(StorageServerConnectionExtensionResource.class, StorageServerConnectionExtensionsResource.class, Host.class);
         TYPES.put(StorageConnectionExtension.class, map);
 
-        map = new ParentToCollectionMap(org.ovirt.engine.api.resource.HostResource.class, org.ovirt.engine.api.resource.HostsResource.class);
+        map = new LocationByParentMap(org.ovirt.engine.api.resource.HostResource.class, org.ovirt.engine.api.resource.HostsResource.class);
         TYPES.put(Host.class, map);
 
-        map = new ParentToCollectionMap(HostNicResource.class, HostNicsResource.class, Host.class);
+        map = new LocationByParentMap(HostNicResource.class, HostNicsResource.class, Host.class);
         TYPES.put(HostNic.class, map);
 
-        map = new ParentToCollectionMap(HostNumaNodeResource.class, HostNumaNodesResource.class, Host.class);
+        map = new LocationByParentMap(HostNumaNodeResource.class, HostNumaNodesResource.class, Host.class);
         TYPES.put(NumaNode.class, map);
 
-        map = new ParentToCollectionMap(HostHookResource.class, HostHooksResource.class, Host.class);
+        map = new LocationByParentMap(HostHookResource.class, HostHooksResource.class, Host.class);
         TYPES.put(Hook.class, map);
 
-        map = new ParentToCollectionMap(FileResource.class, FilesResource.class, StorageDomain.class);
+        map = new LocationByParentMap(FileResource.class, FilesResource.class, StorageDomain.class);
         TYPES.put(File.class, map);
 
-        map = new ParentToCollectionMap(ImageResource.class, ImagesResource.class);
+        map = new LocationByParentMap(ImageResource.class, ImagesResource.class);
         map.add(ImageResource.class, ImagesResource.class, StorageDomain.class);
         TYPES.put(Image.class, map);
 
-        map = new ParentToCollectionMap(GroupResource.class, GroupsResource.class);
+        map = new LocationByParentMap(GroupResource.class, GroupsResource.class);
         map.add(DomainGroupResource.class, DomainGroupsResource.class, Domain.class);
         TYPES.put(Group.class, map);
 
-        map = new ParentToCollectionMap(PermissionResource.class, AssignedPermissionsResource.class, User.class);
+        map = new LocationByParentMap(PermissionResource.class, AssignedPermissionsResource.class, User.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Group.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Role.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Vm.class);
@@ -431,42 +476,42 @@ public class LinkHelper {
         map.add(PermissionResource.class, SystemPermissionsResource.class, NO_PARENT);
         TYPES.put(Permission.class, map);
 
-        map = new ParentToCollectionMap(NetworkResource.class, NetworksResource.class);
+        map = new LocationByParentMap(NetworkResource.class, NetworksResource.class);
         map.add(AssignedNetworkResource.class, AssignedNetworksResource.class, Cluster.class);
         map.add(NetworkResource.class, NetworksResource.class, Network.class);
         map.add(VirtualFunctionAllowedNetworkResource.class, VirtualFunctionAllowedNetworksResource.class, HostNic.class);
         TYPES.put(Network.class, map);
 
-        map = new ParentToCollectionMap();
+        map = new LocationByParentMap();
         map.add(InstanceTypeNicResource.class, InstanceTypeNicsResource.class, InstanceType.class);
         map.add(TemplateNicResource.class, TemplateNicsResource.class, Template.class);
         map.add(VmNicResource.class, VmNicsResource.class, Vm.class);
         TYPES.put(Nic.class, map);
 
-        map = new ParentToCollectionMap(VmNumaNodeResource.class, VmNumaNodesResource.class, Vm.class);
+        map = new LocationByParentMap(VmNumaNodeResource.class, VmNumaNodesResource.class, Vm.class);
         TYPES.put(VirtualNumaNode.class, map);
 
-        map = new ParentToCollectionMap(PermitResource.class, PermitsResource.class, Role.class);
+        map = new LocationByParentMap(PermitResource.class, PermitsResource.class, Role.class);
         TYPES.put(Permit.class, map);
 
-        map = new ParentToCollectionMap(RoleResource.class, RolesResource.class);
+        map = new LocationByParentMap(RoleResource.class, RolesResource.class);
         map.add(RoleResource.class, AssignedRolesResource.class, User.class);
         TYPES.put(Role.class, map);
 
-        map = new ParentToCollectionMap(SnapshotResource.class, SnapshotsResource.class, Vm.class);
+        map = new LocationByParentMap(SnapshotResource.class, SnapshotsResource.class, Vm.class);
         TYPES.put(Snapshot.class, map);
 
-        map = new ParentToCollectionMap(StorageResource.class, HostStorageResource.class, Host.class);
+        map = new LocationByParentMap(StorageResource.class, HostStorageResource.class, Host.class);
         TYPES.put(HostStorage.class, map);
 
-        map = new ParentToCollectionMap(StorageServerConnectionResource.class, StorageServerConnectionsResource.class);
+        map = new LocationByParentMap(StorageServerConnectionResource.class, StorageServerConnectionsResource.class);
         TYPES.put(StorageConnection.class, map);
 
-        map = new ParentToCollectionMap(StorageDomainResource.class, StorageDomainsResource.class);
+        map = new LocationByParentMap(StorageDomainResource.class, StorageDomainsResource.class);
         map.add(AttachedStorageDomainResource.class, AttachedStorageDomainsResource.class, DataCenter.class);
         TYPES.put(StorageDomain.class, map);
 
-        map = new ParentToCollectionMap(TagResource.class, TagsResource.class);
+        map = new LocationByParentMap(TagResource.class, TagsResource.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Host.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, User.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Vm.class);
@@ -474,38 +519,38 @@ public class LinkHelper {
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Group.class);
         TYPES.put(Tag.class, map);
 
-        map = new ParentToCollectionMap(BookmarkResource.class, BookmarksResource.class);
+        map = new LocationByParentMap(BookmarkResource.class, BookmarksResource.class);
         TYPES.put(Bookmark.class, map);
 
-        map = new ParentToCollectionMap(IconResource.class, IconsResource.class);
+        map = new LocationByParentMap(IconResource.class, IconsResource.class);
         TYPES.put(Icon.class, map);
 
-        map = new ParentToCollectionMap(TemplateResource.class, TemplatesResource.class);
+        map = new LocationByParentMap(TemplateResource.class, TemplatesResource.class);
         map.add(StorageDomainTemplateResource.class, StorageDomainTemplatesResource.class, StorageDomain.class);
         TYPES.put(Template.class, map);
 
-        map = new ParentToCollectionMap(InstanceTypeResource.class, InstanceTypesResource.class);
+        map = new LocationByParentMap(InstanceTypeResource.class, InstanceTypesResource.class);
         TYPES.put(InstanceType.class, map);
 
-        map = new ParentToCollectionMap(UserResource.class, UsersResource.class);
+        map = new LocationByParentMap(UserResource.class, UsersResource.class);
         map.add(DomainUserResource.class, DomainUsersResource.class, Domain.class);
         TYPES.put(User.class, map);
 
-        map = new ParentToCollectionMap(VmResource.class, VmsResource.class);
+        map = new LocationByParentMap(VmResource.class, VmsResource.class);
         map.add(StorageDomainVmResource.class, StorageDomainVmsResource.class, StorageDomain.class);
 //        map.add(SnapshotResource.class, SnapshotsResource.class, Snapshot.class);
         TYPES.put(Vm.class, map);
 
-        map = new ParentToCollectionMap(VmPoolResource.class, VmPoolsResource.class);
+        map = new LocationByParentMap(VmPoolResource.class, VmPoolsResource.class);
         TYPES.put(VmPool.class, map);
 
-        map = new ParentToCollectionMap(EventResource.class, EventsResource.class);
+        map = new LocationByParentMap(EventResource.class, EventsResource.class);
         TYPES.put(Event.class, map);
 
-        map = new ParentToCollectionMap(DomainResource.class, DomainsResource.class);
+        map = new LocationByParentMap(DomainResource.class, DomainsResource.class);
         TYPES.put(Domain.class, map);
 
-        map = new ParentToCollectionMap(StatisticResource.class, StatisticsResource.class, Disk.class);
+        map = new LocationByParentMap(StatisticResource.class, StatisticsResource.class, Disk.class);
         map.add(StatisticResource.class, StatisticsResource.class, Host.class);
         map.add(StatisticResource.class, StatisticsResource.class, HostNic.class);
         map.add(StatisticResource.class, StatisticsResource.class, NumaNode.class);
@@ -514,158 +559,158 @@ public class LinkHelper {
         map.add(StatisticResource.class, StatisticsResource.class, GlusterBrick.class);
         TYPES.put(Statistic.class, map);
 
-        map = new ParentToCollectionMap(QuotaResource.class, QuotasResource.class, DataCenter.class);
+        map = new LocationByParentMap(QuotaResource.class, QuotasResource.class, DataCenter.class);
         TYPES.put(Quota.class, map);
 
-        map = new ParentToCollectionMap(QuotaStorageLimitResource.class, QuotaStorageLimitsResource.class, Quota.class);
+        map = new LocationByParentMap(QuotaStorageLimitResource.class, QuotaStorageLimitsResource.class, Quota.class);
         TYPES.put(QuotaStorageLimit.class, map);
-        map = new ParentToCollectionMap(QuotaClusterLimitResource.class, QuotaClusterLimitsResource.class, Quota.class);
+        map = new LocationByParentMap(QuotaClusterLimitResource.class, QuotaClusterLimitsResource.class, Quota.class);
         TYPES.put(QuotaClusterLimit.class, map);
 
-        map = new ParentToCollectionMap(GlusterVolumeResource.class, GlusterVolumesResource.class, Cluster.class);
+        map = new LocationByParentMap(GlusterVolumeResource.class, GlusterVolumesResource.class, Cluster.class);
         TYPES.put(GlusterVolume.class, map);
         TYPES.put(GlusterVolumeProfileDetails.class, map);
 
-        map = new ParentToCollectionMap(GlusterBrickResource.class, GlusterBricksResource.class, GlusterVolume.class);
+        map = new LocationByParentMap(GlusterBrickResource.class, GlusterBricksResource.class, GlusterVolume.class);
         TYPES.put(GlusterBrick.class, map);
 
-        map = new ParentToCollectionMap(GlusterHookResource.class, GlusterHooksResource.class, Cluster.class);
+        map = new LocationByParentMap(GlusterHookResource.class, GlusterHooksResource.class, Cluster.class);
         TYPES.put(GlusterHook.class, map);
 
-        map = new ParentToCollectionMap(CapabiliyResource.class, CapabilitiesResource.class);
+        map = new LocationByParentMap(CapabiliyResource.class, CapabilitiesResource.class);
         TYPES.put(VersionCaps.class, map);
 
-        map = new ParentToCollectionMap();
+        map = new LocationByParentMap();
         map.add(InstanceTypeWatchdogResource.class, InstanceTypeWatchdogsResource.class, InstanceType.class);
         map.add(TemplateWatchdogResource.class, TemplateWatchdogsResource.class, Template.class);
         map.add(VmWatchdogResource.class, VmWatchdogsResource.class, Vm.class);
         TYPES.put(Watchdog.class, map);
 
-        map = new ParentToCollectionMap(JobResource.class, JobsResource.class);
+        map = new LocationByParentMap(JobResource.class, JobsResource.class);
         TYPES.put(Job.class, map);
 
-        map = new ParentToCollectionMap(StepResource.class, StepsResource.class, Job.class);
+        map = new LocationByParentMap(StepResource.class, StepsResource.class, Job.class);
         TYPES.put(Step.class, map);
 
-        map = new ParentToCollectionMap(VnicProfileResource.class, VnicProfilesResource.class);
+        map = new LocationByParentMap(VnicProfileResource.class, VnicProfilesResource.class);
         TYPES.put(VnicProfile.class, map);
 
-        map = new ParentToCollectionMap(LabelResource.class, LabelsResource.class);
+        map = new LocationByParentMap(LabelResource.class, LabelsResource.class);
         map.add(LabelResource.class, LabelsResource.class, Network.class);
         map.add(LabelResource.class, LabelsResource.class, HostNic.class);
         TYPES.put(Label.class, map);
 
-        map = new ParentToCollectionMap(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, Host.class);
+        map = new LocationByParentMap(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, Host.class);
         map.add(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, HostNic.class);
         TYPES.put(NetworkAttachment.class, map);
 
-        map = new ParentToCollectionMap(UnmanagedNetworkResource.class, UnmanagedNetworksResource.class, Host.class);
+        map = new LocationByParentMap(UnmanagedNetworkResource.class, UnmanagedNetworksResource.class, Host.class);
         TYPES.put(UnmanagedNetwork.class, map);
 
-        map = new ParentToCollectionMap(AffinityGroupResource.class, AffinityGroupsResource.class, Cluster.class);
+        map = new LocationByParentMap(AffinityGroupResource.class, AffinityGroupsResource.class, Cluster.class);
         TYPES.put(AffinityGroup.class, map);
 
-        map = new ParentToCollectionMap(VmSessionResource.class, VmSessionsResource.class, Vm.class);
+        map = new LocationByParentMap(VmSessionResource.class, VmSessionsResource.class, Vm.class);
         TYPES.put(Session.class, map);
 
-        map = new ParentToCollectionMap(HostDevice.class, HostDevices.class);
+        map = new LocationByParentMap(HostDevice.class, HostDevices.class);
         map.add(HostDeviceResource.class, HostDevicesResource.class, Host.class);
         map.add(VmHostDeviceResource.class, VmHostDevicesResource.class, Vm.class);
         TYPES.put(HostDevice.class, map);
 
-        map = new ParentToCollectionMap(SchedulingPolicyUnitResource.class, SchedulingPolicyUnitsResource.class);
+        map = new LocationByParentMap(SchedulingPolicyUnitResource.class, SchedulingPolicyUnitsResource.class);
         TYPES.put(SchedulingPolicyUnit.class, map);
 
-        map = new ParentToCollectionMap(SchedulingPolicyResource.class, SchedulingPoliciesResource.class);
+        map = new LocationByParentMap(SchedulingPolicyResource.class, SchedulingPoliciesResource.class);
         TYPES.put(SchedulingPolicy.class, map);
 
-        map = new ParentToCollectionMap(FilterResource.class, FiltersResource.class, SchedulingPolicy.class);
+        map = new LocationByParentMap(FilterResource.class, FiltersResource.class, SchedulingPolicy.class);
         TYPES.put(Filter.class, map);
 
-        map = new ParentToCollectionMap(WeightResource.class, WeightsResource.class, SchedulingPolicy.class);
+        map = new LocationByParentMap(WeightResource.class, WeightsResource.class, SchedulingPolicy.class);
         TYPES.put(Weight.class, map);
 
-        map = new ParentToCollectionMap(BalanceResource.class, BalancesResource.class, SchedulingPolicy.class);
+        map = new LocationByParentMap(BalanceResource.class, BalancesResource.class, SchedulingPolicy.class);
         TYPES.put(Balance.class, map);
 
-        map = new ParentToCollectionMap(QosResource.class, QossResource.class, DataCenter.class);
+        map = new LocationByParentMap(QosResource.class, QossResource.class, DataCenter.class);
         map.add(QosResource.class, QossResource.class, Network.class);
         TYPES.put(Qos.class, map);
 
-        map = new ParentToCollectionMap(IscsiBondResource.class, IscsiBondsResource.class, DataCenter.class);
+        map = new LocationByParentMap(IscsiBondResource.class, IscsiBondsResource.class, DataCenter.class);
         TYPES.put(IscsiBond.class, map);
 
-        map = new ParentToCollectionMap(DiskProfileResource.class, DiskProfilesResource.class);
+        map = new LocationByParentMap(DiskProfileResource.class, DiskProfilesResource.class);
         TYPES.put(DiskProfile.class, map);
 
-        map = new ParentToCollectionMap(CpuProfileResource.class, CpuProfilesResource.class);
+        map = new LocationByParentMap(CpuProfileResource.class, CpuProfilesResource.class);
         TYPES.put(CpuProfile.class, map);
 
         // Operating systems:
-        map = new ParentToCollectionMap(OperatingSystemResource.class, OperatingSystemsResource.class);
+        map = new LocationByParentMap(OperatingSystemResource.class, OperatingSystemsResource.class);
         TYPES.put(OperatingSystemInfo.class, map);
 
         // External host providers:
-        map = new ParentToCollectionMap(ExternalHostProviderResource.class, ExternalHostProvidersResource.class);
+        map = new LocationByParentMap(ExternalHostProviderResource.class, ExternalHostProvidersResource.class);
         TYPES.put(ExternalHostProvider.class, map);
 
-        map = new ParentToCollectionMap(ExternalHostResource.class, ExternalHostsResource.class);
+        map = new LocationByParentMap(ExternalHostResource.class, ExternalHostsResource.class);
         map.add(ExternalHostResource.class, ExternalHostsResource.class, ExternalHostProvider.class);
         TYPES.put(ExternalHost.class, map);
 
-        map = new ParentToCollectionMap(ExternalDiscoveredHostResource.class, ExternalHostsResource.class);
+        map = new LocationByParentMap(ExternalDiscoveredHostResource.class, ExternalHostsResource.class);
         map.add(ExternalDiscoveredHostResource.class, ExternalDiscoveredHostsResource.class, ExternalHostProvider.class);
         TYPES.put(ExternalDiscoveredHost.class, map);
 
-        map = new ParentToCollectionMap(ExternalHostGroupResource.class, ExternalHostGroupsResource.class);
+        map = new LocationByParentMap(ExternalHostGroupResource.class, ExternalHostGroupsResource.class);
         map.add(ExternalHostGroupResource.class, ExternalHostGroupsResource.class, ExternalHostProvider.class);
         TYPES.put(ExternalHostGroup.class, map);
 
-        map = new ParentToCollectionMap(ExternalComputeResourceResource.class, ExternalComputeResourcesResource.class);
+        map = new LocationByParentMap(ExternalComputeResourceResource.class, ExternalComputeResourcesResource.class);
         map.add(ExternalComputeResourceResource.class, ExternalComputeResourcesResource.class, ExternalHostProvider.class);
         TYPES.put(ExternalComputeResource.class, map);
 
         // OpenStack image providers:
-        map = new ParentToCollectionMap(OpenstackImageProviderResource.class, OpenstackImageProvidersResource.class);
+        map = new LocationByParentMap(OpenstackImageProviderResource.class, OpenstackImageProvidersResource.class);
         TYPES.put(OpenStackImageProvider.class, map);
 
-        map = new ParentToCollectionMap(OpenstackImageResource.class, OpenstackImagesResource.class);
+        map = new LocationByParentMap(OpenstackImageResource.class, OpenstackImagesResource.class);
         map.add(OpenstackImageResource.class, OpenstackImagesResource.class, OpenStackImageProvider.class);
         TYPES.put(OpenStackImage.class, map);
 
         // OpenStack volume providers:
-        map = new ParentToCollectionMap(OpenstackVolumeProviderResource.class, OpenstackVolumeProvidersResource.class);
+        map = new LocationByParentMap(OpenstackVolumeProviderResource.class, OpenstackVolumeProvidersResource.class);
         TYPES.put(OpenStackVolumeProvider.class, map);
 
-        map = new ParentToCollectionMap(OpenstackVolumeTypeResource.class, OpenstackVolumeTypesResource.class);
+        map = new LocationByParentMap(OpenstackVolumeTypeResource.class, OpenstackVolumeTypesResource.class);
         map.add(OpenstackVolumeTypeResource.class, OpenstackVolumeTypesResource.class, OpenStackVolumeProvider.class);
         TYPES.put(OpenStackVolumeType.class, map);
 
-        map = new ParentToCollectionMap(OpenstackVolumeAuthenticationKeyResource.class, OpenstackVolumeAuthenticationKeysResource.class);
+        map = new LocationByParentMap(OpenstackVolumeAuthenticationKeyResource.class, OpenstackVolumeAuthenticationKeysResource.class);
         map.add(OpenstackVolumeAuthenticationKeyResource.class, OpenstackVolumeAuthenticationKeysResource.class, OpenStackVolumeProvider.class);
         TYPES.put(OpenstackVolumeAuthenticationKey.class, map);
 
         // OpenStack network providers:
-        map = new ParentToCollectionMap(OpenstackNetworkProviderResource.class, OpenstackNetworkProvidersResource.class);
+        map = new LocationByParentMap(OpenstackNetworkProviderResource.class, OpenstackNetworkProvidersResource.class);
         TYPES.put(OpenStackNetworkProvider.class, map);
 
-        map = new ParentToCollectionMap(OpenstackNetworkResource.class, OpenstackNetworksResource.class);
+        map = new LocationByParentMap(OpenstackNetworkResource.class, OpenstackNetworksResource.class);
         map.add(OpenstackNetworkResource.class, OpenstackNetworksResource.class, OpenStackNetworkProvider.class);
         TYPES.put(OpenStackNetwork.class, map);
 
-        map = new ParentToCollectionMap(OpenstackSubnetResource.class, OpenstackSubnetsResource.class);
+        map = new LocationByParentMap(OpenstackSubnetResource.class, OpenstackSubnetsResource.class);
         map.add(OpenstackSubnetResource.class, OpenstackSubnetsResource.class, OpenStackNetwork.class);
         TYPES.put(OpenStackSubnet.class, map);
 
-        map = new ParentToCollectionMap(FenceAgentResource.class, FenceAgentsResource.class, Host.class);
+        map = new LocationByParentMap(FenceAgentResource.class, FenceAgentsResource.class, Host.class);
         TYPES.put(Agent.class, map);
 
-        map = new ParentToCollectionMap(KatelloErratumResource.class, KatelloErrataResource.class, Host.class);
+        map = new LocationByParentMap(KatelloErratumResource.class, KatelloErrataResource.class, Host.class);
         map.add(KatelloErratumResource.class, KatelloErrataResource.class, Vm.class);
         map.add(KatelloErratumResource.class, EngineKatelloErrataResource.class, NO_PARENT);
         TYPES.put(KatelloErratum.class, map);
 
-        map = new ParentToCollectionMap();
+        map = new LocationByParentMap();
         map.add(SshPublicKeyResource.class, SshPublicKeysResource.class, User.class);
         TYPES.put(SshPublicKey.class, map);
     }
@@ -678,20 +723,11 @@ public class LinkHelper {
      * returned value should be the value of the {@link Path} annotation on the
      * {@link SystemResource#getBookmarksResource()} method.
      *
-     * @param clz the collection resource type
+     * @param service the collection resource type
      * @return the relative path to the collection
      */
-    private static String getRelativePath(Class<?> clz) {
-        for (Method method : SystemResource.class.getMethods()) {
-            if (method.getReturnType() == clz) {
-                Path annotation = method.getAnnotation(Path.class);
-                if (annotation != null) {
-                    return annotation.value();
-                }
-            }
-        }
-        log.error("Can't find relative path for class \"" + clz.getName() + "\", will return null");
-        return null;
+    private static String getRelativePath(Class<?> service) {
+        return getRelativePath(service, SystemResource.class);
     }
 
     /**
@@ -700,17 +736,28 @@ public class LinkHelper {
      * The path is obtained from the @Path annotation on the method on @parent
      * which returns an instance of @clz.
      *
-     * @param clz    the collection resource type (e.g. AssignedTagsResource)
-     * @param parent the parent resource type (e.g. VmResource)
+     * @param service    the collection resource type (e.g. AssignedTagsResource)
+     * @param parentService the parent resource type (e.g. VmResource)
      * @return       the relative path to the collection
      */
-    private static String getRelativePath(Class<?> clz, Class<?> parent) {
-        for (Method method : parent.getMethods()) {
-            if (method.getName().startsWith("get") && method.getReturnType() == clz) {
-                Path pathAnnotation = method.getAnnotation(Path.class);
-                return pathAnnotation.value();
+    private static String getRelativePath(Class<?> service, Class<?> parentService) {
+        PathKey key = new PathKey(service, parentService);
+        String path = pathCache.get(key);
+        if (path!=null) {
+            return path;
+        }
+        else {
+            for (Method method : parentService.getMethods()) {
+                if (method.getName().startsWith("get") && method.getReturnType() == service) {
+                    Path pathAnnotation = method.getAnnotation(Path.class);
+                    if (pathAnnotation != null) {
+                        pathCache.put(key, pathAnnotation.value());
+                        return pathAnnotation.value();
+                    }
+                }
             }
         }
+        log.error("Can't find relative path for class \"" + service.getName() + "\", will return null");
         return null;
     }
 
@@ -744,7 +791,6 @@ public class LinkHelper {
                 }
             }
         }
-
         return ret;
     }
 
@@ -800,10 +846,16 @@ public class LinkHelper {
      * @param parentType the type of the parent
      * @return           the parent object, or null if not set
      */
-    private static <R extends BaseResource> BaseResource getParentModel(R model, Class<?> parentType) {
-        for (BaseResource inline : getInlineResources(model)) {
-            if (parentType.isAssignableFrom(inline.getClass())) {
-                return inline;
+    private static <R extends BaseResource> BaseResource getParent(R model, Class<?> parentType) {
+        for (Method method : getRelevantMethods(model.getClass())) {
+            try {
+                Object potentialParent = method.invoke(model);
+                if (potentialParent != null && parentType.isAssignableFrom(potentialParent.getClass())) {
+                    return (BaseResource)potentialParent;
+                }
+            } catch (Exception e) {
+                log.error("Error invoking method when adding links to an API entity", e);
+                continue;
             }
         }
         return null;
@@ -819,8 +871,8 @@ public class LinkHelper {
      * @param model the object to query for
      * @return      the #Collection instance representing the object's collection
      */
-    private static Collection getCollection(BaseResource model) {
-        return getCollection(model, null);
+    private static ApiLocationMetadata getCollection(BaseResource model) {
+        return getLocationMetadata(model, null);
     }
 
     /**
@@ -834,31 +886,30 @@ public class LinkHelper {
      * @param suggestedParentType  the suggested parent type
      * @return                     the #Collection instance representing the object's collection
      */
-    private static Collection getCollection(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
-        ParentToCollectionMap collections = TYPES.get(model.getClass());
+    private static ApiLocationMetadata getLocationMetadata(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
+        LocationByParentMap locationByParentMap = TYPES.get(model.getClass());
 
-        if (collections == null) {
+        if (locationByParentMap == null) {
             return null;
         }
 
-        if (suggestedParentType != null) {
-            for (Entry<Class<? extends BaseResource>, Collection> entry : collections.entrySet()) {
-                if (entry.getKey().equals(suggestedParentType)) {
-                    return entry.getValue();
-                }
+        if (suggestedParentType != null && locationByParentMap.containsKey(suggestedParentType)) {
+            return locationByParentMap.get(suggestedParentType);
+        }
+
+        for (Entry<Class<? extends BaseResource>, ApiLocationMetadata> entry : locationByParentMap.entrySet()) {
+            if (entry.getKey() != NO_PARENT &&
+                getParent(model, entry.getKey()) != null) {
+                return entry.getValue();
             }
         }
 
-        for (Entry<Class<? extends BaseResource>, Collection> parentTypeEntry : collections.entrySet()) {
-            if (parentTypeEntry.getKey() != NO_PARENT &&
-                getParentModel(model, parentTypeEntry.getKey()) != null) {
-                return parentTypeEntry.getValue();
-            }
-        }
-
-        return collections.get(NO_PARENT);
+        return locationByParentMap.get(NO_PARENT);
     }
 
+    private static ApiLocationMetadata getLocationMetadata(BaseResource model) {
+        return getLocationMetadata(model, null);
+    }
     /**
      * Computes the path for the given object. For example, for a tag of a virtual machine returns the path
      * {@code /ovirt-engine/api/vms/{vm:id}/tags/{tag:id}}.
@@ -873,33 +924,24 @@ public class LinkHelper {
     /**
      * Computes the path for the given object, using the given type to find out what is the type of the parent.
      *
-     * @param object the object
+     * @param entity the object
      * @param suggestedParentType the suggested parent type
      * @return the path for the object, or {@code null} if the path can't be determined
      */
-    public static String getPath(BaseResource object, Class<? extends BaseResource> suggestedParentType) {
-        Collection collection = getCollection(object, suggestedParentType);
-        if (collection == null) {
+    public static String getPath(BaseResource entity, Class<? extends BaseResource> suggestedParentType) {
+        ApiLocationMetadata locationMetadata = getLocationMetadata(entity, suggestedParentType);
+        if (locationMetadata != null) {
+            if (locationMetadata.getParentType() != NO_PARENT) {
+                return getPathConsideringParent(entity, locationMetadata);
+            } else {
+                return getPathWithoutParent(entity, locationMetadata);
+            }
+        } else {
             return null;
         }
+    }
 
-        if (collection.getParentType() != NO_PARENT) {
-            BaseResource parent = getParentModel(object, collection.getParentType());
-            if (parent == null) {
-                return null;
-            }
-            Collection parentCollection = getCollection(parent, suggestedParentType);
-            if (parentCollection == null) {
-                return null;
-            }
-            String parentPath = getPath(parent);
-            if (parentPath == null) {
-                return null;
-            }
-            String relativePath = getRelativePath(collection.getCollectionType(), parentCollection.getResourceType());
-            return String.join("/", parentPath, relativePath, object.getId());
-        }
-
+    private static String getPathWithoutParent(BaseResource entity, ApiLocationMetadata locationMetadata) {
         Current current = CurrentManager.get();
         StringBuilder buffer = new StringBuilder();
         buffer.append(current.getPrefix());
@@ -908,21 +950,27 @@ public class LinkHelper {
             buffer.append(current.getVersion());
         }
         buffer.append("/");
-        buffer.append(getRelativePath(collection.getCollectionType()));
+        buffer.append(getRelativePath(locationMetadata.getCollectionServiceClass()));
         buffer.append("/");
-        buffer.append(object.getId());
+        buffer.append(entity.getId());
         return buffer.toString();
     }
 
-    /**
-     * Set the href attribute on the supplied object
-     *
-     * e.g. set href = '/restapi-definition/vms/{vm_id}/tags/{tag_id}' on a VM tag
-     *
-     * @param model the object
-     */
-    private static void setHref(BaseResource model) {
-        setHref(model, null);
+    private static String getPathConsideringParent(BaseResource entity, ApiLocationMetadata locationMetadata) {
+        BaseResource parent = getParent(entity, locationMetadata.getParentType());
+        if (parent == null) {
+            return null;
+        }
+        ApiLocationMetadata parentLocationMetadata = getLocationMetadata(parent);
+        if (parentLocationMetadata == null) {
+            return null;
+        }
+        String parentPath = getPath(parent);
+        if (parentPath == null) {
+            return null;
+        }
+        String relativePath = getRelativePath(locationMetadata.getCollectionServiceClass(), parentLocationMetadata.getEntityServiceClass());
+        return String.join("/", parentPath, relativePath, entity.getId());
     }
 
     /**
@@ -933,8 +981,7 @@ public class LinkHelper {
      * @param model the object
      * @param suggestedParentType  the suggested parent type
      */
-    private static void setHref(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
-        String path = getPath(model, suggestedParentType);
+    private static void setHref(BaseResource model, String path) {
         if (path != null) {
             model.setHref(path);
         }
@@ -946,14 +993,11 @@ public class LinkHelper {
      * @param model   the object
      * @param suggestedParentType  the suggested parent type
      */
-    private static void setActions(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
-        Collection collection = getCollection(model);
+    private static void setActions(BaseResource model, String path) {
+        ApiLocationMetadata collection = getCollection(model);
         if (collection != null) {
-            String path = getPath(model, suggestedParentType);
-            if (path != null) {
-                ActionsBuilder actionsBuilder = new ActionsBuilder(path, collection.getResourceType());
-                model.setActions(actionsBuilder.build());
-            }
+            ActionsBuilder actionsBuilder = new ActionsBuilder(path, collection.getEntityServiceClass());
+            model.setActions(actionsBuilder.build());
         }
     }
 
@@ -988,51 +1032,97 @@ public class LinkHelper {
     }
 
     public static <R extends BaseResource> R addLinks(R model, Class<? extends BaseResource> suggestedParentType, boolean addActions) {
-        setHref(model, suggestedParentType);
-        if (addActions) {
-            setActions(model, suggestedParentType);
+        String path = getPath(model, suggestedParentType);
+        if (path != null) {
+            model.setHref(path);
+            if (addActions) {
+                setActions(model, path);
+            }
         }
-
         for (BaseResource inline : getInlineResources(model)) {
             if (inline.getId() != null) {
-                setHref(inline);
+                path = getPath(inline, null);
+                if (path!=null) {
+                    inline.setHref(path);
+                }
             }
             for (BaseResource grandParent : getInlineResources(inline)) {
                 unsetInlineResource(inline, grandParent.getClass());
             }
         }
-
         return model;
     }
 
     /**
-     * A #Map sub-class which maps a model type (e.g. Tag.class) to a
-     * set of suitable collection definitions.
+     * A #Map sub-class which holds location meta-data by API entity.
+     * For efficient access each entity contains its metadata objects in a map,
+     * with parent-type as key. For example, the following is an entry in
+     * EntityLocationMap for the entity 'Group':
+     *
+     * -------------------------------------------------
+     * Group:
+     *   NO_PARENT:
+     *      parent: NO_PARENT
+     *      resource_single    : GroupResource
+     *      resource_collection: GroupsResource
+     *   Domain:
+     *      parent: Domain
+     *      resource_single    : DomainGroupResource
+     *      resource_collection: DomainGroupsResource
+     * -------------------------------------------------
+     *
+     * Out of which the following are entries in LocationByParentMap:
+     *
+     *--------------------------------------------------
+     * NO_PARENT:
+     *    parent: NO_PARENT
+     *    resource_single    : GroupResource
+     *    resource_collection: GroupsResource
+     *--------------------------------------------------
+     *--------------------------------------------------
+     * Domain:
+     *    parent: Domain
+     *    resource_single    : DomainGroupResource
+     *    resource_collection: DomainGroupsResource
+     *--------------------------------------------------
+     *
+     * Out of which the following are instances of ApiLocationMetadata:
+     *
+     *--------------------------------------------------
+     * parent: NO_PARENT
+     * resource_single    : GroupResource
+     * resource_collection: GroupsResource
+     *--------------------------------------------------
+     *--------------------------------------------------
+     * parent: Domain
+     * resource_single    : DomainGroupResource
+     * resource_collection: DomainGroupsResource
+     *--------------------------------------------------
      */
-    private static class ModelToCollectionsMap extends HashMap<Class<? extends BaseResource>, ParentToCollectionMap> {}
+    private static class EntityLocationMap extends HashMap<Class<? extends BaseResource>, LocationByParentMap> {}
+
 
     /**
-     * A #Map sub-class which maps a parent model type to collection
-     * definition.
-     *
-     * e.g. the map for Tag contains a collection definition for the
-     * describing the VM, Host and User tags sub-collections. It also
-     * contains a collection definition describing the top-level
-     * tags collection which is keyed on the NO_PARENT key.
+     * A map which holds entity location meta-data according to parent-type.
+     * This is a utility map, which exists only for performance reasons, and is always
+     * used in a broader context. An instance of this map represents location
+     * metadata for a specific entity, but the entity-type is not saved within the map itself,
+     * meaning that looking at an instance of LocationByParentMap without the context in which
+     * it was created, one could not tell which entity the map describes.
      */
-    private static class ParentToCollectionMap extends LinkedHashMap<Class<? extends BaseResource>, Collection> {
-        public ParentToCollectionMap() {
+    private static class LocationByParentMap extends LinkedHashMap<Class<? extends BaseResource>, ApiLocationMetadata> {
+        public LocationByParentMap() {
             super();
         }
 
-        public ParentToCollectionMap(Class<?> resourceType,
-                                     Class<?> collectionType,
+        public LocationByParentMap(Class<?> serviceClass,
+                                     Class<?> collectionClass,
                                      Class<? extends BaseResource> parentType) {
             super();
-            add(resourceType, collectionType, parentType);
+            add(serviceClass, collectionClass, parentType);
         }
 
-        public ParentToCollectionMap(Class<?> resourceType,
+        public LocationByParentMap(Class<?> resourceType,
                                      Class<?> collectionType) {
             this(resourceType, collectionType, NO_PARENT);
         }
@@ -1040,34 +1130,35 @@ public class LinkHelper {
         public void add(Class<?> resourceType,
                         Class<?> collectionType,
                         Class<? extends BaseResource> parentType) {
-            put(parentType, new Collection(resourceType, collectionType, parentType));
+            put(parentType, new ApiLocationMetadata(resourceType, collectionType, parentType));
         }
     }
 
     /**
-     * A description of a collection type, its resource type and the parent
-     * resource which contains it, if any.
-     *
-     * e.g. for the VM tags collection, resourceType is AssignedTagResource,
-     * collectionType is AssignedTagsResource and parentType is VM
+     * A container of meta-data for a location in the API tree:
+     * 1) the Service class which handles single entities in this location.
+     * 2) the Service class which handles the collection of entities in this location.
+     * 3) the parent-type of entities in this location (if any).
+     * e.g: for VMs in root: VmResource, VmsResource, parentType=null.
+     *      for VM-tags: AssignedTagResource, AssignedTagsResource, parentType=VM.
      */
-    private static class Collection {
-        private final Class<?> resourceType;
-        private final Class<?> collectionType;
+    private static class ApiLocationMetadata {
+        private final Class<?> entityServiceClass;
+        private final Class<?> collectionServiceClass;
         private final Class<?> parentType;
 
-        public Collection(Class<?> resourceType, Class<?> collectionType, Class<?> parentType) {
-            this.resourceType = resourceType;
-            this.collectionType = collectionType;
+        public ApiLocationMetadata(Class<?> entityServiceClass, Class<?> collectionServiceClass, Class<?> parentType) {
+            this.entityServiceClass = entityServiceClass;
+            this.collectionServiceClass = collectionServiceClass;
             this.parentType = parentType;
         }
 
-        public Class<?> getResourceType() {
-            return resourceType;
+        public Class<?> getEntityServiceClass() {
+            return entityServiceClass;
         }
 
-        public Class<?> getCollectionType() {
-            return collectionType;
+        public Class<?> getCollectionServiceClass() {
+            return collectionServiceClass;
         }
 
         public Class<?> getParentType() {
