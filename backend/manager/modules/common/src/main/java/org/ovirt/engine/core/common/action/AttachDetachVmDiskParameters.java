@@ -9,6 +9,7 @@ public class AttachDetachVmDiskParameters extends VmDiskOperationParameterBase {
     private static final long serialVersionUID = 5640716432695539552L;
     private boolean isPlugUnPlug;
     private boolean isReadOnly;
+    private Guid snapshotId;
 
     public AttachDetachVmDiskParameters() {
     }
@@ -38,5 +39,13 @@ public class AttachDetachVmDiskParameters extends VmDiskOperationParameterBase {
 
     public void setReadOnly(boolean readOnly) {
         this.isReadOnly = readOnly;
+    }
+
+    public Guid getSnapshotId() {
+        return snapshotId;
+    }
+
+    public void setSnapshotId(Guid snapshotId) {
+        this.snapshotId = snapshotId;
     }
 }

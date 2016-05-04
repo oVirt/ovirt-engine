@@ -11,7 +11,6 @@ public class VmDiskOperationParameterBase extends VmOperationParameterBase {
 
     @Valid
     private Disk diskInfo;
-    private Guid snapshotId;
     private Guid vdsId;
 
     public VmDiskOperationParameterBase() {
@@ -28,14 +27,6 @@ public class VmDiskOperationParameterBase extends VmOperationParameterBase {
 
     public void setDiskInfo(Disk value) {
         diskInfo = value;
-    }
-
-    public Guid getSnapshotId() {
-        return snapshotId;
-    }
-
-    public void setSnapshotId(Guid snapshotId) {
-        this.snapshotId = snapshotId;
     }
 
     public Guid getVdsId() {
