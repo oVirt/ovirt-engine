@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -34,8 +35,10 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VnicProfileValidatorTest {
@@ -45,6 +48,8 @@ public class VnicProfileValidatorTest {
     private static final String OTHER_VNIC_PROFILE_NAME = "myothervnicprofile";
     private static final Guid DEFAULT_GUID = Guid.newGuid();
     private static final Guid OTHER_GUID = Guid.newGuid();
+    private static final Guid VALID_NETWORK_FILTER_ID = Guid.newGuid();
+    private static final Guid INVALID_NETWORK_FILTER_ID = Guid.newGuid();
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
@@ -68,6 +73,9 @@ public class VnicProfileValidatorTest {
     private StoragePoolDao dcDao;
 
     @Mock
+    private NetworkFilterDao networkFilterDao;
+
+    @Mock
     private VnicProfile vnicProfile;
 
     @Mock
@@ -84,7 +92,7 @@ public class VnicProfileValidatorTest {
     public void setup() {
 
         // spy on attempts to access the database
-        validator = spy(new VnicProfileValidator(vnicProfile, vmDao, dcDao));
+        validator = spy(new VnicProfileValidator(vnicProfile, vmDao, dcDao, networkFilterDao));
         doReturn(dbFacade).when(validator).getDbFacade();
 
         // mock some commonly used Daos
@@ -92,10 +100,17 @@ public class VnicProfileValidatorTest {
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
         when(dbFacade.getNetworkQosDao()).thenReturn(networkQosDao);
         when(dbFacade.getVmDao()).thenReturn(vmDao);
+        initNetworkFilterDao();
 
         // mock their getters
         when(vnicProfileDao.get(any(Guid.class))).thenReturn(vnicProfile);
         when(vnicProfileDao.getAllForNetwork(any(Guid.class))).thenReturn(vnicProfiles);
+    }
+
+    private void initNetworkFilterDao() {
+        when(networkFilterDao.getNetworkFilterById(INVALID_NETWORK_FILTER_ID)).thenReturn(null);
+        when(networkFilterDao.getNetworkFilterById(VALID_NETWORK_FILTER_ID))
+                .thenReturn(new NetworkFilter(VALID_NETWORK_FILTER_ID));
     }
 
     @Test
@@ -105,7 +120,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNull() throws Exception {
-        validator = new VnicProfileValidator(null, vmDao, dcDao);
+        validator = new VnicProfileValidator(null, vmDao, dcDao, networkFilterDao);
         assertThat(validator.vnicProfileIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
@@ -394,6 +409,61 @@ public class VnicProfileValidatorTest {
     public void nonPassthroughProfileContainsPortMirroringAndQos() {
         passthroughProfileContainsSupportedPropertiesTest(false, true, DEFAULT_GUID);
         assertThat(validator.passthroughProfileContainsSupportedProperties(), isValid());
+    }
+
+    @Test
+    public void testValidNetworkFilterIdUseDefaultNoFilterId(){
+        assertThat(validator.validUseDefaultNetworkFilterFlag(true), isValid());
+    }
+
+    @Test
+    public void testValidNetworkFilterIdUseDefaultWithFilterId() {
+        initVnicProfileNetworkFilterId(VALID_NETWORK_FILTER_ID, DEFAULT_VNIC_PROFILE_NAME);
+        assertThat(validator.validUseDefaultNetworkFilterFlag(true),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_INVALID_VNIC_PROFILE_NETWORK_ID_CONFIGURATION,
+                        ReplacementUtils.createSetVariableString(VnicProfileValidator.VAR_VNIC_PROFILE_NAME,
+                                DEFAULT_VNIC_PROFILE_NAME),
+                        ReplacementUtils.createSetVariableString(VnicProfileValidator.VAR_NETWORK_FILTER_ID,
+                                VALID_NETWORK_FILTER_ID)));
+    }
+
+    @Test
+    public void testValidNetworkFilterIdNoDefaultNoFilterId(){
+        assertThat(validator.validUseDefaultNetworkFilterFlag(false), isValid());
+    }
+
+    @Test
+    public void testValidNetworkFilterIdNoDefaultWithFilterId(){
+        when(vnicProfile.getNetworkFilterId()).thenReturn(Guid.newGuid());
+        assertThat(validator.validUseDefaultNetworkFilterFlag(false), isValid());
+    }
+
+    @Test
+    public void validVnicProfileNullNetworkFilterId() {
+        when(vnicProfile.getNetworkFilterId()).thenReturn(null);
+        assertThat(validator.validNetworkFilterId(), isValid());
+    }
+
+    @Test
+    public void validVnicProfileNetworkFilterId() {
+        when(vnicProfile.getNetworkFilterId()).thenReturn(VALID_NETWORK_FILTER_ID);
+        assertThat(validator.validNetworkFilterId(), isValid());
+    }
+
+    @Test
+    public void invalidVnicProfileNetworkFilterId() {
+        initVnicProfileNetworkFilterId(INVALID_NETWORK_FILTER_ID, DEFAULT_VNIC_PROFILE_NAME);
+        assertThat(validator.validNetworkFilterId(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_INVALID_VNIC_PROFILE_NETWORK_FILTER_ID,
+                        ReplacementUtils.createSetVariableString(VnicProfileValidator.VAR_VNIC_PROFILE_NAME,
+                                DEFAULT_VNIC_PROFILE_NAME),
+                        ReplacementUtils.createSetVariableString(VnicProfileValidator.VAR_NETWORK_FILTER_ID,
+                                INVALID_NETWORK_FILTER_ID)));
+    }
+
+    private void initVnicProfileNetworkFilterId(Guid networkFilterId, String name) {
+        when(vnicProfile.getNetworkFilterId()).thenReturn(networkFilterId);
+        when(vnicProfile.getName()).thenReturn(name);
     }
 
     private void passthroughProfileContainsSupportedPropertiesTest(boolean passthrough,

@@ -10,19 +10,26 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 
 public class VnicProfileValidator {
 
+    static final String VAR_VNIC_PROFILE_NAME = "VAR_VNIC_PROFILE_NAME";
+    static final String VAR_NETWORK_FILTER_ID = "VAR_NETWORK_FILTER_ID";
+
     private final VmDao vmDao;
     private final StoragePoolDao dcDao;
+    private final NetworkFilterDao networkFilterDao;
 
     private VnicProfile vnicProfile;
     private VnicProfile oldVnicProfile;
@@ -30,11 +37,12 @@ public class VnicProfileValidator {
     private List<VnicProfile> vnicProfiles;
     private List<VM> vms;
 
-    public VnicProfileValidator( VnicProfile vnicProfile, VmDao vmDao, StoragePoolDao dcDao) {
+    public VnicProfileValidator(VnicProfile vnicProfile, VmDao vmDao, StoragePoolDao dcDao, NetworkFilterDao networkFilterDao) {
         this.vnicProfile = vnicProfile;
 
         this.vmDao = vmDao;
         this.dcDao = dcDao;
+        this.networkFilterDao = networkFilterDao;
     }
 
     protected DbFacade getDbFacade() {
@@ -189,5 +197,30 @@ public class VnicProfileValidator {
         }
 
         return vms;
+    }
+
+    public ValidationResult validNetworkFilterId() {
+        final Guid networkFilterId = getNetworkFilterId();
+
+        if (networkFilterId == null) {
+            return ValidationResult.VALID;
+        }
+
+        NetworkFilter networkFilter = networkFilterDao.getNetworkFilterById(networkFilterId);
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_INVALID_VNIC_PROFILE_NETWORK_FILTER_ID,
+                ReplacementUtils.createSetVariableString(VAR_VNIC_PROFILE_NAME, vnicProfile.getName()),
+                ReplacementUtils.createSetVariableString(VAR_NETWORK_FILTER_ID, networkFilterId))
+                .when(networkFilter == null);
+    }
+
+    public ValidationResult validUseDefaultNetworkFilterFlag(boolean useDefaultNetworkFilterId) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_INVALID_VNIC_PROFILE_NETWORK_ID_CONFIGURATION,
+                ReplacementUtils.createSetVariableString(VAR_VNIC_PROFILE_NAME, vnicProfile.getName()),
+                ReplacementUtils.createSetVariableString(VAR_NETWORK_FILTER_ID, vnicProfile.getNetworkFilterId()))
+                .when(useDefaultNetworkFilterId && vnicProfile.getNetworkFilterId() != null);
+    }
+
+    private Guid getNetworkFilterId() {
+        return vnicProfile.getNetworkFilterId();
     }
 }

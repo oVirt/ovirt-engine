@@ -21,6 +21,10 @@ public class NetworkFilter implements IVdcQueryable, BusinessEntity<Guid> {
     public NetworkFilter() {
     }
 
+    public NetworkFilter(Guid id) {
+        this.id = id;
+    }
+
     public NetworkFilter(String name, Version version) {
         this.name = name;
         this.version = version;

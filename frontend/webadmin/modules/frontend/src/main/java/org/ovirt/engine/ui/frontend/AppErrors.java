@@ -1871,6 +1871,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be used when port mirroring is set.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Illegal configuration. vNIC '${VAR_VNIC_PROFILE_NAME}' is configured with network filter id value '${VAR_NETWORK_FILTER_ID}' and use default network filter flag is set to true.\nEither set the flag to false or do not mentioned the network filter id.")
+    String ACTION_TYPE_FAILED_INVALID_VNIC_PROFILE_NETWORK_ID_CONFIGURATION();
+
+    @DefaultStringValue("Cannot ${action} ${type}. vNIC profile '${VAR_VNIC_PROFILE_NAME}' has an invalid network filter id '${VAR_NETWORK_FILTER_ID}'.")
+    String ACTION_TYPE_FAILED_INVALID_VNIC_PROFILE_NETWORK_FILTER_ID();
+
     @DefaultStringValue("Cannot ${action} ${type}. 'Port Mirroring' and 'Qos' are not supported on passthrough profiles.")
     String ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES();
 
