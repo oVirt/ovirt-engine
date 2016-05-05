@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -15,6 +17,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> extends AbstractDiskVmCommand<T> {
+
+    @Inject
+    private DiskHandler diskHandler;
 
     private Disk disk;
     private VmDevice vmDevice;
@@ -33,7 +38,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             return failVmStatusIllegal();
         }
 
-        disk = loadDisk(getParameters().getEntityInfo().getId());
+        disk = diskHandler.loadDiskFromSnapshot(getParameters().getEntityInfo().getId(), getParameters().getSnapshotId());
         if (!isDiskExistAndAttachedToVm(disk)) {
             return false;
         }
@@ -44,7 +49,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         if (vmDevice.getSnapshotId() != null) {
-            disk = loadDiskFromSnapshot(disk.getId(), vmDevice.getSnapshotId());
+            disk = diskHandler.loadDiskFromSnapshot(disk.getId(), vmDevice.getSnapshotId());
         }
 
         if (vmDevice.getIsPlugged() && getVm().getStatus() != VMStatus.Down) {

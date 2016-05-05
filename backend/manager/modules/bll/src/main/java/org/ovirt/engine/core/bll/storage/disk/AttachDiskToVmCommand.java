@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
@@ -42,6 +44,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
+    @Inject
+    private DiskHandler diskHandler;
+
     private List<PermissionSubject> permsList = null;
     private Disk disk;
 
@@ -51,7 +56,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     @Override
     protected void init() {
-        disk = loadDisk(getParameters().getEntityInfo().getId());
+        disk = diskHandler.loadDiskFromSnapshot(getParameters().getEntityInfo().getId(), getParameters().getSnapshotId());
     }
 
     @Override
@@ -88,7 +93,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         if (isImageDisk) {
             //TODO : this load and check of the active disk will be removed
             //after inspecting upgrade
-            Disk activeDisk = loadActiveDisk(disk.getId());
+            Disk activeDisk = diskHandler.loadActiveDisk(disk.getId());
 
             if (((DiskImage) activeDisk).getImageStatus() == ImageStatus.ILLEGAL) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
@@ -276,5 +281,4 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     public String getDiskAlias() {
         return disk.getDiskAlias();
     }
-
 }

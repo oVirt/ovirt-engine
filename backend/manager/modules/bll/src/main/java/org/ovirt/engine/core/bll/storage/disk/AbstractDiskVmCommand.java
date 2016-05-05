@@ -159,25 +159,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return true;
     }
 
-    /**
-     * loads the disk info for the active snapshot, for luns the lun disk will be returned.
-     */
-    protected Disk loadActiveDisk(Guid diskId) {
-        return getDiskDao().get(diskId);
-    }
-
-    protected Disk loadDiskFromSnapshot(Guid diskId, Guid snapshotId) {
-        return getDiskImageDao().getDiskSnapshotForVmSnapshot(diskId, snapshotId);
-    }
-
-    protected Disk loadDisk(Guid diskId) {
-        if (getParameters().getSnapshotId() == null) {
-            return loadActiveDisk(diskId);
-        } else {
-            return loadDiskFromSnapshot(diskId, getParameters().getSnapshotId());
-        }
-    }
-
     /** Updates the VM's disks from the database */
     protected void updateDisksFromDb() {
         VmHandler.updateDisksFromDb(getVm());

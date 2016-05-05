@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,8 +11,11 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -29,20 +31,17 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
-public class AttachDiskToVmCommandTest extends BaseCommandTest {
+@RunWith(MockitoJUnitRunner.class)
+public class AttachDiskToVmCommandTest {
 
     private Guid vmId;
     private Guid diskId;
     private Guid storageId;
-
-    @Mock
-    private DiskDao diskDao;
 
     @Mock
     private VmDeviceDao vmDeviceDao;
@@ -65,11 +64,20 @@ public class AttachDiskToVmCommandTest extends BaseCommandTest {
     @Mock
     private SnapshotsValidator snapshotsValidator;
 
+    @Mock
+    private DiskHandler diskHandler;
+
+    private AttachDetachVmDiskParameters parameters = createParameters();
+
+    @Spy
+    @InjectMocks
+    private AttachDiskToVmCommand<AttachDetachVmDiskParameters> command = new AttachDiskToVmCommand<>(parameters, null);
+
     @Before
     public void initTest() {
         initEntitiesIds();
-        initCommand();
         initialSetup();
+        initCommand();
     }
 
     private void initEntitiesIds() {
@@ -83,6 +91,9 @@ public class AttachDiskToVmCommandTest extends BaseCommandTest {
         doNothing().when(command).updateDisksFromDb();
         doReturn(mockVm()).when(command).getVm();
 
+        doReturn(createDiskImage()).when(diskHandler).loadActiveDisk(any(Guid.class));
+        doReturn(createDiskImage()).when(diskHandler).loadDiskFromSnapshot(any(Guid.class), any(Guid.class));
+
         doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
         doReturn(true).when(command).checkDiskUsedAsOvfStore(diskValidator);
         doReturn(false).when(command).isOperationPerformedOnDiskSnapshot();
@@ -94,17 +105,8 @@ public class AttachDiskToVmCommandTest extends BaseCommandTest {
     }
 
     private void initCommand() {
-        when(diskDao.get(diskId)).thenReturn(createDiskImage());
-        AttachDetachVmDiskParameters parameters = createParameters();
-        command = spy(new AttachDiskToVmCommand<>(parameters, null));
-        doReturn(diskDao).when(command).getDiskDao();
         command.init();
     }
-
-    /**
-     * The command under test.
-     */
-    private AttachDiskToVmCommand<AttachDetachVmDiskParameters> command;
 
     @Test
     public void testValidateSucceed() {
