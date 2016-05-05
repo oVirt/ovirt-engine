@@ -34,6 +34,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
     private boolean passthrough;
     private String description;
     private Map<String, String> customProperties;
+    private Guid networkFilterId;
 
     @Override
     public Guid getId() {
@@ -102,6 +103,14 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
         this.description = description;
     }
 
+    public Guid getNetworkFilterId() {
+        return networkFilterId;
+    }
+
+    public void setNetworkFilterId(Guid networkFilterId) {
+        this.networkFilterId = networkFilterId;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -117,7 +126,8 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
                 networkQosId,
                 portMirroring,
                 passthrough,
-                description
+                description,
+                networkFilterId
         );
     }
 
@@ -137,7 +147,8 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
                 && Objects.equals(networkQosId, other.networkQosId)
                 && portMirroring == other.portMirroring
                 && passthrough == other.passthrough
-                && Objects.equals(description, other.description);
+                && Objects.equals(description, other.description)
+                && Objects.equals(networkFilterId, other.networkFilterId);
     }
 
     @Override
@@ -150,6 +161,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
                 .append("passthrough", isPassthrough())
                 .append("customProperties", getCustomProperties())
                 .append("description", getDescription())
+                .append("networkFilterId", getNetworkFilterId())
                 .build();
     }
 }

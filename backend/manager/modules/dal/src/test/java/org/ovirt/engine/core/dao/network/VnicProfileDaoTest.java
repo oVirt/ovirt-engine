@@ -32,6 +32,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         vnicProfile.setNetworkQosId(FixturesTool.NETWORK_QOS);
         vnicProfile.setPortMirroring(false);
         vnicProfile.setPassthrough(false);
+        vnicProfile.setNetworkFilterId(FixturesTool.VNIC_PROFILE_NETWORK_FILTER);
     }
 
     /**
@@ -138,6 +139,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         assertEquals(vnicProfile.getId(), result.getId());
         assertFalse(result.isPortMirroring());
         assertFalse(result.isPassthrough());
+        assertEquals(vnicProfile.getNetworkFilterId(), result.getNetworkFilterId());
     }
 
     /**
@@ -154,6 +156,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         assertEquals(vnicProfile.getId(), result.getId());
         assertTrue(result.isPortMirroring());
         assertTrue(result.isPassthrough());
+        assertEquals(vnicProfile.getNetworkFilterId(), result.getNetworkFilterId());
     }
 
     /**

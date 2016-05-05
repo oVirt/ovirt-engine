@@ -40,7 +40,8 @@ public class VnicProfileDaoImpl extends DefaultGenericDao<VnicProfile, Guid> imp
                 .addValue("passthrough", profile.isPassthrough())
                 .addValue("description", profile.getDescription())
                 .addValue("custom_properties",
-                        SerializationFactory.getSerializer().serialize(profile.getCustomProperties()));
+                        SerializationFactory.getSerializer().serialize(profile.getCustomProperties()))
+                .addValue("network_filter_id", profile.getNetworkFilterId());
     }
 
     @Override
@@ -68,6 +69,7 @@ public class VnicProfileDaoImpl extends DefaultGenericDao<VnicProfile, Guid> imp
             entity.setPortMirroring(rs.getBoolean("port_mirroring"));
             entity.setPassthrough(rs.getBoolean("passthrough"));
             entity.setDescription(rs.getString("description"));
+            entity.setNetworkFilterId(getGuid(rs, "network_filter_id"));
             return entity;
         }
 

@@ -661,6 +661,8 @@ public class FixturesTool {
 
     public static final Version OVIRT_NO_FILTER_MINIMAL_SUPPORTED_VERSION = new Version("3.0");
 
+    public static final Guid VNIC_PROFILE_NETWORK_FILTER = new Guid("3c6f56c2-bd3a-4575-969b-b6cda2d594ad");
+
     /**
      * Gluster Hook ID(s)
      */

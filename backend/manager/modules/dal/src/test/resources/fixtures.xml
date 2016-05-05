@@ -1727,6 +1727,11 @@
             <value>ovirt-no-filter</value>
             <value>3.0</value>
         </row>
+        <row>
+            <value>3c6f56c2-bd3a-4575-969b-b6cda2d594ad</value>
+            <value>vnic-profile-filter-test</value>
+            <value>3.6</value>
+        </row>
     </table>
 
     <table name="vnic_profiles">
@@ -1740,6 +1745,7 @@
         <column>description</column>
         <column>_create_date</column>
         <column>_update_date</column>
+        <column>network_filter_id</column>
         <row>
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
             <value>engine_profile</value>
@@ -1751,6 +1757,7 @@
             <value>vnic profile description</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
+            <value>22510576-a243-468e-bc37-d68f16130b02</value>
         </row>
         <row>
             <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
@@ -1763,6 +1770,7 @@
             <null />
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
+            <value>22510576-a243-468e-bc37-d68f16130b02</value>
         </row>
         <row>
             <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
@@ -1772,9 +1780,10 @@
             <value>false</value>
             <value>true</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
-            <value>2013-07-02 08:38:36</value>
-            <value>2013-07-02 08:38:36</value>
             <null />
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+            <value>22510576-a243-468e-bc37-d68f16130b02</value>
         </row>
         <row>
             <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
@@ -1784,9 +1793,10 @@
             <value>false</value>
             <value>false</value>
             <value>{ "prop1" : "true" }</value>
-            <value>2013-07-02 08:38:36</value>
-            <value>2013-07-02 08:38:36</value>
             <null />
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+            <value>22510576-a243-468e-bc37-d68f16130b02</value>
         </row>
         <row>
             <value>2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6</value>
@@ -1796,6 +1806,7 @@
             <value>false</value>
             <value>false</value>
             <value>{}</value>
+            <null />
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
             <null />
