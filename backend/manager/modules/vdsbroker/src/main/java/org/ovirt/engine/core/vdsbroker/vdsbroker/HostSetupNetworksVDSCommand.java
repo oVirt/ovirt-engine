@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
@@ -89,18 +90,13 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         return networks;
     }
 
-    private void addIpv4BootProtocol(Map<String, Object> opts, HostNetwork attachment) {
-        switch (attachment.getIpv4BootProtocol()) {
-        case DHCP:
+    void addIpv4BootProtocol(Map<String, Object> opts, HostNetwork attachment) {
+        if (attachment.getIpv4BootProtocol() == Ipv4BootProtocol.DHCP) {
             opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
-            break;
-        case STATIC_IP:
+        } else if (attachment.getIpv4BootProtocol() == Ipv4BootProtocol.STATIC_IP) {
             putIfNotEmpty(opts, "ipaddr", attachment.getIpv4Address());
             putIpv4PrefixOrNetmaskIfNotEmpty(opts, attachment.getIpv4Netmask());
             putIfNotEmpty(opts, "gateway", attachment.getIpv4Gateway());
-            break;
-        default:
-            break;
         }
     }
 
