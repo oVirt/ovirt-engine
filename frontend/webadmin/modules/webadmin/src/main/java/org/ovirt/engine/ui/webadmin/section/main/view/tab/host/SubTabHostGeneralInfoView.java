@@ -65,6 +65,7 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     FullDateTimeLabel bootTime = new FullDateTimeLabel();
     StringValueLabel kdumpStatus = new StringValueLabel();
     StringValueLabel selinuxEnforceMode = new StringValueLabel();
+    StringValueLabel clusterCompatibilityVersion = new StringValueLabel();
 
     MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<>();
     MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<>();
@@ -152,6 +153,7 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.clusterCompatibilityVersion(), clusterCompatibilityVersion, 2).withAutoPlacement());
     }
 
     @Override

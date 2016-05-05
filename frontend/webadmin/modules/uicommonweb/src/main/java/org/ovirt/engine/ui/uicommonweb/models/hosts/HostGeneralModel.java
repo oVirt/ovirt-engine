@@ -714,6 +714,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private String clusterCompatibilityVersion;
+
+    public String getClusterCompatibilityVersion() {
+        return clusterCompatibilityVersion;
+    }
+
+    public void setClusterCompatibilityVersion(String clusterCompatibilityVersion) {
+        if (!Objects.equals(this.clusterCompatibilityVersion, clusterCompatibilityVersion)) {
+            this.clusterCompatibilityVersion = clusterCompatibilityVersion;
+            onPropertyChanged(new PropertyChangedEventArgs("clusterCompatibilityVersion")); //$NON-NLS-1$
+        }
+    }
+
     private boolean hostDevicePassthroughSupport;
 
     public boolean isHostDevicePassthroughSupport() {
@@ -823,6 +836,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
         setKdumpStatus(EnumTranslator.getInstance().translate(vds.getKdumpStatus()));
         setSelinuxEnforceMode(EnumTranslator.getInstance().translate(vds.getSELinuxEnforceMode()));
+        setClusterCompatibilityVersion(vds.getSupportedClusterLevels());
 
         setHostDevicePassthroughSupport(vds.isHostDevicePassthroughEnabled());
 

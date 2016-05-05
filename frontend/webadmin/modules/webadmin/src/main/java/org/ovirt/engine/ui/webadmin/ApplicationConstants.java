@@ -1828,6 +1828,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("SELinux mode")
     String selinuxModeGeneral();
 
+    @DefaultStringValue("Cluster Compatibility Version")
+    String clusterCompatibilityVersion();
+
     // Storage
     @DefaultStringValue("Shared Status")
     String sharedStatusStorage();
