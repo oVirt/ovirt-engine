@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -138,11 +137,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             }
             // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || vm.isAutoStartup())) {
-                VdcReturnValueBase result =
-                        runInternalAction(VdcActionType.InternalMigrateVm,
-                                new InternalMigrateVmParameters(vm.getId(), getActionType()),
-                                createMigrateVmContext(parentContext, vm));
-                if (!result.isValid() || !((Boolean) result.getActionReturnValue()).booleanValue()) {
+                if (!migrateVm(vm, parentContext)) {
                     succeeded = false;
                     appendCustomValue("failedVms", vm.getName(), ",");
                     log.error("Failed to migrate VM '{}'", vm.getName());
@@ -150,6 +145,13 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             }
         }
         return succeeded;
+    }
+
+    protected boolean migrateVm(VM vm, ExecutionContext parentContext) {
+        return runInternalAction(VdcActionType.InternalMigrateVm,
+                new InternalMigrateVmParameters(vm.getId(), getActionType()),
+                createMigrateVmContext(parentContext, vm))
+                .getSucceeded();
     }
 
     protected CommandContext createMigrateVmContext(ExecutionContext parentContext, VM vm) {

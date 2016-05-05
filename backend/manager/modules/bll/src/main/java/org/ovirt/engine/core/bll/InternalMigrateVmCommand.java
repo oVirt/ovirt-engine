@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -14,22 +12,6 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
 
     public InternalMigrateVmCommand(T parameters, CommandContext cmdContext) {
         super(new MigrateVmParameters(parameters), cmdContext);
-    }
-
-    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Command);
-    }
-
-    @Override
-    protected void executeCommand() {
-        try {
-            super.executeCommand();
-            setActionReturnValue(true);
-            setSucceeded(true);
-        } catch (Exception e) {
-            setActionReturnValue(false);
-        }
     }
 
     /**
