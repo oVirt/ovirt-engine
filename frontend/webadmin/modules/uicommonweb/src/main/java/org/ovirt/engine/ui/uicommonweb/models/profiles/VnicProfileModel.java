@@ -1,14 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VersionQueryParameters;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
@@ -50,10 +54,13 @@ public abstract class VnicProfileModel extends Model {
     private final IModel sourceModel;
     private ListModel<Network> network;
     private ListModel<NetworkQoS> networkQoS;
+    private ListModel<NetworkFilter> networkFilter;
     private VnicProfile vnicProfile = null;
     private final boolean customPropertiesVisible;
     private final Guid defaultQosId;
     private NetworkQoS defaultQos;
+
+    private static final NetworkFilter EMPTY_FILTER = new NetworkFilter();
 
     public EntityModel<String> getName() {
         return name;
@@ -127,6 +134,14 @@ public abstract class VnicProfileModel extends Model {
         this.networkQoS = networkQoS;
     }
 
+    public ListModel<NetworkFilter> getNetworkFilter() {
+        return networkFilter;
+    }
+
+    public void setNetworkFilter(ListModel<NetworkFilter> networkFilter) {
+        this.networkFilter = networkFilter;
+    }
+
     public VnicProfileModel(IModel sourceModel,
             Version dcCompatibilityVersion,
             boolean customPropertiesVisible,
@@ -139,6 +154,7 @@ public abstract class VnicProfileModel extends Model {
         setName(new EntityModel<String>());
         setNetwork(new ListModel<Network>());
         setNetworkQoS(new ListModel<NetworkQoS>());
+        setNetworkFilter(new ListModel<NetworkFilter>());
         setPortMirroring(new EntityModel<Boolean>());
         setPassthrough(new EntityModel<Boolean>());
         setCustomPropertySheet(new KeyValueModel());
@@ -166,6 +182,7 @@ public abstract class VnicProfileModel extends Model {
         initPassthroughChangeListener();
         initCustomPropertySheet(dcCompatibilityVersion);
         initNetworkQoSList(dcId);
+        initNetworkFilterList(dcCompatibilityVersion);
         initCommands();
     }
 
@@ -218,6 +235,9 @@ public abstract class VnicProfileModel extends Model {
                 && networkQoS.getId() != null
                 && !networkQoS.getId().equals(Guid.Empty)
                 ? networkQoS.getId() : null);
+        NetworkFilter networkFilter = getNetworkFilter().getSelectedItem();
+        vnicProfile.setNetworkFilterId(networkFilter != null
+                ? networkFilter.getId() : null);
         vnicProfile.setPortMirroring(getPortMirroring().getEntity());
         vnicProfile.setPassthrough(getPassthrough().getEntity());
 
@@ -295,6 +315,28 @@ public abstract class VnicProfileModel extends Model {
         AsyncDataProvider.getInstance().getAllNetworkQos(dcId, _asyncQuery);
     }
 
+    public void initNetworkFilterList(Version dcCompatibilityVersion) {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<NetworkFilter> networkFilters =
+                        new ArrayList((Collection<NetworkFilter>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                networkFilters.add(EMPTY_FILTER);
+
+                getNetworkFilter().setItems(networkFilters);
+
+                initSelectedNetworkFilter();
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllSupportedNetworkFiltersByVersion,
+                new VersionQueryParameters(dcCompatibilityVersion),
+                asyncQuery);
+    }
+
+    protected abstract void initSelectedNetworkFilter();
+
     private void initPassthroughChangeListener() {
         getPassthrough().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
@@ -312,9 +354,16 @@ public abstract class VnicProfileModel extends Model {
                             .networkQosNotChangedIfPassthrough());
                     getNetworkQoS().setIsChangeable(false);
                     getNetworkQoS().setSelectedItem(NetworkQoSModel.EMPTY_QOS);
+
+                    getNetworkFilter().setChangeProhibitionReason(ConstantsManager.getInstance()
+                            .getConstants()
+                            .networkFilterNotChangedIfPassthrough());
+                    getNetworkFilter().setIsChangeable(false);
+                    getNetworkFilter().setSelectedItem(EMPTY_FILTER);
                 } else {
                     getPortMirroring().setIsChangeable(true);
                     getNetworkQoS().setIsChangeable(true);
+                    getNetworkFilter().setIsChangeable(true);
                 }
             }
         });

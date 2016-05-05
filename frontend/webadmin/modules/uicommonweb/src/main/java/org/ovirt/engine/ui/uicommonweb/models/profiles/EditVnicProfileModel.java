@@ -13,6 +13,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
@@ -87,5 +88,11 @@ public class EditVnicProfileModel extends VnicProfileModel {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsByVnicProfileId,
                 params,
                 asyncQuery);
+    }
+
+    @Override
+    protected void initSelectedNetworkFilter() {
+        getNetworkFilter().setSelectedItem(Linq.firstOrNull(getNetworkFilter().getItems(),
+                new Linq.IdPredicate<>(getProfile().getNetworkFilterId())));
     }
 }

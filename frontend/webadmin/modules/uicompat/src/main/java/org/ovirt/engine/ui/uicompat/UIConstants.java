@@ -2326,6 +2326,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("'Network QoS' cannot be set if the vNIC Profile is 'Passthrough'")
     String networkQosNotChangedIfPassthrough();
 
+    @DefaultStringValue("'Network Filter' cannot be set if the vNIC Profile is 'Passthrough'")
+    String networkFilterNotChangedIfPassthrough();
+
     @DefaultStringValue("'Passthrough' cannot be changed if the vNIC Profile is used by a VM")
     String passthroughNotChangedIfUsedByVms();
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.profile;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -12,11 +13,13 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NetworkFilterRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
@@ -64,6 +67,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @WithElementId("networkQoS")
     public ListModelListBoxEditor<NetworkQoS> networkQoSEditor;
 
+    @UiField(provided = true)
+    @Path(value = "networkFilter.selectedItem")
+    @WithElementId("networkFilter")
+    public ListModelListBoxEditor<NetworkFilter> networkFilterEditor;
+
     @UiField
     @Path("passthrough.entity")
     @WithElementId("passthrough")
@@ -97,6 +105,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         customPropertiesSheetEditor = new KeyValueWidget<>("380px"); //$NON-NLS-1$
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
+        networkFilterEditor = new ListModelListBoxEditor<>(new NetworkFilterRenderer(constants));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
         applyStyles();
@@ -112,6 +121,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         portMirroringEditor.setLabel(constants.portMirroringVnicProfile());
         publicUseEditor.setLabel(constants.publicUseVnicProfile());
         networkQoSEditor.setLabel(constants.profileQoSInstanceTypeLabel());
+        networkFilterEditor.setLabel(constants.profileNetworkFilterLabel());
     }
 
     @Override

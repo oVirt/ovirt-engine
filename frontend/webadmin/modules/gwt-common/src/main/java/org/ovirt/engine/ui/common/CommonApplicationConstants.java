@@ -2376,4 +2376,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Please have your administrator check the UI logs")
     String checkUiLogs();
+
+    @DefaultStringValue("<No Network Filter>")
+    String vnicProfileNoFilter();
 }

@@ -34,6 +34,7 @@
 				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 				<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 				<e:ListModelListBoxEditor ui:field="networkQoSEditor"/>
+				<e:ListModelListBoxEditor ui:field="networkFilterEditor"/>
 				<g:FlowPanel width="100%">
 					<ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" />
 					<ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />

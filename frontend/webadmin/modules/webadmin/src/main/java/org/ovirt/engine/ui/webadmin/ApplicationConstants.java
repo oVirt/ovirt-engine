@@ -1503,6 +1503,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("QoS Name")
     String qosNameVnicProfile();
 
+    @DefaultStringValue("Network Filter")
+    String networkFilterNameVnicProfile();
+
     @DefaultStringValue("Passthrough")
     String passthorughVnicProfile();
 
@@ -3605,6 +3608,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("QoS")
     String profileQoSInstanceTypeLabel();
+
+    @DefaultStringValue("Network Filter")
+    String profileNetworkFilterLabel();
 
     @DefaultStringValue("Some hosts in this cluster have the console address overridden and some not. For details please see the Hosts subtab")
     String consolePartiallyOverridden();
