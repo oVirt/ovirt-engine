@@ -131,13 +131,13 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 if (!canScheduleVm(vm)) {
                     succeeded = false;
                     appendCustomValue("failedVms", vm.getName(), ",");
-                    log.error("ResourceManager::vdsMaintenance - There is not host capable of running the hosted engine VM");
+                    log.error("There is no host capable of running the hosted engine VM");
                 }
                 // The Hosted Engine vm is migrated by the HA agent
                 continue;
             }
             // if HAOnly is true check that vm is HA (auto_startup should be true)
-            if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
+            if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || vm.isAutoStartup())) {
                 VdcReturnValueBase result =
                         runInternalAction(VdcActionType.InternalMigrateVm,
                                 new InternalMigrateVmParameters(vm.getId(), getActionType()),
@@ -145,7 +145,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 if (!result.isValid() || !((Boolean) result.getActionReturnValue()).booleanValue()) {
                     succeeded = false;
                     appendCustomValue("failedVms", vm.getName(), ",");
-                    log.error("ResourceManager::vdsMaintenance - Failed migrating desktop '{}'", vm.getName());
+                    log.error("Failed to migrate VM '{}'", vm.getName());
                 }
             }
         }
