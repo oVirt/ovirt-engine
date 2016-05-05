@@ -1045,7 +1045,7 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public FutureTask<Map<String, Object>> poll() {
-        return timeBoundPoll(0, TimeUnit.MILLISECONDS);
+        return timeBoundPoll(2, TimeUnit.SECONDS);
     }
 
     @Override
@@ -1055,7 +1055,7 @@ public class JsonRpcVdsServer implements IVdsServer {
 
             @Override
             public Map<String, Object> call() throws Exception {
-                return new FutureMap(client, request, timeout, unit);
+                return new FutureMap(client, request, timeout, unit, true);
             }
         });
 
