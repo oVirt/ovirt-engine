@@ -13,8 +13,6 @@ public interface NetworkFilterDao extends Dao {
 
     List<NetworkFilter> getAllSupportedNetworkFiltersByVersion(Version version);
 
-    Version getMinimalSupportedVersionByNetworkFilterName(String filterName);
-
     NetworkFilter getNetworkFilterById(Guid id);
 
     NetworkFilter getNetworkFilterByName(String networkFilterName);

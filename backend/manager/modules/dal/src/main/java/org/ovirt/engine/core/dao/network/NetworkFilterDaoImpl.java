@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -24,9 +23,6 @@ public class NetworkFilterDaoImpl extends DefaultReadDao<NetworkFilter, Guid>imp
     private static final String FILTER_NAME = "filter_name";
     private static final String FILTER_VERSION = "version";
 
-    @Inject
-    private HostNetworkQosDao hostNetworkQosDao;
-
     private NetworkFilterRowMapper networkFilterRowMapper = new NetworkFilterRowMapper();
 
     public NetworkFilterDaoImpl() {
@@ -45,14 +41,6 @@ public class NetworkFilterDaoImpl extends DefaultReadDao<NetworkFilter, Guid>imp
         return getCallsHandler().executeReadList("GetAllSupportedNetworkFiltersByVersion",
                 networkFilterRowMapper,
                 getCustomMapSqlParameterSource().addValue(FILTER_VERSION, version));
-    }
-
-    @Override
-    public Version getMinimalSupportedVersionByNetworkFilterName(String filterName) {
-        final VersionRowMapper versionRowMapper = new VersionRowMapper("getMinimalSupportedVersionByNetworkFilterName");
-        return getCallsHandler().executeRead("GetMinimalSupportedVersionByNetworkFilterName",
-                versionRowMapper,
-                getCustomMapSqlParameterSource().addValue(FILTER_NAME, filterName));
     }
 
     @Override

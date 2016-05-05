@@ -73,20 +73,6 @@ public class NetworkFilterDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetMinimalSupportedVersionByNetworkFilterName() {
-        final String networkFilterName = FixturesTool.NETWORK_FILTER_NAME;
-        Version actualMinimalVersion = dao.getMinimalSupportedVersionByNetworkFilterName(networkFilterName);
-        final Version expectedMinimalVersion = FixturesTool.NETWORK_FILTER_VERSION;
-        assertEquals(expectedMinimalVersion, actualMinimalVersion);
-    }
-
-    @Test
-    public void testGetMinimalSupportedVersionByInvalidNetworkFilterName() {
-        Version actualMinimalVersion = dao.getMinimalSupportedVersionByNetworkFilterName(INVALID_NETWORK_FILTER_NAME);
-        assertNull(actualMinimalVersion);
-    }
-
-    @Test
     public void testGetFilterById() {
         final NetworkFilter actualNetworkFilter = dao.getNetworkFilterById(FixturesTool.NETWORK_FILTER);
         final NetworkFilter expectedNetworkFilter = expectedNetworkFilter();

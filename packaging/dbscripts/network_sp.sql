@@ -2204,18 +2204,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetMinimalSupportedVersionByNetworkFilterName (v_filter_name VARCHAR(50))
-RETURNS SETOF VARCHAR(40) STABLE
-AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT version
-    FROM network_filter
-    WHERE filter_name = v_filter_name;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetNetworkFilterByName (v_filter_name VARCHAR(50))
 RETURNS SETOF network_filter STABLE
 AS $PROCEDURE$

@@ -160,7 +160,6 @@ public enum VdcQueryType implements Serializable {
     GetAllNetworkFilters,
     GetAllSupportedNetworkFiltersByVersion,
     GetNetworkFilterById,
-    GetMinimalSupportedVersionByNetworkFilterName,
 
     // Certificate
     GetCACertificate(VdcQueryAuthType.User),
