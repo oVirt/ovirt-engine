@@ -338,7 +338,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
 
             if (vmDeviceForVm.getSnapshotId() != null) {
-                DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), vmDeviceForVm.getSnapshotId());
+                DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskInfo().getId(), vmDeviceForVm.getSnapshotId());
                 if (snapshotDisk.getSize() != newDiskImage.getSize()) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
                 }
@@ -392,7 +392,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (shouldPerformMetadataUpdate()) {
             updateMetaDataDescription((DiskImage) getNewDisk());
         }
-        final Disk disk = getDiskDao().get(getParameters().getDiskId());
+        final Disk disk = getDiskDao().get(getParameters().getDiskInfo().getId());
         applyUserChanges(disk);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
@@ -585,7 +585,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private VdcActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
         UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(
-                getVmId(), newCinderDisk.getId(), newCinderDisk);
+                getVmId(), newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
         parameters.setShouldBeEndedByParent(false);
         return parameters;
@@ -844,8 +844,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     protected Disk getOldDisk() {
-        if (oldDisk == null) {
-            oldDisk = getDiskDao().get(getParameters().getDiskId());
+        if (oldDisk == null && getParameters().getDiskInfo() != null) {
+            oldDisk = getDiskDao().get(getParameters().getDiskInfo().getId());
         }
         return oldDisk;
     }

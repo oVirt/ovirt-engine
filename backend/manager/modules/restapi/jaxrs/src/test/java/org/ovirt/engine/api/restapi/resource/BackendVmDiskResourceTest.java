@@ -143,8 +143,8 @@ public class BackendVmDiskResourceTest
             setUpActionExpectations(
                 VdcActionType.UpdateVmDisk,
                 UpdateVmDiskParameters.class,
-                new String[] { "VmId", "DiskId", "DiskInfo.WipeAfterDelete" },
-                new Object[] { VM_ID, DISK_ID, Boolean.FALSE },
+                new String[] { "VmId", "DiskInfo.WipeAfterDelete" },
+                new Object[] { VM_ID, Boolean.FALSE },
                 true,
                 true
             )
@@ -160,8 +160,8 @@ public class BackendVmDiskResourceTest
             setUpActionExpectations(
                 VdcActionType.UpdateVmDisk,
                 UpdateVmDiskParameters.class,
-                new String[] { "VmId", "DiskId", "DiskInfo.ReadOnly" },
-                new Object[] { VM_ID, DISK_ID, Boolean.TRUE },
+                new String[] { "VmId", "DiskInfo.ReadOnly" },
+                new Object[] { VM_ID, Boolean.TRUE },
                 true,
                 true
             )

@@ -66,7 +66,7 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
     }
 
     protected Guid getDiskId(ExtendCinderDiskCommand<UpdateVmDiskParameters> command) {
-        return command.getParameters().getDiskId();
+        return command.getParameters().getDiskInfo().getId();
     }
 
     protected CinderDisk getDisk(ExtendCinderDiskCommand<UpdateVmDiskParameters> command) {

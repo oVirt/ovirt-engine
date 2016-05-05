@@ -225,7 +225,7 @@ public class BackendVmDiskResource
     protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
         @Override
         public VdcActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-            return new UpdateVmDiskParameters(vmId, entity.getId(), map(incoming, entity));
+            return new UpdateVmDiskParameters(vmId, map(incoming, entity));
         }
     }
 }

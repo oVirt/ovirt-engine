@@ -470,7 +470,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testFailInterfaceCanUpdateReadOnly() {
-        initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, createDiskImage()));
+        initializeCommand(new UpdateVmDiskParameters(vmId, createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                 when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
@@ -480,7 +480,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testSucceedInterfaceCanUpdateReadOnly() {
-        initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, createDiskImage()));
+        initializeCommand(new UpdateVmDiskParameters(vmId, createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
 
@@ -500,7 +500,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
 
-        initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, updatedDisk));
+        initializeCommand(new UpdateVmDiskParameters(vmId, updatedDisk));
 
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED)).
                 when(diskValidator).isDiskUsedAsOvfStore();
@@ -697,7 +697,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         newDiskImage.setSize(SizeConverter.convert(5, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
-        UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(vmId, diskImageGuid, newDiskImage);
+        UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(vmId, newDiskImage);
         long diskExtendingDiffInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
@@ -809,7 +809,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
      */
     protected UpdateVmDiskParameters createParameters() {
         DiskImage diskInfo = createDiskImage();
-        return new UpdateVmDiskParameters(vmId, diskImageGuid, diskInfo);
+        return new UpdateVmDiskParameters(vmId, diskInfo);
     }
 
     /**

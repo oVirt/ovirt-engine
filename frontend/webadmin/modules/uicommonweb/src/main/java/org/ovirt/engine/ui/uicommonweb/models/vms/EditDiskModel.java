@@ -134,7 +134,7 @@ public class EditDiskModel extends AbstractDiskModel {
 
         startProgress();
 
-        UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(getVmId(), getDisk().getId(), getDisk());
+        UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(getVmId(), getDisk());
         IFrontendActionAsyncCallback onFinished = callback != null ? callback : new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
