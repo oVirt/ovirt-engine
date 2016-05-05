@@ -357,7 +357,7 @@ public class VmMapper extends VmBaseMapper {
             }
         } else {
             if (model.getOs() != null) {
-                Boot boot = map(entity.getBootSequence(), null);
+                Boot boot = map(entity.getDefaultBootSequence(), null);
                 model.getOs().setBoot(boot);
             }
         }
