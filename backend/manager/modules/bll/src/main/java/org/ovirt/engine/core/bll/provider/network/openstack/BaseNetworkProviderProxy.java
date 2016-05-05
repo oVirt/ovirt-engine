@@ -112,7 +112,9 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
                 networkForCreate.setProviderNetworkType(FLAT_NETWORK);
             }
         }
-
+        if (!provider.isRequiringAuthentication()) {
+            networkForCreate.setTenantId(DEVICE_OWNER);
+        }
         return networkForCreate;
     }
 
@@ -184,6 +186,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         subnetForCreate.setEnableDHCP(true);
         subnetForCreate.setGw(subnet.getGateway());
         subnetForCreate.setDnsNames(subnet.getDnsServers());
+        subnetForCreate.setTenantId(externalNetwork.getTenantId());
         return subnetForCreate;
     }
 
@@ -303,6 +306,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         portForCreate.setSecurityGroups(securityGroups);
         portForCreate.setBinding(new Binding());
         portForCreate.getBinding().setHostId(hostId);
+        portForCreate.setTenantId(externalNetwork.getTenantId());
         return portForCreate;
     }
 
