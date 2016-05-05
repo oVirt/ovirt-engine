@@ -55,6 +55,8 @@ public class FutureMap implements Map<String, Object> {
     private boolean ignoreResponseKey = false;
     private long timeout = 0;
     private TimeUnit unit = TimeUnit.MILLISECONDS;
+    private boolean cleanOnTimeout;
+    private JsonRpcClient client;
 
     /**
      * During creation request is sent and <code>Future</code> for a response is held.
@@ -66,6 +68,7 @@ public class FutureMap implements Map<String, Object> {
     public FutureMap(JsonRpcClient client, JsonRpcRequest request) {
         try {
             this.response = client.call(request);
+            this.client = client;
         } catch (ClientConnectionException e) {
             throw new XmlRpcRunTimeException("Connection issues during send request", e);
         }
@@ -78,13 +81,16 @@ public class FutureMap implements Map<String, Object> {
      * @param request - Request to be sent.
      * @param timeout - Timeout which is used when populating response map.
      * @param unit - Time unit for timeout.
+     * @param cleanOnTimeout - If timeout occur and set to <code>true</code> the request is removed from tracker.
      * @throws XmlRpcRunTimeException when there are connection issues.
      */
-    public FutureMap(JsonRpcClient client, JsonRpcRequest request, long timeout, TimeUnit unit) {
+    public FutureMap(JsonRpcClient client, JsonRpcRequest request, long timeout, TimeUnit unit, boolean cleanOnTimeout) {
         try {
             this.timeout = timeout;
             this.unit = unit;
             this.response = client.call(request);
+            this.cleanOnTimeout = cleanOnTimeout;
+            this.client = client;
         } catch (ClientConnectionException e) {
             throw new XmlRpcRunTimeException("Connection issues during send request", e);
         }
@@ -110,6 +116,9 @@ public class FutureMap implements Map<String, Object> {
                     throw new IllegalStateException(e);
                 } catch (TimeoutException e) {
                     this.responseMap.put(STATUS, TIMEOUT_STATUS);
+                    if (cleanOnTimeout) {
+                        client.removeCall(this.response);
+                    }
                 }
             }
         }

@@ -954,13 +954,13 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public FutureTask<Map<String, Object>> poll() {
-        return timeBoundPoll(0, TimeUnit.MILLISECONDS);
+        return timeBoundPoll(2, TimeUnit.SECONDS);
     }
 
     @Override
     public FutureTask<Map<String, Object>> timeBoundPoll(final long timeout, final TimeUnit unit) {
         final JsonRpcRequest request = new RequestBuilder("Host.ping").build();
-        final FutureCallable callable = new FutureCallable(() -> new FutureMap(client, request, timeout, unit));
+        final FutureCallable callable = new FutureCallable(() -> new FutureMap(client, request, timeout, unit, true));
 
         FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 

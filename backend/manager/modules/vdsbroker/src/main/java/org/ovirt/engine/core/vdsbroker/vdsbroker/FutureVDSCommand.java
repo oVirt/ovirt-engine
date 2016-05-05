@@ -20,6 +20,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
  */
 public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> implements FutureVDSCall<VDSReturnValue> {
 
+    private static final String TIMEOUT_MESSAGE = "Internal timeout occured";
+
     public FutureVDSCommand(P parameters) {
         super(parameters);
     }
@@ -64,6 +66,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
     public VDSReturnValue get(long timeout, TimeUnit unit) throws TimeoutException {
         try {
             status = new StatusOnlyReturnForXmlRpc(httpTask.get(timeout, unit));
+            checkTimeout();
             proceedProxyReturnValue();
         } catch (TimeoutException e) {
             httpTask.cancel(true);
@@ -87,6 +90,13 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             setVdsRuntimeError(e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e));
         }
         return getVDSReturnValue();
+    }
+
+    private void checkTimeout() throws TimeoutException {
+        String message = getReturnStatus().message;
+        if (TIMEOUT_MESSAGE.equals(message)) {
+            throw new TimeoutException(message);
+        }
     }
 
     @Override
