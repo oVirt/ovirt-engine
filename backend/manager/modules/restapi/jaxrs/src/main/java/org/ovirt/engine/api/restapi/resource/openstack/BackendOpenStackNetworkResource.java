@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -101,18 +102,22 @@ public class BackendOpenStackNetworkResource
     }
 
     private Network findCurrentNetwork(Map<Network, Set<Guid>> networks) {
-        if (networks != null) {
-            for (Map.Entry<Network, Set<Guid>> entry : networks.entrySet()) {
-                Network current = entry.getKey();
-                ProviderNetwork providedBy = current.getProvidedBy();
-                if (Objects.equals(providedBy.getExternalId(), id)) {
-                    return current;
-                }
-            }
+        final Network result;
+        if (networks == null) {
+            result = null;
+        } else {
+            result = networks.keySet()
+                    .stream()
+                    .filter(network -> Objects.equals(network.getProvidedBy().getExternalId(), id))
+                    .findFirst()
+                    .orElse(null);
         }
-        // This will never return but always throw a WebApplicationException
-        notFound();
-        return null;
+
+        if (result == null) {
+            // This will never return but always throw a WebApplicationException
+            notFound();
+        }
+        return result;
     }
 
     private Map<Network, Set<Guid>> getAllNetworks() {
