@@ -101,11 +101,10 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
     @Override
     protected void syncSearch() {
         VdcObjectType objType = getObjectType();
-        boolean directOnly = objType == VdcObjectType.VM ? true : false;
         GetPermissionsForObjectParameters tempVar = new GetPermissionsForObjectParameters();
         tempVar.setObjectId(getEntityGuid());
         tempVar.setVdcObjectType(objType);
-        tempVar.setDirectOnly(directOnly);
+        tempVar.setDirectOnly(false);
         tempVar.setRefresh(getIsQueryFirstTime());
         tempVar.setAllUsersWithPermission(getAllUsersWithPermission());
         super.syncSearch(VdcQueryType.GetPermissionsForObject, tempVar);
