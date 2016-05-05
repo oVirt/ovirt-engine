@@ -58,7 +58,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     @Actionable
-    @Path("commitsnapshot")
+    @Path("commit_snapshot")
     public Response commitSnapshot(V3Action action) {
         return adaptAction(getDelegate()::commitSnapshot, action);
     }
@@ -127,7 +127,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     @Actionable
-    @Path("previewsnapshot")
+    @Path("preview_snapshot")
     public Response previewSnapshot(V3Action action) {
         return adaptAction(getDelegate()::previewSnapshot, action);
     }
@@ -230,7 +230,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @POST
     @Consumes({"application/xml", "application/json"})
     @Actionable
-    @Path("undosnapshot")
+    @Path("undo_snapshot")
     public Response undoSnapshot(V3Action action) {
         return adaptAction(getDelegate()::undoSnapshot, action);
     }
@@ -305,7 +305,7 @@ public class V3VmServer extends V3Server<VmResource> {
         return new V3VmWatchdogsServer(getDelegate().getWatchdogsResource());
     }
 
-    @Path("{action: (cancelmigration|clone|commitsnapshot|detach|export|freezefilesystems|logon|maintenance|migrate|move|previewsnapshot|reboot|reordermacaddresses|shutdown|start|stop|suspend|thawfilesystems|ticket|undosnapshot)}/{oid}")
+    @Path("{action: (cancelmigration|clone|commit_snapshot|detach|export|freezefilesystems|logon|maintenance|migrate|move|preview_snapshot|reboot|reordermacaddresses|shutdown|start|stop|suspend|thawfilesystems|ticket|undo_snapshot)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
