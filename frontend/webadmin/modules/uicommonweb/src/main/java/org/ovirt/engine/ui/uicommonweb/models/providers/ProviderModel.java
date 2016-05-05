@@ -245,7 +245,7 @@ public class ProviderModel extends Model {
                 getReadOnly().setIsAvailable(isReadOnlyAware);
                 if (isReadOnlyAware){
                     OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-                        getReadOnly().setEntity(properties != null ? properties.getReadOnly() : false);
+                        getReadOnly().setEntity(properties != null ? properties.getReadOnly() : true);
                 }
 
                 boolean isVmware = isTypeVmware();
