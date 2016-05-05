@@ -74,7 +74,7 @@ public class HostNetworkProviderModel extends EntityModel {
             }
         };
         startProgress();
-        AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
+        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.OPENSTACK_NETWORK);
     }
 
     public boolean validate() {
