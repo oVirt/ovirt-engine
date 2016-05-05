@@ -52,7 +52,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
             map.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
             VmInfoBuilder.addProfileDataToNic(map, vm, vmDevice, nic);
-            VmInfoBuilder.addNetworkFiltersToNic(map);
+            VmInfoBuilder.addNetworkFiltersToNic(map, nic);
         } else {
             VmInfoBuilder.addNetworkVirtualFunctionProperties(map, nic, vmDevice, vmDevice.getHostDevice(), vm);
         }

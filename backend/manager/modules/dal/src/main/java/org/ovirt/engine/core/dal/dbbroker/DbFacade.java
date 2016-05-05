@@ -164,6 +164,7 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -1171,6 +1172,15 @@ public class DbFacade {
      */
     public VnicProfileDao getVnicProfileDao() {
         return getDao(VnicProfileDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link NetworkFilterDao}.
+     *
+     * @return the dao
+     */
+    public NetworkFilterDao getNetworkFilterDao() {
+        return getDao(NetworkFilterDao.class);
     }
 
     /**

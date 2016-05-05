@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -41,8 +42,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -731,7 +730,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.NIC_TYPE, nicModel);
 
         addProfileDataToNic(struct, vm, vmDevice, vmInterface);
-        addNetworkFiltersToNic(struct);
+        addNetworkFiltersToNic(struct, vmInterface);
     }
 
     static void addNetworkVirtualFunctionProperties(Map<String, Object> struct,
@@ -852,10 +851,24 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    public static void addNetworkFiltersToNic(Map<String, Object> struct) {
-        if (Config.<Boolean> getValue(ConfigValues.EnableMACAntiSpoofingFilterRules)) {
-            struct.put(VdsProperties.NW_FILTER, NetworkFilters.NO_MAC_SPOOFING.getFilterName());
+    public static void addNetworkFiltersToNic(Map<String, Object> struct, VmNic vmNic) {
+        final NetworkFilter networkFilter = fetchVnicProfileNetworkFilter(vmNic);
+        if (networkFilter != null) {
+            final String networkFilterName = networkFilter.getName();
+            struct.put(VdsProperties.NW_FILTER, networkFilterName);
         }
+    }
+
+    private static NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {
+        if (vmNic.getVnicProfileId() != null) {
+            VnicProfile vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(vmNic.getVnicProfileId());
+            if (vnicProfile != null) {
+                final Guid networkFilterId = vnicProfile.getNetworkFilterId();
+                return networkFilterId == null ? null
+                        : DbFacade.getInstance().getNetworkFilterDao().getNetworkFilterById(networkFilterId);
+            }
+        }
+        return null;
     }
 
     private static void addFloppyDetails(VmDevice vmDevice, Map<String, Object> struct) {
