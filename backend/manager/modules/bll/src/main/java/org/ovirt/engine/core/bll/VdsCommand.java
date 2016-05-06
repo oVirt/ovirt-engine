@@ -229,11 +229,19 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         }
     }
 
+    /**
+     * Check if power management(pm) parameters are legal.
+     * Parameters are valid if:
+     *  1) user don't have pm enabled and fence agents are null.
+     *  2) user has pm enabled and send valid non-empty list of fence agents
+     * Parameters aren't valid if:
+     *  1) user has pm enabled and send empty list of fence agents
+     */
     protected boolean isPowerManagementLegal(boolean pmEnabled,
             List<FenceAgent> fenceAgents,
             String clusterCompatibilityVersion) {
-        if (pmEnabled) {
-            if (fenceAgents == null || fenceAgents.isEmpty()) {
+        if (pmEnabled && fenceAgents != null) {
+            if (fenceAgents.isEmpty()) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 return false;
             }

@@ -1316,7 +1316,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
-        param.setFenceAgents(host.getFenceAgents());
+        param.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
         if (networkProvider != null) {

@@ -134,6 +134,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         // REVISIT fencing options
         VDS vds = getEntity();
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
+        params.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
         params = (UpdateVdsActionParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, params);
         if (vds.isOvirtNode()) {
