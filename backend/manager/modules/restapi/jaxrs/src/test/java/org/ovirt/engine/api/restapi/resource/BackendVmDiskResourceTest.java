@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -265,23 +264,6 @@ public class BackendVmDiskResourceTest
     public void testRemove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
-        setUriInfo(
-            setUpActionExpectations(
-                VdcActionType.RemoveDisk,
-                RemoveDiskParameters.class,
-                new String[] { "DiskId" },
-                new Object[] { DISK_ID },
-                true,
-                true
-            )
-        );
-        verifyRemove(resource.remove());
-    }
-
-    @Test
-    public void testDetach() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             VdcActionType.DetachDiskFromVm,
             AttachDetachVmDiskParameters.class,
@@ -291,7 +273,6 @@ public class BackendVmDiskResourceTest
             true,
             false
         );
-        uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmDiskResource.DETACH_ONLY, Boolean.TRUE.toString());
         setUriInfo(uriInfo);
         control.replay();
         verifyRemove(resource.remove());
@@ -312,10 +293,10 @@ public class BackendVmDiskResourceTest
         setUpEntityQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveDisk,
-                RemoveDiskParameters.class,
-                new String[] { "DiskId" },
-                new Object[] { DISK_ID },
+                VdcActionType.DetachDiskFromVm,
+                AttachDetachVmDiskParameters.class,
+                new String[] { "VmId", "EntityInfo" },
+                new Object[] { VM_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
                 valid,
                 success
             )

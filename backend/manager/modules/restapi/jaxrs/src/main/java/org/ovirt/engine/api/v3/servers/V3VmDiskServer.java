@@ -27,15 +27,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Actionable;
+import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
+import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3Disk;
 
 @Produces({"application/xml", "application/json"})
 public class V3VmDiskServer extends V3Server<VmDiskResource> {
-    public V3VmDiskServer(VmDiskResource delegate) {
+    private String id;
+
+    public V3VmDiskServer(String id, VmDiskResource delegate) {
         super(delegate);
+        this.id = id;
     }
 
     @POST
@@ -83,7 +89,26 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
 
     @DELETE
     public Response remove() {
-        return adaptRemove(getDelegate()::remove);
+        return remove(new V3Action());
+    }
+
+    @DELETE
+    @Consumes({"application/xml", "application/json"})
+    public Response remove(V3Action action) {
+        // Detach the disk from the VM:
+        Response response = adaptRemove(getDelegate()::remove);
+
+        // V3 version of the API used the action "detach" element as parameter, to indicate that the disk should only
+        // be detached and not removed completely. In V4 this has been removed, so if the value isn't "true" then we
+        // need to delete the disk using the top level disks collection.
+        if (!action.isSetDetach() || !action.isDetach()) {
+            DisksResource disksResource = BackendApiResource.getInstance().getDisksResource();
+            DiskResource diskResource = disksResource.getDiskResource(id);
+            response = adaptRemove(diskResource::remove);
+        }
+
+        // Return the response:
+        return response;
     }
 
     @Path("permissions")

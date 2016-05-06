@@ -1429,26 +1429,18 @@ DELETE /templates/{template:id}/disks/{disk:id};force=true
 DELETE /templates/{template:id}/disks/{disk:id};storage_domain=123
 ----
 
-=== Use `detach_only` matrix parameter to detach VM disk
+=== Don't remove disks via the VM disk API
 
-The operation that removes a virtual machine supports a `detach`
-parameter. In order to use it the `DELETE` method used to support an
-optional action parameter:
-
-[source]
-----
-DELETE /vms/{vm:id}/disks/{disk:id}
-<action>
-  <detach>true</detach>
-</action>
-----
-
-This optional action parameter has been replaced with an optional matrix
-parameter:
+Removing an entity by deleting `/vms/{vm:id}/disks/{disk:id}` means
+removing the relationship between the VM and the disk - i.e., this
+operation should just detach the disk from the VM. This operation
+is no longer able to remove disks completely from the system, which
+was prone to user errors and had unreverseable consequences.
+To remove a disk, instead use the `/disk/{disk:id}` API:
 
 [source]
 ----
-DELETE /vms/{vm:id}/disks/{disk:id};detach_only=true
+DELETE /disks/{disk:id}
 ----
 
 === Use `force` matrix parameter to force remove a virtual machine
