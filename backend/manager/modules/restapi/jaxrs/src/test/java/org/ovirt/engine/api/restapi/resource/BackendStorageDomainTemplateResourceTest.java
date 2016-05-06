@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -309,7 +308,7 @@ public class BackendStorageDomainTemplateResourceTest
         verifyActionResponse(response, URL_BASE, true, null);
         action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
-        assertEquals(actionStatus.value(), action.getStatus().getState());
+        assertEquals(actionStatus.value(), action.getStatus());
     }
 
     @Test

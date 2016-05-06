@@ -2,12 +2,10 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.List;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-
 
 public class ActionMapper {
 
@@ -18,8 +16,8 @@ public class ActionMapper {
         for (AsyncTaskStatus task : entity) {
             asyncStatus = AsyncTaskMapper.map(task, asyncStatus);
         }
-        model.setStatus(StatusUtils.create(asyncStatus));
-        if (model.getStatus().getState().equals(CreationStatus.FAILED.value())) {
+        model.setStatus(asyncStatus.value());
+        if (asyncStatus == CreationStatus.FAILED) {
             model.setFault(new Fault());
             for (AsyncTaskStatus task : entity) {
                 if (task.getException() != null) {

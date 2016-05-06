@@ -1,48 +1,43 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.EntityExternalStatus;
-import org.ovirt.engine.core.common.businessentities.ExternalStatus;
+import org.ovirt.engine.api.model.ExternalStatus;
 
 /**
  * Created by emesika on 6/12/15.
  */
 public class ExternalStatusMapper {
 
-    @Mapping(from = ExternalStatus.class, to = EntityExternalStatus.class)
-    public static EntityExternalStatus map(ExternalStatus entityStatus, EntityExternalStatus template) {
-        switch (entityStatus) {
+    public static ExternalStatus map(org.ovirt.engine.core.common.businessentities.ExternalStatus status) {
+        switch (status) {
         case Ok:
-            return EntityExternalStatus.OK;
+            return ExternalStatus.OK;
         case Info:
-            return EntityExternalStatus.INFO;
+            return ExternalStatus.INFO;
         case Warning:
-            return EntityExternalStatus.WARNING;
+            return ExternalStatus.WARNING;
         case Error:
-            return EntityExternalStatus.ERROR;
+            return ExternalStatus.ERROR;
         case Failure:
-            return EntityExternalStatus.FAILURE;
+            return ExternalStatus.FAILURE;
         default:
             return null;
         }
     }
 
-
-    @Mapping(from = EntityExternalStatus.class, to = ExternalStatus.class)
-    public static ExternalStatus map(EntityExternalStatus entityStatus, ExternalStatus template) {
-        switch (entityStatus) {
+    public static org.ovirt.engine.core.common.businessentities.ExternalStatus map(ExternalStatus status) {
+        switch (status) {
         case OK:
-            return ExternalStatus.Ok;
+            return org.ovirt.engine.core.common.businessentities.ExternalStatus.Ok;
         case INFO:
-            return ExternalStatus.Info;
+            return org.ovirt.engine.core.common.businessentities.ExternalStatus.Info;
         case WARNING:
-            return ExternalStatus.Warning;
+            return org.ovirt.engine.core.common.businessentities.ExternalStatus.Warning;
         case  ERROR:
-            return ExternalStatus.Error;
+            return org.ovirt.engine.core.common.businessentities.ExternalStatus.Error;
         case FAILURE:
-            return ExternalStatus.Failure;
+            return org.ovirt.engine.core.common.businessentities.ExternalStatus.Failure;
         default:
             return null;
         }
     }
-
 }

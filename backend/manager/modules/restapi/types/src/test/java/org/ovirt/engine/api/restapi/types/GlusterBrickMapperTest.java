@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.GlusterBrick;
-import org.ovirt.engine.api.model.GlusterState;
+import org.ovirt.engine.api.model.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 
@@ -29,14 +29,14 @@ public class GlusterBrickMapperTest extends AbstractInvertibleMappingTest<Gluste
      */
     @Test
     public void testFromBackendToRest() {
-        testStatusMapping(GlusterStatus.UP, GlusterState.UP);
-        testStatusMapping(GlusterStatus.DOWN, GlusterState.DOWN);
+        testStatusMapping(GlusterStatus.UP, GlusterBrickStatus.UP);
+        testStatusMapping(GlusterStatus.DOWN, GlusterBrickStatus.DOWN);
     }
 
-    private void testStatusMapping(GlusterStatus backendStatus, GlusterState restStatus) {
+    private void testStatusMapping(GlusterStatus backendStatus, GlusterBrickStatus restStatus) {
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setStatus(backendStatus);
-        GlusterBrick restVolume = GlusterBrickMapper.map(brick, null);
-        assertEquals(restVolume.getStatus().getState(), restStatus.value());
+        GlusterBrick restBrick = GlusterBrickMapper.map(brick, null);
+        assertEquals(restBrick.getStatus(), restStatus);
     }
 }

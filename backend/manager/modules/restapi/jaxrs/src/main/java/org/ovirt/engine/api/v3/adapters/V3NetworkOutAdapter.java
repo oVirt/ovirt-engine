@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Labels;
 import org.ovirt.engine.api.v3.types.V3Network;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3Usages;
 
 public class V3NetworkOutAdapter implements V3Adapter<Network, V3Network> {
@@ -78,7 +79,9 @@ public class V3NetworkOutAdapter implements V3Adapter<Network, V3Network> {
             to.setRequired(from.isRequired());
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetStp()) {
             to.setStp(from.isStp());

@@ -20,6 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Network;
 
@@ -76,8 +77,8 @@ public class V3NetworkInAdapter implements V3Adapter<V3Network, Network> {
         if (from.isSetRequired()) {
             to.setRequired(from.isRequired());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(NetworkStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetStp()) {
             to.setStp(from.isStp());

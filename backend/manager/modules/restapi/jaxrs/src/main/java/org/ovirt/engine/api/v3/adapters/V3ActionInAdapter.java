@@ -159,8 +159,8 @@ public class V3ActionInAdapter implements V3Adapter<V3Action, Action> {
         if (from.isSetSsh()) {
             to.setSsh(adaptIn(from.getSsh()));
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(from.getStatus().getState());
         }
         if (from.isSetStorageDomain()) {
             to.setStorageDomain(adaptIn(from.getStorageDomain()));

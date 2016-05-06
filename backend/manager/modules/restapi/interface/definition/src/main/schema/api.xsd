@@ -87,7 +87,7 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
-          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="status" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <!-- Fault describing failure case -->
           <xs:element ref="fault" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
@@ -779,14 +779,14 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="selinux_modes" type="SELinuxModes" />
+  <xs:element name="selinux_modes" type="SeLinuxModes" />
 
-  <xs:complexType name="SELinuxModes">
+  <xs:complexType name="SeLinuxModes">
     <xs:sequence>
       <xs:element name="selinux_mode" type="xs:string" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
-            <jaxb:property name="SELinuxModes" />
+            <jaxb:property name="SeLinuxModes" />
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -836,7 +836,7 @@
           <xs:element name="name" type="xs:string" minOccurs="0"/>
           <xs:element name="description" type="xs:string" minOccurs="0"/>
           <xs:element name="comment" type="xs:string" minOccurs="0"/>
-          <xs:element name="creation_status" type="Status" minOccurs="0"/>
+          <xs:element name="creation_status" type="xs:string" minOccurs="0"/>
           <!-- also rel="creation_status" link for monitoring async creation -->
           <!-- further link relation types may be defined by specific resources -->
           <xs:element ref="link" minOccurs="0" maxOccurs="unbounded">

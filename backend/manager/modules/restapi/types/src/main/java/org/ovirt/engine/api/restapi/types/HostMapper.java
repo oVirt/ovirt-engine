@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.AutoNumaStatus;
@@ -17,8 +16,8 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Display;
-import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.ExternalHostProvider;
+import org.ovirt.engine.api.model.ExternalStatus;
 import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
@@ -39,12 +38,11 @@ import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PmProxyType;
 import org.ovirt.engine.api.model.PowerManagement;
-import org.ovirt.engine.api.model.SELinux;
-import org.ovirt.engine.api.model.SELinuxMode;
+import org.ovirt.engine.api.model.SeLinux;
+import org.ovirt.engine.api.model.SeLinuxMode;
 import org.ovirt.engine.api.model.Spm;
-import org.ovirt.engine.api.model.SpmState;
+import org.ovirt.engine.api.model.SpmStatus;
 import org.ovirt.engine.api.model.Ssh;
-import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
@@ -201,22 +199,20 @@ public class HostMapper {
         }
         model.setProtocol(map(entity.getProtocol(), null));
         HostStatus status = map(entity.getStatus(), null);
-        model.setStatus(StatusUtils.create(status));
+        model.setStatus(status);
         if (entity.getExternalStatus() != null) {
-            EntityExternalStatus entityExternalStatus = ExternalStatusMapper.map(entity.getExternalStatus(), null);
-            Status hostStatus = new Status();
-            hostStatus.setState(entityExternalStatus.value());
-            model.setExternalStatus(hostStatus);
+            ExternalStatus externalStatus = ExternalStatusMapper.map(entity.getExternalStatus());
+            model.setExternalStatus(externalStatus);
         }
         if (status == HostStatus.NON_OPERATIONAL) {
-            model.getStatus().setDetail(entity.getNonOperationalReason().name().toLowerCase());
+            model.setStatusDetail(entity.getNonOperationalReason().name().toLowerCase());
         } else if (status == HostStatus.MAINTENANCE || status == HostStatus.PREPARING_FOR_MAINTENANCE) {
-            model.getStatus().setDetail(entity.getMaintenanceReason());
+            model.setStatusDetail(entity.getMaintenanceReason());
         }
         Spm spm = new Spm();
         spm.setPriority(entity.getVdsSpmPriority());
         if (entity.getSpmStatus() != null) {
-            spm.setStatus(StatusUtils.create(map(entity.getSpmStatus(), null)));
+            spm.setStatus(mapSpmStatus(entity.getSpmStatus()));
         }
         model.setSpm(spm);
         if (entity.getVersion() != null &&
@@ -295,7 +291,7 @@ public class HostMapper {
         }
 
         model.setKdumpStatus(map(entity.getKdumpStatus(), null));
-        model.setSelinux(map(entity, (SELinux) null));
+        model.setSeLinux(map(entity, (SeLinux) null));
         model.setAutoNumaStatus(map(entity.getAutoNumaBalancing(), null));
         model.setNumaSupported(entity.isNumaSupport());
 
@@ -580,23 +576,23 @@ public class HostMapper {
         return params;
     }
 
-    @Mapping(from = VDS.class, to = SELinux.class)
-    public static SELinux map(VDS entity, SELinux template) {
-        SELinux model = template != null ? template : new SELinux();
+    @Mapping(from = VDS.class, to = SeLinux.class)
+    public static SeLinux map(VDS entity, SeLinux template) {
+        SeLinux model = template != null ? template : new SeLinux();
         if (entity.getSELinuxEnforceMode() == null) {
             return model;
         }
 
-        SELinuxMode mode = null;
+        SeLinuxMode mode = null;
         switch (entity.getSELinuxEnforceMode()) {
             case DISABLED:
-                mode = SELinuxMode.DISABLED;
+                mode = SeLinuxMode.DISABLED;
                 break;
             case PERMISSIVE:
-                mode = SELinuxMode.PERMISSIVE;
+                mode = SeLinuxMode.PERMISSIVE;
                 break;
             case ENFORCING:
-                mode = SELinuxMode.ENFORCING;
+                mode = SeLinuxMode.ENFORCING;
         }
         model.setMode(mode);
 
@@ -697,15 +693,14 @@ public class HostMapper {
         return entity;
     }
 
-    @Mapping(from = VdsSpmStatus.class, to = SpmState.class)
-    public static SpmState map(VdsSpmStatus entityStatus, SpmState template) {
-        switch (entityStatus) {
+    public static SpmStatus mapSpmStatus(VdsSpmStatus status) {
+        switch (status) {
             case None:
-                return SpmState.NONE;
+                return SpmStatus.NONE;
             case Contending:
-                return SpmState.CONTENDING;
+                return SpmStatus.CONTENDING;
             case SPM:
-                return SpmState.SPM;
+                return SpmStatus.SPM;
             default:
                 return null;
         }

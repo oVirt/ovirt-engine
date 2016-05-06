@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3DataCenter;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3SupportedVersions;
 
 public class V3DataCenterOutAdapter implements V3Adapter<DataCenter, V3DataCenter> {
@@ -58,7 +59,9 @@ public class V3DataCenterOutAdapter implements V3Adapter<DataCenter, V3DataCente
             to.setQuotaMode(from.getQuotaMode().value());
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetStorageFormat()) {
             to.setStorageFormat(from.getStorageFormat().value());

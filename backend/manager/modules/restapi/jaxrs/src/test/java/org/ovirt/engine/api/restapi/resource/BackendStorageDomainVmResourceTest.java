@@ -359,7 +359,7 @@ public class BackendStorageDomainVmResourceTest
         verifyActionResponse(response, URL_BASE, true, null);
         action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
-        assertEquals(actionStatus.value(), action.getStatus().getState());
+        assertEquals(actionStatus.value(), action.getStatus());
     }
 
     @Test

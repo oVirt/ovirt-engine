@@ -731,7 +731,7 @@ public class BackendVmResourceTest
         verifyActionResponse(response, "vms/" + GUIDS[0], true, null);
         Action action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
-        assertEquals(actionStatus.value(), action.getStatus().getState());
+        assertEquals(actionStatus.value(), action.getStatus());
 
     }
 
@@ -876,7 +876,7 @@ public class BackendVmResourceTest
         verifyActionResponse(response);
         Action actionResponse = (Action)response.getEntity();
         assertTrue(actionResponse.isSetStatus());
-        assertEquals(CreationStatus.COMPLETE.value(), actionResponse.getStatus().getState());
+        assertEquals(CreationStatus.COMPLETE.value(), actionResponse.getStatus());
     }
 
     @Test
@@ -889,7 +889,7 @@ public class BackendVmResourceTest
         verifyActionResponse(response);
         Action action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
-        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
+        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus());
     }
 
     @Test
@@ -902,7 +902,7 @@ public class BackendVmResourceTest
         verifyActionResponse(response);
         Action action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
-        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
+        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus());
     }
 
     @Test

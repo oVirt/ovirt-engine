@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterVolumeStatus;
 import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.TransportType;
@@ -69,15 +69,15 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
      */
     @Test
     public void testFromBackendToRest() {
-        testStatusMapping(GlusterStatus.UP, GlusterState.UP);
-        testStatusMapping(GlusterStatus.DOWN, GlusterState.DOWN);
+        testStatusMapping(GlusterStatus.UP, GlusterVolumeStatus.UP);
+        testStatusMapping(GlusterStatus.DOWN, GlusterVolumeStatus.DOWN);
     }
 
-    private void testStatusMapping(GlusterStatus backendStatus, GlusterState restStatus) {
+    private void testStatusMapping(GlusterStatus backendStatus, GlusterVolumeStatus restStatus) {
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setStatus(backendStatus);
         GlusterVolume restVolume = GlusterVolumeMapper.map(volume, null);
-        assertEquals(restVolume.getStatus().getState(), restStatus.value());
+        assertEquals(restVolume.getStatus(), restStatus);
     }
 
     private boolean containsOption(GlusterVolume volume, Option expectedOption) {

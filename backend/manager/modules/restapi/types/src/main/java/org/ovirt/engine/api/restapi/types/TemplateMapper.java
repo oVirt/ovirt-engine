@@ -1,11 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
-
-
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Boot;
-
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateStatus;
@@ -18,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
-
 
 public class TemplateMapper extends VmBaseMapper {
 
@@ -84,7 +79,7 @@ public class TemplateMapper extends VmBaseMapper {
             model.setInitialization(InitializationMapper.map(entity.getVmInit(), null));
         }
         if (entity.getStatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
+            model.setStatus(mapTemplateStatus(entity.getStatus()));
         }
         if (entity.getDefaultBootSequence() != null ||
             entity.getKernelUrl() != null ||
@@ -129,9 +124,8 @@ public class TemplateMapper extends VmBaseMapper {
         return params;
     }
 
-    @Mapping(from = VmTemplateStatus.class, to = TemplateStatus.class)
-    public static TemplateStatus map(VmTemplateStatus entityStatus, TemplateStatus incoming) {
-        switch (entityStatus) {
+    private static TemplateStatus mapTemplateStatus(VmTemplateStatus status) {
+        switch (status) {
         case OK:
             return TemplateStatus.OK;
         case Locked:

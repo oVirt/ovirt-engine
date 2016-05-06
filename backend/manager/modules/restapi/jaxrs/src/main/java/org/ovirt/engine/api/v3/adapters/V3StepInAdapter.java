@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 import org.ovirt.engine.api.model.ExternalSystemType;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
+import org.ovirt.engine.api.model.StepStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Step;
 
@@ -70,8 +71,8 @@ public class V3StepInAdapter implements V3Adapter<V3Step, Step> {
         if (from.isSetStartTime()) {
             to.setStartTime(from.getStartTime());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(StepStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetType()) {
             to.setType(StepEnum.fromValue(from.getType()));

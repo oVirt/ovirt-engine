@@ -444,7 +444,7 @@ public class BackendTemplateResourceTest
         verifyActionResponse(response, "templates/" + GUIDS[0], true, null);
         action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
-        assertEquals(actionStatus.value(), action.getStatus().getState());
+        assertEquals(actionStatus.value(), action.getStatus());
     }
 
     @Override

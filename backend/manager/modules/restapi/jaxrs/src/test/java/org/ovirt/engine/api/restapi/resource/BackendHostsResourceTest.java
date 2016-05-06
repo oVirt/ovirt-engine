@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.easymock.EasyMock.expect;
 
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -272,6 +271,6 @@ public class BackendHostsResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index], model.getName());
         assertEquals(ADDRESSES[index], model.getAddress());
-        assertEquals(HOST_STATUS[index].value(), model.getStatus().getState());
+        assertEquals(HOST_STATUS[index], model.getStatus());
     }
 }

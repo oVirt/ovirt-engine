@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3DiskSnapshot;
 import org.ovirt.engine.api.v3.types.V3Statistics;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3StorageDomains;
 import org.ovirt.engine.api.v3.types.V3VMs;
 
@@ -118,7 +119,9 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
             to.getStatistics().getStatistics().addAll(adaptOut(from.getStatistics().getStatistics()));
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetStorageDomain()) {
             to.setStorageDomain(adaptOut(from.getStorageDomain()));

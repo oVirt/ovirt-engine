@@ -3,10 +3,9 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AccessProtocol;
-import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterVolumeStatus;
 import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
@@ -104,7 +103,7 @@ public class GlusterVolumeMapper {
         volume.setRedundancyCount(fromVolume.getRedundancyCount());
 
         if(fromVolume.getStatus() != null) {
-            volume.setStatus(StatusUtils.create(map(fromVolume.getStatus(), null)));
+            volume.setStatus(mapVolumeStatus(fromVolume.getStatus()));
         }
 
         if (fromVolume.getOptions() != null) {
@@ -240,14 +239,12 @@ public class GlusterVolumeMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus.class, to = GlusterState.class)
-    public static GlusterState map(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus glusterVolumeStatus,
-            String template) {
-        switch (glusterVolumeStatus) {
+    private static GlusterVolumeStatus mapVolumeStatus(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus status) {
+        switch (status) {
         case UP:
-            return GlusterState.UP;
+            return GlusterVolumeStatus.UP;
         case DOWN:
-            return GlusterState.DOWN;
+            return GlusterVolumeStatus.DOWN;
         default:
             return null;
         }

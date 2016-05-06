@@ -9,7 +9,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -167,18 +166,18 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     }
 
     protected Response actionFailure(Action action, WebApplicationException wae) {
-        action.setStatus(StatusUtils.create(CreationStatus.FAILED));
+        action.setStatus(CreationStatus.FAILED.value());
         return Response.fromResponse(wae.getResponse()).entity(action).build();
     }
 
     protected Response actionSuccess(Action action) {
-        action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+        action.setStatus(CreationStatus.COMPLETE.value());
         return Response.ok().entity(action).build();
     }
 
     private Response actionSuccess(Action action, Object result) {
         setActionItem(action, result);
-        action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+        action.setStatus(CreationStatus.COMPLETE.value());
         return Response.ok().entity(action).build();
     }
 
@@ -192,7 +191,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         addOrUpdateLink(action, "parent", path.substring(0, path.lastIndexOf("/")));
         addOrUpdateLink(action, "replay", path);
 
-        action.setStatus(StatusUtils.create(getAsynchronousStatus(actionResult)));
+        action.setStatus(getAsynchronousStatus(actionResult).value());
         return Response.status(ACCEPTED_STATUS).entity(action).build();
     }
 

@@ -20,6 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.v3.V3Adapter;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3Step;
 
 public class V3StepOutAdapter implements V3Adapter<Step, V3Step> {
@@ -69,7 +70,9 @@ public class V3StepOutAdapter implements V3Adapter<Step, V3Step> {
             to.setStartTime(from.getStartTime());
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetType()) {
             to.setType(from.getType().value());

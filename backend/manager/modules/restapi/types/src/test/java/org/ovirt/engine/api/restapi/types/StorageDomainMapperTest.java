@@ -69,20 +69,33 @@ public class StorageDomainMapperTest extends
 
     @Test
     public void storageDomainMappings() {
-        assertEquals(StorageDomainStatus.ACTIVE, StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Active, null));
-        assertEquals(StorageDomainStatus.INACTIVE, StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Inactive, null));
-        assertEquals(StorageDomainStatus.LOCKED, StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Locked, null));
-        assertEquals(StorageDomainStatus.UNATTACHED, StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Unattached, null));
-        assertEquals(StorageDomainStatus.UNKNOWN, StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Unknown, null));
-        assertNull(StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Uninitialized, null));
-        assertEquals(StorageDomainStatus.MAINTENANCE, StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Maintenance, null));
+        assertEquals(
+            StorageDomainStatus.ACTIVE,
+            StorageDomainMapper.mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus.Active)
+        );
+        assertEquals(
+            StorageDomainStatus.INACTIVE,
+            StorageDomainMapper.mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus.Inactive)
+        );
+        assertEquals(
+            StorageDomainStatus.LOCKED,
+            StorageDomainMapper.mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus.Locked)
+        );
+        assertEquals(
+            StorageDomainStatus.UNATTACHED,
+            StorageDomainMapper.mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus.Unattached)
+        );
+        assertEquals(
+            StorageDomainStatus.UNKNOWN,
+            StorageDomainMapper.mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus.Unknown)
+        );
+        assertNull(
+            StorageDomainMapper.mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus.Uninitialized)
+        );
+        assertEquals(
+            StorageDomainStatus.MAINTENANCE,
+            StorageDomainMapper.mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus.Maintenance)
+        );
 
         assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.V3,
                 StorageDomainMapper.map(NfsVersion.V3, null));

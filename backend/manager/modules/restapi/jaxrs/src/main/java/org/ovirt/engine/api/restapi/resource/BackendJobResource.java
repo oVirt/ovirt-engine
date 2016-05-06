@@ -4,6 +4,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Job;
+import org.ovirt.engine.api.model.JobStatus;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.StepsResource;
@@ -28,8 +29,9 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
     @Override
     public Response end(Action action) {
         validateParameters(action, "status");
+        JobStatus status = JobStatus.fromValue(action.getStatus());
         return doAction(VdcActionType.EndExternalJob,
-                new EndExternalJobParameters(guid, JobMapper.map(action.getStatus(), null), action.isSetForce() ? action.isForce() : false), action);
+                new EndExternalJobParameters(guid, JobMapper.mapJobStatus(status), action.isSetForce() ? action.isForce() : false), action);
     }
 
     @Override

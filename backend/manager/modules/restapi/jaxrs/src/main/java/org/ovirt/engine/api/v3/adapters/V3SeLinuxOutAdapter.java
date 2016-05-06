@@ -16,19 +16,16 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
-import org.ovirt.engine.api.model.Status;
+import org.ovirt.engine.api.model.SeLinux;
 import org.ovirt.engine.api.v3.V3Adapter;
-import org.ovirt.engine.api.v3.types.V3Status;
+import org.ovirt.engine.api.v3.types.V3SELinux;
 
-public class V3StatusInAdapter implements V3Adapter<V3Status, Status> {
+public class V3SeLinuxOutAdapter implements V3Adapter<SeLinux, V3SELinux> {
     @Override
-    public Status adapt(V3Status from) {
-        Status to = new Status();
-        if (from.isSetDetail()) {
-            to.setDetail(from.getDetail());
-        }
-        if (from.isSetState()) {
-            to.setState(from.getState());
+    public V3SELinux adapt(SeLinux from) {
+        V3SELinux to = new V3SELinux();
+        if (from.isSetMode()) {
+            to.setMode(from.getMode().value());
         }
         return to;
     }

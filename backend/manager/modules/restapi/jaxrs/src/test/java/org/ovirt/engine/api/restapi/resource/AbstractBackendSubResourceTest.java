@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -96,12 +95,12 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
         }
 
         assertTrue("unexpected status", async
-                   ? action.getStatus().getState().equals(CreationStatus.PENDING.value())
-                     || action.getStatus().getState().equals(CreationStatus.IN_PROGRESS.value())
-                     || action.getStatus().getState().equals(CreationStatus.COMPLETE.value())
+                   ? action.getStatus().equals(CreationStatus.PENDING.value())
+                     || action.getStatus().equals(CreationStatus.IN_PROGRESS.value())
+                     || action.getStatus().equals(CreationStatus.COMPLETE.value())
                    : reason == null
-                     ? action.getStatus().getState().equals(CreationStatus.COMPLETE.value())
-                     : action.getStatus().getState().equals(CreationStatus.FAILED.value()));
+                     ? action.getStatus().equals(CreationStatus.COMPLETE.value())
+                     : action.getStatus().equals(CreationStatus.FAILED.value()));
     }
 
     protected void verifyImmutabilityConstraint(WebApplicationException wae) {

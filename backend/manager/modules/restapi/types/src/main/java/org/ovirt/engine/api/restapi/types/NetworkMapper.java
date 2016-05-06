@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Network;
@@ -121,7 +120,7 @@ public class NetworkMapper {
                 model.getUsages().getUsages().add(NetworkUsage.MANAGEMENT.value());
             }
             if (entity.getCluster().getStatus() != null) {
-                model.setStatus(StatusUtils.create(map(entity.getCluster().getStatus(), null)));
+                model.setStatus(mapNetworkStatus(entity.getCluster().getStatus()));
             }
             model.setDisplay(entity.getCluster().isDisplay());
             model.setRequired(entity.getCluster().isRequired());
@@ -137,10 +136,8 @@ public class NetworkMapper {
         return model;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.network.NetworkStatus.class, to = NetworkStatus.class)
-    public static NetworkStatus map(org.ovirt.engine.core.common.businessentities.network.NetworkStatus entityStatus,
-                                    NetworkStatus template) {
-        switch (entityStatus) {
+    private static NetworkStatus mapNetworkStatus(org.ovirt.engine.core.common.businessentities.network.NetworkStatus status) {
+        switch (status) {
         case NON_OPERATIONAL:
             return NetworkStatus.NON_OPERATIONAL;
         case OPERATIONAL:
@@ -149,22 +146,4 @@ public class NetworkMapper {
             return null;
         }
     }
-
-    @Mapping(from = NetworkStatus.class, to = org.ovirt.engine.core.common.businessentities.network.NetworkStatus.class)
-    public static org.ovirt.engine.core.common.businessentities.network.NetworkStatus map(NetworkStatus modelStatus,
-                                                                             org.ovirt.engine.core.common.businessentities.network.NetworkStatus template) {
-        if (modelStatus==null) {
-            return null;
-        } else {
-            switch (modelStatus) {
-            case NON_OPERATIONAL:
-                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.NON_OPERATIONAL;
-            case OPERATIONAL:
-                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
-            default:
-                return null;
-            }
-        }
-    }
-
 }

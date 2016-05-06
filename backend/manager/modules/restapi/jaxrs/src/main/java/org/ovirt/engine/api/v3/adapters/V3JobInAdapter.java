@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Job;
+import org.ovirt.engine.api.model.JobStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Job;
 
@@ -65,8 +66,8 @@ public class V3JobInAdapter implements V3Adapter<V3Job, Job> {
         if (from.isSetStartTime()) {
             to.setStartTime(from.getStartTime());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(JobStatus.fromValue(from.getStatus().getState()));
         }
         return to;
     }

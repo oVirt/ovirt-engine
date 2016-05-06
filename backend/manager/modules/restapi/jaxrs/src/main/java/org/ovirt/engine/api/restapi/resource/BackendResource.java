@@ -10,7 +10,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.ParametersHelper;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Job;
@@ -187,7 +186,7 @@ public class BackendResource extends BaseBackendResource {
                 if (actionResult.getJobId() != null) {
                     setJobLink(action, actionResult);
                 }
-                action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+                action.setStatus(CreationStatus.COMPLETE.value());
                 if (getEntityWhenDone) {
                     setActionItem(action, getEntity());
                 }
@@ -225,7 +224,7 @@ public class BackendResource extends BaseBackendResource {
         try {
             doNonBlockingAction(task, params);
             if (action!=null) {
-                action.setStatus(StatusUtils.create(CreationStatus.IN_PROGRESS));
+                action.setStatus(CreationStatus.IN_PROGRESS.value());
                 return Response.status(Response.Status.ACCEPTED).entity(action).build();
             } else {
                 return Response.status(Response.Status.ACCEPTED).build();
@@ -403,7 +402,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected Response actionStatus(CreationStatus status, Action action, Object result) {
         setActionItem(action, result);
-        action.setStatus(StatusUtils.create(status));
+        action.setStatus(status.value());
         return Response.ok().entity(action).build();
     }
 

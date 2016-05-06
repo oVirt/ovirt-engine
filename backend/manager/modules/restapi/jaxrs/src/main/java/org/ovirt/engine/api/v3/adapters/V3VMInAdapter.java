@@ -22,8 +22,10 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.v3.V3Adapter;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3VM;
 
 public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
@@ -205,8 +207,14 @@ public class V3VMInAdapter implements V3Adapter<V3VM, Vm> {
         if (from.isSetStatistics()) {
             to.setStatistics(adaptIn(from.getStatistics()));
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        V3Status status = from.getStatus();
+        if (status != null) {
+            if (status.isSetState()) {
+                to.setStatus(VmStatus.fromValue(status.getState()));
+            }
+            if (status.isSetDetail()) {
+                to.setStatusDetail(status.getDetail());
+            }
         }
         if (from.isSetStopReason()) {
             to.setStopReason(from.getStopReason());

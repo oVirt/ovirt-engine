@@ -19,19 +19,21 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.AutoNumaStatus;
+import org.ovirt.engine.api.model.ExternalStatus;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostProtocol;
+import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.KatelloErrata;
 import org.ovirt.engine.api.model.KdumpStatus;
 import org.ovirt.engine.api.model.Spm;
-import org.ovirt.engine.api.model.SpmState;
+import org.ovirt.engine.api.model.SpmStatus;
 import org.ovirt.engine.api.model.Statistics;
-import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.model.StorageConnectionExtensions;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Host;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3StorageManager;
 
 public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
@@ -74,8 +76,8 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
         if (from.isSetExternalHostProvider()) {
             to.setExternalHostProvider(adaptIn(from.getExternalHostProvider()));
         }
-        if (from.isSetExternalStatus()) {
-            to.setExternalStatus(adaptIn(from.getExternalStatus()));
+        if (from.isSetExternalStatus() && from.getExternalStatus().isSetState()) {
+            to.setExternalStatus(ExternalStatus.fromValue(from.getExternalStatus().getState()));
         }
         if (from.isSetHardwareInformation()) {
             to.setHardwareInformation(adaptIn(from.getHardwareInformation()));
@@ -140,7 +142,7 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
             to.setRootPassword(from.getRootPassword());
         }
         if (from.isSetSelinux()) {
-            to.setSelinux(adaptIn(from.getSelinux()));
+            to.setSeLinux(adaptIn(from.getSelinux()));
         }
 
         // This is for the old and deprecated "storage_manager" element:
@@ -149,10 +151,7 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
             Spm spm = new Spm();
             Boolean value = storageManager.isValue();
             if (value != null) {
-                SpmState state = value? SpmState.SPM: SpmState.NONE;
-                Status status = new Status();
-                status.setState(state.value());
-                spm.setStatus(status);
+                spm.setStatus(value? SpmStatus.SPM: SpmStatus.NONE);
             }
             Integer priority = spm.getPriority();
             if (storageManager.getPriority() != null) {
@@ -174,8 +173,14 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
             to.setStatistics(new Statistics());
             to.getStatistics().getStatistics().addAll(adaptIn(from.getStatistics().getStatistics()));
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        V3Status status = from.getStatus();
+        if (status != null) {
+            if (status.isSetState()) {
+                to.setStatus(HostStatus.fromValue(status.getState()));
+            }
+            if (status.isSetDetail()) {
+                to.setStatusDetail(status.getDetail());
+            }
         }
         if (from.isSetStorageConnectionExtensions()) {
             to.setStorageConnectionExtensions(new StorageConnectionExtensions());

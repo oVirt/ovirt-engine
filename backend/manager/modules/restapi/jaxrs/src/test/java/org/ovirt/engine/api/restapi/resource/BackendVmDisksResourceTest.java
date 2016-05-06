@@ -287,7 +287,7 @@ public class BackendVmDisksResourceTest
         verifyModel((Disk) response.getEntity(), 0);
         Disk created = (Disk)response.getEntity();
         assertNotNull(created.getCreationStatus());
-        assertEquals(creationStatus.value(), created.getCreationStatus().getState());
+        assertEquals(creationStatus.value(), created.getCreationStatus());
     }
 
     @Test

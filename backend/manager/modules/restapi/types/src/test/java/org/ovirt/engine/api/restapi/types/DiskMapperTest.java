@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
 import org.junit.Test;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
@@ -22,7 +21,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class));
         model.setInterface(MappingTestHelper.shuffle(DiskInterface.class));
         model.setSgio(MappingTestHelper.shuffle(ScsiGenericIO.class));
-        model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
+        model.setStatus(MappingTestHelper.shuffle(DiskStatus.class));
         model.setLunStorage(null);
         return model;
     }
@@ -41,7 +40,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertEquals(model.getOpenstackVolumeType().getName(), transform.getOpenstackVolumeType().getName());
         assertNotNull(model.getSnapshot());
         assertEquals(model.getSnapshot().getId(), transform.getSnapshot().getId());
-        assertEquals("unexpected status", model.getStatus().getState(), transform.getStatus().getState());
+        assertEquals("unexpected status", model.getStatus(), transform.getStatus());
         assertEquals("unexpected sparse", model.isSparse(), transform.isSparse());
         assertEquals("unexpected bootable", model.isBootable(), transform.isBootable());
         assertEquals("unexpected propagate errors", model.isPropagateErrors(), transform.isPropagateErrors());

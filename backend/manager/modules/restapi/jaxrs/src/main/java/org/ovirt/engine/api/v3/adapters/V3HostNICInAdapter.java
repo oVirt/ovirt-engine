@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Labels;
+import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -108,8 +109,8 @@ public class V3HostNICInAdapter implements V3Adapter<V3HostNIC, HostNic> {
             to.setStatistics(new Statistics());
             to.getStatistics().getStatistics().addAll(adaptIn(from.getStatistics().getStatistics()));
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(NicStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetVirtualFunctionsConfiguration()) {
             to.setVirtualFunctionsConfiguration(adaptIn(from.getVirtualFunctionsConfiguration()));

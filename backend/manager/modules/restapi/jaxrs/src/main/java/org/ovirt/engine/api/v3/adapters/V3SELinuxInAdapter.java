@@ -16,17 +16,17 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
-import org.ovirt.engine.api.model.SELinux;
-import org.ovirt.engine.api.model.SELinuxMode;
+import org.ovirt.engine.api.model.SeLinux;
+import org.ovirt.engine.api.model.SeLinuxMode;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3SELinux;
 
-public class V3SELinuxInAdapter implements V3Adapter<V3SELinux, SELinux> {
+public class V3SELinuxInAdapter implements V3Adapter<V3SELinux, SeLinux> {
     @Override
-    public SELinux adapt(V3SELinux from) {
-        SELinux to = new SELinux();
+    public SeLinux adapt(V3SELinux from) {
+        SeLinux to = new SeLinux();
         if (from.isSetMode()) {
-            to.setMode(SELinuxMode.fromValue(from.getMode()));
+            to.setMode(SeLinuxMode.fromValue(from.getMode()));
         }
         return to;
     }

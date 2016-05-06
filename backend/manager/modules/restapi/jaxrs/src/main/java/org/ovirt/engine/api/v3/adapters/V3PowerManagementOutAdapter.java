@@ -24,6 +24,7 @@ import org.ovirt.engine.api.v3.types.V3Agents;
 import org.ovirt.engine.api.v3.types.V3Options;
 import org.ovirt.engine.api.v3.types.V3PmProxies;
 import org.ovirt.engine.api.v3.types.V3PowerManagement;
+import org.ovirt.engine.api.v3.types.V3Status;
 
 public class V3PowerManagementOutAdapter implements V3Adapter<PowerManagement, V3PowerManagement> {
     @Override
@@ -57,7 +58,9 @@ public class V3PowerManagementOutAdapter implements V3Adapter<PowerManagement, V
             to.getPmProxies().getPmProxy().addAll(adaptOut(from.getPmProxies().getPmProxies()));
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetType()) {
             to.setType(from.getType());

@@ -181,7 +181,7 @@ public class BackendVmsResourceTest
         verifyModel((Vm) response.getEntity(), 0);
         Vm created = (Vm)response.getEntity();
         assertNotNull(created.getCreationStatus());
-        assertEquals(creationStatus.value(), created.getCreationStatus().getState());
+        assertEquals(creationStatus.value(), created.getCreationStatus());
     }
 
     @Test

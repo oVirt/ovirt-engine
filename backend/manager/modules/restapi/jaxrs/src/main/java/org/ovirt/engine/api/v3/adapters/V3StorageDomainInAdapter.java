@@ -19,7 +19,9 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.DataCenters;
+import org.ovirt.engine.api.model.ExternalStatus;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -57,8 +59,8 @@ public class V3StorageDomainInAdapter implements V3Adapter<V3StorageDomain, Stor
         if (from.isSetDescription()) {
             to.setDescription(from.getDescription());
         }
-        if (from.isSetExternalStatus()) {
-            to.setExternalStatus(adaptIn(from.getExternalStatus()));
+        if (from.isSetExternalStatus() && from.getExternalStatus().isSetState()) {
+            to.setExternalStatus(ExternalStatus.fromValue(from.getExternalStatus().getState()));
         }
         if (from.isSetHost()) {
             to.setHost(adaptIn(from.getHost()));
@@ -78,8 +80,8 @@ public class V3StorageDomainInAdapter implements V3Adapter<V3StorageDomain, Stor
         if (from.isSetName()) {
             to.setName(from.getName());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(StorageDomainStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetStorage()) {
             to.setStorage(adaptIn(from.getStorage()));

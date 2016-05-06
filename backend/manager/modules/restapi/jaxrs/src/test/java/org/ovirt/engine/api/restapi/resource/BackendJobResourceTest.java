@@ -1,14 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Date;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Job;
-import org.ovirt.engine.api.model.Status;
+import org.ovirt.engine.api.model.JobStatus;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -52,9 +51,7 @@ public class BackendJobResourceTest
               new String[] { "JobId", "Status", "Force" },
               new Object[] { GUIDS[0], JobExecutionStatus.FINISHED, false }, true, true));
         Action action = new Action();
-        Status status = new Status();
-        status.setState(JobExecutionStatus.FINISHED.name().toLowerCase());
-        action.setStatus(status);
+        action.setStatus(JobStatus.FINISHED.value());
         verifyActionResponse(resource.end(action));
     }
 

@@ -124,7 +124,7 @@ public class BackendAttachedStorageDomainResourceTest
         );
         Action action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
-        assertEquals(actionStatus.value(), action.getStatus().getState());
+        assertEquals(actionStatus.value(), action.getStatus());
     }
 
     @Test

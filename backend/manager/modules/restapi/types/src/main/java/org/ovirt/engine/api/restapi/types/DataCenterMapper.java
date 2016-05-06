@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.model.MacPool;
@@ -64,7 +63,7 @@ public class DataCenterMapper {
             model.setComment(entity.getComment());
         }
         if (entity.getStatus()!=null) {
-            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
+            model.setStatus(mapDataCenterStatus(entity.getStatus()));
         }
         if (entity.getCompatibilityVersion() != null) {
             model.setVersion(VersionMapper.map(entity.getCompatibilityVersion()));
@@ -88,9 +87,8 @@ public class DataCenterMapper {
         return model;
     }
 
-    @Mapping(from = StoragePoolStatus.class, to = DataCenterStatus.class)
-    private static DataCenterStatus map(StoragePoolStatus storagePoolStatus, DataCenterStatus dataCenterStatus) {
-        switch (storagePoolStatus) {
+    private static DataCenterStatus mapDataCenterStatus(StoragePoolStatus status) {
+        switch (status) {
         case Contend:
             return DataCenterStatus.CONTEND;
         case Maintenance:
@@ -103,7 +101,8 @@ public class DataCenterMapper {
             return DataCenterStatus.UNINITIALIZED;
         case Up:
             return DataCenterStatus.UP;
-        default: throw new IllegalStateException("Enum mapping failed");
+        default:
+            throw new IllegalArgumentException("Unknown data center status \"" + status + "\"");
         }
     }
 

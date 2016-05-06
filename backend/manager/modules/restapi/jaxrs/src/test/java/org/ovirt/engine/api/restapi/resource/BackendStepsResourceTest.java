@@ -3,15 +3,14 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Job;
-import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
+import org.ovirt.engine.api.model.StepStatus;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetStepsByJobIdQueryParameters;
@@ -98,9 +97,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
         job.setDescription(DESCRIPTIONS[1]);
         model.setJob(job);
         model.setDescription(DESCRIPTIONS[0]);
-        Status status = new Status();
-        status.setState("started");
-        model.setStatus(status);
+        model.setStatus(StepStatus.STARTED);
         model.setType(StepEnum.EXECUTING);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());

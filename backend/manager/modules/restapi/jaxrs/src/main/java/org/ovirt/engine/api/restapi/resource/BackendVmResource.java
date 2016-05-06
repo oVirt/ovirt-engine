@@ -491,7 +491,7 @@ public class BackendVmResource
 
         final Action actionResponse = (Action) response.getEntity();
 
-        if (CreationStatus.FAILED.value().equals(actionResponse.getStatus().getState())) {
+        if (CreationStatus.FAILED.value().equals(actionResponse.getStatus())) {
             actionResponse.getTicket().setValue(null);
             actionResponse.getTicket().setExpiry(null);
         }

@@ -1,11 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.StatusUtils;
-import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.NfsVersion;
-import org.ovirt.engine.api.model.Status;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
@@ -127,14 +124,10 @@ public class StorageDomainMapper {
         model.setCriticalSpaceActionBlocker(entity.getCriticalSpaceActionBlocker());
         model.setMaster(entity.getStorageDomainType() == org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
         if (entity.getStatus() != null) {
-            StorageDomainStatus status = map(entity.getStatus(), null);
-            model.setStatus(status==null ? null : StatusUtils.create(status));
+            model.setStatus(mapStorageDomainStatus(entity.getStatus()));
         }
         if (entity.getExternalStatus() != null) {
-            EntityExternalStatus entityExternalStatus = ExternalStatusMapper.map(entity.getExternalStatus(), null);
-            Status externalStatus = new Status();
-            externalStatus.setState(entityExternalStatus.value());
-            model.setExternalStatus(externalStatus);
+            model.setExternalStatus(ExternalStatusMapper.map(entity.getExternalStatus()));
         }
         model.setStorage(new HostStorage());
         model.getStorage().setType(map(entity.getStorageType(), null));
@@ -397,11 +390,7 @@ public class StorageDomainMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageDomainStatus.class,
-            to = StorageDomainStatus.class)
-    public static StorageDomainStatus map(
-            org.ovirt.engine.core.common.businessentities.StorageDomainStatus status,
-            StorageDomainStatus template) {
+    public static StorageDomainStatus mapStorageDomainStatus(org.ovirt.engine.core.common.businessentities.StorageDomainStatus status) {
         switch (status) {
         case Unattached:
             return StorageDomainStatus.UNATTACHED;

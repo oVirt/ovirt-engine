@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3DataCenters;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3StorageDomain;
 
 public class V3StorageDomainOutAdapter implements V3Adapter<StorageDomain, V3StorageDomain> {
@@ -56,7 +57,9 @@ public class V3StorageDomainOutAdapter implements V3Adapter<StorageDomain, V3Sto
             to.setDescription(from.getDescription());
         }
         if (from.isSetExternalStatus()) {
-            to.setExternalStatus(adaptOut(from.getExternalStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getExternalStatus().value());
+            to.setExternalStatus(status);
         }
         if (from.isSetHost()) {
             to.setHost(adaptOut(from.getHost()));
@@ -77,7 +80,9 @@ public class V3StorageDomainOutAdapter implements V3Adapter<StorageDomain, V3Sto
             to.setName(from.getName());
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetStorage()) {
             to.setStorage(adaptOut(from.getStorage()));

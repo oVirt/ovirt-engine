@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterVolumeStatus;
 import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.TransportType;
@@ -74,8 +75,8 @@ public class V3GlusterVolumeInAdapter implements V3Adapter<V3GlusterVolume, Glus
         if (from.isSetReplicaCount()) {
             to.setReplicaCount(from.getReplicaCount());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(GlusterVolumeStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetStripeCount()) {
             to.setStripeCount(from.getStripeCount());

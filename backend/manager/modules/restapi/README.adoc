@@ -187,6 +187,7 @@ The following XML schema complex types have been renamed:
 | `QoS` | `Qos`
 | `QoSs` | `Qoss`
 | `RSDL` | `Rsdl`
+| `SELinux` | `SeLinux`
 | `SPM` | `Spm`
 | `SSHPublicKey` | `SshPublicKey`
 | `SSHPublicKeys` | `SshPublicKeys`
@@ -205,6 +206,41 @@ The following XML schema complex types have been renamed:
 
 These renamings don't affect users of the API, unless they are using the
 XML schema, either directly or indirectly via the Python or Java SDKs.
+
+=== Replaced the `Status` type with enum types
+
+Currently the status of different objects is reported using the `Status`
+type, which contains a `state` string describing the status and another
+`detail` string for additional details. For example, the status of a
+virtual machine that is paused due to an IO error is currently reported
+as follows:
+
+[source]
+----
+<vm>
+  ...
+  <status>
+    <state>paused</state>
+    <detail>eio</detail>
+  </status>
+  ...
+</vm>
+----
+
+In version 4 of the API this `Status` type has been removed and replaced
+by enum types. When the additional `detail` string is needed it has been
+replaced with an additional `status_detail` attribute. So, for example,
+the status of the same virtual machine will now be reported as follows:
+
+[source]
+----
+<vm>
+  ...
+  <status>paused</status>
+  <status_detail>eio</status_detail>
+  ...
+</vm>
+----
 
 === Remove the NIC `network` and `port_mirroring` properties
 

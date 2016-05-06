@@ -32,6 +32,7 @@ import org.ovirt.engine.api.v3.types.V3ReportedDevices;
 import org.ovirt.engine.api.v3.types.V3Snapshot;
 import org.ovirt.engine.api.v3.types.V3Snapshots;
 import org.ovirt.engine.api.v3.types.V3Statistics;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3Tags;
 import org.ovirt.engine.api.v3.types.V3WatchDogs;
 
@@ -234,7 +235,9 @@ public class V3SnapshotOutAdapter implements V3Adapter<Snapshot, V3Snapshot> {
             to.getStatistics().getStatistics().addAll(adaptOut(from.getStatistics().getStatistics()));
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetStopReason()) {
             to.setStopReason(from.getStopReason());

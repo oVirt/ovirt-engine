@@ -20,6 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.api.model.TemplateStatus;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -138,8 +139,8 @@ public class V3InstanceTypeInAdapter implements V3Adapter<V3InstanceType, Instan
         if (from.isSetStateless()) {
             to.setStateless(from.isStateless());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(TemplateStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetStorageDomain()) {
             to.setStorageDomain(adaptIn(from.getStorageDomain()));

@@ -2,15 +2,13 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
-import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.resource.HostNicResource;
+import org.ovirt.engine.api.restapi.types.HostNicMapper;
 import org.ovirt.engine.api.restapi.types.Ipv4BootProtocolMapper;
 import org.ovirt.engine.api.restapi.types.Ipv6BootProtocolMapper;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -185,9 +183,9 @@ public class BackendHostNicsResourceTest
         assertEquals(NETWORK_NAME, model.getNetwork().getName());
         assertEquals(calcSpeed(NIC_SPEED), model.getSpeed());
         assertNotNull(model.getStatus());
-        assertEquals(map(NIC_STATUS, null).value(), model.getStatus().getState());
-        assertEquals(map(IPV4_BOOT_PROTOCOL), model.getBootProtocol());
-        assertEquals(map(IPV6_BOOT_PROTOCOL), model.getIpv6BootProtocol());
+        assertEquals(HostNicMapper.mapNicStatus(NIC_STATUS), model.getStatus());
+        assertEquals(Ipv4BootProtocolMapper.map(IPV4_BOOT_PROTOCOL), model.getBootProtocol());
+        assertEquals(Ipv6BootProtocolMapper.map(IPV6_BOOT_PROTOCOL), model.getIpv6BootProtocol());
     }
 
     private Long calcSpeed(Integer nicSpeed) {
@@ -195,18 +193,6 @@ public class BackendHostNicsResourceTest
                              null
                              :
                              nicSpeed * 1000L * 1000;
-    }
-
-    protected NicStatus map(InterfaceStatus interfaceStatus, NicStatus params) {
-        return getMapper(InterfaceStatus.class, NicStatus.class).map(interfaceStatus, params);
-    }
-
-    protected BootProtocol map(Ipv4BootProtocol ipv4BootProtocol) {
-        return Ipv4BootProtocolMapper.map(ipv4BootProtocol);
-    }
-
-    protected BootProtocol map(Ipv6BootProtocol ipv6BootProtocol) {
-        return Ipv6BootProtocolMapper.map(ipv6BootProtocol);
     }
 
     protected void verifyMaster(HostNic model) {

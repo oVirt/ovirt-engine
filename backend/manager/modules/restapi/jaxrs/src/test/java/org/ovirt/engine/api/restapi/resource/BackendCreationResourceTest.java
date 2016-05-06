@@ -83,7 +83,7 @@ public class BackendCreationResourceTest
     protected void verifyModel(Creation model) throws Exception {
         assertNotNull(model);
         assertEquals(URLEncoder.encode(CREATION_ID, "UTF-8"), model.getId());
-        assertEquals(CreationStatus.COMPLETE.value(), model.getStatus().getState());
+        assertEquals(CreationStatus.COMPLETE.value(), model.getStatus());
         verifyLinks(model);
     }
 }

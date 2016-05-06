@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Action;
+import org.ovirt.engine.api.v3.types.V3Status;
 
 public class V3ActionOutAdapter implements V3Adapter<Action, V3Action> {
     @Override
@@ -159,7 +160,9 @@ public class V3ActionOutAdapter implements V3Adapter<Action, V3Action> {
             to.setSsh(adaptOut(from.getSsh()));
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus());
+            to.setStatus(status);
         }
         if (from.isSetStorageDomain()) {
             to.setStorageDomain(adaptOut(from.getStorageDomain()));

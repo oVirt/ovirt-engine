@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.ovirt.engine.api.common.util.ParametersHelper;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
@@ -178,7 +177,7 @@ public class BackendStorageDomainResource
         // create and populate the returned action object so that it looks like a real action result.
         Action result = new Action();
         result.setIsAttached(!attachedStorageDomains.isEmpty());
-        result.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+        result.setStatus(CreationStatus.COMPLETE.value());
 
         return Response.ok().entity(result).build();
     }
@@ -283,7 +282,7 @@ public class BackendStorageDomainResource
     protected StorageDomain deprecatedPopulate(StorageDomain model,
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         if (StorageDomainSharedStatus.Unattached.equals(entity.getStorageDomainSharedStatus())) {
-            model.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
+            model.setStatus(StorageDomainStatus.UNATTACHED);
         } else {
             model.setStatus(null);
         }

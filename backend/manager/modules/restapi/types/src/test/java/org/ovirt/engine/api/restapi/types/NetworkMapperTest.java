@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 
@@ -40,7 +39,7 @@ public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, or
 
     @Override
     protected Network postPopulate(Network model) {
-        model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(NetworkStatus.class)));
+        model.setStatus(MappingTestHelper.shuffle(NetworkStatus.class));
         model.setUsages(new Network.UsagesList());
         model.getUsages().getUsages().add("aaa");
         model.getUsages().getUsages().add(NetworkUsage.DISPLAY.value());

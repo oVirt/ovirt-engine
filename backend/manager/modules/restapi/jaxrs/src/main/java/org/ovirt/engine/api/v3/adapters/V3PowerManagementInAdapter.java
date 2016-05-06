@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PowerManagement;
+import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3PowerManagement;
 
@@ -56,8 +57,8 @@ public class V3PowerManagementInAdapter implements V3Adapter<V3PowerManagement, 
             to.setPmProxies(new PmProxies());
             to.getPmProxies().getPmProxies().addAll(adaptIn(from.getPmProxies().getPmProxy()));
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(PowerManagementStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetType()) {
             to.setType(from.getType());

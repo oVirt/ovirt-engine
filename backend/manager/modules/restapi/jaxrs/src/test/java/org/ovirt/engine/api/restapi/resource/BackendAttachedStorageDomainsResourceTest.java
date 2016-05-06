@@ -244,7 +244,7 @@ public class BackendAttachedStorageDomainsResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertNotNull(model.getDataCenter());
         assertEquals(GUIDS[NAMES.length-1].toString(), model.getDataCenter().getId());
-        assertEquals(org.ovirt.engine.api.model.StorageDomainStatus.ACTIVE.value(), model.getStatus().getState());
+        assertEquals(org.ovirt.engine.api.model.StorageDomainStatus.ACTIVE, model.getStatus());
         assertEquals(true, model.isMaster());
     }
 

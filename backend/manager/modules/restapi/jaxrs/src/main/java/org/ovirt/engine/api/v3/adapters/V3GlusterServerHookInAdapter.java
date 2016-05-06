@@ -18,6 +18,7 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
+import org.ovirt.engine.api.model.GlusterHookStatus;
 import org.ovirt.engine.api.model.GlusterServerHook;
 import org.ovirt.engine.api.model.HookContentType;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -57,8 +58,8 @@ public class V3GlusterServerHookInAdapter implements V3Adapter<V3GlusterServerHo
         if (from.isSetName()) {
             to.setName(from.getName());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(GlusterHookStatus.fromValue(from.getStatus().getState()));
         }
         return to;
     }

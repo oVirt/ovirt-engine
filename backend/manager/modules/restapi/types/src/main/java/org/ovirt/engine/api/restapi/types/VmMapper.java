@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
@@ -312,9 +311,9 @@ public class VmMapper extends VmBaseMapper {
             model.getInstanceType().setId(entity.getInstanceTypeId().toString());
         }
         if (entity.getStatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
-            if (entity.getStatus()==VMStatus.Paused) {
-                model.getStatus().setDetail(entity.getVmPauseStatus().name().toLowerCase());
+            model.setStatus(mapVmStatus(entity.getStatus()));
+            if (entity.getStatus() == VMStatus.Paused) {
+                model.setStatusDetail(entity.getVmPauseStatus().name().toLowerCase());
             }
         }
         if (entity.getStopReason() != null) {
@@ -794,26 +793,42 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    @Mapping(from = VMStatus.class, to = VmStatus.class)
-    public static VmStatus map(VMStatus entityStatus, VmStatus template) {
-        switch (entityStatus) {
-        case Unassigned:            return VmStatus.UNASSIGNED;
-        case Down:                  return VmStatus.DOWN;
-        case Up:                    return VmStatus.UP;
-        case PoweringUp:            return VmStatus.POWERING_UP;
-        case Paused:                return VmStatus.PAUSED;
-        case MigratingFrom:         return VmStatus.MIGRATING;
-        case MigratingTo:           return VmStatus.MIGRATING;
-        case Unknown:               return VmStatus.UNKNOWN;
-        case NotResponding:         return VmStatus.NOT_RESPONDING;
-        case WaitForLaunch:         return VmStatus.WAIT_FOR_LAUNCH;
-        case RebootInProgress:      return VmStatus.REBOOT_IN_PROGRESS;
-        case SavingState:           return VmStatus.SAVING_STATE;
-        case RestoringState:        return VmStatus.RESTORING_STATE;
-        case Suspended:             return VmStatus.SUSPENDED;
-        case ImageLocked:           return VmStatus.IMAGE_LOCKED;
-        case PoweringDown:          return VmStatus.POWERING_DOWN;
-        default:                    return null;
+    private static VmStatus mapVmStatus(VMStatus status) {
+        switch (status) {
+        case Unassigned:
+            return VmStatus.UNASSIGNED;
+        case Down:
+            return VmStatus.DOWN;
+        case Up:
+            return VmStatus.UP;
+        case PoweringUp:
+            return VmStatus.POWERING_UP;
+        case Paused:
+            return VmStatus.PAUSED;
+        case MigratingFrom:
+            return VmStatus.MIGRATING;
+        case MigratingTo:
+            return VmStatus.MIGRATING;
+        case Unknown:
+            return VmStatus.UNKNOWN;
+        case NotResponding:
+            return VmStatus.NOT_RESPONDING;
+        case WaitForLaunch:
+            return VmStatus.WAIT_FOR_LAUNCH;
+        case RebootInProgress:
+            return VmStatus.REBOOT_IN_PROGRESS;
+        case SavingState:
+            return VmStatus.SAVING_STATE;
+        case RestoringState:
+            return VmStatus.RESTORING_STATE;
+        case Suspended:
+            return VmStatus.SUSPENDED;
+        case ImageLocked:
+            return VmStatus.IMAGE_LOCKED;
+        case PoweringDown:
+            return VmStatus.POWERING_DOWN;
+        default:
+            return null;
         }
     }
 

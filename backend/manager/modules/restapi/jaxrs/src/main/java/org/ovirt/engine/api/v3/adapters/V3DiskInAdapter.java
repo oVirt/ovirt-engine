@@ -21,6 +21,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
+import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.Statistics;
@@ -118,8 +119,8 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
             to.setStatistics(new Statistics());
             to.getStatistics().getStatistics().addAll(adaptIn(from.getStatistics().getStatistics()));
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(DiskStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetStorageDomain()) {
             to.setStorageDomain(adaptIn(from.getStorageDomain()));

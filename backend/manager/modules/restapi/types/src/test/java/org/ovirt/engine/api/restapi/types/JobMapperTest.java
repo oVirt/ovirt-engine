@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 
 import org.ovirt.engine.api.model.Job;
+import org.ovirt.engine.api.model.JobStatus;
 
 public class JobMapperTest extends AbstractInvertibleMappingTest<Job, org.ovirt.engine.core.common.job.Job, org.ovirt.engine.core.common.job.Job> {
 
@@ -20,7 +21,7 @@ public class JobMapperTest extends AbstractInvertibleMappingTest<Job, org.ovirt.
 
     @Override
     protected Job postPopulate(Job model) {
-        model.getStatus().setState("started");
+        model.setStatus(JobStatus.STARTED);
         return super.postPopulate(model);
     }
 

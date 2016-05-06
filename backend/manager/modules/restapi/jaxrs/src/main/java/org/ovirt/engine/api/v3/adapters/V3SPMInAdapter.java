@@ -16,9 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
-import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
-
 import org.ovirt.engine.api.model.Spm;
+import org.ovirt.engine.api.model.SpmStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3SPM;
 
@@ -29,8 +28,8 @@ public class V3SPMInAdapter implements V3Adapter<V3SPM, Spm> {
         if (from.isSetPriority()) {
             to.setPriority(from.getPriority());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(SpmStatus.fromValue(from.getStatus().getState()));
         }
         return to;
     }

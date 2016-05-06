@@ -24,6 +24,7 @@ import org.ovirt.engine.api.v3.types.V3HostNIC;
 import org.ovirt.engine.api.v3.types.V3Labels;
 import org.ovirt.engine.api.v3.types.V3Properties;
 import org.ovirt.engine.api.v3.types.V3Statistics;
+import org.ovirt.engine.api.v3.types.V3Status;
 
 public class V3HostNicOutAdapter implements V3Adapter<HostNic, V3HostNIC> {
     @Override
@@ -108,7 +109,9 @@ public class V3HostNicOutAdapter implements V3Adapter<HostNic, V3HostNIC> {
             to.getStatistics().getStatistics().addAll(adaptOut(from.getStatistics().getStatistics()));
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetVirtualFunctionsConfiguration()) {
             to.setVirtualFunctionsConfiguration(adaptOut(from.getVirtualFunctionsConfiguration()));

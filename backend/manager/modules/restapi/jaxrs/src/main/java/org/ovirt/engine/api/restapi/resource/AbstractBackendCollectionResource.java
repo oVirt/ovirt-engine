@@ -8,7 +8,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
@@ -121,7 +120,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     }
 
     protected void handleAsynchrony(VdcReturnValueBase result, R model) {
-        model.setCreationStatus(StatusUtils.create(getAsynchronousStatus(result)));
+        model.setCreationStatus(getAsynchronousStatus(result).value());
         linkSubResource(model, CREATION_STATUS_REL, asString(result.getVdsmTaskIdList()));
     }
 

@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3CustomProperties;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3Template;
 
 public class V3TemplateOutAdapter implements V3Adapter<Template, V3Template> {
@@ -138,7 +139,9 @@ public class V3TemplateOutAdapter implements V3Adapter<Template, V3Template> {
             to.setStateless(from.isStateless());
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetStorageDomain()) {
             to.setStorageDomain(adaptOut(from.getStorageDomain()));

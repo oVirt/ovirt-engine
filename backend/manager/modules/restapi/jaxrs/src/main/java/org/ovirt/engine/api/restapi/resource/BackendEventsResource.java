@@ -4,7 +4,6 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.EntityExternalStatus;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -71,22 +70,22 @@ public class BackendEventsResource
 
         AddExternalEventParameters parameters;
         boolean isHostExternalStateDefined = event.isSetHost() &&
-                event.getHost().isSetExternalStatus() &&
-                event.getHost().getExternalStatus().isSetState();
+                event.getHost().isSetExternalStatus();
         boolean isStorageDomainExternalStateDefined = event.isSetStorageDomain() &&
-                event.getStorageDomain().isSetExternalStatus() &&
-                event.getStorageDomain().getExternalStatus().isSetState();
+                event.getStorageDomain().isSetExternalStatus();
         if (isHostExternalStateDefined) {
-            parameters = new AddExternalEventParameters(map(event),
-                    ExternalStatusMapper.map(EntityExternalStatus.fromValue(
-                            event.getHost().getExternalStatus().getState()), null));
+            parameters = new AddExternalEventParameters(
+                map(event),
+                ExternalStatusMapper.map(event.getHost().getExternalStatus())
+            );
         }
         else if (isStorageDomainExternalStateDefined) {
-            parameters = new AddExternalEventParameters(map(event),
-                    ExternalStatusMapper.map(EntityExternalStatus.fromValue(
-                            event.getStorageDomain().getExternalStatus().getState()), null));
+            parameters = new AddExternalEventParameters(
+                map(event),
+                ExternalStatusMapper.map(event.getStorageDomain().getExternalStatus())
+            );
         }
-        else{
+        else {
             parameters =  new AddExternalEventParameters(map(event), null);
         }
         return parameters;

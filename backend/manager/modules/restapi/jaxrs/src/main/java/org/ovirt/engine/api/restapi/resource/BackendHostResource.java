@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.ParametersHelper;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthenticationMethod;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -559,7 +558,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         FenceOperationResult fenceResult = (FenceOperationResult) result.getReturnValue();
         if (fenceResult.getStatus() == Status.SUCCESS) {
             PowerManagement pm = new PowerManagement();
-            pm.setStatus(StatusUtils.create(convertPowerStatus(fenceResult.getPowerStatus())));
+            pm.setStatus(convertPowerStatus(fenceResult.getPowerStatus()));
             action.setPowerManagement(pm);
             return actionSuccess(action);
         } else {
@@ -581,7 +580,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     private Response handleFailure(Action action, String message) {
-        action.setStatus(StatusUtils.create(CreationStatus.FAILED));
+        action.setStatus(CreationStatus.FAILED.value());
         action.setFault(new Fault());
         action.getFault().setReason(message);
         return Response.ok().entity(action).build();

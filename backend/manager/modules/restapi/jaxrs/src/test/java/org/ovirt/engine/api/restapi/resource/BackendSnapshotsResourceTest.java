@@ -184,7 +184,7 @@ public class BackendSnapshotsResourceTest
         verifyAllContent(responseSnapshot, ConfigurationType.OVF, ovfData);
         Snapshot created = (Snapshot)response.getEntity();
         assertNotNull(created.getCreationStatus());
-        assertEquals(creationStatus.value(), created.getCreationStatus().getState());
+        assertEquals(creationStatus.value(), created.getCreationStatus());
     }
 
     protected void setUpGetEntityExpectations(int times) throws Exception {

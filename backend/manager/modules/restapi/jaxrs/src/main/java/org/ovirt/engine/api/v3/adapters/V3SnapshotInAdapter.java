@@ -33,6 +33,7 @@ import org.ovirt.engine.api.model.SnapshotStatus;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
+import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -236,8 +237,8 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.setStatistics(new Statistics());
             to.getStatistics().getStatistics().addAll(adaptIn(from.getStatistics().getStatistics()));
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(VmStatus.fromValue(from.getStatus().getState()));
         }
         if (from.isSetStopReason()) {
             to.setStopReason(from.getStopReason());

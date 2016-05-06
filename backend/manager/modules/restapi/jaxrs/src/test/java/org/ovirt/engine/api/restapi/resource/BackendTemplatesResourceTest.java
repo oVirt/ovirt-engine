@@ -149,7 +149,7 @@ public class BackendTemplatesResourceTest
         verifyModel((Template) response.getEntity(), 0);
         Template created = (Template)response.getEntity();
         assertNotNull(created.getCreationStatus());
-        assertEquals(creationStatus.value(), created.getCreationStatus().getState());
+        assertEquals(creationStatus.value(), created.getCreationStatus());
     }
 
     public void testAdd() throws Exception {

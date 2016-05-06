@@ -27,6 +27,7 @@ import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3GlusterBricks;
 import org.ovirt.engine.api.v3.types.V3GlusterVolume;
 import org.ovirt.engine.api.v3.types.V3Options;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3TransportTypes;
 
 public class V3GlusterVolumeOutAdapter implements V3Adapter<GlusterVolume, V3GlusterVolume> {
@@ -75,7 +76,9 @@ public class V3GlusterVolumeOutAdapter implements V3Adapter<GlusterVolume, V3Glu
             to.setReplicaCount(from.getReplicaCount());
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         if (from.isSetStripeCount()) {
             to.setStripeCount(from.getStripeCount());

@@ -49,6 +49,7 @@ import org.ovirt.engine.api.v3.types.V3Permissions;
 import org.ovirt.engine.api.v3.types.V3ReportedDevices;
 import org.ovirt.engine.api.v3.types.V3Snapshots;
 import org.ovirt.engine.api.v3.types.V3Statistics;
+import org.ovirt.engine.api.v3.types.V3Status;
 import org.ovirt.engine.api.v3.types.V3Tags;
 import org.ovirt.engine.api.v3.types.V3VM;
 import org.ovirt.engine.api.v3.types.V3WatchDogs;
@@ -255,7 +256,20 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
             to.getStatistics().getStatistics().addAll(adaptOut(from.getStatistics().getStatistics()));
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = to.getStatus();
+            if (status == null) {
+                status = new V3Status();
+                to.setStatus(status);
+            }
+            status.setState(from.getStatus().value());
+        }
+        if (from.isSetStatusDetail()) {
+            V3Status status = to.getStatus();
+            if (status == null) {
+                status = new V3Status();
+                to.setStatus(status);
+            }
+            status.setDetail(from.getStatusDetail());
         }
         if (from.isSetStopReason()) {
             to.setStopReason(from.getStopReason());

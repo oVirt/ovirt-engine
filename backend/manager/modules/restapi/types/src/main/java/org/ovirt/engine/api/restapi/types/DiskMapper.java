@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
@@ -118,7 +117,7 @@ public class DiskMapper {
             diskImage.setvolumeFormat(map(disk.getFormat(), null));
         }
         if (disk.isSetStatus()) {
-            diskImage.setImageStatus(map(DiskStatus.fromValue(disk.getStatus().getState())));
+            diskImage.setImageStatus(mapDiskStatus(disk.getStatus()));
         }
         if (disk.isSetSnapshot() && disk.getSnapshot().isSetId()) {
             diskImage.setVmSnapshotId(GuidUtils.asGuid(disk.getSnapshot().getId()));
@@ -195,8 +194,7 @@ public class DiskMapper {
             model.setFormat(map(entity.getVolumeFormat(), null));
         }
         if (entity.getImageStatus() != null) {
-            DiskStatus status = map(entity.getImageStatus());
-            model.setStatus(StatusUtils.create(status == null ? null : status.value()));
+            model.setStatus(mapDiskStatus(entity.getImageStatus()));
         }
         model.setSparse(VolumeType.Sparse == entity.getVolumeType());
         if (entity.getStorageIds() != null && entity.getStorageIds().size() > 0) {
@@ -327,27 +325,24 @@ public class DiskMapper {
         }
     }
 
-    @Mapping(from = DiskStatus.class, to = ImageStatus.class)
-    public static ImageStatus map(DiskStatus diskStatus) {
-        if (diskStatus==null) {
+    private static ImageStatus mapDiskStatus(DiskStatus status) {
+        if (status == null) {
             return null;
-        } else {
-            switch (diskStatus) {
-            case ILLEGAL:
-                return ImageStatus.ILLEGAL;
-            case LOCKED:
-                return ImageStatus.LOCKED;
-            case OK:
-                return ImageStatus.OK;
-            default:
-                return null;
-            }
+        }
+        switch (status) {
+        case ILLEGAL:
+            return ImageStatus.ILLEGAL;
+        case LOCKED:
+            return ImageStatus.LOCKED;
+        case OK:
+            return ImageStatus.OK;
+        default:
+            return null;
         }
     }
 
-    @Mapping(from = ImageStatus.class, to = DiskStatus.class)
-    public static DiskStatus map(ImageStatus imageStatus) {
-        switch (imageStatus) {
+    private static DiskStatus mapDiskStatus(ImageStatus status) {
+        switch (status) {
         case ILLEGAL:
             return DiskStatus.ILLEGAL;
         case LOCKED:

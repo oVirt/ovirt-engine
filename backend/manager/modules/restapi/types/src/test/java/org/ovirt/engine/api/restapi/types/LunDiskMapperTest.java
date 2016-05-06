@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
 import org.junit.Test;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
@@ -21,7 +20,7 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
     protected Disk postPopulate(Disk model) {
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class));
         model.setInterface(MappingTestHelper.shuffle(DiskInterface.class));
-        model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
+        model.setStatus(MappingTestHelper.shuffle(DiskStatus.class));
         model.setLunStorage(new HostStorage());
         return model;
     }

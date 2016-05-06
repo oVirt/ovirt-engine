@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.common.util;
 
 import java.util.Arrays;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Assert;
@@ -105,7 +104,7 @@ public class CompletenessAssertorTest extends Assert {
     public void testCompleteParameters() throws Exception {
         Vm vm = new Vm();
         vm.setName("foo");
-        vm.setStatus(StatusUtils.create(VmStatus.UP));
+        vm.setStatus(VmStatus.UP);
         vm.setHost(new Host());
         CompletenessAssertor.validateParameters(vm, "name", "host", "status");
     }
@@ -122,7 +121,7 @@ public class CompletenessAssertorTest extends Assert {
     public void testCompleteParametersAlternativesSecond() throws Exception {
         Vm vm = new Vm();
         vm.setName("foo");
-        vm.setStatus(StatusUtils.create(VmStatus.UP));
+        vm.setStatus(VmStatus.UP);
         CompletenessAssertor.validateParameters(vm, "name", "host|status");
     }
 

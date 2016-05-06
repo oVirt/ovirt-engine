@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.joining;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
@@ -219,10 +218,10 @@ public class HostNicMapper {
             model.setMac(new Mac());
             model.getMac().setAddress(entity.getMacAddress());
         }
-        if(entity.getStatistics().getStatus()!=InterfaceStatus.NONE){
-            NicStatus nicStatus = map(entity.getStatistics().getStatus(), null);
-            if(nicStatus!=null){
-                model.setStatus(StatusUtils.create(nicStatus));
+        if (entity.getStatistics().getStatus()!=InterfaceStatus.NONE) {
+            NicStatus nicStatus = mapNicStatus(entity.getStatistics().getStatus());
+            if (nicStatus != null) {
+                model.setStatus(nicStatus);
             }
         }
         if(entity.getSpeed()!=null && entity.getSpeed()>0){
@@ -321,19 +320,18 @@ public class HostNicMapper {
         }
       }
 
-    @Mapping(from = InterfaceStatus.class, to = NicStatus.class)
-    public static NicStatus map(InterfaceStatus interfaceStatus, NicStatus template) {
-        if(interfaceStatus!=null){
-            switch (interfaceStatus) {
-            case UP:
-                return NicStatus.UP;
-            case DOWN:
-                return NicStatus.DOWN;
-            default:
-                return null;
-            }
+    public static NicStatus mapNicStatus(InterfaceStatus status) {
+        if (status == null) {
+            return null;
         }
-        return null;
+        switch (status) {
+        case UP:
+            return NicStatus.UP;
+        case DOWN:
+            return NicStatus.DOWN;
+        default:
+            return null;
+        }
     }
 
     @Mapping(from = HostNicVfsConfig.class, to = HostNicVirtualFunctionsConfiguration.class)

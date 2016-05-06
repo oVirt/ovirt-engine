@@ -97,17 +97,17 @@ import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.ReportedDeviceTypes;
 import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.RngSources;
-import org.ovirt.engine.api.model.SELinuxMode;
-import org.ovirt.engine.api.model.SELinuxModes;
 import org.ovirt.engine.api.model.SchedulingPolicyUnitTypes;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.ScsiGenericIoOptions;
+import org.ovirt.engine.api.model.SeLinuxMode;
+import org.ovirt.engine.api.model.SeLinuxModes;
 import org.ovirt.engine.api.model.SerialNumberPolicies;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.SnapshotStatus;
 import org.ovirt.engine.api.model.SnapshotStatuses;
-import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.model.SpmStates;
+import org.ovirt.engine.api.model.SpmStatus;
 import org.ovirt.engine.api.model.Stages;
 import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepTypes;
@@ -269,10 +269,10 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addPayloadEncodings(version, PayloadEncoding.values());
         addArchitectureCapabilities(version);
         addSerialNumberPolicies(version, SerialNumberPolicy.values());
-        addSELinuxModes(version, SELinuxMode.values());
+        addSELinuxModes(version, SeLinuxMode.values());
         addRngSources(version, RngSource.values());
         addPolicyUnitTypes(version, PolicyUnitType.values());
-        addSpmStates(version, SpmState.values());
+        addSpmStates(version, SpmStatus.values());
         addVmPoolTypes(version, VmPoolType.values());
         addNetworkPluginTypes(version, NetworkPluginType.values());
         addMessageBrokerTypes(version, MessageBrokerType.values());
@@ -828,11 +828,11 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         }
     }
 
-    private void addSELinuxModes(VersionCaps version, SELinuxMode[] values) {
+    private void addSELinuxModes(VersionCaps version, SeLinuxMode[] values) {
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
-            version.setSelinuxModes(new SELinuxModes());
-            for (SELinuxMode mode : values) {
-                version.getSelinuxModes().getSELinuxModes().add(mode.value());
+            version.setSelinuxModes(new SeLinuxModes());
+            for (SeLinuxMode mode : values) {
+                version.getSelinuxModes().getSeLinuxModes().add(mode.value());
             }
         }
     }
@@ -874,10 +874,10 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         }
     }
 
-    private void addSpmStates(VersionCaps version, SpmState[] values) {
+    private void addSpmStates(VersionCaps version, SpmStatus[] values) {
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
             SpmStates states = new SpmStates();
-            for (SpmState state : values) {
+            for (SpmStatus state : values) {
                 states.getSpmStates().add(state.value());
             }
             version.setSpmStates(states);

@@ -16,11 +16,10 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
-import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
-
 import org.ovirt.engine.api.model.Spm;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3SPM;
+import org.ovirt.engine.api.v3.types.V3Status;
 
 public class V3SpmOutAdapter implements V3Adapter<Spm, V3SPM> {
     @Override
@@ -30,7 +29,9 @@ public class V3SpmOutAdapter implements V3Adapter<Spm, V3SPM> {
             to.setPriority(from.getPriority());
         }
         if (from.isSetStatus()) {
-            to.setStatus(adaptOut(from.getStatus()));
+            V3Status status = new V3Status();
+            status.setState(from.getStatus().value());
+            to.setStatus(status);
         }
         return to;
     }

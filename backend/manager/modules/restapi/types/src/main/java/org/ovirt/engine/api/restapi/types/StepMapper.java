@@ -7,8 +7,10 @@ import org.ovirt.engine.api.model.ExternalSystemType;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
+import org.ovirt.engine.api.model.StepStatus;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.TypeConversionHelper;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 
 public class StepMapper {
 
@@ -29,7 +31,7 @@ public class StepMapper {
         model.setType(map(entity.getStepType()));
         model.setDescription(entity.getDescription());
         model.setNumber(entity.getStepNumber());
-        model.setStatus(JobMapper.map(entity.getStatus(), null));
+        model.setStatus(mapStepStatus(entity.getStatus()));
         model.setStartTime(DateMapper.map(entity.getStartTime(), null));
         if (entity.getEndTime() != null) {
             model.setEndTime(TypeConversionHelper.toXMLGregorianCalendar(entity.getEndTime(), null));
@@ -62,7 +64,7 @@ public class StepMapper {
             target.setStepNumber(step.getNumber());
         }
         if (step.isSetStatus()) {
-            target.setStatus(JobMapper.map(step.getStatus(), null));
+            target.setStatus(mapStepStatus(step.getStatus()));
         }
         target.setStartTime(step.isSetStartTime() ? step.getStartTime().toGregorianCalendar().getTime()
                 : new Date(Calendar.getInstance().getTimeInMillis()));
@@ -124,6 +126,36 @@ public class StepMapper {
             return ExternalSystemType.GLUSTER;
         default:
             return null;
+        }
+    }
+
+    private static StepStatus mapStepStatus(JobExecutionStatus status) {
+        switch (status) {
+        case STARTED:
+            return StepStatus.STARTED;
+        case FINISHED:
+            return StepStatus.FINISHED;
+        case FAILED:
+            return StepStatus.FAILED;
+        case ABORTED:
+            return StepStatus.ABORTED;
+        default:
+            return StepStatus.UNKNOWN;
+        }
+    }
+
+    private static JobExecutionStatus mapStepStatus(StepStatus status) {
+        switch (status) {
+        case STARTED:
+            return JobExecutionStatus.STARTED;
+        case FINISHED:
+            return JobExecutionStatus.FINISHED;
+        case FAILED:
+            return JobExecutionStatus.FAILED;
+        case ABORTED:
+            return JobExecutionStatus.ABORTED;
+        default:
+            return JobExecutionStatus.UNKNOWN;
         }
     }
 }

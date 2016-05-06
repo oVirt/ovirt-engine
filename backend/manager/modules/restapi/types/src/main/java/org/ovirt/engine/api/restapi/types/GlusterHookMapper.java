@@ -1,12 +1,11 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.GlusterHook;
+import org.ovirt.engine.api.model.GlusterHookStatus;
 import org.ovirt.engine.api.model.GlusterServerHooks;
 import org.ovirt.engine.api.model.HookContentType;
 import org.ovirt.engine.api.model.HookStage;
-import org.ovirt.engine.api.model.HookStatus;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookConflictFlags;
@@ -68,7 +67,7 @@ public class GlusterHookMapper {
         }
 
         if (entity.getStatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
+            model.setStatus(mapHookStatus(entity.getStatus()));
         }
 
         if (entity.getContentType() != null) {
@@ -148,19 +147,16 @@ public class GlusterHookMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus hookStatus,
-            String template) {
-        switch (hookStatus) {
+    private static GlusterHookStatus mapHookStatus(org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus status) {
+        switch (status) {
         case DISABLED:
-            return HookStatus.DISABLED.toString();
+            return GlusterHookStatus.DISABLED;
         case ENABLED:
-            return HookStatus.ENABLED.toString();
+            return GlusterHookStatus.ENABLED;
         case MISSING:
-            return HookStatus.MISSING.toString();
+            return GlusterHookStatus.MISSING;
         default:
             return null;
         }
     }
-
 }

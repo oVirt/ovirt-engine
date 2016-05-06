@@ -19,6 +19,7 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.GlusterBrick;
+import org.ovirt.engine.api.model.GlusterBrickStatus;
 import org.ovirt.engine.api.model.GlusterClients;
 import org.ovirt.engine.api.model.GlusterMemoryPools;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -81,8 +82,8 @@ public class V3GlusterBrickInAdapter implements V3Adapter<V3GlusterBrick, Gluste
         if (from.isSetServerId()) {
             to.setServerId(from.getServerId());
         }
-        if (from.isSetStatus()) {
-            to.setStatus(adaptIn(from.getStatus()));
+        if (from.isSetStatus() && from.getStatus().isSetState()) {
+            to.setStatus(GlusterBrickStatus.fromValue(from.getStatus().getState()));
         }
         return to;
     }

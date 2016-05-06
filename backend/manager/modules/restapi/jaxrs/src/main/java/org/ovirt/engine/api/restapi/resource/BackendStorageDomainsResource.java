@@ -9,7 +9,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
@@ -426,7 +425,7 @@ public class BackendStorageDomainsResource
             StorageDomain storageDomain = map(entity);
             // status is only relevant in the context of a data-center, so it can either be 'Unattached' or null.
             if (StorageDomainSharedStatus.Unattached.equals(entity.getStorageDomainSharedStatus())) {
-                storageDomain.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
+                storageDomain.setStatus(StorageDomainStatus.UNATTACHED);
             } else {
                 storageDomain.setStatus(null);
             }
