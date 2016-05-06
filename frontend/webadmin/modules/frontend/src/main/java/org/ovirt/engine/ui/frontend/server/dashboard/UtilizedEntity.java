@@ -1,10 +1,20 @@
 package org.ovirt.engine.ui.frontend.server.dashboard;
 
+import org.codehaus.jackson.annotate.JsonValue;
+
 public class UtilizedEntity {
+
     public enum Trend {
+
         UP,
         DOWN,
         SAME;
+
+        @JsonValue
+        public String toValue() {
+            return name().toLowerCase();
+        }
+
     }
 
     private String name;
