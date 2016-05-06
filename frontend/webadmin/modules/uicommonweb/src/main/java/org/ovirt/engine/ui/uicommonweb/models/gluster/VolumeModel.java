@@ -76,6 +76,16 @@ public class VolumeModel extends Model {
         this.cluster = cluster;
     }
 
+    private boolean isHCMode() {
+        if (getCluster() == null || getCluster().getSelectedItem() == null) {
+            return false;
+        }
+        if (getCluster().getSelectedItem().supportsGlusterService() && getCluster().getSelectedItem().supportsVirtService()) {
+            return true;
+        }
+        return false;
+    }
+
     public VolumeModel() {
 
         setAddBricksCommand(new UICommand("AddBricks", this)); //$NON-NLS-1$
@@ -105,7 +115,10 @@ public class VolumeModel extends Model {
 
         setTypeList(new ListModel<GlusterVolumeType>());
         ArrayList<GlusterVolumeType> list = new ArrayList<>();
-        list.add(GlusterVolumeType.DISTRIBUTE);
+        //do not show Distribute for HC
+        if (!isHCMode()) {
+            list.add(GlusterVolumeType.DISTRIBUTE);
+        }
         list.add(GlusterVolumeType.REPLICATE);
         list.add(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         getTypeList().setItems(list);
@@ -124,7 +137,7 @@ public class VolumeModel extends Model {
         setRdmaTransportType(new EntityModel<Boolean>());
         getRdmaTransportType().setEntity(false);
 
-        getTypeList().setSelectedItem(GlusterVolumeType.DISTRIBUTE);
+        getTypeList().setSelectedItem(GlusterVolumeType.REPLICATE);
         getReplicaCount().setIsAvailable(false);
         getStripeCount().setIsAvailable(false);
 

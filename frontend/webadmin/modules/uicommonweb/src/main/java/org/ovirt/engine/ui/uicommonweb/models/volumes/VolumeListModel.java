@@ -80,7 +80,7 @@ import com.google.inject.Inject;
 
 public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVolumeEntity> implements ISupportSystemTreeContext {
 
-    public static final Integer REPLICATE_COUNT_DEFAULT = 2;
+    public static final Integer REPLICATE_COUNT_DEFAULT = 3;
     public static final Integer STRIPE_COUNT_DEFAULT = 4;
 
     private UICommand newVolumeCommand;
