@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -23,8 +23,8 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
             CommandExecutionStatus status,
             int completedChildren) {
 
-        ExtendCinderDiskCommand<UpdateVmDiskParameters> extendCinderDiskCommand =
-                (ExtendCinderDiskCommand<UpdateVmDiskParameters>) command;
+        ExtendCinderDiskCommand<VmDiskOperationParameterBase> extendCinderDiskCommand =
+                (ExtendCinderDiskCommand<VmDiskOperationParameterBase>) command;
         ImageStatus imageStatus = extendCinderDiskCommand.getCinderBroker()
                 .getDiskStatus(getDiskId(extendCinderDiskCommand));
         if (imageStatus != null && imageStatus != getDisk(extendCinderDiskCommand).getImageStatus()) {
@@ -65,16 +65,16 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
         new AuditLogDirector().log(command, auditLogType);
     }
 
-    protected Guid getDiskId(ExtendCinderDiskCommand<UpdateVmDiskParameters> command) {
+    protected Guid getDiskId(ExtendCinderDiskCommand<VmDiskOperationParameterBase> command) {
         return command.getParameters().getDiskInfo().getId();
     }
 
-    protected CinderDisk getDisk(ExtendCinderDiskCommand<UpdateVmDiskParameters> command) {
+    protected CinderDisk getDisk(ExtendCinderDiskCommand<VmDiskOperationParameterBase> command) {
         return (CinderDisk) command.getDiskDao().get(getDiskId(command));
     }
 
     @Override
-    protected ExtendCinderDiskCommand<UpdateVmDiskParameters> getCommand(Guid cmdId) {
+    protected ExtendCinderDiskCommand<VmDiskOperationParameterBase> getCommand(Guid cmdId) {
         return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

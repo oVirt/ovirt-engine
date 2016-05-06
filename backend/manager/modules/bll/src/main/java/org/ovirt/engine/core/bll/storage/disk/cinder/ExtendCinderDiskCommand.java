@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.UpdateVmDiskCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
-public class ExtendCinderDiskCommand<T extends UpdateVmDiskParameters> extends UpdateVmDiskCommand<T> {
+public class ExtendCinderDiskCommand<T extends VmDiskOperationParameterBase> extends UpdateVmDiskCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ExtendCinderDiskCommand.class);
 

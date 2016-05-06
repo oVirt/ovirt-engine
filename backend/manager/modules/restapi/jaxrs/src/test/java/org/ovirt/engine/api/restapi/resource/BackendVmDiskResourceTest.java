@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -37,9 +38,9 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -142,7 +143,7 @@ public class BackendVmDiskResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.UpdateVmDisk,
-                UpdateVmDiskParameters.class,
+                VmDiskOperationParameterBase.class,
                 new String[] { "VmId", "DiskInfo.WipeAfterDelete" },
                 new Object[] { VM_ID, Boolean.FALSE },
                 true,
@@ -159,7 +160,7 @@ public class BackendVmDiskResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.UpdateVmDisk,
-                UpdateVmDiskParameters.class,
+                VmDiskOperationParameterBase.class,
                 new String[] { "VmId", "DiskInfo.ReadOnly" },
                 new Object[] { VM_ID, Boolean.TRUE },
                 true,

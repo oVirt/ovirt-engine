@@ -38,10 +38,10 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -69,7 +69,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T>
+public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
 
     /* Multiplier used to convert GB to bytes or vice versa. */
@@ -584,7 +584,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private VdcActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
-        UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(
+        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(
                 getVmId(), newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
         parameters.setShouldBeEndedByParent(false);
