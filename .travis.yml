@@ -1,0 +1,15 @@
+language: java
+jdk:
+  - oraclejdk8
+services:
+  - postgresql
+before_script:
+  - psql -c postgres -c 'psql -d template1 -c "create database engine_dao_tests owner postgres;"' -U postgres
+script:
+  - "./packaging/dbscripts/schema.sh -d engine_dao_tests -u postgres -c apply"
+  - mvn clean cobertura:cobertura package -P enable-dao-tests -Dcobertura.report.format=xml \
+    -D engine.db.username=postgres -D engine.db.password= sonar:sonar -Dsonar.host.url=https://nemo.sonarqube.org \
+    -Dsonar.login=$SONAR_TOKEN
+env:
+  global:
+    secure: kgBwT3IHk1vg1PHD4KKqkIOFlv4MGkOA+IK+nsTbPRJEvWpzZSgpHLuL+/2YuB4tntNMMj3LHwPTSJmaGLRdxaSjjv0MfzQA/fudLqTJ+FL3MuA++YcLSfjj6wj1dlMRj+0vYgCQcBMKTktDhGMdE6gUh42AQBzywqe1IcnX5Qs=
