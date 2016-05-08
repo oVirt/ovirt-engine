@@ -52,6 +52,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     @Inject
     private PreviousHostedEngineHost previousHostedEngineHost;
 
+    @Inject
+    private MonitoringStrategyFactory monitoringStrategyFactory;
+
     public VdsNotRespondingTreatmentCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -132,7 +135,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             }
 
             // proceed with non responding treatment only if PM action are allowed and PM enabled for host
-            if (!MonitoringStrategyFactory.getMonitoringStrategyForVds(getVds()).isPowerManagementSupported()
+            if (!monitoringStrategyFactory.getMonitoringStrategyForVds(getVds()).isPowerManagementSupported()
                     || !getVds().isPmEnabled()) {
                 setSucceeded(false);
                 setCommandShouldBeLogged(false);

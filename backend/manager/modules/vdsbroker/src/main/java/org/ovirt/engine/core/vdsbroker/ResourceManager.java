@@ -54,6 +54,7 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorFactory;
@@ -98,6 +99,9 @@ public class ResourceManager implements BackendService {
 
     @Inject
     private DbFacade dbFacade;
+
+    @Inject
+    private MonitoringStrategyFactory monitoringStrategyFactory;
 
     private ResourceManager() {
         this.parallelism = Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize);
@@ -204,7 +208,12 @@ public class ResourceManager implements BackendService {
     }
 
     public void addVds(VDS vds, boolean isInternal) {
-        VdsManager vdsManager = new VdsManager(vds, auditLogDirector, this, dbFacade);
+        VdsManager vdsManager = new VdsManager(
+                vds,
+                auditLogDirector,
+                this,
+                dbFacade,
+                monitoringStrategyFactory);
         if (isInternal) {
             VDSStatus status = vds.getStatus();
             switch (vds.getStatus()) {

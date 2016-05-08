@@ -102,7 +102,11 @@ public class VdsManager {
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
 
-    public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager, DbFacade dbFacade) {
+    public VdsManager(VDS vds,
+            AuditLogDirector auditLogDirector,
+            ResourceManager resourceManager,
+            DbFacade dbFacade,
+            MonitoringStrategyFactory monitoringStrategyFactory) {
         HOST_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
         NUMBER_HOST_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
         refreshIteration = NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1;
@@ -112,7 +116,7 @@ public class VdsManager {
         log.info("Entered VdsManager constructor");
         cachedVds = vds;
         vdsId = vds.getId();
-        monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
+        monitoringStrategy = monitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         unrespondedAttempts = new AtomicInteger();
         failedToRunVmAttempts = new AtomicInteger();
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
