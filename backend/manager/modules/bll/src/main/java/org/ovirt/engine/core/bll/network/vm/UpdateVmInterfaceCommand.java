@@ -93,6 +93,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
 
             TransactionSupport.executeInNewTransaction(() -> {
+                bumpVmVersion();
                 updatePassthoughDeviceIfNeeded();
                 getCompensationContext().snapshotEntity(oldIface);
                 getVmNicDao().update(getInterface());

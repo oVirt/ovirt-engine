@@ -38,17 +38,21 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
-    @Inject
-    protected MacPoolPerDc poolPerDc;
-
     private static final int Kb = 1024;
 
     @Inject
+    protected MacPoolPerDc poolPerDc;
+
+    @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
+    @Inject
+    protected VmStaticDao vmStaticDao;
 
     protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;

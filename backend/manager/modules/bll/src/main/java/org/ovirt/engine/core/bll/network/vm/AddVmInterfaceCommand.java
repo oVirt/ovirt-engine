@@ -54,6 +54,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             getInterface().setVmId(getParameters().getVmId());
 
             TransactionSupport.executeInNewTransaction(() -> {
+                bumpVmVersion();
                 addInterfaceToDb(getInterface());
                 addInterfaceDeviceToDb();
                 getCompensationContext().stateChanged();
