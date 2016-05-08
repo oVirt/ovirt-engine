@@ -97,6 +97,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
+                    bumpVmVersion();
                     updatePassthoughDeviceIfNeeded();
                     getCompensationContext().snapshotEntity(oldIface);
                     getVmNicDao().update(getInterface());

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -46,6 +47,12 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         }
 
         return returnValue.getSucceeded();
+    }
+
+    protected void bumpVmVersion() {
+        final VmStatic vmStaticData = getVm().getStaticData();
+        getCompensationContext().snapshotEntity(vmStaticData);
+        vmStaticDao.incrementDbGeneration(vmStaticData.getId());
     }
 
     @Override
