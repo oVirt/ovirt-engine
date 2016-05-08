@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
@@ -74,8 +73,6 @@ public class BondPanel extends HorizontalPanel {
     }
 
     private boolean isAdPartnerMacValid(Bond bond, VDS vds){
-
-        VdsStatic vdsStatic = vds.getStaticData();
         boolean isAdPartnerMacEmpty = bond.getAdPartnerMac() == null || bond.getAdPartnerMac().isEmpty();
         boolean isIfcUp = InterfaceStatus.UP.equals(bond.getStatistics().getStatus());
         boolean isBond4 = BondMode.BOND4.equals(BondMode.parseBondMode(bond.getBondOptions()));
