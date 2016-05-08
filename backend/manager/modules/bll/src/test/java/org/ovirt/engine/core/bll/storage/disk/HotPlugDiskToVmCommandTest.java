@@ -23,7 +23,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
-import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -86,7 +86,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> command;
+    protected HotPlugDiskToVmCommand<VmDiskOperationParameterBase> command;
 
     @Before
     public void setUp() {
@@ -184,7 +184,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         when(storageDomainDao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
     }
 
-    protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
+    protected HotPlugDiskToVmCommand<VmDiskOperationParameterBase> createCommand() {
         return new HotPlugDiskToVmCommand<>(createParameters(), null);
     }
 
@@ -229,8 +229,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     /**
      * @return Valid parameters for the command.
      */
-    protected HotPlugDiskToVmParameters createParameters() {
-        return new HotPlugDiskToVmParameters(new DiskVmElement(diskImageGuid, vmId));
+    protected VmDiskOperationParameterBase createParameters() {
+        return new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId));
     }
 
     /**

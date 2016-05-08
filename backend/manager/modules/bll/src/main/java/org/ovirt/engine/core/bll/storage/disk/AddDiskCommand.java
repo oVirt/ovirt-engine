@@ -34,11 +34,11 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
-import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -691,7 +691,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private void plugDiskToVmIfNeeded() {
         if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null &&  getVm().getStatus() != VMStatus.Down)    {
-            HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(new DiskVmElement(getParameters().getDiskInfo().getId(), getVmId()));
+            VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(getParameters().getDiskInfo().getId(), getVmId()));
             params.setShouldBeLogged(false);
             VdcReturnValueBase returnValue = runInternalAction(VdcActionType.HotPlugDiskToVm, params);
             if (!returnValue.getSucceeded()) {

@@ -9,9 +9,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
-import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -339,7 +339,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private void plug() {
-        Frontend.getInstance().runMultipleAction(VdcActionType.HotPlugDiskToVm, createHotPlugDiskToVmParameters(true),
+        Frontend.getInstance().runMultipleAction(VdcActionType.HotPlugDiskToVm, createPlugOrUnplugParams(true),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -352,7 +352,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.HotUnPlugDiskFromVm, createHotPlugDiskToVmParameters(false),
+        Frontend.getInstance().runMultipleAction(VdcActionType.HotUnPlugDiskFromVm, createPlugOrUnplugParams(false),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -363,7 +363,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                 this);
     }
 
-    private ArrayList<VdcActionParametersBase> createHotPlugDiskToVmParameters(boolean plug) {
+    private ArrayList<VdcActionParametersBase> createPlugOrUnplugParams(boolean plug) {
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
         VM vm = getEntity();
 
@@ -371,7 +371,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             Disk disk = (Disk) item;
             disk.setPlugged(plug);
 
-            parametersList.add(new HotPlugDiskToVmParameters(new DiskVmElement(disk.getId(), vm.getId())));
+            parametersList.add(new VmDiskOperationParameterBase(new DiskVmElement(disk.getId(), vm.getId())));
         }
 
         return parametersList;

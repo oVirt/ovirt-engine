@@ -41,7 +41,6 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
-import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -96,13 +95,13 @@ public class BackendVmDiskResource
 
     @Override
     public Response activate(Action action) {
-        HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(new DiskVmElement(guid, vmId));
+        VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(guid, vmId));
         return doAction(VdcActionType.HotPlugDiskToVm, params, action);
     }
 
     @Override
     public Response deactivate(Action action) {
-        HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(new DiskVmElement(guid, vmId));
+        VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(guid, vmId));
         return doAction(VdcActionType.HotUnPlugDiskFromVm, params, action);
     }
 

@@ -36,7 +36,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
-import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -177,7 +176,7 @@ public class BackendVmDiskResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.HotPlugDiskToVm,
-                HotPlugDiskToVmParameters.class,
+                VmDiskOperationParameterBase.class,
                 new String[] { "DiskVmElement" },
                 new Object[] { new DiskVmElement(DISK_ID, VM_ID) },
                 true,
@@ -193,7 +192,7 @@ public class BackendVmDiskResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.HotUnPlugDiskFromVm,
-                HotPlugDiskToVmParameters.class,
+                VmDiskOperationParameterBase.class,
                 new String[] { "DiskVmElement" },
                 new Object[] { new DiskVmElement(DISK_ID, VM_ID) },
                 true,
