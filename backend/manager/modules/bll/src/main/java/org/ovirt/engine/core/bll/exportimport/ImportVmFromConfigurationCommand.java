@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -153,8 +154,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private AuditLogType attemptToAttachDisksToImportedVm(Collection<Disk> disks) {
         List<String> failedDisks = new LinkedList<>();
         for (Disk disk : disks) {
-            AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(getVm().getId(),
-                    disk.getId(), disk.getPlugged(), disk.getReadOnly());
+            AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(
+                    new DiskVmElement(disk.getId(), getVm().getId()), disk.getPlugged(), disk.getReadOnly());
             VdcReturnValueBase returnVal = runInternalAction(VdcActionType.AttachDiskToVm, params, cloneContextAndDetachFromParent());
             if (!returnVal.getSucceeded()) {
                 failedDisks.add(disk.getDiskAlias());

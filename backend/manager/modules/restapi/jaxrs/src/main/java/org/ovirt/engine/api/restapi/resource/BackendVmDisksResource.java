@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -193,8 +194,8 @@ public class BackendVmDisksResource
         Guid diskId = Guid.createGuidFromStringDefaultEmpty(disk.getId());
         boolean isDiskActive = BooleanUtils.toBooleanDefaultIfNull(disk.isActive(), false);
         boolean isDiskReadOnly = BooleanUtils.toBooleanDefaultIfNull(disk.isReadOnly(), false);
-        AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(vmId, diskId, isDiskActive,
-                isDiskReadOnly);
+        AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(new DiskVmElement(diskId, vmId),
+                isDiskActive, isDiskReadOnly);
 
         if (disk.isSetSnapshot()) {
             validateParameters(disk, "snapshot.id");

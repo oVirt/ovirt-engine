@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -76,7 +77,7 @@ public class RemoveDiskModel extends ConfirmationModel {
         for (Disk disk : disksToRemove) {
             VdcActionParametersBase parameters = removeDisk ?
                     new RemoveDiskParameters(disk.getId()) :
-                    new AttachDetachVmDiskParameters(vm.getId(), disk.getId());
+                    new AttachDetachVmDiskParameters(new DiskVmElement(disk.getId(), vm.getId()));
             paramerterList.add(parameters);
         }
 

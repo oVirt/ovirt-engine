@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AttachDetachVmDiskParameters extends VmDiskOperationParameterBase {
@@ -14,13 +15,13 @@ public class AttachDetachVmDiskParameters extends VmDiskOperationParameterBase {
     public AttachDetachVmDiskParameters() {
     }
 
-    public AttachDetachVmDiskParameters(Guid vmId, Guid diskId) {
-        this(vmId, diskId, true, false);
+    public AttachDetachVmDiskParameters(DiskVmElement diskVmElement) {
+        this(diskVmElement, true, false);
     }
 
-    public AttachDetachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug, boolean isReadOnly) {
-        super(vmId, null);
-        setEntityInfo(new EntityInfo(VdcObjectType.Disk, diskId));
+    public AttachDetachVmDiskParameters(DiskVmElement diskVmElement, boolean isPlugUnPlug, boolean isReadOnly) {
+        super(diskVmElement);
+        setEntityInfo(new EntityInfo(VdcObjectType.Disk, diskVmElement.getDiskId()));
         this.isPlugUnPlug = isPlugUnPlug;
         this.isReadOnly = isReadOnly;
     }

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAlias
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -163,7 +164,7 @@ public class AttachDiskModel extends NewDiskModel {
             // Disk is attached to VM as read only or not, null is applicable only for floating disks
             // but this is not a case here.
             AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(
-                    getVm().getId(), disk.getDisk().getId(), activate,
+                    new DiskVmElement(disk.getDisk().getId(), getVm().getId()) , activate,
                     Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
 
             actionTypes.add(VdcActionType.AttachDiskToVm);

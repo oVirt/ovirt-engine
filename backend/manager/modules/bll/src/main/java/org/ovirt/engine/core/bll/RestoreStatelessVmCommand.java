@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
@@ -70,8 +71,8 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
             if (!disksWithStatelessSnapshot.contains(activeDiskSnapshot.getId())) {
                 VdcReturnValueBase returnValue = runInternalAction (
                         VdcActionType.DetachDiskFromVm,
-                        new AttachDetachVmDiskParameters(
-                                getVmId(), activeDiskSnapshot.getId(), false, false));
+                        new AttachDetachVmDiskParameters(new DiskVmElement(activeDiskSnapshot.getId(), getVmId()),
+                                false, false));
 
                 if (!returnValue.getSucceeded()) {
                     log.error("Could not restore stateless VM  {} due to a failure to detach Disk {}",

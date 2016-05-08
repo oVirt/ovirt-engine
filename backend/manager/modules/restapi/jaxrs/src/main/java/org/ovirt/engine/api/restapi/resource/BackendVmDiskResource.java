@@ -194,7 +194,7 @@ public class BackendVmDiskResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(vmId, guid));
+        return performAction(VdcActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(new DiskVmElement(guid, vmId)));
     }
 
     @Override

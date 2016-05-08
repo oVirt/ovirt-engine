@@ -56,7 +56,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     @Override
     protected void init() {
-        disk = diskHandler.loadDiskFromSnapshot(getParameters().getEntityInfo().getId(), getParameters().getSnapshotId());
+        disk = diskHandler.loadDiskFromSnapshot(getDiskVmElement().getDiskId(), getParameters().getSnapshotId());
     }
 
     @Override
@@ -107,6 +107,10 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (!validate(new VmValidator(getVm()).isVmExists()) || !isVmInUpPausedDownStatus()) {
+            return false;
+        }
+
+        if (!validateDiskVmData()) {
             return false;
         }
 

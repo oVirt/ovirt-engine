@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -39,9 +40,9 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 @RunWith(MockitoJUnitRunner.class)
 public class AttachDiskToVmCommandTest {
 
-    private Guid vmId;
-    private Guid diskId;
-    private Guid storageId;
+    private Guid vmId = Guid.newGuid();
+    private Guid diskId = Guid.newGuid();
+    private Guid storageId = Guid.newGuid();
 
     @Mock
     private VmDeviceDao vmDeviceDao;
@@ -75,15 +76,8 @@ public class AttachDiskToVmCommandTest {
 
     @Before
     public void initTest() {
-        initEntitiesIds();
         initialSetup();
         initCommand();
-    }
-
-    private void initEntitiesIds() {
-        vmId = Guid.newGuid();
-        diskId = Guid.newGuid();
-        storageId = Guid.newGuid();
     }
 
     private void initialSetup() {
@@ -130,7 +124,7 @@ public class AttachDiskToVmCommandTest {
     }
 
     private AttachDetachVmDiskParameters createParameters() {
-        AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(vmId, diskId);
+        AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(new DiskVmElement(diskId, vmId));
         parameters.setReadOnly(true);
         return parameters;
     }

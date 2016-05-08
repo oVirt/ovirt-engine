@@ -38,7 +38,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             return failVmStatusIllegal();
         }
 
-        disk = diskHandler.loadDiskFromSnapshot(getParameters().getEntityInfo().getId(), getParameters().getSnapshotId());
+        disk = diskHandler.loadDiskFromSnapshot(getDiskVmElement().getDiskId(), getParameters().getSnapshotId());
         if (!isDiskExistAndAttachedToVm(disk)) {
             return false;
         }

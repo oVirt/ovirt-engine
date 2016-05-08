@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -218,8 +219,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         runInternalAction(
                 actionType,
                 new AttachDetachVmDiskParameters(
-                        getParameters().getNewVmGuid(),
-                        disk.getId(),
+                        new DiskVmElement(disk.getId(), getParameters().getNewVmGuid()),
                         disk.getPlugged(),
                         disk.getReadOnly()
                 )
