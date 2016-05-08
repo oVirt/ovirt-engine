@@ -24,7 +24,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -320,7 +322,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         if (getEntity() instanceof GlusterVolumeEntity) {
             return VdcObjectType.GlusterVolume;
         }
-        if (getEntity() instanceof DiskImage) {
+        if (getEntity() instanceof DiskImage || getEntity() instanceof LunDisk || getEntity() instanceof CinderDisk) {
             return VdcObjectType.Disk;
         }
         if (getEntity() instanceof Network) {
