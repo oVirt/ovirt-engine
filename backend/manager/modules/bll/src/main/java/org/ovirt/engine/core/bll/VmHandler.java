@@ -951,6 +951,15 @@ public class VmHandler {
     // if the name will be different.
     private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhev-toolssetup_(\\d\\.\\d\\_\\d).*");
 
+    private static void updateGuestAgentStatus(VM vm, GuestAgentStatus guestAgentStatus) {
+        if (vm.getGuestAgentStatus() != guestAgentStatus) {
+            vm.setGuestAgentStatus(guestAgentStatus);
+            DbFacade.getInstance()
+                    .getVmDynamicDao()
+                    .updateGuestAgentStatus(vm.getId(), vm.getGuestAgentStatus());
+        }
+    }
+
     /**
      * Looking for "RHEV_Tools x.x.x" in VMs app_list if found we look if there is a newer version in the isoList - if
      * so we update the GuestAgentStatus of VmDynamic to UpdateNeeded
@@ -972,14 +981,14 @@ public class VmHandler {
                 Matcher m = TOOLS_PATTERN.matcher(vm.getAppList().toLowerCase());
                 if (m.matches() && m.groupCount() > 0) {
                     String toolsVersion = m.group(1);
-                    if (toolsVersion.compareTo(latestVersion) < 0
-                            && vm.getGuestAgentStatus() != GuestAgentStatus.UpdateNeeded) {
-                        vm.setGuestAgentStatus(GuestAgentStatus.UpdateNeeded);
-                        DbFacade.getInstance()
-                                .getVmDynamicDao()
-                                .updateGuestAgentStatus(vm.getId(), vm.getGuestAgentStatus());
+                    if (toolsVersion.compareTo(latestVersion) < 0) {
+                        updateGuestAgentStatus(vm, GuestAgentStatus.UpdateNeeded);
+                    } else {
+                        updateGuestAgentStatus(vm, GuestAgentStatus.Exists);
                     }
                 }
+            } else {
+                updateGuestAgentStatus(vm, GuestAgentStatus.DoesntExist);
             }
         }
     }
