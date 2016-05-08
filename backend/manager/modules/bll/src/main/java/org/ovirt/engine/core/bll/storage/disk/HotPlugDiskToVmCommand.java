@@ -53,6 +53,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         performDbLoads();
 
         return
+                validateDiskVmData() &&
                 validate(new VmValidator(getVm()).isVmExists()) &&
                 isVmInUpPausedDownStatus() &&
                 canRunActionOnNonManagedVm() &&
@@ -94,12 +95,12 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     private void performDbLoads() {
         oldVmDevice =
-                getVmDeviceDao().get(new VmDeviceId(getParameters().getDiskId(), getVmId()));
+                getVmDeviceDao().get(new VmDeviceId(getDiskVmElement().getDiskId(), getVmId()));
         if (oldVmDevice != null) {
             if (oldVmDevice.getSnapshotId() != null) {
-                disk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), oldVmDevice.getSnapshotId());
+                disk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getDiskVmElement().getDiskId(), oldVmDevice.getSnapshotId());
             } else {
-                disk = getDiskDao().get(getParameters().getDiskId());
+                disk = getDiskDao().get(getDiskVmElement().getDiskId());
             }
         }
     }
@@ -202,7 +203,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     protected Disk getDisk() {
         if (disk == null) {
-            disk = getDiskDao().get(getParameters().getDiskId());
+            disk = getDiskDao().get(getDiskVmElement().getDiskId());
         }
         return disk;
     }

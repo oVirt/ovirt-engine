@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -229,7 +230,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
      * @return Valid parameters for the command.
      */
     protected HotPlugDiskToVmParameters createParameters() {
-        return new HotPlugDiskToVmParameters(vmId, diskImageGuid);
+        return new HotPlugDiskToVmParameters(new DiskVmElement(diskImageGuid, vmId));
     }
 
     /**

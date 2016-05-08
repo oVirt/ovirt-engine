@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -370,7 +371,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             Disk disk = (Disk) item;
             disk.setPlugged(plug);
 
-            parametersList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getId()));
+            parametersList.add(new HotPlugDiskToVmParameters(new DiskVmElement(disk.getId(), vm.getId())));
         }
 
         return parametersList;

@@ -2747,6 +2747,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The disk ${DiskName} is not attached to the VM ${VmName}.")
     String ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Disk to VM attachment data is missing.")
+    String ACTION_TYPE_FAILED_DISK_VM_DATA_MISSING();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following disk(s) ID(s) does not exist: ${diskIds}.")
     String ACTION_TYPE_FAILED_DISKS_NOT_EXIST();
 

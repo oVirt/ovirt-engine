@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -195,6 +197,18 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     public String getDiskAlias() {
         return getParameters().getDiskInfo().getDiskAlias();
+    }
+
+    protected boolean validateDiskVmData() {
+        if (getDiskVmElement() == null || getDiskVmElement().getId() == null ||
+                !Objects.equals(getDiskVmElement().getId().getVmId(), getVmId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_VM_DATA_MISSING);
+        }
+        return true;
+    }
+
+    protected DiskVmElement getDiskVmElement() {
+        return getParameters().getDiskVmElement();
     }
 
     @Override

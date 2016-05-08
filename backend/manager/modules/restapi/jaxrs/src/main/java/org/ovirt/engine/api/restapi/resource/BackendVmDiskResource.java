@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -95,13 +96,13 @@ public class BackendVmDiskResource
 
     @Override
     public Response activate(Action action) {
-        HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(vmId, guid);
+        HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(new DiskVmElement(guid, vmId));
         return doAction(VdcActionType.HotPlugDiskToVm, params, action);
     }
 
     @Override
     public Response deactivate(Action action) {
-        HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(vmId, guid);
+        HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(new DiskVmElement(guid, vmId));
         return doAction(VdcActionType.HotUnPlugDiskFromVm, params, action);
     }
 

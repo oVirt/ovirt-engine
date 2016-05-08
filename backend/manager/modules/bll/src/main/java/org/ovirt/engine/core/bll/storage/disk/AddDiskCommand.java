@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -690,7 +691,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private void plugDiskToVmIfNeeded() {
         if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null &&  getVm().getStatus() != VMStatus.Down)    {
-            HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(getVmId(), getParameters().getDiskInfo().getId());
+            HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(new DiskVmElement(getParameters().getDiskInfo().getId(), getVmId()));
             params.setShouldBeLogged(false);
             VdcReturnValueBase returnValue = runInternalAction(VdcActionType.HotPlugDiskToVm, params);
             if (!returnValue.getSucceeded()) {

@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -177,8 +178,8 @@ public class BackendVmDiskResourceTest
             setUpActionExpectations(
                 VdcActionType.HotPlugDiskToVm,
                 HotPlugDiskToVmParameters.class,
-                new String[] { "VmId", "DiskId" },
-                new Object[] { VM_ID, DISK_ID },
+                new String[] { "DiskVmElement" },
+                new Object[] { new DiskVmElement(DISK_ID, VM_ID) },
                 true,
                 true
             )
@@ -193,8 +194,8 @@ public class BackendVmDiskResourceTest
             setUpActionExpectations(
                 VdcActionType.HotUnPlugDiskFromVm,
                 HotPlugDiskToVmParameters.class,
-                new String[] { "VmId", "DiskId" },
-                new Object[] { VM_ID, DISK_ID },
+                new String[] { "DiskVmElement" },
+                new Object[] { new DiskVmElement(DISK_ID, VM_ID) },
                 true,
                 true
             )
