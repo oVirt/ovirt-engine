@@ -91,6 +91,11 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     public UpdateVmDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         loadVmDiskAttachedToInfo();
     }
 

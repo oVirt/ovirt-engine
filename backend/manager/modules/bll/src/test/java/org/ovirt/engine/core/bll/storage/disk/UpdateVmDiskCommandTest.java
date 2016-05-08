@@ -619,6 +619,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
         StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
         doReturn(sdValidator).when(command).getStorageDomainValidator(any(DiskImage.class));
+
+        command.init();
     }
 
     @Test
