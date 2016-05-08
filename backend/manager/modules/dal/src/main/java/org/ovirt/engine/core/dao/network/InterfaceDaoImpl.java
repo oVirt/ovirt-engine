@@ -155,7 +155,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("base_interface", nic.getBaseInterface())
                 .addValue("mtu", nic.getMtu())
                 .addValue("bridged", nic.isBridged())
-                .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()));
+                .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
+                .addValue("ad_partner_mac", nic.getAdPartnerMac());
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {
@@ -359,6 +360,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     entity.setQos(hostNetworkQosDao.get(entity.getId()));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                         HashSet.class));
+                    entity.setAdPartnerMac(rs.getString("ad_partner_mac"));
+
                     return entity;
                 }
 

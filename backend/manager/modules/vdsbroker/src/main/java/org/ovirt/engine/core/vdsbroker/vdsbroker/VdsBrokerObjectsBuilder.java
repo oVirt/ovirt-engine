@@ -1888,6 +1888,8 @@ public class VdsBrokerObjectsBuilder {
                         bondOptions = normalizeBondOptions(bondOptions.toString());
                         bond.setBondOptions(bondOptions.toString());
                     }
+
+                    bond.setAdPartnerMac((String) bondProperties.get("ad_partner_mac"));
                 }
             }
         }
