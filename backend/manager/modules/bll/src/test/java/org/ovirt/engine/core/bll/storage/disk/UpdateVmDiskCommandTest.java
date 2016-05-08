@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -470,7 +471,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testFailInterfaceCanUpdateReadOnly() {
-        initializeCommand(new VmDiskOperationParameterBase(vmId, createDiskImage()));
+        initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                 when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
@@ -480,7 +481,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testSucceedInterfaceCanUpdateReadOnly() {
-        initializeCommand(new VmDiskOperationParameterBase(vmId, createDiskImage()));
+        initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
 
@@ -500,7 +501,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
 
-        initializeCommand(new VmDiskOperationParameterBase(vmId, updatedDisk));
+        initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), updatedDisk));
 
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED)).
                 when(diskValidator).isDiskUsedAsOvfStore();
@@ -697,7 +698,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         newDiskImage.setSize(SizeConverter.convert(5, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
-        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(vmId, newDiskImage);
+        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(new DiskVmElement(newDiskImage.getId(), vmId), newDiskImage);
         long diskExtendingDiffInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
@@ -809,7 +810,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
      */
     protected VmDiskOperationParameterBase createParameters() {
         DiskImage diskInfo = createDiskImage();
-        return new VmDiskOperationParameterBase(vmId, diskInfo);
+        return new VmDiskOperationParameterBase(new DiskVmElement(diskInfo.getId(), vmId), diskInfo);
     }
 
     /**

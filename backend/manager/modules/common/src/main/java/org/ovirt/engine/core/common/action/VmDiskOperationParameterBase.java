@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
-import org.ovirt.engine.core.compat.Guid;
 
 public class VmDiskOperationParameterBase extends VmOperationParameterBase {
 
@@ -15,11 +14,6 @@ public class VmDiskOperationParameterBase extends VmOperationParameterBase {
     private DiskVmElement diskVmElement;
 
     public VmDiskOperationParameterBase() {
-    }
-
-    public VmDiskOperationParameterBase(Guid vmId, Disk diskInfo) {
-        super(vmId);
-        setDiskInfo(diskInfo);
     }
 
     public VmDiskOperationParameterBase(DiskVmElement diskVmElement) {

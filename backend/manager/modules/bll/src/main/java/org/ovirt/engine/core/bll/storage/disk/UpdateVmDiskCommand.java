@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -585,7 +586,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     private VdcActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
         VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(
-                getVmId(), newCinderDisk);
+                new DiskVmElement(newCinderDisk.getId(), getVmId()), newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
         parameters.setShouldBeEndedByParent(false);
         return parameters;

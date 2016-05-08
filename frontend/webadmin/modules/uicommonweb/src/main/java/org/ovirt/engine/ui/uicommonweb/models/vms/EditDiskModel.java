@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -134,7 +135,7 @@ public class EditDiskModel extends AbstractDiskModel {
 
         startProgress();
 
-        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(getVmId(), getDisk());
+        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(new DiskVmElement(getDisk().getId(), getVmId()), getDisk());
         IFrontendActionAsyncCallback onFinished = callback != null ? callback : new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
