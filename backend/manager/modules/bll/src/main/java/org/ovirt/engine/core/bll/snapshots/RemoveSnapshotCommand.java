@@ -418,9 +418,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
 
-        return validate(diskImagesValidator.diskImagesNotLocked()) &&
-                (getVm().isQualifiedForLiveSnapshotMerge()
-                 || validate(diskImagesValidator.diskImagesNotIllegal()));
+        return validateImagesNotLocked(diskImagesValidator) &&
+                (getVm().isQualifiedForLiveSnapshotMerge() || validate(diskImagesValidator.diskImagesNotIllegal()));
+    }
+
+    private boolean validateImagesNotLocked(DiskImagesValidator diskImagesValidator) {
+        return !getParameters().isNeedsLocking() || validate(diskImagesValidator.diskImagesNotLocked());
     }
 
     private List<DiskImage> getDiskImagesToValidate() {
@@ -472,8 +475,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        return getParameters().isNeedsLocking() ?
+                Collections.singletonMap(getVmId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED))
+                : null;
     }
 
     @Override
