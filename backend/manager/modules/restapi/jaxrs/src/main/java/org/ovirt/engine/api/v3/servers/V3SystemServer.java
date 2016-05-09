@@ -215,8 +215,8 @@ public class V3SystemServer extends V3Server<SystemResource> {
     }
 
     @Path("permissions")
-    public V3SystemPermissionsServer getPermissionsResource() {
-        return new V3SystemPermissionsServer(getDelegate().getPermissionsResource());
+    public V3AssignedPermissionsServer getPermissionsResource() {
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
     @Path("tags")
