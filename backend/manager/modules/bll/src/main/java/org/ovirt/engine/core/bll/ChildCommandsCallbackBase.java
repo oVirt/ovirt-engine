@@ -35,10 +35,10 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
             switch (CommandCoordinatorUtil.getCommandStatus(childCmdId)) {
             case NOT_STARTED:
             case ACTIVE:
+            case EXECUTION_FAILED:
                 logWaitingForChildCommand(child, command);
                 return;
             case FAILED:
-            case EXECUTION_FAILED:
                 if (shouldWaitForEndMethodsCompletion(child, command)) {
                     return;
                 }
@@ -142,5 +142,10 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
                 command.getActionType(),
                 command.getCommandId(),
                 status);
+    }
+
+    @Override
+    public boolean pollOnExecutionFailed() {
+        return true;
     }
 }

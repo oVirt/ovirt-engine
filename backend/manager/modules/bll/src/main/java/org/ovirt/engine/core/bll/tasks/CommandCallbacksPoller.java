@@ -85,6 +85,11 @@ public class CommandCallbacksPoller implements BackendService {
                             callback.doPolling(cmdId, commandsRepository.getChildCommandIds(cmdId));
                         }
                         break;
+                    case EXECUTION_FAILED:
+                        if (callback.pollOnExecutionFailed()) {
+                            callback.doPolling(cmdId, commandsRepository.getChildCommandIds(cmdId));
+                        }
+                        break;
                     default:
                         break;
                 }
