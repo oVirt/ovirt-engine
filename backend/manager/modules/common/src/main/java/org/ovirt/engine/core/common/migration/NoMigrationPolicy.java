@@ -13,7 +13,7 @@ public class NoMigrationPolicy extends MigrationPolicy {
         setDescription("The behavior defined on host will be applied."); //$NON-NLS-1$
         setConfig(new NoConvergenceConfig());
         // the ultimate default
-        setMaxMigrations(3);
+        setMaxMigrations(2);
         setId(ID);
     }
 
