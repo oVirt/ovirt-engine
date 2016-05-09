@@ -586,8 +586,8 @@ public class ProviderModel extends Model {
             errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
         } else if (!result.getSucceeded()) {
             errorMessage = result.isValid() ?
-                    Frontend.getInstance().translateEngineFault(result.getFault()) :
-                    Frontend.getInstance().translateExecuteFailedMessages(result.getValidationMessages());
+                    result.getFault().getMessage() :
+                    result.getValidationMessages().get(0);
         }
         getTestResult().setEntity(errorMessage);
     }
