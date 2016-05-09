@@ -777,7 +777,7 @@ select fn_db_add_config_value_for_versions_up_to('ChangeNetworkUnderBridgeInUseS
 
 select fn_db_add_config_value_for_versions_up_to('NetworkExclusivenessPermissiveValidation','false','3.5');
 
-select fn_db_add_config_value('ImageProxyURL','http://192.168.2.54','general');
+select fn_db_add_config_value('ImageProxyURL','http://localhost','general');
 select fn_db_add_config_value('ImageProxyPort','8081','general');
 select fn_db_add_config_value('ImageTransferClientTicketValidityInSeconds','3600','general');
 select fn_db_add_config_value('ImageTransferHostTicketValidityInSeconds','300','general');
