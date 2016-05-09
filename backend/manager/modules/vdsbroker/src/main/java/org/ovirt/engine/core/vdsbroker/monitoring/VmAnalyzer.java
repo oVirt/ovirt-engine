@@ -245,7 +245,7 @@ public class VmAnalyzer {
         destroyVm();
 
         // VM is running on another host - must be during migration
-        if (dbVm == null) {
+        if (!isVmRunningInDatabaseOnMonitoredHost()) {
             return;
         }
 
