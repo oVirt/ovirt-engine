@@ -1029,6 +1029,50 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     HotPlugEnabled,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("http://localhost")
+    ImageProxyURL,
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("8081")
+    ImageProxyPort,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3600")
+    ImageTransferClientTicketValidityInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    ImageTransferHostTicketValidityInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("60")
+    ImageTransferHostTicketRefreshAllowanceInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1800")
+    ImageTransferPausedLogIntervalInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("60")
+    UploadImageUiInactivityTimeoutInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("8192")
+    UploadImageChunkSizeKB,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    UploadImageXhrTimeoutInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    UploadImageXhrRetryIntervalInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    UploadImageXhrMaxRetries,
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")

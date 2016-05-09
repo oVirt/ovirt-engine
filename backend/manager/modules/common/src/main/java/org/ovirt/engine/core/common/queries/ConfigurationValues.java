@@ -173,6 +173,11 @@ public enum ConfigurationValues {
     MaxIoThreadsPerVm(ConfigAuthType.User),
     MultipleGraphicsSupported(ConfigAuthType.User),
     DisplayUncaughtUIExceptions,
+    UploadImageUiInactivityTimeoutInSeconds(ConfigAuthType.User),
+    UploadImageChunkSizeKB,
+    UploadImageXhrTimeoutInSeconds,
+    UploadImageXhrRetryIntervalInSeconds,
+    UploadImageXhrMaxRetries,
     RefreshLunSupported;
 
     public static enum ConfigAuthType {

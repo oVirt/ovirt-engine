@@ -31,6 +31,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
 
@@ -77,6 +78,15 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc setHaMaintenanceMode(String mode, boolean enabled);
 
+    StatusOnlyReturnForXmlRpc add_image_ticket(String ticketId, String[] ops, long timeout,
+                                               long size, String url);
+
+    StatusOnlyReturnForXmlRpc remove_image_ticket(String ticketId);
+
+    StatusOnlyReturnForXmlRpc extend_image_ticket(String ticketId, long timeout);
+
+    OneMapReturnForXmlRpc get_image_transfer_session_stats(String ticketId);
+
     StatusOnlyReturnForXmlRpc desktopLogin(String vmId, String domain, String user, String password);
 
     StatusOnlyReturnForXmlRpc desktopLogoff(String vmId, String force);
@@ -92,6 +102,10 @@ public interface IVdsServer {
     MigrateStatusReturnForXmlRpc migrateStatus(String vmId);
 
     StatusOnlyReturnForXmlRpc migrateCancel(String vmId);
+
+    PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID);
+
+    StatusReturnForXmlRpc teardownImage(String spId, String sdId, String imgGroupId, String imgId);
 
     OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation);
 

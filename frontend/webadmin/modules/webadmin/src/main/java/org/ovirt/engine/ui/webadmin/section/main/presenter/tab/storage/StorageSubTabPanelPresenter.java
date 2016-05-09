@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -16,8 +15,7 @@ import com.gwtplatform.mvp.client.annotations.RequestTabs;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class StorageSubTabPanelPresenter extends
-    AbstractSubTabPanelPresenter<StorageSubTabPanelPresenter.ViewDef, StorageSubTabPanelPresenter.ProxyDef> {
+public class StorageSubTabPanelPresenter extends AbstractSubTabPanelPresenter<StorageSubTabPanelPresenter.ViewDef, StorageSubTabPanelPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     public interface ProxyDef extends Proxy<StorageSubTabPanelPresenter> {

@@ -26,6 +26,8 @@ import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadImagePopupPresenterWidget;
+
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
@@ -46,6 +48,8 @@ public class DiskModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskPopupPresenterWidget> newPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<UploadImagePopupPresenterWidget> uploadImagePopupProvider,
+
             final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider,
             final Provider<ImportExportImagePopupPresenterWidget> importExportImagePopupPresenterWidgetProvider,
@@ -68,6 +72,9 @@ public class DiskModule extends AbstractGinModule {
                             return changeQutoaPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportCommand()) {
                             return importExportImagePopupPresenterWidgetProvider.get();
+                        } else if (lastExecutedCommand == getModel().getUploadCommand()
+                                || lastExecutedCommand == getModel().getResumeUploadCommand()) {
+                            return uploadImagePopupProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
                         }

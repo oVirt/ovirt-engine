@@ -112,6 +112,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Storage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadImagePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
@@ -390,6 +391,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestr
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageForceCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemovePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.UploadImagePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportCloneDialogPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmFromExportDomainPopupView;
@@ -1440,6 +1442,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ImportExportImagePopupPresenterWidget.class,
                 ImportExportImagePopupPresenterWidget.ViewDef.class,
                 ImportExportImagePopupView.class);
+
+        bindPresenterWidget(UploadImagePopupPresenterWidget.class,
+                UploadImagePopupPresenterWidget.ViewDef.class,
+                UploadImagePopupView.class);
+
 
         // Storage Remove
         bindPresenterWidget(StorageRemovePopupPresenterWidget.class,

@@ -245,6 +245,9 @@
         <include name="common/businessentities/storage/ImageOperation.java" />
         <include name="common/businessentities/storage/ImageDbOperationScope.java" />
         <include name="common/businessentities/storage/ImageStatus.java" />
+        <include name="common/businessentities/storage/ImageTransfer.java" />
+        <include name="common/businessentities/storage/ImageTransferPhase.java" />
+        <include name="common/businessentities/storage/ImageTransferUpdates.java" />
         <include name="common/businessentities/storage/LUNs.java" />
         <include name="common/businessentities/storage/LunDisk.java" />
         <include name="common/businessentities/storage/LunStatus.java" />
