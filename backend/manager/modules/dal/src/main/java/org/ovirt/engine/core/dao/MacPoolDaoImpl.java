@@ -92,8 +92,8 @@ public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements 
     private void saveRange(MacRange entity) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("mac_pool_id", entity.getMacPoolId())
-                .addValue("from_mac", entity.getMacFrom())
-                .addValue("to_mac", entity.getMacTo());
+                .addValue("from_mac", entity.getMacFrom().toLowerCase())
+                .addValue("to_mac", entity.getMacTo().toLowerCase());
 
         getCallsHandler().executeModification("InsertMacPoolRange", parameterSource);
     }
