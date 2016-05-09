@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -93,12 +92,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
     @Override
     protected boolean validate() {
-        macPool = getMacPool();
-        VmStatic vm = getVm().getStaticData();
-        if (vm == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-            return false;
+        if (getVm() == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
+        macPool = getMacPool();
 
         if (!canRunActionOnNonManagedVm()) {
             return false;
@@ -138,7 +135,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         VmNicValidator nicValidator = new VmNicValidator(getInterface(), compatibilityVersion, getVm().getOs());
 
         if (!validate(nicValidator.isCompatibleWithOs())
-                || !validate(nicValidator.profileValid(vm.getClusterId()))
+                || !validate(nicValidator.profileValid(getVm().getClusterId()))
                 || !validate(nicValidator.typeMatchesProfile())
                 || !validate(nicValidator.passthroughIsLinked())) {
             return false;
