@@ -74,7 +74,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             ex.setVdsError(new VDSError(EngineError.VDS_NETWORK_ERROR, "Timeout during xml-rpc call"));
             setVdsRuntimeError(ex);
             log.error("Timeout waiting for VDSM response: {}", e.getMessage());
-            log.debug("Exception", e);
+            log.trace("Exception", e);
             throw e;
         } catch (VDSNetworkException e) {
             setVdsRuntimeError(e);
