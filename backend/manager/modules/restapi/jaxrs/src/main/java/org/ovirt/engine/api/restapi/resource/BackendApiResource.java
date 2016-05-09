@@ -22,14 +22,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Action;
@@ -95,7 +96,6 @@ import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.VersionMapper;
-import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.branding.BrandingManager;
@@ -132,7 +132,6 @@ public class BackendApiResource
     }
 
     private static final Logger log = LoggerFactory.getLogger(BackendApiResource.class);
-    private static final String SYSTEM_STATS_ERROR = "Unknown error querying system statistics";
     private static final String API_SCHEMA = "api.xsd";
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
@@ -341,40 +340,29 @@ public class BackendApiResource
     }
 
     private Api addSystemVersion(Api api) {
-        String productVersion = getConfigurationValueDefault(String.class, ConfigurationValues.ProductRPMVersion);
-        BrandingManager obrand = BrandingManager.getInstance();
-        ProductInfo productInfo = new ProductInfo();
-        productInfo.setName(obrand.getMessage("obrand.backend.product"));
-        productInfo.setVendor(obrand.getMessage("obrand.backend.vendor"));
-        Version version = getVersion();
-        version.setFullVersion(productVersion);
-        productInfo.setVersion(version);
-        api.setProductInfo(productInfo);
+        String productVersion = getConfigurationValueDefault(ConfigurationValues.ProductRPMVersion);
+        if (productVersion != null) {
+            BrandingManager obrand = BrandingManager.getInstance();
+            ProductInfo productInfo = new ProductInfo();
+            productInfo.setName(obrand.getMessage("obrand.backend.product"));
+            productInfo.setVendor(obrand.getMessage("obrand.backend.vendor"));
+            Version version = getVersion();
+            version.setFullVersion(productVersion);
+            productInfo.setVersion(version);
+            api.setProductInfo(productInfo);
+        }
         return api;
     }
 
-    private HashMap<String, Integer> getSystemStatistics() {
-        try {
-            VdcQueryReturnValue result = runQuery(VdcQueryType.GetSystemStatistics,
-                    new GetSystemStatisticsQueryParameters(-1));
-
-            if (!result.getSucceeded() || result.getReturnValue() == null) {
-                String failure;
-                Status status;
-                if (result.getExceptionString() != null) {
-                    failure = localize(result.getExceptionString());
-                    status = ErrorMessageHelper.getErrorStatus(result.getExceptionString());
-                } else {
-                    failure = SYSTEM_STATS_ERROR;
-                    status = Status.INTERNAL_SERVER_ERROR;
-                }
-                throw new BackendFailureException(failure, status);
-            }
-
+    private Map<String, Integer> getSystemStatistics() {
+        VdcQueryReturnValue result = runQuery(
+            VdcQueryType.GetSystemStatistics,
+            new GetSystemStatisticsQueryParameters(-1)
+        );
+        if (result.getSucceeded()) {
             return asStatisticsMap(result.getReturnValue());
-        } catch (Exception e) {
-            return handleError(e, false);
         }
+        return Collections.emptyMap();
     }
 
     @SuppressWarnings("unchecked")
@@ -383,48 +371,87 @@ public class BackendApiResource
     }
 
     private Api addSummary(Api api) {
-        if (!isFiltered()) {
-            HashMap<String, Integer> stats = getSystemStatistics();
-
-            ApiSummary summary = new ApiSummary();
-
-            summary.setVms(new ApiSummaryItem());
-            summary.getVms().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD));
-            summary.getVms().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD));
-
-            summary.setHosts(new ApiSummaryItem());
-            summary.getHosts().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD));
-            summary.getHosts().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD));
-
-            summary.setUsers(new ApiSummaryItem());
-            summary.getUsers().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD));
-            summary.getUsers().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD));
-
-            summary.setStorageDomains(new ApiSummaryItem());
-            summary.getStorageDomains().setTotal(stats.get(QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD));
-            summary.getStorageDomains().setActive(stats.get(QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD));
-
-            api.setSummary(summary);
-        }
-        return api;
-    }
-
-    private Api addGlusterSummary(Api api) {
-        HashMap<String, Integer> stats = getSystemStatistics();
+        Map<String, Integer> stats = getSystemStatistics();
 
         ApiSummary summary = new ApiSummary();
 
-        summary.setHosts(new ApiSummaryItem());
-        summary.getHosts().setTotal(stats.get("total_vds"));
-        summary.getHosts().setActive(stats.get("active_vds"));
+        summary.setVms(
+            makeSummaryItem(
+                stats,
+                QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD,
+                QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD
+            )
+        );
 
-        summary.setUsers(new ApiSummaryItem());
-        summary.getUsers().setTotal(stats.get("total_users"));
-        summary.getUsers().setActive(stats.get("active_users"));
+        summary.setHosts(
+            makeSummaryItem(
+                stats,
+                QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD,
+                QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD
+            )
+        );
+
+        summary.setUsers(
+            makeSummaryItem(
+                stats,
+                QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD,
+                QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD
+            )
+        );
+
+        summary.setStorageDomains(
+            makeSummaryItem(
+                stats,
+                QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD,
+                QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD
+            )
+        );
 
         api.setSummary(summary);
 
         return api;
+    }
+
+    private Api addGlusterSummary(Api api) {
+        Map<String, Integer> stats = getSystemStatistics();
+
+        ApiSummary summary = new ApiSummary();
+
+        summary.setHosts(
+            makeSummaryItem(
+                stats,
+                "total_vds",
+                "active_vds"
+            )
+        );
+
+        summary.setUsers(
+            makeSummaryItem(
+                stats,
+                "total_users",
+                "active_users"
+            )
+        );
+
+        api.setSummary(summary);
+
+        return api;
+    }
+
+    private ApiSummaryItem makeSummaryItem(Map<String, Integer> values, String totalKey, String activeKey) {
+        Integer totalValue = values.get(totalKey);
+        Integer activeValue = values.get(activeKey);
+        if (totalValue == null && activeValue == null) {
+            return null;
+        }
+        ApiSummaryItem item = new ApiSummaryItem();
+        if (totalValue != null) {
+            item.setTotal(totalValue);
+        }
+        if (activeValue != null) {
+            item.setActive(activeValue);
+        }
+        return item;
     }
 
     @Override

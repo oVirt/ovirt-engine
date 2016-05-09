@@ -283,27 +283,28 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    @SuppressWarnings("serial")
-    protected <T> T getConfigurationValue(Class<T> clz, ConfigurationValues config, final Version version) {
-        return getEntity(clz,
-                         VdcQueryType.GetConfigurationValue,
-                         new GetConfigurationValueParameters(config, asString(version)),
-                         config.toString());
+    @SuppressWarnings("unchecked")
+    protected <T> T getConfigurationValue(ConfigurationValues config, final Version version) {
+        VdcQueryReturnValue result = runQuery(
+            VdcQueryType.GetConfigurationValue,
+            new GetConfigurationValueParameters(config, asString(version))
+        );
+        if (result.getSucceeded()) {
+            return (T) result.getReturnValue();
+        }
+        return null;
     }
 
-    @SuppressWarnings("serial")
-    protected <T> T getFenceConfigurationValue(Class<T> clz, ConfigurationValues config, final Version version) {
-        return getEntity(clz,
-                VdcQueryType.GetFenceConfigurationValue,
-                new GetConfigurationValueParameters(config, asString(version)),
-                config.toString());
-    }
-
-    protected <T> T getConfigurationValueDefault(Class<T> clz, ConfigurationValues config) {
-        return getEntity(clz,
-                VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(config, ConfigCommon.defaultConfigurationVersion),
-                config.toString());
+    @SuppressWarnings("unchecked")
+    protected <T> T getConfigurationValueDefault(ConfigurationValues config) {
+        VdcQueryReturnValue result = runQuery(
+            VdcQueryType.GetConfigurationValue,
+            new GetConfigurationValueParameters(config, ConfigCommon.defaultConfigurationVersion)
+        );
+        if (result.getSucceeded()) {
+            return (T) result.getReturnValue();
+        }
+        return null;
     }
 
     private static final String VERSION_FORMAT = "{0}.{1}";

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -195,7 +196,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     public VersionCaps generateVersionCaps(Version v) {
-        VersionCaps current = null;
         VersionCaps version = new VersionCaps();
 
         version.setMajor(v.getMajor());
@@ -285,12 +285,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
-        if (current == null && VersionHelper.equals(v, getCurrentVersion())) {
-            current = version;
-            current.setCurrent(true);
-        } else {
-            version.setCurrent(false);
-        }
+        Version currentVersion = getCurrentVersion();
+        version.setCurrent(currentVersion != null && VersionHelper.equals(version, currentVersion));
 
         LinkHelper.<VersionCaps> addLinks(version);
 
@@ -436,8 +432,10 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private Version getCurrentVersion() {
         if (currentVersion == null) {
-            currentVersion = VersionHelper.parseVersion(getConfigurationValueDefault(String.class,
-                    ConfigurationValues.VdcVersion));
+            String currentVersionString = getConfigurationValueDefault(ConfigurationValues.VdcVersion);
+            if (currentVersionString != null) {
+                currentVersion = VersionHelper.parseVersion(currentVersionString);
+            }
         }
         return currentVersion;
     }
@@ -570,11 +568,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private List<Agent> getPowerManagementAgents(Version version) {
-        return FenceOptionsParser.parse(
-            getFenceConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
-            getConfigurationValueDefault(String.class, ConfigurationValues.VdsFenceOptionTypes),
-            true
-        );
+        String fenceMapping = getConfigurationValue(ConfigurationValues.VdsFenceOptionMapping, version);
+        String fenceTypes = getConfigurationValueDefault(ConfigurationValues.VdsFenceOptionTypes);
+        if (fenceMapping != null && fenceTypes != null) {
+            return FenceOptionsParser.parse(fenceMapping, fenceTypes);
+        }
+        return Collections.emptyList();
     }
 
     private List<StorageType> getStorageTypes(Version version) {
@@ -591,14 +590,14 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private List<CustomProperty> getVmHooksEnvs(Version version) {
         List<CustomProperty> ret = new ArrayList<>();
-        ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class,
-                        ConfigurationValues.PredefinedVMProperties,
-                        version),
-                true));
-        ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class,
-                        ConfigurationValues.UserDefinedVMProperties,
-                        version),
-                true));
+        String predefinedProperties = getConfigurationValue(ConfigurationValues.PredefinedVMProperties, version);
+        if (predefinedProperties != null) {
+            ret.addAll(CustomPropertiesParser.parse(predefinedProperties, true));
+        }
+        String userDefinedProperties = getConfigurationValue(ConfigurationValues.UserDefinedVMProperties, version);
+        if (userDefinedProperties != null) {
+            ret.addAll(CustomPropertiesParser.parse(userDefinedProperties, true));
+        }
         return ret;
     }
 
@@ -610,12 +609,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     public List<Version> getSupportedClusterLevels() {
         List<Version> versions = new ArrayList<>();
-        for (org.ovirt.engine.core.compat.Version v : (Set<org.ovirt.engine.core.compat.Version>) getConfigurationValueDefault(Set.class,
-                ConfigurationValues.SupportedClusterLevels)) {
-            Version version = new Version();
-            version.setMajor(v.getMajor());
-            version.setMinor(v.getMinor());
-            versions.add(version);
+        Set<org.ovirt.engine.core.compat.Version> supportedClusterLevels = getConfigurationValueDefault(
+            ConfigurationValues.SupportedClusterLevels
+        );
+        if (supportedClusterLevels != null) {
+            for (org.ovirt.engine.core.compat.Version supportedClusterLevel : supportedClusterLevels) {
+                Version version = new Version();
+                version.setMajor(supportedClusterLevel.getMajor());
+                version.setMinor(supportedClusterLevel.getMinor());
+                versions.add(version);
+            }
         }
         return versions;
     }
