@@ -45,7 +45,7 @@ public class V3ClusterHelper {
     public static void assignCompatiblePolicy(V3Cluster v3Cluster, Cluster v4Cluster) {
         V3SchedulingPolicy v3Policy = v3Cluster.getSchedulingPolicy();
         SchedulingPolicy v4Policy = v4Cluster.getSchedulingPolicy();
-        boolean v3IsSet = v3Policy != null && v3Policy.isSetPolicy();
+        boolean v3IsSet = v3Policy != null && (v3Policy.isSetName() || v3Policy.isSetPolicy());
         boolean v4IsSet = v4Policy != null && (v4Policy.isSetName() || v4Policy.isSetId());
         if (v3IsSet && !v4IsSet) {
             SchedulingPolicy v4CompatiblePolicy = findCompatiblePolicy(v3Policy);
@@ -86,7 +86,10 @@ public class V3ClusterHelper {
      */
     private static boolean arePoliciesCompatible(V3SchedulingPolicy v3Policy, SchedulingPolicy v4Policy) {
         // The V3 "policy" attribute must be equal to the V4 "name" attribute:
-        String v3Name = v3Policy.getPolicy();
+        String v3Name = v3Policy.getName();
+        if (v3Name == null) {
+            v3Name = v3Policy.getPolicy();
+        }
         if (v3Name != null && !Objects.equals(v3Name, v4Policy.getName())) {
             return false;
         }
@@ -97,17 +100,17 @@ public class V3ClusterHelper {
         if (v3Thresholds != null) {
             Integer v3Duration = v3Thresholds.getDuration();
             Integer v4Duration = getIntegerProperty(v4Properties, "CpuOverCommitDurationMinutes");
-            if (!Objects.equals(v3Duration, v4Duration)) {
+            if (!arePropertiesCompatible(v3Duration, v4Duration)) {
                 return false;
             }
             Integer v3High = v3Thresholds.getHigh();
             Integer v4High = getIntegerProperty(v4Properties, "HighUtilization");
-            if (!Objects.equals(v3High, v4High)) {
+            if (!arePropertiesCompatible(v3High, v4High)) {
                 return false;
             }
             Integer v3Low = v3Thresholds.getLow();
             Integer v4Low = getIntegerProperty(v4Properties, "LowUtilization");
-            if (!Objects.equals(v3Low, v4Low)) {
+            if (!arePropertiesCompatible(v3Low, v4Low)) {
                 return false;
             }
         }
@@ -133,5 +136,16 @@ public class V3ClusterHelper {
             return Integer.valueOf(text.get());
         }
         return null;
+    }
+
+    /**
+     * Checks if two integer scheduling policy properties are compatible.
+     *
+     * @param v3Value the V3 value
+     * @param v4Value the V4 value
+     * @returns {@code true} the the values are compatible, {@code false} otherwise
+     */
+    private static boolean arePropertiesCompatible(Integer v3Value, Integer v4Value) {
+        return v3Value == null || v4Value == null || Objects.equals(v3Value, v4Value);
     }
 }
