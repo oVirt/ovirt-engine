@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -39,14 +38,13 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -155,16 +153,7 @@ public class RunVmValidator {
     }
 
     protected ValidationResult validateMemorySize(VM vm) {
-        int maxSize;
-        if (getOsRepository().get64bitOss().contains(vm.getOs())) {
-            ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
-                    ConfigValues.VMPpc64BitMaxMemorySizeInMB :
-                    ConfigValues.VM64BitMaxMemorySizeInMB;
-            maxSize = Config.getValue(config, vm.getCompatibilityVersion().getValue());
-        } else {
-            maxSize = Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB);
-        }
-
+        int maxSize = VmCommonUtils.maxMemorySizeWithHotplugInMb(vm);
         if (vm.getMemSizeMb() > maxSize) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
         }
