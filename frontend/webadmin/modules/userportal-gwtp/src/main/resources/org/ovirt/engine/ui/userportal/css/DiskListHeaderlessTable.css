@@ -66,8 +66,7 @@
 	border: 0px;
 }
 
-@
-sprite .cellTableLoading {
+@sprite .cellTableLoading {
 	gwt-image: 'cellTableLoading';
 	margin: 3px;
 }

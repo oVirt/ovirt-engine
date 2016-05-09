@@ -59,7 +59,6 @@
 	border: 0px;
 }
 
-@
-sprite .cellTableLoading {
+@sprite .cellTableLoading {
 	gwt-image: 'cellTableLoading';
 }
