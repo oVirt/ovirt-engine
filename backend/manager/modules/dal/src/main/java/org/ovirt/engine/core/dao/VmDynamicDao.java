@@ -20,6 +20,15 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
     List<VmDynamic> getAllRunningForVds(Guid vds);
 
     /**
+     * Check whether or not any VM runs on the given VDS instance.
+     *
+     * @param vdsId
+     *            the VDS id
+     * @return false if no VM runs on the host, true otherwise
+     */
+    boolean isAnyVmRunOnVds(Guid vdsId);
+
+    /**
      * Returns the dynamic VM with the specified id.
      *
      * @param id

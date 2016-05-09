@@ -1549,6 +1549,22 @@ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION IsAnyVmRunOnVds(v_vds_id UUID)
+RETURNS SETOF booleanResultType STABLE
+    AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT EXISTS (
+            SELECT vm_guid
+            FROM vm_dynamic
+            WHERE run_on_vds = v_vds_id
+           );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION DeleteVm(v_vm_guid UUID)
 RETURNS VOID
    AS $procedure$

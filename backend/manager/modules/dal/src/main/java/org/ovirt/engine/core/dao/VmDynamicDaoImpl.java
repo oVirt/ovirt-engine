@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -41,6 +42,16 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         RowMapper<VmDynamic> mapper = createEntityRowMapper();
 
         return getCallsHandler().executeReadList("GetVmsDynamicRunningOnVds", mapper, parameterSource);
+    }
+
+    @Override
+    public boolean isAnyVmRunOnVds(Guid vdsId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_id", vdsId);
+
+        return getCallsHandler().executeRead("IsAnyVmRunOnVds",
+                createBooleanMapper(),
+                parameterSource);
     }
 
     @Override

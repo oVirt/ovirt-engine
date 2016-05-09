@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 /**
@@ -27,18 +28,23 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private final ClusterDao clusterDao;
-
     private final VdsDao vdsDao;
+    private final VmDynamicDao vmDynamicDao;
 
-    protected VirtMonitoringStrategy(ClusterDao clusterDao, VdsDao vdsDao) {
+    protected VirtMonitoringStrategy(ClusterDao clusterDao, VdsDao vdsDao, VmDynamicDao vmDynamicDao) {
         this.clusterDao = clusterDao;
         this.vdsDao = vdsDao;
+        this.vmDynamicDao = vmDynamicDao;
     }
 
     @Override
     public boolean canMoveToMaintenance(VDS vds) {
         // We can only move to maintenance in case no VMs are running on the host
-        return vds.getVmCount() == 0;
+        return vds.getVmCount() == 0 && !isAnyVmRunOnVdsInDb(vds.getId());
+    }
+
+    protected boolean isAnyVmRunOnVdsInDb(Guid vdsId) {
+        return vmDynamicDao.isAnyVmRunOnVds(vdsId);
     }
 
     @Override

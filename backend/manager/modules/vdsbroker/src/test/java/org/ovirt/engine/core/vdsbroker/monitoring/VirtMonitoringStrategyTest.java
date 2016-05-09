@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -27,7 +28,7 @@ public class VirtMonitoringStrategyTest {
     private Cluster cluster;
 
     public VirtMonitoringStrategyTest() {
-        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao()));
+        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), null));
         doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),
                 any(NonOperationalReason.class),
                 any(Map.class));
@@ -42,7 +43,10 @@ public class VirtMonitoringStrategyTest {
         vds.setVmCount(1);
         assertFalse(virtStrategy.canMoveToMaintenance(vds));
         vds.setVmCount(0);
+        doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(any(Guid.class));
         assertTrue(virtStrategy.canMoveToMaintenance(vds));
+        doReturn(true).when(virtStrategy).isAnyVmRunOnVdsInDb(any(Guid.class));
+        assertFalse(virtStrategy.canMoveToMaintenance(vds));
     }
 
     @Test
