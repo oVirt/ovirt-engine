@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.UploadDiskImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -44,9 +47,19 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
 
     @Override
     protected void createImage() {
-        CommandCoordinatorUtil.executeAsyncCommand(
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.AddDisk, getAddDiskParameters(), cloneContextAndDetachFromParent());
         persistCommand(getParameters().getParentCommand(), true);
+        try {
+            ArrayList<Guid> ids = future.get().getInternalVdsmTaskIdList();
+            startPollingAsyncTasks(ids);
+            getParameters().setVdsmTaskIds(ids);
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error adding disk '{}' for image upload: {}",
+                    getAddDiskParameters().getDiskInfo().getDiskAlias(),
+                    e.getMessage());
+            log.debug("Exception", e);
+        }
     }
 
     @Override

@@ -1881,7 +1881,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         ticketDict.put("path", url);  // ovirt-image-daemon still expects "path"
 
         JsonRpcRequest request =
-                new RequestBuilder("Host.add_image_ticket")
+                new RequestBuilder("Host.addImageTicket")
                         .withParameter("ticket", ticketDict)
                         .build();
         Map<String, Object> response =
@@ -1892,7 +1892,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc remove_image_ticket(String ticketId) {
         JsonRpcRequest request =
-                new RequestBuilder("Host.remove_image_ticket")
+                new RequestBuilder("Host.removeImageTicket")
                         .withParameter("uuid", ticketId)
                         .build();
         Map<String, Object> response =
@@ -1904,7 +1904,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc extend_image_ticket(String ticketId, long timeout) {
         JsonRpcRequest request =
-                new RequestBuilder("Host.extend_image_ticket")
+                new RequestBuilder("Host.extendImageTicket")
                         .withParameter("uuid", ticketId)
                         .withParameter("timeout", timeout)
                         .build();

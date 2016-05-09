@@ -1030,7 +1030,7 @@ public enum ConfigValues {
     HotPlugEnabled,
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("http://localhost")
+    @DefaultValueAttribute("http://192.168.2.54")
     ImageProxyURL,
 
     @TypeConverterAttribute(String.class)
