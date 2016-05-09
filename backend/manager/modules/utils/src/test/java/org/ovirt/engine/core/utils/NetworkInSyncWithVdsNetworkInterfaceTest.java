@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
@@ -9,7 +8,6 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -425,39 +423,15 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6BootProtocolDifferent() {
-        initIpv6ConfigurationBootProtocol(false);
-        iface.setIpv6BootProtocol(Ipv6BootProtocol.forValue(
-                (IPV6_BOOT_PROTOCOL.getValue() + 1) % Ipv6BootProtocol.values().length));
-        assertThat(createTestedInstance().isNetworkInSync(), is(false));
-    }
-
-    @Test
     public void testIsNetworkInSyncWhenIpv6StaticBootProtocolAddressEqual() throws Exception {
         initIpv6ConfigurationBootProtocolAddress(IPV6_BOOT_PROTOCOL, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolAddressDifferent() throws Exception {
-        initIpv6ConfigurationBootProtocolAddress(IPV6_BOOT_PROTOCOL, false);
-        iface.setIpv6BootProtocol(Ipv6BootProtocol.forValue(
-                (IPV6_BOOT_PROTOCOL.getValue() + 1) % Ipv6BootProtocol.values().length));
-        assertThat(createTestedInstance().isNetworkInSync(), is(false));
-    }
-
-    @Test
     public void testIsNetworkInSyncWhenIpv6StaticBootProtocolNetmaskEqual() throws Exception {
         initIpv6ConfigurationBootProtocolPrefix(IPV6_BOOT_PROTOCOL, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
-    }
-
-    @Test
-    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolPrefixDifferent() throws Exception {
-        initIpv6ConfigurationBootProtocolPrefix(IPV6_BOOT_PROTOCOL, false);
-        iface.setIpv6BootProtocol(Ipv6BootProtocol.forValue(
-                (IPV6_BOOT_PROTOCOL.getValue() + 1) % Ipv6BootProtocol.values().length));
-        assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
     @Test
@@ -486,6 +460,36 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         ipv6Address.setGateway(blankValues.get(blankIndex));
         iface.setIpv6Gateway(blankValues.get(blankIndex ^ 1));
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
+    }
+
+/*
+    TODO: YZ - uncomment the tests after v4.0 is branched out.
+
+    Reporting out-of-sync IPv6 configuration is disabled temporary.
+    It's planned to be re-enabled after v4.0-beta is released.
+
+    @Test
+    public void testIsNetworkInSyncWhenIpv6BootProtocolDifferent() {
+        initIpv6ConfigurationBootProtocol(false);
+        iface.setIpv6BootProtocol(Ipv6BootProtocol.forValue(
+                (IPV6_BOOT_PROTOCOL.getValue() + 1) % Ipv6BootProtocol.values().length));
+        assertThat(createTestedInstance().isNetworkInSync(), is(false));
+    }
+
+    @Test
+    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolAddressDifferent() throws Exception {
+        initIpv6ConfigurationBootProtocolAddress(IPV6_BOOT_PROTOCOL, false);
+        iface.setIpv6BootProtocol(Ipv6BootProtocol.forValue(
+                (IPV6_BOOT_PROTOCOL.getValue() + 1) % Ipv6BootProtocol.values().length));
+        assertThat(createTestedInstance().isNetworkInSync(), is(false));
+    }
+
+    @Test
+    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolPrefixDifferent() throws Exception {
+        initIpv6ConfigurationBootProtocolPrefix(IPV6_BOOT_PROTOCOL, false);
+        iface.setIpv6BootProtocol(Ipv6BootProtocol.forValue(
+                (IPV6_BOOT_PROTOCOL.getValue() + 1) % Ipv6BootProtocol.values().length));
+        assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
     @Test
@@ -547,6 +551,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         }
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
+*/
 
     private void initIpv4Configuration() {
         when(mockedIpConfiguration.hasIpv4PrimaryAddressSet()).thenReturn(true);

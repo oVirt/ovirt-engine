@@ -51,7 +51,15 @@ public class NetworkInSyncWithVdsNetworkInterface {
         result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId());
 
         addReportedIpv4Configuration(result);
-        addReportedIpv6Configuration(result);
+
+        /**
+         * TODO: YZ - uncomment the method call after v4.0 is branched out.
+         *
+         * Reporting out-of-sync IPv6 configuration is disabled temporary.
+         * It's planned to be re-enabled after v4.0-beta is released.
+         *
+         * addReportedIpv6Configuration(result);
+         */
 
         boolean reportHostQos = ifaceQos != null || hostNetworkQos != null;
         if (reportHostQos) {
