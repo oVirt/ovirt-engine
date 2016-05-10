@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddDiskParameters extends VmDiskOperationParameterBase {
@@ -16,8 +17,13 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
         storageDomainId = Guid.Empty;
     }
 
-    public AddDiskParameters(Guid vmId, Disk diskInfo) {
-        super(vmId, diskInfo);
+    // Used for floating disk creation
+    public AddDiskParameters(Disk diskInfo) {
+        this(new DiskVmElement(Guid.Empty, null), diskInfo);
+    }
+
+    public AddDiskParameters(DiskVmElement diskVmElement, Disk DiskInfo) {
+        super(diskVmElement, DiskInfo);
         storageDomainId = Guid.Empty;
     }
 

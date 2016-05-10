@@ -104,7 +104,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected boolean validate() {
-        if (!isFloatingDisk() && !validate(new VmValidator(getVm()).isVmExists())) {
+        if (!isFloatingDisk() && !validate(new VmValidator(getVm()).isVmExists()) && !validateDiskVmData()) {
             return false;
         }
 
@@ -412,7 +412,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected void executeVmCommand() {
-        getParameters().getDiskInfo().setId(Guid.newGuid());
+        createNewDiskId();
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getDiskInfo().getId()));
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
@@ -425,6 +425,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             case CINDER:
                 createDiskBasedOnCinder();
                 break;
+        }
+    }
+
+    private void createNewDiskId() {
+        Guid newDiskId = Guid.newGuid();
+        getParameters().getDiskInfo().setId(newDiskId);
+        if (!isFloatingDisk()) {
+            getDiskVmElement().getId().setDeviceId(newDiskId);
         }
     }
 
@@ -544,10 +552,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private VdcActionParametersBase buildAddCinderDiskParameters() {
-        AddDiskParameters parameters = new AddDiskParameters();
-        parameters.setDiskInfo(getParameters().getDiskInfo());
+        AddDiskParameters parameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), getParameters().getDiskInfo());
         parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
-        parameters.setVmId(getParameters().getVmId());
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
         parameters.setQuotaId(getQuotaId());
         parameters.setShouldBeEndedByParent(false);

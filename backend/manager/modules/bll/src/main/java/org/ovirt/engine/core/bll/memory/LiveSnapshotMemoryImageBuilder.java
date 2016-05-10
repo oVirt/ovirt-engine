@@ -79,7 +79,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     private AddDiskParameters buildAddDiskParameters(DiskImage disk) {
-        AddDiskParameters parameters = new AddDiskParameters(Guid.Empty, disk);
+        AddDiskParameters parameters = new AddDiskParameters(disk);
         parameters.setStorageDomainId(storageDomainId);
         parameters.setParentCommand(enclosingCommand.getActionType());
         parameters.setParentParameters(enclosingCommand.getParameters());

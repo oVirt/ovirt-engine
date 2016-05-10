@@ -115,7 +115,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     private AddDiskParameters buildAddDiskParameters(DiskImage disk) {
-        AddDiskParameters parameters = new AddDiskParameters(Guid.Empty, disk);
+        AddDiskParameters parameters = new AddDiskParameters(disk);
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());

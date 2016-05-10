@@ -125,7 +125,7 @@ public class BackendVmDisksResource
     }
 
     private VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
-        AddDiskParameters parameters = new AddDiskParameters(vmId, entity);
+        AddDiskParameters parameters = new AddDiskParameters(new DiskVmElement(null, vmId), entity);
         Guid storageDomainId = getStorageDomainId(disk);
         if (storageDomainId != null) {
             parameters.setStorageDomainId(storageDomainId);

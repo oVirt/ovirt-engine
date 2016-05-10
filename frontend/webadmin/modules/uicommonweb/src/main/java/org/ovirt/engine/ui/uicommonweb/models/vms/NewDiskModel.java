@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -183,7 +184,7 @@ public class NewDiskModel extends AbstractDiskModel {
 
         startProgress();
 
-        AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
+        AddDiskParameters parameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), getDisk());
         parameters.setPlugDiskToVm(getIsPlugged().getEntity());
         if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE ||
                 getDiskStorageType().getEntity() == DiskStorageType.CINDER) {

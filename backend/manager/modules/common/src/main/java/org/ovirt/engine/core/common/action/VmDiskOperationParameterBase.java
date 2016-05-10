@@ -23,8 +23,13 @@ public class VmDiskOperationParameterBase extends VmOperationParameterBase {
     }
 
     public VmDiskOperationParameterBase(DiskVmElement diskVmElement) {
+        this(diskVmElement, null);
+    }
+
+    public VmDiskOperationParameterBase(DiskVmElement diskVmElement, Disk diskInfo) {
         super(diskVmElement.getVmId());
         setDiskVmElement(diskVmElement);
+        setDiskInfo(diskInfo);
     }
 
     public Disk getDiskInfo() {

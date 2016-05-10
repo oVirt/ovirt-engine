@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -187,7 +188,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         DiskImage image = new DiskImage();
         image.setvolumeFormat(VolumeFormat.COW);
         image.setVolumeType(VolumeType.Preallocated);
-        AddDiskParameters params = new AddDiskParameters(Guid.newGuid(), image);
+        AddDiskParameters params = new AddDiskParameters(new DiskVmElement(null, Guid.newGuid()), image);
         initializeCommand(storageId, params);
         assertFalse(command.validateInputs());
         assertTrue(command.getReturnValue().getValidationMessages().contains("VALIDATION_DISK_INTERFACE_NOT_NULL"));
@@ -522,7 +523,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private static AddDiskParameters createParameters() {
         DiskImage image = new DiskImage();
         image.setDiskInterface(DiskInterface.IDE);
-        AddDiskParameters parameters = new AddDiskParameters(Guid.newGuid(), image);
+        AddDiskParameters parameters = new AddDiskParameters(new DiskVmElement(null, Guid.newGuid()), image);
         return parameters;
     }
 

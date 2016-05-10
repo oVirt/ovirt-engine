@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -261,7 +262,7 @@ implements QuotaStorageDependent {
         image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
         image.setDiskInterface(DiskInterface.VirtIO);
 
-        AddDiskParameters diskParameters = new AddDiskParameters(getVmId(), image);
+        AddDiskParameters diskParameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), image);
         diskParameters.setStorageDomainId(getStorageDomainId());
         diskParameters.setParentCommand(getActionType());
         diskParameters.setParentParameters(getParameters());
