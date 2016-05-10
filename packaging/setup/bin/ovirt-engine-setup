@@ -33,6 +33,8 @@ Usage: $0
         Ask again about components that were disabled in previous run.
     --jboss-home=dir
         Use this jboss.
+    --reconfigure-dwh-scale
+        If DWH is configured, allow changing its scale.
 
 __EOF__
 	exit 1
@@ -73,6 +75,9 @@ while [ -n "$1" ]; do
 		;;
 		--reconfigure-optional-components)
 			environment="${environment} OVESETUP_CORE/reconfigureOptionalComponents=bool:True"
+		;;
+		--reconfigure-dwh-scale)
+			environment="${environment} OVESETUP_DWH_CONFIG/scale=none:None"
 		;;
 		--help)
 			usage
