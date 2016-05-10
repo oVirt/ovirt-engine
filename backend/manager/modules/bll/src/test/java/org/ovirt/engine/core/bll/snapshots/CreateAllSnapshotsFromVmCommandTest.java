@@ -76,7 +76,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "");
+        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "", false);
         cmd = spy(new CreateAllSnapshotsFromVmCommand<>(params, null));
         doReturn(true).when(vm).isManagedVm();
         doReturn(DisplayType.vga).when(vmStatic).getDefaultDisplayType();

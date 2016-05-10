@@ -8,17 +8,20 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = 1862924807826485840L;
+
     private Guid dstSnapshotId;
     private boolean restoreMemory;
     private List<DiskImage> disks;
 
     public TryBackToAllSnapshotsOfVmParameters() {
         dstSnapshotId = Guid.Empty;
+        restoreMemory = true;
     }
 
     public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId) {
         super(vmId);
         this.dstSnapshotId = dstSnapshotId;
+        restoreMemory = true;
     }
 
     public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId, boolean restoreMemory) {

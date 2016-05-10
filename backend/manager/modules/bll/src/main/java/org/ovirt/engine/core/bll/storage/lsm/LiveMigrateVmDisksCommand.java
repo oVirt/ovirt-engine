@@ -189,7 +189,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters
-                (getParameters().getVmId(), StorageConstants.LSM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION);
+                (getParameters().getVmId(), StorageConstants.LSM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION, false);
 
         params.setParentCommand(VdcActionType.LiveMigrateVmDisks);
         params.setSnapshotType(SnapshotType.REGULAR);

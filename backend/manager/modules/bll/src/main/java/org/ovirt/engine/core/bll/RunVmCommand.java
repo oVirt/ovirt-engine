@@ -516,7 +516,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParameters() {
         CreateAllSnapshotsFromVmParameters parameters =
-                new CreateAllSnapshotsFromVmParameters(getVm().getId(), STATELESS_SNAPSHOT_DESCRIPTION);
+                new CreateAllSnapshotsFromVmParameters(getVm().getId(), STATELESS_SNAPSHOT_DESCRIPTION, false);
         parameters.setShouldBeLogged(false);
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());

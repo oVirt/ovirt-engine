@@ -41,6 +41,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public CreateAllSnapshotsFromVmParameters() {
         needsLocking = true;
+        saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
     }
 
@@ -48,6 +49,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
         super(vmId);
         this.description = description;
         needsLocking = true;
+        saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
     }
 
