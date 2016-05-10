@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.snmp4j.mp.SnmpConstants;
 
 public class ProfileTest {
 
@@ -39,10 +40,11 @@ public class ProfileTest {
             }
             snmpManagers.append(" ");
         }
-        Snmp.Profile profile = new Snmp.Profile(
+        Snmp.Profile profile = Snmp.Profile.buildProfile(
             snmpManagers.toString(),
             "public",
-            "1.3.6.1.4.1.2312.13.1.1");
+            "1.3.6.1.4.1.2312.13.1.1",
+            SnmpConstants.version2c);
         for (int i = 0; i < expectedManagers.size(); i++) {
             Snmp.Host parsed = profile.hosts.get(i);
             Snmp.Host expected = expectedManagers.get(i);
