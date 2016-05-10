@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+import org.ovirt.engine.ui.common.widget.editor.BaseEntityModelCheckbox;
 import org.ovirt.engine.ui.common.widget.editor.BaseEntityModelCheckboxEditor;
 
 /**
@@ -23,6 +24,11 @@ public class EntityModelCheckBoxEditor extends BaseEntityModelCheckboxEditor<Boo
 
     public EntityModelCheckBoxEditor(Align labelAlign, VisibilityRenderer visibilityRenderer, boolean useFullWidthIfAvailable) {
         super(labelAlign, new EntityModelCheckBox(), visibilityRenderer, useFullWidthIfAvailable);
+    }
+
+    @Override
+    public BaseEntityModelCheckbox<Boolean> getContentWidget() {
+        return super.getContentWidget();
     }
 
 }

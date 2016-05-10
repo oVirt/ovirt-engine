@@ -8,13 +8,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.HasStoragePool;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -43,9 +46,11 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.regexp.shared.RegExp;
 
 /**
  * Represents a list model with ability to fetch items both sync and async.
@@ -64,6 +69,9 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
     private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$"; //$NON-NLS-1$
     private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$"; //$NON-NLS-1$
+
+    // Whether use the list filter, the default is false : not use
+    private boolean useListFilter = false;
 
     private UICommand privateSearchCommand;
     private HandlerRegistration timerChangeHandler;
@@ -328,6 +336,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
     /**
      * Setter for the grid timer.
+     *
      * @param value The new {@code GridTimer}.
      */
     private void setTimer(final GridTimer value) {
@@ -421,8 +430,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         // Defer search if there max result limit was not yet retrieved.
         if (getSearchPageSize() == UnknownInteger) {
             asyncCallback.requestSearch();
-        }
-        else {
+        } else {
             stopRefresh();
 
             if (getIsQueryFirstTime()) {
@@ -436,8 +444,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 syncSearch();
                 setIsQueryFirstTime(false);
                 startGridTimer();
-            }
-            else {
+            } else {
                 syncSearch();
             }
         }
@@ -560,8 +567,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         if (getItems() != null) {
             Iterator enumerator = getItems().iterator();
             setIsEmpty(enumerator.hasNext() ? false : true);
-        }
-        else {
+        } else {
             setIsEmpty(true);
         }
     }
@@ -634,8 +640,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     private void setSearchStringPage(int newSearchPageNumber) {
-       this.pagingSearchString = " page " + newSearchPageNumber; //$NON-NLS-1$
-       this.currentPageNumber = newSearchPageNumber;
+        this.pagingSearchString = " page " + newSearchPageNumber; //$NON-NLS-1$
+        this.currentPageNumber = newSearchPageNumber;
     }
 
     protected void searchNextPage() {
@@ -755,8 +761,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     /**
-     * Returns {@code true} if this model's {@linkplain #getSearchString search string}
-     * allows the use of server-side sorting.
+     * Returns {@code true} if this model's {@linkplain #getSearchString search string} allows the use of server-side
+     * sorting.
      * <p>
      * This method returns {@code false} if:
      * <ul>
@@ -878,26 +884,104 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return Objects.equals(item1, item2);
     }
 
+    public boolean isUseListFilter() {
+        return useListFilter;
+    }
+
+    public void setUseListFilter(boolean useListFilter) {
+        this.useListFilter = useListFilter;
+    }
+
+    private Collection<T> origineItem;
+    private Collection<T> itemAfterFilter;
+
     public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
-                setItems((Collection<T>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                origineItem = ((Collection<T>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                initItemAfterFilter();
+                execFilterOrNot(isUseListFilter());
             }
         };
-
         vdcQueryParametersBase.setRefresh(getIsQueryFirstTime());
-
         Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, _asyncQuery);
-
         setIsQueryFirstTime(false);
+    }
+
+    // Bind modify the items with the useListFilter'modify
+    public void execFilterOrNot(boolean useListFilter) {
+        setUseListFilter(useListFilter);
+        if (isUseListFilter()) {
+            if (itemAfterFilter == null) {
+                initItemAfterFilter();
+            }
+            setItems(itemAfterFilter);
+        } else {
+            setItems(origineItem);
+        }
+    }
+
+    // Filter the host devices from name, capability, vendor, product
+    // The JSON content's format: {"name":"regexp1","capability":"regexp2","vendor":"regexp3","product":"regexp4"}
+    @SuppressWarnings("unchecked")
+    private void initItemAfterFilter() {
+        if (isUseListFilter()) {
+            String[] keys = { "name", "capability", "vendor", "product" };//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            Map<String, String> blackList = (Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostDeviceBlackList);
+            Map<String, String> whiteList = (Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostDeviceWhiteList);
+            itemAfterFilter = new LinkedList<T>();
+            if (origineItem != null) {
+                for (T item : origineItem) {
+                    if (item instanceof HostDevice) {
+                        HostDevice realItem = (HostDevice) item;
+                        if (rowMatcher(realItem, whiteList, keys)) {
+                            itemAfterFilter.add(item);
+                        } else if (!rowMatcher(realItem, blackList, keys)) {
+                            itemAfterFilter.add(item);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean rowMatcher(HostDevice item, Map<String, String> filterList, String[] keys) {
+        if (filterList != null) {
+            boolean nameMatch = cellPattern(item.getName(), getValueFromFilterList(filterList, keys[0]));
+            boolean capabilityMatch = cellPattern(item.getCapability(), getValueFromFilterList(filterList, keys[1]));
+            boolean vendorMatch = cellPattern(item.getVendorName(), getValueFromFilterList(filterList, keys[2]));
+            boolean productMatch = cellPattern(item.getProductName(), getValueFromFilterList(filterList, keys[3]));
+            if (nameMatch || capabilityMatch || vendorMatch || productMatch) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean cellPattern(String value, String regexp) {
+        if (regexp == null || "".equals(regexp)) {//$NON-NLS-1$
+            return false;
+        }
+        RegExp pattern = RegExp.compile(regexp, "i");//$NON-NLS-1$
+        boolean result = pattern.test(value);
+        return result;
+    }
+
+    private String getValueFromFilterList(Map<String, String> filterList, String key) {
+        if (filterList != null) {
+            if (filterList.containsKey(key)) {
+                return filterList.get(key);
+            }
+        }
+        return null;
     }
 
     public void stopRefresh() {
         if (getTimer() != null) {
-            //Timer can be null if the event bus hasn't been set yet. If the timer is null we can't stop it.
+            // Timer can be null if the event bus hasn't been set yet. If the timer is null we can't stop it.
             getTimer().stop();
         }
     }
@@ -915,14 +999,11 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
         if (command == getSearchCommand()) {
             search();
-        }
-        else if (command == getSearchNextPageCommand()) {
+        } else if (command == getSearchNextPageCommand()) {
             searchNextPage();
-        }
-        else if (command == getSearchPreviousPageCommand()) {
+        } else if (command == getSearchPreviousPageCommand()) {
             searchPreviousPage();
-        }
-        else if (command == getForceRefreshCommand()) {
+        } else if (command == getForceRefreshCommand()) {
             forceRefresh();
         } else if (command instanceof ReportCommand) {
             openReport();
@@ -983,12 +1064,11 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     /**
-     * Get the double click command, in most cases this will be 'edit'. If sub
-     * classes want a different default command they can override this method
-     * and return the command they want.
+     * Get the double click command, in most cases this will be 'edit'. If sub classes want a different default command
+     * they can override this method and return the command they want.
      *
-     * If a user double clicks in a grid or tree, this default command is
-     * invoked.
+     * If a user double clicks in a grid or tree, this default command is invoked.
+     *
      * @return The default {@code UICommand}
      */
     public UICommand getDoubleClickCommand() {
@@ -1017,18 +1097,19 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         // Register to listen for operation complete events.
         registerHandler(getEventBus().addHandler(RefreshActiveModelEvent.getType(),
                 new RefreshActiveModelHandler() {
-            @Override
-            public void onRefreshActiveModel(RefreshActiveModelEvent event) {
-                if (getTimer().isActive() || refreshOnInactiveTimer()) { // Only if we are active should we refresh.
-                    if (handleRefreshActiveModel(event)) {
-                        syncSearch();
+                    @Override
+                    public void onRefreshActiveModel(RefreshActiveModelEvent event) {
+                        if (getTimer().isActive() || refreshOnInactiveTimer()) { // Only if we are active should we
+                                                                                 // refresh.
+                            if (handleRefreshActiveModel(event)) {
+                                syncSearch();
+                            }
+                            if (event.isDoFastForward()) {
+                                // Start the fast refresh.
+                                getTimer().fastForward();
+                            }
+                        }
                     }
-                    if (event.isDoFastForward()) {
-                        // Start the fast refresh.
-                        getTimer().fastForward();
-                    }
-                }
-            }
-        }));
+                }));
     }
 }

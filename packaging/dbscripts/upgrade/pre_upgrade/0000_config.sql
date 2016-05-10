@@ -773,6 +773,10 @@ select fn_db_add_config_value('AutoImportHostedEngine','true','general');
 select fn_db_add_config_value('HostedEngineStorageDomainName','hosted_storage','general');
 select fn_db_add_config_value('AllowEditingHostedEngine','true','general');
 
+-- Host Device filter list
+select fn_db_add_config_value('HostDeviceBlackList','{"name":"(.*)(usb)(.*)"}','general');
+select fn_db_add_config_value('HostDeviceWhiteList','{"capability":"(usb_device)"}','general');
+
 select fn_db_add_config_value_for_versions_up_to('ChangeNetworkUnderBridgeInUseSupported','false','3.5');
 
 select fn_db_add_config_value_for_versions_up_to('NetworkExclusivenessPermissiveValidation','false','3.5');

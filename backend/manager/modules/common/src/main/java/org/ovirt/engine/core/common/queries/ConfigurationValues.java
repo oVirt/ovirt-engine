@@ -178,7 +178,9 @@ public enum ConfigurationValues {
     UploadImageXhrTimeoutInSeconds,
     UploadImageXhrRetryIntervalInSeconds,
     UploadImageXhrMaxRetries,
-    RefreshLunSupported;
+    RefreshLunSupported,
+    HostDeviceBlackList,
+    HostDeviceWhiteList;
 
     public static enum ConfigAuthType {
         Admin,
