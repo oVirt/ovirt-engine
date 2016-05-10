@@ -52,11 +52,9 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         int from = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, FROM_CONSTRAINT_PARAMETER, -1, -1);
         int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, MAX, -1, -1);
 
+        searchParams.setCaseSensitive(caseSensitive);
         if (from != -1) {
             searchParams.setSearchFrom(from);
-        }
-        if (caseSensitive) {
-            searchParams.setCaseSensitive(caseSensitive);
         }
         if (max != -1) {
             searchParams.setMaxCount(max);
