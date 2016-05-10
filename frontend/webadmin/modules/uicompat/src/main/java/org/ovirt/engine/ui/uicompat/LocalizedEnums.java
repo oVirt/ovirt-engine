@@ -300,6 +300,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___VM_MIGRATION_FAILED();
 
+    String AuditLogType___VM_MIGRATION_TO_SERVER_FAILED();
+
     String AuditLogType___VM_NOT_RESPONDING();
 
     String AuditLogType___VM_STATUS_RESTORED();
