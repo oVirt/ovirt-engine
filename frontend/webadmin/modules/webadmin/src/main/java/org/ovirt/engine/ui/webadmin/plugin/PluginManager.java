@@ -20,8 +20,11 @@ import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
 /**
  * The main component of WebAdmin UI plugin infrastructure.
@@ -35,7 +38,7 @@ import com.google.inject.Inject;
  * <p>
  * Should be bound as GIN eager singleton, created early on during application startup.
  */
-public class PluginManager {
+public class PluginManager implements HasHandlers {
 
     public interface PluginInvocationCondition {
 
@@ -63,11 +66,13 @@ public class PluginManager {
 
     private final PluginUiFunctions uiFunctions;
     private final CurrentUser user;
+    private final EventBus eventBus;
 
     @Inject
-    public PluginManager(PluginUiFunctions uiFunctions, CurrentUser user) {
+    public PluginManager(PluginUiFunctions uiFunctions, CurrentUser user, EventBus eventBus) {
         this.uiFunctions = uiFunctions;
         this.user = user;
+        this.eventBus = eventBus;
         exposePluginApi();
         defineAndLoadPlugins();
     }
@@ -181,11 +186,19 @@ public class PluginManager {
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
             @Override
             public void execute() {
-                for (Plugin plugin : getPlugins()) {
-                    initPlugin(plugin);
-                }
+                initAllPlugins();
             }
         });
+    }
+
+    /**
+     * Initialize all the plugins and fire an event when finished.
+     */
+    private void initAllPlugins() {
+        for (Plugin plugin : getPlugins()) {
+            initPlugin(plugin);
+        }
+        UiPluginsInitializedEvent.fire(PluginManager.this);
     }
 
     /**
@@ -398,6 +411,11 @@ public class PluginManager {
         if (plugin.isInState(PluginState.IN_USE)) {
             invokeScheduledFunctionCommands(pluginName);
         }
+    }
+
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        eventBus.fireEvent(event);
     }
 
     /**
