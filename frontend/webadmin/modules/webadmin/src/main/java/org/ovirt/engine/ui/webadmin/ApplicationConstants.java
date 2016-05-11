@@ -3220,6 +3220,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Register")
     String registerDisk();
 
+    @DefaultStringValue("Import")
+    String registerDiskImage();
+
     @DefaultStringValue("New")
     String newLibvirtSecret();
 

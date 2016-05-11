@@ -60,7 +60,7 @@ public class SubTabStorageRegisterDiskImageView extends AbstractSubTabTableView<
         getTable().ensureColumnVisible(
                 DisksViewColumns.getDescriptionColumn(null), constants.descriptionDisk(), true, "200px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.registerDisk()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.registerDiskImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRegisterCommand();
