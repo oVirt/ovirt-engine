@@ -32,7 +32,8 @@
     margin-bottom: 0px !important;
     font-family: inherit;
     font-weight: 600;
-    background-color: #BDEDFF;
+    color: #FFC300;
+    background-color: transparent;
 }
 
 .login-modal-content .login-modal-body-form .login-word {
