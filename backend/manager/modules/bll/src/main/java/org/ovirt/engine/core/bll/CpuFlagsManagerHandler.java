@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.CpuVendor;
 import org.ovirt.engine.core.compat.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,9 +139,6 @@ public class CpuFlagsManagerHandler implements BackendService {
         private Map<String, ServerCpu> _intelCpuByVdsNameDictionary = new HashMap<>();
         private Map<String, ServerCpu> _amdCpuByVdsNameDictionary = new HashMap<>();
         private Map<String, ServerCpu> _ibmCpuByVdsNameDictionary = new HashMap<>();
-        private final String _intelFlag = "vmx";
-        private final String _amdFlag = "svm";
-        private final String _ibmFlag = "powernv";
 
         public CpuFlagsManager(Version ver) {
             initDictionaries(ver);
@@ -206,13 +204,13 @@ public class CpuFlagsManagerHandler implements BackendService {
                         }
 
                         ServerCpu sc = new ServerCpu(info[1], level, flgs, info[3], archType);
-                        if (sc.getFlags().contains(_intelFlag)) {
+                        if (sc.getFlags().contains(CpuVendor.INTEL.getFlag())) {
                             _intelCpuByNameDictionary.put(sc.getCpuName(), sc);
                             _intelCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
-                        } else if (sc.getFlags().contains(_amdFlag)) {
+                        } else if (sc.getFlags().contains(CpuVendor.AMD.getFlag())) {
                             _amdCpuByNameDictionary.put(sc.getCpuName(), sc);
                             _amdCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
-                        } else if (sc.getFlags().contains(_ibmFlag)) {
+                        } else if (sc.getFlags().contains(CpuVendor.IBM.getFlag())) {
                             _ibmCpuByNameDictionary.put(sc.getCpuName(), sc);
                             _ibmCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
                         }
@@ -341,21 +339,21 @@ public class CpuFlagsManagerHandler implements BackendService {
             HashSet<String> lstFlags = StringUtils.isEmpty(flags) ? new HashSet<>()
                     : new HashSet<>(Arrays.asList(flags.split("[,]", -1)));
 
-            if (lstFlags.contains(_intelFlag)) {
+            if (lstFlags.contains(CpuVendor.INTEL.getFlag())) {
                 for (int i = _intelCpuList.size() - 1; i >= 0; i--) {
                     if (checkIfFlagsContainsCpuFlags(_intelCpuList.get(i), lstFlags)) {
                         result = _intelCpuList.get(i);
                         break;
                     }
                 }
-            } else if (lstFlags.contains(_amdFlag)) {
+            } else if (lstFlags.contains(CpuVendor.AMD.getFlag())) {
                 for (int i = _amdCpuList.size() - 1; i >= 0; i--) {
                     if (checkIfFlagsContainsCpuFlags(_amdCpuList.get(i), lstFlags)) {
                         result = _amdCpuList.get(i);
                         break;
                     }
                 }
-            } else if (lstFlags.contains(_ibmFlag)) {
+            } else if (lstFlags.contains(CpuVendor.IBM.getFlag())) {
                 for (int i = _ibmCpuList.size() - 1; i >= 0; i--) {
                     if (checkIfFlagsContainsCpuFlags(_ibmCpuList.get(i), lstFlags)) {
                         result = _ibmCpuList.get(i);
