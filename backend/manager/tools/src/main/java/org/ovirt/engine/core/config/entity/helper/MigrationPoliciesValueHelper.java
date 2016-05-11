@@ -36,7 +36,7 @@ public class MigrationPoliciesValueHelper extends StringValueHelper {
         return new ValidationResult(true);
     }
 
-    private String getExamplePolicy() {
+    String getExamplePolicy() {
         ConvergenceConfig config = new ConvergenceConfig();
         config.setInitialItems(Arrays.asList(new ConvergenceItem("setDowntime", 100)));
         config.setConvergenceItems(Arrays.asList(new ConvergenceItemWithStallingLimit(1, "setDowntime", 200)));
