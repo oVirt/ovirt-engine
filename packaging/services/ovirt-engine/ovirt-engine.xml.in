@@ -468,11 +468,11 @@
           <authentication>
             <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required">
               <module-option name="useTicketCache" value="{{ config.getboolean('AAA_JAAS_USE_TICKET_CACHE') }}"/>
-              {% if config.get('AAA_JAAS_TICKET_CACHE') != "" %}
+              {% if config.get('AAA_JAAS_TICKET_CACHE_FILE') != "" %}
               <module-option name="ticketCache" value="{{ config.get('AAA_JAAS_TICKET_CACHE_FILE') }}"/>
               {% endif %}
               <module-option name="useKeyTab" value="{{ config.getboolean('AAA_JAAS_USE_KEYTAB') }}"/>
-              {% if config.get('AAA_JAAS_KEYTAB') != "" %}
+              {% if config.get('AAA_JAAS_KEYTAB_FILE') != "" %}
               <module-option name="keyTab" value="{{ config.get('AAA_JAAS_KEYTAB_FILE') }}"/>
               {% endif %}
               <module-option name="doNotPrompt" value="true"/>
