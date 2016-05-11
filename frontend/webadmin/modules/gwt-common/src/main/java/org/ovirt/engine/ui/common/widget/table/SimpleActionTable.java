@@ -160,6 +160,10 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         tableContainer.getElement().getStyle().setMarginTop(topMargin, Unit.PX);
     }
 
+    public HTMLPanel getBarPanel() {
+        return barPanel;
+    }
+
     interface Style extends CssResource {
         String content();
 

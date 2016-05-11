@@ -151,7 +151,7 @@ popup windows, for instance for creating a new VM */
 logo used in the application header */
 
 .obrand_headerLogoImage {
-    background-image: url(images/ovirt_top_logo.png);
+    background-image: url(images/EayunOS_top_logo.png);
     width: 264px;
     height: 15px !important;
     border: 0px;

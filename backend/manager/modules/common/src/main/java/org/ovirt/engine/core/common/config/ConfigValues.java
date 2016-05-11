@@ -1880,6 +1880,15 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     MaxNumOfTriesToRunFailedAutoStartVm,
 
+    //Host device list filter
+    @TypeConverterAttribute(Map.class)
+    @DefaultValueAttribute("{\"name\":\"\",\"capability\":\"\",\"vendor\":\"\",\"product\":\"\"}")
+    HostDeviceBlackList,
+
+    @TypeConverterAttribute(Map.class)
+    @DefaultValueAttribute("{\"name\":\"\",\"capability\":\"\",\"vendor\":\"\",\"product\":\"\"}")
+    HostDeviceWhiteList,
+
     /**
      * Value representing maximum number of milliseconds a VM can be down during live migration.
      * Default value of 0 means this value will not be sent to VDSM at all and the currently configured value on
