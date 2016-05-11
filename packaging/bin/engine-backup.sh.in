@@ -1100,6 +1100,18 @@ dorestore() {
 			cleanDbTempData "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 			resetDwhCurrentlyRunning "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 		fi
+		backup_date=$(stat -c %y "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}")
+		cat << __EOF__
+------------------------------------------------------------------------------
+Please note:
+
+The engine database was backed up at ${backup_date} .
+
+Objects that were added, removed or changed after this date, such as virtual
+machines, disks, etc., are missing in the engine, and will probably require
+recovery or recreation.
+------------------------------------------------------------------------------
+__EOF__
 	fi
 	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
 		output "- DWH database '"${DWH_DB_DATABASE}"'"
