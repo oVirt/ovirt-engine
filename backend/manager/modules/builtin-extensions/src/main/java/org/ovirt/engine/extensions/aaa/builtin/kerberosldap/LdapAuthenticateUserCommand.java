@@ -60,7 +60,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
             Exception ex = directorySearcher.getException();
             handleDirectorySearcherException(output, ex);
         } else {
-            user = populateUserData((LdapUser) searchResult, getAuthenticationDomain());
+            user = populateUserData((LdapUser) searchResult, getAuthenticationDomain(), false, false);
             if (user != null) {
                 setReturnValue(output.mput(
                         Authn.InvokeKeys.RESULT,
