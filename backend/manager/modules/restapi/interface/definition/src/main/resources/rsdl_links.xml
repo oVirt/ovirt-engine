@@ -1,0 +1,29 @@
+<links>
+
+  <link href="templates/{template:id}/nics/{nic:id}" rel="delete">
+    <description>delete the specified network interface card attached to the template</description>
+    <request>
+      <http_method>DELETE</http_method>
+      <headers>
+        <header required="false">
+          <name>Correlation-Id</name>
+          <value>any string</value>
+        </header>
+        <header required="false">
+          <name>Content-Type</name>
+          <value>application/xml|json</value>
+        </header>
+      </headers>
+      <url>
+        <parameters_set>
+          <parameter required="false" type="xs:boolean" context="matrix">
+            <name>async</name>
+            <value>true|false</value>
+          </parameter>
+        </parameters_set>
+      </url>
+      <body/>
+    </request>
+  </link>
+
+</links>
