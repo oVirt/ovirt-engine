@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.memory;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -27,13 +28,16 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     private VM vm;
     private CommandBase<?> enclosingCommand;
     private StoragePool storagePool;
+    private VmOverheadCalculator vmOverheadCalculator;
 
     public LiveSnapshotMemoryImageBuilder(VM vm, Guid storageDomainId,
-            StoragePool storagePool, CommandBase<?> enclosingCommand) {
+            StoragePool storagePool, CommandBase<?> enclosingCommand,
+            VmOverheadCalculator vmOverheadCalculator) {
         this.vm = vm;
         this.enclosingCommand = enclosingCommand;
         this.storageDomainId = storageDomainId;
         this.storagePool = storagePool;
+        this.vmOverheadCalculator = vmOverheadCalculator;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     private Guid addMemoryDisk() {
-        DiskImage memoryDisk = MemoryUtils.createSnapshotMemoryDisk(vm, getStorageType());
+        DiskImage memoryDisk = MemoryUtils.createSnapshotMemoryDisk(vm, getStorageType(), vmOverheadCalculator);
         return addDisk(memoryDisk);
     }
 

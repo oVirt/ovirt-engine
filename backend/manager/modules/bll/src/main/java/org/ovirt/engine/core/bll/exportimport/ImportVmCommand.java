@@ -36,7 +36,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmUtils;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -95,6 +95,9 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmCommandBase<T>
         implements QuotaStorageDependent {
+
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
 
@@ -509,7 +512,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
         List<DiskImage> memoryDisksList =
-                MemoryUtils.createDiskDummies(VmUtils.getSnapshotMemorySizeInBytes(getVm()),
+                MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                         MemoryUtils.METADATA_SIZE_IN_BYTES);
         StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                 getParameters().getStoragePoolId(), memoryDisksList, getVmDisksDummies(), getVm());
@@ -927,7 +930,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 snapshot.getVmId(), snapshot.getId());
         DiskImage memoryDisk = MemoryUtils.createMemoryDisk(
                 vm,
-                storageDomainStaticDao.get(guids.get(0)).getStorageType());
+                storageDomainStaticDao.get(guids.get(0)).getStorageType(),
+                vmOverheadCalculator);
         memoryDisk.setId(guids.get(2));
         memoryDisk.setImageId(guids.get(3));
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));

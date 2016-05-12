@@ -4,12 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.utils.VmUtils;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -43,6 +45,9 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private boolean hibernateVdsProblematic;
     private Guid cachedStorageDomainId;
 
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -72,7 +77,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     public Guid getStorageDomainId() {
         if (cachedStorageDomainId == null) {
             List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(
-                    VmUtils.getSnapshotMemorySizeInBytes(getVm()),
+                    vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                     MemoryUtils.METADATA_SIZE_IN_BYTES);
             StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
                     getStoragePoolId(), diskDummiesForMemSize,
@@ -97,7 +102,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     private void addMemoryDisk() {
-        DiskImage memoryDisk = MemoryUtils.createHibernationMemoryDisk(getVm(), getStorageDomain().getStorageType());
+        DiskImage memoryDisk = MemoryUtils.createHibernationMemoryDisk(getVm(),
+                getStorageDomain().getStorageType(), vmOverheadCalculator);
         addDisk(memoryDisk);
     }
 

@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -36,7 +38,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.utils.VmUtils;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -88,6 +90,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private String cachedSnapshotIsBeingTakenMessage;
     private Guid newActiveSnapshotId = Guid.newGuid();
     private MemoryImageBuilder memoryBuilder;
+
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
 
     public CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
@@ -179,7 +184,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         List<DiskImage> memoryDisksList = null;
         if (getParameters().isSaveMemory()) {
-            memoryDisksList = MemoryUtils.createDiskDummies(VmUtils.getSnapshotMemorySizeInBytes(getVm()),
+            memoryDisksList = MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                     MemoryUtils.METADATA_SIZE_IN_BYTES);
             if (Guid.Empty.equals(getStorageDomainIdForVmMemory(memoryDisksList))) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
@@ -275,7 +280,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         if (getParameters().isSaveMemory() && isLiveSnapshotApplicable()) {
-            return new LiveSnapshotMemoryImageBuilder(getVm(), cachedStorageDomainId, getStoragePool(), this);
+            return new LiveSnapshotMemoryImageBuilder(getVm(), cachedStorageDomainId, getStoragePool(),
+                    this, vmOverheadCalculator);
         }
 
         return new NullableMemoryImageBuilder();
@@ -756,5 +762,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     @Override
     public CommandCallback getCallback() {
         return new ConcurrentChildCommandsExecutionCallback();
+    }
+
+    /* Test only */
+    public void setVmOverheadCalculator(VmOverheadCalculator vmOverheadCalculator) {
+        this.vmOverheadCalculator = vmOverheadCalculator;
     }
 }

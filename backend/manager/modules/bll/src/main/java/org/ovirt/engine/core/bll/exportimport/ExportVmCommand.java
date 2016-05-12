@@ -27,7 +27,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.VmUtils;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -82,6 +82,9 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     private List<DiskImage> disksImages;
     private Collection<Snapshot> snapshotsWithMemory;
+
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -216,7 +219,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     private List<DiskImage> getMemoryVolumes() {
         int numOfSnapshots = snapshotsWithMemory.size();
-        long memorySize = numOfSnapshots * VmUtils.getSnapshotMemorySizeInBytes(getVm());
+        long memorySize = numOfSnapshots * vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm());
         long metadataSize = numOfSnapshots * MemoryUtils.METADATA_SIZE_IN_BYTES;
         List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(memorySize, metadataSize);
 

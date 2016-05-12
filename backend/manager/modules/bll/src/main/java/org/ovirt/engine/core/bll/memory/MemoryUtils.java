@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.utils.VmUtils;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -109,23 +109,23 @@ public class MemoryUtils {
         return String.format(VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN, vmName);
     }
 
-    public static DiskImage createSnapshotMemoryDisk(VM vm, StorageType storageType) {
-        DiskImage image = createMemoryDisk(vm, storageType);
+    public static DiskImage createSnapshotMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator) {
+        DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator);
         image.setDiskAlias(VM_SNAPSHOT_MEMORY_DISK_ALIAS);
         image.setDescription(VM_SNAPSHOT_MEMORY_DISK_DESCRIPTION);
         return image;
     }
 
-    public static DiskImage createHibernationMemoryDisk(VM vm, StorageType storageType) {
-        DiskImage image = createMemoryDisk(vm, storageType);
+    public static DiskImage createHibernationMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator) {
+        DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator);
         image.setDiskAlias(generateHibernationMemoryDiskAlias(vm.getName()));
         image.setDescription(VM_HIBERNATION_MEMORY_DISK_DESCRIPTION);
         return image;
     }
 
-    public static DiskImage createMemoryDisk(VM vm, StorageType storageType) {
+    public static DiskImage createMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator) {
         DiskImage image = new DiskImage();
-        image.setSize(VmUtils.getSnapshotMemorySizeInBytes(vm));
+        image.setSize(vmOverheadCalculator.getSnapshotMemorySizeInBytes(vm));
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
         image.setVolumeFormat(VolumeFormat.RAW);
         return image;

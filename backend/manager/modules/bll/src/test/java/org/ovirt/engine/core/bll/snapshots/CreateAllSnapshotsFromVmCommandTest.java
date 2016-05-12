@@ -21,10 +21,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculatorImpl;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -73,11 +76,15 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @Mock
     private MemoryImageBuilder memoryImageBuilder;
 
+    @Spy
+    private VmOverheadCalculator vmOverheadCalculator = new VmOverheadCalculatorImpl();
+
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "", false);
         cmd = spy(new CreateAllSnapshotsFromVmCommand<>(params, null));
+        cmd.setVmOverheadCalculator(vmOverheadCalculator);
         doReturn(true).when(vm).isManagedVm();
         doReturn(DisplayType.vga).when(vmStatic).getDefaultDisplayType();
         doReturn(vmStatic).when(vm).getStaticData();
