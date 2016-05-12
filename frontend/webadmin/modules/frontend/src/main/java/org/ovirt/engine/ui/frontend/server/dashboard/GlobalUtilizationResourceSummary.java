@@ -10,7 +10,7 @@ import java.util.List;
 public class GlobalUtilizationResourceSummary {
 
     protected double used;
-    protected double physicalTotal = 1; //Always have at least 1 so you don't get a divide by 0.
+    protected double physicalTotal = 0;
     protected double virtualTotal;
     protected double virtualUsed;
     protected List<HistoryNode> history;
@@ -47,9 +47,6 @@ public class GlobalUtilizationResourceSummary {
      */
     public void setPhysicalTotal(double physicalTotal) {
         this.physicalTotal = physicalTotal;
-        if (this.physicalTotal <= 0) {
-            this.physicalTotal = 1;
-        }
     }
 
     /**
@@ -75,7 +72,7 @@ public class GlobalUtilizationResourceSummary {
      * @return A percentage indicating the running virtual resource compared to actual resources.
      */
     public double getOvercommit() {
-        return virtualUsed / physicalTotal * 100;
+        return virtualUsed / (physicalTotal == 0 ? 1 : physicalTotal) * 100;
     }
 
     /**
@@ -85,7 +82,7 @@ public class GlobalUtilizationResourceSummary {
      * @return A percentage indicating the allocated virtual resource compared to actual resources.
      */
     public double getAllocated() {
-        return virtualTotal / physicalTotal * 100;
+        return virtualTotal / (physicalTotal == 0 ? 1 : physicalTotal) * 100;
     }
 
     /**
