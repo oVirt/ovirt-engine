@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -64,6 +66,15 @@ import org.slf4j.LoggerFactory;
  * hand-over migration and save-to-db
  */
 public class VmsMonitoring {
+
+    /*
+    When importing external VMs or the Hosted Engine VM there are devices which do not have an address field but we
+    want them to be imported.
+     */
+    private static final List<String> graphicsDevices = Arrays.asList(
+            GraphicsType.VNC.name().toLowerCase(),
+            GraphicsType.SPICE.name().toLowerCase()
+    );
 
     private final boolean timeToUpdateVmStatistics;
     private final long fetchTime;
@@ -303,7 +314,8 @@ public class VmsMonitoring {
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
     }
 
-    private void importHostedEngineVM(Map vmStruct) {
+    // Visible for testing
+    protected void importHostedEngineVM(Map vmStruct) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
         if (vm != null) {
             vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
@@ -313,6 +325,24 @@ public class VmsMonitoring {
             }
             vm.setVdsGroupId(getVdsManager().getVdsGroupId());
             vm.setRunOnVds(getVdsManager().getVdsId());
+            // Search for spice or vnc devices and add the result as a managed device to the VM
+            for (Object o : (Object[]) vmStruct.get(VdsProperties.Devices)) {
+                Map device = (Map<String, Object>) o;
+                String deviceName = (String)device.get(VdsProperties.Device);
+                if (graphicsDevices.contains(deviceName)){
+                    GraphicsDevice graphicsDevice = new GraphicsDevice(VmDeviceType.valueOf(deviceName.toUpperCase()));
+                    graphicsDevice.setVmId(vm.getId());
+                    graphicsDevice.setDeviceId(Guid.newGuid());
+                    vm.setSingleQxlPci(false);
+                    if (graphicsDevice.getGraphicsType() == GraphicsType.VNC) {
+                        vm.setDefaultDisplayType(DisplayType.cirrus);
+                    } else {
+                        vm.setDefaultDisplayType(DisplayType.qxl);
+                    }
+                    vm.getManagedVmDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
+                    break;
+                }
+            }
             getVdsEventListener().importHostedEngineVm(vm);
         }
     }
@@ -408,33 +438,38 @@ public class VmsMonitoring {
             // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
             Map[] vmsInfo = getVmInfo(vmsToQuery);
             for (Map vmInfo : vmsInfo) {
-                Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
-                VmStatic vmStatic = new VmStatic();
-                vmStatic.setId(vmId);
-                vmStatic.setCreationDate(new Date());
-                vmStatic.setVdsGroupId(vdsManager.getVdsGroupId());
-                String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
-
-                if (StringUtils.equals(Config.<String>getValue(ConfigValues.HostedEngineVmName), vmNameOnHost)) {
-                    // its a hosted engine VM -> import it and skip the external VM phase
-                    importHostedEngineVM(vmInfo);
-                    continue;
-                } else {
-                    vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
-                    vmStatic.setOrigin(OriginType.EXTERNAL);
-                }
-
-                vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
-                vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
-                vmStatic.setSingleQxlPci(false);
-
-                setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
-                setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
-
-                externalVmsToAdd.add(vmStatic);
-                log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
+                convertVm(defaultOsId, defaultDisplayType, vmInfo);
             }
         }
+    }
+
+    // Visible for testing
+    protected void convertVm(int defaultOsId, DisplayType defaultDisplayType, Map vmInfo) {
+        Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setId(vmId);
+        vmStatic.setCreationDate(new Date());
+        vmStatic.setVdsGroupId(vdsManager.getVdsGroupId());
+        String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
+
+        if (StringUtils.equals(Config.<String>getValue(ConfigValues.HostedEngineVmName), vmNameOnHost)) {
+            // its a hosted engine VM -> import it and skip the external VM phase
+            importHostedEngineVM(vmInfo);
+            return;
+        } else {
+            vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
+            vmStatic.setOrigin(OriginType.EXTERNAL);
+        }
+
+        vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
+        vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
+        vmStatic.setSingleQxlPci(false);
+
+        setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
+        setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
+
+        log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
+        externalVmsToAdd.add(vmStatic);
     }
 
     // ***** DB interaction *****
@@ -534,7 +569,7 @@ public class VmsMonitoring {
      *
      * @param vm
      */
-    private void processVmDevices(Map vm) {
+    protected void processVmDevices(Map vm) {
         if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
             log.error("Received NULL VM or VM id when processing VM devices, abort.");
             return;
@@ -680,7 +715,7 @@ public class VmsMonitoring {
         if (StringUtils.isEmpty(typeName) || StringUtils.isEmpty(deviceName)) {
             log.error("Empty or NULL values were passed for a VM '{}' device, Device is skipped", vmId);
         } else {
-            String address = ((Map<String, String>) device.get(VdsProperties.Address)).toString();
+            String address = device.get(VdsProperties.Address).toString();
             String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
             Object o = device.get(VdsProperties.SpecParams);
             newDeviceId = Guid.newGuid();
@@ -854,4 +889,10 @@ public class VmsMonitoring {
     public void addVmGuestAgentNics(Guid id, List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
         vmGuestAgentNics.put(id, vmGuestAgentInterfaces);
     }
+
+    // Visible for testing
+    protected List<VmStatic> getExternalVmsToAdd() {
+        return externalVmsToAdd;
+    }
+
 }
