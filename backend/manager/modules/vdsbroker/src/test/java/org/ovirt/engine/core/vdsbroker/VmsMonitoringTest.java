@@ -1,106 +1,74 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import static org.mockito.Matchers.any;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
-/**
- * @Ignore
- * most of the functionally is tested in {@link org.ovirt.engine.core.vdsbroker.VmAnalyzerTest}
- */
 public class VmsMonitoringTest {
 
-    private static final Guid VM_1 = Guid.createGuidFromString("7eeabc50-325f-49bb-acb6-15e786599423");
     private static final Version vdsCompVersion = Version.v3_4;
 
     @ClassRule
-    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
-
-    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(
-                    ConfigValues.DebugTimerLogging,
-                    true),
-            MockConfigRule.mockConfig(
-                    ConfigValues.VdsRefreshRate,
-                    3),
-            MockConfigRule.mockConfig(
-                    ConfigValues.TimeToReduceFailedRunOnVdsInMinutes,
-                    3),
-            MockConfigRule.mockConfig(
-                    ConfigValues.ReportedDisksLogicalNames,
+            mockConfig(ConfigValues.ReportedDisksLogicalNames,
                     vdsCompVersion.getValue(),
-                    true));
-
-    private VDS vds;
-    HashMap[] vmInfo;
-    List<VmDynamic> poweringUpVms;
+                    true),
+            mockConfig(ConfigValues.HostedEngineVmName,
+                    ConfigCommon.defaultConfigurationVersion,
+                    "HostedEngine")
+    );
 
     VmsMonitoring vmsMonitoring;
-
-    @Mock
-    VdsGroupDao groupDao;
-
-    @Mock
-    VmDao vmDao;
-
-    @Mock
-    DiskDao diskDao;
 
     @Mock
     DbFacade dbFacade;
 
     @Mock
-    VDSGroup cluster;
-
-    @Mock
     VmDeviceDao vmDeviceDao;
-
-    @Mock
-    VmDynamicDao vmDynamicDao;
-
-    @Mock
-    private VdsDao vdsDao;
-
-    VM vm_1_db;
-    VM vm_1_vdsm;
-
-    @Mock
-    ResourceManager resourceManager;
 
     @Mock
     AuditLogDirector auditLogDirector;
@@ -108,10 +76,26 @@ public class VmsMonitoringTest {
     @Mock
     private VdsManager vdsManager;
 
+    @Mock
+    private IVdsEventListener eventListener;
+
+    private static Map<String, Object> external_vm;
+
+    private static Map<String, Object> hosted_engine;
+
+    private static Map<String, Object> internal_vm;
+
+    @BeforeClass
+    public static void loadVmData() throws IOException {
+        external_vm = loadVm("/external_vm.json");
+        internal_vm = loadVm("/internal_vm.json");
+        hosted_engine = loadVm("/he_vm.json");
+    }
+
     @Before
     public void setup() {
-        initVds();
-        initConditions();
+        when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDao);
+        when(vdsManager.getGroupCompatibilityVersion()).thenReturn(vdsCompVersion);
         vmsMonitoring = Mockito.spy(
                 new VmsMonitoring(
                         vdsManager,
@@ -125,29 +109,106 @@ public class VmsMonitoringTest {
                     }
 
                     @Override
-                    protected Map[] getVmInfo(List<String> vmsToUpdate) {
-                        return vmInfo;
+                    protected IVdsEventListener getVdsEventListener() {
+                        return eventListener;
                     }
-
                 }
         );
     }
 
-    private void initConditions() {
-        when(dbFacade.getVdsGroupDao()).thenReturn(groupDao);
-        when(dbFacade.getVmDao()).thenReturn(vmDao);
-        when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDao);
-        when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
-        when(dbFacade.getDiskDao()).thenReturn(diskDao);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(groupDao.get((Guid) any())).thenReturn(cluster);
-        when(vmDao.getAllRunningByVds(vds.getId())).thenReturn(Collections.singletonMap(VM_1, vm_1_db));
-        when(vdsDao.get((Guid) any())).thenReturn(vds);
+    private static Map<String, Object> loadVm(String resourcePath) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(VmsMonitoringTest.class.getResourceAsStream(resourcePath));
+        Map<String, Object> map = mapper.convertValue(node, Map.class);
+        map.put(VdsProperties.Devices, ((List) map.get(VdsProperties.Devices)).toArray());
+        return map;
     }
 
-    private void initVds() {
-        vds = new VDS();
-        vds.setId(new Guid("00000000-0000-0000-0000-000000000012"));
-        vds.setVdsGroupCompatibilityVersion(vdsCompVersion);
+    @Test
+    public void shouldConvertExternalVm() throws IOException {
+        vmsMonitoring.convertVm(1, DisplayType.qxl, external_vm);
+        VmStatic vmStatic = vmsMonitoring.getExternalVmsToAdd().get(0);
+        verifyZeroInteractions(eventListener);
+        assertThat(vmStatic.getNumOfSockets(), is(4));
+        assertThat(vmStatic.getMemSizeMb(), is(7052));
+    }
+
+    @Test
+    public void shouldDetectHostedEngineVM() throws IOException {
+        vmsMonitoring.importHostedEngineVM(hosted_engine);
+        verify(eventListener).importHostedEngineVm(argThat(new HEVmMatcher()));
+    }
+
+    @Test
+    public void shouldExtractExternalVmDevices() throws IOException {
+        vmsMonitoring.processVmDevices(external_vm);
+        List<VmDevice> newDevices = vmsMonitoring.getNewVmDevices();
+        List<VmDeviceId> removedDevices = vmsMonitoring.getRemovedVmDevices();
+        List<VmDeviceGeneralType> devices = getDeviceTypes(vmsMonitoring.getNewVmDevices());
+        List<String> deviceNames = getDevice(vmsMonitoring.getNewVmDevices());
+
+        assertThat(removedDevices.size(), is(0));
+        assertThat(newDevices.size(), is(11));
+
+        // A ballooning device model of type 'none' means that there is no such device
+        assertThat(devices.contains(VmDeviceGeneralType.BALLOON), is(false));
+        //TODO: Do we really not want to import devices like that?
+        assertThat(devices.contains(VmDeviceGeneralType.CONSOLE), is(false));
+
+        //Cirrus device should be there
+        assertThat(deviceNames.contains(VmDeviceType.CIRRUS.name().toLowerCase()), is(true));
+        //TODO: VNC and SPICE devices should also be imported for external VMs
+        assertThat(deviceNames.contains(VmDeviceType.VNC.name().toLowerCase()), is(false));
+    }
+
+    @Test
+    public void shouldExtractInternalVmDevices() throws IOException {
+        vmsMonitoring.processVmDevices(internal_vm);
+        List<VmDevice> newDevices = vmsMonitoring.getNewVmDevices();
+        List<VmDeviceId> removedDevices = vmsMonitoring.getRemovedVmDevices();
+        List<VmDeviceGeneralType> deviceTypes = getDeviceTypes(vmsMonitoring.getNewVmDevices());
+        List<String> deviceNames = getDevice(vmsMonitoring.getNewVmDevices());
+
+        assertThat(removedDevices.size(), is(0));
+        assertThat(newDevices.size(), is(11));
+
+        assertThat(deviceTypes.contains(VmDeviceGeneralType.BALLOON), is(true));
+        //TODO: Do we really not want to import deviceTypes like that?
+        assertThat(deviceTypes.contains(VmDeviceGeneralType.CONSOLE), is(false));
+
+        //QXL device should be there
+        assertThat(deviceNames.contains(VmDeviceType.QXL.name().toLowerCase()), is(true));
+        //SPICE device details are fetched when needed, don't reimport the device
+        assertThat(deviceNames.contains(VmDeviceType.SPICE.name().toLowerCase()), is(false));
+    }
+
+    private List<VmDeviceGeneralType> getDeviceTypes(List<VmDevice> devices) {
+        List<VmDeviceGeneralType> deviceTypes = new ArrayList<>();
+        for (VmDevice device : devices) {
+            deviceTypes.add(device.getType());
+        }
+        return deviceTypes;
+    }
+
+    private List<String> getDevice(List<VmDevice> devices) {
+        List<String> deviceNames = new ArrayList<>();
+        for (VmDevice device : devices) {
+            deviceNames.add(device.getDevice());
+        }
+        return deviceNames;
+    }
+
+    private class HEVmMatcher extends ArgumentMatcher<VM> {
+
+        @Override
+        public boolean matches(Object argument) {
+            VmStatic vmStatic = ((VM) argument).getStaticData();
+            assertThat(vmStatic.getNumOfSockets(), is(4));
+            assertThat(vmStatic.getMemSizeMb(), is(7052));
+            assertThat(vmStatic.getManagedDeviceMap().size(), is(1));
+            GraphicsDevice device = (GraphicsDevice) vmStatic.getManagedDeviceMap().values().iterator().next();
+            assertThat(device.getGraphicsType(), is(GraphicsType.VNC));
+            return true;
+        }
     }
 }
