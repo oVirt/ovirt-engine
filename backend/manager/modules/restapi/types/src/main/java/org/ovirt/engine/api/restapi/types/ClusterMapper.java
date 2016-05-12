@@ -117,7 +117,7 @@ public class ClusterMapper {
             entity.setFencingPolicy(FencingPolicyMapper.map(model.getFencingPolicy(), null));
         }
         if (model.isSetMigration()) {
-            MigrationOptionsMapper.copyMigrationOptions(model.getMigration(), entity);
+            ClusterMigrationOptionsMapper.copyMigrationOptions(model.getMigration(), entity);
         }
 
         return entity;
@@ -186,7 +186,7 @@ public class ClusterMapper {
             model.setRequiredRngSources(new RequiredRngSourcesList());
             model.getRequiredRngSources().getRequiredRngSources().addAll(RngDeviceMapper.mapRngSources(entity.getRequiredRngSources()));
         }
-        model.setMigration(MigrationOptionsMapper.map(entity, null));
+        model.setMigration(ClusterMigrationOptionsMapper.map(entity, null));
 
         if (entity.getFencingPolicy() != null) {
             model.setFencingPolicy(FencingPolicyMapper.map(entity.getFencingPolicy(), null));

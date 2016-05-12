@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -247,6 +248,7 @@ public class BackendClustersResourceTest extends
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        expect(entity.getMigrationBandwidthLimitType()).andReturn(MigrationBandwidthLimitType.AUTO).anyTimes();
         return entity;
     }
 
