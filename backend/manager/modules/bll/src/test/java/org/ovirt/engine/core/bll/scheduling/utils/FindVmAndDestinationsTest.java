@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -22,8 +25,11 @@ public class FindVmAndDestinationsTest {
     @Mock
     VmDao vmDao;
 
+    @Inject
+    SlaValidator slaValidator;
+
     @InjectMocks
-    FindVmAndDestinations findVmAndDestinations = new FindVmAndDestinations(null, 80, 1024);
+    FindVmAndDestinations findVmAndDestinations = new FindVmAndDestinations(null, 80, 1024, slaValidator);
 
     @Before
     public void setUp() {

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
@@ -36,6 +38,9 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
 
     private static final Logger log = LoggerFactory.getLogger(CpuPinningPolicyUnit.class);
 
+    @Inject
+    SlaValidator slaValidator;
+
     public CpuPinningPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -59,7 +64,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
         // only add hosts as candidates which have all required CPUs up and running
         final List<VDS> candidates = new ArrayList<>();
         for (final VDS host : hosts) {
-            final Collection<Integer> onlineHostCpus = SlaValidator.getOnlineCpus(host);
+            final Collection<Integer> onlineHostCpus = slaValidator.getOnlineCpus(host);
             final Collection difference = CollectionUtils.subtract(pinnedCpus, onlineHostCpus);
             if (difference.isEmpty()) {
                 candidates.add(host);

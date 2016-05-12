@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
@@ -55,6 +58,9 @@ import org.slf4j.LoggerFactory;
 )
 public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
     private static final Logger log = LoggerFactory.getLogger(PowerSavingBalancePolicyUnit.class);
+
+    @Inject
+    private SlaValidator slaValidator;
 
     public PowerSavingBalancePolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -286,7 +292,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                         Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) :
                         0L;
 
-        return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
+        return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory, slaValidator);
     }
 
     @Override

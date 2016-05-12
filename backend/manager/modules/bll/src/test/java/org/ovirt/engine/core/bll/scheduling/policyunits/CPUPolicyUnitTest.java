@@ -11,8 +11,9 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculatorImpl;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -27,7 +28,6 @@ public class CPUPolicyUnitTest {
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
 
-    @InjectMocks
     private final CPUPolicyUnit cpuPolicyUnit = new CPUPolicyUnit(null, null);
 
     private VDS vdsWithInvalidCpuInfo;
@@ -40,6 +40,9 @@ public class CPUPolicyUnitTest {
 
     @Before
     public void setUp() {
+        SlaValidator slaValidator = new SlaValidator();
+        slaValidator.setVmOverheadCalculator(new VmOverheadCalculatorImpl());
+        cpuPolicyUnit.setSlaValidator(slaValidator);
 
         vm = new VM();
         vm.setCpuPerSocket(2);

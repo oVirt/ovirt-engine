@@ -12,9 +12,11 @@ import org.ovirt.engine.core.common.businessentities.VDS;
  */
 public class VdsCpuUsageComparator implements Comparator<VDS>, Serializable {
     boolean countThreadsAsCores;
+    private final SlaValidator slaValidator;
 
-    public VdsCpuUsageComparator(boolean countThreadsAsCores) {
+    public VdsCpuUsageComparator(boolean countThreadsAsCores, SlaValidator slaValidator) {
         this.countThreadsAsCores = countThreadsAsCores;
+        this.slaValidator = slaValidator;
     }
 
     @Override
@@ -23,6 +25,6 @@ public class VdsCpuUsageComparator implements Comparator<VDS>, Serializable {
     }
 
     private int calculateCpuUsage(VDS o1) {
-        return o1.getUsageCpuPercent() * SlaValidator.getEffectiveCpuCores(o1, countThreadsAsCores) / o1.getVdsStrength();
+        return o1.getUsageCpuPercent() * slaValidator.getEffectiveCpuCores(o1, countThreadsAsCores) / o1.getVdsStrength();
     }
 }

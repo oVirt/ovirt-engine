@@ -28,6 +28,7 @@ public class FindVmAndDestinations {
     private Cluster cluster;
     private int highCpuUtilization;
     private long requiredMemory;
+    private SlaValidator slaValidator;
 
     public static class Result {
         private List<VDS> destinationHosts;
@@ -47,10 +48,11 @@ public class FindVmAndDestinations {
         }
     }
 
-    public FindVmAndDestinations(Cluster cluster, int highCpuUtilization, long requiredMemory) {
+    public FindVmAndDestinations(Cluster cluster, int highCpuUtilization, long requiredMemory, SlaValidator slaValidator) {
         this.cluster = cluster;
         this.highCpuUtilization = highCpuUtilization;
         this.requiredMemory = requiredMemory;
+        this.slaValidator = slaValidator;
     }
 
     public Optional<Result> invoke(List<VDS> sourceHosts,
@@ -94,7 +96,7 @@ public class FindVmAndDestinations {
      *          predicted vm cpu
      */
     protected int getPredictedVmCpu(VM vm, VDS vds, boolean countThreadsAsCores) {
-        Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
+        Integer effectiveCpuCores = slaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
         if (vm.getUsageCpuPercent() != null && effectiveCpuCores != null) {
             return (vm.getUsageCpuPercent() * vm.getNumOfCpus())
                     / effectiveCpuCores;

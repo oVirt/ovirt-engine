@@ -16,8 +16,11 @@ import java.util.Optional;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -31,6 +34,13 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolicyUnitTest {
     static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
+
+    @Spy
+    SlaValidator slaValidator = new SlaValidator();
+
+    @Spy
+    @InjectMocks
+    PowerSavingBalancePolicyUnit policyUnit = new PowerSavingBalancePolicyUnit(null, null);
 
     @ClassRule
     public static MockConfigRule configRule =
@@ -56,7 +66,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         ArrayList<String> messages = new ArrayList<>();
 
-        PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
+        PowerSavingBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());
@@ -83,7 +93,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         ArrayList<String> messages = new ArrayList<>();
 
-        PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
+        PowerSavingBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());
@@ -110,7 +120,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         ArrayList<String> messages = new ArrayList<>();
 
-        PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
+        PowerSavingBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());
@@ -138,7 +148,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         ArrayList<String> messages = new ArrayList<>();
 
-        PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
+        PowerSavingBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());
@@ -165,7 +175,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         ArrayList<String> messages = new ArrayList<>();
 
-        PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
+        PowerSavingBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());
@@ -187,7 +197,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         ArrayList<String> messages = new ArrayList<>();
 
-        PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
+        PowerSavingBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());
@@ -209,7 +219,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
         ArrayList<String> messages = new ArrayList<>();
 
-        PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
+        PowerSavingBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());

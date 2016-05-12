@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
@@ -36,6 +38,9 @@ import org.slf4j.LoggerFactory;
 public class MemoryPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(MemoryPolicyUnit.class);
 
+    @Inject
+    SlaValidator slaValidator;
+
     public MemoryPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -57,7 +62,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             // allocation without provoked and fail if there is not enough memory
             int pendingRealMemory = PendingMemory.collectForHost(getPendingResourceManager(), vds.getId());
 
-            if (!SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, pendingRealMemory)) {
+            if (!slaValidator.hasPhysMemoryToRunVM(vds, vm, pendingRealMemory)) {
                 Long hostAvailableMem = vds.getMemFree() + vds.getSwapFree();
                 log.debug(
                         "Host '{}' has insufficient memory to run the VM. Only {} MB of physical memory + swap are available.",
@@ -97,7 +102,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             }
 
             // Check logical memory using overcommit, pending and guaranteed memory rules
-            if (SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm)) {
+            if (slaValidator.hasOvercommitMemoryToRunVM(vds, vm)) {
                 resultList.add(vds);
             } else {
                 overcommitFailed.add(vds);
@@ -120,7 +125,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                 vds.setPendingVmemSize(pendingMemory);
 
                 // Check logical memory using overcommit, pending and guaranteed memory rules
-                if (SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm)) {
+                if (slaValidator.hasOvercommitMemoryToRunVM(vds, vm)) {
                     resultList.add(vds);
                 } else {
                     overcommitFailed.add(vds);

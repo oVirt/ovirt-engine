@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
@@ -37,6 +39,9 @@ import org.slf4j.LoggerFactory;
 public class CpuOverloadPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuOverloadPolicyUnit.class);
 
+    @Inject
+    SlaValidator slaValidator;
+
     public CpuOverloadPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -54,7 +59,7 @@ public class CpuOverloadPolicyUnit extends PolicyUnitImpl {
 
         for (VDS vds : hosts) {
             // Check the core count
-            Integer cores = SlaValidator.getEffectiveCpuCores(vds,
+            Integer cores = slaValidator.getEffectiveCpuCores(vds,
                     cluster != null && cluster.getCountThreadsAsCores());
 
             if (cores == null) {

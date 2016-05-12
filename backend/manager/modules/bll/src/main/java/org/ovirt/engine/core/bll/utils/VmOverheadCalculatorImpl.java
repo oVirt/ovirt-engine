@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 
 @Singleton
 public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
@@ -18,6 +19,9 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      * It includes VM size, expected QEMU overhead and other memory taken from
      * the system by running the VM (such as page tables).
      *
+     * Hugepages are taken into account here, a VM backed with hugepages
+     * only consumes the overhead from the free RAM.
+     *
      * Please note the return value is just estimation of the memory
      * requirements and the real required RAM may differ in both directions.
      *
@@ -28,7 +32,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      */
     @Override
     public int getTotalRequiredMemoryInMb(VM vm) {
-        int vmRam = vm.getVmMemSizeMb();
+        int vmRam = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData());
         return vmRam + getOverheadInMb(vm);
     }
 

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
                 + " likely to be selected)"
 )
 public class EvenDistributionCPUWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
-
     public EvenDistributionCPUWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -46,7 +44,7 @@ public class EvenDistributionCPUWeightPolicyUnit extends EvenDistributionWeightP
             VM vm,
             boolean countThreadsAsCores) {
         int score = MaxSchedulerWeight - 1;
-        Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
+        Integer effectiveCpuCores = slaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
         if (effectiveCpuCores != null
                 && vds.getUsageCpuPercent() != null) {
             // round the result and adding one to avoid zero
@@ -55,5 +53,4 @@ public class EvenDistributionCPUWeightPolicyUnit extends EvenDistributionWeightP
         }
         return score;
     }
-
 }

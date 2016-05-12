@@ -12,7 +12,12 @@ import java.util.Optional;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -22,6 +27,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
+@RunWith(MockitoJUnitRunner.class)
 public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancingPolicyUnitTest {
     static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
 
@@ -36,6 +42,13 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
                     MockConfigRule.mockConfig(ConfigValues.UtilizationThresholdInPercent, 80)
             );
 
+    @Spy
+    private SlaValidator slaValidator = new SlaValidator();
+
+    @Spy
+    @InjectMocks
+    private EvenDistributionBalancePolicyUnit policyUnit = new EvenDistributionBalancePolicyUnit(null, null);
+
     @Test
     public void testBalanceCpuLoad() throws Exception {
         Map<Guid, BusinessEntity<Guid>> cache = newCache();
@@ -49,7 +62,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         ArrayList<String> messages = new ArrayList<>();
 
-        EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
+        EvenDistributionBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
@@ -73,7 +86,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         ArrayList<String> messages = new ArrayList<>();
 
-        EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
+        EvenDistributionBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
@@ -102,7 +115,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         ArrayList<String> messages = new ArrayList<>();
 
-        EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
+        EvenDistributionBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert !result.isPresent();
@@ -125,7 +138,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         ArrayList<String> messages = new ArrayList<>();
 
-        EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
+        EvenDistributionBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
@@ -156,7 +169,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         ArrayList<String> messages = new ArrayList<>();
 
-        EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
+        EvenDistributionBalancePolicyUnit unit = mockUnit(policyUnit, cluster, hosts, vms);
 
         Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert !result.isPresent();

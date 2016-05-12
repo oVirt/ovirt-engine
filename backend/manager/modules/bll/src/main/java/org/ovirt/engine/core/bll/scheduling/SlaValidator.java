@@ -3,21 +3,23 @@ package org.ovirt.engine.core.bll.scheduling;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class SlaValidator {
     private static final Logger log = LoggerFactory.getLogger(SlaValidator.class);
 
-    private static final SlaValidator instance = new SlaValidator();
-
-    public static SlaValidator getInstance() {
-        return instance;
-    }
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
 
     /**
      * Check whether a host has enough physical memory to start or receive the VM.
@@ -34,13 +36,14 @@ public class SlaValidator {
      * @return true when there is enough memory, false otherwise
      */
     public boolean hasPhysMemoryToRunVM(VDS curVds, VM vm, int pendingMemory) {
-        if (curVds.getMemFree() != null && curVds.getGuestOverhead() != null) {
+        if (curVds.getMemFree() != null) {
             double vmMemRequired = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())
-                    + curVds.getGuestOverhead();
+                    + vmOverheadCalculator.getStaticOverheadInMb(vm);
 
             if (HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
                 log.debug("VM uses HugePages - ignore its memory size");
             }
+
             double vdsMemLimit = curVds.getMemFree() - pendingMemory;
 
             log.debug("hasPhysMemoryToRunVM: host '{}'; free memory is : {} MB (+ {} MB pending); free swap is: {} MB, required memory is {} MB; Guest overhead {} MB",
@@ -49,7 +52,7 @@ public class SlaValidator {
                     pendingMemory,
                     curVds.getSwapFree(),
                     vmMemRequired,
-                    curVds.getGuestOverhead());
+                    vmOverheadCalculator.getStaticOverheadInMb(vm));
 
             if (curVds.getSwapFree() != null) {
                 vdsMemLimit += curVds.getSwapFree();
@@ -75,8 +78,7 @@ public class SlaValidator {
      * @return true when there is enough memory, false otherwise
      */
     public boolean hasOvercommitMemoryToRunVM(VDS curVds, VM vm) {
-        double vmMemRequired = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())
-                + curVds.getGuestOverhead();
+        double vmMemRequired = vmOverheadCalculator.getTotalRequiredMemoryInMb(vm);
 
         if (HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
             log.debug("VM uses HugePages - ignore its memory size");
@@ -88,13 +90,13 @@ public class SlaValidator {
                 curVds.getName(),
                 vdsMemLimit,
                 vmMemRequired,
-                curVds.getGuestOverhead());
+                vmOverheadCalculator.getOverheadInMb(vm));
 
         log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
         return vmMemRequired <= vdsMemLimit;
     }
 
-    public static Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {
+    public Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {
         if (vds.getCpuThreads() != null
                 && countThreadsAsCores) {
             return vds.getCpuThreads();
@@ -112,7 +114,7 @@ public class SlaValidator {
      * @param host to check for online cpus
      * @return online cpus or empty collection if no information is available
      */
-    public static Collection<Integer> getOnlineCpus(final VDS host) {
+    public Collection<Integer> getOnlineCpus(final VDS host) {
         final Collection<Integer> cpus = new ArrayList<>();
         if (StringUtils.isEmpty(host.getOnlineCpus())) {
             return cpus;
@@ -125,5 +127,10 @@ public class SlaValidator {
             }
         }
         return cpus;
+    }
+
+    // Test only
+    public void setVmOverheadCalculator(VmOverheadCalculator vmOverheadCalculator) {
+        this.vmOverheadCalculator = vmOverheadCalculator;
     }
 }

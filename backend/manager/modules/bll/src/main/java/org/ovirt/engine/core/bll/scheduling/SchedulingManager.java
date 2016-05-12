@@ -42,6 +42,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
+import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -102,6 +103,10 @@ public class SchedulingManager implements BackendService {
     private NetworkDeviceHelper networkDeviceHelper;
     @Inject
     private HostDeviceManager hostDeviceManager;
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
+    @Inject
+    private SlaValidator slaValidator;
     @Inject
     private ExternalSchedulerBroker externalBroker;
     @Inject
@@ -343,12 +348,8 @@ public class SchedulingManager implements BackendService {
             if (bestHost.isPresent() && !bestHost.get().equals(vm.getRunOnVds())) {
                 Guid bestHostId = bestHost.get();
                 getPendingResourceManager().addPending(new PendingCpuCores(bestHostId, vm, vm.getNumOfCpus()));
-
-                VDS bestHostEntity = vdsList.stream().filter(vds -> vds.getId().equals(bestHostId)).findFirst().get();
-
-                getPendingResourceManager().addPending(new PendingMemory(bestHostId, vm, bestHostEntity.getGuestOverhead()));
-                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHostId, vm,
-                        HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())));
+                getPendingResourceManager().addPending(new PendingMemory(bestHostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
+                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHostId, vm, vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)));
                 getPendingResourceManager().addPending(new PendingVM(bestHostId, vm));
 
                 // Add pending records for all specified hugepage sizes
@@ -898,7 +899,8 @@ public class SchedulingManager implements BackendService {
         log.debug("HA Reservation check timer entered.");
         List<Cluster> clusters = clusterDao.getAll();
         if (clusters != null) {
-            HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager());
+            HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager(),
+                    slaValidator);
             for (Cluster cluster : clusters) {
                 if (cluster.supportsHaReservation()) {
                     List<VDS> returnedFailedHosts = new ArrayList<>();

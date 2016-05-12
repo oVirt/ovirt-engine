@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -14,6 +17,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
+    @Inject
+    SlaValidator slaValidator;
 
     public EvenDistributionWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -65,4 +70,9 @@ public abstract class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
             VDS vds,
             VM vm,
             boolean countThreadsAsCores);
+
+    /* Test only */
+    protected void setSlaValidator(SlaValidator slaValidator) {
+        this.slaValidator = slaValidator;
+    }
 }

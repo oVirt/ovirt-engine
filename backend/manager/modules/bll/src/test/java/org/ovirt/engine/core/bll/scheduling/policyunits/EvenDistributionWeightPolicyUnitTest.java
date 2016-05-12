@@ -13,7 +13,9 @@ import java.util.Map;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -29,6 +31,9 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest {
 
     private static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
+
+    @Spy
+    SlaValidator slaValidator;
 
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(
@@ -70,8 +75,10 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
 
     protected <T extends EvenDistributionWeightPolicyUnit> T mockPolicyUnit(Class<T> unitType)
             throws Exception {
-        return spy(unitType.getConstructor(PolicyUnit.class, PendingResourceManager.class)
-                .newInstance(null, new PendingResourceManager()));
+        final T policyUnit = unitType.getConstructor(PolicyUnit.class, PendingResourceManager.class)
+                .newInstance(null, new PendingResourceManager());
+        policyUnit.setSlaValidator(slaValidator);
+        return spy(policyUnit);
     }
 
     protected <T extends EvenDistributionWeightPolicyUnit> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {

@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
@@ -43,6 +44,9 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
     @Inject
     private VmStatisticsDao vmStatisticsDao;
+
+    @Inject
+    private SlaValidator slaValidator;
 
     @Override
     protected Set<PolicyUnitParameter> getParameters() {
@@ -254,7 +258,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             // Assume all hosts belong to the same cluster
             Cluster cluster = getClusterDao().get(overUtilizedHosts.get(0).getClusterId());
             Collections.sort(overUtilizedHosts, new VdsCpuUsageComparator(
-                    cluster != null && cluster.getCountThreadsAsCores()).reversed());
+                    cluster != null && cluster.getCountThreadsAsCores(), slaValidator).reversed());
         }
 
         return overUtilizedHosts;
@@ -292,7 +296,8 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             // Assume all hosts belong to the same cluster
             Cluster cluster = getClusterDao().get(underUtilizedHosts.get(0).getClusterId());
             Collections.sort(underUtilizedHosts, new VdsCpuUsageComparator(
-                    cluster != null && cluster.getCountThreadsAsCores()));
+                    cluster != null && cluster.getCountThreadsAsCores(),
+                    slaValidator));
         }
 
         return underUtilizedHosts;
