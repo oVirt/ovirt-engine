@@ -329,8 +329,7 @@ public class DbFacade {
                 return (T) dao;
             }
         }
-        log.error("Can't find dao for " + daoType);
-        return null;
+        throw new IllegalArgumentException("There is no Dao registered for dao type " + daoType.getName());
     }
 
     /**

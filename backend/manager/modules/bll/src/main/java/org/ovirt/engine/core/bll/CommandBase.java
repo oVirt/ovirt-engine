@@ -485,28 +485,21 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                                 : snapshotData.toString());
                 Class<BusinessEntity<Serializable>> entityClass =
                         (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
-                GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity =
-                        DbFacade.getInstance().getDaoForEntity(entityClass);
 
                 switch (snapshot.getSnapshotType()) {
                 case CHANGED_STATUS_ONLY:
                     EntityStatusSnapshot entityStatusSnapshot = (EntityStatusSnapshot) snapshotData;
-                    ((StatusAwareDao<Serializable, Enum<?>>) daoForEntity).updateStatus(
+                    ((StatusAwareDao<Serializable, Enum<?>>) getDaoForEntity(entityClass)).updateStatus(
                             entityStatusSnapshot.getId(), entityStatusSnapshot.getStatus());
                     break;
                 case DELETED_OR_UPDATED_ENTITY:
-                    BusinessEntity<Serializable> entitySnapshot = (BusinessEntity<Serializable>) snapshotData;
-                    if (daoForEntity.get(entitySnapshot.getId()) == null) {
-                        daoForEntity.save(entitySnapshot);
-                    } else {
-                        daoForEntity.update(entitySnapshot);
-                    }
+                    deletedOrUpdateEntity(entityClass, (BusinessEntity<Serializable>) snapshotData);
                     break;
                 case UPDATED_ONLY_ENTITY:
-                    daoForEntity.update((BusinessEntity<Serializable>)snapshotData);
+                    getDaoForEntity(entityClass).update((BusinessEntity<Serializable>)snapshotData);
                     break;
                 case NEW_ENTITY_ID:
-                    daoForEntity.remove(snapshotData);
+                    getDaoForEntity(entityClass).remove(snapshotData);
                     break;
                 case TRANSIENT_ENTITY:
                     objectCompensation.compensate(CommandBase.this, (TransientCompensationBusinessEntity) snapshotData);
@@ -522,6 +515,27 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             getCompensationContext().afterCompensationCleanup();
             return null;
         });
+    }
+
+    /*
+     * method introduced to fix variable scope in switches (as nested scope is not created for switches),
+     * when static analysis disallows nested blocks
+     */
+    private void deletedOrUpdateEntity(Class<BusinessEntity<Serializable>> entityClass,
+            BusinessEntity<Serializable> entitySnapshot) {
+        GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity = getDaoForEntity(entityClass);
+
+        if (daoForEntity.get(entitySnapshot.getId()) == null) {
+            daoForEntity.save(entitySnapshot);
+        } else {
+            daoForEntity.update(entitySnapshot);
+        }
+    }
+
+    private GenericDao<BusinessEntity<Serializable>, Serializable> getDaoForEntity(
+            Class<BusinessEntity<Serializable>> entityClass) {
+
+        return DbFacade.getInstance().getDaoForEntity(entityClass);
     }
 
     protected void startFinalizingStep() {

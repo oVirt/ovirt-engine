@@ -167,10 +167,9 @@ public class DefaultCompensationContext extends CompensationContextBase {
         Class<BusinessEntity<Serializable>> entityClass = (Class<BusinessEntity<Serializable>>) entity.getClass();
         boolean verifyDaoExistence = ! (entity instanceof TransientCompensationBusinessEntity);
 
-        boolean reportMissingDao = verifyDaoExistence && DbFacade.getInstance().getDaoForEntity(entityClass) == null;
-        if (reportMissingDao) {
-            throw new IllegalArgumentException("There is no rollback Dao registered for entity type "
-                    + entityClass.getName());
+        if (verifyDaoExistence) {
+            //callMustNotFail
+            DbFacade.getInstance().getDaoForEntity(entityClass);
         }
     }
 
