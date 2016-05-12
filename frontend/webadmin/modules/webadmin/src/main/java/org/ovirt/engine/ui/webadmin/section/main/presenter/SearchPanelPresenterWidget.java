@@ -23,8 +23,6 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
         String getSearchString();
 
-        String getSearchPrefixString();
-
         void setSearchString(String searchString);
 
         void setSearchStringPrefix(String searchStringPrefix);
@@ -42,6 +40,8 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
         HasKeyDownHandlers getSearchInputHandlers();
 
         void hideSuggestionBox();
+
+        void enableSearchBar(boolean status);
 
         void setCommonModel(CommonModel commonModel);
 
@@ -85,6 +85,10 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
                 else if ("HasSelectedTags".equals(args.propertyName)) { //$NON-NLS-1$
                     updateViewHasSelectedTags();
+                }
+
+                else if ("SearchEnabled".equals(args.propertyName)) { //$NON-NLS-1$
+                    updateViewSearchEnabled();
                 }
             }
         });
@@ -155,6 +159,10 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
     void updateViewHasSelectedTags() {
         getView().setHasSelectedTags(commonModel.getHasSelectedTags());
+    }
+
+    void updateViewSearchEnabled() {
+        getView().enableSearchBar(commonModel.getSearchEnabled());
     }
 
 }

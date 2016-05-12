@@ -109,11 +109,6 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     }
 
     @Override
-    public String getSearchPrefixString() {
-        return searchStringPrefixLabel.getText();
-    }
-
-    @Override
     public void setSearchString(String searchString) {
         searchStringInput.setText(searchString);
     }
@@ -175,4 +170,8 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
         oracle.setCommonModel(commonModel);
     }
 
+    @Override
+    public void enableSearchBar(boolean status) {
+        searchStringInput.setEnabled(status);
+    }
 }

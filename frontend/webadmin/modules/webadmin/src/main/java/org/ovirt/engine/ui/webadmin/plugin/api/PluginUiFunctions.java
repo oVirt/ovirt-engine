@@ -107,7 +107,8 @@ public class PluginUiFunctions implements HasHandlers {
                 requestTabsEventType, changeTabEventType, slot,
                 label, options.getPriority().floatValue(),
                 historyToken, isMainTab, contentUrl,
-                options.getAlignRight() ? Align.RIGHT : Align.LEFT);
+                options.getAlignRight() ? Align.RIGHT : Align.LEFT,
+                options.getSearchPrefix());
 
         // Redraw the corresponding tab container
         RedrawDynamicTabContainerEvent.fire(this, requestTabsEventType);

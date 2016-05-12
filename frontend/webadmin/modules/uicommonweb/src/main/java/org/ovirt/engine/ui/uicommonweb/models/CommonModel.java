@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.plugin.PluginModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
@@ -86,7 +87,9 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private boolean hasSelectedTags;
     private boolean executingSearch;
     private Map<ListModel<?>, String> listModelSearchStringHistory = new HashMap<>();
+    private final Map<String, PluginModel> pluginModelMap = new HashMap<>();
     private boolean systemSelected = true;
+    private boolean searchEnabled = true;
 
     private final DataCenterListModel dataCenterListModel;
     private final ClusterListModel<Void> clusterListModel;
@@ -563,6 +566,22 @@ public class CommonModel extends ListModel<SearchableListModel> {
         }
     }
 
+    public void addPluginModel(String historyToken, String searchPrefix) {
+        PluginModel model = new PluginModel(historyToken, searchPrefix);
+        getItems().add(model);
+        pluginModelMap.put(historyToken, model);
+    }
+
+    public void setPluginTabSelected(String historyToken) {
+        PluginModel model = pluginModelMap.get(historyToken);
+        if (model != null) {
+            setSelectedItem(model);
+            setSearchEnabled(false);
+        } else {
+            setSelectedItem(getDefaultItem());
+        }
+    }
+
     private void searchStringChanged() {
         SystemTreeItemModel model = getSystemTree().getSelectedItem();
         if (model != null && model.getType().equals(SystemTreeItemType.System)) {
@@ -652,6 +671,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
     @Override
     protected void onSelectedItemChanged() {
+        setSearchEnabled(true);
         super.onSelectedItemChanged();
 
         if (!executingSearch && getSelectedItem() != null) {
@@ -1217,6 +1237,17 @@ public class CommonModel extends ListModel<SearchableListModel> {
             loggedInUser = value;
             onPropertyChanged(new PropertyChangedEventArgs("LoggedInUser")); //$NON-NLS-1$
         }
+    }
+
+    private void setSearchEnabled(boolean value) {
+        if (searchEnabled != value) {
+            searchEnabled = value;
+            onPropertyChanged(new PropertyChangedEventArgs("SearchEnabled")); //$NON-NLS-1$
+        }
+    }
+
+    public boolean getSearchEnabled() {
+        return this.searchEnabled;
     }
 
     public List<AuditLog> getEvents() {

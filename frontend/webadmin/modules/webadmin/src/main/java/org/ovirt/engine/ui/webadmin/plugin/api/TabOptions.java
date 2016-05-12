@@ -31,4 +31,15 @@ public final class TabOptions extends JsObjectWithProperties {
         return getValueAsDouble("priority", Double.MAX_VALUE); //$NON-NLS-1$
     }
 
+    /**
+     * Returns the search prefix associated with the tab.
+     * <p>
+     * Applies only to main tabs.
+     * <p>
+     * Default return value: {@code null}
+     */
+    public String getSearchPrefix() {
+        return getValueAsString("searchPrefix", null); //$NON-NLS-1$
+    }
+
 }
