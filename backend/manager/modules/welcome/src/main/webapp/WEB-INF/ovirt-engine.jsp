@@ -25,9 +25,9 @@
                             <div class="download-link-image"></div>
                         </div>
                         <div class="media-body download-text-container">
-                            <h4>下载</h4>
-                            <p>控制台客户资源</p>
-                        </div>
+                            <h4><fmt:message key="obrand.welcome.downloads_title" /></h4>
+                            <p><fmt:message key="obrand.welcome.portal_client.resource" /></p>
+                        </div>	
                     </div>
                 </a>
             </div>
@@ -62,7 +62,7 @@
 				     <div class="footer-container">
 				          <div class="col-sm-9">
 				            <div class="logo-image">
-			             		 <a class="obrand_loginPageLogoImage" href="{obrand.common.vendor_url}">
+			             		 <a class="obrand_loginPageLogoImage" href="${obrand.common.vendor_url}">
 			           			</a>
 			              </div>
 			              
