@@ -92,7 +92,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div title='{1}' id=\"{2}\" style=\"text-align: center;\">{0}</div>")
     SafeHtml imageWithHoverTextAndContainerId(SafeHtml statusImage, String hoverText, String id);
 
-    @Template("<span><span style='position: fixed; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{1}</span>"
+    @Template("<span><span style='position: absolute; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{1}</span>"
             + "<span style='position: relative; white-space: normal; height: 14px; line-height: 14px;'>{0}</span></span>")
     SafeHtml lockedStatusTemplate(SafeHtml lockImage, SafeHtml statusImage);
 
