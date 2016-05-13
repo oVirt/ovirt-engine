@@ -12,7 +12,7 @@
 			width: 390px;
 		}
 
-		.vcenterContentStyle {
+		.contentWithQuestionMarkLabel {
 			display: inline-block;
 			float: right;
 		}
@@ -35,32 +35,32 @@
 			height: 165px;
 		}
 
-        .messageSectionStyle {
-            height: 20px;
+		.messageSectionStyle {
+			height: 20px;
 		}
 
-        .floatLeft {
-            float: left;
-        }
+		.floatLeft {
+			float: left;
+		}
 
-        .errorStyle {
-            color: red;
-            vertical-align: bottom;
-            line-height: 15px;
-            margin-left: 3px;
-        }
+		.errorStyle {
+			color: red;
+			vertical-align: bottom;
+			line-height: 15px;
+			margin-left: 3px;
+		}
 
-        .warningStyle {
-            vertical-align: bottom;
-            line-height: 15px;
-            margin-left: 3px;
-        }
+		.warningStyle {
+			vertical-align: bottom;
+			line-height: 15px;
+			margin-left: 3px;
+		}
 
 		.loadButtonStyle {
 			margin-top: 15px;
 			margin-right: 20px;
-            float: right;
-        }
+			float: right;
+		}
 
 	</ui:style>
 
@@ -113,7 +113,7 @@
 			    </g:FlowPanel>
 
                 <g:FlowPanel ui:field="xenPanel" visible="false" addStyleNames="{style.xenSectionStyle}">
-                    <ge:StringEntityModelTextBoxEditor ui:field="xenUriEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+                    <w:EntityModelWidgetWithInfo ui:field="xenUriWithInfo" addStyleNames="{style.sourcePropertyStyle}" />
                     <e:ListModelListBoxEditor ui:field="xenProxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
                     <g:FlowPanel addStyleNames="{style.loadButtonStyle}">
                         <w:UiCommandButton ui:field="loadXenButton"/>

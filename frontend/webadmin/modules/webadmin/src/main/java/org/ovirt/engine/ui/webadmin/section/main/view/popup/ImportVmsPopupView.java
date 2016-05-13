@@ -60,7 +60,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     }
 
     protected interface Style extends CssResource {
-        String vcenterContentStyle();
+        String contentWithQuestionMarkLabel();
     }
 
     @UiField
@@ -166,10 +166,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @WithElementId("ovaPath")
     StringEntityModelTextBoxEditor ovaPathEditor;
 
-    @UiField
     @Path("xenUri.entity")
     @WithElementId("xenUri")
-    StringEntityModelTextBoxEditor xenUriEditor;
+    StringEntityModelTextBoxOnlyEditor xenUriEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo xenUriWithInfo;
 
     @UiField(provided = true)
     @Path("xenProxyHosts.selectedItem")
@@ -291,6 +294,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         vCenterEditorWithInfo = new EntityModelWidgetWithInfo(label, vCenterEditor);
         vCenterEditorWithInfo.setExplanation(templates.italicText(constants.vCenterInfo()));
 
+        xenUriEditor = new StringEntityModelTextBoxOnlyEditor();
+        EnableableFormLabel xenUriLabel = new EnableableFormLabel();
+        xenUriLabel.setPaddingLeft(5);
+        xenUriLabel.setText(constants.xenUri());
+        xenUriWithInfo = new EntityModelWidgetWithInfo(xenUriLabel, xenUriEditor);
+        xenUriWithInfo.setExplanation(templates.xenUriInfo());
+
         externalVms = new EntityModelCellTable<>(true, false, true);
         importedVms = new EntityModelCellTable<>(true, false, true);
         vmsTable =
@@ -304,7 +314,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         dataCentersEditor.setLabel(constants.dataCenter());
         importSourcesEditor.setLabel(constants.importSource());
         vmwareProvidersEditor.setLabel(constants.externalProviderLabel());
-        vCenterEditor.setWrapperStyleName(style.vcenterContentStyle());
+        vCenterEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
 
         exportDomainName.setLabel(constants.nameLabel());
         exportDomainPath.setLabel(constants.pathStorageGeneral());
@@ -322,6 +332,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         ovaPathEditor.setLabel(constants.ovaPath());
 
         xenUriEditor.setLabel(constants.xenUri());
+        xenUriEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
         xenProxyHostsEditor.setLabel(constants.proxyHost());
 
         kvmUriEditor.setLabel(constants.kvmUri());

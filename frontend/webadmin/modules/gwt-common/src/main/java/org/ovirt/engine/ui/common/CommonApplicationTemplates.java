@@ -145,4 +145,10 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("Total number of vCPUs.<br/>Stands for number of<ul><li>sockets</li><li>cores per socket</li><li>threads per core</li></ul>")
     SafeHtml numOfCpuCoresTooltip();
+
+    @Template("<i>Replace '&lthostname&gt' with the hostname of the Xen hypervisor in the libvirt URI. <br />" +
+            "Only SSH transport is allowed for Xen import and the connection has to be without password. <br /> <br />" +
+            "To disable SSH host key verification add 'no_verify' parameter to the URI, " +
+            "i.e.: xen+ssh://root@xen.example.com?no_verify=1</i>")
+    SafeHtml xenUriInfo();
 }

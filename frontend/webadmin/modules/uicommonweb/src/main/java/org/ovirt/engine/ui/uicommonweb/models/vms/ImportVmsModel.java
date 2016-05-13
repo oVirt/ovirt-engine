@@ -138,6 +138,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
         // Xen
         setXenUri(new EntityModel<String>());
+        getXenUri().setEntity(constants.xenUriExample());
         setXenProxyHosts(new ListModel<VDS>());
 
         // Kvm
