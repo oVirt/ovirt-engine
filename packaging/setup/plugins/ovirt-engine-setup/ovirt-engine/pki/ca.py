@@ -232,6 +232,12 @@ class Plugin(plugin.PluginBase):
             'user': oengcommcons.SystemEnv.USER_ROOT,
             'keepKey': False,
         },
+        {
+            'name': 'imageio-proxy',
+            'extract': True,
+            'user': oengcommcons.SystemEnv.USER_ROOT,
+            'keepKey': False,
+        },
     )
 
     def _expired(self, x509):
