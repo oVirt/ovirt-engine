@@ -210,8 +210,8 @@ public class V3SystemServer extends V3Server<SystemResource> {
     }
 
     @Path("katelloerrata")
-    public V3EngineKatelloErrataServer getKatelloErrataResource() {
-        return new V3EngineKatelloErrataServer(getDelegate().getKatelloErrataResource());
+    public V3KatelloErrataServer getKatelloErrataResource() {
+        return new V3KatelloErrataServer(getDelegate().getKatelloErrataResource());
     }
 
     @Path("permissions")
