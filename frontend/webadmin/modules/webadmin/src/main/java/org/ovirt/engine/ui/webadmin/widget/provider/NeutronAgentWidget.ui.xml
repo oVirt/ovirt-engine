@@ -4,38 +4,40 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
-	<ui:style>
-		.sectionStyle {
-			margin-top: 20px;
-		}
-
-        .messagingServerInnerPanel {
-            padding-left: 20px;
-        }
-
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+    <ui:style>
         .messagingServerHeader {
-			font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            padding: 0 5px;
-		}
-	</ui:style>
+            font-weight: bold;
+        }
+    </ui:style>
 
-	<g:FlowPanel>
-		<w:EntityModelWidgetWithInfo ui:field="mappings" />
-		<g:FlowPanel addStyleNames="{style.sectionStyle}">
-			<g:Label text="{constants.messagingConfiguration}" addStyleNames="{style.messagingServerHeader}"/>
-			<g:FlowPanel addStyleNames="{style.messagingServerInnerPanel}">
-				<e:ListModelListBoxEditor ui:field="brokerTypeEditor"/>
-				<ge:StringEntityModelTextBoxEditor ui:field="messagingServer"/>
-				<ge:StringEntityModelTextBoxEditor ui:field="messagingServerPort"/>
-				<ge:StringEntityModelTextBoxEditor ui:field="messagingServerUsername"/>
-				<ge:StringEntityModelPasswordBoxEditor ui:field="messagingServerPassword"/>
-			</g:FlowPanel>
-		</g:FlowPanel>
-	</g:FlowPanel>
+    <g:FlowPanel>
+        <b:Row>
+            <w:EntityModelWidgetWithInfo ui:field="mappings" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <b:Column size="LG_12">
+                <g:Label text="{constants.messagingConfiguration}" addStyleNames="{style.messagingServerHeader}"/>
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <e:ListModelListBoxEditor ui:field="brokerTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="messagingServer" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="messagingServerPort" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="messagingServerUsername" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelPasswordBoxEditor ui:field="messagingServerPassword" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+    </g:FlowPanel>
 
 </ui:UiBinder>

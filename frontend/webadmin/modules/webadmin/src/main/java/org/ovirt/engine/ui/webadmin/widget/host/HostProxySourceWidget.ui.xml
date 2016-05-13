@@ -24,6 +24,10 @@
             font-weight: bolder;
         }
 
+        .editColumn {
+            padding: 0px 0px 0px 5px;
+        }
+
         .upDownPadding {
             padding: 0px;
         }
@@ -44,12 +48,16 @@
     <b:Container addStyleNames="{style.container}">
       <b:Row addStyleNames="{style.rowPadding}">
         <b:Column size="LG_1">
-          <g:Label ui:field="orderLabel" addStyleNames="{style.bold}"/>
+          <b:Row>
+            <b:Column size="LG_6" addStyleNames="{style.editColumn}">
+              <g:Label ui:field="orderLabel" addStyleNames="{style.bold}"/>
+            </b:Column>
+          </b:Row>
         </b:Column>
-        <b:Column size="LG_8">
+        <b:Column size="LG_9">
           <g:Label ui:field="proxyLabel" />
         </b:Column>
-        <b:Column size="LG_2">
+        <b:Column size="LG_1" addStyleNames="{style.editColumn}">
           <b:Row addStyleNames="{style.noMargin}">
             <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
               <g:PushButton ui:field="up" text="/\" addStyleNames="{style.upDownButton}" />

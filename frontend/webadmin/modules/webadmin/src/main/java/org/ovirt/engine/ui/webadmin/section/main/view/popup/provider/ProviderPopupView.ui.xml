@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+    xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView.Style">
-		.contentStyle {
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView.Style">
+        .contentStyle {
+        }
 
        .generalTabTopDecorator {
             background-color: #D3D3D3;
@@ -21,75 +22,82 @@
             padding-bottom: 6px;
         }
 
-		.sectionStyle {
-			margin-top: 20px;
-		}
+        .sectionStyle {
+            margin-top: 20px;
+        }
 
-		.authField {
-			padding-left: 10px;
-		}
+        .authField {
+            padding-left: 10px;
+        }
 
-		.testResultImage {
-			float: left;
-			margin-left: 3px;
-		}
+        .testResultImage {
+            float: left;
+            margin-left: 3px;
+        }
 
-		.testResultMessage {
-			float: left;
-			display: inline-block;
-			width: 450px;
-			margin-left: 5px;
-			font-size: 8pt;
-		}
+        .testResultMessage {
+            float: left;
+            display: inline-block;
+            width: 450px;
+            margin-left: 5px;
+            font-size: 8pt;
+        }
 
-		.testButton {
-			float: right;
-			vertical-align: middle;
-			margin-right: 10px;
-		}
-	</ui:style>
+        .testButton {
+            float: right;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
 
-	<d:SimpleDialogPanel width="660px" height="490px">
+        .container {
+            width: 100%;
+            padding-top: 20px;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="660px" height="490px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
                     <t:DialogTab ui:field="generalTab">
                         <t:content>
-                        	<g:FlowPanel>
-                        		<g:FlowPanel>
-									<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
-										<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-										<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-										<e:ListModelListBoxEditor ui:field="typeEditor" />
+                            <g:FlowPanel>
+                                <g:FlowPanel>
+                                        <g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
+                                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+                                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
+                                        <e:ListModelListBoxEditor ui:field="typeEditor" />
                                         <e:ListModelListBoxEditor ui:field="datacenterEditor" />
                                     </g:FlowPanel>
-									<g:FlowPanel>
-										<ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
-										<ge:StringEntityModelTextBoxEditor ui:field="urlEditor" />
-										<ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" />
-										<p:VmwarePropertiesWidget ui:field="vmwarePropertiesWidget" />
-									</g:FlowPanel>
-									<g:FlowPanel addStyleNames="{style.sectionStyle}">
-										<ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
-										<ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
-										<ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
-										<ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
+                                    <g:FlowPanel>
+                                        <ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
+                                        <ge:StringEntityModelTextBoxEditor ui:field="urlEditor" />
+                                        <ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" />
+                                        <p:VmwarePropertiesWidget ui:field="vmwarePropertiesWidget" />
+                                    </g:FlowPanel>
+                                    <g:FlowPanel addStyleNames="{style.sectionStyle}">
+                                        <ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
+                                        <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
+                                        <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
+                                        <ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
                                         <ge:StringEntityModelTextBoxEditor ui:field="authUrlEditor" addStyleNames="{style.authField}" />
-									</g:FlowPanel>
-								</g:FlowPanel>
-								<g:FlowPanel>
-									<g:Image ui:field="testResultImage" addStyleNames="{style.testResultImage}" />
-									<g:Label ui:field="testResultMessage" addStyleNames="{style.testResultMessage}" />
-									<w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}" />
-								</g:FlowPanel>
-                        	</g:FlowPanel>
+                                    </g:FlowPanel>
+                                </g:FlowPanel>
+                                <g:FlowPanel>
+                                    <g:Image ui:field="testResultImage" addStyleNames="{style.testResultImage}" />
+                                    <g:Label ui:field="testResultMessage" addStyleNames="{style.testResultMessage}" />
+                                    <w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}" />
+                                </g:FlowPanel>
+                            </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="agentConfigurationTab">
                         <t:content>
-							<p:NeutronAgentWidget ui:field="neutronAgentWidget" />
+                            <b:Container addStyleNames="{style.container}">
+                                <p:NeutronAgentWidget ui:field="neutronAgentWidget" />
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

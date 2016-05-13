@@ -2,15 +2,22 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-    <ui:style>
+    <ui:style type="org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander.Style">
         .expander {
             background: Transparent;
             border: none;
             padding: 0px;
             margin: 5px;
         }
+
+        .expanderPf {
+            background: Transparent;
+            border: none;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
     </ui:style>
 
-    <g:ToggleButton ui:field="expander" addStyleNames="{style.expander} ape_expander_pfly_fix"/>
+    <g:ToggleButton ui:field="expander" addStyleNames="{style.expander}"/>
 
 </ui:UiBinder>

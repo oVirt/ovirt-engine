@@ -9,7 +9,9 @@ import java.util.TreeMap;
 
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
@@ -60,6 +62,7 @@ import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -82,7 +85,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
@@ -163,7 +165,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     Row searchProviderRow;
 
     @UiField
-    Row discoveredHostsRow;
+    FlowPanel discoveredHostPanel;
 
     @UiField(provided = true)
     @Path(value = "externalDiscoveredHosts.selectedItem")
@@ -267,7 +269,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     @Ignore
-    VerticalPanel spmPanel;
+    Container spmContainer;
 
     @UiField
     @Path(value = "pkSection.entity")
@@ -342,10 +344,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     InfoIcon provisionedHostInfoIcon;
 
     @UiField
-    @Ignore
-    Label consoleAddressLabel;
-
-    @UiField
     @Path(value = "consoleAddress.entity")
     @WithElementId
     StringEntityModelTextBoxEditor consoleAddress;
@@ -371,7 +369,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     @Ignore
-    FlowPanel expanderContent;
+    Column expanderContent;
 
     @UiField
     @Ignore
@@ -431,6 +429,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         providersEditor.hideLabel();
         passwordEditor.hideLabel();
         publicKeyEditor.hideLabel();
+        consoleAddressEnabled.hideLabel();
+        consoleAddress.hideLabel();
     }
 
     private void initInfoIcon() {
@@ -445,14 +445,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private void addStyles() {
-        externalHostProviderEnabledEditor.addContentWidgetContainerStyleName(style.externalHostProviderEnabledEditorContent());
         providerSearchFilterEditor.addContentWidgetContainerStyleName(style.searchFilter());
-        providerSearchFilterEditor.setLabelStyleName(style.emptyEditor());
-        providerSearchFilterLabel.addContentWidgetContainerStyleName(style.emptyEditor());
-        fetchSshFingerprint.addContentWidgetContainerStyleName(style.fingerprintEditor());
-        expanderContent.setStyleName(style.expanderContent());
-        publicKeyEditor.setCustomStyle(style.pkStyle());
-        tabPanel.addBarStyle(style.bar());
     }
 
     private void initEditors() {
@@ -587,8 +580,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         rootPasswordLabel.setText(constants.hostPopupAuthLabelForExternalHost());
         rbPasswordLabel.setText(constants.hostPopupPasswordLabel());
         rbPublicKeyLabel.setText(constants.hostPopupPublicKeyLabel());
-        rbProvisionedHost.setText(constants.provisionedHostsLabel());
-        rbDiscoveredHost.setText(constants. discoveredHostsLabel());
         fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
         overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
         protocolEditor.setLabel(constants.hostPopupProtocolLabel());
@@ -600,9 +591,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         // Power Management tab
         powerManagementTab.setLabel(constants.hostPopupPowerManagementTabLabel());
         pmEnabledEditor.setLabel(constants.hostPopupPmEnabledLabel());
-
-        consoleAddress.setLabel(constants.consoleAddress());
-        consoleAddressLabel.setText(constants.enableConsoleAddressOverride());
 
         // Auto PM
         disableAutomaticPowerManagementEditor.setLabel(constants.hostPopupPmDisableAutoPM());
@@ -832,7 +820,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private void showExternalDiscoveredHost(boolean enabled) {
-        discoveredHostsRow.setVisible(enabled);
+        discoveredHostPanel.setVisible(enabled);
     }
 
     private void usualFormToDiscover(boolean isDiscovered) {
@@ -855,22 +843,24 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     private void createSpmControls(final HostModel object) {
 
-        spmPanel.clear();
+        spmContainer.clear();
 
         Iterable<?> items = object.getSpmPriority().getItems();
         if (items == null) {
             return;
         }
-
+        int i = 0;
         // Recreate SPM related controls.
         for (Object item : items) {
 
-            final EntityModel model = (EntityModel) item;
+            @SuppressWarnings("unchecked")
+            final EntityModel<Integer> model = (EntityModel<Integer>) item;
 
             RadioButton rb = new RadioButton("spm"); // $//$NON-NLS-1$
             rb.setText(model.getTitle());
+            Element labelElement = (Element)rb.getElement().getChild(1);
+            labelElement.addClassName(style.patternFlyRadio());
             rb.setValue(object.getSpmPriority().getSelectedItem() == model);
-            rb.addStyleName(style.radioButton());
 
             rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                 @Override
@@ -879,7 +869,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                 }
             });
 
-            spmPanel.add(rb);
+            Row row = new Row();
+            if (i == 0) {
+                row.addStyleName(style.topElement());
+            }
+            Column column = new Column(ColumnSize.LG_12, rb);
+            row.add(column);
+            spmContainer.add(row);
+            i++;
         }
     }
 
@@ -965,25 +962,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     interface Style extends CssResource {
 
-        String radioButton();
-
-        String checkBox();
-
         String searchFilter();
-
-        String emptyEditor();
-
-        String fingerprintEditor();
-
-        String expanderContent();
-
-        String pkStyle();
 
         String fetchResultErrorLabel();
 
-        String bar();
+        String topElement();
 
-        String externalHostProviderEnabledEditorContent();
+        String patternFlyRadio();
     }
 
     public void setPkPasswordSectionVisiblity(boolean visible) {

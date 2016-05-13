@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
@@ -28,7 +29,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.inject.Inject;
 
-public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<HostNetworkProviderModel> {
+public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<HostNetworkProviderModel>
+    implements PatternFlyCompatible {
 
     interface Driver extends SimpleBeanEditorDriver<HostNetworkProviderModel, HostNetworkProviderWidget> {
     }
@@ -115,6 +117,13 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     public HostNetworkProviderModel flush() {
         neutronAgentWidget.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        networkProvider.setUsePatternFly(use);
+        networkProviderTypeEditor.setUsePatternFly(use);
+        providerPluginTypeEditor.setUsePatternFly(use);
     }
 
 }
