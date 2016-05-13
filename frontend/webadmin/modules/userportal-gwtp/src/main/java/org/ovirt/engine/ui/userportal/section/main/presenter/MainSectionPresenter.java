@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.widget.AlertManager;
+import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
+import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -15,11 +17,15 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef, MainSectionPresenter.ProxyDef> {
 
+    private static final int HEIGHT_FOR_EXTENDED_USER = 70;
+    private static final int HEIGHT_FOR_REGULAR_USER = 30;
+
     @ProxyCodeSplit
     public interface ProxyDef extends Proxy<MainSectionPresenter> {
     }
 
     public interface ViewDef extends View {
+        public void setHeaderPanelHeight(int height);
     }
 
     @ContentSlot
@@ -33,17 +39,19 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     private final String basicGuideUrl;
     private final String extendedGuideUrl;
     private final AlertManager alertManager;
+    private final UserPortalCurrentUserRole userRole;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, HeaderPresenterWidget header,
             UserPortalPlaceManager userPortalPlaceManager, ApplicationDynamicMessages dynamicMessages,
-            AlertManager alertManager) {
+            AlertManager alertManager, CurrentUserRole userRole) {
         super(eventBus, view, proxy, RevealType.RootLayout);
         this.header = header;
         this.placeManager = userPortalPlaceManager;
         this.basicGuideUrl = dynamicMessages.guideUrl();
         this.extendedGuideUrl = dynamicMessages.extendedGuideUrl();
         this.alertManager = alertManager;
+        this.userRole = (UserPortalCurrentUserRole) userRole;
     }
 
     @Override
@@ -72,6 +80,13 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
             header.setGuideUrl(basicGuideUrl);
         } else {
             header.setGuideUrl(extendedGuideUrl);
+        }
+
+        if (userRole.isExtendedUser()) {
+            getView().setHeaderPanelHeight(HEIGHT_FOR_EXTENDED_USER);
+        }
+        else {
+            getView().setHeaderPanelHeight(HEIGHT_FOR_REGULAR_USER);
         }
     }
 }

@@ -41,4 +41,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         }
     }
 
+    public void setHeaderPanelHeight(int height) {
+        wrapperLayoutPanel.setWidgetSize(headerPanel, height);
+    }
 }
