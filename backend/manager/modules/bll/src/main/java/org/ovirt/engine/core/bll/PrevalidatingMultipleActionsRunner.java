@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -28,6 +29,9 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
     private final ArrayList<CommandBase<?>> commands = new ArrayList<>();
     protected boolean isInternal;
     private boolean isWaitForResult = false;
+
+    @Inject
+    private SessionDataContainer sessionDataContainer;
 
     @Inject
     NestedCommandFactory commandFactory;
@@ -184,6 +188,12 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
      */
 
     protected void executeValidatedCommand(CommandBase<?> command) {
+        if (!isInternal) {
+            logExecution(log,
+                    sessionDataContainer,
+                    command.getParameters().getSessionId(),
+                    String.format("command %s", actionType));
+        }
         commandFactory.prepareCommandForMonitoring(commandContext, command);
         command.executeAction();
     }
