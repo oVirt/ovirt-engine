@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.editor.BaseEntityModelCheckbox;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostDevicePresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -48,7 +49,7 @@ public class SubTabHostDeviceView extends AbstractSubTabTableWidgetView<VDS, Hos
     public void initTable() {
         super.initTable();
         table.getBarPanel().add(doFilterEditor);
-        doFilterEditor.setLabel("启用过滤");//$NON-NLS-1$
+        doFilterEditor.setLabel(AssetProvider.getConstants().enableFilterOfHostDevice());//$NON-NLS-1$
     }
 
     public void execListFilter(final BaseEntityModelCheckbox<Boolean> filterCheckBox,

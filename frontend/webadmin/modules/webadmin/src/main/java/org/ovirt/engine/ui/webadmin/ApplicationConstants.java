@@ -4736,4 +4736,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Physical Function")
     String physicalFunction();
+
+    @DefaultStringValue("Enable Filter")
+    String enableFilterOfHostDevice();
 }

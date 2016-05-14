@@ -22,12 +22,6 @@
             <div class="container">
                 <div class="row">
 
-                    <div class="col-sm-12">
-                        <div id="brand">
-                            <div class="obrand_loginFormLogoImage"></div>
-                        </div>
-                    </div>
-
                     <div class="col-sm-12 welcome-title-wrapper">
                         <span class="welcome-title"><fmt:message key="methodnotallowed.method_not_allowed" bundle="${methodnotallowed}" /></span>
                     </div>
