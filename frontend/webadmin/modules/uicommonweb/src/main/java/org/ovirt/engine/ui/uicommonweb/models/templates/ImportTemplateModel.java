@@ -35,19 +35,19 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
     @Inject
     public ImportTemplateModel(final VmImportDiskListModel vmImportDiskListModel,
             final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
-            final TemplateGeneralModel templateGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
+            final TemplateImportGeneralModel templateImportGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
         super(vmImportDiskListModel, cluster, clusterQuota, null, vmImportInterfaceListModel,
                 vmImportAppListModel);
         this.templateImportDiskListModel = templateImportDiskListModel;
-        setDetailList(templateGeneralModel, templateImportInterfaceListModel);
+        setDetailList(templateImportGeneralModel, templateImportInterfaceListModel);
     }
 
-    private void setDetailList(final TemplateGeneralModel vmGeneralModel,
+    private void setDetailList(final TemplateImportGeneralModel templateImportGeneralModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
         List<HasEntity> list = new ArrayList<>();
-        list.add(vmGeneralModel);
+        list.add(templateImportGeneralModel);
         list.add(templateImportInterfaceListModel);
         list.add(templateImportDiskListModel);
         setDetailModels(list);
