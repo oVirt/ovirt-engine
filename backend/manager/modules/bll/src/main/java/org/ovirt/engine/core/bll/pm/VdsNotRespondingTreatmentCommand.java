@@ -222,14 +222,14 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     private boolean isConnectivityBrokenThresholdReached(VDS vds) {
         Cluster cluster = DbFacade.getInstance().getClusterDao().get(vds.getClusterId());
-        double percents = 0.0;
+        int percents = 0;
         boolean result = false;
         if (cluster.getFencingPolicy().isSkipFencingIfConnectivityBroken()) {
             List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForCluster(cluster.getId());
             double hostsNumber = hosts.size();
             double hostsWithBrokenConnectivityNumber =
                     hosts.stream().filter(h -> h.getStatus() == VDSStatus.Connecting || h.getStatus() == VDSStatus.NonResponsive).count();
-            percents = (hostsWithBrokenConnectivityNumber/hostsNumber)*100.0;
+            percents = (int) ((hostsWithBrokenConnectivityNumber/hostsNumber)*100);
             result = percents >= cluster.getFencingPolicy().getHostsWithBrokenConnectivityThreshold();
         }
         if (result) {
@@ -238,9 +238,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         return result;
     }
 
-    private void logAlert(VDS host, Double percents) {
+    private void logAlert(VDS host, int percents) {
         AuditLogableBase auditLogable = new AuditLogableBase();
-        auditLogable.addCustomValue("Percents", percents.toString());
+        auditLogable.addCustomValue("Percents", String.valueOf(percents));
         auditLogable.setVdsId(host.getId());
         auditLogable.setRepeatable(true);
         auditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY);
