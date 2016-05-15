@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -188,7 +189,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters
-                (getParameters().getVmId(), "Auto-generated for Live Storage Migration");
+                (getParameters().getVmId(), StorageConstants.LSM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION);
 
         params.setParentCommand(VdcActionType.LiveMigrateVmDisks);
         params.setSnapshotType(SnapshotType.REGULAR);
