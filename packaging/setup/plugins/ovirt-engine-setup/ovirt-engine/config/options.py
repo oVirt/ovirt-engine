@@ -108,6 +108,10 @@ class Plugin(plugin.PluginBase):
                         osetupcons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT,
                     ),
                 },
+                {
+                    'name': 'ImageProxyAddress',
+                    'value': self.environment[osetupcons.ConfigEnv.FQDN],
+                },
             ),
         )
 
