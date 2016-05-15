@@ -346,6 +346,8 @@ select fn_db_add_config_value('IPTablesConfig',
 -A INPUT -p tcp -m multiport --dports 49152:49216 -j ACCEPT
 # snmp
 -A INPUT -p udp --dport 161 -j ACCEPT
+# image-proxy
+-A INPUT -p tcp --dport 54322 -j ACCEPT
 # Reject any other input traffic
 -A INPUT -j REJECT --reject-with icmp-host-prohibited
 -A FORWARD -m physdev ! --physdev-is-bridged -j REJECT --reject-with icmp-host-prohibited
