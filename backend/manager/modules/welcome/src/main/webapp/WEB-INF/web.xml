@@ -65,17 +65,6 @@
     <url-pattern>/405.html</url-pattern>
   </servlet-mapping>
 
-  <!-- ReportsNotInstalled Servlet -->
-  <servlet>
-      <servlet-name>ReportsNotInstalledServlet</servlet-name>
-      <jsp-file>/WEB-INF/ReportsNotInstalled.jsp</jsp-file>
-  </servlet>
-
-  <servlet-mapping>
-      <servlet-name>ReportsNotInstalledServlet</servlet-name>
-      <url-pattern>/ReportsNotInstalled.html</url-pattern>
-  </servlet-mapping>
-
   <!-- Error Servlet -->
   <servlet>
       <servlet-name>ErrorServlet</servlet-name>
