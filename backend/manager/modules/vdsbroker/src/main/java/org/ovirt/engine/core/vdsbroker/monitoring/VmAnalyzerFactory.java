@@ -75,7 +75,7 @@ public class VmAnalyzerFactory {
         // VM from the database running on the monitored host, might be null
         VM dbVmOnMonitoredHost = monitoredVm.getFirst();
         VM dbVm = dbVmOnMonitoredHost != null ? dbVmOnMonitoredHost : vmDao.get(vdsmVm.getVmDynamic().getId());
-        if (updateStatistics) {
+        if (updateStatistics && dbVm != null) {
             dbVm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(dbVm.getId()));
         }
 
