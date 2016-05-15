@@ -69,4 +69,15 @@ public interface VmNetworkInterfaceDao extends ReadDao<VmNetworkInterface, Guid>
      * @return the list of VmNetworkInterfaces
      */
     List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId);
+
+    /**
+     * Retrieves only the properties of VM Network Interfaces that are relevant for
+     * their statistics monitoring.
+     *
+     * @param vmId
+     *             the VM id
+     * @return the list of interfaces with partial data for monitoring
+     */
+    List<VmNetworkInterface> getAllForMonitoredVm(Guid vmId);
+
 }

@@ -2229,6 +2229,27 @@ LEFT JOIN (
     )
     ON vnic_profiles.id = vm_interface.vnic_profile_id;
 
+
+CREATE OR REPLACE VIEW vm_interface_monitoring_view AS
+
+SELECT vm_interface_statistics.rx_rate,
+    vm_interface_statistics.tx_rate,
+    vm_interface_statistics.rx_drop,
+    vm_interface_statistics.tx_drop,
+    vm_interface_statistics.rx_total,
+    vm_interface_statistics.tx_total,
+    vm_interface_statistics.rx_offset,
+    vm_interface_statistics.tx_offset,
+    vm_interface_statistics.iface_status,
+    vm_interface_statistics.sample_time,
+    vm_interface.mac_addr,
+    vm_interface.vm_guid,
+    vm_interface.id
+FROM vm_interface_statistics
+INNER JOIN vm_interface
+    ON vm_interface_statistics.id = vm_interface.id;
+
+
 ----------------------------------------------
 -- Storage Pool
 ----------------------------------------------

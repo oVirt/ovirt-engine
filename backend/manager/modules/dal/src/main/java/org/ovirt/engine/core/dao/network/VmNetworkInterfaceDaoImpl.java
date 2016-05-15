@@ -44,6 +44,18 @@ public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface
     }
 
     @Override
+    public List<VmNetworkInterface> getAllForMonitoredVm(Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId);
+
+        List<VmNetworkInterface> results =
+                getCallsHandler().executeReadList("GetVmNetworkInterfaceToMonitorByVmId",
+                        VmNetworkInterfaceMonitoringRowMapper.INSTANCE,
+                        parameterSource);
+        return results;
+    }
+
+    @Override
     public List<VmNetworkInterface> getAllForTemplate(Guid id) {
         return getAllForTemplate(id, null, false);
     }
@@ -105,4 +117,21 @@ public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface
         }
 
     }
+
+    private static class VmNetworkInterfaceMonitoringRowMapper implements RowMapper<VmNetworkInterface> {
+
+        public static VmNetworkInterfaceMonitoringRowMapper INSTANCE = new VmNetworkInterfaceMonitoringRowMapper();
+
+        @Override
+        public VmNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VmNetworkInterface entity = new VmNetworkInterface();
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
+            entity.setVmId(getGuid(rs, "vm_guid"));
+            entity.setMacAddress(rs.getString("mac_addr"));
+            entity.setStatistics(VmNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
+            return entity;
+        }
+
+    }
+
 }

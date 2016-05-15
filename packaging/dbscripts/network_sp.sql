@@ -959,6 +959,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceToMonitorByVmId (v_vm_id UUID)
+RETURNS SETOF vm_interface_monitoring_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM vm_interface_monitoring_view
+    WHERE vm_guid = v_vm_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceViewByTemplateId (
     v_template_id UUID,
     v_user_id UUID,
