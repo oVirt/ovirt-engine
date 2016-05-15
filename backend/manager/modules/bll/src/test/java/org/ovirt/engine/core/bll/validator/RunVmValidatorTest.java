@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,6 +63,12 @@ public class RunVmValidatorTest {
     @Before
     public void setup() {
         mockVmPropertiesUtils();
+        mockOsRepository();
+    }
+
+    @After
+    public void tearDown() {
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class);
     }
 
     @Test
@@ -233,7 +241,7 @@ public class RunVmValidatorTest {
     private void mockOsRepository() {
         OsRepository osRepository = mock(OsRepository.class);
         when(osRepository.get64bitOss()).thenReturn(new ArrayList<Integer>() {{ add(_64_BIT_OS); }});
-        when(runVmValidator.getOsRepository()).thenReturn(osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     @Test
@@ -241,7 +249,6 @@ public class RunVmValidatorTest {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_0);
         vm.setVmMemSizeMb(MEMORY_LIMIT_32_BIT + 1);
-        mockOsRepository();
         validateResult(runVmValidator.validateMemorySize(vm), false, EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
     }
 
@@ -251,7 +258,6 @@ public class RunVmValidatorTest {
         vm.setClusterCompatibilityVersion(Version.v4_0);
         vm.setVmMemSizeMb(MEMORY_LIMIT_64_BIT + 1);
         vm.setVmOs(_64_BIT_OS);
-        mockOsRepository();
         validateResult(runVmValidator.validateMemorySize(vm), false, EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
     }
 
