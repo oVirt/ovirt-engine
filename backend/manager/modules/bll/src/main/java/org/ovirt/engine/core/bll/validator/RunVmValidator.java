@@ -39,11 +39,9 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
@@ -64,7 +62,6 @@ public class RunVmValidator {
     private RunVmParams runVmParam;
     private boolean isInternalExecution;
     private Guid activeIsoDomainId;
-    private OsRepository osRepository;
 
     private List<Disk> cachedVmDisks;
     private List<DiskImage> cachedVmImageDisks;
@@ -77,7 +74,6 @@ public class RunVmValidator {
         this.runVmParam = rumVmParam;
         this.isInternalExecution = isInternalExecution;
         this.activeIsoDomainId = activeIsoDomainId;
-        this.osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     /**
@@ -565,9 +561,5 @@ public class RunVmValidator {
         }
 
         return cachedClusterNetworksNames;
-    }
-
-    public OsRepository getOsRepository() {
-        return osRepository;
     }
 }
