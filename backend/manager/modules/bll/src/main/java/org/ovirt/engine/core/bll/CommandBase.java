@@ -1938,6 +1938,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return returnValue;
     }
 
+    public boolean reacquireLocks() {
+        return acquireLockAsyncTask();
+    }
+
     /**
      * The following method should be called after restart of engine during initialization of asynchronous task
      */
