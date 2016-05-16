@@ -94,6 +94,15 @@ public class CommandsRepository {
                 .filter(x -> x.getCommandStatus() == CommandStatus.ACTIVE)
                 .filter(x -> !asyncTaskManagerManagedCommands.contains(x.getId()))
                 .forEach(x -> commandsCache.updateCommandStatus(x.getId(), CommandStatus.ENDED_WITH_FAILURE));
+
+        // active commands managed by callbacks and not managed by async task manager need to reacquire locks
+        // on engine restart
+        getCommands(false).stream()
+                .filter(x -> x.isCallbackEnabled())
+                .filter(x -> !x.isCallbackNotified())
+                .filter(x -> x.getCommandStatus().isDuringExecution())
+                .filter(x -> !asyncTaskManagerManagedCommands.contains(x.getId()))
+                .forEach(x -> retrieveCommand(x.getId()).reacquireLocks());
     }
 
     public void addToCallbackMap(Guid commandId, CallbackTiming callbackTiming) {
