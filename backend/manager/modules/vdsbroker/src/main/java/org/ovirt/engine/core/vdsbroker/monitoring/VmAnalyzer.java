@@ -267,6 +267,11 @@ public class VmAnalyzer {
 
             case Error:
                 abortVmMigration();
+
+                if (dbVm.isAutoStartup()) {
+                    setAutoRunFlag();
+                    break;
+                }
             }
             break;
 
