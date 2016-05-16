@@ -1493,6 +1493,18 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetVmsRunningByVds(v_vds_id UUID) RETURNS SETOF vms_monitoring_view STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY
+SELECT DISTINCT vms_monitoring_view.*
+   FROM vms_monitoring_view
+   WHERE run_on_vds = v_vds_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetVmsMigratingToVds(v_vds_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN

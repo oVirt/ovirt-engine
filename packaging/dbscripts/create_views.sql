@@ -1365,6 +1365,40 @@ LEFT JOIN (
     ON vm_static.vm_guid = vm_snapshots.vm_id
 WHERE vm_static.entity_type = 'VM';
 
+
+CREATE OR REPLACE VIEW vms_monitoring_view AS
+
+SELECT vm_dynamic.*,
+    vm_static.vm_name,
+    vm_static.origin,
+    vm_static.auto_startup,
+    vm_static.mem_size_mb,
+    vm_static.min_allocated_mem,
+    vm_static.num_of_sockets,
+    vm_static.cpu_per_socket,
+    vm_static.threads_per_cpu,
+    vm_static.fn_get_num_of_vcpus AS num_of_cpus, -- use of function as an attribute
+    vm_statistics.cpu_user,
+    vm_statistics.cpu_sys,
+    vm_statistics.memory_usage_history,
+    vm_statistics.cpu_usage_history,
+    vm_statistics.network_usage_history,
+    vm_statistics.elapsed_time,
+    vm_statistics.usage_network_percent,
+    vm_statistics.disks_usage,
+    vm_statistics.usage_mem_percent,
+    vm_statistics.migration_progress_percent,
+    vm_statistics.usage_cpu_percent,
+    vm_statistics.guest_mem_buffered,
+    vm_statistics.guest_mem_free,
+    vm_statistics.guest_mem_cached
+FROM vm_static
+INNER JOIN vm_dynamic
+    ON vm_static.vm_guid = vm_dynamic.vm_guid
+INNER JOIN vm_statistics
+    ON vm_static.vm_guid = vm_statistics.vm_guid
+WHERE vm_static.entity_type = 'VM';
+
 CREATE OR REPLACE VIEW vms_with_tags AS
 
 SELECT vms.vm_name,

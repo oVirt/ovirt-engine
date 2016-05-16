@@ -145,9 +145,13 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override
     public Map<Guid, VM> getAllRunningByVds(Guid id) {
+        List<VM> vms = getCallsHandler().executeReadList("GetVmsRunningByVds",
+                 VmMonitoringRowMapper.instance,
+                 getCustomMapSqlParameterSource()
+                        .addValue("vds_id", id));
         HashMap<Guid, VM> map = new HashMap<>();
 
-        for (VM vm : getAllRunningForVds(id)) {
+        for (VM vm : vms) {
             map.put(vm.getId(), vm);
         }
 
@@ -353,6 +357,29 @@ public class VmDaoImpl extends BaseDao implements VmDao {
             entity.setClusterSpiceProxy(rs.getString("cluster_spice_proxy"));
             entity.setNextRunConfigurationExists(rs.getBoolean("next_run_config_exists"));
             entity.setPreviewSnapshot(rs.getBoolean("is_previewing_snapshot"));
+            return entity;
+        }
+    }
+
+    private static final class VmMonitoringRowMapper implements RowMapper<VM> {
+        public static final VmMonitoringRowMapper instance = new VmMonitoringRowMapper();
+
+        @Override
+        public VM mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+            VM entity = new VM();
+            entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
+            entity.setName(rs.getString("vm_name"));
+            entity.setOrigin(OriginType.forValue(rs.getInt("origin")));
+            entity.setAutoStartup(rs.getBoolean("auto_startup"));
+            entity.setVmMemSizeMb(rs.getInt("mem_size_mb"));
+            entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
+            entity.setNumOfSockets(rs.getInt("num_of_sockets"));
+            entity.setCpuPerSocket(rs.getInt("cpu_per_socket"));
+            entity.setThreadsPerCpu(rs.getInt("threads_per_cpu"));
+            entity.setDynamicData(VmDynamicDaoImpl.getRowMapper().mapRow(rs, rowNum));
+            entity.setStatisticsData(VmStatisticsDaoImpl.getRowMapper().mapRow(rs, rowNum));
+
             return entity;
         }
     }
