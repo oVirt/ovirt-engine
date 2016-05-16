@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -32,23 +33,11 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
         if (connection.getStorageType().isFileDomain()) {
             domains = getStorageDomainsByConnId(connection.getId());
             if (domains.size() > 0) {
-                String domainNames = createDomainNamesListFromStorageDomains(domains);
+                String domainNames = domains.stream().map(StorageDomain::getName).collect(Collectors.joining(","));
                 return prepareFailureMessageForDomains(domainNames);
             }
         }
         return true;
-    }
-
-    protected String createDomainNamesListFromStorageDomains(List<StorageDomain> domains) {
-        // Build domain names list to display in the error
-        StringBuilder domainNames = new StringBuilder();
-        for (StorageDomain domain : domains) {
-            domainNames.append(domain.getStorageName());
-            domainNames.append(",");
-        }
-        // Remove the last "," after the last domain
-        domainNames.deleteCharAt(domainNames.length() - 1);
-        return domainNames.toString();
     }
 
     protected List<StorageDomain> getStorageDomainsByConnId(String connectionId) {
