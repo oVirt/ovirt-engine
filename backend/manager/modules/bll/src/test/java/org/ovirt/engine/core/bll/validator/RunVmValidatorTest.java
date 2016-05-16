@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -60,11 +61,14 @@ public class RunVmValidatorTest {
 
     @Spy
     private RunVmValidator runVmValidator = new RunVmValidator();
+    @Mock
+    private SnapshotsValidator snapshotValidator;
 
     @Before
     public void setup() throws InitializationException {
         mockVmPropertiesUtils();
         mockOsRepository();
+        doReturn(snapshotValidator).when(runVmValidator).getSnapshotValidator();
     }
 
     @After
@@ -268,25 +272,9 @@ public class RunVmValidatorTest {
             Boolean isStatelessParam,
             boolean shouldPass,
             EngineMessage message) {
-        runVmValidator = new RunVmValidator() {
-            @Override
-            protected SnapshotsValidator getSnapshotValidator() {
-                return new SnapshotsValidator() {
-                    @Override
-                    public ValidationResult vmNotInPreview(Guid vmId) {
-                        if (vmInPreview) {
-                            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
-                        }
-                        return ValidationResult.VALID;
-                    };
-                };
-            };
-
-            @Override
-            public ValidationResult hasSpaceForSnapshots() {
-                return ValidationResult.VALID;
-            }
-        };
+        doReturn(ValidationResult.VALID).when(runVmValidator).hasSpaceForSnapshots();
+        when(snapshotValidator.vmNotInPreview(any(Guid.class))).thenReturn(vmInPreview ?
+                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW) : ValidationResult.VALID);
         VM vm = new VM();
         vm.setAutoStartup(autoStartUp);
         vm.setStateless(isVmStateless);
