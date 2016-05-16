@@ -272,10 +272,12 @@ public class RunVmValidatorTest {
             Boolean isStatelessParam,
             boolean shouldPass,
             EngineMessage message) {
+        Guid vmId = Guid.newGuid();
         doReturn(ValidationResult.VALID).when(runVmValidator).hasSpaceForSnapshots();
-        when(snapshotValidator.vmNotInPreview(any(Guid.class))).thenReturn(vmInPreview ?
+        when(snapshotValidator.vmNotInPreview(vmId)).thenReturn(vmInPreview ?
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW) : ValidationResult.VALID);
         VM vm = new VM();
+        vm.setId(vmId);
         vm.setAutoStartup(autoStartUp);
         vm.setStateless(isVmStateless);
         validateResult(runVmValidator.validateStatelessVm(vm, isStatelessParam),
