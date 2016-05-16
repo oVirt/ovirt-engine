@@ -89,6 +89,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
@@ -97,6 +98,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Inject
     private ProviderDao providerDao;
+    @Inject
+    private VmDevicesMonitoring vmDevicesMonitoring;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -204,6 +207,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateRngDevice();
             updateGraphicsDevices();
             updateVmHostDevices();
+            updateDeviceAddresses();
         }
         IconUtils.removeUnusedIcons(oldIconIds);
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
@@ -278,6 +282,19 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         return true;
+    }
+
+    private void updateDeviceAddresses() {
+        if (isEmulatedMachineChanged()) {
+            log.info("Emulated machine changed for VM: {} ({}). Clearing device addresses.",
+                    getVm().getName(),
+                    getVm().getId());
+            getVmDeviceDao().clearAllDeviceAddressesByVmId(getVmId());
+
+            VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(System.nanoTime());
+            change.updateVm(getVmId(), VmDevicesMonitoring.EMPTY_HASH);
+            change.flush();
+        }
     }
 
     private void createNextRunSnapshot() {
@@ -973,6 +990,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return !(getVm().getCpuPinning() == null ?
                 getParameters().getVmStaticData().getCpuPinning() == null :
                 getVm().getCpuPinning().equals(getParameters().getVmStaticData().getCpuPinning()));
+    }
+
+    private boolean isEmulatedMachineChanged() {
+        return !Objects.equals(
+                getParameters().getVm().getCustomEmulatedMachine(),
+                getVm().getCustomEmulatedMachine());
     }
 
     @Override

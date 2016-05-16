@@ -354,6 +354,17 @@ END;$BODY$
 
 LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION clearAllDeviceAddressesByVmId (v_vm_id UUID)
+RETURNS VOID AS $BODY$
+
+BEGIN
+    UPDATE vm_device
+    SET address = ''
+    WHERE vm_id = v_vm_id;
+END;$BODY$
+
+LANGUAGE 'plpgsql';
+
 CREATE OR REPLACE FUNCTION ExistsVmDeviceByVmIdAndType (
     v_vm_id UUID,
     v_type VARCHAR(30)

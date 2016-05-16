@@ -237,7 +237,14 @@ public class VmDeviceDaoImpl extends
                 .addValue("device_id", deviceId);
 
         getCallsHandler().executeModification("clearVmDeviceAddress", parameterSource);
+    }
 
+    @Override
+    public void clearAllDeviceAddressesByVmId(Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId);
+
+        getCallsHandler().executeModification("clearAllDeviceAddressesByVmId", parameterSource);
     }
 
     @Override
