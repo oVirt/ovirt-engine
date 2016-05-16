@@ -791,7 +791,7 @@ select fn_db_add_config_value('ImageTransferHostTicketValidityInSeconds','300','
 select fn_db_add_config_value('ImageTransferHostTicketRefreshAllowanceInSeconds','60','general');
 select fn_db_add_config_value('ImageTransferPausedLogIntervalInSeconds','1800','general');
 select fn_db_add_config_value('UploadImageUiInactivityTimeoutInSeconds','60','general');
-select fn_db_add_config_value('UploadImageChunkSizeKB','8192','general');
+select fn_db_add_config_value('UploadImageChunkSizeKB','4096','general');
 select fn_db_add_config_value('UploadImageXhrTimeoutInSeconds','10','general');
 select fn_db_add_config_value('UploadImageXhrRetryIntervalInSeconds','3','general');
 select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
