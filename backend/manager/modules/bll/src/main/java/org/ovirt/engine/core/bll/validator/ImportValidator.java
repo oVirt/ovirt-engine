@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
-import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.ImportParameters;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class ImportValidator {
 
-    private ImportVmParameters params;
+    private ImportParameters params;
 
     private StoragePool cachedStoragePool;
     private StorageDomain cachedStorageDomain;
@@ -46,17 +46,11 @@ public class ImportValidator {
     private static final Pattern VALIDATE_MAC_ADDRESS =
             Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
-    public ImportValidator(ImportVmParameters params) {
+    public ImportValidator(ImportParameters params) {
         this.params = params;
     }
 
     protected Logger log = LoggerFactory.getLogger(getClass());
-
-    /**
-     * Used for testings
-     */
-    public ImportValidator() {
-    }
 
     public ValidationResult validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData, List<DiskImage> images) {
         if (ovfEntityData == null && !params.isImportAsNewEntity()) {

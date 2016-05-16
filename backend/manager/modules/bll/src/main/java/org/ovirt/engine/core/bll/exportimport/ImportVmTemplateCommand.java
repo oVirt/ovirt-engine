@@ -210,7 +210,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         }
 
-        if (!validate(new ImportValidator().validateMacAddress(getVmTemplate().getInterfaces()))) {
+        if (!validate(new ImportValidator(getParameters()).validateMacAddress(getVmTemplate().getInterfaces()))) {
             return false;
         }
 

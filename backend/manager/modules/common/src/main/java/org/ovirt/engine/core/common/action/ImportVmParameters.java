@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImportVmParameters extends VmOperationParameterBase implements Serializable {
+public class ImportVmParameters extends VmOperationParameterBase implements Serializable, ImportParameters {
     private static final long serialVersionUID = -6514416097090370831L;
 
     @Valid

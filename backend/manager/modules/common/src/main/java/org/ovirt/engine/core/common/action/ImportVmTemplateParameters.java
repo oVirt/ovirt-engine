@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImportVmTemplateParameters extends MoveOrCopyParameters implements Serializable {
+public class ImportVmTemplateParameters extends MoveOrCopyParameters implements Serializable, ImportParameters {
     private static final long serialVersionUID = -6796905699865416157L;
 
     public ImportVmTemplateParameters(Guid storagePoolId, Guid sourceDomainId, Guid destDomainId, Guid clusterId,
