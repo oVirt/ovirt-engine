@@ -3005,4 +3005,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Stop Gluster service")
     String stopGlusterServices();
+
+    @DefaultStringValue("There is no cluster supporting selected VM(s) architecture in selected Data Center")
+    String noClusterSupportingArchitectureInDC();
+
+    @DefaultStringValue("Selected Virtual Machines have to have same architecture.")
+    String sameArchitectureRequired();
 }
