@@ -2300,6 +2300,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
+        if (!importVmsModel.validateArchitectures()) {
+            return;
+        }
+
         final ImportVmModel model = importVmsModel.getSpecificImportModel();
         setWindow(null); // remove import-vms window first
         setWindow(model);
