@@ -12,6 +12,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -240,7 +241,7 @@ public class RunVmValidatorTest {
 
     private void mockOsRepository() {
         OsRepository osRepository = mock(OsRepository.class);
-        when(osRepository.get64bitOss()).thenReturn(new ArrayList<Integer>() {{ add(_64_BIT_OS); }});
+        when(osRepository.get64bitOss()).thenReturn(Collections.singletonList(_64_BIT_OS));
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
