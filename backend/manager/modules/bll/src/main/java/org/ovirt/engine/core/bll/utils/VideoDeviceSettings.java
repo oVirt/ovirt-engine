@@ -17,19 +17,10 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VideoDeviceSettings {
 
-    private interface VideoSettings {
-        /**
-         * Returns video device settings such as the number of heads or RAM sizes.
-         *
-         * @return a map of device settings
-         */
-        public abstract Map<String, Integer> getVideoDeviceSettings(VmBase vmBase);
-    }
-
     /**
      * Video settings for clusters 3.6 and newer (they may change in future versions).
      */
-    private static class VgamemVideoSettings implements VideoSettings {
+    private static class VgamemVideoSettings {
 
         // Displays up to 4 Mpix fit into this; higher resolutions are currently
         // not supported by the drivers.
@@ -37,21 +28,12 @@ public class VideoDeviceSettings {
         private static final int DEFAULT_VRAM_SIZE = 8192; // KB
         private static final int RAM_MULTIPLIER = 4;
 
-        @Override
-        public Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
-            if (vmBase.getDefaultDisplayType() == DisplayType.qxl) {
-                return getQxlVideoDeviceSettings(vmBase);
-            } else {
-                return getVgaVideoDeviceSettings();
-            }
-        }
-
         /**
          * Returns video device settings for QXL devices.
          *
          * @return a map of device settings
          */
-        private Map<String, Integer> getQxlVideoDeviceSettings(VmBase vmBase) {
+        public static Map<String, Integer> getQxlVideoDeviceSettings(VmBase vmBase) {
             // Things are likely to completely change in future, so let's keep this
             // computation as simple as possible for now.
             Map<String, Integer> settings = new HashMap<>();
@@ -71,7 +53,7 @@ public class VideoDeviceSettings {
          *
          * @return a map of device settings
          */
-        private Map<String, Integer> getVgaVideoDeviceSettings() {
+        public static Map<String, Integer> getVgaVideoDeviceSettings() {
             // No multihead, no special driver requirements, the base value should
             // just work.  Except for high resolutions on Wayland (requires twice
             // as much video RAM as other systems due to page flipping); not likely
@@ -79,10 +61,11 @@ public class VideoDeviceSettings {
             return Collections.singletonMap(VdsProperties.VIDEO_VRAM, BASE_RAM_SIZE);
         }
 
-        private int getVramMultiplier(VmBase vmBase) {
+        private static int getVramMultiplier(VmBase vmBase) {
             OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
             return osRepository.getVramMultiplier(vmBase.getOsId());
         }
+
     }
 
     /**
@@ -90,13 +73,12 @@ public class VideoDeviceSettings {
      * Not necesessarily correct but this is what the engine used to send to the hosts,
      * so it's best to reuse the values in order not to break old setups.
      */
-    private static class LegacyVideoSettings implements VideoSettings {
+    private static class LegacyVideoSettings {
 
         private static final int BASE_RAM_SIZE = 65536; // KB
         private static final int VRAM_SIZE = 32768; // KB
 
-        @Override
-        public Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
+        public static Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
             Map<String, Integer> settings = new HashMap<>();
             boolean singleQxlPci = vmBase.getSingleQxlPci();
             int numOfMonitors = vmBase.getNumOfMonitors();
@@ -108,10 +90,21 @@ public class VideoDeviceSettings {
             }
             return settings;
         }
+
     }
 
     private static Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
-        return selectVideoSettings(vmBase).getVideoDeviceSettings(vmBase);
+        Version vmVersion = vmBase.getCustomCompatibilityVersion();
+        Supplier<Version> clusterVersionSupplier = () -> ClusterUtils.getCompatibilityVersion(vmBase);
+        if (CompatibilityVersionUtils.getEffective(vmVersion, clusterVersionSupplier).greaterOrEquals(Version.v3_6)) {
+            if (vmBase.getDefaultDisplayType() == DisplayType.qxl) {
+                return VgamemVideoSettings.getQxlVideoDeviceSettings(vmBase);
+            } else {
+                return VgamemVideoSettings.getVgaVideoDeviceSettings();
+            }
+        } else {
+            return LegacyVideoSettings.getVideoDeviceSettings(vmBase);
+        }
     }
 
     /**
@@ -122,16 +115,6 @@ public class VideoDeviceSettings {
     public static Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
         return getVideoDeviceSettings(vmBase).entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, e -> String.valueOf(e.getValue())));
-    }
-
-    private static VideoSettings selectVideoSettings(VmBase vmBase) {
-        Version vmVersion = vmBase.getCustomCompatibilityVersion();
-        Supplier<Version> clusterVersionSupplier = () -> ClusterUtils.getCompatibilityVersion(vmBase);
-        if (CompatibilityVersionUtils.getEffective(vmVersion, clusterVersionSupplier).greaterOrEquals(Version.v3_6)) {
-            return new VgamemVideoSettings();
-        } else {
-            return new LegacyVideoSettings();
-        }
     }
 
     /**
@@ -145,4 +128,5 @@ public class VideoDeviceSettings {
         return (settings.getOrDefault(VdsProperties.VIDEO_RAM, 0) +
                 settings.getOrDefault(VdsProperties.VIDEO_VRAM, 0) + 1023) / 1024;
     }
+
 }
