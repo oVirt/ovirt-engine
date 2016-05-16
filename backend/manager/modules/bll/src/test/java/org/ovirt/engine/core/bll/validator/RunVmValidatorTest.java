@@ -61,7 +61,7 @@ public class RunVmValidatorTest {
     private RunVmValidator runVmValidator = new RunVmValidator();
 
     @Before
-    public void setup() {
+    public void setup() throws InitializationException {
         mockVmPropertiesUtils();
         mockOsRepository();
     }
@@ -294,7 +294,7 @@ public class RunVmValidatorTest {
                 message);
     }
 
-    private VmPropertiesUtils mockVmPropertiesUtils() {
+    private VmPropertiesUtils mockVmPropertiesUtils() throws InitializationException {
         VmPropertiesUtils utils = spy(new VmPropertiesUtils());
         doReturn("sap_agent=^(true|false)$;sndbuf=^[0-9]+$;" +
                 "vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;" +
@@ -308,11 +308,7 @@ public class RunVmValidatorTest {
                 when(utils)
                 .getSupportedClusterLevels();
         doReturn(utils).when(runVmValidator).getVmPropertiesUtils();
-        try {
-            utils.init();
-        } catch (InitializationException e) {
-            e.printStackTrace();
-        }
+        utils.init();
         return utils;
     }
 
