@@ -277,6 +277,7 @@ public class BackendStorageDomainsResource
         case ISCSI:
         case FCP:
             if (storageDomain.isSetImport() && storageDomain.isImport()) {
+                validateParameters(storageDomain, "id");
                 resp = addExistingSAN(storageDomain, entity.getStorageType(), hostId);
             } else {
                 resp = addSAN(storageDomain, entity.getStorageType(), entity, hostId);
