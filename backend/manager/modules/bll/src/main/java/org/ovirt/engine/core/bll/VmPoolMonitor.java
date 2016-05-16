@@ -64,10 +64,13 @@ public class VmPoolMonitor implements BackendService {
      */
     @OnTimerMethodAnnotation("managePrestartedVmsInAllVmPools")
     public void managePrestartedVmsInAllVmPools() {
-        List<VmPool> vmPools = DbFacade.getInstance().getVmPoolDao().getAll();
-        for (VmPool vmPool : vmPools) {
-            managePrestartedVmsInPool(vmPool);
-        }
+        getAllVmPools().stream()
+        .filter(pool -> pool.getPrestartedVms() > 0)
+        .forEach(this::managePrestartedVmsInPool);
+    }
+
+    private List<VmPool> getAllVmPools() {
+        return DbFacade.getInstance().getVmPoolDao().getAll();
     }
 
     public void triggerPoolMonitoringJob() {
