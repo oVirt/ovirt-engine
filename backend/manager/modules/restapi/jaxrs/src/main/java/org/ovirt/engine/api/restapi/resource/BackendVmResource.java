@@ -40,6 +40,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
+import org.ovirt.engine.api.resource.DiskAttachmentsResource;
 import org.ovirt.engine.api.resource.GraphicsConsolesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
@@ -229,6 +230,12 @@ public class BackendVmResource
     @Override
     public VmDisksResource getDisksResource() {
         return inject(new BackendVmDisksResource(guid));
+    }
+
+    @Override
+    public DiskAttachmentsResource getDiskAttachmentsResource() {
+        // TODO: Implement this.
+        return null;
     }
 
     @Override

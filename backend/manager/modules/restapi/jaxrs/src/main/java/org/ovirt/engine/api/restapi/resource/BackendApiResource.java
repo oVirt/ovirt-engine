@@ -58,6 +58,7 @@ import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
 import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.api.resource.MacPoolsResource;
+import org.ovirt.engine.api.resource.NetworkFiltersResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.resource.RolesResource;
@@ -540,6 +541,12 @@ public class BackendApiResource
     @Override
     public MacPoolsResource getMacPoolsResource() {
         return inject(new BackendMacPoolsResource());
+    }
+
+    @Override
+    public NetworkFiltersResource getNetworkFiltersResource() {
+        // TODO: Implement this.
+        return null;
     }
 
     @Override
