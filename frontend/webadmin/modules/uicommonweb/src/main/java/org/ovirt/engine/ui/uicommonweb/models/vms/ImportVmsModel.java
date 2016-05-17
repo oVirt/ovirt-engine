@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -118,8 +119,41 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         // General
         setDataCenters(new ListModel<StoragePool>());
         setImportSources(new ListModel<ImportSource>());
-        setExternalVmModels(new ListModel<EntityModel<VM>>());
-        setImportedVmModels(new ListModel<EntityModel<VM>>());
+
+        setExternalVmModels(new ListModel<EntityModel<VM>>()
+        {
+            @Override
+            // for sorting the external VMs list
+            public void setItems(Collection<EntityModel<VM>> values) {
+
+                Collection<EntityModel<VM>> externalVms = getExternalVmModels().getItems();
+
+                if (values != null && externalVms == values) {   // sort required.
+                    sortVms(values);
+                }
+                else {                                           // regular flow - sort is not required*/
+                    super.setItems(values);
+                }
+            }
+        });
+
+        setImportedVmModels(new ListModel<EntityModel<VM>>()
+        {
+            @Override
+            // for sorting the imported VMs list
+            public void setItems(Collection<EntityModel<VM>> values) {
+
+                Collection<EntityModel<VM>> importedVms = getImportedVmModels().getItems();
+
+                if (values != null && importedVms == values) {   // sort required.
+                    sortVms(values);
+                }
+                else {                                           // regular flow - sort is not required*/
+                    super.setItems(values);
+                }
+            }
+        });
+
         setVmwareProviders(new ListModel<Provider<VmwareVmProviderProperties>>());
 
         // VMWARE
@@ -229,6 +263,21 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setHashName("import_virtual_machine"); //$NON-NLS-1$
 
         initDataCenters();
+    }
+
+    private void sortVms(Collection<EntityModel<VM>> vms) {
+        List<VM> vmsList = new ArrayList<>();
+
+        for (EntityModel<VM> vm : vms) {
+            vmsList.add(vm.getEntity());
+        }
+
+        Collections.sort(vmsList, new LexoNumericNameableComparator<>());
+
+        vms.clear();
+        for (VM vm : vmsList) {
+            vms.add(new EntityModel<>(vm));
+        }
     }
 
     private INewAsyncCallback createGetStorageDomainsByStoragePoolIdCallback(final StoragePool dataCenter) {
@@ -653,6 +702,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private void updateVms(List<VM> vms) {
         clearVms();
         List<EntityModel<VM>> externalVms = new ArrayList<>();
+
+        // VMs sorting
+        Collections.sort(vms, new LexoNumericNameableComparator<>());
+
         for (VM vm : vms) {
             externalVms.add(new EntityModel<>(vm));
         }

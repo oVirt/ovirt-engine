@@ -174,7 +174,10 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
 
         if (excludedTableModel.getItems() != null && excludedTableModel.getItems().containsAll(itemsToInclude)) {
             excludedTableModel.getItems().removeAll(itemsToInclude);
-            getListModelItems(includedTableModel).addAll(itemsToInclude);
+
+            Collection<T> items = getListModelItems(includedTableModel);
+            items.addAll(itemsToInclude);
+            includedTableModel.setItems(items);
 
             for (T item : itemsToInclude) {
                 excludedSelectionModel.setSelected(item, false);
@@ -190,7 +193,10 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
 
         if (includedTableModel.getItems() != null && includedTableModel.getItems().containsAll(itemsToExclude)) {
             includedTableModel.getItems().removeAll(itemsToExclude);
-            getListModelItems(excludedTableModel).addAll(itemsToExclude);
+
+            Collection<T> items = getListModelItems(excludedTableModel);
+            items.addAll(itemsToExclude);
+            excludedTableModel.setItems(items);
 
             for (T item : itemsToExclude) {
                 includedSelectionModel.setSelected(item, false);
