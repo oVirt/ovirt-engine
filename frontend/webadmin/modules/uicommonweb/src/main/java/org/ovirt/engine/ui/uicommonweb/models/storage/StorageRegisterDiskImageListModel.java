@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.RegisterDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.UnregisteredDiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -21,6 +20,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -111,13 +112,29 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
             return;
         }
 
-        for (Object item : getSelectedItems()) {
-            DiskImage disk = (DiskImage) item;
-            RegisterDiskParameters registerDiskParams =
-                    new RegisterDiskParameters(disk, getEntity().getId());
-            registerDiskParams.setRefreshFromStorage(true);
-            Frontend.getInstance().runAction(VdcActionType.RegisterDisk, registerDiskParams);
-        }
+        final RegisterDiskModel registerDiskModel = new RegisterDiskModel();
+        registerDiskModel.setSourceAvailable(false);
+        registerDiskModel.setTargetAvailable(false);
+        setWindow(registerDiskModel);
+
+        // noinspection unchecked
+        registerDiskModel.setEntity(this);
+        registerDiskModel.init();
+        registerDiskModel.setTitle(ConstantsManager.getInstance().getConstants().importDisksTitle());
+        registerDiskModel.setHelpTag(HelpTag.import_disks);
+        registerDiskModel.setHashName("import_disks"); //$NON-NLS-1$
+
+        registerDiskModel.startProgress();
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                StoragePool dataCenter = (StoragePool) returnValue;
+                registerDiskModel.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
+                registerDiskModel.setDisks(Linq.disksToDiskModelList(getSelectedItems()));
+                registerDiskModel.updateStorageDomain(getEntity());
+                registerDiskModel.stopProgress();
+            }
+        }), getEntity().getStoragePoolId());
     }
 
     @Override

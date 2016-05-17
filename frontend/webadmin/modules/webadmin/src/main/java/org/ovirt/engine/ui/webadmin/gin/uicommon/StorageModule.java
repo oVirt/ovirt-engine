@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.DiskProfilePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
@@ -262,7 +263,8 @@ public class StorageModule extends AbstractGinModule {
     public SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel> getStorageRegisterDiskImageListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<StorageListModel> mainModelProvider,
-            final Provider<StorageRegisterDiskImageListModel> modelProvider) {
+            final Provider<StorageRegisterDiskImageListModel> modelProvider,
+            final Provider<DisksAllocationPopupPresenterWidget> registerDiskPopupProvider) {
 
         SearchableDetailTabModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel> result =
                 new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel>(
@@ -271,6 +273,18 @@ public class StorageModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(
                             StorageRegisterDiskImageListModel source, UICommand lastExecutedCommand) {
                         return super.getConfirmModelPopup(source, lastExecutedCommand);
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
+                            StorageRegisterDiskImageListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand == getModel().getRegisterCommand()) {
+                            return registerDiskPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
                     }
                 };
         result.setMainModelProvider(mainModelProvider);

@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
@@ -59,6 +60,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     boolean showVolumeType;
     boolean showSource;
+    boolean showTarget;
     boolean showQuota;
     boolean showVolumeFormat;
 
@@ -104,7 +106,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
             listHeader.addColumn(new EmptyColumn(), constants.sourceDisk(), width);
         }
 
-        listHeader.addColumn(new EmptyColumn(), constants.targetDisk(), width);
+        if (showTarget) {
+            listHeader.addColumn(new EmptyColumn(), constants.targetDisk(), width);
+        }
+
         listHeader.addColumn(new EmptyColumn(), constants.diskProfile(), width);
 
         if (showQuota) {
@@ -121,6 +126,8 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         setShowVolumeType(model.getIsVolumeTypeAvailable());
         setShowVolumeFormat(model.getIsVolumeFormatAvailable());
         setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
+        setShowSource(model.isSourceAvailable());
+        setShowTarget(model.isTargetAvailable());
     }
 
     @Override
@@ -184,6 +191,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     public void setShowSource(boolean showSource) {
         this.showSource = showSource;
+    }
+
+    public void setShowTarget(boolean showTarget) {
+        this.showTarget = showTarget;
     }
 
     public void setShowQuota(boolean showQuota) {

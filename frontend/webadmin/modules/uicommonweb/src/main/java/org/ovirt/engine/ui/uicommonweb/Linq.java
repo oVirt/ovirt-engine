@@ -604,9 +604,7 @@ public final class Linq {
         ArrayList<DiskModel> diskModels = new ArrayList<>();
 
         for (Disk disk : disks) {
-            DiskModel diskModel = new DiskModel();
-            diskModel.setDisk(disk);
-            diskModels.add(diskModel);
+            diskModels.add(diskToModel(disk));
         }
 
         return diskModels;

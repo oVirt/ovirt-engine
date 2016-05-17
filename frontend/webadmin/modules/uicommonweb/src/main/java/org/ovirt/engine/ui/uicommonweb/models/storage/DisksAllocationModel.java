@@ -100,7 +100,7 @@ public class DisksAllocationModel extends EntityModel {
         }
     }
 
-    private void setDefaultVolumeInformationSelection(List<DiskModel> diskModels) {
+    protected void setDefaultVolumeInformationSelection(List<DiskModel> diskModels) {
         final Map<Guid, DiskModel> diskModelsMap = new HashMap<>();
         for (DiskModel diskModel : diskModels) {
             diskModelsMap.put(((DiskImage) diskModel.getDisk()).getImageId(), diskModel);
@@ -169,6 +169,8 @@ public class DisksAllocationModel extends EntityModel {
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainNameAvailable;
     private boolean isWarningAvailable;
+    private boolean isSourceAvailable = true;
+    private boolean isTargetAvailable = true;
 
     public DisksAllocationModel() {
         setImageToDestinationDomainMap(new HashMap<Guid, DiskImage>());
@@ -286,6 +288,7 @@ public class DisksAllocationModel extends EntityModel {
         for (DiskModel diskModel : disks) {
             diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
             diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
+            diskModel.getStorageDomain().setIsAvailable(isTargetAvailable);
             diskModel.getVolumeType().setIsAvailable(isVolumeTypeAvailable);
             diskModel.getVolumeType().setIsChangeable(isVolumeTypeChangable);
             diskModel.getVolumeFormat().setIsAvailable(isVolumeFormatAvailable);
@@ -457,4 +460,19 @@ public class DisksAllocationModel extends EntityModel {
         dynamicWarning = value;
     }
 
+    public boolean isSourceAvailable() {
+        return isSourceAvailable;
+    }
+
+    public void setSourceAvailable(boolean sourceAvailable) {
+        isSourceAvailable = sourceAvailable;
+    }
+
+    public boolean isTargetAvailable() {
+        return isTargetAvailable;
+    }
+
+    public void setTargetAvailable(boolean targetAvailable) {
+        isTargetAvailable = targetAvailable;
+    }
 }

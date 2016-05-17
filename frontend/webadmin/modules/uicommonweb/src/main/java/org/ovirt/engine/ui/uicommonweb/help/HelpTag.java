@@ -236,6 +236,8 @@ public enum HelpTag {
 
     import_images("import_images", HelpTagType.WEBADMIN, "[Glance integration] Storage main tab -> Images sub-tab (only for 'ISO' storage domain) -> 'Import Image(s)' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    import_disks("import_disks", HelpTagType.WEBADMIN, "Storage main tab -> Disk Import sub-tab -> 'Import Disk(s)' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     import_networks("import_networks", HelpTagType.WEBADMIN, "[Neutron integration?] 'Networks' main tab -> 'Import Networks' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     import_pre_configured_domain("import_pre_configured_domain", HelpTagType.WEBADMIN, "Storage Tab > Import Domain"), //$NON-NLS-1$ //$NON-NLS-2$
