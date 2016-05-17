@@ -140,6 +140,9 @@ public class VdsBrokerObjectsBuilder {
         } catch (IllegalArgumentException ex) {
             log.error("Illegal architecture type: %s, replacing with x86_64", xmlRpcStruct.get(VdsProperties.vm_arch));
             vm.setClusterArch(ArchitectureType.x86_64);
+        } catch (NullPointerException ex) {
+            log.error("null architecture type, replacing with x86_64, %s", vm);
+            vm.setClusterArch(ArchitectureType.x86_64);
         }
 
         return vm;
@@ -747,11 +750,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     protected static ArchitectureType parseArchitecture(Map<String, Object> xmlRpcStruct) {
-        try {
-            return ArchitectureType.valueOf((String) xmlRpcStruct.get(VdsProperties.vm_arch));
-        } catch (NullPointerException e) {
-            return null;
-        }
+        return ArchitectureType.valueOf((String) xmlRpcStruct.get(VdsProperties.vm_arch));
     }
 
     public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> xmlRpcStruct) {
