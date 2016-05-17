@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 import static org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper.isHostedEngineDomain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -403,9 +404,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getParameters().getStorageDomainId(),
+        List permissionCheckSubjects = new ArrayList<>();
+        permissionCheckSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage,
                 getActionType().getActionGroup()));
+        return permissionCheckSubjects;
     }
 
     protected void changeStorageDomainStatusInTransaction(final StoragePoolIsoMap map,
