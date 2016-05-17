@@ -173,6 +173,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         if (ipv4BootProtocol != value) {
             ipv4BootProtocol = value;
             ipv4BootProtocolChanged();
+            onPropertyChanged(new PropertyChangedEventArgs("Ipv4BootProtocol")); //$NON-NLS-1$
         }
     }
 
@@ -184,6 +185,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         if (ipv6BootProtocol != value) {
             ipv6BootProtocol = value;
             ipv6BootProtocolChanged();
+            onPropertyChanged(new PropertyChangedEventArgs("Ipv6BootProtocol")); //$NON-NLS-1$
         }
     }
 
@@ -283,7 +285,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
                 && networkAttachment.getReportedConfigurations().isNetworkInSync();
         boolean shouldBeSyncedNetwork = !syncedNetwork && Boolean.TRUE.equals(getIsToSync().getEntity());
         if (newAttachment || syncedNetwork || shouldBeSyncedNetwork) {
-            syncWith(new InterfacePropertiesAccessor.FromNetworkAttachment(networkAttachment, networkQos));
+            syncWith(new InterfacePropertiesAccessor.FromNetworkAttachmentForModel(networkAttachment, networkQos, nic));
         } else {
             syncWith(new InterfacePropertiesAccessor.FromNic(nic));
         }
@@ -365,6 +367,8 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
     }
 
     private void isToSyncChanged() {
+        // The widget has to be available in order to update its values
+        setBootProtocolsAvailable(true);
         initValues();
 
         Boolean isEditingEnabled = !getIsToSync().getIsChangable() || getIsToSync().getEntity();

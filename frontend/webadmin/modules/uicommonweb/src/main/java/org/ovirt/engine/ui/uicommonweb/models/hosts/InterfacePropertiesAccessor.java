@@ -242,4 +242,60 @@ public interface InterfacePropertiesAccessor {
             return customProperties;
         }
     }
+
+    class FromNetworkAttachmentForModel extends FromNetworkAttachment {
+
+        VdsNetworkInterface nic;
+
+        public FromNetworkAttachmentForModel(NetworkAttachment networkAttachment,
+                HostNetworkQos networkQos,
+                VdsNetworkInterface nic) {
+            super(networkAttachment, networkQos);
+            this.nic = nic;
+        }
+
+        @Override
+        public String getIpv4Address() {
+            return shouldTakeIpv4DataFromNic() ? nic.getIpv4Address() : super.getIpv4Address();
+        }
+
+        @Override
+        public String getIpv4Netmask() {
+            return shouldTakeIpv4DataFromNic() ? nic.getIpv4Subnet() : super.getIpv4Netmask();
+        }
+
+        @Override
+        public String getIpv4Gateway() {
+            return shouldTakeIpv4DataFromNic() ? nic.getIpv4Gateway() : super.getIpv4Gateway();
+        }
+
+        @Override
+        public String getIpv6Address() {
+            return shouldTakeIpv6DataFromNic() ? nic.getIpv6Address() : super.getIpv6Address();
+        }
+
+        @Override
+        public Integer getIpv6Prefix() {
+            return shouldTakeIpv6DataFromNic() ? nic.getIpv6Prefix() : super.getIpv6Prefix();
+        }
+
+        @Override
+        public String getIpv6Gateway() {
+            return shouldTakeIpv6DataFromNic() ? nic.getIpv6Gateway() : super.getIpv6Gateway();
+        }
+
+        private boolean shouldTakeIpv4DataFromNic() {
+            if (Ipv4BootProtocol.DHCP == getIpv4BootProtocol()) {
+                return true;
+            }
+            return false;
+        }
+
+        private boolean shouldTakeIpv6DataFromNic() {
+            if (Ipv6BootProtocol.DHCP == getIpv6BootProtocol() || Ipv6BootProtocol.AUTOCONF == getIpv6BootProtocol()) {
+                return true;
+            }
+            return false;
+        }
+    }
 }
