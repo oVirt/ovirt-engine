@@ -295,14 +295,24 @@ class Plugin(plugin.PluginBase):
                     ),
                 ]
             )
-        self.execute(
+        rc, stdout, stderr = self.execute(
             args=args,
             envAppend={
                 'DBFUNC_DB_PGPASSFILE': self.environment[
                     oenginecons.EngineDBEnv.PGPASS_FILE
                 ]
             },
+            raiseOnError=False,
         )
+        if rc:
+            self.logger.error(
+                '%s: %s',
+                os.path.basename(
+                    oenginecons.FileLocations.OVIRT_ENGINE_DB_SCHMA_TOOL
+                ),
+                stderr[-1]
+            )
+            raise RuntimeError(_('Engine schema refresh failed'))
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
