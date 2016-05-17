@@ -510,7 +510,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
     private UploadDiskImageParameters createInitParams() {
         Disk newDisk = diskModel.getDisk();
-        AddDiskParameters diskParameters = new AddDiskParameters(null, newDisk);
+        AddDiskParameters diskParameters = new AddDiskParameters(newDisk);
 
         if (diskModel.getDiskStorageType().getEntity() == DiskStorageType.IMAGE ||
                 diskModel.getDiskStorageType().getEntity() == DiskStorageType.CINDER) {
