@@ -5,20 +5,18 @@ import static org.easymock.EasyMock.expect;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Label;
+import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicLabelResourceTest
-    extends AbstractBackendSubResourceTest<Label, NetworkLabel, BackendHostNicLabelResource> {
+    extends AbstractBackendSubResourceTest<NetworkLabel, org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel, BackendHostNicLabelResource> {
 
     private static final Guid NIC_ID = Guid.newGuid();
     private static final Guid HOST_ID = Guid.newGuid();
@@ -57,7 +55,7 @@ public class BackendHostNicLabelResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(getEntityList());
         control.replay();
-        Label model = resource.get();
+        NetworkLabel model = resource.get();
         assertEquals(LABELS[0], model.getId());
         verifyLinks(model);
     }
@@ -124,7 +122,7 @@ public class BackendHostNicLabelResourceTest
         }
     }
 
-    private void setUpEntityQueryExpectations(List<? super NetworkLabel> result) throws Exception {
+    private void setUpEntityQueryExpectations(List<? super org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> result) throws Exception {
         setUpEntityQueryExpectations(
             VdcQueryType.GetNetworkLabelsByHostNicId,
             IdQueryParameters.class,
@@ -134,8 +132,8 @@ public class BackendHostNicLabelResourceTest
         );
     }
 
-    private List<NetworkLabel> getEntityList() {
-        List<NetworkLabel> labels = new ArrayList<>();
+    private List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> labels = new ArrayList<>();
         for (int i = 0; i < LABELS.length; i++) {
             labels.add(getEntity(i));
         }
@@ -143,8 +141,8 @@ public class BackendHostNicLabelResourceTest
     }
 
     @Override
-    protected NetworkLabel getEntity(int index) {
-        NetworkLabel entity = control.createMock(NetworkLabel.class);
+    protected org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel entity = control.createMock(org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel.class);
         expect(entity.getId()).andReturn(LABELS[index]).anyTimes();
         return entity;
     }

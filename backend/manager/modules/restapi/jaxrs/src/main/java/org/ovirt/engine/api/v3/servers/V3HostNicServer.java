@@ -51,7 +51,7 @@ public class V3HostNicServer extends V3Server<HostNicResource> {
 
     @Path("labels")
     public V3LabelsServer getLabelsResource() {
-        return new V3LabelsServer(getDelegate().getLabelsResource());
+        return new V3LabelsServer(getDelegate().getNetworkLabelsResource());
     }
 
     @Path("networkattachments")

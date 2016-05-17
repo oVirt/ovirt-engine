@@ -1,10 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.LabelsResource;
+import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
@@ -12,7 +11,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendHostNicLabelsResource extends AbstractBaseHostNicLabelsResource implements LabelsResource {
+public class BackendHostNicLabelsResource
+    extends AbstractBaseHostNicLabelsResource
+    implements NetworkLabelsResource {
 
     private Guid nicId;
 

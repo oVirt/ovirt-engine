@@ -21,13 +21,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.LabelResource;
+import org.ovirt.engine.api.resource.NetworkLabelResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Label;
 
 @Produces({"application/xml", "application/json"})
-public class V3LabelServer extends V3Server<LabelResource> {
-    public V3LabelServer(LabelResource delegate) {
+public class V3LabelServer extends V3Server<NetworkLabelResource> {
+    public V3LabelServer(NetworkLabelResource delegate) {
         super(delegate);
     }
 

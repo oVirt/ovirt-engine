@@ -17,9 +17,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendNetworksResource extends AbstractBackendNetworksResource implements NetworksResource {
+public class BackendNetworksResource
+    extends AbstractBackendNetworksResource
+    implements NetworksResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "vnicprofiles", "labels" };
+    static final String[] SUB_COLLECTIONS = { "permissions", "vnicprofiles", "networklabels" };
 
     public BackendNetworksResource() {
         this(VdcQueryType.GetAllNetworks);

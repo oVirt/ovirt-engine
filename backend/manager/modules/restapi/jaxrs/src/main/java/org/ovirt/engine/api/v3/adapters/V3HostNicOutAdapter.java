@@ -18,10 +18,13 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
+import java.util.Objects;
+
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3HostNIC;
 import org.ovirt.engine.api.v3.types.V3Labels;
+import org.ovirt.engine.api.v3.types.V3Link;
 import org.ovirt.engine.api.v3.types.V3Properties;
 import org.ovirt.engine.api.v3.types.V3Statistics;
 import org.ovirt.engine.api.v3.types.V3Status;
@@ -32,6 +35,12 @@ public class V3HostNicOutAdapter implements V3Adapter<HostNic, V3HostNIC> {
         V3HostNIC to = new V3HostNIC();
         if (from.isSetLinks()) {
             to.getLinks().addAll(adaptOut(from.getLinks()));
+
+            // In version 3 of the API the name of the network labels sub-collection was just "labels", but in version
+            // 4 of the API it has been renamed to "networklabels", so we need to adjust the links accordingly:
+            to.getLinks().stream()
+                .filter(this::isNetworksLabelsLink)
+                .forEach(this::fixNetworkLabelsLink);
         }
         if (from.isSetActions()) {
             to.setActions(adaptOut(from.getActions()));
@@ -72,9 +81,9 @@ public class V3HostNicOutAdapter implements V3Adapter<HostNic, V3HostNIC> {
         if (from.isSetIp()) {
             to.setIp(adaptOut(from.getIp()));
         }
-        if (from.isSetLabels()) {
+        if (from.isSetNetworkLabels()) {
             to.setLabels(new V3Labels());
-            to.getLabels().getLabels().addAll(adaptOut(from.getLabels().getLabels()));
+            to.getLabels().getLabels().addAll(adaptOut(from.getNetworkLabels().getNetworkLabels()));
         }
         if (from.isSetMac()) {
             to.setMac(adaptOut(from.getMac()));
@@ -120,5 +129,28 @@ public class V3HostNicOutAdapter implements V3Adapter<HostNic, V3HostNIC> {
             to.setVlan(adaptOut(from.getVlan()));
         }
         return to;
+    }
+
+    /**
+     * Checks if the given link corresponds to the network labels sub-collection.
+     */
+    private boolean isNetworksLabelsLink(V3Link link) {
+        return Objects.equals(link.getRel(), "networklabels");
+    }
+
+    /**
+     * Fixes a network labels link, replacing {@code networklabels} with {@code labels}.
+     */
+    private void fixNetworkLabelsLink(V3Link link) {
+        // Fix the rel:
+        link.setRel("labels");
+
+        // Fix the href:
+        String href = link.getHref();
+        int index = href.lastIndexOf("/");
+        if (index > 0) {
+            href = href.substring(0, index) + "labels";
+            link.setHref(href);
+        }
     }
 }

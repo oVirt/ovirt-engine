@@ -18,14 +18,14 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
-import org.ovirt.engine.api.model.Label;
+import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Label;
 
-public class V3LabelInAdapter implements V3Adapter<V3Label, Label> {
+public class V3LabelInAdapter implements V3Adapter<V3Label, NetworkLabel> {
     @Override
-    public Label adapt(V3Label from) {
-        Label to = new Label();
+    public NetworkLabel adapt(V3Label from) {
+        NetworkLabel to = new NetworkLabel();
         if (from.isSetLinks()) {
             to.getLinks().addAll(adaptIn(from.getLinks()));
         }

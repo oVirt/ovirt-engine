@@ -4,7 +4,7 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedVnicProfilesResource;
-import org.ovirt.engine.api.resource.LabelsResource;
+import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -67,7 +67,7 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
     }
 
     @Override
-    public LabelsResource getLabelsResource() {
+    public NetworkLabelsResource getNetworkLabelsResource() {
         return inject(new BackendNetworkLabelsResource(asGuid(id)));
     }
 

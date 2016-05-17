@@ -4,22 +4,20 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Label;
+import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworkLabelsResourceTest
-    extends AbstractBackendCollectionResourceTest<Label, NetworkLabel, BackendNetworkLabelsResource> {
+    extends AbstractBackendCollectionResourceTest<NetworkLabel, org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel, BackendNetworkLabelsResource> {
 
     private static final Guid NETWORK_ID = Guid.newGuid();
     private static final String[] LABELS = { "lbl1", "lbl2", "lbl3" };
@@ -45,8 +43,8 @@ public class BackendNetworkLabelsResourceTest
                 asList(getEntity(0)));
         Response response = collection.add(getModel(0));
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Label);
-        verifyModel((Label) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof NetworkLabel);
+        verifyModel((NetworkLabel) response.getEntity(), 0);
     }
 
     @Test
@@ -76,21 +74,21 @@ public class BackendNetworkLabelsResourceTest
 
     @Test
     public void testAddIncompleteParameters() throws Exception {
-        Label model = new Label();
+        NetworkLabel model = new NetworkLabel();
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Label", "add", "id");
+            verifyIncompleteException(wae, "NetworkLabel", "add", "id");
         }
     }
 
 
     @Override
-    protected List<Label> getCollection() {
-        return collection.list().getLabels();
+    protected List<NetworkLabel> getCollection() {
+        return collection.list().getNetworkLabels();
     }
 
     // No searching support for network labels
@@ -115,20 +113,20 @@ public class BackendNetworkLabelsResourceTest
     }
 
     @Override
-    protected void verifyModel(Label model, int index) {
+    protected void verifyModel(NetworkLabel model, int index) {
         assertEquals(LABELS[index], model.getId());
         verifyLinks(model);
     }
 
     @Override
-    protected NetworkLabel getEntity(int index) {
-        NetworkLabel networkLabel = control.createMock(NetworkLabel.class);
+    protected org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel networkLabel = control.createMock(org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel.class);
         expect(networkLabel.getId()).andReturn(LABELS[index]).anyTimes();
         return networkLabel;
     }
 
-    private List<NetworkLabel> getEntityList() {
-        List<NetworkLabel> labels = new ArrayList<>();
+    private List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> labels = new ArrayList<>();
         for (int i = 0; i < LABELS.length; i++) {
             labels.add(getEntity(i));
         }
@@ -136,8 +134,8 @@ public class BackendNetworkLabelsResourceTest
         return labels;
     }
 
-    private Label getModel(int i) {
-        Label model = new Label();
+    private NetworkLabel getModel(int i) {
+        NetworkLabel model = new NetworkLabel();
         model.setId(LABELS[i]);
         return model;
     }

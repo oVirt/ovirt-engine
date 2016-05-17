@@ -18,14 +18,14 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
-import org.ovirt.engine.api.model.Labels;
+import org.ovirt.engine.api.model.NetworkLabels;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Labels;
 
-public class V3LabelsInAdapter implements V3Adapter<V3Labels, Labels> {
+public class V3LabelsInAdapter implements V3Adapter<V3Labels, NetworkLabels> {
     @Override
-    public Labels adapt(V3Labels from) {
-        Labels to = new Labels();
+    public NetworkLabels adapt(V3Labels from) {
+        NetworkLabels to = new NetworkLabels();
         if (from.isSetActions()) {
             to.setActions(adaptIn(from.getActions()));
         }
@@ -38,7 +38,7 @@ public class V3LabelsInAdapter implements V3Adapter<V3Labels, Labels> {
         if (from.isSetTotal()) {
             to.setTotal(from.getTotal());
         }
-        to.getLabels().addAll(adaptIn(from.getLabels()));
+        to.getNetworkLabels().addAll(adaptIn(from.getLabels()));
         return to;
     }
 }

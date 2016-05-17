@@ -18,13 +18,13 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
-import org.ovirt.engine.api.model.Label;
+import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Label;
 
-public class V3LabelOutAdapter implements V3Adapter<Label, V3Label> {
+public class V3NetworkLabelOutAdapter implements V3Adapter<NetworkLabel, V3Label> {
     @Override
-    public V3Label adapt(Label from) {
+    public V3Label adapt(NetworkLabel from) {
         V3Label to = new V3Label();
         if (from.isSetLinks()) {
             to.getLinks().addAll(adaptOut(from.getLinks()));

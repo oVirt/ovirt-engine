@@ -5,42 +5,43 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
-import org.ovirt.engine.api.model.Label;
-import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.resource.LabelResource;
-import org.ovirt.engine.api.resource.LabelsResource;
+import org.ovirt.engine.api.model.NetworkLabel;
+import org.ovirt.engine.api.model.NetworkLabels;
+import org.ovirt.engine.api.resource.NetworkLabelResource;
+import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendNetworkLabelsResource extends AbstractBackendCollectionResource<Label, NetworkLabel> implements LabelsResource {
+public class BackendNetworkLabelsResource
+    extends AbstractBackendCollectionResource<NetworkLabel, org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel>
+    implements NetworkLabelsResource {
 
     private Guid networkId;
 
     protected BackendNetworkLabelsResource(Guid networkId) {
-        super(Label.class, NetworkLabel.class);
+        super(NetworkLabel.class, org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel.class);
         this.networkId = networkId;
     }
 
     @Override
-    public Labels list() {
+    public NetworkLabels list() {
         return mapCollection(getNetworkLabels(networkId));
     }
 
-    private List<NetworkLabel> getNetworkLabels(Guid networkId) {
+    private List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> getNetworkLabels(Guid networkId) {
         return getBackendCollection(VdcQueryType.GetNetworkLabelsByNetworkId, new IdQueryParameters(networkId));
     }
 
-    private Labels mapCollection(List<NetworkLabel> networkLabels) {
-        Labels labels = new Labels();
-        for (NetworkLabel networkLabel : networkLabels) {
-            Label label = new Label();
+    private NetworkLabels mapCollection(List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> networkLabels) {
+        NetworkLabels labels = new NetworkLabels();
+        for (org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel networkLabel : networkLabels) {
+            NetworkLabel label = new NetworkLabel();
             label.setId(networkLabel.getId());
-            labels.getLabels().add(label);
+            labels.getNetworkLabels().add(label);
             addLinks(label, Network.class);
         }
 
@@ -48,7 +49,7 @@ public class BackendNetworkLabelsResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    public Response add(Label label) {
+    public Response add(NetworkLabel label) {
         validateParameters(label, "id");
         return performCreate(VdcActionType.LabelNetwork,
                 new LabelNetworkParameters(networkId, label.getId()),
@@ -56,19 +57,19 @@ public class BackendNetworkLabelsResource extends AbstractBackendCollectionResou
     }
 
     @Override
-    public LabelResource getLabelResource(String id) {
+    public NetworkLabelResource getLabelResource(String id) {
         return inject(new BackendNetworkLabelResource(id, this));
     }
 
     @Override
-    protected Label addParents(Label model) {
+    protected NetworkLabel addParents(NetworkLabel model) {
         model.setNetwork(new Network());
         model.getNetwork().setId(networkId.toString());
         return model;
     };
 
     @Override
-    protected Label addLinks(Label model,
+    protected NetworkLabel addLinks(NetworkLabel model,
             Class<? extends BaseResource> suggestedParent,
             String... excludeSubCollectionMembers) {
         return super.addLinks(model, Network.class);
@@ -90,8 +91,8 @@ public class BackendNetworkLabelsResource extends AbstractBackendCollectionResou
         }
 
         @Override
-        public NetworkLabel lookupEntity(String id) throws BackendFailureException {
-            List<NetworkLabel> labels = getNetworkLabels(networkId);
+        public org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel lookupEntity(String id) throws BackendFailureException {
+            List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> labels = getNetworkLabels(networkId);
             if (!labels.isEmpty()) {
                 return labels.get(0);
             }

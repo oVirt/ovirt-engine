@@ -5,18 +5,18 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.LabelsResource;
+import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVirtualFunctionAllowedLabelsResource extends AbstractBaseHostNicLabelsResource
-        implements LabelsResource {
+public class BackendVirtualFunctionAllowedLabelsResource
+    extends AbstractBaseHostNicLabelsResource
+    implements NetworkLabelsResource {
 
     private Guid nicId;
     private String hostId;

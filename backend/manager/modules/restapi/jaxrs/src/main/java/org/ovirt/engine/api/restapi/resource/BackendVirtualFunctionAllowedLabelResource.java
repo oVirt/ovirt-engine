@@ -2,12 +2,13 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.LabelResource;
+import org.ovirt.engine.api.resource.NetworkLabelResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 
-public class BackendVirtualFunctionAllowedLabelResource extends AbstractBaseHostNicLabelResource
-        implements LabelResource {
+public class BackendVirtualFunctionAllowedLabelResource
+    extends AbstractBaseHostNicLabelResource
+    implements NetworkLabelResource {
 
     private String id;
     private BackendVirtualFunctionAllowedLabelsResource parent;

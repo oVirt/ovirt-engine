@@ -24,14 +24,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.LabelsResource;
+import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Label;
 import org.ovirt.engine.api.v3.types.V3Labels;
 
 @Produces({"application/xml", "application/json"})
-public class V3LabelsServer extends V3Server<LabelsResource> {
-    public V3LabelsServer(LabelsResource delegate) {
+public class V3LabelsServer extends V3Server<NetworkLabelsResource> {
+    public V3LabelsServer(NetworkLabelsResource delegate) {
         super(delegate);
     }
 

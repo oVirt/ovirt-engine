@@ -62,6 +62,6 @@ public class V3NetworkServer extends V3Server<NetworkResource> {
 
     @Path("labels")
     public V3LabelsServer getLabelsResource() {
-        return new V3LabelsServer(getDelegate().getLabelsResource());
+        return new V3LabelsServer(getDelegate().getNetworkLabelsResource());
     }
 }

@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.HostNicResource;
-import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
+import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -140,7 +140,7 @@ public class BackendHostNicResource
     }
 
     @Override
-    public LabelsResource getLabelsResource() {
+    public NetworkLabelsResource getNetworkLabelsResource() {
         return inject(new BackendHostNicLabelsResource(asGuid(id), parent.getHostId()));
     }
 
@@ -150,7 +150,7 @@ public class BackendHostNicResource
     }
 
     @Override
-    public LabelsResource getVirtualFunctionAllowedLabelsResource() {
+    public NetworkLabelsResource getVirtualFunctionAllowedLabelsResource() {
         return inject(new BackendVirtualFunctionAllowedLabelsResource(guid, parent.getHostId()));
     }
 

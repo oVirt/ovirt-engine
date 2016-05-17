@@ -20,7 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNic;
-import org.ovirt.engine.api.model.Labels;
+import org.ovirt.engine.api.model.NetworkLabels;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.model.Statistics;
@@ -74,8 +74,8 @@ public class V3HostNICInAdapter implements V3Adapter<V3HostNIC, HostNic> {
             to.setIp(adaptIn(from.getIp()));
         }
         if (from.isSetLabels()) {
-            to.setLabels(new Labels());
-            to.getLabels().getLabels().addAll(adaptIn(from.getLabels().getLabels()));
+            to.setNetworkLabels(new NetworkLabels());
+            to.getNetworkLabels().getNetworkLabels().addAll(adaptIn(from.getLabels().getLabels()));
         }
         if (from.isSetMac()) {
             to.setMac(adaptIn(from.getMac()));

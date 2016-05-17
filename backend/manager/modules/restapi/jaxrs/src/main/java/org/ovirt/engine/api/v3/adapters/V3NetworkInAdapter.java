@@ -18,8 +18,8 @@ package org.ovirt.engine.api.v3.adapters;
 
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
-import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.NetworkLabels;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Network;
@@ -59,8 +59,8 @@ public class V3NetworkInAdapter implements V3Adapter<V3Network, Network> {
             to.setIp(adaptIn(from.getIp()));
         }
         if (from.isSetLabels()) {
-            to.setLabels(new Labels());
-            to.getLabels().getLabels().addAll(adaptIn(from.getLabels().getLabels()));
+            to.setNetworkLabels(new NetworkLabels());
+            to.getNetworkLabels().getNetworkLabels().addAll(adaptIn(from.getLabels().getLabels()));
         }
         if (from.isSetMtu()) {
             to.setMtu(from.getMtu());

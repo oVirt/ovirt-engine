@@ -16,8 +16,8 @@ import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.IscsiDetails;
-import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.StorageDomains;
@@ -239,7 +239,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         }
 
         if (action.isSetModifiedLabels()) {
-            for (Label label : action.getModifiedLabels().getLabels()) {
+            for (NetworkLabel label : action.getModifiedLabels().getNetworkLabels()) {
                 NicLabel nicLabel = new NicLabel();
                 nicLabel.setLabel(label.getId());
                 if (label.isSetHostNic()) {
@@ -251,7 +251,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         }
 
         if (action.isSetRemovedLabels()) {
-            for (Label label : action.getRemovedLabels().getLabels()) {
+            for (NetworkLabel label : action.getRemovedLabels().getNetworkLabels()) {
                 parameters.getRemovedLabels().add(label.getId());
             }
         }
