@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -70,6 +71,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private SortedListModel<EntityModel<VM>> externalVmModels;
     private SortedListModel<EntityModel<VM>> importedVmModels;
     private ListModel<Provider<VmwareVmProviderProperties>> vmwareProviders;
+    private ListModel<Provider<KVMVmProviderProperties>> kvmProviders;
 
     private EntityModel<String> vCenter;
     private EntityModel<String> esx;
@@ -135,6 +137,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setImportedVmModels(new SortedListModel<>(new EntityModelLexoNumericNameableComparator<EntityModel<VM>, VM>()));
 
         setVmwareProviders(new ListModel<Provider<VmwareVmProviderProperties>>());
+        setKvmProviders(new ListModel<Provider<KVMVmProviderProperties>>());
 
         setExportDomain(new EntityModel<StorageDomain>());
 
@@ -164,6 +167,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setKvmProxyHosts(new ListModel<VDS>());
 
         setInfoMessage(new EntityModel<String>());
+
+        getKvmProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                providerChanged();
+            }
+        });
 
         getVmwareProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -328,8 +338,26 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         case VMWARE:
             vmwareProviderChanged();
             break;
+        case KVM:
+            kvmProviderChanged();
+            break;
         default:
         }
+    }
+
+    private void kvmProviderChanged() {
+        Provider<KVMVmProviderProperties> provider = getKvmProviders().getSelectedItem();
+        if (provider == null) {
+            provider = new Provider<>();
+            provider.setAdditionalProperties(new KVMVmProviderProperties());
+        }
+
+        getKvmUsername().setEntity(provider.getUsername());
+        getKvmPassword().setEntity(provider.getPassword());
+
+        KVMVmProviderProperties properties = provider.getAdditionalProperties();
+        getKvmUri().setEntity(properties.getUrl());
+        setupProxyHost(getKvmProxyHosts(), properties.getProxyHostId());
     }
 
     private void vmwareProviderChanged() {
@@ -349,12 +377,16 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         getVmwareDatacenter().setEntity(dcAndCluster.getFirst());
         getVmwareCluster().setEntity(dcAndCluster.getSecond());
         getVerify().setEntity(properties.isVerifySSL());
-        if (properties.getProxyHostId() == null) {
-            getProxyHosts().setSelectedItem(null);
+        setupProxyHost(getProxyHosts(), properties.getProxyHostId());
+    }
+
+    private void setupProxyHost(ListModel<VDS> proxyHosts, Guid proxyHostId) {
+        if (proxyHostId == null) {
+            proxyHosts.setSelectedItem(null);
         } else {
-            for (VDS host : getProxyHosts().getItems()) {
-                if (host != null && host.getId().equals(properties.getProxyHostId())) {
-                    getProxyHosts().setSelectedItem(host);
+            for (VDS host : proxyHosts.getItems()) {
+                if (host != null && host.getId().equals(proxyHostId)) {
+                    proxyHosts.setSelectedItem(host);
                     break;
                 }
             }
@@ -485,10 +517,30 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }), ProviderType.VMWARE);
     }
 
+    private void loadKvmProviders() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<Provider<KVMVmProviderProperties>> providers = new ArrayList<>();
+                for (Provider<KVMVmProviderProperties> provider : (List<Provider<KVMVmProviderProperties>>) returnValue) {
+                    if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
+                            || provider.getAdditionalProperties().getStoragePoolId() == null) {
+                        providers.add(provider);
+                    }
+                }
+                providers.add(0, null);
+                getKvmProviders().setItems(providers);
+            }
+        }), ProviderType.KVM);
+    }
+
     private void loadProviders() {
         switch(importSources.getSelectedItem()) {
         case VMWARE:
             loadVmwareProviders();
+            break;
+        case KVM:
+            loadKvmProviders();
             break;
         default:
         }
@@ -980,6 +1032,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void setVmwareProviders(ListModel<Provider<VmwareVmProviderProperties>> vmwareProviders) {
         this.vmwareProviders = vmwareProviders;
+    }
+
+    public ListModel<Provider<KVMVmProviderProperties>> getKvmProviders() {
+        return kvmProviders;
+    }
+
+    public void setKvmProviders(ListModel<Provider<KVMVmProviderProperties>> kvmProviders) {
+        this.kvmProviders = kvmProviders;
     }
 
     public ListModel<VDS> getHosts() {

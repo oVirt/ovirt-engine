@@ -68,6 +68,7 @@
                                     <ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                                 <p:VmwarePropertiesWidget addStyleNames="{style.topElement}" ui:field="vmwarePropertiesWidget" />
+                                <p:KVMPropertiesWidget addStyleNames="{style.topElement}" ui:field="kvmPropertiesWidget" />
                                 <b:Row>
                                     <ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>

@@ -62,6 +62,10 @@ public class EditProviderModel extends ProviderModel {
             getVmwarePropertiesModel().init(provider);
         }
 
+        if (isTypeKVM()) {
+            getKvmPropertiesModel().init(provider);
+        }
+
         oldUrl = provider.getUrl();
     }
 

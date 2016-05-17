@@ -5,7 +5,9 @@ import org.ovirt.engine.core.bll.provider.network.openstack.ExternalNetworkProvi
 import org.ovirt.engine.core.bll.provider.network.openstack.OpenstackNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
+import org.ovirt.engine.core.bll.provider.vms.KVMVmProviderProxy;
 import org.ovirt.engine.core.bll.provider.vms.VmwareVmProviderProxy;
+import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -50,6 +52,9 @@ public class ProviderProxyFactory {
 
         case VMWARE:
             return (P) new VmwareVmProviderProxy((Provider<VmwareVmProviderProperties>) provider);
+
+        case KVM:
+            return (P) new KVMVmProviderProxy((Provider<KVMVmProviderProperties>) provider);
 
         default:
             return null;

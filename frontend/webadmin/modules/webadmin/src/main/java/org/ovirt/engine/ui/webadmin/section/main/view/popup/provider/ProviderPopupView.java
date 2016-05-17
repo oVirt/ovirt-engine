@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.KVMPropertiesWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.VmwarePropertiesWidget;
 import com.google.gwt.core.client.GWT;
@@ -130,6 +131,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Ignore
     VmwarePropertiesWidget vmwarePropertiesWidget;
 
+    @UiField
+    @Ignore
+    KVMPropertiesWidget kvmPropertiesWidget;
+
     @UiField(provided = true)
     @Path(value = "readOnly.entity")
     @WithElementId
@@ -191,12 +196,14 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         driver.edit(model);
         neutronAgentWidget.edit(model.getNeutronAgentModel());
         vmwarePropertiesWidget.edit(model.getVmwarePropertiesModel());
+        kvmPropertiesWidget.edit(model.getKvmPropertiesModel());
     }
 
     @Override
     public ProviderModel flush() {
         neutronAgentWidget.flush();
         vmwarePropertiesWidget.flush();
+        kvmPropertiesWidget.flush();
         return driver.flush();
     }
 
@@ -241,6 +248,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         urlEditor.setTabIndex(nextTabIndex++);
         readOnlyEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = vmwarePropertiesWidget.setTabIndexes(nextTabIndex);
+        kvmPropertiesWidget.setTabIndexes(nextTabIndex++);
         requiresAuthenticationEditor.setTabIndex(nextTabIndex++);
         usernameEditor.setTabIndex(nextTabIndex++);
         passwordEditor.setTabIndex(nextTabIndex++);

@@ -10,6 +10,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
@@ -65,6 +66,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 tenantName = volumeProperties.getTenantName();
                 break;
             case VMWARE:
+            case KVM:
                 additionalProperties = entity.getAdditionalProperties();
                 break;
             default:
@@ -160,6 +162,8 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 return volumeProperties;
             case VMWARE:
                 return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), VmwareVmProviderProperties.class);
+            case KVM:
+                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KVMVmProviderProperties.class);
             default:
                 return null;
             }

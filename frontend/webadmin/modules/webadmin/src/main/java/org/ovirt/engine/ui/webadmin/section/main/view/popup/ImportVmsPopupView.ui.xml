@@ -72,6 +72,7 @@
 					<g:HorizontalPanel>
 						<e:ListModelListBoxEditor  ui:field="importSourcesEditor" addStyleNames="{style.sourcePropertyStyle}" />
 						<e:ListModelListBoxEditor ui:field="vmwareProvidersEditor" addStyleNames="{style.sourcePropertyStyle}" />
+						<e:ListModelListBoxEditor ui:field="kvmProvidersEditor" addStyleNames="{style.sourcePropertyStyle}" />
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 

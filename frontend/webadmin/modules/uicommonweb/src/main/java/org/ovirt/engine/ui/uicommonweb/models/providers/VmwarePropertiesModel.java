@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
-import java.util.Collections;
-
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
@@ -9,7 +7,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -19,7 +16,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmwarePropertiesModel extends Model {
+public class VmwarePropertiesModel extends ProxyHostPropertiesModel {
 
     private EntityModel<String> vCenter = new EntityModel<>();
     private EntityModel<String> esx = new EntityModel<>();
@@ -27,9 +24,6 @@ public class VmwarePropertiesModel extends Model {
     private EntityModel<String> vmwareCluster = new EntityModel<>();
     private EntityModel<Boolean> verifySSL = new EntityModel<>(false);
     private ListModel<VDS> proxyHost = new ListModel<>();
-
-    private Guid lastStoragePoolId;
-    private Guid lastProxyHostId;
 
     public VmwarePropertiesModel() {
         getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
@@ -97,11 +91,6 @@ public class VmwarePropertiesModel extends Model {
         this.vmwareCluster = vmwareCluster;
     }
 
-    void disableProxyHost() {
-        getProxyHost().setItems(Collections.<VDS>singleton(null));
-        getProxyHost().setIsChangeable(false);
-    }
-
     VmwareVmProviderProperties getVmwareVmProviderProperties(Guid dataCenterId) {
         return new VmwareVmProviderProperties(
                 getvCenter().getEntity(),
@@ -120,16 +109,8 @@ public class VmwarePropertiesModel extends Model {
         getVmwareDatacenter().setEntity(dcAndCluster.getFirst());
         getVmwareCluster().setEntity(dcAndCluster.getSecond());
         getVerifySSL().setEntity(properties.isVerifySSL());
-        this.lastProxyHostId = properties.getProxyHostId();
-        this.lastStoragePoolId = properties.getStoragePoolId();
-    }
-
-    public Guid getLastStoragePoolId() {
-        return lastStoragePoolId;
-    }
-
-    public Guid getLastProxyHostId() {
-        return lastProxyHostId;
+        setLastProxyHostId(properties.getProxyHostId());
+        setLastStoragePoolId(properties.getStoragePoolId());
     }
 
     public String getUrl() {

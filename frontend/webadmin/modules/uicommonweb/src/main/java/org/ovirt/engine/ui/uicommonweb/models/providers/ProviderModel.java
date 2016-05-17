@@ -72,6 +72,7 @@ public class ProviderModel extends Model {
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
     private VmwarePropertiesModel vmwarePropertiesModel = new VmwarePropertiesModel();
+    private KVMPropertiesModel kvmPropertiesModel = new KVMPropertiesModel();
     private String certificate;
     private EntityModel<Boolean> readOnly = new EntityModel<>();
 
@@ -140,6 +141,11 @@ public class ProviderModel extends Model {
         return vmwarePropertiesModel;
     }
 
+    public KVMPropertiesModel getKvmPropertiesModel() {
+        return kvmPropertiesModel;
+    }
+
+
     protected boolean isExternalNetwork() {
         return getType().getSelectedItem() == ProviderType.EXTERNAL_NETWORK;
     }
@@ -158,6 +164,10 @@ public class ProviderModel extends Model {
 
     protected boolean isTypeVmware() {
         return getType().getSelectedItem() == ProviderType.VMWARE;
+    }
+
+    protected boolean isTypeKVM() {
+        return getType().getSelectedItem() == ProviderType.KVM;
     }
 
     public ListModel<StoragePool> getDataCenter() {
@@ -189,6 +199,8 @@ public class ProviderModel extends Model {
             case OPENSTACK_VOLUME:
                 return "http://localhost:8776"; //$NON-NLS-1$
             case VMWARE:
+                return ""; //$NON-NLS-1$
+            case KVM:
                 return ""; //$NON-NLS-1$
             case FOREMAN:
             default:
@@ -249,21 +261,23 @@ public class ProviderModel extends Model {
                 }
 
                 boolean isVmware = isTypeVmware();
+                boolean isKvm = isTypeKVM();
                 boolean requiresAuth = isTypeRequiresAuthentication();
                 getRequiresAuthentication().setEntity(isVmware || Boolean.valueOf(requiresAuth));
                 getRequiresAuthentication().setIsChangeable(!requiresAuth);
 
                 boolean isCinder = isTypeOpenStackVolume();
-                getDataCenter().setIsAvailable(isCinder || isVmware);
+                getDataCenter().setIsAvailable(isCinder || isVmware || isKvm);
                 if (isCinder) {
                     updateDatacentersForVolumeProvider();
                 }
 
                 getVmwarePropertiesModel().setIsAvailable(isVmware);
+                getKvmPropertiesModel().setIsAvailable(isKvm);
                 getRequiresAuthentication().setIsAvailable(!isVmware);
-                getUrl().setIsAvailable(!isVmware);
-                if (isVmware) {
-                    updateDatacentersForVmwareProvider();
+                getUrl().setIsAvailable(!isVmware && !isKvm);
+                if (isVmware || isKvm) {
+                    updateDatacentersForExternalProvider();
                 }
             }
         });
@@ -285,22 +299,24 @@ public class ProviderModel extends Model {
         getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getType().getSelectedItem() != ProviderType.VMWARE) {
+                if (!isTypeVmware() && !isTypeKVM()) {
                     return;
                 }
 
+                final ProxyHostPropertiesModel proxyHostPropertiesModel = getProxyHostPropertiesModel();
+
                 if (getDataCenter().getSelectedItem() == null) {
-                    getVmwarePropertiesModel().disableProxyHost();
+                    proxyHostPropertiesModel.disableProxyHost();
                 } else {
-                    getVmwarePropertiesModel().getProxyHost().setIsChangeable(true);
+                    proxyHostPropertiesModel.getProxyHost().setIsChangeable(true);
                     AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
                             List<VDS> hosts = (List<VDS>) returnValue;
                             VDS prevHost = getPreviousHost(hosts);
                             hosts.add(0, null); // Any host in the cluster
-                            getVmwarePropertiesModel().getProxyHost().setItems(hosts);
-                            getVmwarePropertiesModel().getProxyHost().setSelectedItem(prevHost);
+                            proxyHostPropertiesModel.getProxyHost().setItems(hosts);
+                            proxyHostPropertiesModel.getProxyHost().setSelectedItem(prevHost);
                         }
                     }),
                     getDataCenter().getSelectedItem().getId());
@@ -308,7 +324,8 @@ public class ProviderModel extends Model {
             }
 
             private VDS getPreviousHost(List<VDS> hosts) {
-                Guid previousProxyHostId = getVmwarePropertiesModel().getLastProxyHostId();
+                Guid previousProxyHostId = getProxyHostPropertiesModel().getLastProxyHostId();
+
                 for (VDS host : hosts) {
                     if (host.getId().equals(previousProxyHostId)) {
                         return host;
@@ -319,7 +336,18 @@ public class ProviderModel extends Model {
         });
     }
 
-    protected void updateDatacentersForVmwareProvider() {
+    public ProxyHostPropertiesModel getProxyHostPropertiesModel() {
+        if (isTypeKVM()) {
+            return getKvmPropertiesModel();
+        } else if (isTypeVmware()) {
+            return getVmwarePropertiesModel();
+        } else {
+            // null object, to avoid null checks everywhere
+            return new ProxyHostPropertiesModel() {};
+        }
+    }
+
+    protected void updateDatacentersForExternalProvider() {
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -330,12 +358,13 @@ public class ProviderModel extends Model {
                 getDataCenter().setItems(dataCenters);
                 getDataCenter().setSelectedItem(prevDataCenter);
                 if (getDataCenter().getSelectedItem() == null) {
-                    getVmwarePropertiesModel().disableProxyHost();
+                    getProxyHostPropertiesModel().disableProxyHost();
                 }
             }
 
             private StoragePool getPreviousDataCenter(List<StoragePool> dataCenters) {
-                Guid previousDataCenterId = getVmwarePropertiesModel().getLastStoragePoolId();
+                Guid previousDataCenterId = getProxyHostPropertiesModel().getLastStoragePoolId();
+
                 for (StoragePool dataCenter : dataCenters) {
                     if (dataCenter.getId().equals(previousDataCenterId)) {
                         return dataCenter;
@@ -355,12 +384,14 @@ public class ProviderModel extends Model {
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getNeutronAgentModel().validate();
         getVmwarePropertiesModel().validate();
+        getKvmPropertiesModel().validate();
         boolean connectionSettingsValid = validateConnectionSettings();
 
         return connectionSettingsValid &&
                 getName().getIsValid() &&
                 getType().getIsValid() &&
                 getNeutronAgentModel().getIsValid() &&
+                getKvmPropertiesModel().getIsValid() &&
                 getVmwarePropertiesModel().getIsValid();
     }
 
@@ -404,6 +435,10 @@ public class ProviderModel extends Model {
             provider.setAdditionalProperties(getVmwarePropertiesModel().getVmwareVmProviderProperties(
                     dataCenter.getSelectedItem() != null ? dataCenter.getSelectedItem().getId() : null));
             provider.setUrl(getVmwarePropertiesModel().getUrl());
+        } else if (isTypeKVM()) {
+            provider.setUrl(getKvmPropertiesModel().getUrl().getEntity());
+            provider.setAdditionalProperties(getKvmPropertiesModel().getKVMVmProviderProperties(
+                    dataCenter.getSelectedItem() != null ? dataCenter.getSelectedItem().getId() : null));
         }
 
         boolean authenticationRequired = requiresAuthentication.getEntity();

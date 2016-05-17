@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -111,6 +112,11 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     @UiField
     UiCommandButton loadKvmButton;
+
+    @UiField(provided = true)
+    @Path("kvmProviders.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Provider<KVMVmProviderProperties>> kvmProvidersEditor;
 
     @UiField(provided = true)
     @Path("vmwareProviders.selectedItem")
@@ -290,6 +296,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
             }
         });
 
+        kvmProvidersEditor = new ListModelListBoxEditor<>(new AbstractRenderer<Provider<KVMVmProviderProperties>>() {
+            @Override
+            public String render(Provider<KVMVmProviderProperties> provider) {
+                return provider == null ? constants.customExternalProvider() : provider.getName();
+            }
+        });
+
         vCenterEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel label = new EnableableFormLabel();
         label.setPaddingLeft(5);
@@ -342,6 +355,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         kvmUsernameEditor.setLabel(constants.usernameProvider());
         kvmPasswordEditor.setLabel(constants.passwordProvider());
         kvmProxyHostsEditor.setLabel(constants.proxyHost());
+        kvmProvidersEditor.setLabel(constants.externalProviderLabel());
 
         loadVmsFromExportDomainButton.setLabel(constants.loadLabel());
         loadVmsFromVmwareButton.setLabel(constants.loadLabel());
@@ -453,6 +467,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         ovaPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.OVA);
         xenPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.XEN);
         kvmPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.KVM);
+        kvmProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.KVM);
     }
 
     @Override
