@@ -92,7 +92,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                             getParameters().getParentCommand(),
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));
-            getReturnValue().getInternalVdsmTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
+            getTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
 
             return true;
         }
