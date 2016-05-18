@@ -561,6 +561,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             } finally {
                 endStepsAndJobIfNeeded();
                 freeLockEndAction();
+                // NOTE: this update persists updates made during the endSuccessfully()/endWithFailure() execution.
+                // The update is done intentionally after the freeLock() call, change with care.
+                persistCommandIfNeeded();
                 if (getCommandShouldBeLogged()) {
                     logCommand();
                 }
@@ -697,7 +700,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             exceptionOccurred = true;
             throw e;
         } finally {
-            freeLockEndAction();
             if (TransactionSupport.current() == null) {
                 try {
                     getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
@@ -715,7 +717,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                     logExceptionAndCompensate(e);
                 }
             }
-            persistCommandIfNeeded();
         }
     }
     /**
