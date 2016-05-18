@@ -8,8 +8,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -22,13 +21,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 
 public class VdsCommandsHelper {
-    @Inject
-    private static VdsDao vdsDao;
-    @Inject
-    private static BackendInternal backendInternal;
 
     private VdsCommandsHelper() {
     }
@@ -100,7 +96,7 @@ public class VdsCommandsHelper {
     }
 
     public static Guid getHostForExecution(Guid poolId, Collection<Guid> hostsToFilter) {
-        List<Guid> hostsForExecution = vdsDao
+        List<Guid> hostsForExecution = getVdsDao()
                 .getAllForStoragePoolAndStatus(poolId, VDSStatus.Up).stream()
                 .filter(x -> !hostsToFilter.contains(x.getId()))
                 .map(x -> x.getId()).collect(Collectors.toList());
@@ -112,6 +108,11 @@ public class VdsCommandsHelper {
     }
 
     protected static BackendInternal getBackend() {
-        return backendInternal;
+        return Backend.getInstance();
     }
+
+    protected static VdsDao getVdsDao() {
+        return DbFacade.getInstance().getVdsDao();
+    }
+
 }
