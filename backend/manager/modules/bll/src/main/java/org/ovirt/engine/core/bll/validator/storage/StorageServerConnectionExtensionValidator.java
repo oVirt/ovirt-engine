@@ -25,7 +25,7 @@ public class StorageServerConnectionExtensionValidator {
         if (existingConnExt != null && !existingConnExt.getId().equals(connExt.getId())) {
             VDS host = getDbFacade().getVdsDao().get(connExt.getHostId());
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS,
-                    String.format(String.format("$target %s", connExt.getIqn())),
+                    String.format("$target %s", connExt.getIqn()),
                     String.format("$vdsName %s", host.getName()));
         }
         return ValidationResult.VALID;
