@@ -176,6 +176,11 @@ public class Smtp extends Transport {
                             attempt.address);
                     log.debug("Send mail body='{}'", message.getMessageBody());
                     sendMail(attempt.address, message.getMessageSubject(), message.getMessageBody());
+                    log.info(
+                        "Mail subject='{}' to='{}' sent successfully",
+                        message.getMessageSubject(),
+                        attempt.address
+                    );
                     notifyObservers(DispatchResult.success(attempt.event, attempt.address, EventNotificationMethod.SMTP));
                     iterator.remove();
                 } catch (Exception ex) {
