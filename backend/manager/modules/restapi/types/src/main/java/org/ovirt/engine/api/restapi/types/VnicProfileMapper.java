@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.NetworkFilter;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.VnicPassThrough;
 import org.ovirt.engine.api.model.VnicPassThroughMode;
@@ -41,6 +42,13 @@ public class VnicProfileMapper {
         if (model.isSetPassThrough() && model.getPassThrough().isSetMode()) {
             entity.setPassthrough(map(model.getPassThrough().getMode()));
         }
+        if (model.isSetNetworkFilter()) {
+            if (model.getNetworkFilter().isSetId()) {
+                entity.setNetworkFilterId(GuidUtils.asGuid(model.getNetworkFilter().getId()));
+            } else {
+                entity.setNetworkFilterId(null);
+            }
+        }
         return entity;
     }
 
@@ -75,6 +83,10 @@ public class VnicProfileMapper {
         final VnicPassThrough vnicPassThrough = new VnicPassThrough();
         vnicPassThrough.setMode(map(entity.isPassthrough()));
         model.setPassThrough(vnicPassThrough);
+        if (entity.getNetworkFilterId() != null){
+            model.setNetworkFilter(new NetworkFilter());
+            model.getNetworkFilter().setId(entity.getNetworkFilterId().toString());
+        }
         return model;
     }
 
