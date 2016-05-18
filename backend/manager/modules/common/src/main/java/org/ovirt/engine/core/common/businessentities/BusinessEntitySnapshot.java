@@ -18,7 +18,8 @@ public class BusinessEntitySnapshot {
         DELETED_OR_UPDATED_ENTITY,
         NEW_ENTITY_ID,
         CHANGED_STATUS_ONLY,
-        UPDATED_ONLY_ENTITY
+        UPDATED_ONLY_ENTITY,
+        TRANSIENT_ENTITY
     }
 
     /**

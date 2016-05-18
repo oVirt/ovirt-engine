@@ -167,7 +167,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
             // If the installation failed, we don't want to compensate for the failure since it will remove the
             // host, but instead the host should be left in an "install failed" status.
-            getCompensationContext().resetCompensation();
+            getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
             return null;
         });
         // do not install vds's which added in pending mode or for provisioning (currently power

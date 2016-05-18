@@ -48,7 +48,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             }
 
             setStorageDomainStatus(StorageDomainStatus.Active, null);
-            getCompensationContext().resetCompensation();
+            getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
             return null;
         });
         setSucceeded(true);

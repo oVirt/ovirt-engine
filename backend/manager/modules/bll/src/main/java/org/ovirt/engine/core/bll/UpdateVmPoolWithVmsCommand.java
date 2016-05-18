@@ -116,6 +116,8 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
         List<VM> poolVmsBeforeAdd = currentVmsInPoolQuery.getSucceeded() ? currentVmsInPoolQuery.<List<VM>>getReturnValue() : null;
 
         super.executeCommand();
+        getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
+
         if (getSucceeded()) {
             updatePoolVms(poolVmsBeforeAdd);
         }

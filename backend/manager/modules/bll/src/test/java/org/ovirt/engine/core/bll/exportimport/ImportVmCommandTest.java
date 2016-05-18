@@ -238,7 +238,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(cluster).when(cmd).getCluster();
         doReturn(macPool).when(cmd).getMacPool();
 
-        when(macPoolPerDc.poolForDataCenter(any(Guid.class))).thenReturn(macPool);
+        when(macPoolPerDc.getMacPoolForDataCenter(any(Guid.class))).thenReturn(macPool);
 
         ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
         for (DiskImage image : parameters.getVm().getImages()) {

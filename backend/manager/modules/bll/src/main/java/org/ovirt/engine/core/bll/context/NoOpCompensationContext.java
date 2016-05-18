@@ -4,12 +4,13 @@ import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
+import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
 
 /**
  * An implementation of COmpensation Context that does nothing - will be used by commands that do not implement
  * compensation. This class is stateless, therefore it is possible to use a single instance of it
  */
-public class NoOpCompensationContext implements CompensationContext {
+public class NoOpCompensationContext extends CompensationContextBase {
 
     private static final NoOpCompensationContext instance = new NoOpCompensationContext();
 
@@ -37,11 +38,23 @@ public class NoOpCompensationContext implements CompensationContext {
     }
 
     @Override
+    public void snapshotObject(TransientCompensationBusinessEntity entity) {
+    }
+
+    @Override
     public void stateChanged() {
     }
 
     @Override
-    public void resetCompensation() {
+    public void doAfterCompensationCleanup() {
+    }
+
+    @Override
+    public void doCleanupCompensationDataAfterSuccessfulCommand() {
+    }
+
+    @Override
+    public void doClearCollectedCompensationData() {
     }
 
     public static CompensationContext getInstance() {
@@ -54,5 +67,10 @@ public class NoOpCompensationContext implements CompensationContext {
 
     @Override
     public void snapshotNewEntities(Collection<? extends BusinessEntity<?>> entities) {
+    }
+
+    @Override
+    public boolean isCompensationEnabled() {
+        return false;
     }
 }

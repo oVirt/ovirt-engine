@@ -108,7 +108,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     * */
     protected MacPool getMacPool() {
         if (macPool == null) {
-            macPool = poolPerDc.poolForDataCenter(getStoragePoolId());
+            macPool = poolPerDc.getMacPoolForDataCenter(getStoragePoolId());
         }
         return macPool;
     }
@@ -190,7 +190,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (!isVmsAdded()) {
             onNoVmsAdded(poolId);
         }
-        getCompensationContext().resetCompensation();
     }
 
     private void addVmsToPool(Guid poolId) {

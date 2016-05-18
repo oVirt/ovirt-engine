@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -133,7 +134,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getDstSnapshot(),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                 getImagesToPreview(),
-                getCompensationContext(), getVm().getCompatibilityVersion(), getCurrentUser());
+                getCompensationContext(),
+                getCurrentUser(),
+                new VmInterfaceManager(getMacPool()));
     }
 
     @Override

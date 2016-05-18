@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
+import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
@@ -22,7 +23,7 @@ import org.ovirt.engine.core.utils.Serializer;
  * Default context used to track entities that are changing during a command's execution and save the changes at each
  * state change to the DB.
  */
-public class DefaultCompensationContext implements CompensationContext {
+public class DefaultCompensationContext extends CompensationContextBase {
 
     /**
      * A set of all the entities which have been snapshotted ever in this context, since we only want to save the
@@ -111,6 +112,11 @@ public class DefaultCompensationContext implements CompensationContext {
     }
 
     @Override
+    public void snapshotObject(TransientCompensationBusinessEntity entity) {
+        snapshotEntityInMemory(entity, entity, SnapshotType.TRANSIENT_ENTITY);
+    }
+
+    @Override
     public <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity) {
         snapshotEntityStatus(entity, entity.getStatus());
     }
@@ -132,27 +138,39 @@ public class DefaultCompensationContext implements CompensationContext {
         if (!cachedEntities.contains(cachedEntityEntry)) {
             cachedEntities.add(cachedEntityEntry);
 
-            BusinessEntitySnapshot entitySnapshot = new BusinessEntitySnapshot();
-            entitySnapshot.setCommandId(commandId);
-            entitySnapshot.setCommandType(commandType);
-            entitySnapshot.setEntityId(String.valueOf(entity.getId()));
-            entitySnapshot.setEntityType(entity.getClass().getName());
-            entitySnapshot.setEntitySnapshot((String) snapshotSerializer.serialize(payload));
-            entitySnapshot.setSnapshotClass(payload.getClass().getName());
-            entitySnapshot.setSnapshotType(snapshotType);
-            entitySnapshot.setInsertionOrder(cachedEntities.size());
-
-            entitiesToPersist.add(entitySnapshot);
+            entitiesToPersist.add(createBusinessEntitySnapshot(entity, payload, snapshotType));
         }
+    }
+
+    private BusinessEntitySnapshot createBusinessEntitySnapshot(BusinessEntity<?> entity,
+            Serializable payload,
+            SnapshotType snapshotType) {
+
+        BusinessEntitySnapshot entitySnapshot = new BusinessEntitySnapshot();
+        entitySnapshot.setCommandId(commandId);
+        entitySnapshot.setCommandType(commandType);
+        entitySnapshot.setEntityId(String.valueOf(entity.getId()));
+        entitySnapshot.setEntityType(entity.getClass().getName());
+        entitySnapshot.setEntitySnapshot((String) snapshotSerializer.serialize(payload));
+        entitySnapshot.setSnapshotClass(payload.getClass().getName());
+        entitySnapshot.setSnapshotType(snapshotType);
+        entitySnapshot.setInsertionOrder(cachedEntities.size());
+        return entitySnapshot;
     }
 
     private void checkEntityForRollback(BusinessEntity<?> entity) {
         if(entity == null) {
             throw new IllegalArgumentException("Can not create snapshot from a null entity");
         }
-        if (DbFacade.getInstance().getDaoForEntity((Class<BusinessEntity<Serializable>>) entity.getClass()) == null) {
+
+        @SuppressWarnings("unchecked")
+        Class<BusinessEntity<Serializable>> entityClass = (Class<BusinessEntity<Serializable>>) entity.getClass();
+        boolean verifyDaoExistence = ! (entity instanceof TransientCompensationBusinessEntity);
+
+        boolean reportMissingDao = verifyDaoExistence && DbFacade.getInstance().getDaoForEntity(entityClass) == null;
+        if (reportMissingDao) {
             throw new IllegalArgumentException("There is no rollback Dao registered for entity type "
-                    + entity.getClass().getName());
+                    + entityClass.getName());
         }
     }
 
@@ -166,7 +184,17 @@ public class DefaultCompensationContext implements CompensationContext {
     }
 
     @Override
-    public void resetCompensation() {
+    public void doAfterCompensationCleanup() {
+        doClearCollectedCompensationData();
+    }
+
+    @Override
+    public void doCleanupCompensationDataAfterSuccessfulCommand() {
+        doClearCollectedCompensationData();
+    }
+
+    @Override
+    public void doClearCollectedCompensationData() {
         businessEntitySnapshotDao.removeAllForCommandId(commandId);
         cachedEntities.clear();
         entitiesToPersist.clear();
@@ -256,5 +284,10 @@ public class DefaultCompensationContext implements CompensationContext {
                 snapshotNewEntity(entity);
             }
         }
+    }
+
+    @Override
+    public boolean isCompensationEnabled() {
+        return true;
     }
 }

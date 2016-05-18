@@ -145,8 +145,8 @@ public class ImportValidator {
         return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
     }
 
-    protected MacPool getMacPool() {
-        return Injector.get(MacPoolPerDc.class).poolForDataCenter(params.getStoragePoolId());
+    private MacPool getMacPool() {
+        return Injector.get(MacPoolPerDc.class).getMacPoolForDataCenter(params.getStoragePoolId());
     }
 
     public StorageDomainDao getStorageDomainDao() {

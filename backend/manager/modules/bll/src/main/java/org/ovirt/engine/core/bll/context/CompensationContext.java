@@ -4,11 +4,17 @@ import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
+import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
 
 /**
  * The compensation context contains information needed for compensating failed command executions.
  */
 public interface CompensationContext {
+
+    /**
+     * @return true, if this CompensationContext does compensation logic. False if compensation is not performed.
+     */
+    boolean isCompensationEnabled();
 
     /**
      * Save a snapshot of the entire entity before it is changed/deleted in the DB, so that it can be restored later on
@@ -17,7 +23,7 @@ public interface CompensationContext {
      * @param entity
      *            The entity state before the change.
      */
-    public void snapshotEntity(BusinessEntity<?> entity);
+    void snapshotEntity(BusinessEntity<?> entity);
 
     /**
      * Save a snapshot of the entire entity before it was changed in the DB, so that it can be restored later on
@@ -26,7 +32,7 @@ public interface CompensationContext {
      * @param entity
      *            The entity state before the change.
      */
-    public void snapshotEntityUpdated(BusinessEntity<?> entity);
+    void snapshotEntityUpdated(BusinessEntity<?> entity);
 
     /**
      * For each entity in the collection saves a snapshot of the entire data before it is changed/deleted in the DB, so
@@ -35,7 +41,7 @@ public interface CompensationContext {
      * @param entities
      *            The entities before the changes.
      */
-    public void snapshotEntities(Collection<? extends BusinessEntity<?>> entities);
+    void snapshotEntities(Collection<? extends BusinessEntity<?>> entities);
 
     /**
      * Save a snapshot of a new entity that was added to the DB, so that if there's need for compensation it will be
@@ -44,7 +50,7 @@ public interface CompensationContext {
      * @param entity
      *            The new entity which was added.
      */
-    public void snapshotNewEntity(BusinessEntity<?> entity);
+    void snapshotNewEntity(BusinessEntity<?> entity);
 
     /**
      * Save snapshots of new entities that were added to the DB, so that if there's a need for compensation they will be
@@ -53,7 +59,7 @@ public interface CompensationContext {
      * @param entities
      *            the entities that were added.
      */
-    public void snapshotNewEntities(Collection<? extends BusinessEntity<?>> entities);
+    void snapshotNewEntities(Collection<? extends BusinessEntity<?>> entities);
 
     /**
      * Snapshot the entity status only, so that in case of compensation for the entity, the status will be updated to
@@ -64,7 +70,7 @@ public interface CompensationContext {
      * @param status
      *            The status to snapshot.
      */
-    public <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status);
+    <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status);
 
     /**
      * Snapshot the entity status only, so that in case of compensation for the entity, the status will be updated to
@@ -73,18 +79,38 @@ public interface CompensationContext {
      * @param entity
      *            The entity for which to save the status snapshot.
      */
-    public <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity);
+    <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity);
+
+
+    /**
+     * @param entity entity representing BLL data to be bounded to compensation mechanism.
+     */
+    void snapshotObject(TransientCompensationBusinessEntity entity);
 
     /**
      * Signify that the command state had changed and the transaction is about to end, so that the snapshots can
      * be saved to the DB (in order to reduce lock time on the compensations table).
      */
-    public void stateChanged();
+    void stateChanged();
+
 
     /**
-     * Signify that the command does not need the compensation data which has been recorded up to this point, and if an
-     * error occurs after this point then compensation will handle only the entities which were snapshot after this
-     * point.
+     * After compensation was called(because command failed or thrown exception), this method is invoked to
+     * clean up all data, which was just compensated.
      */
-    public void resetCompensation();
+    void afterCompensationCleanup();
+
+    /**
+     * After command using compensation ended in success, this method is invoked to
+     * clean up all data, which was recorded for potential compensation.
+     */
+    void cleanupCompensationDataAfterSuccessfulCommand();
+
+    void addListener(CompensationListener compensationListener);
+
+    interface CompensationListener {
+        void afterCompensation();
+        void cleaningCompensationDataAfterSuccess();
+    }
+
 }

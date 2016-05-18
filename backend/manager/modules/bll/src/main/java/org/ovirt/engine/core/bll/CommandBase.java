@@ -65,6 +65,7 @@ import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
+import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -138,6 +139,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     @Inject
     private VDSBrokerFrontend vdsBroker;
+
+    @Inject
+    private ObjectCompensation objectCompensation;
+
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
@@ -453,7 +458,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     @SuppressWarnings({ "unchecked", "synthetic-access" })
-    protected final void internalCompensate() {
+    private void internalCompensate() {
         try {
             if (isQuotaDependant()) {
                 rollbackQuota();
@@ -503,19 +508,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 case NEW_ENTITY_ID:
                     daoForEntity.remove(snapshotData);
                     break;
+                case TRANSIENT_ENTITY:
+                    objectCompensation.compensate(CommandBase.this, (TransientCompensationBusinessEntity) snapshotData);
+                    break;
+                default:
+                    throw new IllegalArgumentException(String.format(
+                            "Unknown %s value, unable to compensate value %s.",
+                            SnapshotType.class.getName(),
+                            snapshot.getSnapshotType()));
                 }
             }
 
-            cleanUpCompensationData();
+            getCompensationContext().afterCompensationCleanup();
             return null;
         });
-    }
-
-    /**
-     * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
-     */
-    private void cleanUpCompensationData() {
-        getCompensationContext().resetCompensation();
     }
 
     protected void startFinalizingStep() {
@@ -679,18 +685,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         } finally {
             freeLockEndAction();
             if (TransactionSupport.current() == null) {
-
-                // In the unusual case that we have no current transaction, try to cleanup after yourself and if the
-                // cleanup fails (probably since the transaction is aborted) then try to compensate.
                 try {
-                    cleanUpCompensationData();
+                    getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
                 } catch (RuntimeException e) {
                     logExceptionAndCompensate(e);
                 }
             } else {
                 try {
                     if (!exceptionOccurred && TransactionSupport.current().getStatus() == Status.STATUS_ACTIVE) {
-                        cleanUpCompensationData();
+                        getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
                     } else {
                         compensate();
                     }
@@ -701,7 +704,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             persistCommandIfNeeded();
         }
     }
-
     /**
      * Log the exception & call compensate.
      *
@@ -1323,7 +1325,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                         commandStatus == CommandStatus.ACTIVE) {
                     setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY);
                 }
-                cleanUpCompensationData();
+                getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
             }
         }
         return functionReturnValue;

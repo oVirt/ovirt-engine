@@ -83,9 +83,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         Guid newMacPoolId = getNewMacPoolId();
         Objects.requireNonNull(oldMacPoolId); //this should not happen, just make sure this invariant is fulfilled.
         Objects.requireNonNull(newMacPoolId); //this should not happen, just make sure this invariant is fulfilled.
+
+        MacPool sourcePool = poolPerDc.getMacPoolById(oldMacPoolId, getContext());
+        MacPool targetPool = poolPerDc.getMacPoolById(newMacPoolId, getContext());
         boolean needToMigrateMacs = !oldMacPoolId.equals(newMacPoolId);
-
-
 
         updateQuotaCache();
         copyUnchangedStoragePoolProperties(getStoragePool(), oldStoragePool);
@@ -98,7 +99,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         getStoragePoolDao().updatePartial(getStoragePool());
 
         if (needToMigrateMacs) {
-            moveMacsOfUpdatedDataCenter(oldMacPoolId, newMacPoolId, vmInterfaceMacs);
+            moveMacsOfUpdatedDataCenter(vmInterfaceMacs, sourcePool, targetPool);
         }
 
         updateStoragePoolFormatType();
@@ -113,18 +114,16 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      * to target {@link MacPool macPool}. Because source macPool may contain duplicates and/or allow
      * duplicates, {@link MacPool#forceAddMac(String)} is used to add them override
      * <em>allowDuplicates</em> setting of target macPool.
-     * @param oldMacPoolId id of macPool before update
-     * @param newMacPoolId macPool Id of updated data center.
+     * @param vmInterfaceMacs all macs to move between pools
+     * @param sourceMacPool mac pool to move macs from
+     * @param targetMacPool mac pool to move macs to
      */
-    private void moveMacsOfUpdatedDataCenter(Guid oldMacPoolId, Guid newMacPoolId, List<String> vmInterfaceMacs) {
+    private void moveMacsOfUpdatedDataCenter(List<String> vmInterfaceMacs, MacPool sourceMacPool, MacPool targetMacPool) {
         Objects.requireNonNull(vmInterfaceMacs);
 
-        MacPool sourcePool = poolPerDc.getPoolById(oldMacPoolId);
-        MacPool targetPool = poolPerDc.getPoolById(newMacPoolId);
-
         for (String mac : vmInterfaceMacs) {
-            sourcePool.freeMac(mac);
-            targetPool.forceAddMac(mac);
+            sourceMacPool.freeMac(mac);
+            targetMacPool.forceAddMac(mac);
         }
     }
 

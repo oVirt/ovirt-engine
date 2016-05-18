@@ -3,11 +3,15 @@ package org.ovirt.engine.core.bll.network.macpool;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,20 +20,19 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolPerDcTest extends DbDependentTestBase {
@@ -38,6 +41,15 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
 
     @Mock
     private StoragePoolDao storagePoolDao;
+
+    @Mock
+    private MacPoolFactory macPoolFactory;
+
+    @Mock
+    private DecoratedMacPoolFactory decoratedMacPoolFactory;
+
+    @Mock
+    private org.ovirt.engine.core.bll.network.macpool.MacPool macPoolMock;
 
     @Mock
     private VmNicDao vmNicDao;
@@ -63,9 +75,19 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         when(DbFacade.getInstance().getAuditLogDao()).thenReturn(auditLogDao);
 
         macPool = createMacPool(MAC_FROM, MAC_TO);
+
+        when(macPoolFactory.createMacPool(eq(macPool))).thenReturn(macPoolMock);
+
+        Mockito.doAnswer(invocation -> invocation.getArguments()[1])
+                .when(decoratedMacPoolFactory)
+                .createDecoratedPool(any(Guid.class),
+                        any(org.ovirt.engine.core.bll.network.macpool.MacPool.class),
+                        any(List.class));
+
+
         dataCenter = createStoragePool(macPool);
         vmNic = createVmNic();
-        pool = new MacPoolPerDc(macPoolDao, new LockedObjectFactory());
+        pool = new MacPoolPerDc(macPoolDao, macPoolFactory, decoratedMacPoolFactory);
     }
 
     @Test()
@@ -73,7 +95,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         pool.initialize();
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage(MacPoolPerDc.INEXISTENT_POOL_EXCEPTION_MESSAGE);
-        pool.poolForDataCenter(Guid.newGuid());
+        pool.getMacPoolForDataCenter(Guid.newGuid());
     }
 
     @Test
@@ -81,7 +103,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         mockStoragePool(dataCenter);
         mockGettingAllMacPools(macPool);
         pool.initialize();
-        assertThat(pool.poolForDataCenter(dataCenter.getId()), is(notNullValue()));
+        assertThat(pool.getMacPoolForDataCenter(dataCenter.getId()), is(notNullValue()));
     }
 
     @Test
@@ -92,10 +114,11 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
 
         pool.initialize();
         assertThat("scoped pool for this nic should exist",
-                pool.poolForDataCenter(dataCenter.getId()), is(notNullValue()));
+                pool.getMacPoolForDataCenter(dataCenter.getId()), is(notNullValue()));
 
-        assertThat("provided mac should be used in returned pool",
-                pool.poolForDataCenter(dataCenter.getId()).isMacInUse(vmNic.getMacAddress()), is(true));
+        //provided mac should be force-added into relevant pool"
+        verify(macPoolMock).forceAddMac(vmNic.getMacAddress());
+        verifyNoMoreInteractions(macPoolMock);
     }
 
     @Test
@@ -105,7 +128,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         mockStoragePool(dataCenter);
         pool.createPool(macPool);
         assertThat("scoped pool for this data center should exist",
-                pool.poolForDataCenter(dataCenter.getId()), is (notNullValue()));
+                pool.getMacPoolForDataCenter(dataCenter.getId()), is (notNullValue()));
     }
 
     @Test
@@ -124,45 +147,35 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         final String macAddress2 = "00:00:00:00:00:02";
 
         MacPool macPool = createMacPool(macAddress1, macAddress1);
+        when(macPoolFactory.createMacPool(eq(macPool))).thenReturn(macPoolMock);
         StoragePool dataCenter = createStoragePool(macPool);
 
         mockStoragePool(dataCenter);
         mockGettingAllMacPools(macPool);
         pool.initialize();
 
-        assertThat(pool.poolForDataCenter(dataCenter.getId()).addMac(MAC_FROM), is(true));
-        assertThat(pool.poolForDataCenter(dataCenter.getId()).addMac(MAC_FROM), is(false));
+        verifyNoMoreInteractions(macPoolMock);
+        pool.getMacPoolForDataCenter(dataCenter.getId()).addMac(MAC_FROM);
+        verify(macPoolMock).addMac(MAC_FROM);
 
-        final String allocatedMac = allocateMac(dataCenter);
 
-        /*needed due to implementation of modifyPool;
-        modify assumes, that all allocated macs is used for vmNics. If allocatedMac succeeded it's expected that all
-        vmNics were also successfully persisted to db or all allocated macs were returned to the pool. So after
-        allocation we need to mock db, otherwise re-init in modifyPool would return improper results.*/
-        mockAllMacsForStoragePool(dataCenter, allocatedMac);
+        MacPool alteredMacPool = createMacPool(macAddress1, macAddress2, macPool.getId());
+        alteredMacPool.setAllowDuplicateMacAddresses(true);
 
-        assertThat(allocatedMac, is(macAddress1));
-        try {
-            allocateMac(dataCenter);
-            Assert.fail("this allocation should not succeed.");
-        } catch (EngineException e) {
-            //ok, this exception should occur.
-        }
+        org.ovirt.engine.core.bll.network.macpool.MacPool differentMacPoolMock =
+                Mockito.mock(org.ovirt.engine.core.bll.network.macpool.MacPool.class);
+        when(macPoolFactory.createMacPool(eq(alteredMacPool))).thenReturn(differentMacPoolMock);
+        pool.modifyPool(alteredMacPool);
 
-        macPool.setAllowDuplicateMacAddresses(true);
-        final MacRange macRange = new MacRange();
-        macRange.setMacFrom(macAddress1);
-        macRange.setMacTo(macAddress2);
+        pool.getMacPoolForDataCenter(dataCenter.getId()).addMac(MAC_FROM);
+        verify(differentMacPoolMock).addMac(MAC_FROM);
 
-        macPool.setRanges(Collections.singletonList(macRange));
-        pool.modifyPool(macPool);
-
-        assertThat(pool.poolForDataCenter(dataCenter.getId()).addMac(MAC_FROM), is(true));
-        assertThat(allocateMac(dataCenter), is(macAddress2));
+        verifyNoMoreInteractions(macPoolMock);
+        verifyNoMoreInteractions(differentMacPoolMock);
     }
 
     protected String allocateMac(StoragePool dataCenter) {
-        return pool.poolForDataCenter(dataCenter.getId()).allocateNewMac();
+        return pool.getMacPoolForDataCenter(dataCenter.getId()).allocateNewMac();
     }
 
     @Test
@@ -180,13 +193,13 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         mockGettingAllMacPools(macPool);
         pool.initialize();
 
-        assertThat(pool.poolForDataCenter(dataCenter.getId()), is(notNullValue()));
+        assertThat(pool.getMacPoolForDataCenter(dataCenter.getId()), is(notNullValue()));
 
         pool.removePool(macPool.getId());
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage(MacPoolPerDc.INEXISTENT_POOL_EXCEPTION_MESSAGE);
-        pool.poolForDataCenter(dataCenter.getId());
+        pool.getMacPoolForDataCenter(dataCenter.getId());
     }
 
     @Test
@@ -194,7 +207,7 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         pool.initialize();
 
         try {
-            pool.poolForDataCenter(dataCenter.getId());
+            pool.getMacPoolForDataCenter(dataCenter.getId());
             Assert.fail("pool for given data center should not exist");
         } catch (IllegalStateException e) {
             //ignore this exception.
@@ -214,12 +227,16 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
     }
 
     private MacPool createMacPool(String macFrom, String macTo) {
+        return createMacPool(macFrom, macTo, Guid.newGuid());
+    }
+
+    private MacPool createMacPool(String macFrom, String macTo, Guid id) {
         final MacRange macRange = new MacRange();
         macRange.setMacFrom(macFrom);
         macRange.setMacTo(macTo);
 
         final MacPool macPool = new MacPool();
-        macPool.setId(Guid.newGuid());
+        macPool.setId(id);
         macPool.setRanges(Collections.singletonList(macRange));
         return macPool;
     }

@@ -97,7 +97,8 @@ import org.slf4j.LoggerFactory;
 // to all the business and timeout methods in the singleton.
 // The developer of the singleton is responsible for ensuring that the state
 // of the singleton is synchronized across all clients.
-@DependsOn("LockManager")
+//@DependsOn: this bean depends on MacPoolPerDc as pool initialization must be done before compensating entities
+@DependsOn({"LockManager", "MacPoolPerDc"})
 @Local({ BackendLocal.class, BackendInternal.class, BackendCommandObjectsHandler.class })
 @Interceptors({ CorrelationIdTrackerInterceptor.class })
 @Singleton

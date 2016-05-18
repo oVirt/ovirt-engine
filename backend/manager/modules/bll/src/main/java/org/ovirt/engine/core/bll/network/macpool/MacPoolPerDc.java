@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,16 +11,12 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.math.LongRange;
-import org.ovirt.engine.core.common.businessentities.MacRange;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.utils.DisjointRanges;
-import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
-import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +28,10 @@ public class MacPoolPerDc {
     private MacPoolDao macPoolDao;
 
     @Inject
-    private LockedObjectFactory lockedObjectFactory;
+    private DecoratedMacPoolFactory decoratedMacPoolFactory;
+
+    @Inject
+    MacPoolFactory macPoolFactory;
 
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
     static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
@@ -44,9 +43,10 @@ public class MacPoolPerDc {
 
     public MacPoolPerDc() {}
 
-    MacPoolPerDc(MacPoolDao macPoolDao, LockedObjectFactory lockedObjectFactory) {
+    MacPoolPerDc(MacPoolDao macPoolDao, MacPoolFactory macPoolFactory, DecoratedMacPoolFactory decoratedMacPoolFactory) {
         this.macPoolDao = macPoolDao;
-        this.lockedObjectFactory = lockedObjectFactory;
+        this.macPoolFactory = macPoolFactory;
+        this.decoratedMacPoolFactory = decoratedMacPoolFactory;
     }
 
     @PostConstruct
@@ -72,16 +72,34 @@ public class MacPoolPerDc {
         }
     }
 
-    public MacPool poolForDataCenter(Guid dataCenterId) {
+    public MacPool getMacPoolForDataCenter(Guid dataCenterId) {
+        return getMacPoolForDataCenter(dataCenterId, null);
+    }
+
+    /**
+     * @param dataCenterId id of data center.
+     * @return {@link MacPool} instance to be used within transaction, compensation or scope without either.
+     */
+    public MacPool getMacPoolForDataCenter(Guid dataCenterId, CommandContext commandContext) {
+        return getMacPoolById(getMacPoolId(dataCenterId), commandContext);
+    }
+
+    public MacPool getMacPoolById(Guid macPoolId) {
+        return getMacPoolById(macPoolId, Collections.emptyList());
+    }
+
+    /**
+     * @param macPoolId id of mac pool.
+     * @return {@link MacPool} instance decorated by given decorators.
+     */
+    private MacPool getMacPoolById(Guid macPoolId, List<MacPoolDecorator> decorators) {
         try (AutoCloseableLock lock = readLockResource()) {
-            return getPoolWithoutLocking(getMacPoolId(dataCenterId));
+            return getMacPoolWithoutLocking(macPoolId, decorators);
         }
     }
 
-    public MacPool getPoolById(Guid macPoolId) {
-        try (AutoCloseableLock lock = readLockResource()) {
-            return getPoolWithoutLocking(macPoolId);
-        }
+    public MacPool getMacPoolById(Guid macPoolId, CommandContext commandContext) {
+        return getMacPoolById(macPoolId, Collections.singletonList(new TransactionalMacPoolDecorator(commandContext)));
     }
 
     private Guid getMacPoolId(Guid dataCenterId) {
@@ -89,13 +107,14 @@ public class MacPoolPerDc {
         return storagePool == null ? null : storagePool.getMacPoolId();
     }
 
-    private MacPool getPoolWithoutLocking(Guid macPoolId) {
-        final MacPool result = macPools.get(macPoolId);
+    private MacPool getMacPoolWithoutLocking(Guid macPoolId, List<MacPoolDecorator> decorators) {
+        final MacPool poolById = macPools.get(macPoolId);
 
-        if (result == null) {
+        if (poolById == null) {
             throw new IllegalStateException(INEXISTENT_POOL_EXCEPTION_MESSAGE);
         }
-        return result;
+
+        return decoratedMacPoolFactory.createDecoratedPool(macPoolId, poolById, decorators);
     }
 
     /**
@@ -112,9 +131,8 @@ public class MacPoolPerDc {
             throw new IllegalStateException(UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST);
         }
 
-        MacPool poolForScope = new MacPoolUsingRanges(macPoolToRanges(macPool), macPool.isAllowDuplicateMacAddresses());
-        macPools.put(macPool.getId(), lockedObjectFactory.createLockingInstance(poolForScope, MacPool.class,
-                new ReentrantReadWriteLock()));
+        MacPool poolForScope = macPoolFactory.createMacPool(macPool);
+        macPools.put(macPool.getId(), poolForScope);
         return poolForScope;
     }
 
@@ -130,15 +148,6 @@ public class MacPoolPerDc {
             removeWithoutLocking(macPool.getId());
             initializeMacPool(macPool);
         }
-    }
-
-    private Collection<LongRange> macPoolToRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
-        final DisjointRanges disjointRanges = new DisjointRanges();
-        for (MacRange macRange : macPool.getRanges()) {
-            disjointRanges.addRange(MacAddressRangeUtils.macToLong(macRange.getMacFrom()),
-                    MacAddressRangeUtils.macToLong(macRange.getMacTo()));
-        }
-        return MacAddressRangeUtils.clipMultiCastsFromRanges(disjointRanges.getRanges());
     }
 
     public void removePool(Guid macPoolId) {

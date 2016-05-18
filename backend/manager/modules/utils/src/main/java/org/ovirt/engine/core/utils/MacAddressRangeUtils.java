@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.lang.math.Range;
+import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,5 +140,14 @@ public class MacAddressRangeUtils {
         }
 
         return true;
+    }
+
+    public static  Collection<LongRange> macPoolToRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
+        final DisjointRanges disjointRanges = new DisjointRanges();
+        for (MacRange macRange : macPool.getRanges()) {
+            disjointRanges.addRange(macToLong(macRange.getMacFrom()),
+                    macToLong(macRange.getMacTo()));
+        }
+        return clipMultiCastsFromRanges(disjointRanges.getRanges());
     }
 }

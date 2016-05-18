@@ -13,8 +13,6 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -41,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -55,7 +52,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
@@ -67,12 +63,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SnapshotsManager {
     private static final Logger log = LoggerFactory.getLogger(SnapshotsManager.class);
-
-    private final MacPoolPerDc poolPerDc;
-
-    public SnapshotsManager() {
-        poolPerDc = Injector.get(MacPoolPerDc.class);
-    }
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
@@ -449,16 +439,17 @@ public class SnapshotsManager {
      *
      * @param snapshot
      *            The snapshot containing the configuration.
-     * @param version
-     *            The compatibility version of the VM's cluster
      * @param user
      *            The user that performs the action
+     * @param vmInterfaceManager vmInterfaceManager instance
      */
     public void attempToRestoreVmConfigurationFromSnapshot(VM vm,
             Snapshot snapshot,
             Guid activeSnapshotId,
             List<DiskImage> images,
-            CompensationContext compensationContext, Version version, DbUser user) {
+            CompensationContext compensationContext,
+            DbUser user,
+            VmInterfaceManager vmInterfaceManager) {
         boolean vmUpdatedFromConfiguration = false;
         if (snapshot.getVmConfiguration() != null) {
             vmUpdatedFromConfiguration = updateVmFromConfiguration(vm, snapshot.getVmConfiguration());
@@ -481,7 +472,7 @@ public class SnapshotsManager {
 
         if (vmUpdatedFromConfiguration) {
             getVmStaticDao().update(vm.getStaticData());
-            synchronizeNics(vm, compensationContext, user);
+            synchronizeNics(vm, compensationContext, user, vmInterfaceManager);
 
             for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vm.getId())) {
                 if (deviceCanBeRemoved(vmDevice)) {
@@ -619,15 +610,14 @@ public class SnapshotsManager {
      * All existing NICs will be deleted, and the ones from the snapshot re-added.<br>
      * In case a MAC address is already in use, the user will be issued a warning in the audit log.
      *
-     * @param nics
-     *            The nics from snapshot.
-     * @param version
-     *            The compatibility version of the VM's cluster
      * @param user
      *            The user that performs the action
+     * @param vmInterfaceManager vmInterfaceManager instance
      */
-    protected void synchronizeNics(VM vm, CompensationContext compensationContext, DbUser user) {
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool(vm.getStoragePoolId()));
+    private void synchronizeNics(VM vm,
+            CompensationContext compensationContext,
+            DbUser user,
+            VmInterfaceManager vmInterfaceManager) {
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(vm.getClusterId(),
                         vm.getStoragePoolId(),
@@ -646,10 +636,6 @@ public class SnapshotsManager {
         }
 
         vnicProfileHelper.auditInvalidInterfaces(vm.getName());
-    }
-
-    private MacPool getMacPool(Guid storagePoolId) {
-        return poolPerDc.poolForDataCenter(storagePoolId);
     }
 
     /**

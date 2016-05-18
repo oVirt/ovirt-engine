@@ -57,13 +57,19 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
 
+    private MacPool macPool;
+
     public VmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmId(parameters.getVmId());
     }
 
     protected MacPool getMacPool() {
-        return poolPerDc.poolForDataCenter(getStoragePoolId());
+        if (this.macPool == null) {
+            this.macPool = poolPerDc.getMacPoolForDataCenter(getStoragePoolId(), getContext());
+        }
+
+        return this.macPool;
     }
 
     protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
@@ -234,6 +240,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
         endActionOnDisks();
         unlockVm();
+
         setSucceeded(true);
     }
 

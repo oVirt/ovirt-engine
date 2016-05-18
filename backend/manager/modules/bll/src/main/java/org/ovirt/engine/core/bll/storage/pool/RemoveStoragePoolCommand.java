@@ -64,10 +64,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         super(commandId);
     }
 
-    private MacPool getMacPool() {
-        return poolPerDc.poolForDataCenter(getStoragePoolId());
-    }
-
     @Override
     protected void executeCommand() {
         List<String> macsToRemove = getVmNicDao().getAllMacsByDataCenter(getStoragePool().getId());
@@ -90,7 +86,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
-        getMacPool().freeMacs(macsToRemove);
+        MacPool macPool = poolPerDc.getMacPoolForDataCenter(getStoragePoolId(), getContext());
+        macPool.freeMacs(macsToRemove);
         removeDataCenter();
 
         setSucceeded(true);

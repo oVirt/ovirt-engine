@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -455,7 +456,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 targetSnapshot,
                 targetSnapshot.getId(),
                 null,
-                getCompensationContext(), getVm().getCompatibilityVersion(), getCurrentUser());
+                getCompensationContext(),
+                getCurrentUser(),
+                new VmInterfaceManager(getMacPool()));
         getSnapshotDao().remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
         snapshotsManager.addActiveSnapshot(targetSnapshot.getId(),

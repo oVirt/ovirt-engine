@@ -165,7 +165,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         setActionReturnValue(reconstructOpSucceeded);
         connectAndRefreshAllUpHosts(reconstructOpSucceeded);
         if (isLastMaster) {
-            getCompensationContext().resetCompensation();
+            getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
         }
         setSucceeded(!isLastMaster && reconstructOpSucceeded);
 
