@@ -55,6 +55,11 @@ public class V3GlusterBrickServer extends V3Server<GlusterBrickResource> {
         return adaptAction(getDelegate()::replace, action);
     }
 
+    @Path("statistics")
+    public V3StatisticsServer getStatisticsResource() {
+        return new V3StatisticsServer(getDelegate().getStatisticsResource());
+    }
+
     @Path("{action: (replace)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));

@@ -132,6 +132,11 @@ public class V3GlusterVolumeServer extends V3Server<GlusterVolumeResource> {
         return new V3GlusterBricksServer(getDelegate().getGlusterBricksResource());
     }
 
+    @Path("statistics")
+    public V3StatisticsServer getStatisticsResource() {
+        return new V3StatisticsServer(getDelegate().getStatisticsResource());
+    }
+
     @Path("{action: (getprofilestatistics|rebalance|resetalloptions|resetoption|setoption|start|startprofile|stop|stopprofile|stoprebalance)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));

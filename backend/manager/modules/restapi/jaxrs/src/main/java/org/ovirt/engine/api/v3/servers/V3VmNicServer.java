@@ -96,6 +96,11 @@ public class V3VmNicServer extends V3Server<VmNicResource> {
         return new V3VmReportedDevicesServer(getDelegate().getReportedDevicesResource());
     }
 
+    @Path("statistics")
+    public V3StatisticsServer getStatisticsResource() {
+        return new V3StatisticsServer(getDelegate().getStatisticsResource());
+    }
+
     @Path("{action: (activate|deactivate)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));

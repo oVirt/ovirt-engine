@@ -49,6 +49,11 @@ public class V3StepServer extends V3Server<StepResource> {
         return adaptGet(getDelegate()::get);
     }
 
+    @Path("statistics")
+    public V3StatisticsServer getStatisticsResource() {
+        return new V3StatisticsServer(getDelegate().getStatisticsResource());
+    }
+
     @Path("{action: (end)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
