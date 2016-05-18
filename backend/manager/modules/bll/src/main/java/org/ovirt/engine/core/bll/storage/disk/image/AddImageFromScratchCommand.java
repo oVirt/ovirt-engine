@@ -3,13 +3,20 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.CreateSnapshotCommand;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
+import org.ovirt.engine.core.common.action.CreateVolumeParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -21,17 +28,36 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
-@NonTransactiveCommandAttribute(forceCompensation=true)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters> extends CreateSnapshotCommand<T> {
 
     public AddImageFromScratchCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmId(getParameters().getMasterVmId());
         getParameters().setCommandType(getActionType());
+        setStoragePoolId(getParameters().getStoragePoolId());
     }
 
     public AddImageFromScratchCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        if (isDataCenterWithoutSpm()) {
+            return new ConcurrentChildCommandsExecutionCallback();
+        }
+
+        return null;
+    }
+
+    @Override
+    protected AsyncTaskType getTaskType() {
+        if (isDataCenterWithoutSpm()) {
+            return AsyncTaskType.notSupported;
+        }
+
+        return super.getTaskType();
     }
 
     @Override
@@ -82,41 +108,71 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     protected boolean processImageInIrs() {
-        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage, getCreateImageVDSCommandParameters());
-        if (vdsReturnValue.getSucceeded()) {
-            getParameters().setVdsmTaskIds(new ArrayList<>());
-            getParameters().getVdsmTaskIds().add(
-                    createTask(taskId,
-                            vdsReturnValue.getCreationInfo(),
-                            getParameters().getParentCommand(),
-                            VdcObjectType.Storage,
-                            getParameters().getStorageDomainId()));
-            getTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
+        if (isDataCenterWithSpm()) {
+            Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage,
+                    getCreateImageVDSCommandParameters());
+            if (vdsReturnValue.getSucceeded()) {
+                getParameters().setVdsmTaskIds(new ArrayList<>());
+                getParameters().getVdsmTaskIds().add(
+                        createTask(taskId,
+                                vdsReturnValue.getCreationInfo(),
+                                getParameters().getParentCommand(),
+                                VdcObjectType.Storage,
+                                getParameters().getStorageDomainId()));
+                getTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
 
+                return true;
+            }
+        } else {
+            runInternalAction(VdcActionType.CreateVolume, getCreateVolumeParameters());
             return true;
         }
 
         return false;
     }
 
-    private CreateImageVDSCommandParameters getCreateImageVDSCommandParameters() {
+    private Long getInitialSize() {
         DiskImage diskImage = getParameters().getDiskInfo();
+        Long initialSize = null;
+        if (getStorageDomain().getStorageType().isBlockDomain() &&
+                diskImage.getImage().getVolumeType().equals(VolumeType.Sparse) &&
+                diskImage.getActualSizeInBytes() != 0) {
+            initialSize = diskImage.getActualSizeInBytes();
+        }
+
+        return initialSize;
+    }
+
+    private CreateImageVDSCommandParameters getCreateImageVDSCommandParameters() {
         CreateImageVDSCommandParameters parameters =
                 new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters()
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
                         getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
-                                .getVolumeFormat(), getDestinationImageId(),
+                        .getVolumeFormat(), getDestinationImageId(),
                         getJsonDiskDescription(getParameters().getDiskInfo()));
 
-        if (getStorageDomain().getStorageType().isBlockDomain() &&
-                diskImage.getImage().getVolumeType().equals(VolumeType.Sparse) &&
-                diskImage.getActualSizeInBytes() != 0) {
-            parameters.setImageInitialSizeInBytes(diskImage.getActualSizeInBytes());
-
-        }
+        parameters.setImageInitialSizeInBytes(Optional.ofNullable(getInitialSize()).orElse(0L));
         return parameters;
+    }
+
+    private CreateVolumeParameters getCreateVolumeParameters() {
+        CreateVolumeParameters createVolumeParameters =
+                new CreateVolumeParameters(getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(),
+                        getImageGroupId(),
+                        getDestinationImageId(),
+                        Guid.Empty, Guid.Empty,
+                        getParameters().getDiskInfo().getSize(),
+                        getInitialSize(),
+                        getParameters().getDiskInfo().getVolumeFormat(),
+                        getParameters().getDiskInfo().getVolumeType(),
+                        getJsonDiskDescription(getParameters().getDiskInfo()));
+        createVolumeParameters.setParentCommand(getActionType());
+        createVolumeParameters.setParentParameters(getParameters());
+        createVolumeParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        return createVolumeParameters;
     }
 
     @Override
