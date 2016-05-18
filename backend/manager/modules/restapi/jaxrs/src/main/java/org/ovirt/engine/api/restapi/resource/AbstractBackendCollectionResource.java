@@ -169,8 +169,10 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         } else {
             if (model == null) {
                 response = Response.status(ACCEPTED_STATUS).build();
-            } else {
+            } else if (model.isSetHref()) {
                 response = Response.created(URI.create(model.getHref())).entity(model).build();
+            } else {
+                response = Response.ok(Response.Status.CREATED).entity(model).build();
             }
         }
         return response;
