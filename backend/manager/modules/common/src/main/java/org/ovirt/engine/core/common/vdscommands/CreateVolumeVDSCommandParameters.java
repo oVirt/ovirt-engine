@@ -15,9 +15,9 @@ public class CreateVolumeVDSCommandParameters extends StorageJobVdsCommandParame
     private String description;
     private Long initialSize;
 
-    public CreateVolumeVDSCommandParameters(Guid storageDomainId, Guid jobId, long imageSizeInBytes, Guid newImageID,
-                                            Guid srcImageId, Guid srcImageGroupId, Guid newImageGroupId, VolumeFormat
-                                                    volumeFormat, String description, Long initialSize) {
+    public CreateVolumeVDSCommandParameters(Guid storageDomainId, Guid jobId, long imageSizeInBytes, Long
+            initialSize, Guid newImageGroupId, Guid newImageID, Guid srcImageGroupId, Guid srcImageId, VolumeFormat
+            volumeFormat, String description) {
         super(storageDomainId, jobId);
         this.imageSizeInBytes = imageSizeInBytes;
         this.newImageID = newImageID;
