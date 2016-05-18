@@ -268,8 +268,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<>();
-        permissionList.addAll(super.getPermissionCheckSubjects());
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
         permissionList.add(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool,
                 getActionType().getActionGroup()));
