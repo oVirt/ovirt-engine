@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String ticket;
@@ -12,12 +13,14 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
     private Guid userId;
     private GraphicsType graphicsType;
     private ConsoleDisconnectAction disconnectAction;
+    private Version compatibilityVersion;
 
     public SetVmTicketVDSCommandParameters() {
     }
 
     public SetVmTicketVDSCommandParameters(Guid vdsId, Guid vmId, String ticket, int validTime, String userName,
-                                           Guid userId, GraphicsType graphicsType, ConsoleDisconnectAction disconnectAction) {
+                                           Guid userId, GraphicsType graphicsType, ConsoleDisconnectAction disconnectAction,
+                                           Version compatibilityVersion) {
         super(vdsId, vmId);
         this.ticket = ticket;
         this.validTime = validTime;
@@ -25,6 +28,7 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
         this.userId = userId;
         this.graphicsType = graphicsType;
         this.disconnectAction = disconnectAction;
+        this.compatibilityVersion = compatibilityVersion;
     }
 
     public String getTicket() {
@@ -49,6 +53,10 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
 
     public GraphicsType getGraphicsType() {
         return graphicsType;
+    }
+
+    public Version getCompatibilityVersion() {
+        return compatibilityVersion;
     }
 
     @Override

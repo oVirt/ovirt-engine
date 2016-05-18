@@ -199,7 +199,9 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
                 runVdsCommand(VDSCommandType.SetVmTicket,
                         new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(),
                                 ticket, getParameters().getValidTime(),
-                            user.getLoginName(), user.getId(), getParameters().getGraphicsType(), getVm().getConsoleDisconnectAction())).getSucceeded();
+                                user.getLoginName(), user.getId(),
+                                getParameters().getGraphicsType(), getVm().getConsoleDisconnectAction(),
+                                getVm().getCompatibilityVersion())).getSucceeded();
 
         // Return the ticket only if sending it to the virtual machine succeeded:
         if (sent) {

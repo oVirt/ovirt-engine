@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -31,7 +32,10 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
         devStruct.put("graphicsType", getParameters().getGraphicsType().name().toLowerCase());
         devStruct.put("password", getParameters().getTicket());
         devStruct.put("ttl", getParameters().getValidTime());
-        devStruct.put("existingConnAction", connectionAction);
+        if (getParameters().getCompatibilityVersion().less(Version.v4_0)) {
+            // Older Vdsm versions crash when this parameter is not present.
+            devStruct.put("existingConnAction", connectionAction);
+        }
         devStruct.put("disconnectAction", getParameters().getDisconnectAction());
         devStruct.put("params", getUidParams());
 
