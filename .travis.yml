@@ -1,0 +1,19 @@
+language: java
+jdk:
+  - oraclejdk8
+services:
+  - postgresql
+install: true
+before_script:
+  - psql -d template1 -c "create database engine_dao_tests owner postgres;" -U postgres
+  - sudo rm -rf /etc/securetty # Work around ServletUtilsTest test
+script:
+  - "./packaging/dbscripts/schema.sh -d engine_dao_tests -u postgres -c apply"
+  - mvn --quiet clean install -P enable-dao-tests -Dengine.db.username=postgres -Dengine.db.password
+addons:
+  postgresql: "9.2"
+cache:
+  directories:
+    - $HOME/.m2
+  before_cache:
+    - rm -rf $HOME/.m2/repository/org/ovirt/
