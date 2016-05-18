@@ -90,9 +90,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             setStorageDomainId(cinderDisk.getStorageIds().get(0));
             getCinderBroker().updateConnectionInfoForDisk(cinderDisk);
         }
-        Map<String, String> diskAddressMap = getDiskAddressMap(vmDevice, disk.getDiskInterface());
+        Map<String, String> diskAddressMap = getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
-                getVm(), disk, vmDevice, diskAddressMap));
+                getVm(), disk, vmDevice, diskAddressMap, getDiskVmElement().getDiskInterface()));
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {
@@ -111,16 +111,17 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 .getAllForLun(lun.getLUNId())));
     }
 
-    protected boolean isDiskPassPciAndIdeLimit(Disk diskInfo) {
+    protected boolean isDiskPassPciAndIdeLimit() {
         List<VmNic> vmInterfaces = getVmNicDao().getAllForVm(getVmId());
-        List<Disk> allVmDisks = new ArrayList<>(getVm().getDiskMap().values());
-        allVmDisks.add(diskInfo);
+        List<DiskVmElement> diskVmElements = getDiskVmElementDao().getAllForVm(getVmId());
+
+        diskVmElements.add(getDiskVmElement());
 
         return checkPciAndIdeLimit(getVm().getOs(),
                 getVm().getCompatibilityVersion(),
                 getVm().getNumOfMonitors(),
                 vmInterfaces,
-                allVmDisks,
+                diskVmElements,
                 isVirtioScsiControllerAttached(getVmId()),
                 hasWatchdog(getVmId()),
                 isBalloonEnabled(getVmId()),
@@ -142,23 +143,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean hasWatchdog(Guid vmId) {
         return VmDeviceUtils.hasWatchdog(vmId);
-    }
-
-    protected boolean isDiskCanBeAddedToVm(Disk diskInfo, VM vm) {
-        if (!diskInfo.isDiskSnapshot() && diskInfo.isBoot()) {
-            for (Disk disk : vm.getDiskMap().values()) {
-                if (disk.isBoot() && !disk.isDiskSnapshot()) {
-                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
-                    getReturnValue().getValidationMessages().add(
-                            String.format("$DiskName %1$s", disk.getDiskAlias()));
-                    getReturnValue().getValidationMessages().add(
-                            String.format("$VmName %1$s", vm.getName()));
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /** Updates the VM's disks from the database */

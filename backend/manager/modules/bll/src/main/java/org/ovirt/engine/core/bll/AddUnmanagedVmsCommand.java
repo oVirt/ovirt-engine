@@ -137,10 +137,10 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     private void importHostedEngineVm(Map<String, Object> vmStruct) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
         if (vm != null) {
-            vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
+            vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct, vm.getId()));
             vm.setInterfaces(VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
             for (DiskImage diskImage : vm.getImages()) {
-                vm.getDiskMap().put(Guid.newGuid(), diskImage);
+                vm.getDiskMap().put(diskImage.getId(), diskImage);
             }
             vm.setClusterId(getClusterId());
             vm.setRunOnVds(getVdsId());

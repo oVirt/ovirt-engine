@@ -1,13 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -75,14 +78,17 @@ public class NewDiskModel extends AbstractDiskModel {
     @Override
     public void initialize() {
         super.initialize();
+        setDiskVmElement(new DiskVmElement(new VmDeviceId(null, getIsFloating() ? null : getVm().getId())));
 
-        if (getVm() != null) {
+        if (!getIsFloating()) {
             updateSuggestedDiskAliasFromServer();
             getIsPlugged().setIsAvailable(true);
         } else {
             // Read only disk can be created only in the scope of VM.
             getIsReadOnly().setIsAvailable(false);
             getIsPlugged().setEntity(false);
+            getIsBootable().setIsAvailable(false);
+            getDiskInterface().setIsAvailable(false);
 
             // set using scsi reservation to be invisible
             getIsUsingScsiReservation().setIsAvailable(false);
@@ -90,6 +96,12 @@ public class NewDiskModel extends AbstractDiskModel {
         }
 
         getSizeExtend().setIsAvailable(false);
+    }
+
+    @Override
+    public void initialize(List<Disk> currentDisks) {
+        super.initialize(currentDisks);
+        setDiskVmElement(new DiskVmElement(new VmDeviceId(null, getIsFloating() ? null : getVm().getId())));
     }
 
     public void updateSuggestedDiskAliasFromServer() {
@@ -184,7 +196,7 @@ public class NewDiskModel extends AbstractDiskModel {
 
         startProgress();
 
-        AddDiskParameters parameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), getDisk());
+        AddDiskParameters parameters = new AddDiskParameters(getDiskVmElement(), getDisk());
         parameters.setPlugDiskToVm(getIsPlugged().getEntity());
         if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE ||
                 getDiskStorageType().getEntity() == DiskStorageType.CINDER) {

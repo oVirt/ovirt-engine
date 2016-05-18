@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,9 +13,11 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -96,6 +99,12 @@ public class OvfUpdateProcessHelper {
         for (DiskImage diskImage : filteredDisks) {
             allVmImages.addAll(getAllImageSnapshots(diskImage));
         }
+
+        for (DiskImage disk : allVmImages) {
+            DiskVmElement dve = DbFacade.getInstance().getDiskVmElementDao().get(new VmDeviceId(disk.getId(), vm.getId()));
+            disk.setDiskVmElements(Collections.singletonList(dve));
+        }
+
         return allVmImages;
     }
 

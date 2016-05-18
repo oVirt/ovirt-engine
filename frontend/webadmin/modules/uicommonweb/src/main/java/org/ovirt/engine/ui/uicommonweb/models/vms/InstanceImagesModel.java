@@ -11,6 +11,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -209,7 +210,7 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
                 continue;
             }
             if (disk.getId().equals(bootDisk.getId())) {
-                if (disk.isBoot()) {
+                if (disk.getDiskVmElementForVm(getVm().getId()).isBoot()) {
                     return null;
                 } else {
                     // removed boot flag, this command has to be executed first so if other disk is marked as boot,
@@ -224,7 +225,8 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
 
     private Disk findBoot(List<Disk> disks) {
         for (Disk disk : disks) {
-            if (disk.isBoot()) {
+            DiskVmElement dve = disk.getDiskVmElementForVm(getVm().getId());
+            if (dve != null && dve.isBoot()) {
                 return disk;
             }
         }

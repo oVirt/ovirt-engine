@@ -405,15 +405,7 @@ SELECT d.disk_id AS vm_disk_id,
     CAST(i.size / 1048576 AS INT) AS vm_disk_size_mb,
     CAST(i.volume_type AS SMALLINT) AS vm_disk_type,
     CAST(i.volume_format AS SMALLINT) AS vm_disk_format,
-    CASE
-        WHEN d.disk_interface = 'IDE'
-            THEN CAST(0 AS SMALLINT)
-        WHEN d.disk_interface = 'SCSI'
-            THEN CAST(1 AS SMALLINT)
-        WHEN d.disk_interface = 'VirtIO'
-            THEN CAST(2 AS SMALLINT)
-        END AS vm_disk_interface,
-    d.shareable AS is_shared,
+     d.shareable AS is_shared,
     i._create_date AS create_date,
     i._update_date AS update_date
 FROM images AS i

@@ -429,7 +429,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setVolumeType(diskImage.getVolumeType());
         di.setvolumeFormat(diskImage.getVolumeFormat());
         di.setSize(diskImage.getSize());
-        di.setBoot(diskImage.isBoot());
         if (diskImage.getQuotaIds() != null) {
             di.setQuotaIds(new ArrayList<>(diskImage.getQuotaIds()));
         }
@@ -464,7 +463,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setVmSnapshotId(diskImage.getVmSnapshotId());
         di.setId(diskImage.getId());
         di.setNumberOfVms(diskImage.getNumberOfVms());
-        di.setDiskInterface(diskImage.getDiskInterface());
         di.setWipeAfterDelete(diskImage.isWipeAfterDelete());
         di.setPropagateErrors(diskImage.getPropagateErrors());
         di.setDiskAlias(diskImage.getDiskAlias());

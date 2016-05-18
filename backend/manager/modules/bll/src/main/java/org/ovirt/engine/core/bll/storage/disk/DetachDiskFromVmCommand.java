@@ -53,7 +53,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         if (vmDevice.getIsPlugged() && getVm().getStatus() != VMStatus.Down) {
-            if (!isDiskSupportedForPlugUnPlug(disk)) {
+            if (!isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias())) {
                 return false;
             }
         }
@@ -83,6 +83,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             performPlugCommand(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }
         getVmDeviceDao().remove(vmDevice.getId());
+        getDiskVmElementDao().remove(vmDevice.getId());
 
         if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {
             // clears snapshot ID

@@ -102,11 +102,33 @@ public class AttachDiskModel extends NewDiskModel {
         public void onSuccess(Object model, Object returnValue) {
             List<Disk> disks = adjustReturnValue(returnValue);
             Collections.sort(disks, new DiskByDiskAliasComparator());
-            ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
+            final ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
 
-            List<EntityModel<DiskModel>> entities = Linq.toEntityModelList(
-                    Linq.filterDisksByType(diskModels, diskStorageType));
-            initAttachableDisks(entities);
+            AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object diskInterfacesReturnValue) {
+                    final ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) diskInterfacesReturnValue;
+                    AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object virtioScsiEnabledReturnValue) {
+                            if (Boolean.FALSE.equals(virtioScsiEnabledReturnValue)) {
+                                diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
+                            }
+                            for (DiskModel diskModel : diskModels) {
+                                diskModel.getDiskInterface().setItems(diskInterfaces);
+                                diskModel.getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
+                            }
+                            List<EntityModel<DiskModel>> entities = Linq.toEntityModelList(
+                                    Linq.filterDisksByType(diskModels, diskStorageType));
+                            initAttachableDisks(entities);
+
+                        }
+                    }), getVmId());
+                }
+            });
+            AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), asyncQuery);
+
+
         }
 
         protected void initAttachableDisks(List<EntityModel<DiskModel>> entities) {
@@ -157,14 +179,18 @@ public class AttachDiskModel extends NewDiskModel {
              */
             boolean activate = false;
             if (getIsPlugged().getEntity()) {
-                activate = disk.getDisk().getDiskInterface() == DiskInterface.IDE ?
+                activate = disk.getDiskInterface().getSelectedItem() == DiskInterface.IDE ?
                         getVm().getStatus() == VMStatus.Down : true;
             }
 
+
+            DiskVmElement dve = new DiskVmElement(disk.getDisk().getId(), getVm().getId());
+            dve.setBoot(disk.getIsBootable().getEntity());
+            dve.setDiskInterface(disk.getDiskInterface().getSelectedItem());
+
             // Disk is attached to VM as read only or not, null is applicable only for floating disks
             // but this is not a case here.
-            AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(
-                    new DiskVmElement(disk.getDisk().getId(), getVm().getId()) , activate,
+            AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(dve , activate,
                     Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
 
             actionTypes.add(VdcActionType.AttachDiskToVm);
@@ -220,7 +246,7 @@ public class AttachDiskModel extends NewDiskModel {
 
     private boolean isSelectedDiskInterfaceIDE(List<EntityModel<DiskModel>> selectedDisks) {
         for (EntityModel<DiskModel> selectedDisk : selectedDisks) {
-            if (selectedDisk.getEntity().getDisk().getDiskInterface() == DiskInterface.IDE) {
+            if (selectedDisk.getEntity().getDiskInterface().getSelectedItem() == DiskInterface.IDE) {
                 return true;
             }
         }

@@ -5,7 +5,6 @@ import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
-import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -19,7 +18,6 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
     @Override
     protected Disk postPopulate(Disk model) {
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class));
-        model.setInterface(MappingTestHelper.shuffle(DiskInterface.class));
         model.setStatus(MappingTestHelper.shuffle(DiskStatus.class));
         model.setLunStorage(new HostStorage());
         return model;
@@ -29,9 +27,7 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
     protected void verify(Disk model, Disk transform) {
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
-        assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isActive(), transform.isActive());
-        assertEquals("unexpected bootable", model.isBootable(), transform.isBootable());
         assertEquals("unexpected propagate errors", model.isPropagateErrors(), transform.isPropagateErrors());
         assertEquals("unexpected wipe after delete", model.isWipeAfterDelete(), transform.isWipeAfterDelete());
         assertEquals("unexpected shareable", model.isShareable(), transform.isShareable());

@@ -139,12 +139,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.bootableDiskColumn,
-                new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
-                all || images || luns || cinder, "30px"); //$NON-NLS-1$
-
-        getTable().ensureColumnVisible(
                 DisksViewColumns.shareableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),

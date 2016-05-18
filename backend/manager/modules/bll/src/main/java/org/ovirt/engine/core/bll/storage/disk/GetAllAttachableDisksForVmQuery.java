@@ -1,30 +1,31 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetAllAttachableDisksForVmQuery<P extends GetAllAttachableDisksForVmQueryParameters> extends BaseGetAttachableDisksQuery<P> {
+public class GetAllAttachableDisksForVmQuery<P extends GetAllAttachableDisksForVmQueryParameters> extends QueriesCommandBase<P> {
 
     public GetAllAttachableDisksForVmQuery(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected List<Disk> filterDisks(List<Disk> diskList) {
-        VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId(),
-                getUserID(),
-                getParameters().isFiltered());
-
-        if (vm == null) {
-            return new ArrayList<>();
+    protected void executeQueryCommand() {
+        List<Disk> diskList = DbFacade.getInstance()
+                .getDiskDao()
+                .getAllAttachableDisksByPoolId(getParameters().getStoragePoolId(),
+                        getParameters().getVmId(),
+                        getUserID(),
+                        getParameters().isFiltered());
+        if (CollectionUtils.isEmpty(diskList)) {
+            setReturnValue(diskList);
+            return;
         }
-
-        return doFilter(diskList, vm.getOs(), vm.getCompatibilityVersion());
+        setReturnValue(diskList);
     }
-
 }

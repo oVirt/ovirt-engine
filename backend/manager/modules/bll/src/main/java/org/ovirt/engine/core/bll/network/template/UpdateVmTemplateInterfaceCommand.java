@@ -106,7 +106,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 clusterCompatibilityVersion,
                 getVmTemplate().getNumOfMonitors(),
                 interfaces,
-                new ArrayList<>(getVmTemplate().getDiskList()),
+                getTemplateDiskVmElements(),
                 VmDeviceUtils.hasVirtioScsiController(getVmTemplate().getId()),
                 VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
                 VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),

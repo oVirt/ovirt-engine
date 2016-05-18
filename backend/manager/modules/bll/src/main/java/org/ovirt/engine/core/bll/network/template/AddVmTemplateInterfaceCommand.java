@@ -73,7 +73,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                     getCluster().getCompatibilityVersion(),
                     getVmTemplate().getNumOfMonitors(),
                     interfacesForCheckPciLimit,
-                    new ArrayList<>(getVmTemplate().getDiskList()),
+                    getTemplateDiskVmElements(),
                     VmDeviceUtils.hasVirtioScsiController(getVmTemplate().getId()),
                     VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
                     VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),

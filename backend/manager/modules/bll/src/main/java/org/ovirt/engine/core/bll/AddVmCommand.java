@@ -87,9 +87,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -301,17 +301,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return vmInterfaceDevices;
     }
 
-    protected List<? extends Disk> _vmDisks;
+    private List<DiskVmElement> diskVmElements;
 
-    protected List<? extends Disk> getVmDisks() {
-        if (_vmDisks == null) {
-            _vmDisks =
-                    DbFacade.getInstance()
-                            .getDiskDao()
+    protected List<DiskVmElement> getDiskVmElements() {
+        if (diskVmElements == null) {
+            diskVmElements = DbFacade.getInstance().getDiskVmElementDao()
                             .getAllForVm(vmDisksSource.getId());
         }
 
-        return _vmDisks;
+        return diskVmElements;
     }
 
     protected boolean canAddVm(List<String> reasons, Collection<StorageDomain> destStorages) {
@@ -373,7 +371,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         getEffectiveCompatibilityVersion(),
                         getParameters().getVmStaticData().getNumOfMonitors(),
                         getVmInterfaces(),
-                        getVmDisks(),
+                        getDiskVmElements(),
                         isVirtioScsiEnabled(),
                         hasWatchdog(),
                         isBalloonEnabled(),
@@ -914,6 +912,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (addVmImages()) {
             TransactionSupport.executeInNewTransaction(() -> {
+                copyDiskVmElements();
                 copyVmDevices();
                 addDiskPermissions();
                 addVmPayload();
@@ -930,6 +929,27 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             addVmToPool();
         }
     }
+
+    /**
+     * After the copy of the images, copy the properties of the disk VM elements of the source disks to new
+     * disk VM elements for the created destination disks and save them
+     */
+    protected void copyDiskVmElements() {
+        for (Map.Entry<Guid, Guid> srcToDst : getSrcDiskIdToTargetDiskIdMapping().entrySet()) {
+            DiskVmElement srcDve = getImagesToCheckDestinationStorageDomains().
+                    stream().
+                    filter(d -> d.getId().equals(srcToDst.getKey())).
+                    findFirst().
+                    get().
+                    getDiskVmElementForVm(getSourceVmId());
+            createAndSaveNewDiskVmElement(srcToDst.getValue(), getVmId(), srcDve);
+        }
+    }
+
+    protected Guid getSourceVmId() {
+        return getVmTemplateId();
+    }
+
 
     private void addGraphicsDevice() {
         for (GraphicsDevice graphicsDevice : getParameters().getGraphicsDevices().values()) {
@@ -1201,6 +1221,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return tempVar;
     }
 
+    protected void createAndSaveNewDiskVmElement(Guid newDiskImageId, Guid newVmId, DiskVmElement oldDve) {
+        DiskVmElement newDve = DiskVmElement.copyOf(oldDve, newDiskImageId, newVmId);
+        getDiskVmElementDao().save(newDve);
+    }
+
     protected void addVmCinderDisks(Collection<DiskImage> templateDisks) {
         List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateDisks);
         if (cinderDisks.isEmpty()) {
@@ -1219,6 +1244,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 return;
             }
             Guid imageId = vdcReturnValueBase.getActionReturnValue();
+            createAndSaveNewDiskVmElement(imageId, getVmId(), cinderDisk.getDiskVmElementForVm(getVmTemplateId()));
+
             diskImageMap.put(cinderDisk.getId(), imageId);
         }
         srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);

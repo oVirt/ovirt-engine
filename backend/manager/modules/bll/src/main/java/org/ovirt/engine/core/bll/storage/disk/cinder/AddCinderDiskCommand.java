@@ -66,6 +66,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
             if (getVm() != null) {
                 addManagedDeviceForDisk(cinderDisk.getId());
+                addDiskVmElementForDisk(getDiskVmElement());
             }
             return null;
         });
@@ -75,8 +76,6 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
         final CinderDisk cinderDisk = new CinderDisk();
         cinderDisk.setDiskAlias(getDiskAlias());
         cinderDisk.setSize(getParameters().getDiskInfo().getSize());
-        cinderDisk.setBoot(getParameters().getDiskInfo().isBoot());
-        cinderDisk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
         cinderDisk.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
         cinderDisk.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
         cinderDisk.setShareable(getParameters().getDiskInfo().isShareable());
@@ -91,6 +90,10 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
         cinderDisk.setVmSnapshotId(getParameters().getVmSnapshotId());
         cinderDisk.setCinderVolumeType(getParameters().getDiskInfo().getCinderVolumeType());
         cinderDisk.setQuotaId(getParameters().getQuotaId());
+
+        if (getVm() != null) {
+            cinderDisk.setDiskVmElements(Collections.singletonList(getDiskVmElement()));
+        }
         return cinderDisk;
     }
 
@@ -114,6 +117,9 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
     @Override
     public boolean validate() {
+        if (getVm() != null) {
+            return validateDiskVmData();
+        }
         return true;
     }
 

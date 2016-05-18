@@ -78,7 +78,10 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         AbstractTextColumn<DiskImage> interfaceColumn = new AbstractEnumColumn<DiskImage, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(DiskImage object) {
-                return object.getDiskInterface();
+                if (object.getDiskVmElements().size() == 1) {
+                    return object.getDiskVmElements().iterator().next().getDiskInterface();
+                }
+                return null;
             }
         };
         getTable().addColumn(interfaceColumn, constants.interfaceDisk(), "150px"); //$NON-NLS-1$

@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
@@ -13,7 +14,6 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
@@ -86,10 +86,8 @@ public class BackendTemplateDisksResourceTest
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
-        expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
         expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
-        expect(entity.isBoot()).andReturn(false).anyTimes();
         expect(entity.isShareable()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
         expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
@@ -124,7 +122,6 @@ public class BackendTemplateDisksResourceTest
     static void verifyModelSpecific(Disk model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertTrue(model.isSparse());
-        assertTrue(!model.isBootable());
         assertTrue(model.isPropagateErrors());
     }
 

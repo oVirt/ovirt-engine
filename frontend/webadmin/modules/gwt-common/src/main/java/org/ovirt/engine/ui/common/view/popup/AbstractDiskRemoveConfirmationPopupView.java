@@ -36,7 +36,8 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
         if (disk.isShareable()) {
             notes.add(constants.shareable());
         }
-        if (disk.isBoot()) {
+        if (isInVm && disk.getDiskVmElementForVm(diskModel.getVm().getId()) != null &&
+                disk.getDiskVmElementForVm(diskModel.getVm().getId()).isBoot()) {
             notes.add(constants.bootable());
         }
 

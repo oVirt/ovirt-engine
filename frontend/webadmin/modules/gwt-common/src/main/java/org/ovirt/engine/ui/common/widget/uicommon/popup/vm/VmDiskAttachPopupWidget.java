@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -19,7 +18,6 @@ import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
@@ -34,6 +32,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -174,7 +173,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 return diskImage.getSize();
             }
         };
-        imageDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "105px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "100px"); //$NON-NLS-1$
 
         AbstractDiskSizeColumn<EntityModel> actualSizeColumn = new AbstractDiskSizeColumn<EntityModel>() {
             @Override
@@ -183,7 +182,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 return diskImage.getActualSizeInBytes();
             }
         };
-        imageDiskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable(), "105px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<EntityModel> storageDomainColumn = new AbstractTextColumn<EntityModel>() {
             @Override
@@ -192,38 +191,17 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 return diskImage.getStoragesNames().get(0);
             }
         };
-        imageDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "115px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<EntityModel> interfaceColumn = new AbstractEnumColumn<EntityModel, DiskInterface>() {
-            @Override
-            protected DiskInterface getRawValue(EntityModel object) {
-                Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                return disk.getDiskInterface();
-            }
-        };
-        imageDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "95px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(DisksViewColumns.getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
 
         imageDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
                 "30px"); //$NON-NLS-1$
 
-        imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                return disk.isBoot() ? resources.bootableDiskIcon() : null;
-            }
-
-            @Override
-            public SafeHtml getTooltip(EntityModel object) {
-                Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                if (disk.isBoot()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
-                }
-                return null;
-            }
-        }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
-        "30px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(DisksViewColumns.bootCheckboxColumn,
+                new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootableDisk())),
+                "30px"); //$NON-NLS-1$
 
         imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
@@ -331,36 +309,16 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(serialColumn, constants.serialSanStorage(), "70px"); //$NON-NLS-1$
 
-        AbstractTextColumn<EntityModel> interfaceColumn = new AbstractEnumColumn<EntityModel, DiskInterface>() {
-            @Override
-            protected DiskInterface getRawValue(EntityModel object) {
-                Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                return disk.getDiskInterface();
-            }
-        };
-        lunDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
+        lunDiskTable.addColumn(DisksViewColumns.getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
 
         lunDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
                 "30px"); //$NON-NLS-1$
 
-        lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                return disk.isBoot() ? resources.bootableDiskIcon() : null;
-            }
-
-            @Override
-            public SafeHtml getTooltip(EntityModel object) {
-                Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                if (disk.isBoot()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
-                }
-                return null;
-            }
-        }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
+        lunDiskTable.addColumn(DisksViewColumns.bootCheckboxColumn,
+                new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootableDisk())),
                 "30px"); //$NON-NLS-1$
+
 
         lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
@@ -414,14 +372,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         cinderDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<EntityModel> interfaceColumn = new AbstractEnumColumn<EntityModel, DiskInterface>() {
-            @Override
-            protected DiskInterface getRawValue(EntityModel object) {
-                Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                return disk.getDiskInterface();
-            }
-        };
-        cinderDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
+        cinderDiskTable.addColumn(DisksViewColumns.getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
 
         AbstractTextColumn<EntityModel> cinderVolumeTypeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
@@ -436,22 +387,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
                 "30px"); //$NON-NLS-1$
 
-        cinderDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
-                                   @Override
-                                   public ImageResource getValue(EntityModel object) {
-                                       Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                                       return disk.isBoot() ? resources.bootableDiskIcon() : null;
-                                   }
-
-                                   @Override
-                                   public SafeHtml getTooltip(EntityModel object) {
-                                       Disk disk = ((DiskModel) object.getEntity()).getDisk();
-                                       if (disk.isBoot()) {
-                                           return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
-                                       }
-                                       return null;
-                                   }
-                               }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
+        cinderDiskTable.addColumn(DisksViewColumns.bootCheckboxColumn,
+                new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootableDisk())),
                 "30px"); //$NON-NLS-1$
 
         cinderDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {

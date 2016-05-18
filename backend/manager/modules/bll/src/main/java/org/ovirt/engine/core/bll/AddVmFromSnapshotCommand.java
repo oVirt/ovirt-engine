@@ -171,7 +171,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     protected boolean checkCanDisableVirtIoScsi() {
-        VmValidator vmValidator = createVmValidator(vmFromConfiguration);
+        VmValidator vmValidator = createVmValidator(getVmFromConfiguration());
         if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled()) &&
                 !validate(vmValidator.canDisableVirtioScsi(getAdjustedDiskImagesFromConfiguration()))) {
             return false;

@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -50,10 +49,8 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
         entity.setvolumeFormat(VolumeFormat.RAW);
-        entity.setDiskInterface(DiskInterface.VirtIO);
         entity.setImageStatus(ImageStatus.OK);
         entity.setVolumeType(VolumeType.Sparse);
-        entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
         return setUpStatisticalEntityExpectations(entity);    }
@@ -245,9 +242,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         Disk model = new Disk();
         model.setProvisionedSize(1024 * 1024L);
         model.setFormat(DiskFormat.COW);
-        model.setInterface(org.ovirt.engine.api.model.DiskInterface.IDE);
         model.setSparse(true);
-        model.setBootable(false);
         model.setShareable(false);
         model.setPropagateErrors(true);
         model.setStorageDomains(new StorageDomains());
@@ -266,7 +261,6 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         assertEquals(GUIDS[index].toString(), model.getId());
         assertFalse(model.isSetVm());
         assertTrue(model.isSparse());
-        assertTrue(!model.isBootable());
         assertTrue(model.isPropagateErrors());
     }
 }

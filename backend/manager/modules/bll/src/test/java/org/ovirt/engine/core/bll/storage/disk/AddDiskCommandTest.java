@@ -16,9 +16,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -59,6 +57,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -72,11 +71,15 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private static final Logger log = LoggerFactory.getLogger(AddDiskCommandTest.class);
     private static int MAX_BLOCK_SIZE = 8192;
     private static int MAX_PCI_SLOTS = 26;
+    private static Guid vmId = Guid.newGuid();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE)
             );
+
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
 
     @Mock
     private StorageDomainDao storageDomainDao;
@@ -129,9 +132,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
-        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class), any(DiskVmElement.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskValidator.isVirtIoScsiValid(any(VM.class), any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
 
         assertFalse(command.validate());
@@ -359,6 +362,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
         doReturn(vmNicDao).when(command).getVmNicDao();
         doReturn(diskLunMapDao).when(command).getDiskLunMapDao();
+        doReturn(diskVmElementDao).when(command).getDiskVmElementDao();
         doReturn(vmDao).when(command).getVmDao();
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
@@ -368,6 +372,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isBalloonEnabled(any(Guid.class));
         doReturn(false).when(command).isSoundDeviceEnabled(any(Guid.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
+        doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
@@ -379,7 +384,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     private void mockVmWithDisk(Guid storageId) {
         DiskImage image = new DiskImage();
+        image.setId(Guid.newGuid());
         image.setStorageIds(new ArrayList<>(Arrays.asList(storageId)));
+        DiskVmElement dve = new DiskVmElement(image.getId(), vmId);
+        image.setDiskVmElements(Collections.singletonList(dve));
         mockVm().getDiskMap().put(image.getId(), image);
     }
 
@@ -409,6 +417,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     private VM mockVm() {
         VM vm = new VM();
+        vm.setId(vmId);
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(Guid.newGuid());
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
@@ -522,22 +531,21 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     private static AddDiskParameters createParameters() {
         DiskImage image = new DiskImage();
-        image.setDiskInterface(DiskInterface.IDE);
-        AddDiskParameters parameters = new AddDiskParameters(new DiskVmElement(null, Guid.newGuid()), image);
+        DiskVmElement dve = new DiskVmElement(null, vmId);
+        dve.setDiskInterface(DiskInterface.IDE);
+        AddDiskParameters parameters = new AddDiskParameters(dve, image);
         return parameters;
     }
 
     private static DiskImage createSparseDiskImage() {
         DiskImage image = new DiskImage();
         image.setVolumeType(VolumeType.Sparse);
-        image.setDiskInterface(DiskInterface.IDE);
         return image;
     }
 
     private static DiskImage createPreallocDiskImage() {
         DiskImage image = new DiskImage();
         image.setVolumeType(VolumeType.Preallocated);
-        image.setDiskInterface(DiskInterface.IDE);
         image.setSizeInGigabytes(5);
         return image;
     }
@@ -545,20 +553,12 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private static DiskImage createDiskImage(long sizeInGigabytes) {
         DiskImage image = new DiskImage();
         image.setSizeInGigabytes(sizeInGigabytes);
-        image.setDiskInterface(DiskInterface.IDE);
         return image;
     }
 
     private static DiskImage createShareableDiskImage() {
         DiskImage image = new DiskImage();
         image.setShareable(true);
-        image.setDiskInterface(DiskInterface.IDE);
-        return image;
-    }
-
-    private static DiskImage createVirtIoScsiDiskImage() {
-        DiskImage image = new DiskImage();
-        image.setDiskInterface(DiskInterface.VirtIO_SCSI);
         return image;
     }
 
@@ -575,6 +575,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         connections.add(connection);
         lun.setLunConnections(connections);
         disk.setLun(lun);
+        disk.setId(Guid.newGuid());
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vmId);
+        disk.setDiskVmElements(Collections.singletonList(dve));
         return disk;
     }
 
@@ -593,7 +596,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         LunDisk disk = createISCSILunDisk();
         disk.setSgio(sgio);
         disk.setUsingScsiReservation(isUsingScsiReservation);
-        disk.setDiskInterface(diskInterface);
         return disk;
     }
 
@@ -713,7 +715,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void testLunDiskValid() {
         VDS vds = mockVds();
         LunDisk disk = createISCSILunDisk();
-        disk.setDiskInterface(DiskInterface.VirtIO);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
@@ -747,7 +748,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void testLunDiskInvalid() {
         VDS vds = mockVds();
         LunDisk disk = createISCSILunDisk();
-        disk.setDiskInterface(DiskInterface.VirtIO);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
@@ -782,9 +782,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void testAddingIDELunExceedsSlotLimit() {
         mockInterfaceList();
         LunDisk disk = createISCSILunDisk();
-        disk.setDiskInterface(DiskInterface.IDE);
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
+        parameters.getDiskVmElement().setDiskInterface(DiskInterface.IDE);
         initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         VM vm = mockVm();
@@ -792,10 +792,12 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         // use maximum slots for IDE - validate expected to succeed.
-        fillDiskMap(disk, vm, VmCommand.MAX_IDE_SLOTS - 1);
+        mockOtherVmDisks(vm, VmCommand.MAX_IDE_SLOTS - 1, DiskInterface.IDE);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
 
-        vm.getDiskMap().put(Guid.newGuid(), disk);
+        LunDisk newDisk = createISCSILunDisk();
+        newDisk.getDiskVmElementForVm(vmId).setDiskInterface(DiskInterface.IDE);
+        vm.getDiskMap().put(newDisk.getId(), newDisk);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS);
     }
@@ -804,28 +806,41 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void testAddingPCILunExceedsSlotLimit() {
         mockInterfaceList();
         LunDisk disk = createISCSILunDisk();
-        disk.setDiskInterface(DiskInterface.VirtIO);
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
+        parameters.getDiskVmElement().setDiskInterface(DiskInterface.VirtIO);
         initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         VM vm = mockVm();
         mockMaxPciSlots();
 
         // use maximum slots for PCI. validate expected to succeed.
-        fillDiskMap(disk, vm, MAX_PCI_SLOTS - 2);
+        mockOtherVmDisks(vm, MAX_PCI_SLOTS - 2, DiskInterface.VirtIO);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
 
-        vm.getDiskMap().put(Guid.newGuid(), disk);
+        LunDisk newDisk = createISCSILunDisk();
+        newDisk.getDiskVmElementForVm(vmId).setDiskInterface(DiskInterface.VirtIO);
+        vm.getDiskMap().put(newDisk.getId(), newDisk);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS);
     }
 
+    private void mockOtherVmDisks(VM vm, int numOfDisks, DiskInterface iface) {
+        List<DiskVmElement> otherDisks = new ArrayList<>(numOfDisks);
+        for (int i = 0; i < numOfDisks; i++) {
+            DiskVmElement dve = new DiskVmElement(Guid.newGuid(), vm.getId());
+            dve.setDiskInterface(iface);
+            otherDisks.add(dve);
+        }
+        doReturn(otherDisks).when(diskVmElementDao).getAllForVm(vmId);
+    }
+
     @Test
     public void testVirtIoScsiNotSupportedByOs() {
-        DiskImage disk = createVirtIoScsiDiskImage();
+        DiskImage disk = new DiskImage();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
+        parameters.getDiskVmElement().setDiskInterface(DiskInterface.VirtIO_SCSI);
 
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
@@ -847,9 +862,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testVirtioScsiDiskWithoutControllerCantBeAdded() {
-        DiskImage disk = createVirtIoScsiDiskImage();
+        DiskImage disk = new DiskImage();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
+        parameters.getDiskVmElement().setDiskInterface(DiskInterface.VirtIO_SCSI);
 
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
@@ -868,11 +884,12 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testDiskImageWithSgioCantBeAdded() {
-        DiskImage disk = createVirtIoScsiDiskImage();
+        DiskImage disk = new DiskImage();
         disk.setSgio(ScsiGenericIO.UNFILTERED);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
+        parameters.getDiskVmElement().setDiskInterface(DiskInterface.VirtIO_SCSI);
 
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
@@ -892,7 +909,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void testLunDiskWithSgioCanBeAdded() {
         LunDisk disk = createISCSILunDisk();
-        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setSgio(ScsiGenericIO.UNFILTERED);
 
         AddDiskParameters parameters = createParameters();
@@ -949,9 +965,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(Guid.newGuid(), parameters);
         mockVm();
 
-        doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
+        doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
-                when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+                when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(parameters.getDiskVmElement());
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -966,20 +982,12 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         mockEntities(storageId);
 
-        doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
+        doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(VM.class), any(DiskValidator.class));
-        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
-
-    private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {
-        Map<Guid, Disk> diskMap = new HashMap<>();
-        for (int i = 0; i < expectedMapSize; i++) {
-            diskMap.put(Guid.newGuid(), disk);
-        }
-        vm.setDiskMap(diskMap);
     }
 
     private boolean verifyValidationMessagesContainMessage(EngineMessage message) {

@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
@@ -28,20 +29,24 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskUploadImageProgressColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.cellview.client.Column;
 
 public class DisksViewColumns {
 
@@ -97,7 +102,12 @@ public class DisksViewColumns {
 
         @Override
         public ImageResource getValue(Disk object) {
-            return object.isBoot() ? getDefaultImage() : null;
+            if (object.getDiskVmElements().size() == 1) {
+                if (object.getDiskVmElements().iterator().next().isBoot()) {
+                    return getDefaultImage();
+                }
+            }
+            return null;
         }
 
         @Override
@@ -107,8 +117,10 @@ public class DisksViewColumns {
 
         @Override
         public SafeHtml getTooltip(Disk object) {
-            if (object.isBoot()) {
-                return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+            if (object.getDiskVmElements().size() == 1) {
+                if (object.getDiskVmElements().iterator().next().isBoot()) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                }
             }
             return null;
         }
@@ -300,7 +312,10 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(Disk object) {
-                return object.getDiskInterface();
+                if (object.getDiskVmElements().size() == 1) {
+                    return object.getDiskVmElements().iterator().next().getDiskInterface();
+                }
+                return null;
             }
         };
 
@@ -432,7 +447,7 @@ public class DisksViewColumns {
                 DiskModel diskModel = (DiskModel) object.getEntity();
                 Disk disk = diskModel.getDisk();
                 boolean isScsiPassthrough = disk.isScsiPassthrough();
-                boolean ideLimitation = disk.getDiskInterface() == DiskInterface.IDE;
+                boolean ideLimitation = diskModel.getDiskInterface().getSelectedItem() == DiskInterface.IDE;
                 return !isScsiPassthrough && !ideLimitation;
             }
 
@@ -442,6 +457,36 @@ public class DisksViewColumns {
                 return diskModel.getDisk().getReadOnly();
             }
     };
+
+    public static final AbstractCheckboxColumn<EntityModel> bootCheckboxColumn = new AbstractCheckboxColumn<EntityModel>(
+            new FieldUpdater<EntityModel, Boolean>() {
+                @Override
+                public void update(int idx, EntityModel object, Boolean value) {
+                    DiskModel diskModel = (DiskModel) object.getEntity();
+                    diskModel.getIsBootable().setEntity(value);
+                }
+            }) {
+        @Override
+        protected boolean canEdit(EntityModel object) {
+            return true;
+        }
+
+        @Override
+        public Boolean getValue(EntityModel object) {
+            DiskModel diskModel = (DiskModel) object.getEntity();
+            return diskModel.getIsBootable().getEntity();
+        }
+    };
+
+    public static final Column getDiskInterfaceSelectionColumn() {
+        AbstractListModelListBoxColumn diskInterfaceStringColumn = new AbstractListModelListBoxColumn<EntityModel, DiskInterface>(new EnumRenderer<DiskInterface>()) {
+            @Override
+            public ListModel getValue(EntityModel object) {
+                return ((DiskModel) object.getEntity()).getDiskInterface();
+            }
+        };
+        return diskInterfaceStringColumn;
+    }
 
     public static final AbstractDiskSizeColumn<Disk> getSnapshotSizeColumn(String sortBy) {
         AbstractDiskSizeColumn<Disk> column = new AbstractDiskSizeColumn<Disk>() {

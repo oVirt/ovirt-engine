@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -8,10 +9,12 @@ import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnTemplate;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -61,6 +64,10 @@ public class VmTemplateHandler {
             // Translation from number of sectors to GB.
             vmt.setSizeGB(Double.valueOf(dit.getSize()) / Double.valueOf(1024 * 1024 * 1024));
             vmt.getDiskImageMap().put(dit.getId(), diskImage);
+
+            DiskVmElement dve = DbFacade.getInstance().getDiskVmElementDao().get(new VmDeviceId(dit.getId(), vmt.getId()));
+            dit.setDiskVmElements(Collections.singletonList(dve));
+
             vmt.getDiskList().add(diskImage);
         }
     }

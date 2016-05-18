@@ -17,7 +17,6 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -76,10 +75,8 @@ public class BackendExportDomainDisksResourceTest
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
         entity.setvolumeFormat(VolumeFormat.RAW);
-        entity.setDiskInterface(DiskInterface.VirtIO);
         entity.setImageStatus(ImageStatus.OK);
         entity.setVolumeType(VolumeType.Sparse);
-        entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
         return setUpStatisticalEntityExpectations(entity);    }
@@ -103,7 +100,6 @@ public class BackendExportDomainDisksResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertFalse(model.isSetVm());
         assertTrue(model.isSparse());
-        assertTrue(!model.isBootable());
         assertTrue(model.isPropagateErrors());
     }
 

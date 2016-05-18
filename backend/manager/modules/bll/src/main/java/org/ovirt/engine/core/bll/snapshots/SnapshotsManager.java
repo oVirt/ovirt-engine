@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +29,14 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -44,6 +47,7 @@ import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -390,10 +394,18 @@ public class SnapshotsManager {
             disks = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), false, true, true);
             disks.addAll(ImagesHandler.getCinderLeafImages(getDiskDao().getAllForVm(vm.getId()), false));
         }
+        populateDisksWithVmData(disks, vm.getId());
         for (DiskImage image : disks) {
             image.setStorageIds(null);
         }
         return new OvfManager().exportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
+    }
+
+    private void populateDisksWithVmData(List<? extends Disk> disks, Guid vmId) {
+        for (Disk disk : disks) {
+            DiskVmElement dve = getDiskVmElementDao().get(new VmDeviceId(disk.getId(), vmId));
+            disk.setDiskVmElements(Collections.singletonList(dve));
+        }
     }
 
     /**
@@ -671,6 +683,11 @@ public class SnapshotsManager {
             diskIdsFromSnapshot.add(diskImage.getId());
             if (getBaseDiskDao().exists(diskImage.getId())) {
                 getBaseDiskDao().update(diskImage);
+                DiskVmElement dve = getDiskVmElementDao().get(diskImage.getDiskVmElementForVm(vmId).getId());
+                if (dve != null && !dve.equals(diskImage.getDiskVmElementForVm(vmId))) {
+                    getDiskVmElementDao().update(diskImage.getDiskVmElementForVm(vmId));
+                }
+
             } else {
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
                 if (getDiskImageDao().getSnapshotById(diskImage.getImageId()) == null) {
@@ -735,6 +752,10 @@ public class SnapshotsManager {
 
     protected DiskDao getDiskDao() {
         return DbFacade.getInstance().getDiskDao();
+    }
+
+    protected DiskVmElementDao getDiskVmElementDao() {
+        return DbFacade.getInstance().getDiskVmElementDao();
     }
 
     protected ClusterDao getClusterDao() {

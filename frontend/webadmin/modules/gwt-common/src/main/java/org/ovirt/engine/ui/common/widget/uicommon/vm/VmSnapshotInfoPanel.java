@@ -130,7 +130,10 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         AbstractTextColumn<DiskImage> interfaceColumn = new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getDiskInterface().toString();
+                if (object.getDiskVmElements().size() == 1) {
+                    return object.getDiskVmElements().iterator().next().getDiskInterface().toString();
+                }
+                return null;
             }
         };
         disksTable.addColumn(interfaceColumn, constants.interfaceDisk(), "95px"); //$NON-NLS-1$

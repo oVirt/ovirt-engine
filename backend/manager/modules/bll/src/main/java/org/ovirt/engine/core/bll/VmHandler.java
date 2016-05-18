@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -59,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -314,6 +317,7 @@ public class VmHandler {
         List<Disk> imageList = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
         vm.clearDisks();
         updateDisksForVm(vm, imageList);
+        VmHandler.updateDisksVmDataForVm(vm);
     }
 
     public static void updateDisksForVm(VM vm, Collection<? extends Disk> disks) {
@@ -327,6 +331,14 @@ public class VmHandler {
             }
         }
     }
+
+    public static void updateDisksVmDataForVm(VM vm) {
+        for (Disk disk : vm.getDiskMap().values()) {
+            DiskVmElement dve = DbFacade.getInstance().getDiskVmElementDao().get(new VmDeviceId(disk.getId(), vm.getId()));
+            disk.setDiskVmElements(Collections.singletonList(dve));
+        }
+    }
+
 
     /**
      * Fetch VmInit from Database

@@ -91,7 +91,7 @@ public class ReadOnlyDiskModel extends AbstractDiskModel {
 
     @Override
     public void setDefaultInterface() {
-        getDiskInterface().setSelectedItem(getDisk().getDiskInterface());
+        getDiskInterface().setSelectedItem(getDisk().getDiskVmElementForVm(getVmId()).getDiskInterface());
     }
 
     @Override

@@ -117,15 +117,20 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         VM vm = getVm();
 
+        DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
         if (vm != null) {
-            if (!canRunActionOnNonManagedVm()) {
+            if (!validateDiskVmData() || !canRunActionOnNonManagedVm()) {
                 return false;
             }
 
             updateDisksFromDb();
+
+            if (getDiskVmElement().isBoot() && !validate(diskValidator.isVmNotContainsBootDisk(vm))) {
+                return false;
+            }
+
             // if user sent drive check that its not in use
-            if (!isDiskCanBeAddedToVm(getParameters().getDiskInfo(), vm) ||
-                    !isDiskPassPciAndIdeLimit(getParameters().getDiskInfo())) {
+            if (!isDiskPassPciAndIdeLimit()) {
                 return false;
             }
         }
@@ -133,8 +138,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return failValidation(EngineMessage.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
         }
 
-        DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
-        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface())) {
+        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface(getDiskVmElement()))) {
             return false;
         }
 
@@ -194,11 +198,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
-        if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
+        if (!validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement()))) {
             return false;
         }
 
-        if (!validate(diskValidator.isDiskInterfaceSupported(getVm()))) {
+        if (!validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()))) {
             return false;
         }
 
@@ -250,8 +254,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 validate(storageDomainValidator.isDomainWithinThresholds()) &&
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk() &&
-                validate(diskValidator.isVirtIoScsiValid(vm)) &&
-                validate(diskValidator.isDiskInterfaceSupported(getVm()));
+                validate(diskValidator.isVirtIoScsiValid(vm, getDiskVmElement())) &&
+                validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()));
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
@@ -450,6 +454,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
             if (getVm() != null) {
                 addManagedDeviceForDisk(getParameters().getDiskInfo().getId(), ((LunDisk) getParameters().getDiskInfo()).isUsingScsiReservation());
+                addDiskVmElementForDisk(getParameters().getDiskInfo().getDiskVmElementForVm(getVmId()));
             }
             return null;
         });
@@ -458,7 +463,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setSucceeded(true);
     }
 
-    protected VmDevice addManagedDeviceForDisk(Guid diskId, Boolean isUsingScsiReservation) {
+    private VmDevice addManagedDeviceForDisk(Guid diskId, Boolean isUsingScsiReservation) {
         return  VmDeviceUtils.addDiskDevice(
                 getVmId(),
                 diskId,
@@ -469,6 +474,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected VmDevice addManagedDeviceForDisk(Guid diskId) {
         return addManagedDeviceForDisk(diskId, false);
+    }
+
+    protected DiskVmElement addDiskVmElementForDisk(DiskVmElement diskVmElement) {
+        getDiskVmElementDao().save(diskVmElement);
+        return diskVmElement;
     }
 
     protected boolean shouldDiskBePlugged() {
@@ -517,6 +527,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         getTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
 
         if (getVm() != null) {
+            // The disk VM element has to be added before the VM device since as a part of the VM device creation the
+            // boot order is determined so the VM device creation depends on the existance of the disk VM element
+            getCompensationContext().snapshotEntity(addDiskVmElementForDisk(getDiskVmElement()));
             getCompensationContext().snapshotNewEntity(addManagedDeviceForDisk(getParameters().getDiskInfo().getId()));
             getCompensationContext().stateChanged();
         }
@@ -560,6 +573,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         if (getVm() != null) {
             parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+            parameters.setDiskVmElement(parameters.getDiskVmElement());
         }
         return parameters;
     }
@@ -653,13 +667,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected List<Class<?>> getValidationGroups() {
-        addValidationGroup(UpdateEntity.class);
+        // Validation of parameters is only required for VM disks as the rest is validated in the validate() phase
+        if (!isFloatingDisk()) {
+            addValidationGroup(UpdateEntity.class);
+        }
         return super.getValidationGroups();
     }
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (getParameters().getDiskInfo().isBoot() && !isFloatingDisk()) {
+        if (!isFloatingDisk() && getDiskVmElement() != null && getDiskVmElement().isBoot()) {
             return Collections.singletonMap(getParameters().getVmId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }

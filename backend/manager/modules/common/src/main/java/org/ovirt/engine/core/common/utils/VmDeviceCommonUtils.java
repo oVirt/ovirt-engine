@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -255,8 +255,8 @@ public class VmDeviceCommonUtils {
         }
 
         for (VmDevice device : diskDevices) {
-            BaseDisk disk = getDisk(vm, device.getDeviceId());
-            if (disk != null && disk.isBoot()) {
+            DiskVmElement dve = getDiskVmElement(vm, device.getDeviceId());
+            if (dve != null && dve.isBoot()) {
                 device.setBootOrder(++bootOrder);
             }
         }
@@ -264,10 +264,10 @@ public class VmDeviceCommonUtils {
         return bootOrder;
     }
 
-    private static Disk getDisk(VM vm, Guid id) {
+    private static DiskVmElement getDiskVmElement(VM vm, Guid diskId) {
         for (Disk disk : vm.getDiskMap().values()) {
-            if (disk.getId().equals(id)) {
-                return disk;
+            if (disk.getId().equals(diskId)) {
+                return disk.getDiskVmElementForVm(vm.getId());
             }
         }
         return null;

@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -379,9 +380,10 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         command.getParameters().setVirtioScsiEnabled(false);
 
         Disk disk = new DiskImage();
-        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setPlugged(true);
-
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vm.getId());
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        disk.setDiskVmElements(Collections.singletonList(dve));
         mockDiskDaoGetAllForVm(Collections.singletonList(disk), true);
         mockVmValidator();
 

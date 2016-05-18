@@ -51,6 +51,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -362,6 +363,9 @@ public final class ImagesHandler {
      */
     public static void addDiskToVm(BaseDisk disk, Guid vmId) {
         DbFacade.getInstance().getBaseDiskDao().save(disk);
+        if (disk.getDiskVmElementForVm(vmId) != null) {
+            getDiskVmElementDao().save(disk.getDiskVmElementForVm(vmId));
+        }
         VmDeviceUtils.addDiskDevice(vmId, disk.getId());
     }
 
@@ -910,6 +914,10 @@ public final class ImagesHandler {
 
     private static DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
+    }
+
+    private static DiskVmElementDao getDiskVmElementDao() {
+        return DbFacade.getInstance().getDiskVmElementDao();
     }
 
     private static boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {

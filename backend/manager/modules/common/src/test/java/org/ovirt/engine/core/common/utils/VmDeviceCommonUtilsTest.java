@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -112,7 +114,10 @@ public class VmDeviceCommonUtilsTest {
     private Disk createDisk(Guid id, boolean boot) {
         Disk disk = new DiskImageBase();
         disk.setId(id);
-        disk.setBoot(boot);
+
+        DiskVmElement dve = new DiskVmElement(new VmDeviceId(id, null));
+        dve.setBoot(boot);
+        disk.setDiskVmElements(Collections.singletonList(dve));
 
         return disk;
     }

@@ -272,7 +272,7 @@ public class V3VmServer extends V3Server<VmResource> {
 
     @Path("disks")
     public V3VmDisksServer getDisksResource() {
-        return new V3VmDisksServer(getDelegate().getDisksResource());
+        return new V3VmDisksServer(id, getDelegate().getDisksResource());
     }
 
     @Path("hostdevices")

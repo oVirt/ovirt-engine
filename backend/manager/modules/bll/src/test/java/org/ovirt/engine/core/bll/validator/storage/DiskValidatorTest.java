@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -98,7 +99,6 @@ public class DiskValidatorTest {
         initializeOsRepository(1, DiskInterface.VirtIO);
         disk = createDiskImage();
         disk.setDiskAlias("disk1");
-        disk.setDiskInterface(DiskInterface.VirtIO);
         validator = spy(new DiskValidator(disk));
         doReturn(vmDao).when(validator).getVmDao();
     }
@@ -165,7 +165,9 @@ public class DiskValidatorTest {
     public void diskInterfaceSupportedByOs() {
         VM vm = createVM();
         initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
-        assertThat(validator.isDiskInterfaceSupported(vm), isValid());
+        DiskVmElement dve = new DiskVmElement();
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        assertThat(validator.isDiskInterfaceSupported(vm, dve), isValid());
     }
 
     @Test
@@ -173,49 +175,54 @@ public class DiskValidatorTest {
         VM vm = createVM();
         vm.setVmOs(2);
         initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
-        assertThat(validator.isDiskInterfaceSupported(vm), failsWith(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        DiskVmElement dve = new DiskVmElement();
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        assertThat(validator.isDiskInterfaceSupported(vm, dve), failsWith(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
     }
 
     @Test
     public void readOnlyIsNotSupportedByDiskInterface() {
         disk.setReadOnly(true);
-        disk.setDiskInterface(DiskInterface.IDE);
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(),
+        DiskVmElement dve = new DiskVmElement();
+        dve.setDiskInterface(DiskInterface.IDE);
+
+        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve),
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                         and(replacements(hasItem(String.format("$interface %1$s", DiskInterface.IDE)))));
 
         setupForLun();
         lunDisk.setReadOnly(true);
-        lunDisk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         lunDisk.setSgio(ScsiGenericIO.FILTERED);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(),
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve),
                 failsWith(EngineMessage.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK));
     }
 
     @Test
     public void readOnlyIsSupportedByDiskInterface() {
         disk.setReadOnly(true);
-        disk.setDiskInterface(DiskInterface.VirtIO);
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+        DiskVmElement dve = new DiskVmElement();
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
 
-        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
 
         disk.setReadOnly(false);
-        disk.setDiskInterface(DiskInterface.IDE);
-        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+        dve.setDiskInterface(DiskInterface.IDE);
+        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
 
         setupForLun();
         lunDisk.setReadOnly(true);
-        lunDisk.setDiskInterface(DiskInterface.VirtIO);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
 
         lunDisk.setReadOnly(false);
-        lunDisk.setDiskInterface(DiskInterface.VirtIO_SCSI);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
 
-        lunDisk.setDiskInterface(DiskInterface.IDE);
-        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+        dve.setDiskInterface(DiskInterface.IDE);
+        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(dve), isValid());
     }
 
     @Test

@@ -103,14 +103,6 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
         };
         disksTable.addColumn(allocationColumn, constants.allocationDisk(), "110px"); //$NON-NLS-1$
 
-        AbstractTextColumn<DiskImage> interfaceColumn = new AbstractTextColumn<DiskImage>() {
-            @Override
-            public String getValue(DiskImage object) {
-                return object.getDiskInterface().toString();
-            }
-        };
-        disksTable.addColumn(interfaceColumn, constants.interfaceDisk(), "95px"); //$NON-NLS-1$
-
         AbstractTextColumn<DiskImage> statusColumn = new AbstractEnumColumn<DiskImage, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(DiskImage object) {

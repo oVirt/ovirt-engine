@@ -21,6 +21,7 @@ import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -234,8 +235,7 @@ public class BackendVmResource
 
     @Override
     public DiskAttachmentsResource getDiskAttachmentsResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendDiskAttachmentsResource(guid));
     }
 
     @Override

@@ -988,6 +988,7 @@ public class VmDeviceUtils {
                 device.setBootOrder(0);
             }
             VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vmId));
+            VmHandler.updateDisksVmDataForVm(vm);
             VmHandler.updateNetworkInterfacesFromDb(vm);
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
             dao.updateBootOrderInBatch(devices);

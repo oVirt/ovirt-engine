@@ -11,6 +11,8 @@ public class VmDiskOperationParameterBase extends VmOperationParameterBase {
 
     @Valid
     private Disk diskInfo;
+
+    @Valid
     private DiskVmElement diskVmElement;
 
     public VmDiskOperationParameterBase() {

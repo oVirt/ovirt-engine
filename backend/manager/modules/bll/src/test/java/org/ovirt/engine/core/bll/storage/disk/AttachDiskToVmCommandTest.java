@@ -88,7 +88,7 @@ public class AttachDiskToVmCommandTest {
         doReturn(createDiskImage()).when(diskHandler).loadActiveDisk(any(Guid.class));
         doReturn(createDiskImage()).when(diskHandler).loadDiskFromSnapshot(any(Guid.class), any(Guid.class));
 
-        doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
+        doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(true).when(command).checkDiskUsedAsOvfStore(diskValidator);
         doReturn(false).when(command).isOperationPerformedOnDiskSnapshot();
 
@@ -110,17 +110,17 @@ public class AttachDiskToVmCommandTest {
     @Test
     public void testValidateSucceedReadOnlyWithInterface() {
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-        verify(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+        verify(diskValidator).isReadOnlyPropertyCompatibleWithInterface(parameters.getDiskVmElement());
     }
 
     @Test
     public void testValidateFailReadOnlyOnInterface() {
-        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(
+        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class))).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR));
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
-        verify(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+        verify(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
     }
 
     private AttachDetachVmDiskParameters createParameters() {
@@ -146,9 +146,9 @@ public class AttachDiskToVmCommandTest {
 
     private void mockDiskValidator() {
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
-        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isVirtIoScsiValid(any(VM.class), any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class), any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
     }
 
     private void mockSnapshotsValidator() {

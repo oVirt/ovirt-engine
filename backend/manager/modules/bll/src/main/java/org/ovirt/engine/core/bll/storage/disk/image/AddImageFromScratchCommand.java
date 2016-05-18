@@ -43,8 +43,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
 
         newDiskImage = new DiskImage();
         newDiskImage.setImageId(getDestinationImageId());
-        newDiskImage.setBoot(getParameters().getDiskInfo().isBoot());
-        newDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
         newDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
         newDiskImage.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
         newDiskImage.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());

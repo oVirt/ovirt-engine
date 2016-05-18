@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> extends AbstractDiskVmCommand<T> {
 
     private Disk disk;
+    private DiskVmElement diskVmElement;
     protected VmDevice oldVmDevice;
 
     public HotPlugDiskToVmCommand(T parameters, CommandContext commandContext) {
@@ -53,7 +55,6 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
         performDbLoads();
 
         return
-                validateDiskVmData() &&
                 validate(new VmValidator(getVm()).isVmExists()) &&
                 isVmInUpPausedDownStatus() &&
                 canRunActionOnNonManagedVm() &&
@@ -67,12 +68,12 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
 
     private boolean virtIoScsiDiskValidation() {
         DiskValidator diskValidator = getDiskValidator(disk);
-        return validate(diskValidator.isVirtIoScsiValid(getVm()));
+        return validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement()));
     }
 
     private boolean interfaceDiskValidation() {
         DiskValidator diskValidator = getDiskValidator(disk);
-        return validate(diskValidator.isDiskInterfaceSupported(getVm()));
+        return validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()));
     }
 
     private boolean imageStorageValidation() {
@@ -94,8 +95,10 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     }
 
     private void performDbLoads() {
-        oldVmDevice =
-                getVmDeviceDao().get(new VmDeviceId(getDiskVmElement().getDiskId(), getVmId()));
+        if (getDiskVmElement() == null) {
+            return;
+        }
+        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(getDiskVmElement().getDiskId(), getVmId()));
         if (oldVmDevice != null) {
             if (oldVmDevice.getSnapshotId() != null) {
                 disk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getDiskVmElement().getDiskId(), oldVmDevice.getSnapshotId());
@@ -108,7 +111,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     private boolean checkCanPerformPlugUnPlugDisk() {
         if (getVm().getStatus().isUpOrPaused()) {
             setVdsId(getVm().getRunOnVds());
-            if (!isDiskSupportedForPlugUnPlug(disk)) {
+            if (!isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias())) {
                 return false;
             }
         }
@@ -142,7 +145,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
         // Now after updating 'isPlugged' property of the plugged/unplugged device, its time to
         // update the boot order for all VM devices. Failure to do that doesn't change the fact that
         // device is already plugged to or unplugged from VM.
-        if (disk.isBoot()) {
+        if (getDiskVmElement().isBoot()) {
             updateBootOrder();
         }
 
@@ -181,7 +184,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
                             EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.name() +
                                     String.format("$diskAliases %1$s", getDiskAlias())));
 
-            if (getDisk().isBoot()) {
+            if (getDiskVmElement() != null && getDiskVmElement().isBoot()) {
                 exclusiveLock.put(getVmId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
@@ -203,8 +206,18 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
 
     protected Disk getDisk() {
         if (disk == null) {
-            disk = getDiskDao().get(getDiskVmElement().getDiskId());
+            disk = getDiskDao().get(super.getDiskVmElement().getDiskId());
         }
         return disk;
+    }
+
+    // As all the validation should be done against the DiskVmElement loaded from the DB since the parameters may
+    // not contain all relevant data
+    @Override
+    protected DiskVmElement getDiskVmElement() {
+        if (diskVmElement == null && getDisk() != null) {
+            diskVmElement = getDiskVmElementDao().get(new VmDeviceId(getDisk().getId(), getVmId()));
+        }
+        return diskVmElement;
     }
 }

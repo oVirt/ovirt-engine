@@ -90,12 +90,7 @@ public class InstanceImageLineModel extends EntityModel {
             type = constants.creatingDisk();
         }
 
-        String boot = ""; //$NON-NLS-1$
-        if (disk.isBoot()) {
-            boot = constants.bootDisk();
-        }
-
-        name.setEntity(messages.vmDialogDisk(diskName, size, type, boot));
+        name.setEntity(messages.vmDialogDisk(diskName, size, type, ""));
     }
 
     private void toggleActive() {

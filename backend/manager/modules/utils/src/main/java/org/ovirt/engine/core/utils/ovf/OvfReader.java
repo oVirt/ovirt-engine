@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -128,6 +129,7 @@ public abstract class OvfReader implements IOvfBuilder {
             final Guid guid = new Guid(node.attributes.get("ovf:diskId").getValue());
 
             DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
+            DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
 
             if (node.attributes.get("ovf:vm_snapshot_id") != null) {
                 image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
@@ -161,15 +163,15 @@ public abstract class OvfReader implements IOvfBuilder {
             }
             if (node.attributes.get("ovf:disk-interface") != null) {
                 if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-interface").getValue())) {
-                    image.setDiskInterface(DiskInterface.valueOf(node.attributes.get("ovf:disk-interface").getValue()));
+                    dve.setDiskInterface(DiskInterface.valueOf(node.attributes.get("ovf:disk-interface").getValue()));
                 }
             }
             else {
-                image.setDiskInterface(DiskInterface.IDE);
+                dve.setDiskInterface(DiskInterface.IDE);
             }
             if (node.attributes.get("ovf:boot") != null) {
                 if (!StringUtils.isEmpty(node.attributes.get("ovf:boot").getValue())) {
-                    image.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
+                    dve.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
                 }
             }
             if (node.attributes.get("ovf:wipe-after-delete") != null) {
@@ -915,6 +917,9 @@ public abstract class OvfReader implements IOvfBuilder {
             disk.setActive(true);
             disk.setImageStatus(ImageStatus.OK);
             disk.setDescription(node.attributes.get("ovf:description").getValue());
+
+            disk.setDiskVmElements(Collections.singletonList(new DiskVmElement(disk.getId(), vmBase.getId())));
+
             _images.add(disk);
         }
     }
@@ -1015,6 +1020,14 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void setDefaultBootDevice() {
+        // In the time of disk creation the VM ID is an empty Guid, this is changed to the real ID only after the reading
+        // of the OS properties which comes after the disks creation so the disk VM elements are set to the wrong VM ID
+        // this part sets them to the correct VM ID
+        for (DiskImage disk : _images) {
+            disk.getDiskVmElements().stream().forEach(dve -> dve.setId(new VmDeviceId(disk.getId(), vmBase.getId())));
+            disk.setDiskVmElements(disk.getDiskVmElements());
+        }
+
         boolean hasBootDevice =
                 vmBase.getManagedDeviceMap().values().stream()
                         .anyMatch(device -> device.getBootOrder() > 0);
@@ -1024,7 +1037,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
         AtomicInteger order = new AtomicInteger(1);  // regular non-final variable cannot be used in lambda expression
         _images.stream()
-                .filter(DiskImage::isBoot)
+                .filter(d -> d.getDiskVmElementForVm(vmBase.getId()).isBoot())
                 .map(image -> vmBase.getManagedDeviceMap().get(image.getId()))
                 .filter(Objects::nonNull)
                 .forEachOrdered(device -> device.setBootOrder(order.getAndIncrement()));

@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.PermissionDao;
@@ -774,6 +775,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
+    }
+
+    public DiskVmElementDao getDiskVmElementDao() {
+        return getDbFacade().getDiskVmElementDao();
     }
 
     public VmDeviceDao getVmDeviceDao() {

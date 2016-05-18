@@ -5431,101 +5431,120 @@
 
     <table name="base_disks">
         <column>disk_id</column>
-        <column>disk_interface</column>
         <column>wipe_after_delete</column>
         <column>propagate_errors</column>
         <column>disk_alias</column>
         <column>disk_description</column>
         <column>shareable</column>
-        <column>boot</column>
         <column>disk_storage_type</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
-            <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
             <value>New Disk Alias Name</value>
             <value>New Description</value>
-            <value>false</value>
             <value>false</value>
             <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
             <value>New Disk Alias Name</value>
             <value>New Description</value>
-            <value>false</value>
             <value>false</value>
             <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
-            <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
             <value>New Disk Alias Name</value>
             <value>New Description</value>
             <value>false</value>
-            <value>false</value>
             <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
-            <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
             <value>false</value>
             <value>New Description</value>
             <value>true</value>
-            <value>false</value>
             <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
-            <value>VirtIO</value>
             <value>4</value>
             <value>Off</value>
             <value>false</value>
             <value>New Description</value>
             <value>true</value>
-            <value>false</value>
             <value>0</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
-            <value>VirtIO</value>
             <value>4</value>
             <value>Off</value>
             <value>false</value>
             <value>New Description</value>
             <value>false</value>
-            <value>true</value>
             <value>1</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a41</value>
-            <value>VirtIO</value>
             <value>4</value>
             <value>Off</value>
             <value>false</value>
             <value>New Description</value>
-            <value>false</value>
             <value>false</value>
             <value>1</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a45</value>
-            <value>VirtIO</value>
             <value>4</value>
             <value>Off</value>
             <value>false</value>
             <value>New Description</value>
             <value>false</value>
-            <value>false</value>
             <value>2</value>
+        </row>
+    </table>
+
+    <table name="disk_vm_element">
+        <column>disk_id</column>
+        <column>vm_id</column>
+        <column>is_boot</column>
+        <column>disk_interface</column>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>false</value>
+            <value>VirtIO</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>false</value>
+            <value>VirtIO</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>false</value>
+            <value>VirtIO</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>true</value>
+            <value>VirtIO</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a41</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>false</value>
+            <value>VirtIO</value>
         </row>
     </table>
 

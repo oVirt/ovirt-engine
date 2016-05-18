@@ -538,11 +538,11 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                             && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 
             boolean isDiskHotpluggableInterface = false;
-            if (getEntity() != null) {
+            if (getEntity() != null && disk.getDiskVmElementForVm(getEntity().getId()) != null) {
                 isDiskHotpluggableInterface =
                         AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(
                                 getEntity().getOs(),
-                                getEntity().getCompatibilityVersion()).contains(disk.getDiskInterface());
+                                getEntity().getCompatibilityVersion()).contains(disk.getDiskVmElementForVm(getEntity().getId()).getDiskInterface());
             }
 
             if (disk.getPlugged() == plug

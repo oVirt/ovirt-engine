@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -310,6 +311,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             Map<String, Object> struct = new HashMap<>();
             // get vm device for this disk from DB
             VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
+            DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             // skip unamanged devices (handled separtely)
             if (!vmDevice.getIsManaged()) {
                 continue;
@@ -317,7 +319,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             if (vmDevice.getIsPlugged()) {
                 struct.put(VdsProperties.Type, vmDevice.getType().getValue());
                 struct.put(VdsProperties.Device, vmDevice.getDevice());
-                switch (disk.getDiskInterface()) {
+                switch (dve.getDiskInterface()) {
                 case IDE:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Ide);
                     break;
@@ -367,7 +369,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     break;
                 }
                 // Insure that boot disk is created first
-                if (!bootDiskFound && disk.isBoot()) {
+                if (!bootDiskFound && dve.isBoot()) {
                     bootDiskFound = true;
                     struct.put(VdsProperties.Index, getBootableDiskIndex(disk));
                 }
@@ -1162,7 +1164,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
 
         for (Disk disk : disks) {
-            if (disk.getDiskInterface() == scsiInterface) {
+            DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
+            if (dve.getDiskInterface() == scsiInterface) {
                 VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
                 Map<String, String> address = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
                 String unitStr = address.get(VdsProperties.Unit);

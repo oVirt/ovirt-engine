@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -103,7 +102,6 @@ public class MemoryUtils {
         image.setSize(MemoryUtils.METADATA_SIZE_IN_BYTES);
         image.setVolumeType(VolumeType.Preallocated);
         image.setvolumeFormat(VolumeFormat.RAW);
-        image.setDiskInterface(DiskInterface.VirtIO);
         return image;
     }
 
@@ -130,7 +128,6 @@ public class MemoryUtils {
         image.setSize(VmUtils.getSnapshotMemorySizeInBytes(vm));
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
         image.setvolumeFormat(VolumeFormat.RAW);
-        image.setDiskInterface(DiskInterface.VirtIO);
         return image;
     }
 

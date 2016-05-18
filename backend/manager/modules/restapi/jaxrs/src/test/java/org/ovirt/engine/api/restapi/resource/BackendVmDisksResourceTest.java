@@ -21,6 +21,7 @@ import static org.easymock.EasyMock.expect;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
@@ -113,10 +113,8 @@ public class BackendVmDisksResourceTest
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
-        expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
         expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
-        expect(entity.isBoot()).andReturn(false).anyTimes();
         expect(entity.isShareable()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
         expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
@@ -145,9 +143,7 @@ public class BackendVmDisksResourceTest
     static Disk getModel() {
         Disk model = new Disk();
         model.setFormat(DiskFormat.COW);
-        model.setInterface(org.ovirt.engine.api.model.DiskInterface.VIRTIO);
         model.setSparse(true);
-        model.setBootable(false);
         model.setShareable(false);
         model.setPropagateErrors(true);
         model.setStorageDomains(new StorageDomains());
@@ -166,7 +162,6 @@ public class BackendVmDisksResourceTest
     static void verifyModelSpecific(Disk model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertTrue(model.isSparse());
-        assertTrue(!model.isBootable());
         assertTrue(model.isPropagateErrors());
     }
     @Test
@@ -553,7 +548,7 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters", "interface");
+            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters", "provisionedSize|size", "format");
         }
     }
 

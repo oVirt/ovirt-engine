@@ -29,11 +29,9 @@ public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implement
         return createIdParameterMapper(entity.getId())
                 .addValue("disk_alias", entity.getDiskAlias())
                 .addValue("disk_description", entity.getDiskDescription())
-                .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()))
                 .addValue("wipe_after_delete", entity.isWipeAfterDelete())
                 .addValue("propagate_errors", EnumUtils.nameOrNull(entity.getPropagateErrors()))
                 .addValue("shareable", entity.isShareable())
-                .addValue("boot", entity.isBoot())
                 .addValue("sgio", entity.getSgio())
                 .addValue("alignment", entity.getAlignment())
                 .addValue("last_alignment_scan", entity.getLastAlignmentScan())
@@ -68,13 +66,4 @@ public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implement
             return new BaseDisk();
         }
     }
-
-    @Override
-    public void updateDiskBootFlag(Guid id, boolean boot) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("disk_id", id)
-                .addValue("boot", boot);
-        getCallsHandler().executeModification("UpdateBaseDiskBootFlag", parameterSource);
-    }
-
 }

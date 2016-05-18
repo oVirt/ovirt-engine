@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +31,6 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
     protected BaseDisk generateNewEntity() {
         BaseDisk d = new BaseDisk();
         d.setId(Guid.newGuid());
-        d.setDiskInterface(DiskInterface.IDE);
         d.setWipeAfterDelete(true);
         d.setPropagateErrors(PropagateErrors.Off);
         d.setDiskAlias("DiskName");
@@ -42,7 +40,7 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
 
     @Override
     protected void updateExistingEntity() {
-        existingEntity.setDiskInterface(DiskInterface.IDE);
+        existingEntity.setDiskAlias("Other_Alias");
     }
 
     @Override

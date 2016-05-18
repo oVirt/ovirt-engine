@@ -98,7 +98,7 @@ public class BackendVmsResource extends
         implements VmsResource {
 
     static final String[] SUB_COLLECTIONS = { "applications", "disks", "nics", "numanodes", "cdroms", "snapshots", "tags", "permissions",
-            "statistics", "reporteddevices", "watchdogs", "sessions", "katelloerrata", "graphicsconsoles", "hostdevices" };
+            "statistics", "reporteddevices", "watchdogs", "sessions", "katelloerrata", "graphicsconsoles", "hostdevices", "diskattachments" };
 
     public static final String CLONE = "clone";
     public static final String CLONE_PERMISSIONS = "clone_permissions";

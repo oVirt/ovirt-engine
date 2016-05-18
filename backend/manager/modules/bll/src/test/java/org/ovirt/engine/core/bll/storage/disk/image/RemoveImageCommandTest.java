@@ -8,6 +8,7 @@ import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.junit.Before;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -109,7 +111,14 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         Guid vmSnapshotId = Guid.newGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);
+        DiskVmElement dve1 = new DiskVmElement(disk1.getId(), vm.getId());
+        dve1.setDiskInterface(DiskInterface.VirtIO);
+        disk1.setDiskVmElements(Collections.singletonList(dve1));
+
         DiskImage disk2 = addTestDisk(vm, vmSnapshotId);
+        DiskVmElement dve2 = new DiskVmElement(disk2.getId(), vm.getId());
+        dve2.setDiskInterface(DiskInterface.IDE);
+        disk2.setDiskVmElements(Collections.singletonList(dve2));
 
         OvfManager ovfManager = new OvfManager();
         ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
@@ -138,7 +147,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         disk.setId(Guid.newGuid());
         disk.setVolumeType(VolumeType.Sparse);
         disk.setvolumeFormat(VolumeFormat.COW);
-        disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setStoragePoolId(vm.getStoragePoolId());
         disk.setActive(Boolean.TRUE);
         disk.setPlugged(Boolean.TRUE);

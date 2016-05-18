@@ -27,6 +27,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Actionable;
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
@@ -37,11 +38,13 @@ import org.ovirt.engine.api.v3.types.V3Disk;
 
 @Produces({"application/xml", "application/json"})
 public class V3VmDiskServer extends V3Server<VmDiskResource> {
-    private String id;
+    private String diskId;
+    private String vmId;
 
-    public V3VmDiskServer(String id, VmDiskResource delegate) {
+    public V3VmDiskServer(String vmId, String diskId, VmDiskResource delegate) {
         super(delegate);
-        this.id = id;
+        this.vmId = vmId;
+        this.diskId = diskId;
     }
 
     @POST
@@ -70,7 +73,12 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
 
     @GET
     public V3Disk get() {
-        return adaptGet(getDelegate()::get);
+        V3Disk disk = adaptGet(getDelegate()::get);
+        DiskAttachment diskAttachment = BackendApiResource.getInstance().getVmsResource().getVmResource(vmId).
+                getDiskAttachmentsResource().getAttachmentResource(diskId).get();
+        disk.setBootable(diskAttachment.isBootable());
+        disk.setInterface(diskAttachment.getInterface().toString().toLowerCase());
+        return disk;
     }
 
     @POST
@@ -103,7 +111,7 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
         // need to delete the disk using the top level disks collection.
         if (!action.isSetDetach() || !action.isDetach()) {
             DisksResource disksResource = BackendApiResource.getInstance().getDisksResource();
-            DiskResource diskResource = disksResource.getDiskResource(id);
+            DiskResource diskResource = disksResource.getDiskResource(diskId);
             response = adaptRemove(diskResource::remove);
         }
 

@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -745,7 +746,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(createCluster()).when(spy).getCluster();
         doReturn(true).when(spy).areParametersLegal(anyListOf(String.class));
         doReturn(Collections.<VmNetworkInterface> emptyList()).when(spy).getVmInterfaces();
-        doReturn(Collections.<DiskImageBase> emptyList()).when(spy).getVmDisks();
+        doReturn(Collections.<DiskVmElement> emptyList()).when(spy).getDiskVmElements();
         doReturn(false).when(spy).isVirtioScsiControllerAttached(any(Guid.class));
         doReturn(true).when(osRepository).isSoundDeviceEnabled(any(Integer.class), any(Version.class));
         spy.setVmTemplateId(Guid.newGuid());

@@ -437,6 +437,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     protected abstract VM getVmFromConfiguration();
 
+    @Override
     protected abstract Guid getSourceVmId();
 
     @Override

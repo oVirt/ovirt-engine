@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -47,7 +46,6 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
             diskImage.setStorageIds(storageIds);
             diskImage.setStoragePoolId(enclosingCommand.getParameters().getStoragePoolId());
             diskImage.setId(enclosingCommand.getParameters().getImageGroupID());
-            diskImage.setDiskInterface(DiskInterface.VirtIO);
 
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,

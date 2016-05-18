@@ -269,8 +269,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     private void updateBootDiskFlag(VM vm) {
-        vm.getStaticData().getImages().stream().filter(DiskImage::isBoot).forEach(
-                diskImage -> getBaseDiskDao().updateDiskBootFlag(diskImage.getId(), true));
+        vm.getStaticData().getImages().stream().filter(disk -> disk.getDiskVmElementForVm(vm.getId()).isBoot())
+                .forEach(disk -> getDiskVmElementDao().update(disk.getDiskVmElementForVm(vm.getId())));
     }
 
     private void addImportedDevices(VM vm) {
@@ -280,7 +280,14 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         vmStatic.setInterfaces(new ArrayList<>());
         ImportUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
         VmDeviceUtils.addImportedDevices(vmStatic, false);
+        saveDiskVmElements(vm);
         getVmDeviceDao().updateBootOrderInBatch(new ArrayList<>(vm.getManagedVmDeviceMap().values()));
+    }
+
+    private void saveDiskVmElements(VM vm) {
+        for (DiskImage disk : vm.getStaticData().getImages()) {
+            getDiskVmElementDao().save(disk.getDiskVmElementForVm(vm.getId()));
+        }
     }
 
     private void removeVm() {

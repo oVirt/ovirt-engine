@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -86,12 +87,8 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     }
 
     @Override
-    protected List<? extends Disk> getVmDisks() {
-        if (_vmDisks == null) {
-            _vmDisks = (getParameters().getDiskInfoList() != null) ? getParameters().getDiskInfoList()
-                    : new ArrayList<>();
-        }
-        return _vmDisks;
+    protected List<DiskVmElement> getDiskVmElements() {
+        return Collections.emptyList();
     }
 
     @Override

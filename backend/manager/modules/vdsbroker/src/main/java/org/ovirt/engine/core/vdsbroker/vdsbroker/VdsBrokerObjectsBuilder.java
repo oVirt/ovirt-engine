@@ -79,6 +79,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -154,7 +155,7 @@ public class VdsBrokerObjectsBuilder {
      *
      * @return A List of Disk Images {@linkplain DiskImage}
      */
-    public static ArrayList<DiskImage> buildDiskImagesFromDevices(Map<String, Object> vmStruct) {
+    public static ArrayList<DiskImage> buildDiskImagesFromDevices(Map<String, Object> vmStruct, Guid vmId) {
         ArrayList<DiskImage> diskImages = new ArrayList<>();
         Object[] devices = (Object[]) vmStruct.get("devices");
         if (devices != null) {
@@ -172,15 +173,18 @@ public class VdsBrokerObjectsBuilder {
                     image.setImageId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.VolumeId)));
                     // TODO not sure how to extract that info
                     image.setVolumeType(VolumeType.Preallocated);
+
+                    DiskVmElement dve = new DiskVmElement(image.getId(), vmId);
+                    image.setDiskVmElements(Collections.singletonList(dve));
                     switch ((String) deviceMap.get("iface")) {
                     case "virtio":
-                        image.setDiskInterface(DiskInterface.VirtIO);
+                        dve.setDiskInterface(DiskInterface.VirtIO);
                         break;
                     case "iscsi":
-                        image.setDiskInterface(DiskInterface.VirtIO_SCSI);
+                        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
                         break;
                     case "ide":
-                        image.setDiskInterface(DiskInterface.IDE);
+                        dve.setDiskInterface(DiskInterface.IDE);
                         break;
                     }
                     diskImages.add(image);

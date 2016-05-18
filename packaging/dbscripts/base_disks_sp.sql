@@ -5,13 +5,11 @@
 --
 CREATE OR REPLACE FUNCTION InsertBaseDisk (
     v_disk_id UUID,
-    v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
     v_propagate_errors VARCHAR(32),
     v_disk_alias VARCHAR(50),
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
-    v_boot BOOLEAN,
     v_sgio INT,
     v_alignment SMALLINT,
     v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
@@ -22,13 +20,11 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     INSERT INTO base_disks (
         disk_id,
-        disk_interface,
         wipe_after_delete,
         propagate_errors,
         disk_alias,
         disk_description,
         shareable,
-        boot,
         sgio,
         alignment,
         last_alignment_scan,
@@ -37,13 +33,11 @@ BEGIN
         )
     VALUES (
         v_disk_id,
-        v_disk_interface,
         v_wipe_after_delete,
         v_propagate_errors,
         v_disk_alias,
         v_disk_description,
         v_shareable,
-        v_boot,
         v_sgio,
         v_alignment,
         v_last_alignment_scan,
@@ -55,13 +49,11 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateBaseDisk (
     v_disk_id UUID,
-    v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
     v_propagate_errors VARCHAR(32),
     v_disk_alias VARCHAR(50),
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
-    v_boot BOOLEAN,
     v_sgio INT,
     v_alignment SMALLINT,
     v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
@@ -71,30 +63,16 @@ CREATE OR REPLACE FUNCTION UpdateBaseDisk (
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE base_disks
-    SET disk_interface = v_disk_interface,
-        wipe_after_delete = v_wipe_after_delete,
+    SET wipe_after_delete = v_wipe_after_delete,
         propagate_errors = v_propagate_errors,
         disk_alias = v_disk_alias,
         disk_description = v_disk_description,
         shareable = v_shareable,
-        boot = v_boot,
         sgio = v_sgio,
         alignment = v_alignment,
         last_alignment_scan = v_last_alignment_scan,
         disk_storage_type = v_disk_storage_type,
         cinder_volume_type = v_cinder_volume_type
-    WHERE disk_id = v_disk_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION UpdateBaseDiskBootFlag (
-    v_disk_id UUID,
-    v_boot BOOLEAN
-    )
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    UPDATE base_disks
-    SET boot = v_boot
     WHERE disk_id = v_disk_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

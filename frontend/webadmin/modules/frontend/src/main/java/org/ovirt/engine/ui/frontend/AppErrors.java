@@ -2145,9 +2145,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} in VM ${VmName} already marked as boot.")
     String ACTION_TYPE_FAILED_DISK_BOOT_IN_USE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The VMs ${VmsName} already have a disk marked as boot.")
-    String ACTION_TYPE_FAILED_VMS_BOOT_IN_USE();
-
     @DefaultStringValue("VM priority value passed the permitted max value, value should be between 0 and ${MaxValue}.")
     String VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE();
 

@@ -460,7 +460,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         AbstractImageResourceColumn<DiskImage> bootableDiskColumn = new AbstractImageResourceColumn<DiskImage>() {
             @Override
             public ImageResource getValue(DiskImage object) {
-                return object.isBoot() ? getDefaultImage() : null;
+                return object.getDiskVmElements().iterator().next().isBoot() ? getDefaultImage() : null;
             }
 
             @Override
@@ -470,7 +470,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
             @Override
             public SafeHtml getTooltip(DiskImage object) {
-                if (object.isBoot()) {
+                if (object.getDiskVmElements().iterator().next().isBoot()) {
                     return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
                 }
                 return null;

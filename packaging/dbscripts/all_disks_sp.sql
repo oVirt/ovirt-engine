@@ -142,8 +142,10 @@ BEGIN
     FROM all_disks
     INNER JOIN vm_device
         ON vm_device.device_id = all_disks.image_group_id
+    INNER JOIN disk_vm_element
+        ON disk_vm_element.disk_id = all_disks.image_group_id
     WHERE vm_device.vm_id = v_vm_guid
-        AND boot = TRUE
+        AND disk_vm_element.is_boot = TRUE
         AND vm_device.snapshot_id IS NULL;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
@@ -84,6 +85,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.EngineBackupLogDao;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.dao.EventDao;
@@ -210,6 +212,7 @@ public class DbFacade {
             put(VmStatic.class, VmStaticDao.class);
             put(VmStatistics.class, VmStatisticsDao.class);
             put(BaseDisk.class, BaseDiskDao.class);
+            put(DiskVmElement.class, DiskVmElementDao.class);
             put(DiskImage.class, BaseDiskDao.class);
             put(CinderDisk.class, BaseDiskDao.class);
             put(DiskImageDynamic.class, DiskImageDynamicDao.class);
@@ -633,6 +636,15 @@ public class DbFacade {
      */
     public BaseDiskDao getBaseDiskDao() {
         return getDao(BaseDiskDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link DiskVmElementDao}.
+     *
+     * @return the dao
+     */
+    public DiskVmElementDao getDiskVmElementDao() {
+        return getDao(DiskVmElementDao.class);
     }
 
     /**

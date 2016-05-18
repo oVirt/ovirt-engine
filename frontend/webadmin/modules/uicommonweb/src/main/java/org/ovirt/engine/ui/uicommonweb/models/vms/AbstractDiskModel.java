@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -65,8 +66,9 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 public abstract class AbstractDiskModel extends DiskModel {
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
+    private DiskVmElement diskVmElement;
+
     private EntityModel<Boolean> isWipeAfterDelete;
-    private EntityModel<Boolean> isBootable;
     private EntityModel<Boolean> isShareable;
     private EntityModel<Boolean> isPlugged;
     private EntityModel<Boolean> isReadOnly;
@@ -97,14 +99,6 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public void setIsWipeAfterDelete(EntityModel<Boolean> isWipeAfterDelete) {
         this.isWipeAfterDelete = isWipeAfterDelete;
-    }
-
-    public EntityModel<Boolean> getIsBootable() {
-        return isBootable;
-    }
-
-    public void setIsBootable(EntityModel<Boolean> isBootable) {
-        this.isBootable = isBootable;
     }
 
     public EntityModel<Boolean> getIsShareable() {
@@ -261,9 +255,6 @@ public abstract class AbstractDiskModel extends DiskModel {
         setIsWipeAfterDelete(new EntityModel<Boolean>());
         getIsWipeAfterDelete().setEntity(false);
 
-        setIsBootable(new EntityModel<Boolean>());
-        getIsBootable().setEntity(false);
-
         setIsShareable(new EntityModel<Boolean>());
         getIsShareable().setEntity(false);
 
@@ -324,6 +315,14 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public boolean getIsFloating() {
         return getVm() == null;
+    }
+
+    protected DiskVmElement getDiskVmElement() {
+        return diskVmElement;
+    }
+
+    protected void setDiskVmElement(DiskVmElement diskVmElement) {
+        this.diskVmElement = diskVmElement;
     }
 
     protected abstract boolean isDatacenterAvailable(StoragePool dataCenter);
@@ -498,7 +497,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsBootable().setIsChangeable(true);
         if (getDisk() == null || !getDisk().isDiskSnapshot()) {
             for (Disk disk : vmDisks) {
-                if (disk.isBoot() && !disk.equals(getDisk())) {
+                if (disk.getDiskVmElementForVm(getVm().getId()).isBoot() && !disk.equals(getDisk())) {
                     getIsBootable().setEntity(false);
                     if (!disk.isDiskSnapshot()) {
                         getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
@@ -507,10 +506,6 @@ public abstract class AbstractDiskModel extends DiskModel {
                     }
                 }
          }
-        }
-
-        if (!getIsNew()) {
-            getIsBootable().setEntity(getDisk().isBoot());
         }
     }
 
@@ -1012,13 +1007,16 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         getDisk().setDiskAlias(getAlias().getEntity());
         getDisk().setDiskDescription(getDescription().getEntity());
-        getDisk().setDiskInterface(getDiskInterface().getSelectedItem());
         getDisk().setWipeAfterDelete(getIsWipeAfterDelete().getEntity());
-        getDisk().setBoot(getIsBootable().getEntity());
         getDisk().setShareable(getIsShareable().getEntity());
         getDisk().setPlugged(getIsPlugged().getEntity());
         getDisk().setPropagateErrors(PropagateErrors.Off);
         getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : null);
+
+        if (getVm() != null) {
+            diskVmElement.setBoot(getIsBootable().getEntity());
+            diskVmElement.setDiskInterface(getDiskInterface().getSelectedItem());
+        }
     }
 
     private void updateQuota(DiskImage diskImage) {

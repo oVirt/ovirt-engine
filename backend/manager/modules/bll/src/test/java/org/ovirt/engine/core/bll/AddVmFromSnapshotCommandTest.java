@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -83,7 +84,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
     }
 
     @Test
-    public void testCannotDisableVirtioScsi() {
+    public void testCannotDisableVirtioScsiCanDisableIDE() {
         initCommand();
         command.getParameters().setVirtioScsiEnabled(false);
 
@@ -97,8 +98,10 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         doReturn(snapshot).when(command).getSnapshot();
 
         DiskImage disk = new DiskImage();
-        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setPlugged(true);
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vm.getId());
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        disk.setDiskVmElements(Collections.singletonList(dve));
         doReturn(Collections.singletonList(disk)).when(command).getAdjustedDiskImagesFromConfiguration();
 
         VmValidator vmValidator = spy(new VmValidator(vm));
@@ -108,6 +111,9 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         ValidateTestUtils.assertValidationMessages("Validation should prevent disabling of virtIO-scsi.",
                 command,
                 EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
+
+        dve.setDiskInterface(DiskInterface.IDE);
+        assertTrue(command.checkCanDisableVirtIoScsi());
     }
 
     @Override

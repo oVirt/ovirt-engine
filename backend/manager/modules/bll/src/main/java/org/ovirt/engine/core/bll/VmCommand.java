@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -127,12 +127,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     /**
      * This method checks that with the given parameters, the max PCI and IDE limits defined are not passed.
      */
-    public static <T extends Disk> boolean checkPciAndIdeLimit(
+    public static boolean checkPciAndIdeLimit(
             int osId,
             Version clusterVersion,
             int monitorsNumber,
             List<? extends VmNic> interfaces,
-            List<T> disks,
+            List<DiskVmElement> diskVmElements,
             boolean virtioScsiEnabled,
             boolean hasWatchdog,
             boolean isBalloonEnabled,
@@ -154,7 +154,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         }
 
-        pciInUse += disks.stream().filter(a-> a.getDiskInterface() == DiskInterface.VirtIO).count();
+        pciInUse += diskVmElements.stream().filter(dve -> dve.getDiskInterface() == DiskInterface.VirtIO).count();
 
         // VirtIO SCSI controller requires one PCI slot
         pciInUse += virtioScsiEnabled ? 1 : 0;
@@ -176,17 +176,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
         }
-        else if (MAX_IDE_SLOTS < disks.stream().filter(a -> a.getDiskInterface() == DiskInterface.IDE).count()) {
+        else if (MAX_IDE_SLOTS < diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.IDE).count()) {
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS.name());
         }
         else if (MAX_VIRTIO_SCSI_DISKS <
-                disks.stream().filter(a -> a.getDiskInterface() == DiskInterface.VirtIO_SCSI).count()) {
+                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.VirtIO_SCSI).count()) {
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS.name());
         }
         else if (MAX_SPAPR_SCSI_DISKS <
-                disks.stream().filter(a -> a.getDiskInterface() == DiskInterface.SPAPR_VSCSI).count()) {
+                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.SPAPR_VSCSI).count()) {
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS.name());
         }
@@ -375,9 +375,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     /**
      * The following method should check if os of guest is supported for disk hot plug/unplug operation
      */
-    protected boolean isDiskSupportedForPlugUnPlug(Disk disk) {
-        if (disk.getDiskInterface() == DiskInterface.IDE) {
-            addValidationMessageVariable("diskAlias", disk.getDiskAlias());
+    protected boolean isDiskSupportedForPlugUnPlug(DiskVmElement diskVmElement, String diskAlias) {
+        if (diskVmElement.getDiskInterface() == DiskInterface.IDE) {
+            addValidationMessageVariable("diskAlias", diskAlias);
             addValidationMessageVariable("vmName", getVm().getName());
             return failValidation(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
         }
@@ -385,7 +385,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 getVm().getCompatibilityVersion());
 
         if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
-                || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().name())) {
+                || !diskHotpluggableInterfaces.contains(diskVmElement.getDiskInterface().name())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
         }
 

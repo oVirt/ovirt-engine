@@ -225,7 +225,7 @@ implements QuotaStorageDependent {
     @Override
     protected void processImages() {
         if (getVm().getOrigin() == OriginType.KVM && !getVm().getImages().isEmpty()) {
-            getVm().getImages().get(0).setBoot(true);
+            getVm().getImages().get(0).getDiskVmElementForVm(getVmId()).setBoot(true);
         }
         ArrayList<Guid> diskIds = new ArrayList<>();
         for (DiskImage image : getVm().getImages()) {
@@ -261,7 +261,6 @@ implements QuotaStorageDependent {
 
     private Guid createDisk(DiskImage image) {
         image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
-        image.setDiskInterface(DiskInterface.VirtIO);
 
         AddDiskParameters diskParameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), image);
         diskParameters.setStorageDomainId(getStorageDomainId());
@@ -269,6 +268,11 @@ implements QuotaStorageDependent {
         diskParameters.setParentParameters(getParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setStorageDomainId(getParameters().getDestDomainId());
+
+        DiskVmElement dve = new DiskVmElement(image.getId(), getVmId());
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        diskParameters.setDiskVmElement(dve);
+
         VdcReturnValueBase vdcReturnValueBase =
                 runInternalActionWithTasksContext(VdcActionType.AddDisk, diskParameters);
 

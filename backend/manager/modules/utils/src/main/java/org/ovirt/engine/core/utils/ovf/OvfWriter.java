@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -153,6 +154,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeRaw("List of Virtual Disks");
         _writer.writeEndElement();
         for (DiskImage image : _images) {
+            DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
             _writer.writeStartElement("Disk");
             _writer.writeAttributeString(OVF_URI, "diskId", image.getImageId().toString());
             _writer.writeAttributeString(OVF_URI, "size", String.valueOf(bytesToGigabyte(image.getSize())));
@@ -199,8 +201,8 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeAttributeString(OVF_URI, "format", format);
             _writer.writeAttributeString(OVF_URI, "volume-format", image.getVolumeFormat().toString());
             _writer.writeAttributeString(OVF_URI, "volume-type", image.getVolumeType().toString());
-            _writer.writeAttributeString(OVF_URI, "disk-interface", image.getDiskInterface().toString());
-            _writer.writeAttributeString(OVF_URI, "boot", String.valueOf(image.isBoot()));
+            _writer.writeAttributeString(OVF_URI, "disk-interface", dve.getDiskInterface().toString());
+            _writer.writeAttributeString(OVF_URI, "boot", String.valueOf(dve.isBoot()));
             if (image.getDiskAlias() != null) {
                 _writer.writeAttributeString(OVF_URI, "disk-alias", image.getDiskAlias());
             }

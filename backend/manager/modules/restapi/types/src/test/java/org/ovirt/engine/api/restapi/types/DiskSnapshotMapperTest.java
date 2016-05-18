@@ -4,7 +4,6 @@ import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.DiskFormat;
-import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.ScsiGenericIO;
@@ -20,7 +19,6 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
     @Override
     protected DiskSnapshot postPopulate(DiskSnapshot model) {
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class));
-        model.setInterface(MappingTestHelper.shuffle(DiskInterface.class));
         model.setSgio(MappingTestHelper.shuffle(ScsiGenericIO.class));
         model.setStatus(MappingTestHelper.shuffle(DiskStatus.class));
         model.setLunStorage(null);
@@ -32,7 +30,6 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getFormat(), transform.getFormat());
-        assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isActive(), transform.isActive());
         assertEquals(model.isReadOnly(), transform.isReadOnly());
         assertEquals(model.getDescription(), transform.getDescription());
@@ -40,7 +37,6 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
         assertEquals(model.getSnapshot().getId(), transform.getSnapshot().getId());
         assertEquals("unexpected status", model.getStatus(), transform.getStatus());
         assertEquals("unexpected sparse", model.isSparse(), transform.isSparse());
-        assertEquals("unexpected bootable", model.isBootable(), transform.isBootable());
         assertEquals("unexpected propagate errors", model.isPropagateErrors(), transform.isPropagateErrors());
         assertEquals("unexpected wipe after delete", model.isWipeAfterDelete(), transform.isWipeAfterDelete());
         assertEquals("unexpected shareable", model.isShareable(), transform.isShareable());

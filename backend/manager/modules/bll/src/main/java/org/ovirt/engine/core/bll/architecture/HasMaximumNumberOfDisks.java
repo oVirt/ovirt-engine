@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.architecture;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.VmCommand;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.archstrategy.ArchCommand;
@@ -12,14 +12,14 @@ import org.ovirt.engine.core.utils.archstrategy.ArchCommand;
 
 public class HasMaximumNumberOfDisks implements ArchCommand {
     private boolean hasMaximum;
-    private List<Disk> allDisks;
+    private List<DiskVmElement> allDiskVmElements;
 
     public HasMaximumNumberOfDisks(Guid vmId) {
-        allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
+        allDiskVmElements = DbFacade.getInstance().getDiskVmElementDao().getAllForVm(vmId);
     }
 
     private int countDisks(final DiskInterface diskType) {
-        return (int) allDisks.stream().filter(a -> a.getDiskInterface() == diskType).count();
+        return (int) allDiskVmElements.stream().filter(a -> a.getDiskInterface() == diskType).count();
     }
 
     @Override

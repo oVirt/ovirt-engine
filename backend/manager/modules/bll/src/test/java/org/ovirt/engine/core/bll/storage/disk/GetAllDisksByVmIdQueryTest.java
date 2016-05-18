@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,18 +14,21 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
@@ -48,6 +52,9 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
 
     /** An unplugged disk snapshot for the test */
     private DiskImage unpluggedDiskSnapshot;
+
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
 
     @Before
     @Override
@@ -84,6 +91,9 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         DiskDao diskDaoMock = mock(DiskDao.class);
         when(dbFacadeMock.getDiskDao()).thenReturn(diskDaoMock);
         when(diskDaoMock.getAllForVm(vmID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(returnArray);
+
+        when(dbFacadeMock.getDiskVmElementDao()).thenReturn(diskVmElementDao);
+        when(diskVmElementDao.get(any(VmDeviceId.class))).thenReturn(new DiskVmElement(new VmDeviceId()));
 
         // VM Device Dao
         VmDeviceDao vmDeviceDaoMock = mock(VmDeviceDao.class);

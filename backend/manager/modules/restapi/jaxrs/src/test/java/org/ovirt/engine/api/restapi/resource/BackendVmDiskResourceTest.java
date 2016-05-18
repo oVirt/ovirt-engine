@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -528,10 +527,8 @@ public class BackendVmDiskResourceTest
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
-        expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
         expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
-        expect(entity.isBoot()).andReturn(false).anyTimes();
         expect(entity.isShareable()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
         expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
@@ -555,7 +552,6 @@ public class BackendVmDiskResourceTest
     static void verifyModelSpecific(Disk model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertTrue(model.isSparse());
-        assertTrue(!model.isBootable());
         assertTrue(model.isPropagateErrors());
     }
 }

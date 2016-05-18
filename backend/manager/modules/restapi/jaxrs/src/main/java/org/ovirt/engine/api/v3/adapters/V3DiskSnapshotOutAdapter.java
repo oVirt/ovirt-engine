@@ -45,9 +45,6 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
         if (from.isSetAlias()) {
             to.setAlias(from.getAlias());
         }
-        if (from.isSetBootable()) {
-            to.setBootable(from.isBootable());
-        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }
@@ -74,9 +71,6 @@ public class V3DiskSnapshotOutAdapter implements V3Adapter<DiskSnapshot, V3DiskS
         }
         if (from.isSetInstanceType()) {
             to.setInstanceType(adaptOut(from.getInstanceType()));
-        }
-        if (from.isSetInterface()) {
-            to.setInterface(from.getInterface().value());
         }
         if (from.isSetLogicalName()) {
             to.setLogicalName(from.getLogicalName());

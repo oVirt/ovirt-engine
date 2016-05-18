@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInf
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeStatus;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -23,6 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.cinder.model.ConnectionForInitialize;
 import com.woorea.openstack.cinder.model.Snapshot;
@@ -290,7 +290,6 @@ public class CinderBroker extends AuditLogableBase {
         cinderDisk.setActive(true);
         cinderDisk.setImageStatus(ImageStatus.OK);
         cinderDisk.setvolumeFormat(VolumeFormat.RAW);
-        cinderDisk.setDiskInterface(DiskInterface.VirtIO);
         try {
             cinderDisk.setCreationDate(new SimpleDateFormat(DATE_FORMAT).parse(volume.getCreatedAt()));
         } catch (ParseException e) {

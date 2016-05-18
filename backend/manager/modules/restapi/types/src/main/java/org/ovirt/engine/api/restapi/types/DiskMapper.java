@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
-import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
@@ -58,9 +57,6 @@ public class DiskMapper {
         if (disk.isSetId()) {
             engineDisk.setId(GuidUtils.asGuid(disk.getId()));
         }
-        if (disk.isSetBootable()) {
-            engineDisk.setBoot(disk.isBootable());
-        }
         if (disk.isSetPropagateErrors()) {
             engineDisk.setPropagateErrors(disk.isPropagateErrors() ? PropagateErrors.On
                     : PropagateErrors.Off);
@@ -83,9 +79,6 @@ public class DiskMapper {
             engineDisk.setDiskDescription(disk.getDescription());
         }
 
-        if (disk.isSetInterface()) {
-            engineDisk.setDiskInterface(map(disk.getInterface(), null));
-        }
         if (disk.isSetShareable()) {
             engineDisk.setShareable(disk.isShareable());
         }
@@ -96,7 +89,7 @@ public class DiskMapper {
             if (disk.isSetUsesScsiReservation()) {
                 ((LunDisk) engineDisk).setUsingScsiReservation(disk.isUsesScsiReservation());
             }
-            if (disk.isSetSgio() && engineDisk.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
+            if (disk.isSetSgio()) {
                 engineDisk.setSgio(map(disk.getSgio(), null));
             }
         } else {
@@ -151,10 +144,6 @@ public class DiskMapper {
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }
-        if (entity.getDiskInterface() != null) {
-            model.setInterface(map(entity.getDiskInterface(), null));
-        }
-        model.setBootable(entity.isBoot());
         model.setPropagateErrors(PropagateErrors.On == entity.getPropagateErrors());
         model.setWipeAfterDelete(entity.isWipeAfterDelete());
         model.setActive(entity.getPlugged());
@@ -169,7 +158,7 @@ public class DiskMapper {
         } else {
             model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new HostStorage()));
             model.setUsesScsiReservation(((LunDisk) entity).isUsingScsiReservation());
-            if (entity.getSgio() != null && entity.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
+            if (entity.getSgio() != null) {
                 model.setSgio(map(entity.getSgio(), null));
             }
         }
@@ -246,40 +235,6 @@ public class DiskMapper {
             return DiskFormat.COW;
         case RAW:
             return DiskFormat.RAW;
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = DiskInterface.class, to = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class)
-    public static org.ovirt.engine.core.common.businessentities.storage.DiskInterface map(
-            DiskInterface diskInterface,
-            org.ovirt.engine.core.common.businessentities.storage.DiskInterface template) {
-        switch (diskInterface) {
-        case IDE:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.IDE;
-        case VIRTIO:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO;
-        case VIRTIO_SCSI:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO_SCSI;
-        case SPAPR_VSCSI:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SPAPR_VSCSI;
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class, to = DiskInterface.class)
-    public static DiskInterface map(org.ovirt.engine.core.common.businessentities.storage.DiskInterface diskInterface, DiskInterface template) {
-        switch (diskInterface) {
-        case IDE:
-            return DiskInterface.IDE;
-        case VirtIO:
-            return DiskInterface.VIRTIO;
-        case VirtIO_SCSI:
-            return DiskInterface.VIRTIO_SCSI;
-        case SPAPR_VSCSI:
-            return DiskInterface.SPAPR_VSCSI;
         default:
             return null;
         }

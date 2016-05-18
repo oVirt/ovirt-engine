@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -53,7 +54,9 @@ public class VmValidatorTest extends DbDependentTestBase {
     @Test
     public void canDisableVirtioScsiSuccess() {
         Disk disk = new DiskImage();
-        disk.setDiskInterface(DiskInterface.VirtIO);
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vm.getId());
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        disk.setDiskVmElements(Collections.singletonList(dve));
 
         assertThat(validator.canDisableVirtioScsi(Collections.singletonList(disk)), isValid());
     }
@@ -61,7 +64,9 @@ public class VmValidatorTest extends DbDependentTestBase {
     @Test
     public void canDisableVirtioScsiFail() {
         Disk disk = new DiskImage();
-        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vm.getId());
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        disk.setDiskVmElements(Collections.singletonList(dve));
 
         assertThat(validator.canDisableVirtioScsi(Collections.singletonList(disk)),
                 failsWith(EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS));

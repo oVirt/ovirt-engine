@@ -21,6 +21,7 @@ public class DiskModel extends Model {
     private EntityModel<String> alias;
     private EntityModel<String> description;
     private EntityModel<String> sourceStorageDomainName;
+    private EntityModel<Boolean> isBootable;
 
     private ListModel<VolumeType> volumeType;
     private ListModel<DiskInterface> diskInterface;
@@ -104,6 +105,14 @@ public class DiskModel extends Model {
         this.diskInterface = diskInterface;
     }
 
+    public EntityModel<Boolean> getIsBootable() {
+        return isBootable;
+    }
+
+    public void setIsBootable(EntityModel<Boolean> isBootable) {
+        this.isBootable = isBootable;
+    }
+
     public ListModel<StorageDomain> getSourceStorageDomain() {
         return sourceStorageDomain;
     }
@@ -153,6 +162,9 @@ public class DiskModel extends Model {
         setDiskInterface(new ListModel<DiskInterface>());
         setStorageDomain(new ListModel<StorageDomain>());
         setDiskProfile(new ListModel<DiskProfile>());
+
+        setIsBootable(new EntityModel<Boolean>());
+        getIsBootable().setEntity(false);
 
         setQuota(new ListModel<Quota>());
         getQuota().setIsAvailable(false);

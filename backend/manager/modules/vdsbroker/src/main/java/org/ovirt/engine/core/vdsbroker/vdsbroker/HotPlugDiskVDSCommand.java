@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -45,18 +46,18 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.put(VdsProperties.Type, VmDeviceType.DISK.getName());
         drive.put(VdsProperties.Address, getParameters().getAddressMap() != null ?
                 getParameters().getAddressMap() : StringUtils.EMPTY);
-        drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().getName());
+        drive.put(VdsProperties.INTERFACE, getParameters().getDiskInterface().getName());
 
         int numOfIoThreads = getParameters().getVm().getNumOfIoThreads();
-        if (numOfIoThreads != 0 && disk.getDiskInterface() == DiskInterface.VirtIO) {
+        if (numOfIoThreads != 0 && getParameters().getDiskInterface() == DiskInterface.VirtIO) {
             if (vmDevice.getSpecParams() == null) {
                 vmDevice.setSpecParams(new HashMap<>());
             }
 
-            List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId(), false);
+            List<DiskVmElement> diskVmElements = DbFacade.getInstance().getDiskVmElementDao().getAllPluggedToVm(getParameters().getVmId());
             int numOfAttachedVirtioInterfaces = 0;
-            for (Disk oneDisk : allDisks) {
-                if (oneDisk.getPlugged() && oneDisk.getDiskInterface() == DiskInterface.VirtIO) {
+            for (DiskVmElement dve : diskVmElements) {
+                if (dve.getDiskInterface() == DiskInterface.VirtIO) {
                     numOfAttachedVirtioInterfaces ++;
                 }
             }
@@ -93,7 +94,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
 
                 // If SCSI pass-through is enabled (VirtIO-SCSI/DirectLUN disk and SGIO is defined),
                 // set device type as 'lun' (instead of 'disk') and set the specified SGIO
-                boolean isVirtioScsi = getParameters().getDisk().getDiskInterface() == DiskInterface.VirtIO_SCSI;
+                boolean isVirtioScsi = getParameters().getDiskInterface() == DiskInterface.VirtIO_SCSI;
                 boolean isScsiPassthrough = getParameters().getDisk().isScsiPassthrough();
                 if (isVirtioScsi) {
                     if (isScsiPassthrough) {

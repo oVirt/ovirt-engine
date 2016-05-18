@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -62,10 +66,28 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
      */
     private boolean shareable;
 
+    private Map<Guid, DiskVmElement> diskVmElementsMap = Collections.emptyMap();
+
     /**
-     * The disk interface (IDE/SCSI/etc).
+     * @return an unmodifiable collection, we don't want anyone messing with the values without going through the setter
      */
-    private DiskInterface diskInterface;
+    @JsonIgnore
+    public Collection<DiskVmElement> getDiskVmElements() {
+        return Collections.unmodifiableCollection(diskVmElementsMap.values());
+    }
+
+    public void setDiskVmElements(Collection<DiskVmElement> diskVmElements) {
+        // Done Java-7 style since it undergoes GWT compilation, should be revised once this changes
+        diskVmElementsMap = new HashMap<>();
+        for (DiskVmElement element : diskVmElements) {
+            diskVmElementsMap.put(element.getId().getVmId(), element);
+        }
+    }
+
+    @JsonIgnore
+    public DiskVmElement getDiskVmElementForVm(Guid vmId) {
+        return diskVmElementsMap.get(vmId);
+    }
 
     /**
      * Should the disk be wiped after it's deleted.
@@ -76,8 +98,6 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
      * Should disk errors be propagated to the guest?
      */
     private PropagateErrors propagateErrors;
-
-    private boolean boot;
 
     private ScsiGenericIO sgio;
 
@@ -105,15 +125,6 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
     @Override
     public void setId(Guid id) {
         this.id = id;
-    }
-
-    @NotNull(message = "VALIDATION_DISK_INTERFACE_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
-    public DiskInterface getDiskInterface() {
-        return diskInterface;
-    }
-
-    public void setDiskInterface(DiskInterface diskInterface) {
-        this.diskInterface = diskInterface;
     }
 
     public boolean isWipeAfterDelete() {
@@ -161,14 +172,6 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
 
     public void setShareable(boolean shareable) {
         this.shareable = shareable;
-    }
-
-    public boolean isBoot() {
-        return boot;
-    }
-
-    public void setBoot(boolean value) {
-        boot = value;
     }
 
     public ScsiGenericIO getSgio() {
@@ -221,11 +224,9 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
                 id,
                 diskAlias,
                 diskDescription,
-                diskInterface,
                 propagateErrors,
                 shareable,
                 wipeAfterDelete,
-                boot,
                 sgio,
                 cinderVolumeType
         );
@@ -243,11 +244,9 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
         return Objects.equals(id, other.id)
                 && Objects.equals(diskAlias, other.diskAlias)
                 && Objects.equals(diskDescription, other.diskDescription)
-                && diskInterface == other.diskInterface
                 && propagateErrors == other.propagateErrors
                 && shareable == other.shareable
                 && isWipeAfterDelete() == other.isWipeAfterDelete()
-                && boot == other.boot
                 && sgio == other.sgio
                 && Objects.equals(cinderVolumeType, other.cinderVolumeType);
     }

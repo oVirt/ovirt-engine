@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -70,6 +71,9 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     private StorageDomainDao storageDomainDao;
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
 
     @Spy
     private DiskValidator diskValidator = new DiskValidator(disk);
@@ -105,7 +109,9 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         doReturn(vmNetworkInterfaceDao).when(command).getVmNetworkInterfaceDao();
         doReturn(vmDao).when(command).getVmDao();
         doReturn(diskDao).when(command).getDiskDao();
+        doReturn(diskVmElementDao).when(command).getDiskVmElementDao();
 
+        doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vm);
@@ -169,7 +175,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockVmStatusUp();
         createVirtIODisk();
         initStorageDomain();
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class), any(DiskVmElement.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
@@ -237,26 +243,31 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
      * The following method will create a disk which is not VirtIO
      */
     private void createNotVirtIODisk() {
-        DiskImage disk = mockDiskImage();
-        disk.setDiskInterface(DiskInterface.IDE);
+        mockDiskImage(DiskInterface.IDE);
+        command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.IDE);
     }
 
     /**
      * The following method will create a VirtIO disk , which is marked as unplugged
      */
     protected void createVirtIODisk() {
-        DiskImage disk = mockDiskImage();
-        disk.setDiskInterface(DiskInterface.VirtIO);
+        mockDiskImage(DiskInterface.VirtIO);
+        command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.VirtIO);
     }
 
-    private DiskImage mockDiskImage() {
+    private DiskImage mockDiskImage(DiskInterface iface) {
         disk.setImageId(diskImageGuid);
         ArrayList<Guid> storageIdList = new ArrayList<>();
         storageIdList.add(storageDomainId);
         disk.setStorageIds(storageIdList);
         disk.setStoragePoolId(storagePoolId);
         disk.setActive(true);
+        disk.setId(Guid.newGuid());
+
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vmId);
+        dve.setDiskInterface(iface);
+        when(diskVmElementDao.get(new VmDeviceId(disk.getId(), vmId))).thenReturn(dve);
         return disk;
     }
 

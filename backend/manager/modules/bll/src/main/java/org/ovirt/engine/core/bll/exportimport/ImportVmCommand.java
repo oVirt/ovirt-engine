@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -761,6 +762,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 saveBaseDisk(disk);
+                if (getParameters().isImportAsNewEntity()) {
+                    saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getVmId()));
+                }
                 saveDiskImageDynamic(disk);
             }
 
@@ -803,6 +807,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     /** Saves the base disk object */
     protected void saveBaseDisk(DiskImage disk) {
         getBaseDiskDao().save(disk);
+    }
+
+    protected void saveDiskVmElement(Guid diskId, Guid vmId, DiskVmElement diskVmElement) {
+        DiskVmElement dve = DiskVmElement.copyOf(diskVmElement, diskId, vmId);
+        getDiskVmElementDao().save(dve);
     }
 
     /** Save the entire image, including it's storage mapping */

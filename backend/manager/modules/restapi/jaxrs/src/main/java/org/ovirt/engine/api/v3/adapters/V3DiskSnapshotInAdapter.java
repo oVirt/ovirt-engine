@@ -19,7 +19,6 @@ package org.ovirt.engine.api.v3.adapters;
 import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.DiskFormat;
-import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
@@ -49,9 +48,6 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
         if (from.isSetAlias()) {
             to.setAlias(from.getAlias());
         }
-        if (from.isSetBootable()) {
-            to.setBootable(from.isBootable());
-        }
         if (from.isSetComment()) {
             to.setComment(from.getComment());
         }
@@ -78,9 +74,6 @@ public class V3DiskSnapshotInAdapter implements V3Adapter<V3DiskSnapshot, DiskSn
         }
         if (from.isSetInstanceType()) {
             to.setInstanceType(adaptIn(from.getInstanceType()));
-        }
-        if (from.isSetInterface()) {
-            to.setInterface(DiskInterface.fromValue(from.getInterface()));
         }
         if (from.isSetLogicalName()) {
             to.setLogicalName(from.getLogicalName());

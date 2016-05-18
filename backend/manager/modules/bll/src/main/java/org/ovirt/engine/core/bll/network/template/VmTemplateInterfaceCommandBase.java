@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -78,5 +79,9 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
         }
 
         return true;
+    }
+
+    protected List<DiskVmElement> getTemplateDiskVmElements() {
+        return getDiskVmElementDao().getAllForVm(getVmTemplateId());
     }
 }

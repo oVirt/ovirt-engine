@@ -69,8 +69,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -869,7 +869,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected boolean isValidPciAndIdeLimit(VM vmFromParams) {
-        List<Disk> allDisks = getDbFacade().getDiskDao().getAllForVm(getVmId());
+        List<DiskVmElement> diskVmElements = getDbFacade().getDiskVmElementDao().getAllForVm(getVmId());
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
 
         return checkPciAndIdeLimit(
@@ -877,7 +877,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getEffectiveCompatibilityVersion(),
                 vmFromParams.getNumOfMonitors(),
                 interfaces,
-                allDisks,
+                diskVmElements,
                 isVirtioScsiEnabled(),
                 hasWatchdog(),
                 isBalloonEnabled(),

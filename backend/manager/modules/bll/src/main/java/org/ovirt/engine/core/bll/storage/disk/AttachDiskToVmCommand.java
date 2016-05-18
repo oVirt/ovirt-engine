@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -119,7 +121,12 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         updateDisksFromDb();
-        if (!isDiskCanBeAddedToVm(disk, getVm()) || !isDiskPassPciAndIdeLimit(disk)) {
+
+        if (getDiskVmElement().isBoot() && !validate(diskValidator.isVmNotContainsBootDisk(getVm()))) {
+            return false;
+        }
+
+        if (!isDiskPassPciAndIdeLimit()) {
             return false;
         }
 
@@ -144,15 +151,15 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             }
         }
 
-        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface())) {
+        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface(getDiskVmElement()))) {
             return false;
         }
 
-        if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
+        if (!validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement()))) {
             return false;
         }
 
-        if (!validate(diskValidator.isDiskInterfaceSupported(getVm()))) {
+        if (!validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()))) {
             return false;
         }
 
@@ -162,7 +169,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
         if (getParameters().isPlugUnPlug()
                 && getVm().getStatus() != VMStatus.Down) {
-            return isDiskSupportedForPlugUnPlug(disk);
+            return isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias());
         }
         return true;
     }
@@ -179,6 +186,10 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
         final VmDevice vmDevice = createVmDevice();
         getVmDeviceDao().save(vmDevice);
+
+        DiskVmElement diskVmElement = getDiskVmElement();
+        diskVmElement.getId().setDeviceId(disk.getId());
+        getDiskVmElementDao().save(diskVmElement);
 
         // update cached image
         List<Disk> imageList = new ArrayList<>();
@@ -263,7 +274,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
-        if (disk.isBoot()) {
+        if (getDiskVmElement() != null && getDiskVmElement().isBoot()) {
             locks.put(getParameters().getVmId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
@@ -276,7 +287,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         return getSucceeded() ? AuditLogType.USER_ATTACH_DISK_TO_VM : AuditLogType.USER_FAILED_ATTACH_DISK_TO_VM;
     }
 
-
     protected Snapshot getSnapshot() {
         return getSnapshotDao().get(getParameters().getSnapshotId());
     }
@@ -284,5 +294,11 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     @Override
     public String getDiskAlias() {
         return disk.getDiskAlias();
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(UpdateEntity.class);
+        return super.getValidationGroups();
     }
 }

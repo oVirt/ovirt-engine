@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -79,11 +79,11 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected boolean pciAndIdeWithinLimit(VM vm, List<VmNic> allInterfaces) {
-        List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
+        List<DiskVmElement> diskVmElements = getDiskVmElementDao().getAllForVm(getVmId());
 
         return checkPciAndIdeLimit(vm.getOs(),
                 vm.getCompatibilityVersion(),
-                vm.getNumOfMonitors(), allInterfaces, allDisks,
+                vm.getNumOfMonitors(), allInterfaces, diskVmElements,
                 VmDeviceUtils.hasVirtioScsiController(getVmId()),
                 VmDeviceUtils.hasWatchdog(getVmId()),
                 VmDeviceUtils.hasMemoryBalloon(getVmId()),

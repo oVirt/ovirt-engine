@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -44,8 +45,8 @@ public class DiskValidator {
     /**
      * Verifies Virtio-SCSI interface validity.
      */
-    public ValidationResult isVirtIoScsiValid(VM vm) {
-        if (DiskInterface.VirtIO_SCSI != disk.getDiskInterface()) {
+    public ValidationResult isVirtIoScsiValid(VM vm, DiskVmElement diskVmElement) {
+        if (vm != null && DiskInterface.VirtIO_SCSI != diskVmElement.getDiskInterface()) {
             return ValidationResult.VALID;
         }
 
@@ -59,8 +60,10 @@ public class DiskValidator {
             if (!isVirtioScsiControllerAttached(vm.getId())) {
                 return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
             }
+            else {
+                return isOsSupportedForVirtIoScsi(vm);
 
-            return isOsSupportedForVirtIoScsi(vm);
+            }
         }
 
         return ValidationResult.VALID;
@@ -106,9 +109,10 @@ public class DiskValidator {
 
     }
 
-    public ValidationResult isReadOnlyPropertyCompatibleWithInterface() {
+
+    public ValidationResult isReadOnlyPropertyCompatibleWithInterface(DiskVmElement diskVmElement) {
         if (Boolean.TRUE.equals(disk.getReadOnly())) {
-            DiskInterface diskInterface = disk.getDiskInterface();
+            DiskInterface diskInterface = diskVmElement.getDiskInterface();
 
             if (diskInterface == DiskInterface.IDE) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR,
@@ -133,10 +137,10 @@ public class DiskValidator {
         return DbFacade.getInstance().getVmDao();
     }
 
-    public ValidationResult isDiskInterfaceSupported(VM vm) {
+    public ValidationResult isDiskInterfaceSupported(VM vm, DiskVmElement diskVmElement) {
         if (vm != null) {
             if (!VmValidationUtils.isDiskInterfaceSupportedByOs(
-                    vm.getOs(), vm.getCompatibilityVersion(), disk.getDiskInterface())) {
+                    vm.getOs(), vm.getCompatibilityVersion(), diskVmElement.getDiskInterface())) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
                         String.format("$osName %s", getOsRepository().getOsName(vm.getOs())));
             }
@@ -204,5 +208,14 @@ public class DiskValidator {
                 ReplacementUtils.createSetVariableString(VM_NAME_VARIABLE, vm.getName())};
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM, replacements).
                 when(vms.stream().noneMatch(vm1 -> vm1.getId().equals(vm.getId())));
+    }
+
+    public ValidationResult isVmNotContainsBootDisk(VM vm) {
+        Disk bootDisk = DbFacade.getInstance().getDiskDao().getVmBootActiveDisk(vm.getId());
+        if (bootDisk != null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE,
+                    "VmName", vm.getName(), "DiskName", bootDisk.getDiskAlias());
+        }
+        return ValidationResult.VALID;
     }
 }

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -112,7 +111,6 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         newImage.setImageId(Guid.newGuid());
         newImage.setvolumeFormat(VolumeFormat.COW);
         newImage.setVolumeType(VolumeType.Sparse);
-        newImage.setDiskInterface(DiskInterface.IDE);
         newImage.setActive(true);
         newImage.setImageTemplateId(EXISTING_IMAGE_DISK_TEMPLATE);
         newImage.setId(Guid.newGuid());

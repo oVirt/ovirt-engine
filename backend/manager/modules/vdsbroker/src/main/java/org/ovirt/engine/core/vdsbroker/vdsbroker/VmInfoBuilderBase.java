@@ -53,13 +53,18 @@ public abstract class VmInfoBuilderBase {
 
     private static class DiskImageByBootAndSnapshotComparator implements Comparator<Disk>, Serializable {
         private static final long serialVersionUID = 4732164571328497830L;
+        private Guid vmId;
+
+        DiskImageByBootAndSnapshotComparator(Guid vmId) {
+            this.vmId = vmId;
+        }
 
         @Override
         public int compare(Disk o1, Disk o2) {
-            Boolean boot1 = o1.isBoot();
-            Boolean boot2 = o2.isBoot();
+            Boolean boot1 = o1.getDiskVmElementForVm(vmId).isBoot();
+            Boolean boot2 = o2.getDiskVmElementForVm(vmId).isBoot();
             int bootResult = boot1.compareTo(boot2);
-            if (bootResult == 0 && o1.isBoot()) {
+            if (bootResult == 0 && boot1) {
                 return Boolean.compare(o2.isDiskSnapshot(), o1.isDiskSnapshot());
             }
             return bootResult;
@@ -283,7 +288,7 @@ public abstract class VmInfoBuilderBase {
                 .values());
         Collections.sort(diskImages, new DiskByDiskAliasComparator());
         Collections.sort(diskImages,
-                Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator()));
+                Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator(vm.getId())));
         return diskImages;
     }
 

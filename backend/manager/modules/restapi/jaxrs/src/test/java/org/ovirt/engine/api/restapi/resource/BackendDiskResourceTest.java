@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
@@ -126,10 +125,8 @@ public class BackendDiskResourceTest
         entity.setId(GUIDS[index]);
         entity.setImageId(GUIDS[1]);
         entity.setvolumeFormat(VolumeFormat.RAW);
-        entity.setDiskInterface(DiskInterface.VirtIO);
         entity.setImageStatus(ImageStatus.OK);
         entity.setVolumeType(VolumeType.Sparse);
-        entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
 
@@ -159,7 +156,6 @@ public class BackendDiskResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertFalse(model.isSetVm());
         assertTrue(model.isSparse());
-        assertTrue(!model.isBootable());
         assertTrue(model.isPropagateErrors());
     }
 

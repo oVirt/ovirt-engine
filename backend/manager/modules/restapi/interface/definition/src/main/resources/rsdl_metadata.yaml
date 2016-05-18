@@ -686,11 +686,11 @@ actions:
       signatures:
       - mandatoryArguments:
           disk.format: xs:string
-          disk.interface: xs:string
           disk.provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
           disk.bootable: xs:boolean
+          disk.interface: xs:string
           disk.description: xs:string
           disk.disk_profile.id: xs:string
           disk.name: xs:string
@@ -706,7 +706,6 @@ actions:
         description: add a new disk to the virtual machine allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments:
-          disk.interface: xs:string
           disk.lun_storage.logical_units.logical_unit--COLLECTION:
             logical_unit.address: xs:string
             logical_unit.id: xs:string
@@ -719,6 +718,7 @@ actions:
           disk.description: xs:string
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
+          disk.interface: xs:string
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.quota.id: xs:string
@@ -994,7 +994,6 @@ actions:
       signatures:
       - mandatoryArguments:
           disk.format: xs:string
-          disk.interface: xs:string
           disk.provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
@@ -1002,7 +1001,6 @@ actions:
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
           disk.description: xs:string
-          disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
@@ -1013,7 +1011,6 @@ actions:
         description: add a new disk to the system with specified size, space will be allocated from the storage domain for the disk
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments:
-          disk.interface: xs:string
           disk.lun_storage.logical_units.logical-unit--COLLECTION:
             logical_unit.address: xs:string
             logical_unit.id: xs:string
@@ -1024,7 +1021,6 @@ actions:
           disk.alias: xs:string
           disk.sparse: xs:boolean
           disk.description: xs:string
-          disk.bootable: xs:boolean
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
@@ -4733,3 +4729,31 @@ actions:
           cluster_domain.id: xs:string
           limit: xs:long
         description: add a cluster limit to a specified Quota
+
+- name: /vms/{vm:id}/diskattachments|rel=get
+  description: Get the list of disk attachments of a virtual machine
+
+- name: /vms/{vm:id}/diskattachments|rel=add
+  description: Adds a disk attachment to a virtual machine
+  request:
+    body:
+      parameterType: DiskAttachment
+      signatures:
+      - mandatoryArguments:
+          disk_attachment.bootable: xs:boolean
+          disk_attachment.interface: xs:string
+      - optionalArguments:
+          disk_attachment.disk.id: xs:string
+
+- name: /vms/{vm:id}/diskattachments/{diskattachment:id}|rel=get
+  description: Get the a specific disk attachment of a virtual machine
+
+- name: /vms/{vm:id}/diskattachments/{diskattachment:id}|rel=delete
+  description: Removes a disk attachment from a virtual machine
+  request:
+    urlparams:
+      detach_only:
+        context: query
+        type: xs:boolean
+        value: true|false
+        required: false

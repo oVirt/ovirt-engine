@@ -73,7 +73,6 @@ public class BackendDisksResource
     }
 
     protected void validateDiskForCreation(Disk disk) {
-        validateParameters(disk, 2, "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
             validateParameters(disk.getLunStorage(), 2, "type"); // when creating a LUN disk, user must specify type.
             StorageType storageType = disk.getLunStorage().getType();

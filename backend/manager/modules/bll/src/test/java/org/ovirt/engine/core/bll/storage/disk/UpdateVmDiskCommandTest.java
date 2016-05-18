@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +27,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -69,6 +65,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -120,6 +117,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private DiskValidator diskValidator;
 
     @Mock
+    private DiskVmElementDao diskVmElementDao;
+
+    @Mock
     private OsRepository osRepository;
 
     @ClassRule
@@ -132,25 +132,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
      * The command under test.
      */
     private UpdateVmDiskCommand<VmDiskOperationParameterBase> command;
-
-    @Test
-    public void getOtherVmDisks() {
-        VmDiskOperationParameterBase parameters = createParameters();
-
-        DiskImage otherDisk = new DiskImage();
-        otherDisk.setId(Guid.newGuid());
-        otherDisk.setActive(true);
-        when(diskDao.getAllForVm(vmId)).thenReturn(new LinkedList<>(Arrays.asList(parameters.getDiskInfo(),
-                otherDisk)));
-        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-        initializeCommand(parameters);
-
-        VM vm = createVmStatusDown();
-        mockCtorRelatedDaoCalls(Collections.singletonList(vm));
-        List<Disk> otherDisks = command.getOtherVmDisks(vm.getId());
-        assertEquals("Wrong number of other disks", 1, otherDisks.size());
-        assertFalse("Wrong other disk", otherDisks.contains(parameters.getDiskInfo()));
-    }
 
     @Test
     public void validateFailedVMNotFound() throws Exception {
@@ -283,55 +264,16 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     private void validateMakeDiskBootable(boolean boot) {
         VmDiskOperationParameterBase parameters = createParameters();
-        Disk newDisk = parameters.getDiskInfo();
-        newDisk.setBoot(true);
+        parameters.getDiskVmElement().setBoot(true);
 
         DiskImage otherDisk = new DiskImage();
         otherDisk.setId(Guid.newGuid());
         otherDisk.setActive(true);
-        otherDisk.setBoot(boot);
-        if (boot) {
-            when(diskDao.getVmBootActiveDisk(vmId)).thenReturn(otherDisk);
-        }
+        when(diskValidator.isVmNotContainsBootDisk(createVm(VMStatus.Down))).
+                thenReturn(boot ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE) : ValidationResult.VALID);
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
         initializeCommand(parameters);
-
-        mockInterfaceList();
-
-        // The command should only succeed if there is no other bootable disk
-        assertEquals(!boot, command.validate());
-    }
-
-    @Test
-    public void validateMakeDiskBootableOnOtherVmSuccess() {
-        validateMakeDiskBootableOnOtherVm(false);
-    }
-
-    @Test
-    public void validateMakeDiskBootableOnOtherVmFail() {
-        validateMakeDiskBootableOnOtherVm(true);
-    }
-
-    private void validateMakeDiskBootableOnOtherVm(boolean boot) {
-        VmDiskOperationParameterBase parameters = createParameters();
-        Disk newDisk = parameters.getDiskInfo();
-        newDisk.setBoot(true);
-
-        Guid otherVmId = Guid.newGuid();
-        VM otherVm = new VM();
-        otherVm.setId(otherVmId);
-
-        DiskImage otherDisk = new DiskImage();
-        otherDisk.setId(Guid.newGuid());
-        otherDisk.setActive(true);
-        otherDisk.setBoot(boot);
-        if (boot) {
-            when(diskDao.getVmBootActiveDisk(otherVmId)).thenReturn(otherDisk);
-        }
-        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
-        initializeCommand(parameters, Arrays.asList(createVmStatusDown(), otherVm));
 
         mockInterfaceList();
 
@@ -387,22 +329,19 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void clearAddressOnInterfaceChange() {
         final VmDiskOperationParameterBase parameters = createParameters();
         // update new disk interface so it will be different than the old one
-        parameters.getDiskInfo().setDiskInterface(DiskInterface.VirtIO_SCSI);
+        parameters.getDiskVmElement().setDiskInterface(DiskInterface.VirtIO);
 
-        // creating old disk with interface different than interface of disk from parameters
-        // have to return original disk on each request to dao,
-        // since the command updates retrieved instance of disk
-        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                final DiskImage oldDisk = createDiskImage();
-                oldDisk.setDiskInterface(DiskInterface.VirtIO);
-                assertNotSame(oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
-                return oldDisk;
-            }
-        });
+        DiskImage diskFromDb = createDiskImage();
+        doReturn(diskFromDb).when(diskDao).get(diskImageGuid);
+
         initializeCommand(parameters);
+
+        DiskVmElement dve = new DiskVmElement(diskImageGuid, vmId);
+        dve.setDiskInterface(DiskInterface.IDE);
+        doReturn(dve).when(command).getOldDiskVmElement();
+
         mockVdsCommandSetVolumeDescription();
+        assertNotSame(dve.getDiskInterface(), parameters.getDiskVmElement().getDiskInterface());
         command.executeVmCommand();
 
         // verify that device address was cleared exactly once
@@ -433,23 +372,18 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Test
     public void testUpdateDiskInterfaceUnsupported() {
         final VmDiskOperationParameterBase parameters = createParameters();
-        parameters.getDiskInfo().setDiskInterface(DiskInterface.IDE);
-        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-            final DiskImage oldDisk = createDiskImage();
-            oldDisk.setDiskInterface(DiskInterface.VirtIO);
-            assertNotSame(oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
-            return oldDisk;
-            }
-        });
+        parameters.getDiskVmElement().setDiskInterface(DiskInterface.IDE);
 
         initializeCommand(parameters);
-        doReturn(true).when(command).validatePciAndIdeLimit(anyListOf(VM.class));
         mockVdsCommandSetVolumeDescription();
 
-        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        DiskVmElement dve = new DiskVmElement(diskImageGuid, vmId);
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        doReturn(dve).when(command).getOldDiskVmElement();
+        doReturn(createDiskImage()).when(command).getOldDisk();
+
+        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class), any(DiskVmElement.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(parameters.getDiskInfo())).thenReturn(diskValidator);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
@@ -474,7 +408,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
-                when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+                when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
 
         assertFalse(command.validateCanUpdateReadOnly(diskValidator));
     }
@@ -483,7 +417,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void testSucceedInterfaceCanUpdateReadOnly() {
         initializeCommand(new VmDiskOperationParameterBase(new DiskVmElement(diskImageGuid, vmId), createDiskImage()));
         doReturn(true).when(command).updateReadOnlyRequested();
-        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
 
         assertTrue(command.validateCanUpdateReadOnly(diskValidator));
     }
@@ -492,11 +426,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void testUpdateOvfDiskNotSupported() {
         DiskImage updatedDisk = createDiskImage();
         updatedDisk.setReadOnly(true);
-        updatedDisk.setDiskInterface(DiskInterface.IDE);
 
         DiskImage diskFromDB = createDiskImage();
         diskFromDB.setReadOnly(false);
-        diskFromDB.setDiskInterface(DiskInterface.IDE);
         diskFromDB.setContentType(DiskContentType.OVF_STORE);
 
         when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
@@ -590,6 +522,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
         doReturn(vmDao).when(command).getVmDao();
         doReturn(diskDao).when(command).getDiskDao();
+        doReturn(diskVmElementDao).when(command).getDiskVmElementDao();
         doNothing().when(command).reloadDisks();
         doNothing().when(command).updateBootOrder();
         doNothing().when(vmStaticDao).incrementDbGeneration(any(Guid.class));
@@ -598,12 +531,12 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isVirtIoScsiValid(any(VM.class), any(DiskVmElement.class))).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskUsedAsOvfStore()).thenReturn(ValidationResult.VALID);
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(any(VM.class));
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).validateNotHostedEngineDisk();
-        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
 
@@ -715,6 +648,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         for (VM vm: vms) {
             if (vm.getId().equals(command.getParameters().getVmId())) {
                 when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+                when(diskVmElementDao.get(new VmDeviceId(command.getParameters().getDiskInfo().getId(), vm.getId()))).thenReturn(new DiskVmElement());
                 break;
             }
         }
@@ -829,7 +763,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageGuid);
         disk.setSize(100000L);
-        disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setStorageIds(new ArrayList<>(Collections.singleton(sdId)));
         disk.setStoragePoolId(spId);
         disk.setDescription(RandomUtils.instance().nextString(10));
@@ -843,7 +776,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskImage disk = createDiskImage();
         disk.setvolumeFormat(volumeFormat);
         disk.setShareable(true);
-        disk.setDiskInterface(DiskInterface.VirtIO);
         return disk;
     }
 

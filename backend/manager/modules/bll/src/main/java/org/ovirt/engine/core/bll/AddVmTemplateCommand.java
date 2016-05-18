@@ -59,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -69,6 +70,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -817,6 +819,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
         DiskImage newImage = retValue.getActionReturnValue();
         srcDeviceIdToTargetDeviceIdMapping.put(diskImage.getId(), newImage.getId());
+        addTemplateDiskVmElement(newImage, diskImage);
+    }
+
+
+    private void addTemplateDiskVmElement(DiskImage newDisk, DiskImage oldDisk) {
+        DiskVmElement oldDve = getDiskVmElementDao().get(new VmDeviceId(oldDisk.getId(), getVmId()));
+        DiskVmElement newDve = DiskVmElement.copyOf(oldDve);
+        newDve.setId(new VmDeviceId(newDisk.getId(), getVmTemplateId()));
+        getDiskVmElementDao().save(newDve);
     }
 
     private Guid getVmIdFromImageParameters(){

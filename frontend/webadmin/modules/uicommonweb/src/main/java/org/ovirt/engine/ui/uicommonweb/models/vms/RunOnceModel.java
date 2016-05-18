@@ -861,7 +861,7 @@ public abstract class RunOnceModel extends Model {
 
     private boolean isDisksContainBootableDisk(List<Disk> disks) {
         for (Disk disk : disks) {
-            if (disk.isBoot()) {
+            if (disk.getDiskVmElementForVm(vm.getId()).isBoot()) {
                 return true;
             }
         }

@@ -216,7 +216,6 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
                     .getInt("volume_format")));
             entity.setId(getGuidDefaultEmpty(rs, "image_group_id"));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
-            entity.setBoot(rs.getBoolean("boot"));
             entity.setReadRate(rs.getInt("read_rate"));
             entity.setWriteRate(rs.getInt("write_rate"));
             entity.setContentType(rs.getBoolean("ovf_store") ? DiskContentType.OVF_STORE : DiskContentType.DATA);

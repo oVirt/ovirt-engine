@@ -134,7 +134,7 @@ public class VmValidator {
         }
 
         boolean isVirtioScsiDiskExist =
-                vmDisks.stream().anyMatch(d -> d.getDiskInterface() == DiskInterface.VirtIO_SCSI);
+                vmDisks.stream().anyMatch(d -> d.getDiskVmElementForVm(vm.getId()).getDiskInterface() == DiskInterface.VirtIO_SCSI);
 
         if (isVirtioScsiDiskExist) {
             return new ValidationResult(EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);

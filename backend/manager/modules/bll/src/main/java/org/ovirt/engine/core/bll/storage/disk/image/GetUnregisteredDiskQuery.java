@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -93,9 +92,6 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
             }
         }
 
-        // The disk image won't have an interface set on it. Set it to IDE by default. When the
-        // disk is attached to a VM, its interface can be changed to the appropriate value for that VM.
-        newDiskImage.setDiskInterface(DiskInterface.IDE);
         newDiskImage.setStoragePoolId(storagePoolId);
         getQueryReturnValue().setReturnValue(newDiskImage);
         getQueryReturnValue().setSucceeded(true);

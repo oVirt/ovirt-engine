@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -227,12 +228,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue) {
 
             List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
+            List<DiskVmElement> diskVmElements = getDiskVmElementDao().getAllForVm(getVmTemplateId());
 
             if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
                     getVmTemplate().getCompatibilityVersion(),
                     getParameters().getVmTemplateData().getNumOfMonitors(),
                     interfaces,
-                    new ArrayList<>(getParameters().getVmTemplateData().getDiskList()),
+                    diskVmElements,
                     VmDeviceUtils.hasVirtioScsiController(getParameters().getVmTemplateData().getId()),
                     hasWatchdog(getParameters().getVmTemplateData().getId()),
                     VmDeviceUtils.hasMemoryBalloon(getParameters().getVmTemplateData().getId()),
