@@ -171,13 +171,13 @@ public class Smtp extends Transport {
                     EventMessageContent message = new EventMessageContent();
                     message.prepareMessage(hostName, attempt.event, isBodyHtml);
 
-                    log.info("Send mail subject='{}' to='{}'",
+                    log.info("Sending e-mail subject='{}' to='{}'",
                             message.getMessageSubject(),
                             attempt.address);
-                    log.debug("Send mail body='{}'", message.getMessageBody());
+                    log.debug("Send e-mail body='{}'", message.getMessageBody());
                     sendMail(attempt.address, message.getMessageSubject(), message.getMessageBody());
                     log.info(
-                        "Mail subject='{}' to='{}' sent successfully",
+                        "E-mail subject='{}' to='{}' sent successfully",
                         message.getMessageSubject(),
                         attempt.address
                     );
