@@ -44,7 +44,7 @@ public class GlusterVolumeUtils {
 
     public static boolean isHealingRequired(GlusterVolumeEntity volume) {
         for (GlusterBrickEntity brick : volume.getBricks()) {
-            if (brick.getUnSyncedEntries() > 0) {
+            if (brick.getUnSyncedEntries() != null && brick.getUnSyncedEntries() > 0) {
                 return true;
             }
         }

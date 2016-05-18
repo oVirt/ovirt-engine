@@ -47,7 +47,7 @@ public class BrickStatusCell extends AbstractCell<GlusterBrickEntity> {
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        if (brick.getUnSyncedEntries() > 0) {
+        if (brick.getUnSyncedEntries() != null && brick.getUnSyncedEntries() > 0) {
             SafeHtml alertImageHtml =
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
             sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id, status.toString()));

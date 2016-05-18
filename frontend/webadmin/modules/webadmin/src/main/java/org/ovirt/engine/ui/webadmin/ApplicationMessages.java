@@ -126,10 +126,10 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String onlyAvailableInCompatibilityVersions(String versions);
 
     @DefaultMessage("{0} unsynced entries present")
-    String unSyncedEntriesPresent(double unSyncedEntries);
+    String unSyncedEntriesPresent(int unSyncedEntries);
 
     @DefaultMessage("{0}, {1} unsynced entries present")
-    String brickStatusWithUnSyncedEntriesPresent(String brickStatus, double unSyncedEntries);
+    String brickStatusWithUnSyncedEntriesPresent(String brickStatus, int unSyncedEntries);
 
     @DefaultMessage("{0}, Unsynced entries present - Needs healing")
     String needsGlusterHealingWithVolumeStatus(String volumeStatus);

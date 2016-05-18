@@ -55,7 +55,8 @@ public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, Gluste
             tooltip = constants.down();
         }
 
-        if (brick.getStatus() != GlusterStatus.DOWN && brick.getUnSyncedEntries() > 0) {
+        if (brick.getStatus() != GlusterStatus.DOWN && brick.getUnSyncedEntries() != null
+                && brick.getUnSyncedEntries() > 0) {
             tooltip = messages.brickStatusWithUnSyncedEntriesPresent(tooltip, brick.getUnSyncedEntries());
         }
 
