@@ -562,6 +562,11 @@ public class PluginManager implements HasHandlers {
                 if (validatePluginAction(this.pluginName)) {
                     return @org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils::getRootURL()() + @org.ovirt.engine.ui.frontend.utils.BaseContextPathData::getRelativePath()();
                 }
+            },
+            currentLocale: function() {
+                if (validatePluginAction(this.pluginName)) {
+                    return uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::getCurrentLocale()();
+                }
             }
 
         };

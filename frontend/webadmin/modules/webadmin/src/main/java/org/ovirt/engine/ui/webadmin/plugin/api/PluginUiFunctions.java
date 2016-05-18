@@ -31,6 +31,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -286,6 +287,24 @@ public class PluginUiFunctions implements HasHandlers {
                 alertManager.showAlert(type, SafeHtmlUtils.fromString(message), options.getAutoHideMs().intValue());
             }
         });
+    }
+
+    /**
+     * Returns the current locale string in <a href="http://tools.ietf.org/html/rfc5646">standard format</a>,
+     * e.g. {@code en-US}.
+     */
+    public String getCurrentLocale() {
+        String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
+
+        // Replace "default" with "en_US"
+        if ("default".equals(currentLocale)) { //$NON-NLS-1$
+            currentLocale = "en_US"; //$NON-NLS-1$
+        }
+
+        // Replace "_" with "-"
+        currentLocale = currentLocale.replace('_', '-');
+
+        return currentLocale;
     }
 
 }
