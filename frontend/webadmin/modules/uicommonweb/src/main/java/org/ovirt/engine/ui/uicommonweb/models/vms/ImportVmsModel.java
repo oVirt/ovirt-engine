@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
-import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -46,6 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -67,8 +67,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private ListModel<StoragePool> dataCenters;
     private ListModel<ImportSource> importSources;
-    private ListModel<EntityModel<VM>> externalVmModels;
-    private ListModel<EntityModel<VM>> importedVmModels;
+    private SortedListModel<EntityModel<VM>> externalVmModels;
+    private SortedListModel<EntityModel<VM>> importedVmModels;
     private ListModel<Provider<VmwareVmProviderProperties>> vmwareProviders;
 
     private EntityModel<String> vCenter;
@@ -131,39 +131,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setDataCenters(new ListModel<StoragePool>());
         setImportSources(new ListModel<ImportSource>());
 
-        setExternalVmModels(new ListModel<EntityModel<VM>>()
-        {
-            @Override
-            // for sorting the external VMs list
-            public void setItems(Collection<EntityModel<VM>> values) {
-
-                Collection<EntityModel<VM>> externalVms = getExternalVmModels().getItems();
-
-                if (values != null && externalVms == values) {   // sort required.
-                    sortVms(values);
-                }
-                else {                                           // regular flow - sort is not required*/
-                    super.setItems(values);
-                }
-            }
-        });
-
-        setImportedVmModels(new ListModel<EntityModel<VM>>()
-        {
-            @Override
-            // for sorting the imported VMs list
-            public void setItems(Collection<EntityModel<VM>> values) {
-
-                Collection<EntityModel<VM>> importedVms = getImportedVmModels().getItems();
-
-                if (values != null && importedVms == values) {   // sort required.
-                    sortVms(values);
-                }
-                else {                                           // regular flow - sort is not required*/
-                    super.setItems(values);
-                }
-            }
-        });
+        setExternalVmModels(new SortedListModel<>(new EntityModelLexoNumericNameableComparator<EntityModel<VM>, VM>()));
+        setImportedVmModels(new SortedListModel<>(new EntityModelLexoNumericNameableComparator<EntityModel<VM>, VM>()));
 
         setVmwareProviders(new ListModel<Provider<VmwareVmProviderProperties>>());
 
@@ -301,21 +270,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         });
         Frontend.getInstance().runQuery(VdcQueryType.GetAllClusters, new VdcQueryParametersBase(), callback);
 
-    }
-
-    private void sortVms(Collection<EntityModel<VM>> vms) {
-        List<VM> vmsList = new ArrayList<>();
-
-        for (EntityModel<VM> vm : vms) {
-            vmsList.add(vm.getEntity());
-        }
-
-        Collections.sort(vmsList, new LexoNumericNameableComparator<>());
-
-        vms.clear();
-        for (VM vm : vmsList) {
-            vms.add(new EntityModel<>(vm));
-        }
     }
 
     private INewAsyncCallback createGetStorageDomainsByStoragePoolIdCallback(final StoragePool dataCenter) {
@@ -741,9 +695,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         clearVms();
         List<EntityModel<VM>> externalVms = new ArrayList<>();
 
-        // VMs sorting
-        Collections.sort(vms, new LexoNumericNameableComparator<>());
-
         for (VM vm : vms) {
             externalVms.add(new EntityModel<>(vm));
         }
@@ -841,19 +792,19 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         this.importSources = importSources;
     }
 
-    public ListModel<EntityModel<VM>> getExternalVmModels() {
+    public SortedListModel<EntityModel<VM>> getExternalVmModels() {
         return externalVmModels;
     }
 
-    private void setExternalVmModels(ListModel<EntityModel<VM>> externalVmModels) {
+    private void setExternalVmModels(SortedListModel<EntityModel<VM>> externalVmModels) {
         this.externalVmModels = externalVmModels;
     }
 
-    public ListModel<EntityModel<VM>> getImportedVmModels() {
+    public SortedListModel<EntityModel<VM>> getImportedVmModels() {
         return importedVmModels;
     }
 
-    private void setImportedVmModels(ListModel<EntityModel<VM>> importedVmModels) {
+    private void setImportedVmModels(SortedListModel<EntityModel<VM>> importedVmModels) {
         this.importedVmModels = importedVmModels;
     }
 
