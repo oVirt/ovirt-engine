@@ -57,4 +57,9 @@ public class StorageJobCallback extends CommandCallback {
     private HostJobStatus pollStorageJob(Guid jobId) {
         return HostJobStatus.done;
     }
+
+    @Override
+    public boolean pollOnExecutionFailed() {
+        return true;
+    }
 }
