@@ -308,6 +308,7 @@ public enum VdcActionType {
     AllocateImageGroupVolume(1027, QuotaDependency.STORAGE),
     CreateImagePlaceholder(1028, QuotaDependency.NONE),
     SyncImageGroupData(1029, QuotaDependency.NONE),
+    CreateVolumeContainer(1030, QuotaDependency.STORAGE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
