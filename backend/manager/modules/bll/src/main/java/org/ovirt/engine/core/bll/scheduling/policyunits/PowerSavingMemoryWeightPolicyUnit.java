@@ -14,21 +14,22 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 @SchedulingUnit(
-        guid = "38440000-8cf0-14bd-c43e-10b96e4ef00b",
-        name ="None",
-        description = "Follows Even Distribution weight module",
+        guid = "9dfe6086-646d-43b8-8eef-4d94de8472c8",
+        name = "OptimalForMemoryPowerSaving",
+        description =
+                "Gives hosts with lower available memory, lower weight (means that hosts with lower available memory are"
+                        + " more likely to be selected)",
         type = PolicyUnitType.WEIGHT
 )
-public class NoneWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
+public class PowerSavingMemoryWeightPolicyUnit extends EvenDistributionMemoryWeightPolicyUnit {
 
-    public NoneWeightPolicyUnit(PolicyUnit policyUnit,
+    public PowerSavingMemoryWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
     }
 
     @Override
     public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        return super.score(cluster, hosts, vm, parameters);
+        return reverseEvenDistributionScore(cluster, hosts, vm, parameters);
     }
-
 }

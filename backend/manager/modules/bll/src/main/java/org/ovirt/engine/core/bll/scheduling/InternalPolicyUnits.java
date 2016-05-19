@@ -13,7 +13,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionCPUWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionMemoryWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
@@ -27,10 +28,10 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingCPUWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingMemoryWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -43,7 +44,8 @@ public class InternalPolicyUnits {
         enabledUnits.add(CPUPolicyUnit.class);
         enabledUnits.add(EmulatedMachineFilterPolicyUnit.class);
         enabledUnits.add(EvenDistributionBalancePolicyUnit.class);
-        enabledUnits.add(EvenDistributionWeightPolicyUnit.class);
+        enabledUnits.add(EvenDistributionCPUWeightPolicyUnit.class);
+        enabledUnits.add(EvenDistributionMemoryWeightPolicyUnit.class);
         enabledUnits.add(EvenGuestDistributionBalancePolicyUnit.class);
         enabledUnits.add(EvenGuestDistributionWeightPolicyUnit.class);
         //enabledUnits.add(HaReservationBalancePolicyUnit.class); /* TODO not used? */
@@ -55,10 +57,10 @@ public class InternalPolicyUnits {
         enabledUnits.add(MigrationPolicyUnit.class);
         enabledUnits.add(NetworkPolicyUnit.class);
         enabledUnits.add(NoneBalancePolicyUnit.class);
-        enabledUnits.add(NoneWeightPolicyUnit.class);
         enabledUnits.add(PinToHostPolicyUnit.class);
         enabledUnits.add(PowerSavingBalancePolicyUnit.class);
-        enabledUnits.add(PowerSavingWeightPolicyUnit.class);
+        enabledUnits.add(PowerSavingCPUWeightPolicyUnit.class);
+        enabledUnits.add(PowerSavingMemoryWeightPolicyUnit.class);
         enabledUnits.add(VmAffinityFilterPolicyUnit.class);
         enabledUnits.add(VmAffinityWeightPolicyUnit.class);
         enabledUnits.add(CpuPinningPolicyUnit.class);

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,28 +15,20 @@ import org.ovirt.engine.core.compat.Guid;
 
 @SchedulingUnit(
         guid = "736999d0-1023-46a4-9a75-1316ed50e15b",
-        name = "OptimalForPowerSaving",
+        name = "OptimalForCpuPowerSaving",
         description = "Gives hosts with higher CPU usage, lower weight (means that hosts with higher CPU usage are"
                 + " more likely to be selected)",
         type = PolicyUnitType.WEIGHT
 )
-public class PowerSavingWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
+public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPolicyUnit {
 
-    public PowerSavingWeightPolicyUnit(PolicyUnit policyUnit,
+    public PowerSavingCPUWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
     }
 
     @Override
     public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        List<Pair<Guid, Integer>> scores = new ArrayList<>();
-        for (VDS vds : hosts) {
-            int score = MaxSchedulerWeight - 1;
-            if (vds.getVmCount() > 0) {
-                score -= calcEvenDistributionScore(vds, vm, cluster.getCountThreadsAsCores());
-            }
-            scores.add(new Pair<>(vds.getId(), score));
-        }
-        return scores;
+        return reverseEvenDistributionScore(cluster, hosts, vm, parameters);
     }
 }
