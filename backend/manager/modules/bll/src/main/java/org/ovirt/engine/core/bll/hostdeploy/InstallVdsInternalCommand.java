@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -104,8 +103,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 new VdsDeployMiscUnit(),
                 new VdsDeployVdsmUnit(),
                 new VdsDeployPKIUnit(),
-                new VdsDeployKdumpUnit(),
-                new VdsDeployKernelUnit()
+                new VdsDeployKdumpUnit()
             );
 
             if (parameters.getNetworkProviderId() != null) {
@@ -167,15 +165,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 case Failed:
                     throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
                 case Incomplete:
-                    markCurrentCmdlineAsStored();
                     throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
                 case Reboot:
-                    markCurrentCmdlineAsStored();
                     setVdsStatus(VDSStatus.Reboot);
                     runSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
-                    markCurrentCmdlineAsStored();
                     try (ProtocolDetector detector = new ProtocolDetector(getVds(),
                             resourceManager,
                             getVdsStaticDao(),
@@ -212,11 +207,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         } catch (Exception e) {
             handleError(e, VDSStatus.InstallFailed);
         }
-    }
-
-    private void markCurrentCmdlineAsStored() {
-        final VdsStatic vdsStatic = getVds().getStaticData();
-        getVdsStaticDao().updateLastStoredKernelCmdline(vdsStatic.getId(), vdsStatic.getCurrentKernelCmdline());
     }
 
     private void configureManagementNetwork() {
