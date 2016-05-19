@@ -186,7 +186,7 @@ class Plugin(plugin.PluginBase):
                         'ENGINE_SSO_SERVICE_SSL_VERIFY_HOST=false\n'
                         'ENGINE_SSO_SERVICE_SSL_VERIFY_CHAIN=true\n'
                         'SSO_ENGINE_URL='
-                        '"{engine_url_scheme}://{engine_url_host}:'
+                        '"{engine_url_scheme}://{fqdn}:'
                         '{engine_url_port}/ovirt-engine/"\n'
                         'SSO_PKI_TRUST_STORE=' + (
                             '"${{ENGINE_PKI_TRUST_STORE}}"\n'
@@ -216,15 +216,6 @@ class Plugin(plugin.PluginBase):
                                 if self.environment[
                                     osetupcons.CoreEnv.DEVELOPER_MODE
                                 ] else 'https'
-                            )
-                        ),
-                        engine_url_host=(
-                            (
-                                'localhost'
-                                if self.environment[
-                                    osetupcons.CoreEnv.DEVELOPER_MODE
-                                ] else
-                                self.environment[osetupcons.ConfigEnv.FQDN]
                             )
                         ),
                         engine_url_port=(
