@@ -12,10 +12,10 @@
 	<d:SimpleDialogPanel width="1280px" height="800px">
 		<d:content>
 			<g:FlowPanel>
-				<g:FlowPanel>
+				<g:FlowPanel width="340px">
 					<e:ListModelListBoxEditor ui:field="pinnedHostEditor" />
+					<e:ListModelListBoxEditor ui:field="capabilityEditor" label="{constants.capability}" />
 				</g:FlowPanel>
-				<e:ListModelListBoxEditor ui:field="capabilityEditor" label="{constants.capability}" />
 				<w:HorizontalSplitTable ui:field="splitTable" />
 			</g:FlowPanel>
 		</d:content>
