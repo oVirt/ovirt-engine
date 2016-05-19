@@ -273,6 +273,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         return null;
     }
 
+    public StorageDomain getExportDomain() {
+        return exportDomain;
+    }
+
     private void providerChanged() {
         clearValidations();
         switch(importSources.getSelectedItem()) {

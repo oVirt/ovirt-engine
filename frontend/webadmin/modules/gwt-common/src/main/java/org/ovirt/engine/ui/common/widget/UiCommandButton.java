@@ -8,9 +8,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UiCommandButton extends AbstractUiCommandButton implements Focusable {
+public class UiCommandButton extends AbstractUiCommandButton implements Focusable, HasEnabled {
 
     interface WidgetUiBinder extends UiBinder<Widget, UiCommandButton> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -79,8 +80,14 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
         return nextTabIndex;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         getButtonWidget().setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return getButtonWidget().isEnabled();
     }
 
     @Override
