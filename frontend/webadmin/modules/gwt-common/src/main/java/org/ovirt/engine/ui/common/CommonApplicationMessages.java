@@ -1,255 +1,159 @@
 package org.ovirt.engine.ui.common;
 
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import com.google.gwt.i18n.client.Messages;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationMessages extends Messages {
-
-    // Common error messages
-
-    @DefaultMessage("Error while loading data from server: {0}")
     String asyncCallFailure(String reason);
 
-    // UiCommon related error messages
-
-    @DefaultMessage("Error while executing action: {0}")
     String uiCommonRunActionFailed(String reason);
 
-    @DefaultMessage("Error while executing action {0}: {1}")
     String uiCommonRunActionExecutionFailed(String action, String reason);
 
-    @DefaultMessage("Error while executing query: {0}")
     String uiCommonRunQueryFailed(String reason);
 
-    @DefaultMessage("Connection closed: {0}")
     String uiCommonPublicConnectionClosed(String reason);
 
-    @DefaultMessage("LUN is already part of a Storage Domain: {0}")
     String lunAlreadyPartOfStorageDomainWarning(String storageDomainName);
 
-    @DefaultMessage("LUN is already used by a Disk: {0}")
     String lunUsedByDiskWarning(String diskAlias);
 
-    @DefaultMessage("Attached to {0} VM(s) other than {1}")
     String diskAttachedToOtherVMs(int numberOfVms, String vmName);
 
-    @DefaultMessage("Attached to {0} VM(s)")
     String diskAttachedToVMs(int numberOfVms);
 
-    @DefaultMessage("Note that the disk is:")
     String diskNote();
 
-    @DefaultMessage("Shareable")
     String shareable();
 
-    @DefaultMessage("Bootable")
     String bootable();
 
-    @DefaultMessage("Last scan: {0}")
     String lastDiskAlignment(String lastScanDate);
 
-    @DefaultMessage("out of {0} VMs in pool")
     String outOfXVMsInPool(String numOfVms);
 
-    @DefaultMessage("Number of Prestarted VMs defines the number of VMs in Run state , that are waiting to be attached to Users. Accepted values: 0 to the Number of VMs that already exists in the Pool.")
     String prestartedHelp();
 
-    @DefaultMessage("It is possible to specify mask for the VM indexes, for example: for pool ''my"
-            + VmPool.MASK_CHARACTER
-            + VmPool.MASK_CHARACTER
-            + "pool'' the generated names will be: my01pool,my02pool,...my99pool")
     String poolNameHelp();
 
-    @DefaultMessage("Maximum number of VMs a single user can attach to from this pool. This field must be between 1 and number of VMs in this pool.")
     String maxAssignedVmsPerUserHelp();
 
-    @DefaultMessage("Free: {0} vCPU")
     String quotaFreeCpus(int numOfVCPU);
 
-    @DefaultMessage("{0} addresses")
     String addressesVmGuestAgent(int numOfAddresses);
 
-    @DefaultMessage("The following disks are in status {0}: {1}")
     String disksStatusWarning(String status, String disksAliases);
 
-    // Model-bound widgets
-    @DefaultMessage("{0} ({1}:{2}:{3}  Sockets:Cores/S.:Threads/C.)")
     String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket, int numOfThreadsPerCore);
 
-    @DefaultMessage("{0} ({1} GB free of {2} GB)")
     String storageDomainFreeSpace(String name, int free, int total);
 
-    @DefaultMessage("+ {0} GB")
     String additionalAvailableSizeInGB(int size);
 
-    // Console
-
-    @DefaultMessage("Select Console for ''{0}''")
     String selectConsoleFor(String name);
 
-    @DefaultMessage("{0} sec")
     String refreshRateSeconds(Integer seconds);
 
-    @DefaultMessage("default [{0}]")
     String globalVncKeyboardLayoutCaption(String currentDefault);
 
-    @DefaultMessage("default: {0}")
     String defaultTimeZoneCaption(String currentDefault);
 
-    @DefaultMessage("<Empty>")
     SafeHtml emptyProfile();
 
-    @DefaultMessage("Do not assign any profile to this virtual network interface")
     SafeHtml emptyProfileDescription();
 
-    @DefaultMessage("{0} ({1})")
     SafeHtml profileAndNetwork(String profileName, String networkName);
 
-    @DefaultMessage("{0}/{1}")
     SafeHtml profileAndNetworkSelected(String profileName, String networkName);
 
-    @DefaultMessage("User: {0} with Role: {1}")
     SafeHtml userWithRole(String userName, String roleName);
 
-    @DefaultMessage("Role: {0} on User: {1}")
     SafeHtml roleOnUser(String roleName, String userName);
 
-    @DefaultMessage("Map control-alt-del shortcut to {0}")
     String remapCtrlAltDelete(String hotkey);
 
-    @DefaultMessage("This will override the SPICE proxy defined in {0}. Current configuration: {1}. SPICE proxy address format: [protocol://]<host>[:port]. The only supported protocol is http.")
     String consoleOverrideSpiceProxyMessage(String parentConfiguration, String parentSpiceProxy);
 
-    @DefaultMessage("cluster")
     String consoleOverrideDefinedOnCluster();
 
-    @DefaultMessage("global configuration")
     String consoleOverrideDefinedInGlobalConfig();
 
-    @DefaultMessage("No SPICE proxy defined")
     String noSpiceProxyDefined();
 
-    @DefaultMessage("{0} or {1}")
     String or(String a, String b);
 
-    @DefaultMessage("Represents maximum number of milliseconds the VM can be down during live migration. Value of 0 means that VDSM default will be used. (Current engine-wide default is {0}ms)")
     String migrationDowntimeInfo(Integer milliseconds);
 
-    @DefaultMessage("When at least one of the VM activated disks use SCSI reservation, migration option is ignored and VM cannot be migrated.")
     String migrationSelectInfo();
 
-    @DefaultMessage("Represents the policy which handles the migration convergence. No migration policy means the hypervisor takes care of convergence.")
     String migrationPolicyInfo();
 
-    @DefaultMessage("Hot add CPUs by changing the number of sockets." +
-            " Please consult documentation for your guest operating system to ensure it has proper support for CPU Hot Add")
     String hotPlugUnplugCpuWarning();
 
-    @DefaultMessage("Set simultaneous multithreading.\n" +
-            "Please check host architecture properly before changing the value.\n" +
-            "When not sure, keep threads-per-core set to 1.\n" +
-            "Recommended values for:\n" +
-            " - x86: 1\n" +
-            " - Power8: 1..8 (8 for high load VMs)")
     String threadsPerCoreInfo();
 
-    @DefaultMessage("Policy of assigning serial numbers to running VMs. Can be Host''s UUID, Vm''s UUID or any custom value.")
     String serialNumberInfo();
 
-    @DefaultMessage("Changes that require Virtual Machine restart:")
     String nextRunConfigurationExists();
 
-    @DefaultMessage("Changes that can be applied immediately:")
     String nextRunConfigurationCanBeAppliedImmediately();
 
-    @DefaultMessage("CPU")
     String nextRunConfigurationCpuValue();
 
-    @DefaultMessage("Memory")
     String nextRunConfigurationMemoryValue();
 
-    @DefaultMessage("Migration option changed to allow migration:")
     String unpinnedRunningVmWarningTitle();
 
-    @DefaultMessage("Following changes may put VM in risk:")
     String warningSectionTitle();
 
-    @DefaultMessage("Due to host hardware incompatibility - Migration might fail or application(s) may fail.")
     String unpinnedRunningVmWarningIncompatability();
 
-    @DefaultMessage("Migrating Virtual Machine may contain information about old host.")
     String unpinnedRunningVmWarningSecurity();
 
-    @DefaultMessage("{0} (Previewing: {1})")
     String snapshotPreviewing(String snapshotDescription, String diskAliases);
 
-    @DefaultMessage("The VM contains {0} disk(s): {1}")
     String vmDisksLabel(int numOfDisks, String diskAliases);
 
-    @DefaultMessage("(The snapshot contains {0} disk(s): {1})")
     String snapshotDisksLabel(int numOfDisks, String diskAliases);
 
-    @DefaultMessage("Sent {0} MB")
     String imageUploadProgress(int mbSent);
 
-    @DefaultMessage("Sent {0} of {1} MB")
     String imageUploadProgressWithTotal(int mbSent, int mbTotal);
 
-    //Numa messages
-    @DefaultMessage("{0}_NUMA{1}")
     String vNumaName(String name, int index);
 
-    @DefaultMessage("{0} CPUs")
     String numaTotalCpus(int totalCpu);
 
-    @DefaultMessage("{0}% Used")
     String numaPercentUsed(int percentage);
 
-    @DefaultMessage("{0} MB")
     String numaMemory(long totalMemory);
 
-    @DefaultMessage("{0} MB used")
     String numaMemoryUsed(long totalMemoryUsed);
 
-    @DefaultMessage("Socket {0}")
     SafeHtml numaSocketNumber(int nodeIndex);
 
-    @DefaultMessage("NUMA {0}")
     String numaNode(int index);
 
-    @DefaultMessage("{0}: {1}")
     String migratingProgress(String status, String progress);
 
-    @DefaultMessage("Data Center: {0}")
     String hostDataCenter(String name);
 
-    // Alerts
-
-    @DefaultMessage("Uncaught exception occurred. Please try <a href=\"{0}\">reloading</a> the page.")
     String uncaughtExceptionAlertMessage(String reloadLink);
 
-    @DefaultMessage("Details: {0}")
     String uncaughtExceptionAlertMessageDetails(String details);
 
-    @DefaultMessage(" ({0})")
     String templateVersionName(String name);
 
-    @DefaultMessage("Login name: {0}")
     String principalLoginName(String name);
 
-    @DefaultMessage("Name: {0} {1}")
     String principalName(String firstName, String lastName);
 
-    @DefaultMessage("E-mail: {0}")
     String principalEmail(String email);
 
-    @DefaultMessage("Department: {0}")
     String principalDepartment(String department);
 
-    @DefaultMessage("Notes: {0}")
     String principalNote(String note);
 
-    @DefaultMessage("Namespace: {0}")
     String principalNamespace(String namespace);
 }
+

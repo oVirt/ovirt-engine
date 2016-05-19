@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicompat;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedEnums extends ConstantsWithLookup {
-
     String NonOperationalReason___NONE();
 
     String NonOperationalReason___GENERAL();
@@ -223,7 +222,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String ActionGroup___DELETE_NETWORK_VNIC_PROFILE();
 
     String ActionGroup___MANIPULATE_AFFINITY_GROUPS();
-    // Gluster action groups
+
     String ActionGroup___CREATE_GLUSTER_VOLUME();
 
     String ActionGroup___MANIPULATE_GLUSTER_VOLUME();
@@ -332,7 +331,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___CLUSTER_ALERT_HA_RESERVATION_DOWN();
 
-    // Gluster Audit log types
     String AuditLogType___GLUSTER_VOLUME_CREATE();
 
     String AuditLogType___GLUSTER_VOLUME_CREATE_FAILED();
@@ -811,7 +809,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___RemoveQuota();
 
-    // Gluster Action Types
     String VdcActionType___CreateGlusterVolume();
 
     String VdcActionType___SetGlusterVolumeOption();
@@ -1190,3 +1187,4 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ArchitectureType___undefined();
 }
+

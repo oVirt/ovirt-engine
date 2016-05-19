@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicompat;
 
+
 public interface Enums extends LocalizedEnums {
     String NetworkStatus___NON_OPERATIONAL();
 
@@ -186,11 +187,7 @@ public interface Enums extends LocalizedEnums {
     String OriginType___HOSTED_ENGINE();
 
     String OriginType___EXTERNAL();
-    /**
-     * This needs to cleaned up. We are leaving it in place to support import of
-     * VMs created using previous versions.
-     * @deprecated
-     */
+
     @Deprecated
     String VmInterfaceType___rtl8139_pv();
 
@@ -344,7 +341,6 @@ public interface Enums extends LocalizedEnums {
 
     String ProviderType___OPENSTACK_VOLUME();
 
-    // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
 
     String GlusterVolumeType___REPLICATE();
@@ -397,3 +393,4 @@ public interface Enums extends LocalizedEnums {
 
     String MigrationBandwidthLimitType___CUSTOM();
 }
+

@@ -65,3 +65,4 @@ public interface ConsoleErrors extends ConstantsWithLookup {
 
     String E112();
 }
+
