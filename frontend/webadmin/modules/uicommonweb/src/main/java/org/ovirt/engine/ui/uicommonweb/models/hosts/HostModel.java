@@ -706,10 +706,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setIsDiscoveredHosts(new EntityModel<Boolean>());
 
         setKernelCmdline(new EntityModel<String>());
-        setKernelCmdlineIommu(new EntityModel<Boolean>());
-        setKernelCmdlineKvmNested(new EntityModel<Boolean>());
-        setKernelCmdlineUnsafeInterrupts(new EntityModel<Boolean>());
-        setKernelCmdlinePciRealloc(new EntityModel<Boolean>());
+        setKernelCmdlineIommu(new EntityModel<>(false));
+        setKernelCmdlineKvmNested(new EntityModel<>(false));
+        setKernelCmdlineUnsafeInterrupts(new EntityModel<>(false));
+        setKernelCmdlinePciRealloc(new EntityModel<>(false));
         kernelCmdlineListener = new EnableableEventListener<>(null);
     }
 
