@@ -109,6 +109,8 @@ public interface IVdsServer {
 
     OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation);
 
+    OneVmReturnForXmlRpc changeDisk(String vmId, Map<String, Object> driveSpec);
+
     OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation);
 
     StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand);

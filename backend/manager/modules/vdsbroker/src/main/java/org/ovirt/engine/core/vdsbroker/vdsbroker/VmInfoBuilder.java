@@ -881,16 +881,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 vm.getCompatibilityVersion(),
                 ChipsetType.fromMachineType(vm.getEmulatedMachine()));
 
-        if ("scsi".equals(cdInterface)) {
-            struct.put(VdsProperties.Index, "0"); // SCSI unit 0 is reserved by VDSM to CDROM
-            struct.put(VdsProperties.Address, createAddressForScsiDisk(0, 0));
-        } else if ("ide".equals(cdInterface)) {
-            struct.put(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
-        } else if ("sata".equals(cdInterface)) {
-            struct.put(VdsProperties.Index, "0"); // SATA slot 0 is reserved by VDSM to CDROM
-        }
-
         struct.put(VdsProperties.INTERFACE, cdInterface);
+
+        int index = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
+        struct.put(VdsProperties.Index, Integer.toString(index));
+
+        if ("scsi".equals(cdInterface)) {
+            struct.put(VdsProperties.Address, createAddressForScsiDisk(0, index));
+        }
 
         struct.put(VdsProperties.ReadOnly, Boolean.TRUE.toString());
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
@@ -910,14 +908,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     vm.getCompatibilityVersion(),
                     ChipsetType.fromMachineType(vm.getEmulatedMachine()));
 
+            int index = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
+            struct.put(VdsProperties.Index, Integer.toString(index));
+
             if ("scsi".equals(cdInterface)) {
-                struct.put(VdsProperties.Index, "1"); // SCSI unit 1 is reserved for payload
-                struct.put(VdsProperties.Address, createAddressForScsiDisk(0, 1));
-            } else if ("ide".equals(cdInterface)) {
-                // 3 is magic number for payload - we are using it as hdd
-                struct.put(VdsProperties.Index, "3");
-            } else if ("sata".equals(cdInterface)) {
-                struct.put(VdsProperties.Index, "1"); // SATA slot 1 is reserved for payload
+                struct.put(VdsProperties.Address, createAddressForScsiDisk(0, index));
             }
         }
         struct.put(VdsProperties.SpecParams, specParams);

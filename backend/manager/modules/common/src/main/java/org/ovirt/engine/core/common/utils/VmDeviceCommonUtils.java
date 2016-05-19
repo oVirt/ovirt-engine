@@ -432,4 +432,42 @@ public class VmDeviceCommonUtils {
         vmBase.getManagedDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
     }
 
+    /**
+     * Get unit/slot number reserved by VDSM for CD-ROM.
+     *
+     * @param cdInterface name of the interface ("ide"/"scsi"/"sata")
+     * @return the index
+     */
+    public static int getCdDeviceIndex(String cdInterface) {
+        switch (cdInterface) {
+        case "scsi":
+            return 0;
+        case "ide":
+            return 2;
+        case "sata":
+            return 0;
+        default:
+            return -1;
+        }
+    }
+
+    /**
+     * Get unit/slot number reserved by VDSM for payload.
+     *
+     * @param cdInterface name of the interface ("ide"/"scsi"/"sata")
+     * @return the index
+     */
+    public static int getCdPayloadDeviceIndex(String cdInterface) {
+        switch (cdInterface) {
+        case "scsi":
+            return 1;
+        case "ide":
+            return 3;
+        case "sata":
+            return 1;
+        default:
+            return -1;
+        }
+    }
+
 }

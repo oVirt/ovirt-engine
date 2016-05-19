@@ -66,6 +66,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> changeCD(String vmId, String imageLocation);
 
+    public Map<String, Object> changeCD(String vmId, Map<String, Object> driveSpec);
+
     public Map<String, Object> changeFloppy(String vmId, String imageLocation);
 
     public Map<String, Object> monitorCommand(String vmId, String monitorCommand);

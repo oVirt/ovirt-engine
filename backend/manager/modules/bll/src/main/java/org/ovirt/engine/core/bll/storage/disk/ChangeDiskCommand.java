@@ -8,12 +8,15 @@ import org.ovirt.engine.core.bll.VmOperationCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Version;
 
 public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends VmOperationCommandBase<T> {
     private String cdImagePath;
@@ -79,13 +82,21 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     protected void perform() {
-        cdImagePath = ImagesHandler.cdPathWindowsToLinux(getParameters().getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
+        String iface = null;
+        int index = 0;
+        if (getVm().getCompatibilityVersion().greaterOrEquals(Version.v4_0)) {
+            iface = VmDeviceUtils.getCdInterface(getVm());
+            index = VmDeviceCommonUtils.getCdDeviceIndex(iface);
+        }
+        cdImagePath = ImagesHandler.cdPathWindowsToLinux(
+                getParameters().getCdImagePath(),
+                getVm().getStoragePoolId(),
+                getVm().getRunOnVds());
         setActionReturnValue(runVdsCommand(VDSCommandType.ChangeDisk,
-                        new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), cdImagePath))
-                .getReturnValue());
+                new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), iface, index, cdImagePath))
+                        .getReturnValue());
         VmHandler.updateCurrentCd(getVdsId(), getVm(), getParameters().getCdImagePath());
         setSucceeded(true);
-
     }
 
     @Override

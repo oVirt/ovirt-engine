@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -94,6 +95,16 @@ public class VmDeviceUtils {
         } else {
             return "";
         }
+    }
+
+    /**
+     * Determine the bus interface (IDE, SCSI, SATA etc.) to be used for CD device in the given VM.
+     */
+    public static String getCdInterface(VM vm) {
+        return osRepository.getCdInterface(
+                vm.getOs(),
+                vm.getCompatibilityVersion(),
+                ChipsetType.fromMachineType(vm.getEmulatedMachine()));
     }
 
     /**

@@ -358,11 +358,19 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation) {
-        // TODO DriveSpec should be used instead of imageLocation
-        JsonRpcRequest request =
-                new RequestBuilder("VM.changeCD").withParameter("vmID", vmId)
-                        .withParameter("driveSpec", imageLocation)
-                        .build();
+        JsonRpcRequest request = new RequestBuilder("VM.changeCD").withParameter("vmID", vmId)
+                .withParameter("driveSpec", imageLocation)
+                .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("vmList");
+        return new OneVmReturnForXmlRpc(response);
+    }
+
+    @Override
+    public OneVmReturnForXmlRpc changeDisk(String vmId, Map<String, Object> driveSpec) {
+        JsonRpcRequest request = new RequestBuilder("VM.changeCD").withParameter("vmID", vmId)
+                .withParameter("driveSpec", driveSpec)
+                .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList");
         return new OneVmReturnForXmlRpc(response);

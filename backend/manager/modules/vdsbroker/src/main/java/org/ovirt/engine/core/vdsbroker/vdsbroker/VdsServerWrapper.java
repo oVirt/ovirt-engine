@@ -331,6 +331,18 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public OneVmReturnForXmlRpc changeDisk(String vmId, Map<String, Object> driveSpec) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.changeCD(vmId, driveSpec);
+            OneVmReturnForXmlRpc wrapper = new OneVmReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+
+    }
+
+    @Override
     public OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.changeFloppy(vmId, imageLocation);
