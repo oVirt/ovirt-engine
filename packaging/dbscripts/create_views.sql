@@ -3005,33 +3005,35 @@ FROM user_vm_template_permissions_view_base NATURAL
  JOIN engine_session_user_flat_groups;
 
 -- Permissions on VMs
--- The user has permission on the VM
-CREATE OR REPLACE VIEW user_vm_permissions_view_base (
+-- The user and admin has permission on the VM
+CREATE OR REPLACE VIEW vm_permissions_view_base (
     entity_id,
-    granted_id
+    granted_id,
+    role_type
     ) AS
 
 SELECT object_id,
-    ad_element_id
+    ad_element_id,
+    role_type
 FROM internal_permissions_view
 WHERE object_type_id = 2
-    AND role_type = 2 -- Or the user has permissions on the cluster containing the VM
 
 UNION ALL
 
 SELECT vm_guid,
-    ad_element_id
+    ad_element_id,
+    role_type
 FROM vm_static
 INNER JOIN internal_permissions_view
     ON object_id = cluster_id
         AND object_type_id = 9
         AND allows_viewing_children
-        AND role_type = 2 -- Or the user has permissions on the data center containing the VM
 
 UNION ALL
 
 SELECT vm_guid,
-    ad_element_id
+    ad_element_id,
+    role_type
 FROM vm_static
 INNER JOIN cluster
     ON cluster.cluster_id = vm_static.cluster_id
@@ -3039,18 +3041,18 @@ INNER JOIN internal_permissions_view
     ON object_id = storage_pool_id
         AND object_type_id = 14
         AND allows_viewing_children
-        AND role_type = 2 -- Or the user has permissions on system
 
 UNION ALL
 
 SELECT vm_guid,
-    ad_element_id
+    ad_element_id,
+    role_type
 FROM internal_permissions_view
 CROSS JOIN vm_static
 WHERE object_type_id = 1
-    AND allows_viewing_children
-    AND role_type = 2;
+    AND allows_viewing_children;
 
+-- only user permissions
 CREATE OR REPLACE VIEW user_vm_permissions_view (
     entity_id,
     user_id
@@ -3058,7 +3060,19 @@ CREATE OR REPLACE VIEW user_vm_permissions_view (
 
 SELECT DISTINCT entity_id,
     user_id
-FROM user_vm_permissions_view_base NATURAL
+FROM vm_permissions_view_base NATURAL
+ JOIN engine_session_user_flat_groups
+ WHERE vm_permissions_view_base.role_type = 2;
+
+-- both admin and user permissions
+CREATE OR REPLACE VIEW vm_permissions_view (
+    entity_id,
+    user_id
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM vm_permissions_view_base NATURAL
  JOIN engine_session_user_flat_groups;
 
 -- Permissions on disk
