@@ -311,6 +311,7 @@ public enum VdcActionType {
     SyncImageGroupData(1029, QuotaDependency.NONE),
     CreateVolumeContainer(1030, QuotaDependency.STORAGE),
     DownloadImage(1031, QuotaDependency.STORAGE),
+    CloneImageGroupVolumesStructure(1032, QuotaDependency.STORAGE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),

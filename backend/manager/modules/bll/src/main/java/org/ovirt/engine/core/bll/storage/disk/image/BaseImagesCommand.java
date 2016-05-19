@@ -308,18 +308,18 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage();
     }
 
-    private VDSReturnValue getVolumeInfo(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
+    protected DiskImage getVolumeInfo(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
                                          Guid newImageId) {
         if (isDataCenterWithSpm()) {
-            return runVdsCommand(
+            return (DiskImage) runVdsCommand(
                     VDSCommandType.GetImageInfo,
                     new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
-                            newImageId));
+                            newImageId)).getReturnValue();
         } else {
-            return VdsCommandsHelper.runVdsCommandWithFailover(
+            return (DiskImage) VdsCommandsHelper.runVdsCommandWithFailover(
                     VDSCommandType.GetVolumeInfo,
                     new GetVolumeInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
-                            newImageId), storagePoolId, null);
+                            newImageId), storagePoolId, null).getReturnValue();
         }
     }
 
@@ -337,8 +337,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
             // complete IRS data to DB disk image:
             try {
-                DiskImage newImageIRS = (DiskImage) getVolumeInfo(storagePoolId, newStorageDomainID, newImageGroupId,
-                        newImageId).getReturnValue();
+                DiskImage newImageIRS = getVolumeInfo(storagePoolId, newStorageDomainID, newImageGroupId, newImageId);
 
                 if (newImageIRS != null) {
                     completeImageData(newImageIRS);
