@@ -338,6 +338,11 @@ public final class VdcActionUtils {
     public static boolean canExecute(List<? extends BusinessEntityWithStatus<?, ?>> entities,
             Class type,
             VdcActionType action) {
+
+        if (entities == null) {
+            return false;
+        }
+
         if (_matrix.containsKey(type)) {
             for (BusinessEntityWithStatus<?, ?> a : entities) {
                 if (a.getClass() == type && _matrix.get(type).containsKey(a.getStatus())
