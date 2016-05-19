@@ -773,7 +773,7 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("ilo3=ipmilan")
+    @DefaultValueAttribute("drac7=ipmilan,ilo2=ilo")
     FenceAgentMapping,
 
     @Reloadable
@@ -783,7 +783,7 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("ilo3:lanplus,power_wait=4")
+    @DefaultValueAttribute("drac7:privlvl=OPERATOR,lanplus=1,delay=10;ilo3:power_wait=4;ilo4:power_wait=4;ilo_ssh:secure=1")
     FenceAgentDefaultParams,
 
     @Reloadable
@@ -793,7 +793,7 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("ilo3:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;ilo4:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4")
+    @DefaultValueAttribute("ilo3:cipher=1,privlvl=administrator,power_wait=4;ilo4:cipher=1,privlvl=administrator,power_wait=4;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4")
     FenceAgentDefaultParamsForPPC,
 
     @Reloadable
