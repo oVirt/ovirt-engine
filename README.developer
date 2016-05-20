@@ -366,3 +366,24 @@ ovirt_build_locales [1]
 Example:
 
 # rpmbuild -D"ovirt_build_minimal 1" -tb @tarball@
+
+DOCKER
+
+$ docker build . -t virtkube/ovirt-engine
+
+builds a docker image from the latest master on github.
+
+$ docker-compose up
+
+starts the built engine. The engine can be accessed at https://localhost:8443.
+
+$ make dist
+$ docker-compose -f docker-compose-devel.yml build
+
+builds a docker image of the checked out sources.
+
+$ docker-compose -f docker-compose-devel.yml up
+
+starts the compiled engine with fakevdsm and a postgres database. The engine
+can then be accessed at https://localhost:8443. Fakevdsm is listening on the
+address "vdsmfake". Use this address to add a fake host.
