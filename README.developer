@@ -1,0 +1,389 @@
+Developer mode installation
+===========================
+
+
+PREPARATIONS
+------------
+
+PREREQUISITES
+
+Install the following system components:
+
+ - jdk-7 / openjdk-7-jdk / icedtea-7 or jdk-8 / openjdk-8-jdk / icedtea-8
+ - mime-types or mailcap
+ - unzip
+ - openssl
+ - postgresql-server postgresql
+ - python-m2crypto / m2crypto
+ - python-psycopg2 / psycopg
+ - python-cheetah / cheetah
+ - libxml2-python / libxml2[python]
+ - python-daemon
+ - otopi >= 1.1.0
+ - ovirt-host-deploy >= 1.1.0
+ - maven-3 (optional)
+ - pyflakes (optional)
+ - python-pep8 / pep8 (optional)
+ - patternfly1 (optional)
+ - python-docker-py (optional)
+
+Maven-3 is required, download and extract if not installed using
+distribution package management, and add to PATH.
+
+JBoss EAP is required, download[1] and extract into /opt, wildfly can also
+be used but it requires ovirt-overlay to be usable. Easier to use jboss-eap
+for now.
+
+[1] http://www.jboss.org/products/eap/download/
+
+Both application servers can be installed from ovirt-master-snapshot-static
+repository:
+
+  [ovirt-master-snapshot-static]
+  name=Latest oVirt master additional nightly snapshot
+  baseurl=http://resources.ovirt.org/pub/ovirt-master-snapshot-static/rpm/@DIST@$releasever/
+  enabled=1
+  skip_if_unavailable=1
+  gpgcheck=0
+
+Please replace "@DIST@" with "fc" for Fedora or "el" for Centos/RHEL.
+
+SYSTEM SETTINGS
+
+Build locales requires at least 10240 file descriptors, create the
+following file, replace <user> with user that is used for building,
+and logout/login:
+
+/etc/security/limits.d/10-nofile.conf
+---
+<user> hard nofile 10240
+#<user> soft nofile 10240  # optional, to apply automatically
+---
+
+If soft limit was not set, before building, apply new limit using:
+
+ $ ulimit -n 10240
+
+POSTGRESQL ACCESSIBILITY
+
+Configure postgresql to accept user and password:
+
+Locate pg_hba.conf within your distribution,
+common locations are:
+ - /var/lib/pgsql/data/pg_hba.conf
+ - /etc/postgresql-*/pg_hba.conf
+ - /etc/postgresql/*/main/pg_hba.conf
+
+Within pg_hba.conf set method to 'password' for
+127.0.0.1/32 and ::1/128.
+
+restart postgresql service.
+
+DATABASE CREATION
+
+Create database for ovirt-engine, usually the following
+sequence should work to create a user named 'engine' that owns
+database named 'engine':
+
+# su - postgres -c "psql -d template1"
+template1=# create user engine password 'engine';
+template1=# drop database engine;
+template1=# create database engine owner engine template template0
+encoding 'UTF8' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8';
+
+
+DEVELOPMENT
+-----------
+
+ENVIRONMENT
+
+Development environment is supported only under non-root account. Do
+not run this sequence as root.
+
+Each instance of application must be installed at different PREFIX
+and use its own database. Throughout this document application is
+installed using PREFIX="${PREFIX}" and engine database and
+user, these should be changed if a new instance is required. Do not
+mix different versions of product with same PREFIX/database.
+
+From this point on, the "${PREFIX}" will be used to mark the prefix
+in which you selected to install the development environment.
+
+BUILD
+
+To build and install ovirt-engine at your home folder under ovirt-engine
+directory.
+
+Execute:
+
+$ make clean install-dev PREFIX="${PREFIX}"
+
+NOTE: ${PREFIX} should be replaced with the location in
+which you intend to install the environment:
+
+BUILD TARGETS
+
+all             Build project.
+clean           Clean project.
+all-dev         Build project for development.
+install-dev     Install a development environment at PREFIX.
+dist            Create source tarball out of git repository.
+maven           Force execution of maven.
+
+BUILD CUSTOMIZATION
+
+The following Makefile environment variables are available for build
+customization:
+
+PREFIX [/usr/local]
+    Installation root directory.
+
+PATTERNFLY_DIR [/usr/share/patternfly1/resources]
+    The location of the PatternFly installation.
+
+BUILD_GWT [1]
+    Build GWT.
+
+BUILD_GWT_USERPORTAL [1]
+    Build user portal if GWT is enabled.
+
+BUILD_GWT_WEBADMIN [1]
+    Build web admin if GWT is enabled.
+
+BUILD_ALL_USER_AGENTS [0]
+    Build GWT applications for all supported browsers.
+
+BUILD_LOCALES [0]
+    Build GWT applications for all supported locales.
+
+BUILD_DEV [0]
+    Add extra development flags. Usually this should not be used
+    directly, as the all-dev sets this.
+
+BUILD_UT [0]
+    Perform unit tests during build.
+
+BUILD_JAVA_OPTS_MAVEN [-XX:MaxPermSize=512M]
+    Maven JVM options.
+    Can be defined as environment variable.
+
+BUILD_JAVA_OPTS_GWT []
+    GWT compiler and Dev Mode JVM options.
+    Can be defined as environment variable.
+
+    Note that BUILD_JAVA_OPTS_GWT overrides BUILD_JAVA_OPTS_MAVEN
+    when building GWT applications (BUILD_JAVA_OPTS_MAVEN settings
+    still apply, unless overridden).
+
+DEV_BUILD_GWT_DRAFT [0]
+    Build draft GWT application without optimizations, this is
+    useful when profiling compiled application in web browser.
+
+    Following changes are applied for draft builds:
+    - prevent code and CSS obfuscation
+    - reduce the level of code optimizations
+
+DEV_EXTRA_BUILD_FLAGS
+    Any maven build flags requires for building.
+
+    For example, if your machine is low on memory, limit
+    maximum simultaneous GWT permutation worker threads:
+    DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=1"
+
+DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS
+    By default, GWT applications are built for Firefox only.
+    To build for additional browsers, provide comma-separated list of
+    user agents, see frontend/webadmin/modules/pom.xml for full list.
+
+    For example, to build for Firefox and Chrome:
+    DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.userAgent=gecko1_8,safari"
+
+    To build for all supported browsers, use BUILD_ALL_USER_AGENTS=1.
+
+DEV_REBUILD [1]
+    Disable if only packaging components were modified.
+
+WILDFLY_OVERLAY_MODULES [/usr/share/ovirt-engine-wildfly-overlay/modules]
+    Change location of WildFly overlay modules. If you want to disable WildFly
+    overlay configuration completely, please set to empty string.
+
+SETUP
+
+To setup the product use the following command:
+
+$ "${PREFIX}/bin/engine-setup"
+
+JBOSS
+
+If you want to use different WildFly/EAP installation, specify it at
+--jboss-home= parameter of setup.
+
+ENVIRONMENT
+
+OVIRT_ENGINE_JAVA_HOME
+    Select a specific Java home.
+
+OVIRT_ENGINE_JAVA_HOME_FORCE
+    Set to non zero to bypass Java compatibility check.
+
+REFRESH
+
+If there are no significant changes, such as file structure or database
+schema, there is no need to run the setup again, 'make install-dev <args>'
+will overwrite files as required, run engine-setup to refresh database
+schema.
+
+Do remember to restart the engine service.
+
+If there is a significant change, safest path is to stop service, remove
+${PREFIX} directory, build and setup.
+
+The ${PREFIX}/bin/engine-cleanup is also available to cleanup
+the environment, it is useful for application changes, less for packaging
+changes.
+
+SERVICE ADMINISTRATION
+
+Most utilities and services are operational, including PKI, host deploy.
+
+To start/stop the engine service use:
+
+$ "${PREFIX}/share/ovirt-engine/services/ovirt-engine/ovirt-engine.py" start
+
+While the service is running, this command will not exit.
+Press <Ctrl>-C to stop service.
+
+Access using HTTP or HTTPS:
+ - http://<server>:8080
+ - https://<server>:8443
+
+Debug port is available at 127.0.0.1:8787
+
+RUNNING INSTANCE MANAGEMENT (JMX)
+
+ovirt-engine service supports jmx as management interface. Actually, this is
+the standard jboss jmx interface, while authentication can be done using any
+engine user with SuperUser role. Access is permitted only from the local
+host.
+
+Access JMX shell using provide OPTIONAL_COMMAND for non interactive usage:
+
+$ "${JBOSS_HOME}/bin/jboss-cli.sh" \
+    --connect \
+    --controller=localhost:8706 \
+    --user=admin@internal \
+    OPTIONAL_COMMAND
+
+Useful commands:
+
+  Modify log level
+  /subsystem=logging/logger=org.ovirt.engine.core.bll:write-attribute(name=level,value=DEBUG)"
+
+  Create a new log category
+  /subsystem=logging/logger=org.ovirt.engine:add
+
+  Get the engine data-source statistics:
+  ls /subsystem=datasources/data-source=ENGINEDataSource/statistics=jdbc/
+
+  Get Threading info
+  ls /core-service=platform-mbean/type=threading/
+
+By default JMX access is available only to localhost, to open JMX to world,
+add ${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jmx-debug.conf with:
+
+  ENGINE_JMX_INTERFACE=public
+
+GWT DEBUG
+
+$ make install-dev PREFIX="${PREFIX}"
+$ make gwt-debug DEBUG_MODULE=<module>
+
+While <module> is webadmin or userportal-gwtp.
+
+Debug port is 8000, detailed instructions for GWT debugging are at [1].
+
+GWT debug URLs, provided components running on same machine:
+    WebAdmin    http://127.0.0.1:8080/ovirt-engine/webadmin/WebAdmin.html?gwt.codesvr=127.0.0.1:9997
+    UserPortal  http://127.0.0.1:8080/ovirt-engine/userportal/UserPortal.html?gwt.codesvr=127.0.0.1:9997
+
+[1] http://wiki.ovirt.org/DebugFrontend
+
+DAO TESTS
+
+Create empty database for DAO tests refer to DATABASE CREATION.
+
+Provided user is 'engine', password is 'engine' and database
+is engine_dao_tests.
+
+$ PGPASSWORD=engine \
+    ./packaging/dbscripts/schema.sh \
+        -c apply -u engine -d engine_dao_tests
+
+Run build as:
+
+$ make maven BUILD_GWT=0 BUILD_UT=1 EXTRA_BUILD_FLAGS="-P enable-dao-tests \
+    -D engine.db.username=engine \
+    -D engine.db.password=engine \
+    -D engine.db.url=jdbc:postgresql://localhost/engine_dao_tests"
+
+VMCONSOLE
+
+After the environment is setup and installed, some adjustments are required.
+
+Copy vmconsole-host configuration.
+
+$ sudo cp -p  "${PREFIX}/share/ovirt-engine/conf/ovirt-vmconsole-proxy.conf \
+	/etc/ovirt-vmconsole/ovirt-vmconsole-proxy/conf.d/50-ovirt-vmconsole-proxy.conf
+
+If selinux is enabled on your machine, set type on vmconsole helper using:
+
+$ sudo chcon --type=bin_t "${PREFIX}/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py"
+
+RPM PACKAGING
+
+$ make dist
+$ rpmbuild -ts @tarball@
+# yum-builddep @srpm@
+# rpmbuild -tb @tarball@
+
+The following spec file variables are available for package customization:
+
+ovirt_build_quick [0]
+    Quick build, best for syntax checks.
+
+ovirt_build_minimal [0]
+    Build minimal Firefox only package.
+
+ovirt_build_gwt [1]
+    Build GWT components.
+
+ovirt_build_all_user_agents [1]
+    Build GWT components for all supported browsers.
+
+ovirt_build_locales [1]
+    Build GWT components for all supported locales.
+
+Example:
+
+# rpmbuild -D"ovirt_build_minimal 1" -tb @tarball@
+
+DOCKER
+
+$ docker build . -t virtkube/ovirt-engine
+
+builds a docker image from the latest master on github.
+
+$ docker-compose up
+
+starts the built engine. The engine can be accessed at https://localhost:8443.
+
+$ make dist
+$ docker-compose -f docker-compose-devel.yml build
+
+builds a docker image of the checked out sources.
+
+$ docker-compose -f docker-compose-devel.yml up
+
+starts the compiled engine with fakevdsm and a postgres database. The engine
+can then be accessed at https://localhost:8443. Fakevdsm is listening on the
+address "vdsmfake". Use this address to add a fake host.

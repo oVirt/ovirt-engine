@@ -1,0 +1,69 @@
+FROM fedora:22
+
+MAINTAINER Roman Mohr <rmohr@redhat.com>
+
+# Build
+ENV OVIRT_HOME=/home/ovirt/ovirt-engine
+
+# Database
+ENV POSTGRES_USER engine
+ENV POSTGRES_PASSWORD engine
+ENV POSTGRES_DB engine
+ENV POSTGRES_HOST postgres
+ENV POSTGRES_PORT 5432
+
+# oVirt
+ENV OVIRT_FQDN localhost
+
+EXPOSE 8080 8443 8787
+
+RUN useradd -ms /bin/bash ovirt
+
+#oVirt
+ENV OVIRT_PASSWORD engine
+ENV OVIRT_PKI_ORGANIZATION oVirt
+
+# Build with --no-cache to update build dependencies
+# Since this docker file is just for development we will keep all build dependencies installed
+RUN dnf -y install http://resources.ovirt.org/pub/yum-repo/ovirt-release36.rpm \
+    && curl  https://copr.fedorainfracloud.org/coprs/patternfly/patternfly1/repo/fedora-23/patternfly-patternfly1-fedora-23.repo > /etc/yum.repos.d/patternfly.repo \
+    && dnf --best --allowerasing -y install git java-devel maven openssl nss \
+       m2crypto python-psycopg2 python-cheetah python-daemon libxml2-python \
+       unzip patternfly1 pyflakes python-pep8 python-docker-py mailcap python-jinja2 \
+    && dnf --best --allowerasing -y install ovirt-engine-wildfly ovirt-engine-wildfly-overlay \
+    && dnf -y install ovirt-host-deploy ovirt-setup-lib patch postgresql bind-utils iproute procps-ng openssh java-1.8.0-openjdk-headless \
+    && dnf -y clean all
+
+USER ovirt
+
+# Build will always start from here whenever the build arguments have changed
+ARG VERSION=3.6.6
+ARG BRANCH=master
+
+# Build will always start from here whenever the archive changed
+COPY ovirt-engine-${VERSION}_${BRANCH}.tar.gz /home/ovirt
+
+RUN cd /home/ovirt && mkdir -p ovirt-engine-$VERSION \
+    && tar xf ovirt-engine-${VERSION}_${BRANCH}.tar.gz -C ovirt-engine-$VERSION \
+    && cd ovirt-engine-$VERSION \
+    && make clean install-dev PREFIX="$OVIRT_HOME" BUILD_UT=0 \
+    && cp docker/* /home/ovirt/
+
+RUN cd / \
+    && patch -p0 < /home/ovirt/setup.patch \
+    && rm -rf /home/ovirt/.m2
+
+# Persist this folder to keep the generated TLS certificates on the first start
+VOLUME $OVIRT_HOME/etc/pki/ovirt-engine
+# Persist this folder to keep the database backups
+VOLUME $OVIRT_HOME/var/lib/ovirt-engine/backups
+
+# Encrypt host communication
+ENV HOST_ENCRYPT=true
+# Try to provision hosts when they are added
+ENV HOST_INSTALL=true
+
+COPY docker/entrypoint.sh /home/ovirt/
+
+CMD bash /home/ovirt/entrypoint.sh
+

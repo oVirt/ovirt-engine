@@ -1,0 +1,26 @@
+ovirt-engine:
+  image: virtkube/ovirt-engine
+  environment:
+    - OVIRT_PASSWORD=engine
+    - POSTGRES_DB=engine
+    - POSTGRES_HOST=postgres
+    - HOST_ENCRYPT=false
+    - HOST_INSTALL=false
+  links:
+    - vdsmfake
+    - postgres
+  ports:
+    - 8443:8443
+    - 8787:8787
+
+vdsmfake:
+  image: virtkube/ovirt-vdsmfake
+
+postgres:
+  image: rmohr/ovirt-postgres
+  environment:
+    - POSTGRES_PASSWORD=engine
+    - POSTGRES_USER=engine
+    - POSTGRES_DB=engine
+  ports:
+    - 5433:5432
