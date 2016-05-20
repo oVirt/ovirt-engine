@@ -326,6 +326,17 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             hasVmOrHost = !vmList.isEmpty() || !allForCluster.isEmpty();
         }
 
+        if (result && !getCluster().getCompatibilityVersion().equals(oldGroup.getCompatibilityVersion())) {
+            // all VMs must be in Down state when major.minor cluster version change
+            for (VM vm : vmList) {
+                if (!vm.isDown()) {
+                    result = false;
+                    addValidationMessage(EngineMessage.CLUSTER_VERSION_CANNOT_UPDATE_WHEN_ACTIVE_VM);
+                    break;
+                }
+            }
+        }
+
         // cannot change the the processor architecture while there are attached hosts or VMs to the cluster
         if (result  && getCluster().supportsVirtService()
                 && !isArchitectureUpdatable()

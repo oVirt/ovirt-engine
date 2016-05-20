@@ -1998,5 +1998,7 @@ public interface UIConstants extends Constants {
     String kernelCmdlineCheckboxesAndDirectCustomizationNotAllowed();
 
     String currentKernelCmdLine();
+
+    String cannotClusterVersionChangeWithActiveVm();
 }
 
