@@ -377,9 +377,9 @@ public class SsoOAuthServiceUtils {
         return new HttpURLConnectionBuilder(url).setHttpsProtocol(EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_SERVICE_SSL_PROTOCOL"))
                 .setReadTimeout(0)
                 .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
-                .setTrustStore(EngineLocalConfig.getInstance().getProperty("ENGINE_PKI_TRUST_STORE"))
-                .setTrustStorePassword(EngineLocalConfig.getInstance().getPKITrustStorePassword())
-                .setTrustStoreType(EngineLocalConfig.getInstance().getPKITrustStoreType())
+                .setTrustStore(EngineLocalConfig.getInstance().getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
+                .setTrustStorePassword(EngineLocalConfig.getInstance().getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
+                .setTrustStoreType(EngineLocalConfig.getInstance().getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
                 .setURL(url)
                 .setVerifyChain(EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_CHAIN"))
                 .setVerifyHost(EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_HOST")).create();
