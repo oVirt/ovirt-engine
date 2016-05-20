@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -23,16 +22,14 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivitySeperatorCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickCapacityCell;
+import org.ovirt.engine.ui.webadmin.widget.table.column.BrickHealInfoColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.inject.Inject;
 
@@ -43,7 +40,6 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public SubTabVolumeBrickView(SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider) {
@@ -91,34 +87,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
             }
         }, constants.volumeCapacity(), "100px");//$NON-NLS-1$
 
-        AbstractTextColumn<GlusterBrickEntity> healInfoColumn = new AbstractUptimeColumn<GlusterBrickEntity>() {
-            @Override
-            protected Double getRawValue(GlusterBrickEntity object) {
-                return object.getSelfHealEta();
-            }
-
-            @Override
-            public String getValue(GlusterBrickEntity object) {
-                if (object.getSelfHealEta() > 0) {
-                    return super.getValue(object);
-                } else {
-                    return object.getUnSyncedEntries() == null ? constants.notAvailableLabel()
-                            : object.getUnSyncedEntries() > 0
-                                    ? messages.unSyncedEntriesPresent(object.getUnSyncedEntries())
-                                    : constants.GlusterSelfHealOk();
-                }
-            }
-
-            @Override
-            public SafeHtml getTooltip(GlusterBrickEntity object) {
-                if (object.getSelfHealEta() > 0) {
-                    String toolTip = messages.unSyncedEntriesPresent(object.getUnSyncedEntries());
-                    return SafeHtmlUtils.fromString(toolTip);
-                } else {
-                    return null;
-                }
-            }
-        };
+        BrickHealInfoColumn healInfoColumn = new BrickHealInfoColumn();
         getTable().addColumn(healInfoColumn, constants.healInfo(), "110px"); //$NON-NLS-1$
 
         getTable().addColumn(new VolumeActivityColumn<GlusterBrickEntity>(getActivityCell()),

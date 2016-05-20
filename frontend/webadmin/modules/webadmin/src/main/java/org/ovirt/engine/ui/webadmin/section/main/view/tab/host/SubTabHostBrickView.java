@@ -13,7 +13,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.table.column.BrickHealInfoColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>
@@ -61,6 +63,9 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
         };
         brickDirColumn.makeSortable();
         getTable().addColumn(brickDirColumn, constants.brickDirectoryBricks(), "220px"); //$NON-NLS-1$
+
+        BrickHealInfoColumn healInfoColumn = new BrickHealInfoColumn();
+        getTable().addColumn(healInfoColumn, constants.healInfo(), "110px"); //$NON-NLS-1$
 
    }
 
