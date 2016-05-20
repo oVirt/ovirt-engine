@@ -7,7 +7,7 @@ import com.google.gwt.safehtml.shared.SafeUri;
 public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<div>" +
-            "<div style='float:right; width: {2}px; color: {3}; font-weight: {4}'>{5}%</div>" +
+            "<div style='float:right; width: {2}px; color: {3}; font-weight: {4}; text-align: right'>{5}%</div>" +
             "<div style='margin-right: {1}px; width: 100%; margin: auto;'>" +
                 "<img style='border-left: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0;' src='{0}' />" +
             "</div>" +

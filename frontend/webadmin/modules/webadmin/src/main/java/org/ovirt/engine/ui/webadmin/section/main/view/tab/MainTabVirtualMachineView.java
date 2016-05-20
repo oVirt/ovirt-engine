@@ -156,7 +156,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         memoryColumn.makeSortable(VmConditionFieldAutoCompleter.MEM_USAGE);
-        getTable().addColumn(memoryColumn, constants.memoryVm(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(memoryColumn, constants.memoryVm(), "80px"); //$NON-NLS-1$
 
         ColumnResizeTableLineChartProgressBar cpuColumn = new ColumnResizeTableLineChartProgressBar() {
 
@@ -166,7 +166,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         cpuColumn.makeSortable(VmConditionFieldAutoCompleter.CPU_USAGE);
-        getTable().addColumn(cpuColumn, constants.cpuVm(), "70px"); //$NON-NLS-1$
+        getTable().addColumn(cpuColumn, constants.cpuVm(), "80px"); //$NON-NLS-1$
 
         ColumnResizeTableLineChartProgressBar networkColumn = new ColumnResizeTableLineChartProgressBar() {
 
@@ -177,7 +177,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
 
         networkColumn.makeSortable(VmConditionFieldAutoCompleter.NETWORK_USAGE);
-        getTable().addColumn(networkColumn, constants.networkVm(), "70px"); //$NON-NLS-1$
+        getTable().addColumn(networkColumn, constants.networkVm(), "80px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> graphicsColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override

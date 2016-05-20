@@ -43,7 +43,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
 
     private static final int lineWidth = 2;
 
-    private static final int textWidth = 27;
+    private static final int textWidth = 40;
 
     private static final int rightMargin = textWidth + lineEndShapeSize;
 
