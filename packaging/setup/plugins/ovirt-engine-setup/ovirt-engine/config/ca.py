@@ -85,6 +85,12 @@ class Plugin(plugin.PluginBase):
                         '"{engine_store_password}"\n'
                     ) +
                     'ENGINE_PKI_ENGINE_STORE_ALIAS="{engine_store_alias}"\n'
+                    'ENGINE_HTTPS_PKI_TRUST_STORE=' + (
+                        '"${{ENGINE_PKI_TRUST_STORE}}"\n'
+                    ) +
+                    'ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD=' + (
+                        '"${{ENGINE_PKI_TRUST_STORE_PASSWORD}}"\n'
+                    )
                 ).format(
                     pki_dir=(
                         oenginecons.FileLocations.

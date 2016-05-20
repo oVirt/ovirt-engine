@@ -188,12 +188,6 @@ class Plugin(plugin.PluginBase):
                         'SSO_ENGINE_URL='
                         '"{engine_url_scheme}://{fqdn}:'
                         '{engine_url_port}/ovirt-engine/"\n'
-                        'SSO_PKI_TRUST_STORE=' + (
-                            '"${{ENGINE_PKI_TRUST_STORE}}"\n'
-                        ) +
-                        'SSO_PKI_TRUST_STORE_PASSWORD=' + (
-                            '"${{ENGINE_PKI_TRUST_STORE_PASSWORD}}"\n'
-                        ) +
                         '{devenv}'
                     ).format(
                         client_id=self.client_id,

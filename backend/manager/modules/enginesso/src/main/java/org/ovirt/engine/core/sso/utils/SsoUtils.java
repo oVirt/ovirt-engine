@@ -611,9 +611,9 @@ public class SsoUtils {
                 .setReadTimeout(config.getInteger("SSO_CALLBACK_READ_TIMEOUT"))
                 .setConnectTimeout(config.getInteger("SSO_CALLBACK_CONNECT_TIMEOUT"))
                 .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
-                .setTrustStore(config.getProperty("SSO_PKI_TRUST_STORE"))
-                .setTrustStorePassword(config.getProperty("SSO_PKI_TRUST_STORE_PASSWORD"))
-                .setTrustStoreType(config.getProperty("SSO_PKI_TRUST_STORE_TYPE"))
+                .setTrustStore(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
+                .setTrustStorePassword(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
+                .setTrustStoreType(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
                 .setURL(url)
                 .setVerifyChain(clientInfo.isNotificationCallbackVerifyChain())
                 .setVerifyHost(clientInfo.isNotificationCallbackVerifyHost()).create();
