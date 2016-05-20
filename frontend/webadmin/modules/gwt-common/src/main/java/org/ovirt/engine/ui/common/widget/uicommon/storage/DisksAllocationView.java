@@ -29,6 +29,7 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -54,6 +55,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     @UiField
     SimplePanel diskListHeaderPanel;
+
+    @Ignore
+    @UiField
+    Label diskAllocationLabel;
 
     @Ignore
     EntityModelCellTable<ListModel> listHeader;
@@ -155,6 +160,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     void addDiskList(DisksAllocationModel model) {
         diskListPanel.clear();
+        diskAllocationLabel.setVisible(!model.getDisks().isEmpty());
 
         int diskIndex = 0;
         for (final DiskModel diskModel : model.getDisks()) {

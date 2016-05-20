@@ -4,6 +4,8 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView.Style">
         .overflow {
             overflow: auto;
@@ -13,9 +15,16 @@
             position: absolute;
             width: 100%;
         }
+
+        .sectionLabel {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
     </ui:style>
 
     <g:FlowPanel>
+        <g:Label ui:field="diskAllocationLabel" addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
         <g:SimplePanel ui:field="diskListHeaderPanel" />
         <g:FlowPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel} {style.overflow}" />
     </g:FlowPanel>

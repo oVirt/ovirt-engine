@@ -582,7 +582,6 @@
                 <g:FlowPanel ui:field="disksAllocationPanel">
                   <b:Row>
                     <b:Column size="LG_12">
-                      <g:Label addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
                       <g:FlowPanel ui:field="disksPanel">
                         <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="629" showVolumeType="true" usePatternFly="true" />
                       </g:FlowPanel>
