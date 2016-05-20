@@ -17,7 +17,6 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -75,7 +74,7 @@ public class BackendDiskAttachmentsResource
         validateDiskForCreation(disk);
         updateStorageTypeForDisk(disk);
         return resource.performCreate(VdcActionType.AddDisk,
-                getAddParameters(attachment, new DiskMapper().map(disk, null), disk), entityResolver);
+                getAddParameters(attachment, DiskMapper.map(disk, null), disk), entityResolver);
     }
 
     @Override
