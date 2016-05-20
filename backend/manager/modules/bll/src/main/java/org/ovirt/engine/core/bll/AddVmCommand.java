@@ -1362,6 +1362,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
             // create_vm is overriding in case no create_instance, try again with it
             if (!checkSinglePermission(permSubject, getReturnValue().getValidationMessages())) {
+                logMissingPermission(permSubject);
                 return false;
             }
         }

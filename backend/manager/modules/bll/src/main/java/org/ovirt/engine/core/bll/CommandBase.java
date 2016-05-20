@@ -1131,19 +1131,23 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
         for (PermissionSubject permSubject : permSubjects) {
             if (!checkSinglePermission(permSubject, getReturnValue().getValidationMessages())) {
-                log.info("No permission found for user '{}' or one of the groups he is member of,"
-                        + " when running action '{}', Required permissions are: Action type: '{}' Action group: '{}'"
-                        + " Object type: '{}'  Object ID: '{}'.",
-                        getCurrentUser().getId(),
-                        getActionType(),
-                        permSubject.getActionGroup().getRoleType().name(),
-                        permSubject.getActionGroup().name(),
-                        permSubject.getObjectType().getVdcObjectTranslation(),
-                        permSubject.getObjectId());
+                logMissingPermission(permSubject);
                 return false;
             }
         }
         return true;
+    }
+
+    protected void logMissingPermission(PermissionSubject permSubject) {
+        log.info("No permission found for user '{}' or one of the groups he is member of,"
+                + " when running action '{}', Required permissions are: Action type: '{}' Action group: '{}'"
+                + " Object type: '{}'  Object ID: '{}'.",
+                getCurrentUser().getId(),
+                getActionType(),
+                permSubject.getActionGroup().getRoleType().name(),
+                permSubject.getActionGroup().name(),
+                permSubject.getObjectType().getVdcObjectTranslation(),
+                permSubject.getObjectId());
     }
 
     public final boolean checkSinglePermission(PermissionSubject permSubject, Collection<String> messages) {
