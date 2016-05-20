@@ -306,6 +306,16 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             hasVmOrHost = !vmList.isEmpty() || !allForVdsGroup.isEmpty();
         }
 
+        if (result && !getVdsGroup().getCompatibilityVersion().equals(oldGroup.getCompatibilityVersion())) {
+            // all VMs must be in Down state when major.minor cluster version change
+            for (VM vm : vmList) {
+                if (!vm.isDown()) {
+                    result = false;
+                    addCanDoActionMessage(EngineMessage.VDS_GROUP_VERSION_CANNOT_UPDATE_WHEN_ACTIVE_VM);
+                    break;
+                }
+            }
+        }
         // cannot change the the processor architecture while there are attached hosts or VMs to the cluster
         if (result  && getVdsGroup().supportsVirtService()
                 && !isArchitectureUpdatable()
