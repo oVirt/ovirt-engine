@@ -144,6 +144,7 @@ limitations under the License.
         <url-pattern>/v4/model.json</url-pattern>
         <url-pattern>/v4/model.jar</url-pattern>
         <url-pattern>/v4/model.zip</url-pattern>
+        <url-pattern>/v4/model.html</url-pattern>
     </servlet-mapping>
 
     <!-- confidentiality -->

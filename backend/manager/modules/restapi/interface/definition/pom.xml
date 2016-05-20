@@ -102,6 +102,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
+
           <execution>
             <id>generate-code</id>
             <phase>generate-sources</phase>
@@ -122,12 +123,14 @@
                 <argument>--jaxrs=${project.basedir}/target/generated-sources/model</argument>
                 <argument>--jaxrs-package=^services\.(.*)$=org.ovirt.engine.api.resource.$1</argument>
                 <argument>--jaxrs-package=org.ovirt.engine.api.resource</argument>
+                <argument>--docs=${project.basedir}/target/generated-adoc</argument>
               </arguments>
               <includePluginDependencies>true</includePluginDependencies>
               <includeProjectDependencies>false</includeProjectDependencies>
             </configuration>
           </execution>
-            <execution>
+
+          <execution>
             <id>generate-enums</id>
             <phase>generate-sources</phase>
             <goals>
@@ -145,6 +148,7 @@
               <includeProjectDependencies>false</includeProjectDependencies>
             </configuration>
           </execution>
+
           <execution>
             <id>generate-enums-jaxb</id>
             <phase>process-sources</phase> <!-- TODO: REVISIT phase -->
@@ -162,6 +166,7 @@
               <includeProjectDependencies>false</includeProjectDependencies>
             </configuration>
           </execution>
+
         </executions>
         <dependencies>
           <dependency>
@@ -245,6 +250,37 @@
               </arguments>
             </configuration>
           </execution>
+        </executions>
+      </plugin>
+
+      <!-- Process the AsciiDoc documentation of the model: -->
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>1.5.3</version>
+        <executions>
+
+          <!-- Generate HTML: -->
+          <execution>
+            <id>generate-html</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>process-asciidoc</goal>
+            </goals>
+            <configuration>
+              <sourceDirectory>${project.basedir}/target/generated-adoc</sourceDirectory>
+              <outputDirectory>${project.basedir}/target/generated-resources</outputDirectory>
+              <backend>html5</backend>
+              <attributes>
+                <toc>right</toc>
+                <sectnums>true</sectnums>
+                <sectlinks>true</sectlinks>
+                <sectanchors>true</sectanchors>
+                <source-highlighter>highlightjs</source-highlighter>
+              </attributes>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
 
