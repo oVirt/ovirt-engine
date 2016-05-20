@@ -257,6 +257,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             getTable().addColumn(spmColumn, constants.spmPriorityHost(), "100px"); //$NON-NLS-1$
         }
 
+        // Create/Edit/Remove Host operations
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
             @Override
             protected UICommand resolveCommand() {
@@ -275,66 +276,41 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getRemoveCommand();
             }
         });
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.activateHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getActivateCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.maintenanceHost()) {
+
+        // Management operations drop down
+        List<ActionButtonDefinition<VDS>> managementSubActions = new LinkedList<>();
+        // Maintenance button
+        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.maintenanceHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMaintenanceCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.selectHostAsSPM()) {
+        // Activate button
+        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.activateHost()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getSelectAsSpmCommand();
+                return getMainModel().getActivateCommand();
             }
         });
+        // Refresh capabilities button
+        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.refreshHostCapabilities()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRefreshCapabilitiesCommand();
+            }
+        });
+        // Confirm rebooted host
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.numaSupport()) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getMainModel().getNumaSupportCommand();
-                }
-            });
             getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
-                    CommandLocation.OnlyFromContext) {
+                CommandLocation.OnlyFromContext) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getMainModel().getManualFenceCommand();
                 }
             });
         }
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.approveHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getApproveCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.reinstallHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getInstallCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.upgradeHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getUpgradeCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.configureLocalStorageHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getConfigureLocalStorageCommand();
-            }
-        });
-
+        // Power management drop down
         List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<>();
 
         pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
@@ -359,15 +335,89 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         });
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.pmHost(),
-                    pmSubActions,
-                    CommandLocation.OnlyFromToolBar));
+            managementSubActions.add(
+                new WebAdminMenuBarButtonDefinition<>(
+                    constants.pmHost(),
+                    pmSubActions
+                )
+            );
         }
+        // Select as SPM button
+        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.selectHostAsSPM()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getSelectAsSpmCommand();
+            }
+        });
+        // Configure local storage button
+        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.configureLocalStorageHost()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getConfigureLocalStorageCommand();
+            }
+        });
 
+        // Add management menu bar
+        getTable().addActionButton(
+            new WebAdminMenuBarButtonDefinition<>(
+                constants.management(),
+                managementSubActions
+            )
+        );
+
+        // Installation operations drop down
+        List<ActionButtonDefinition<VDS>> moreSubActions = new LinkedList<>();
+        // Reinstall button
+        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.reinstallHost()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getInstallCommand();
+            }
+        });
+        // Enroll certificate button
+        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.enrollCertificate()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEnrollCertificateCommand();
+            }
+        });
+        // Upgrade button
+        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.upgradeHost()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getUpgradeCommand();
+            }
+        });
+        getTable().addActionButton(
+            new WebAdminMenuBarButtonDefinition<>(
+                constants.installation(),
+                moreSubActions
+            )
+        );
+
+        // Assign tags
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.assignTagsHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();
+            }
+        });
+
+        // NUMA support
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
+            getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.numaSupport()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getMainModel().getNumaSupportCommand();
+                }
+            });
+        }
+
+        // Approve
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.approveHost()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getApproveCommand();
             }
         });
 
@@ -381,20 +431,6 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 }
             });
         }
-
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.refreshHostCapabilities()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRefreshCapabilitiesCommand();
-            }
-        });
-
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.enrollCertificate()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEnrollCertificateCommand();
-            }
-        });
     }
 
     private void updateReportsAvailability() {
