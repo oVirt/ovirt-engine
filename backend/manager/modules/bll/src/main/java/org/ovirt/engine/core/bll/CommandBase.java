@@ -2255,6 +2255,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         persistCommand(parentCommand, getContext(), enableCallback);
     }
 
+    protected void persistCommandIfNeeded() {
+        if (getCallback() != null || parentHasCallback()) {
+            persistCommand(getParameters().getParentCommand());
+        }
+    }
+
     public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallback) {
         Transaction transaction = TransactionSupport.suspend();
         try {
