@@ -63,7 +63,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -146,16 +145,6 @@ public class IrsProxyData {
 
     private void setProtocol(VdsProtocol value) {
         this.privateProtocol = value;
-    }
-
-    private Version privateVersion;
-
-    private Version getVersion() {
-        return this.privateVersion;
-    }
-
-    private void setVersion(Version version) {
-        this.privateVersion = version;
     }
 
     public Guid getFencedIrs() {
@@ -570,7 +559,6 @@ public class IrsProxyData {
         setmIrsPort(vds.getPort());
         privatemCurrentIrsHost = vds.getHostName();
         setProtocol(vds.getProtocol());
-        setVersion(vds.getClusterCompatibilityVersion());
     }
 
     public boolean failover() {
