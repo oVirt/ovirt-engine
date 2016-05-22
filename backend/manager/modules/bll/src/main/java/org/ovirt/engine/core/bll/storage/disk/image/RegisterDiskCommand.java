@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
@@ -154,6 +155,13 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 getDiskImage().getActualSize()));
 
         return list;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
+        return getSucceeded() ? AuditLogType.USER_REGISTER_DISK_FINISHED_SUCCESS
+                : AuditLogType.USER_REGISTER_DISK_FINISHED_FAILURE;
     }
 
     @Override
