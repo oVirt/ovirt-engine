@@ -122,7 +122,10 @@ public class OvfUtils {
                     archType = getOsSection(xmlDocument);
                     updateUnregisteredDisksWithVMs(unregisteredDisks, entityId, vmName, xmlDocument);
                 } catch (Exception e) {
-                    log.error("Could not parse VM's disks or architecture: {}", e.getMessage());
+                    log.error("Could not parse VM's disks or architecture, file name: {}, content size: {}, error: {}",
+                            fileEntry.getKey(),
+                            ovfData.length(),
+                            e.getMessage());
                     log.debug("Exception", e);
                     continue;
                 }

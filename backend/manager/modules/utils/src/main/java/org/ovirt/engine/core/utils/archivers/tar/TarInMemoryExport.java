@@ -29,19 +29,16 @@ public class TarInMemoryExport implements AutoCloseable {
      */
     public Map<String, ByteBuffer> unTar() throws IOException {
         Map<String, ByteBuffer> fileContent = new HashMap<>();
-        TarArchiveEntry tarEntry = null;
-        tarEntry = tarInputStream.getNextTarEntry();
-        while (tarEntry != null) {
+        for (TarArchiveEntry tarEntry = tarInputStream.getNextTarEntry(); tarEntry != null; tarEntry =
+                tarInputStream.getNextTarEntry()) {
             // Get Size of the file and create a byte array for the size.
             byte[] content = new byte[(int) tarEntry.getSize()];
 
             // Read file from the archive into byte array.
             if (tarInputStream.read(content) == -1) {
-                log.error("File '{}' could not be read.", tarEntry.getFile());
-                continue;
+                log.warn("File '{}' could not be read.", tarEntry.getFile());
             }
             fileContent.put(tarEntry.getName(), ByteBuffer.wrap(content));
-            tarEntry = tarInputStream.getNextTarEntry();
         }
         return fileContent;
     }
