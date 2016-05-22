@@ -35,12 +35,12 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 
-public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters> extends
-VmPoolUserCommandBase<T> implements QuotaVdsDependent {
-    private Guid vmToAttach = null;
+public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
+        extends VmPoolUserCommandBase<T> implements QuotaVdsDependent {
+
+    private Guid vmToAttach;
 
     protected AttachUserToVmFromPoolAndRunCommand(Guid commandId) {
         super(commandId);
@@ -67,7 +67,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
         synchronized (_lockObject) {
             // no available VMs:
-            if (Guid.Empty.equals(getVmToAttach(getParameters().getVmPoolId()))) {
+            if (Guid.Empty.equals(getVmToAttach())) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
                 returnValue = false;
             }
@@ -102,19 +102,19 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         addValidationMessage(EngineMessage.VAR__TYPE__VM_FROM_VM_POOL);
     };
 
-    private Guid getVmToAttach(Guid poolId) {
+    private Guid getVmToAttach() {
         if (vmToAttach == null) {
-            Guid vmGuid = getPrestartedVmToAttach(poolId);
-            if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
-                vmGuid = getNonPrestartedVmToAttach(poolId);
+            Guid vmGuid = getPrestartedVmToAttach();
+            if (Guid.Empty.equals(vmGuid)) {
+                vmGuid = getNonPrestartedVmToAttach();
             }
             vmToAttach = vmGuid;
         }
         return vmToAttach;
     }
 
-    private Guid getPrestartedVmToAttach(Guid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
+    private Guid getPrestartedVmToAttach() {
+        List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(getVmPoolId(), VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachPrestartedVmToUser(map.getVmId(),
@@ -127,8 +127,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         return Guid.Empty;
     }
 
-    private Guid getNonPrestartedVmToAttach(Guid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
+    private Guid getNonPrestartedVmToAttach() {
+        List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(getVmPoolId(), VMStatus.Down);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachNonPrestartedVmToUser(map.getVmId(), getReturnValue().getValidationMessages())) {
@@ -151,24 +151,14 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     }
 
     @Override
-    protected Guid getVmPoolId() {
-        return getParameters().getVmPoolId();
-    }
-
-    @Override
-    protected void setVmPoolId(Guid value) {
-        getParameters().setVmPoolId(value);
-    }
-
-    @Override
     public Guid getAdUserId() {
         return getParameters().getUserId();
     }
 
     @Override
     protected TransactionScopeOption getTransactionScopeOption() {
-        return getActionState() != CommandActionState.EXECUTE ? TransactionScopeOption.Suppress : super
-                .getTransactionScopeOption();
+        return getActionState() != CommandActionState.EXECUTE ? TransactionScopeOption.Suppress
+                : super.getTransactionScopeOption();
     }
 
     @Override
@@ -179,11 +169,11 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         boolean isPrestartedVm = false;
         Guid vmToAttach;
         synchronized (_lockObject) {
-            vmToAttach = getPrestartedVmToAttach(getParameters().getVmPoolId());
+            vmToAttach = getPrestartedVmToAttach();
             if (!Guid.Empty.equals(vmToAttach)) {
                 isPrestartedVm = true;
             } else {
-                vmToAttach = getNonPrestartedVmToAttach(getParameters().getVmPoolId());
+                vmToAttach = getNonPrestartedVmToAttach();
             }
 
             if (!Guid.Empty.equals(vmToAttach)) {
@@ -221,7 +211,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             runVmParams.setRunAsStateless(!getVmPool().isStateful());
             ExecutionContext runVmContext = createRunVmContext();
             VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
-                    runVmParams, cloneContext().withExecutionContext(runVmContext).withoutLock().withCompensationContext(null));
+                    runVmParams,
+                    cloneContext().withExecutionContext(runVmContext).withoutLock().withCompensationContext(null));
 
             getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             setSucceeded(vdcReturnValue.getSucceeded());
@@ -240,7 +231,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             Step step = ExecutionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.TAKING_VM_FROM_POOL,
-                    ExecutionMessageDirector.resolveStepMessage(StepEnum.TAKING_VM_FROM_POOL, Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName())));
+                    ExecutionMessageDirector.resolveStepMessage(StepEnum.TAKING_VM_FROM_POOL,
+                            Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName())));
             ctx.setStep(step);
             ctx.setMonitored(true);
             ctx.setShouldEndJob(true);
@@ -253,9 +245,10 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     @Override
     protected void endSuccessfully() {
         if (getVm() != null) {
-            if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
+            if (getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
                 setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
-                        getParameters().getImagesParameters().get(0), cloneContext().withoutLock().withoutExecutionContext()).getSucceeded());
+                        getParameters().getImagesParameters().get(0),
+                        cloneContext().withoutLock().withoutExecutionContext()).getSucceeded());
 
                 if (!getSucceeded()) {
                     log.warn("EndSuccessfully: endAction of RunVm failed, detaching user from Vm");
@@ -309,14 +302,13 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     protected void detachUserFromVmFromPool() {
         // Detach user from vm from pool:
         if (!Guid.Empty.equals(getAdUserId())) {
-            Permission perm = DbFacade
-                    .getInstance()
-                    .getPermissionDao()
+            Permission perm = getPermissionDao()
                     .getForRoleAndAdElementAndObject(
-                            PredefinedRoles.ENGINE_USER.getId(), getAdUserId(),
+                            PredefinedRoles.ENGINE_USER.getId(),
+                            getAdUserId(),
                             getVmId());
             if (perm != null) {
-                DbFacade.getInstance().getPermissionDao().remove(perm.getId());
+                getPermissionDao().remove(perm.getId());
             }
         }
     }
@@ -344,4 +336,5 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         }
         return list;
     }
+
 }
