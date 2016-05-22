@@ -91,7 +91,7 @@ public class StorageDomainValidator {
      */
     private double getTotalSizeForNewDisks(Collection<DiskImage> diskImages) {
         return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
-            double sizeForDisk = diskImage.getCapacity();
+            double sizeForDisk = diskImage.getSize();
             if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
                 if (storageDomain.getStorageType().isFileDomain()) {
                     sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
@@ -121,11 +121,11 @@ public class StorageDomainValidator {
      * */
     private double getTotalSizeForClonedDisks(Collection<DiskImage> diskImages) {
         return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
-            double sizeForDisk = diskImage.getCapacity();
+            double sizeForDisk = diskImage.getSize();
             if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
                     storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
                 double usedSpace = diskImage.getActualDiskWithSnapshotsSizeInBytes();
-                sizeForDisk = Math.min(diskImage.getCapacity(), usedSpace);
+                sizeForDisk = Math.min(diskImage.getSize(), usedSpace);
             }
 
             if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
@@ -150,7 +150,7 @@ public class StorageDomainValidator {
      * */
     private double getTotalSizeForDisksWithSnapshots(Collection<DiskImage> diskImages) {
         return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
-            double sizeForDisk = diskImage.getCapacity();
+            double sizeForDisk = diskImage.getSize();
             if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse)
                 || diskImage.getVolumeFormat() == VolumeFormat.COW) {
                 sizeForDisk = diskImage.getActualDiskWithSnapshotsSizeInBytes();
