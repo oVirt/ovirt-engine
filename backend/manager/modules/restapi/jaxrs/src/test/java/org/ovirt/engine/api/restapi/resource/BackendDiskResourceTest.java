@@ -124,7 +124,7 @@ public class BackendDiskResourceTest
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
         entity.setImageId(GUIDS[1]);
-        entity.setvolumeFormat(VolumeFormat.RAW);
+        entity.setVolumeFormat(VolumeFormat.RAW);
         entity.setImageStatus(ImageStatus.OK);
         entity.setVolumeType(VolumeType.Sparse);
         entity.setShareable(false);

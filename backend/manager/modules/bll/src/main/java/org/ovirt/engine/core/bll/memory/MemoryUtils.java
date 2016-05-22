@@ -67,14 +67,14 @@ public class MemoryUtils {
     public static List<DiskImage> createDiskDummies(long memorySize, long metadataSize) {
         DiskImage memoryVolume = new DiskImage();
         memoryVolume.setDiskAlias("memory");
-        memoryVolume.setvolumeFormat(VolumeFormat.RAW);
+        memoryVolume.setVolumeFormat(VolumeFormat.RAW);
         memoryVolume.setSize(memorySize);
         memoryVolume.setActualSizeInBytes(memorySize);
         memoryVolume.getSnapshots().add(memoryVolume);
 
         DiskImage dataVolume = new DiskImage();
         dataVolume.setDiskAlias("metadata");
-        dataVolume.setvolumeFormat(VolumeFormat.RAW);
+        dataVolume.setVolumeFormat(VolumeFormat.RAW);
         dataVolume.setVolumeType(VolumeType.Preallocated);
         dataVolume.setSize(metadataSize);
         dataVolume.setActualSizeInBytes(metadataSize);
@@ -101,7 +101,7 @@ public class MemoryUtils {
         DiskImage image = new DiskImage();
         image.setSize(MemoryUtils.METADATA_SIZE_IN_BYTES);
         image.setVolumeType(VolumeType.Preallocated);
-        image.setvolumeFormat(VolumeFormat.RAW);
+        image.setVolumeFormat(VolumeFormat.RAW);
         return image;
     }
 
@@ -127,7 +127,7 @@ public class MemoryUtils {
         DiskImage image = new DiskImage();
         image.setSize(VmUtils.getSnapshotMemorySizeInBytes(vm));
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
-        image.setvolumeFormat(VolumeFormat.RAW);
+        image.setVolumeFormat(VolumeFormat.RAW);
         return image;
     }
 

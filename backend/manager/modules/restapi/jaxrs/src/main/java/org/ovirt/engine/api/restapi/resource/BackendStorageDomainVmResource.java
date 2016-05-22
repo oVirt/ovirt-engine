@@ -111,7 +111,7 @@ public class BackendStorageDomainVmResource
                 }
                 if (modelDisk.isSetFormat()) {
                     VolumeFormat entityDiskFormat = DiskMapper.map(modelDisk.getFormat(), null);
-                    entityDisk.setvolumeFormat(entityDiskFormat);
+                    entityDisk.setVolumeFormat(entityDiskFormat);
                 }
                 if (modelDisk.isSetSparse()) {
                     entityDisk.setVolumeType(modelDisk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);

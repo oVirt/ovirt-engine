@@ -54,7 +54,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
     private void initCinderDependentVolume(CinderDisk newCinderVolume) {
         // override volume type and volume format to Unassigned and unassigned for Cinder.
         newCinderVolume.setVolumeType(VolumeType.Unassigned);
-        newCinderVolume.setvolumeFormat(VolumeFormat.Unassigned);
+        newCinderVolume.setVolumeFormat(VolumeFormat.Unassigned);
         newCinderVolume.setImageStatus(ImageStatus.LOCKED);
         newCinderVolume.setCreationDate(new Date());
         newCinderVolume.setLastModifiedDate(new Date());

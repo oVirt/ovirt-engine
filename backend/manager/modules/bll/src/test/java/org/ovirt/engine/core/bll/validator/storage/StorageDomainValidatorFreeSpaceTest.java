@@ -51,7 +51,7 @@ public class StorageDomainValidatorFreeSpaceTest {
                 for (VolumeType volumeType : volumeTypes) {
                     for (VolumeFormat volumeFormat : new VolumeFormat[] { VolumeFormat.COW, VolumeFormat.RAW }) {
                         DiskImage disk = new DiskImage();
-                        disk.setvolumeFormat(volumeFormat);
+                        disk.setVolumeFormat(volumeFormat);
                         disk.setVolumeType(volumeType);
                         disk.getSnapshots().add(disk);
                         disk.setSizeInGigabytes(200);

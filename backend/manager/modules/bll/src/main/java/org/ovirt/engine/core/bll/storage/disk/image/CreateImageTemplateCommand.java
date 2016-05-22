@@ -53,7 +53,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
             fillVolumeInformation(newImage);
         }
         if (getParameters().getVolumeFormat() != null) {
-            newImage.setvolumeFormat(getParameters().getVolumeFormat());
+            newImage.setVolumeFormat(getParameters().getVolumeFormat());
         }
         if (getParameters().getVolumeType() != null) {
             newImage.setVolumeType(getParameters().getVolumeType());
@@ -134,7 +134,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
      */
     private void fillVolumeInformation(DiskImage disk) {
         DiskImage ancestor = getDiskImageDao().getAncestor(getDiskImage().getImageId());
-        disk.setvolumeFormat(ancestor.getVolumeFormat());
+        disk.setVolumeFormat(ancestor.getVolumeFormat());
         disk.setVolumeType(ancestor.getVolumeType());
     }
 

@@ -289,7 +289,7 @@ public class CinderBroker extends AuditLogableBase {
         cinderDisk.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
         cinderDisk.setActive(true);
         cinderDisk.setImageStatus(ImageStatus.OK);
-        cinderDisk.setvolumeFormat(VolumeFormat.RAW);
+        cinderDisk.setVolumeFormat(VolumeFormat.RAW);
         try {
             cinderDisk.setCreationDate(new SimpleDateFormat(DATE_FORMAT).parse(volume.getCreatedAt()));
         } catch (ParseException e) {

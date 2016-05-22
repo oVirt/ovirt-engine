@@ -68,7 +68,7 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
         // override volume type and volume format to Unassigned and unassigned for Cinder.
         clonedDiskFromSnapshot.setVolumeType(VolumeType.Unassigned);
-        clonedDiskFromSnapshot.setvolumeFormat(VolumeFormat.Unassigned);
+        clonedDiskFromSnapshot.setVolumeFormat(VolumeFormat.Unassigned);
         clonedDiskFromSnapshot.setImageStatus(ImageStatus.LOCKED);
         clonedDiskFromSnapshot.setCreationDate(new Date());
         clonedDiskFromSnapshot.setVmSnapshotId(getParameters().getVmSnapshotId());

@@ -853,7 +853,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         DiskImage newImage = new DiskImage();
         newImage.setImageId(image.getImageId());
         newImage.setDiskAlias(image.getDiskAlias());
-        newImage.setvolumeFormat(image.getVolumeFormat());
+        newImage.setVolumeFormat(image.getVolumeFormat());
         newImage.setVolumeType(image.getVolumeType());
         ArrayList<Guid> storageIds = new ArrayList<>();
         storageIds.add(storageId);

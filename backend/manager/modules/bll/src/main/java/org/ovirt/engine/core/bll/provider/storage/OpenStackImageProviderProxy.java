@@ -179,9 +179,9 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
         diskImage.setActualSizeInBytes(glanceImage.getSize());
 
         if (glanceImage.getDiskFormat().equals(GlanceImageFormat.RAW.getValue())) {
-            diskImage.setvolumeFormat(VolumeFormat.RAW);
+            diskImage.setVolumeFormat(VolumeFormat.RAW);
         } else if (glanceImage.getDiskFormat().equals(GlanceImageFormat.COW.getValue())) {
-            diskImage.setvolumeFormat(VolumeFormat.COW);
+            diskImage.setVolumeFormat(VolumeFormat.COW);
         } else {
             throw new OpenStackImageException(
                     OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,

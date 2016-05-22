@@ -289,7 +289,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                 diskImage.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
                 diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
                 DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
-                diskImage.setvolumeFormat(diskForVolumeInfo.getVolumeFormat());
+                diskImage.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());
                 diskImage.setVolumeType(diskForVolumeInfo.getVolumeType());
                 VDSReturnValue vdsReturnValue = runVdsCommand(
                                     VDSCommandType.GetImageInfo,

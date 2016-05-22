@@ -40,7 +40,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         returnValue.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         if (getParameters().getDiskImageBase() != null) {
             returnValue.setVolumeType(getParameters().getDiskImageBase().getVolumeType());
-            returnValue.setvolumeFormat(getParameters().getDiskImageBase().getVolumeFormat());
+            returnValue.setVolumeFormat(getParameters().getDiskImageBase().getVolumeFormat());
         }
         return returnValue;
     }

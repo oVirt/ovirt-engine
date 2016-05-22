@@ -485,7 +485,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 DiskImage disk = (DiskImage) entry.getValue();
                 map.put(disk.getId(), getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
-                disk.setvolumeFormat(
+                disk.setVolumeFormat(
                         AsyncDataProvider.getInstance().getDiskVolumeFormat(
                                 getDiskImportData(disk.getId()).getSelectedVolumeType(),
                                 getDiskImportData(

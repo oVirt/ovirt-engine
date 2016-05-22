@@ -146,7 +146,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         disk.setImageId(imageId);
         disk.setId(Guid.newGuid());
         disk.setVolumeType(VolumeType.Sparse);
-        disk.setvolumeFormat(VolumeFormat.COW);
+        disk.setVolumeFormat(VolumeFormat.COW);
         disk.setStoragePoolId(vm.getStoragePoolId());
         disk.setActive(Boolean.TRUE);
         disk.setPlugged(Boolean.TRUE);

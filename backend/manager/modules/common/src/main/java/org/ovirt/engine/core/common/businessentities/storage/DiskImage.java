@@ -388,7 +388,7 @@ public class DiskImage extends DiskImageBase {
 
         // set all private fields (imitate clone - deep copy)
         di.setVolumeType(diskImage.getVolumeType());
-        di.setvolumeFormat(diskImage.getVolumeFormat());
+        di.setVolumeFormat(diskImage.getVolumeFormat());
         di.setSize(diskImage.getSize());
         if (diskImage.getQuotaIds() != null) {
             di.setQuotaIds(new ArrayList<>(diskImage.getQuotaIds()));

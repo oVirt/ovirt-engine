@@ -198,7 +198,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
         DiskImage image = new DiskImage();
         image.setActualSizeInBytes(2);
-        image.setvolumeFormat(volumeFormat);
+        image.setVolumeFormat(volumeFormat);
         image.setVolumeType(volumeType);
 
         resultMap.put(new VmTemplate(), Arrays.asList(image));

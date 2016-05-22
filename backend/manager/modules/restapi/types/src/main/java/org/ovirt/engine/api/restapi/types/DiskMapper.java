@@ -107,7 +107,7 @@ public class DiskMapper {
             diskImage.setSize(disk.getProvisionedSize());
         }
         if (disk.isSetFormat()) {
-            diskImage.setvolumeFormat(map(disk.getFormat(), null));
+            diskImage.setVolumeFormat(map(disk.getFormat(), null));
         }
         if (disk.isSetStatus()) {
             diskImage.setImageStatus(mapDiskStatus(disk.getStatus()));

@@ -774,7 +774,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
      */
     private DiskImage createShareableDisk(VolumeFormat volumeFormat) {
         DiskImage disk = createDiskImage();
-        disk.setvolumeFormat(volumeFormat);
+        disk.setVolumeFormat(volumeFormat);
         disk.setShareable(true);
         return disk;
     }

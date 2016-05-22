@@ -115,7 +115,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             // Adjust disk image configuration if needed.
             if ( diskImage.getVolumeType().equals(VolumeType.Sparse) && diskImage.getVolumeFormat().equals(VolumeFormat.RAW) &&
                     getDestintationDomainTypeFromDisk(diskImage).isBlockDomain()) {
-                diskImage.setvolumeFormat(VolumeFormat.COW);
+                diskImage.setVolumeFormat(VolumeFormat.COW);
             }
         }
     }

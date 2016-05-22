@@ -86,7 +86,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
             DiskImage disk = (DiskImage) entry.getValue();
             ImportDiskData importDiskData = getDiskImportData(disk.getDiskAlias());
             disk.setVolumeType(getAllocation().getSelectedItem());
-            disk.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
+            disk.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
                     disk.getVolumeType(),
                     getStorage().getSelectedItem().getStorageType()));
 

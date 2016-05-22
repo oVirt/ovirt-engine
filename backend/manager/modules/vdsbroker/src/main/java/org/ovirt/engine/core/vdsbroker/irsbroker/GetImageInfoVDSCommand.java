@@ -111,7 +111,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                         true));
             }
             if (xmlRpcStruct.containsKey("format")) {
-                newImage.setvolumeFormat(EnumUtils.valueOf(VolumeFormat.class, xmlRpcStruct.get("format")
+                newImage.setVolumeFormat(EnumUtils.valueOf(VolumeFormat.class, xmlRpcStruct.get("format")
                         .toString(), true));
             }
         } catch (RuntimeException ex) {

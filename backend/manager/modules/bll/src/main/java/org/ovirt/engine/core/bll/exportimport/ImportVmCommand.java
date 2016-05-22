@@ -268,7 +268,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     // only if requested by the user
                     if (p.getImageId().equals(image.getImageId())) {
                         if (p.getVolumeFormat() != null) {
-                            image.setvolumeFormat(p.getVolumeFormat());
+                            image.setVolumeFormat(p.getVolumeFormat());
                         }
                         if (p.getVolumeType() != null) {
                             image.setVolumeType(p.getVolumeType());
@@ -747,7 +747,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         && getParameters().getVm().getDiskMap().containsKey(disk.getId())) {
                     DiskImageBase diskImageBase =
                             (DiskImageBase) getParameters().getVm().getDiskMap().get(disk.getId());
-                    disk.setvolumeFormat(diskImageBase.getVolumeFormat());
+                    disk.setVolumeFormat(diskImageBase.getVolumeFormat());
                     disk.setVolumeType(diskImageBase.getVolumeType());
                 }
                 setDiskStorageDomainInfo(disk);

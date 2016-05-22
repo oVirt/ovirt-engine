@@ -48,7 +48,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
-        entity.setvolumeFormat(VolumeFormat.RAW);
+        entity.setVolumeFormat(VolumeFormat.RAW);
         entity.setImageStatus(ImageStatus.OK);
         entity.setVolumeType(VolumeType.Sparse);
         entity.setShareable(false);

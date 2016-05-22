@@ -76,7 +76,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                 curr = getDiskImageDao().getSnapshotById(curr.getParentId());
                 getImageDao().remove(curr.getImageId());
             }
-            getDestinationDiskImage().setvolumeFormat(curr.getVolumeFormat());
+            getDestinationDiskImage().setVolumeFormat(curr.getVolumeFormat());
             getDestinationDiskImage().setVolumeType(curr.getVolumeType());
             getDestinationDiskImage().setParentId(getDiskImage().getParentId());
             getBaseDiskDao().update(curr);

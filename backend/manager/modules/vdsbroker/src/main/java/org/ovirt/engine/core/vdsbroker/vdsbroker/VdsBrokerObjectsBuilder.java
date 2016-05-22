@@ -167,7 +167,7 @@ public class VdsBrokerObjectsBuilder {
                     image.setSize(Long.parseLong((String) deviceMap.get("apparentsize")));
                     image.setActualSize(Long.parseLong((String) deviceMap.get("truesize")));
                     image.setId(Guid.newGuid());
-                    image.setvolumeFormat(VolumeFormat.valueOf(((String) deviceMap.get(VdsProperties.Format)).toUpperCase()));
+                    image.setVolumeFormat(VolumeFormat.valueOf(((String) deviceMap.get(VdsProperties.Format)).toUpperCase()));
                     image.setShareable(false);
                     image.setId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.DeviceId)));
                     image.setImageId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.VolumeId)));
@@ -305,7 +305,7 @@ public class VdsBrokerObjectsBuilder {
         image.setActualSizeInBytes(Long.parseLong((String) map.get(VdsProperties.DISK_ALLOCATION)));
         image.setId(Guid.newGuid());
         if (map.containsKey(VdsProperties.Format)) {
-            image.setvolumeFormat(VolumeFormat.valueOf(((String) map.get(VdsProperties.Format)).toUpperCase()));
+            image.setVolumeFormat(VolumeFormat.valueOf(((String) map.get(VdsProperties.Format)).toUpperCase()));
         }
 
         return image;

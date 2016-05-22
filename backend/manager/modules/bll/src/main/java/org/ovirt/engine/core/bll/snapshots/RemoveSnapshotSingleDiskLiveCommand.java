@@ -325,7 +325,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     private void handleForwardLiveMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {
         // For forward merge, the volume format and type may change.
-        topImage.setvolumeFormat(baseImage.getVolumeFormat());
+        topImage.setVolumeFormat(baseImage.getVolumeFormat());
         topImage.setVolumeType(baseImage.getVolumeType());
         topImage.setParentId(baseImage.getParentId());
         topImage.setImageStatus(ImageStatus.OK);

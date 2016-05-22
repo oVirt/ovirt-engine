@@ -101,7 +101,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
                 // in kvm we just copy the image, in other modes such as vmware or xen we use
                 // virt-v2v which converts the image format as well
                 if (vm.getOrigin() != OriginType.KVM) {
-                    disk.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                    disk.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
                             disk.getVolumeType(),
                             getStorage().getSelectedItem().getStorageType()));
                 }

@@ -109,7 +109,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
     public void testSave() {
         DiskImage newImage = new DiskImage();
         newImage.setImageId(Guid.newGuid());
-        newImage.setvolumeFormat(VolumeFormat.COW);
+        newImage.setVolumeFormat(VolumeFormat.COW);
         newImage.setVolumeType(VolumeType.Sparse);
         newImage.setActive(true);
         newImage.setImageTemplateId(EXISTING_IMAGE_DISK_TEMPLATE);

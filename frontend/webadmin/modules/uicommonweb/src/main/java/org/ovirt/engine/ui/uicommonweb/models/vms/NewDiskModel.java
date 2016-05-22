@@ -174,7 +174,7 @@ public class NewDiskModel extends AbstractDiskModel {
             case CINDER:
                 CinderDisk cinderDisk = (CinderDisk) getDisk();
                 cinderDisk.setSizeInGigabytes(getSize().getEntity());
-                cinderDisk.setvolumeFormat(VolumeFormat.RAW);
+                cinderDisk.setVolumeFormat(VolumeFormat.RAW);
                 cinderDisk.setCinderVolumeType(getCinderVolumeType().getSelectedItem());
                 break;
             default:
@@ -183,7 +183,7 @@ public class NewDiskModel extends AbstractDiskModel {
                     diskImage.setSizeInGigabytes(getSize().getEntity());
                 }
                 diskImage.setVolumeType(getVolumeType().getSelectedItem());
-                diskImage.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(diskImage.getVolumeType(), getStorageDomain().getSelectedItem().getStorageType()));
+                diskImage.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(diskImage.getVolumeType(), getStorageDomain().getSelectedItem().getStorageType()));
                 break;
         }
     }

@@ -53,7 +53,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         newDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
         newDiskImage.setSize(getParameters().getDiskInfo().getSize());
         newDiskImage.setVolumeType(getParameters().getDiskInfo().getVolumeType());
-        newDiskImage.setvolumeFormat(getParameters().getDiskInfo().getVolumeFormat());
+        newDiskImage.setVolumeFormat(getParameters().getDiskInfo().getVolumeFormat());
         newDiskImage.setDescription("");
         newDiskImage.setCreationDate(new Date());
         newDiskImage.setLastModified(new Date());

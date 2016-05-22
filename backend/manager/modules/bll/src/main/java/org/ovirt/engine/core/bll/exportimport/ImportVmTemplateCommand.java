@@ -320,7 +320,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         if (storageType.isBlockDomain()
                 && image.getVolumeFormat() == VolumeFormat.RAW
                 && image.getVolumeType() == VolumeType.Sparse) {
-            image.setvolumeFormat(VolumeFormat.COW);
+            image.setVolumeFormat(VolumeFormat.COW);
         }
     }
 

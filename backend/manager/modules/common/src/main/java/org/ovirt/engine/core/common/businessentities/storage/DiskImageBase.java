@@ -42,7 +42,7 @@ public class DiskImageBase extends Disk {
         return getImage().getVolumeFormat();
     }
 
-    public void setvolumeFormat(VolumeFormat volumeFormat) {
+    public void setVolumeFormat(VolumeFormat volumeFormat) {
         getImage().setVolumeFormat(volumeFormat);
     }
 

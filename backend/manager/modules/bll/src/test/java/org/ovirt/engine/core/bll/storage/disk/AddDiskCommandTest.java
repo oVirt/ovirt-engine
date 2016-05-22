@@ -189,7 +189,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void validateFailsOnNullDiskInterface() throws Exception {
         Guid storageId = Guid.newGuid();
         DiskImage image = new DiskImage();
-        image.setvolumeFormat(VolumeFormat.COW);
+        image.setVolumeFormat(VolumeFormat.COW);
         image.setVolumeType(VolumeType.Preallocated);
         AddDiskParameters params = new AddDiskParameters(new DiskVmElement(null, Guid.newGuid()), image);
         initializeCommand(storageId, params);
@@ -272,7 +272,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateShareableDiskVolumeFormatSucceeds() {
         DiskImage image = createShareableDiskImage();
-        image.setvolumeFormat(VolumeFormat.RAW);
+        image.setVolumeFormat(VolumeFormat.RAW);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(image);
@@ -294,7 +294,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateShareableDiskVolumeFormatFails() {
         DiskImage image = createShareableDiskImage();
-        image.setvolumeFormat(VolumeFormat.COW);
+        image.setVolumeFormat(VolumeFormat.COW);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(image);
@@ -315,7 +315,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateShareableDiskOnGlusterFails() {
         DiskImage image = createShareableDiskImage();
-        image.setvolumeFormat(VolumeFormat.RAW);
+        image.setVolumeFormat(VolumeFormat.RAW);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(image);

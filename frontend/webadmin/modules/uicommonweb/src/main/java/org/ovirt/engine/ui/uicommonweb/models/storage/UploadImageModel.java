@@ -453,7 +453,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         // Ensure a file is selected before diskModel.flush() calls diskModel.validate()
         if (validate(false)) {
             diskModel.flush();
-            ((DiskImage) getDiskModel().getDisk()).setvolumeFormat(getVolumeFormat().getSelectedItem());
+            ((DiskImage) getDiskModel().getDisk()).setVolumeFormat(getVolumeFormat().getSelectedItem());
         }
     }
 

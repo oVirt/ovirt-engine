@@ -82,7 +82,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
         cinderDisk.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
         cinderDisk.setSize(getParameters().getDiskInfo().getSize());
         cinderDisk.setVolumeType(VolumeType.Unassigned);
-        cinderDisk.setvolumeFormat(VolumeFormat.RAW);
+        cinderDisk.setVolumeFormat(VolumeFormat.RAW);
         cinderDisk.setCreationDate(new Date());
         cinderDisk.setLastModified(new Date());
         cinderDisk.setActive(true);

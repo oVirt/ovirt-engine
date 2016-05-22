@@ -79,7 +79,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         // override volume type and volume format to sparse and cow according to
         // storage team request
         newDiskImage.setVolumeType(VolumeType.Sparse);
-        newDiskImage.setvolumeFormat(VolumeFormat.COW);
+        newDiskImage.setVolumeFormat(VolumeFormat.COW);
         VDSReturnValue vdsReturnValue = null;
 
         try {

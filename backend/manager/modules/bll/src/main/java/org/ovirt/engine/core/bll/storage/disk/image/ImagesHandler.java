@@ -852,7 +852,7 @@ public final class ImagesHandler {
         for (DiskImage diskImage : originalDisks) {
             DiskImage clone = DiskImage.copyOf(diskImage);
             clone.setVolumeType(VolumeType.Sparse);
-            clone.setvolumeFormat(VolumeFormat.COW);
+            clone.setVolumeFormat(VolumeFormat.COW);
             diskDummies.add(clone);
         }
         return diskDummies;
@@ -888,7 +888,7 @@ public final class ImagesHandler {
         clonedDiskImage.setVmSnapshotId(snapshotId);
         clonedDiskImage.setId(newImageGroupId);
         clonedDiskImage.setLastModifiedDate(new Date());
-        clonedDiskImage.setvolumeFormat(srcDiskImage.getVolumeFormat());
+        clonedDiskImage.setVolumeFormat(srcDiskImage.getVolumeFormat());
         clonedDiskImage.setVolumeType(srcDiskImage.getVolumeType());
         ArrayList<Guid> storageIds = new ArrayList<>();
         storageIds.add(storageDomainId);
@@ -925,7 +925,7 @@ public final class ImagesHandler {
     }
 
     protected static void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {
-        clonedDiskImage.setvolumeFormat(diskImageFromClient.getVolumeFormat());
+        clonedDiskImage.setVolumeFormat(diskImageFromClient.getVolumeFormat());
         clonedDiskImage.setVolumeType(diskImageFromClient.getVolumeType());
     }
 }

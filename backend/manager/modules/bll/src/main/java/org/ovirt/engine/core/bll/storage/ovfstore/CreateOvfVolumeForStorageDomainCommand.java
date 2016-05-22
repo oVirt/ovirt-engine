@@ -85,7 +85,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         createdDiskImage.setShareable(shouldOvfStoreBeShareable());
         createdDiskImage.setStorageIds(new ArrayList<>(Collections.singletonList(domainId)));
         createdDiskImage.setSize(SizeConverter.BYTES_IN_MB * 128);
-        createdDiskImage.setvolumeFormat(VolumeFormat.RAW);
+        createdDiskImage.setVolumeFormat(VolumeFormat.RAW);
         createdDiskImage.setVolumeType(VolumeType.Preallocated);
         createdDiskImage.setDescription("OVF store for domain " + domainId);
         Date creationDate = new Date();
