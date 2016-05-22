@@ -28,8 +28,6 @@ public class DiskImage extends DiskImageBase {
     private String appList;
     // TODO from storage_domain_static
     private Guid storagePoolId;
-    private int readRateKbPerSec;
-    private int writeRateKbPerSec;
     private ArrayList<DiskImage> snapshots;
     private double actualDiskWithSnapthotsSize;
     private ArrayList<Guid> quotaIds;
@@ -304,22 +302,6 @@ public class DiskImage extends DiskImageBase {
 
     }
 
-    public int getReadRateKbPerSec() {
-        return readRateKbPerSec;
-    }
-
-    public void setReadRateKbPerSec(int readRate) {
-        readRateKbPerSec = readRate;
-    }
-
-    public int getWriteRateKbPerSec() {
-        return writeRateKbPerSec;
-    }
-
-    public void setWriteRateKbPerSec(int writeRate) {
-        writeRateKbPerSec = writeRate;
-    }
-
     public Object getQueryableId() {
         return getImageId();
     }
@@ -458,8 +440,6 @@ public class DiskImage extends DiskImageBase {
         di.setShareable(diskImage.isShareable());
         di.storagePoolId = diskImage.storagePoolId;
         di.actualSize = diskImage.actualSize;
-        di.readRateKbPerSec = diskImage.readRateKbPerSec;
-        di.writeRateKbPerSec = diskImage.writeRateKbPerSec;
 
         // TODO: is it ok to use shallow copy here?!
         di.snapshots = new ArrayList<>(diskImage.snapshots);
@@ -480,8 +460,6 @@ public class DiskImage extends DiskImageBase {
                 actualSizeInBytes,
                 appList,
                 description,
-                readRateKbPerSec,
-                writeRateKbPerSec,
                 readRateFromDiskImageDynamic,
                 storageIds,
                 storagePoolId,
@@ -510,8 +488,6 @@ public class DiskImage extends DiskImageBase {
                 && actualSizeInBytes == other.actualSizeInBytes
                 && Objects.equals(appList, other.appList)
                 && Objects.equals(description, other.description)
-                && readRateKbPerSec == other.readRateKbPerSec
-                && writeRateKbPerSec == other.writeRateKbPerSec
                 && readRateFromDiskImageDynamic == other.readRateFromDiskImageDynamic
                 && Objects.equals(storageIds, other.storageIds)
                 && Objects.equals(storagePoolId, other.storagePoolId)
