@@ -2310,7 +2310,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         persistCommand(parentCommand, getContext(), enableCallback, callbackTriggeredByEvent());
     }
 
-    private void persistCommandIfNeeded() {
+    protected void persistCommandIfNeeded() {
         if (getCallback() != null || parentHasCallback()) {
             persistCommand(getParameters().getParentCommand());
         }
