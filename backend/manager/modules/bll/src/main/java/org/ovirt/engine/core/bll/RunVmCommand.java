@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -513,14 +512,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getContext().withExecutionContext(createSnapshotsCtx);
         persistCommandIfNeeded();
         return getContext().clone().withoutCompensationContext();
-    }
-
-    private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParametersForEndAction() {
-        CreateAllSnapshotsFromVmParameters parameters = buildCreateSnapshotParameters();
-        parameters.setImagesParameters(getParameters().getImagesParameters());
-        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setCommandId(getParametersForChildCommand().get(0).getCommandId());
-        return parameters;
     }
 
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParameters() {
@@ -1100,7 +1091,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void endSuccessfully() {
         if (isStatelessSnapshotExistsForVm()) {
             getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    buildCreateSnapshotParametersForEndAction(),
+                    getParameters().getImagesParameters().get(0),
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
             getParameters().setShouldBeLogged(false);
@@ -1155,7 +1146,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void endWithFailure() {
         if (isStatelessSnapshotExistsForVm()) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    buildCreateSnapshotParametersForEndAction(), cloneContext().withoutExecutionContext().withoutLock());
+                    getParameters().getImagesParameters().get(0), cloneContext().withoutExecutionContext()
+                            .withoutLock());
 
             setSucceeded(vdcReturnValue.getSucceeded());
             // we are not running the VM, of course,
