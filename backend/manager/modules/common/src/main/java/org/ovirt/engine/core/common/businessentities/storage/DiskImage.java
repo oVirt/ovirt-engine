@@ -293,15 +293,6 @@ public class DiskImage extends DiskImageBase {
         return getActualDiskWithSnapshotsSize() * SizeConverter.BYTES_IN_GB;
     }
 
-    /**
-     * This method is created for SOAP serialization of primitives that are read only but sent by the client. The setter
-     * implementation is empty and the field is not being changed.
-     */
-    @Deprecated
-    public void setActualDiskWithSnapshotsSize(double value) {
-
-    }
-
     public Object getQueryableId() {
         return getImageId();
     }
