@@ -66,7 +66,6 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -158,8 +157,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
         loadVmInit();
         fetchVmDisksFromDb();
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
-        getParameters().setUseCinderCommandCallback(!cinderDisks.isEmpty());
     }
 
     @Override
@@ -493,9 +490,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // setting lock to null in order not to release lock twice
         setLock(null);
         setSucceeded(vdcReturnValue.getSucceeded());
-        if (vdcReturnValue.getSucceeded()) {
-            getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-        } else {
+        if (!vdcReturnValue.getSucceeded()) {
             if (areDisksLocked(vdcReturnValue)) {
                 throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
@@ -521,10 +516,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParametersForEndAction() {
         CreateAllSnapshotsFromVmParameters parameters = buildCreateSnapshotParameters();
         parameters.setImagesParameters(getParameters().getImagesParameters());
-        if (getParameters().isUseCinderCommandCallback()) {
-            parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-            parameters.setCommandId(getParametersForChildCommand().get(0).getCommandId());
-        }
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setCommandId(getParametersForChildCommand().get(0).getCommandId());
         return parameters;
     }
 
@@ -1279,7 +1272,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public CommandCallback getCallback() {
-        return (getParameters().isUseCinderCommandCallback() && getFlow().isStateless())
-                ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return getFlow().isStateless() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 }
