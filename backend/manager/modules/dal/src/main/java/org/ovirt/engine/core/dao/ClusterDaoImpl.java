@@ -109,8 +109,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
 
     @Override
     public List<Cluster> getAllWithQuery(String query) {
-        List<Cluster> groups = getJdbcTemplate().query(query, ClusterRowMapper.instance);
-        return getHostsAndVmsForClusters(groups);
+        List<Cluster> clusters = getJdbcTemplate().query(query, ClusterRowMapper.instance);
+        return getHostsAndVmsForClusters(clusters);
     }
 
     @Override
@@ -126,18 +126,18 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     }
 
     @Override
-    public void save(Cluster group) {
-        Guid id = group.getId();
+    public void save(Cluster cluster) {
+        Guid id = cluster.getId();
         if (Guid.isNullOrEmpty(id)) {
             id = Guid.newGuid();
-            group.setId(id);
+            cluster.setId(id);
         }
-        getCallsHandler().executeModification("InsertCluster", getClusterParamSource(group));
+        getCallsHandler().executeModification("InsertCluster", getClusterParamSource(cluster));
     }
 
     @Override
-    public void update(Cluster group) {
-        getCallsHandler().executeModification("UpdateCluster", getClusterParamSource(group));
+    public void update(Cluster cluster) {
+        getCallsHandler().executeModification("UpdateCluster", getClusterParamSource(cluster));
     }
 
     @Override
@@ -201,55 +201,55 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         return getCallsHandler().executeReadList("GetTrustedClusters", ClusterRowMapper.instance, parameterSource);
     }
 
-    private MapSqlParameterSource getClusterParamSource(Cluster group) {
+    private MapSqlParameterSource getClusterParamSource(Cluster cluster) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("description", group.getDescription())
-                .addValue("name", group.getName())
-                .addValue("free_text_comment", group.getComment())
-                .addValue("cluster_id", group.getId())
-                .addValue("cpu_name", group.getCpuName())
-                .addValue("storage_pool_id", group.getStoragePoolId())
+                .addValue("description", cluster.getDescription())
+                .addValue("name", cluster.getName())
+                .addValue("free_text_comment", cluster.getComment())
+                .addValue("cluster_id", cluster.getId())
+                .addValue("cpu_name", cluster.getCpuName())
+                .addValue("storage_pool_id", cluster.getStoragePoolId())
                 .addValue("max_vds_memory_over_commit",
-                        group.getMaxVdsMemoryOverCommit())
+                        cluster.getMaxVdsMemoryOverCommit())
                 .addValue("count_threads_as_cores",
-                        group.getCountThreadsAsCores())
+                        cluster.getCountThreadsAsCores())
                 .addValue("transparent_hugepages",
-                        group.getTransparentHugepages())
+                        cluster.getTransparentHugepages())
                 .addValue("compatibility_version",
-                        group.getCompatibilityVersion())
-                .addValue("migrate_on_error", group.getMigrateOnError())
-                .addValue("virt_service", group.supportsVirtService())
-                .addValue("gluster_service", group.supportsGlusterService())
-                .addValue("gluster_cli_based_snapshot_scheduled", group.isGlusterCliBasedSchedulingOn())
-                .addValue("tunnel_migration", group.isTunnelMigration())
-                .addValue("required_rng_sources", VmRngDevice.sourcesToCsv(group.getRequiredRngSources()))
-                .addValue("emulated_machine", group.getEmulatedMachine())
-                .addValue("detect_emulated_machine", group.isDetectEmulatedMachine())
-                .addValue("trusted_service", group.supportsTrustedService())
-                .addValue("ha_reservation", group.supportsHaReservation())
-                .addValue("optional_reason", group.isOptionalReasonRequired())
-                .addValue("maintenance_reason_required", group.isMaintenanceReasonRequired())
-                .addValue("cluster_policy_id", group.getClusterPolicyId())
+                        cluster.getCompatibilityVersion())
+                .addValue("migrate_on_error", cluster.getMigrateOnError())
+                .addValue("virt_service", cluster.supportsVirtService())
+                .addValue("gluster_service", cluster.supportsGlusterService())
+                .addValue("gluster_cli_based_snapshot_scheduled", cluster.isGlusterCliBasedSchedulingOn())
+                .addValue("tunnel_migration", cluster.isTunnelMigration())
+                .addValue("required_rng_sources", VmRngDevice.sourcesToCsv(cluster.getRequiredRngSources()))
+                .addValue("emulated_machine", cluster.getEmulatedMachine())
+                .addValue("detect_emulated_machine", cluster.isDetectEmulatedMachine())
+                .addValue("trusted_service", cluster.supportsTrustedService())
+                .addValue("ha_reservation", cluster.supportsHaReservation())
+                .addValue("optional_reason", cluster.isOptionalReasonRequired())
+                .addValue("maintenance_reason_required", cluster.isMaintenanceReasonRequired())
+                .addValue("cluster_policy_id", cluster.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
-                                SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()))
-                .addValue("architecture", group.getArchitecture())
-                .addValue("enable_balloon", group.isEnableBallooning())
-                .addValue("optimization_type", group.getOptimizationType())
-                .addValue("enable_ksm", group.isEnableKsm())
-                .addValue("spice_proxy", group.getSpiceProxy())
-                .addValue("serial_number_policy", group.getSerialNumberPolicy() == null ? null : group.getSerialNumberPolicy().getValue())
-                .addValue("custom_serial_number", group.getCustomSerialNumber())
-                .addValue("skip_fencing_if_sd_active", group.getFencingPolicy().isSkipFencingIfSDActive())
-                .addValue("skip_fencing_if_connectivity_broken", group.getFencingPolicy().isSkipFencingIfConnectivityBroken())
-                .addValue("hosts_with_broken_connectivity_threshold", group.getFencingPolicy().getHostsWithBrokenConnectivityThreshold())
-                .addValue("fencing_enabled", group.getFencingPolicy().isFencingEnabled())
-                .addValue("is_auto_converge", group.getAutoConverge())
-                .addValue("is_migrate_compressed", group.getMigrateCompressed())
-                .addValue("gluster_tuned_profile", group.getGlusterTunedProfile())
-                .addValue("ksm_merge_across_nodes", group.isKsmMergeAcrossNumaNodes())
-                .addValue("migration_bandwidth_limit_type", group.getMigrationBandwidthLimitType().name())
-                .addValue("custom_migration_bandwidth_limit", group.getCustomMigrationNetworkBandwidth())
-                .addValue("migration_policy_id", group.getMigrationPolicyId());
+                                SerializationFactory.getSerializer().serialize(cluster.getClusterPolicyProperties()))
+                .addValue("architecture", cluster.getArchitecture())
+                .addValue("enable_balloon", cluster.isEnableBallooning())
+                .addValue("optimization_type", cluster.getOptimizationType())
+                .addValue("enable_ksm", cluster.isEnableKsm())
+                .addValue("spice_proxy", cluster.getSpiceProxy())
+                .addValue("serial_number_policy", cluster.getSerialNumberPolicy() == null ? null : cluster.getSerialNumberPolicy().getValue())
+                .addValue("custom_serial_number", cluster.getCustomSerialNumber())
+                .addValue("skip_fencing_if_sd_active", cluster.getFencingPolicy().isSkipFencingIfSDActive())
+                .addValue("skip_fencing_if_connectivity_broken", cluster.getFencingPolicy().isSkipFencingIfConnectivityBroken())
+                .addValue("hosts_with_broken_connectivity_threshold", cluster.getFencingPolicy().getHostsWithBrokenConnectivityThreshold())
+                .addValue("fencing_enabled", cluster.getFencingPolicy().isFencingEnabled())
+                .addValue("is_auto_converge", cluster.getAutoConverge())
+                .addValue("is_migrate_compressed", cluster.getMigrateCompressed())
+                .addValue("gluster_tuned_profile", cluster.getGlusterTunedProfile())
+                .addValue("ksm_merge_across_nodes", cluster.isKsmMergeAcrossNumaNodes())
+                .addValue("migration_bandwidth_limit_type", cluster.getMigrationBandwidthLimitType().name())
+                .addValue("custom_migration_bandwidth_limit", cluster.getCustomMigrationNetworkBandwidth())
+                .addValue("migration_policy_id", cluster.getMigrationPolicyId());
 
         return parameterSource;
     }
@@ -346,19 +346,19 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     }
 
     protected List<Cluster> getHostsAndVmsForClusters(List<Cluster> clusters) {
-        Map<Guid, Cluster> groupsById = new HashMap<>();
+        Map<Guid, Cluster> clustersById = new HashMap<>();
         for (Cluster cluster : clusters) {
-            groupsById.put(cluster.getId(), cluster);
+            clustersById.put(cluster.getId(), cluster);
         }
         List<ClusterHostsAndVMs> dataList = getCallsHandler().executeReadList("GetHostsAndVmsForClusters",
                 ClusterHostsAndVMsRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("cluster_ids", createArrayOf("uuid", groupsById.keySet().toArray())));
+                        .addValue("cluster_ids", createArrayOf("uuid", clustersById.keySet().toArray())));
 
-        for (ClusterHostsAndVMs groupDetail : dataList) {
-            groupsById.get(groupDetail.getClusterId()).setGroupHostsAndVms(groupDetail);
+        for (ClusterHostsAndVMs clusterDetail : dataList) {
+            clustersById.get(clusterDetail.getClusterId()).setClusterHostsAndVms(clusterDetail);
         }
-        //The VDS groups have been updated, but we want to keep the order, so return the original list which is
+        //The VDS clusters have been updated, but we want to keep the order, so return the original list which is
         //in the right order.
         return clusters;
 

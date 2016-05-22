@@ -102,7 +102,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     private OptimizationType optimizationType;
 
     private SerialNumberPolicy serialNumberPolicy;
-    private ClusterHostsAndVMs groupHostsAndVms;
+    private ClusterHostsAndVMs clusterHostsAndVms;
 
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
@@ -457,12 +457,12 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         this.migrateCompressed = migrateCompressed;
     }
 
-    public ClusterHostsAndVMs getGroupHostsAndVms() {
-        return groupHostsAndVms;
+    public ClusterHostsAndVMs getClusterHostsAndVms() {
+        return clusterHostsAndVms;
     }
 
-    public void setGroupHostsAndVms(ClusterHostsAndVMs groupHostsAndVms) {
-        this.groupHostsAndVms = groupHostsAndVms;
+    public void setClusterHostsAndVms(ClusterHostsAndVMs clusterHostsAndVms) {
+        this.clusterHostsAndVms = clusterHostsAndVms;
     }
 
     public String getGlusterTunedProfile() {
@@ -543,7 +543,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 optimizationType,
                 serialNumberPolicy,
                 customSerialNumber,
-                groupHostsAndVms,
+                clusterHostsAndVms,
                 fencingPolicy,
                 autoConverge,
                 migrateCompressed,
@@ -596,7 +596,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 && optimizationType == other.optimizationType
                 && serialNumberPolicy == other.serialNumberPolicy
                 && Objects.equals(customSerialNumber, other.customSerialNumber)
-                && Objects.equals(groupHostsAndVms, other.groupHostsAndVms)
+                && Objects.equals(clusterHostsAndVms, other.clusterHostsAndVms)
                 && Objects.equals(requiredRngSources, other.requiredRngSources)
                 && Objects.equals(fencingPolicy, other.fencingPolicy)
                 && Objects.equals(autoConverge, other.autoConverge)

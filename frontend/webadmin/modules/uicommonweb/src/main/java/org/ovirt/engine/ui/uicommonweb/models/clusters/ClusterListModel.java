@@ -361,7 +361,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         clusterModel.getAutoConverge().setSelectedItem(cluster.getAutoConverge());
         clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
         clusterModel.getGlusterTunedProfile().setSelectedItem(cluster.getGlusterTunedProfile());
-        clusterModel.getGlusterTunedProfile().setIsChangeable(cluster.getGroupHostsAndVms().getHosts() == 0);
+        clusterModel.getGlusterTunedProfile().setIsChangeable(cluster.getClusterHostsAndVms().getHosts() == 0);
         clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
         clusterModel.getMigrationBandwidthLimitType().setSelectedItem(cluster.getMigrationBandwidthLimitType() != null
                 ? cluster.getMigrationBandwidthLimitType()
@@ -402,13 +402,13 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                             }
                         };
                         AsyncDataProvider.getInstance().getVolumeList(asyncQuery, cluster.getName());
-                        if (cluster.getGroupHostsAndVms().getVms() > 0) {
+                        if (cluster.getClusterHostsAndVms().getVms() > 0) {
                             clusterModel.getEnableOvirtService().setIsChangeable(false);
                             if (!isVirtGlusterAllowed) {
                                 clusterModel.getEnableGlusterService().setIsChangeable(false);
                             }
                         }
-                        if (cluster.getGroupHostsAndVms().getHosts() > 0) {
+                        if (cluster.getClusterHostsAndVms().getHosts() > 0) {
                             clusterModel.getEnableTrustedService().setIsChangeable(false);
                             clusterModel.getEnableTrustedService().setChangeProhibitionReason(
                                     ConstantsManager.getInstance()

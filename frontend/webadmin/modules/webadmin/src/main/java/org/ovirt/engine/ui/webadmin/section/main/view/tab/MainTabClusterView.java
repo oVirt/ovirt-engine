@@ -111,10 +111,10 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Clus
         AbstractTextColumn<Cluster> hostCountColumn = new AbstractTextColumn<Cluster>() {
             @Override
             public String getValue(Cluster object) {
-                if (object.getGroupHostsAndVms() == null) {
+                if (object.getClusterHostsAndVms() == null) {
                     return ""; //$NON-NLS-1$
                 }
-                return object.getGroupHostsAndVms().getHosts() + ""; //$NON-NLS-1$
+                return object.getClusterHostsAndVms().getHosts() + ""; //$NON-NLS-1$
             }
         };
 
@@ -123,10 +123,10 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Clus
         AbstractTextColumn<Cluster> vmCountColumn = new AbstractTextColumn<Cluster>() {
             @Override
             public String getValue(Cluster object) {
-                if (object.getGroupHostsAndVms() == null) {
+                if (object.getClusterHostsAndVms() == null) {
                     return ""; //$NON-NLS-1$
                 }
-                return object.getGroupHostsAndVms().getVms() + ""; //$NON-NLS-1$
+                return object.getClusterHostsAndVms().getVms() + ""; //$NON-NLS-1$
             }
         };
 

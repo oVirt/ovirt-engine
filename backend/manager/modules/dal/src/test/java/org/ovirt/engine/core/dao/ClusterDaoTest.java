@@ -491,8 +491,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         List<Cluster> clusters = new ArrayList<>();
         clusters.add(dao.get(guid));
         List<Cluster> data = ((ClusterDaoImpl) dao).getHostsAndVmsForClusters(clusters);
-        assertEquals("Incorrect number of VMs in cluster", data.get(0).getGroupHostsAndVms().getVms(), 7);
-        assertEquals("Incorrect number of Hosts in cluster", data.get(0).getGroupHostsAndVms().getHosts(), 1);
+        assertEquals("Incorrect number of VMs in cluster", data.get(0).getClusterHostsAndVms().getVms(), 7);
+        assertEquals("Incorrect number of Hosts in cluster", data.get(0).getClusterHostsAndVms().getHosts(), 1);
     }
 
     @Test
