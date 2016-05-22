@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.ovirt.engine.core.common.businessentities.IImage;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DiskImage extends DiskImageBase implements IImage {
+public class DiskImage extends DiskImageBase {
 
     private static final long serialVersionUID = 3185087852755356847L;
 
@@ -97,12 +96,10 @@ public class DiskImage extends DiskImageBase implements IImage {
         getImage().setVolumeClassification(volumeClassification);
     }
 
-    @Override
     public Date getCreationDate() {
         return getImage().getCreationDate();
     }
 
-    @Override
     public void setCreationDate(Date creationDate) {
         getImage().setCreationDate(creationDate);
     }
@@ -170,12 +167,10 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     private String description;
 
-    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -188,12 +183,10 @@ public class DiskImage extends DiskImageBase implements IImage {
         this.appList = appList;
     }
 
-    @Override
     public Guid getImageTemplateId() {
         return getImage().getTemplateImageId();
     }
 
-    @Override
     public void setImageTemplateId(Guid guid) {
         getImage().setTemplateImageId(guid);
     }
@@ -311,27 +304,22 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     }
 
-    @Override
     public int getReadRateKbPerSec() {
         return readRateKbPerSec;
     }
 
-    @Override
     public void setReadRateKbPerSec(int readRate) {
         readRateKbPerSec = readRate;
     }
 
-    @Override
     public int getWriteRateKbPerSec() {
         return writeRateKbPerSec;
     }
 
-    @Override
     public void setWriteRateKbPerSec(int writeRate) {
         writeRateKbPerSec = writeRate;
     }
 
-    @Override
     public Object getQueryableId() {
         return getImageId();
     }
