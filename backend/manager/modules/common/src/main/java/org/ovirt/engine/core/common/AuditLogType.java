@@ -91,7 +91,7 @@ public enum AuditLogType {
     VDS_DOMAIN_DELAY_INTERVAL(524, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.HOUR.getValue()),
     VDS_LOW_DISK_SPACE(23, AuditLogSeverity.WARNING,
-            AuditLogTimeInterval.HOUR.getValue() * 12),
+            AuditLogTimeInterval.HOUR.getValue()),
     VDS_LOW_DISK_SPACE_ERROR(24, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue() * 15),
     VDS_NO_SELINUX_ENFORCEMENT(25, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue()),
