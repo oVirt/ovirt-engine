@@ -454,6 +454,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         externalVmModels.setItems(null);
     }
 
+    private void clearForLoad() {
+        clearProblem();
+        clearVms();
+    }
+
     private void loadVmwareProviders() {
         AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new INewAsyncCallback() {
             @Override
@@ -505,7 +510,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmFromOva() {
-        clearProblem();
+        clearForLoad();
         if (!validateOvaConfiguration()) {
             return;
         }
@@ -536,7 +541,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmsFromVmware() {
-        clearProblem();
+        clearForLoad();
+
         if (!validateVmwareConfiguration()) {
             return;
         }
@@ -545,7 +551,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmsFromXen() {
-        clearProblem();
+        clearForLoad();
         if (!validateXenConfiguration()) {
             return;
         }
@@ -554,7 +560,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void loadVmsFromKvm() {
-        clearProblem();
+        clearForLoad();
         if (!validateKvmConfiguration()) {
             return;
         }
