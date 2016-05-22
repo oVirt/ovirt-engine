@@ -71,6 +71,7 @@ import org.ovirt.engine.api.model.KatelloErratum;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkAttachment;
+import org.ovirt.engine.api.model.NetworkFilter;
 import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NumaNode;
@@ -177,6 +178,8 @@ import org.ovirt.engine.api.resource.MacPoolResource;
 import org.ovirt.engine.api.resource.MacPoolsResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
+import org.ovirt.engine.api.resource.NetworkFilterResource;
+import org.ovirt.engine.api.resource.NetworkFiltersResource;
 import org.ovirt.engine.api.resource.NetworkLabelResource;
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
@@ -433,6 +436,9 @@ public class LinkHelper {
 
         map = new LocationByParentMap(MacPoolResource.class, MacPoolsResource.class);
         TYPES.put(MacPool.class, map);
+
+        map = new LocationByParentMap(NetworkFilterResource.class, NetworkFiltersResource.class);
+        TYPES.put(NetworkFilter.class, map);
 
         map = new LocationByParentMap(DiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, Vm.class);

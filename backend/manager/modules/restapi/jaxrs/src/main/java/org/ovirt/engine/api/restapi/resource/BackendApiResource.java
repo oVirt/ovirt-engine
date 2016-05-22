@@ -545,8 +545,7 @@ public class BackendApiResource
 
     @Override
     public NetworkFiltersResource getNetworkFiltersResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendNetworkFiltersResource());
     }
 
     @Override
