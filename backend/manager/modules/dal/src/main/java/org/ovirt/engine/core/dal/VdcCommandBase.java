@@ -46,9 +46,4 @@ public abstract class VdcCommandBase {
     }
 
     protected abstract void executeCommand();
-
-    public Object executeWithReturnValue() {
-        execute();
-        return getReturnValue();
-    }
 }
