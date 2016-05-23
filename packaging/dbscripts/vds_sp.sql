@@ -1162,6 +1162,31 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+-- Returns all gluster VDS for a given cluster and having given status, peer status
+CREATE OR REPLACE FUNCTION getVdsForClusterWithPeerStatus (
+    v_cluster_id UUID,
+    v_status INT,
+    v_peer_status VARCHAR(50)
+    )
+RETURNS SETOF vds STABLE AS $PROCEDURE$
+BEGIN
+    BEGIN
+        RETURN QUERY
+
+        SELECT vds.*
+        FROM vds
+        INNER JOIN gluster_server
+            ON vds_id = server_id
+        WHERE (status = v_status)
+            AND (peer_status = v_peer_status)
+            AND (cluster_id = v_cluster_id)
+        ORDER BY vds.vds_id ASC;
+    END;
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 -- Returns all VDS for a given pool with one of the given statuses or in any status in case v_statuses is NULL.
 CREATE OR REPLACE FUNCTION getVdsByStoragePoolIdWithStatuses(
     v_storage_pool_id UUID,

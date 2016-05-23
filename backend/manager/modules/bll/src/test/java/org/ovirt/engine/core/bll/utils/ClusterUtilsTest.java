@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -26,7 +27,8 @@ public class ClusterUtilsTest {
     @Before
     public void mockDbFacadeAndDao() {
         vdsDao = mock(VdsDao.class);
-        when(vdsDao.getAllForClusterWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
+        when(vdsDao.getAllForClusterWithStatusAndPeerStatus(CLUSTER_ID, VDSStatus.Up,
+                PeerStatus.CONNECTED)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
 
         clusterUtils = spy(ClusterUtils.getInstance());
         doReturn(vdsDao).when(clusterUtils).getVdsDao();

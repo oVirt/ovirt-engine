@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -50,7 +51,7 @@ public class ClusterUtils {
     }
 
     public List<VDS> getAllUpServers(Guid clusterId) {
-        return getVdsDao().getAllForClusterWithStatus(clusterId, VDSStatus.Up);
+        return getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
     }
 
     public List<VDS> getAllServers(Guid clusterId) {

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -170,17 +171,14 @@ public class GlusterSyncJob extends GlusterJob {
             if (isSyncableStatus(server.getStatus())) {
                 if (glusterServer == null) {
                     if (cluster.supportsVirtService()) {
-                        // If the cluster supports virt service as well, we should not be removing any servers from it,
-                        // even
-                        // if they
-                        // have been removed from the Gluster cluster using the Gluster cli, as they could potentially
-                        // be
-                        // used for
-                        // running VMs
-                        log.debug(
-                                "As cluster '{}' supports virt service as well, server '{}' detected as removed from glusterfs will not be removed from engine",
+                        // If the cluster supports virt service as well, we should not be removing any servers from it, even
+                        // if they have been removed from the Gluster cluster using the Gluster cli, as they could
+                        // potentially be
+                        // used for running VMs. Will mark this server status as DISCONNECTED instead
+                        log.debug("As cluster '{}' supports virt service as well, server '{}' detected as removed from glusterfs will not be removed from engine",
                                 cluster.getName(),
                                 server.getHostName());
+                        setNonOperational(server);
                         continue;
                     }
                     log.info(
@@ -205,13 +203,12 @@ public class GlusterSyncJob extends GlusterJob {
                     VDSReturnValue returnValue =
                             runVdsCommand(VDSCommandType.GlusterServersList,
                                     new VdsIdVDSCommandParametersBase(server.getId()));
-                    if (!returnValue.getSucceeded() && !cluster.supportsVirtService()) {
-                        // TBD: should this done if virt service is enabled?
+                    if (!returnValue.getSucceeded()) {
                         setNonOperational(server);
                     }
                 } else {
-                    // check if all interfaces with gluster network have been peer probed.
-                    peerProbeAlternateInterfaces(glusterNetwork, server);
+                    // update correct status and check if all interfaces with gluster network have been peer probed.
+                    updateStatusAndpeerProbeOtherIface(glusterNetwork, server, glusterServer);
                 }
             }
 
@@ -236,12 +233,17 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void peerProbeAlternateInterfaces(Network glusterNetwork, VDS host) {
-        if (glusterNetwork == null || host.getStatus() != VDSStatus.Up) {
-            return;
-        }
+    private void updateStatusAndpeerProbeOtherIface(Network glusterNetwork, VDS host, GlusterServerInfo fetchedServerInfo) {
         GlusterServer glusterServer = getGlusterServerDao().get(host.getId());
         if (glusterServer == null) {
+            return;
+        }
+        if (glusterServer.getPeerStatus() == PeerStatus.DISCONNECTED
+                && fetchedServerInfo.getStatus() == PeerStatus.CONNECTED) {
+           //change the status to indicate that host is now part of cluster
+            getGlusterServerDao().updatePeerStatus(host.getId(), PeerStatus.CONNECTED);
+        }
+        if (glusterNetwork == null || host.getStatus() != VDSStatus.Up) {
             return;
         }
         List<VdsNetworkInterface> interfaces = getInterfaceDao().getAllInterfacesForVds(host.getId());
@@ -276,13 +278,13 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private VDS getAlternateUpServerInCluster(Guid clusterId, Guid vdsId) {
-        List<VDS> vdsList = getVdsDao().getAllForClusterWithStatus(clusterId, VDSStatus.Up);
+        List<VDS> vdsList = getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
         // If the cluster already having Gluster servers, get an up server
         if (vdsList.isEmpty()) {
             return null;
         }
         for (VDS vds : vdsList) {
-            if (!vdsId.equals(vds.getId())) {
+            if (!vdsId.equals(vds.getId()) && vds.getExternalStatus() == ExternalStatus.Ok) {
                 return vds;
             }
         }
@@ -324,13 +326,7 @@ public class GlusterSyncJob extends GlusterJob {
      * before they are probed.
      */
     private boolean isSyncableStatus(VDSStatus status) {
-        switch (status) {
-        case Up:
-        case Down:
-            return true;
-        default:
-            return false;
-        }
+        return status == VDSStatus.Up || status == VDSStatus.Down;
     }
 
     /**
@@ -425,13 +421,18 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void setNonOperational(VDS server) {
-        SetNonOperationalVdsParameters nonOpParams =
-                new SetNonOperationalVdsParameters(server.getId(),
-                        NonOperationalReason.GLUSTER_COMMAND_FAILED,
-                        Collections.singletonMap(GlusterConstants.COMMAND, "gluster peer status"));
-        backend.runInternalAction(VdcActionType.SetNonOperationalVds,
-                nonOpParams,
-                ExecutionHandler.createInternalJobContext());
+        Cluster cluster = getClusterDao().get(server.getClusterId());
+        if (!cluster.supportsVirtService()) {
+            SetNonOperationalVdsParameters nonOpParams =
+                    new SetNonOperationalVdsParameters(server.getId(),
+                            NonOperationalReason.GLUSTER_COMMAND_FAILED,
+                            Collections.singletonMap(GlusterConstants.COMMAND, "gluster peer status"));
+            backend.runInternalAction(VdcActionType.SetNonOperationalVds,
+                    nonOpParams,
+                    ExecutionHandler.createInternalJobContext());
+        }
+        getGlusterServerDao().updatePeerStatus(server.getId(), PeerStatus.DISCONNECTED);
+        logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_STATUS_DISCONNECTED);
     }
 
     /**

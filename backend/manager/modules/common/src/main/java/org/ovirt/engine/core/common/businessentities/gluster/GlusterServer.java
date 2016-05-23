@@ -16,6 +16,8 @@ public class GlusterServer implements BusinessEntity<Guid> {
 
     private Guid glusterServerUuid;
 
+    private PeerStatus peerStatus;
+
     public GlusterServer() {
         knownAddresses = new ArrayList<>();
     }
@@ -52,12 +54,21 @@ public class GlusterServer implements BusinessEntity<Guid> {
         this.knownAddresses = knownAddresses;
     }
 
+    public PeerStatus getPeerStatus() {
+        return peerStatus;
+    }
+
+    public void setPeerStatus(PeerStatus peerStatus) {
+        this.peerStatus = peerStatus;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
                 serverId,
                 glusterServerUuid,
-                knownAddresses
+                knownAddresses,
+                peerStatus
         );
     }
 
@@ -73,6 +84,7 @@ public class GlusterServer implements BusinessEntity<Guid> {
         GlusterServer entity = (GlusterServer) obj;
         return Objects.equals(serverId, entity.serverId)
                 && Objects.equals(glusterServerUuid, entity.glusterServerUuid)
-                && Objects.equals(knownAddresses, entity.knownAddresses);
+                && Objects.equals(knownAddresses, entity.knownAddresses)
+                && Objects.equals(peerStatus, entity.peerStatus);
     }
 }
