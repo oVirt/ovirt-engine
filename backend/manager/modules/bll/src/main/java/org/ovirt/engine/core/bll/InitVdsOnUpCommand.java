@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
@@ -408,7 +409,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_NOT_FOUND, null);
         }
         refreshGlusterStorageDevices();
-        return glusterHostUuidFound && initGlusterPeerProcess();
+        boolean ret = glusterHostUuidFound && initGlusterPeerProcess();
+        getDbFacade().getGlusterServerDao().updatePeerStatus(getVds().getId(),
+                ret == true ? PeerStatus.CONNECTED : PeerStatus.DISCONNECTED);
+        return ret;
     }
 
     private void refreshGlusterStorageDevices() {
@@ -531,6 +535,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             glusterServer = new GlusterServer();
             glusterServer.setId(getVds().getId());
             glusterServer.setGlusterServerUuid(addedServerUuid);
+            glusterServer.setPeerStatus(PeerStatus.CONNECTED);
             glusterServerDao.save(glusterServer);
         }
     }

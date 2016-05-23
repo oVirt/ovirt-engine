@@ -6,6 +6,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -176,6 +177,12 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
      * @return list of VDS instances
      */
     List<VDS> getAllForClusterWithStatus(Guid clusterId, VDSStatus status);
+
+    /**
+     * Retrieves all gluster VDS instances in the given cluster, that are in given status
+     * @return list of VDS instances
+     */
+    List<VDS> getAllForClusterWithStatusAndPeerStatus(Guid clusterId, VDSStatus status, PeerStatus peerStatus);
 
     /**
      * Retrieves all VDS instances that have a Network Interface that the given Network is attached to.

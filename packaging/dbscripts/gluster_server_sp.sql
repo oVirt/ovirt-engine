@@ -5,17 +5,20 @@ Stored procedures for database operations on gluster_server table
 --------------------------------------------------------------*/
 CREATE OR REPLACE FUNCTION InsertGlusterServer (
     v_server_id UUID,
-    v_gluster_server_uuid UUID
+    v_gluster_server_uuid UUID,
+    v_peer_status VARCHAR(20)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     INSERT INTO gluster_server (
         server_id,
-        gluster_server_uuid
+        gluster_server_uuid,
+        peer_status
         )
     VALUES (
         v_server_id,
-        v_gluster_server_uuid
+        v_gluster_server_uuid,
+        v_peer_status
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -80,6 +83,18 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE gluster_server
     SET known_addresses = v_known_addresses
+    WHERE server_id = v_server_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateGlusterServerPeerStatus (
+    v_server_id UUID,
+    v_peer_status VARCHAR(50)
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE gluster_server
+    SET peer_status = v_peer_status
     WHERE server_id = v_server_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

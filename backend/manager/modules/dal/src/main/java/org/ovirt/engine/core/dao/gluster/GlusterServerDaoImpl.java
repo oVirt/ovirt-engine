@@ -10,6 +10,8 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDao;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,6 +55,7 @@ public class GlusterServerDaoImpl extends DefaultGenericDao<GlusterServer, Guid>
             GlusterServer glusterServer = new GlusterServer();
             glusterServer.setId(getGuidDefaultEmpty(rs, "server_id"));
             glusterServer.setGlusterServerUuid(getGuidDefaultEmpty(rs, "gluster_server_uuid"));
+            glusterServer.setPeerStatus(PeerStatus.valueOf(rs.getString("peer_status")));
             String knownAddresses = rs.getString("known_addresses");
             if (StringUtils.isNotBlank(knownAddresses)) {
                 String[] knownAddressArray = knownAddresses.split(",");
@@ -69,7 +72,8 @@ public class GlusterServerDaoImpl extends DefaultGenericDao<GlusterServer, Guid>
     @Override
     protected MapSqlParameterSource createFullParametersMapper(GlusterServer entity) {
         return createIdParameterMapper(entity.getId())
-                .addValue("gluster_server_uuid", entity.getGlusterServerUuid());
+                .addValue("gluster_server_uuid", entity.getGlusterServerUuid())
+                .addValue("peer_status", EnumUtils.nameOrNull(entity.getPeerStatus()));
     }
 
     @Override
@@ -94,5 +98,12 @@ public class GlusterServerDaoImpl extends DefaultGenericDao<GlusterServer, Guid>
         getCallsHandler().executeModification("UpdateGlusterServerKnownAddresses",
                 getCustomMapSqlParameterSource().addValue("server_id", serverId)
                         .addValue("known_addresses", StringUtils.join(addresses, ",")));
+    }
+
+    @Override
+    public void updatePeerStatus(Guid serverId, PeerStatus peerStatus) {
+        getCallsHandler().executeModification("UpdateGlusterServerPeerStatus",
+                getCustomMapSqlParameterSource().addValue("server_id", serverId)
+                        .addValue("peer_status", EnumUtils.nameOrNull(peerStatus)));
     }
 }

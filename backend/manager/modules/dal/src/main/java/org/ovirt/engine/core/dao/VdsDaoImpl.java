@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
@@ -198,6 +199,17 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clusterId)
                         .addValue("status", status.getValue()));
+        return uniteAgents(vdsList);
+    }
+
+    @Override
+    public List<VDS> getAllForClusterWithStatusAndPeerStatus(Guid clusterId, VDSStatus status, PeerStatus peerStatus) {
+        List<VDS> vdsList = getCallsHandler().executeReadList("getVdsForClusterWithPeerStatus",
+                VdsRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("status", status.getValue())
+                        .addValue("peer_status", peerStatus.name()));
         return uniteAgents(vdsList);
     }
 
