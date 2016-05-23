@@ -21,6 +21,8 @@ import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -149,6 +151,9 @@ public class ImportRepoImageCopyTaskHandler
 
     private void attachDiskToTemplate(Guid templateId) {
         DiskImage templateDiskImage = getEnclosingCommand().getParameters().getDiskImage();
+        DiskVmElement dve = new DiskVmElement(templateDiskImage.getId(), templateId);
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        DbFacade.getInstance().getDiskVmElementDao().save(dve);
         VmDeviceUtils.addDiskDevice(templateId, templateDiskImage.getId());
     }
 
