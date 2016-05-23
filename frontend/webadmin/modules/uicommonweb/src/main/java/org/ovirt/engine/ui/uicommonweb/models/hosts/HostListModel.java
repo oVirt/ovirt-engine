@@ -818,7 +818,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        if (!model.getIsPm().getEntity()) {
+        if (!model.getIsPm().getEntity() && model.getFencingEnabled().getEntity()) {
             if (model.getCluster().getSelectedItem().supportsVirtService()) {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);

@@ -1701,7 +1701,8 @@ SELECT cluster.cluster_id AS cluster_id,
             -- Values (5 & 6) correspond to OriginTypes of HOSTED_ENGINE & MANAGED_HOSTED_ENGINE respectively
             AND vm_static.origin IN (5,6)) AS is_hosted_engine_host,
     vds_static.kernel_cmdline AS kernel_cmdline,
-    vds_static.last_stored_kernel_cmdline AS last_stored_kernel_cmdline
+    vds_static.last_stored_kernel_cmdline AS last_stored_kernel_cmdline,
+    cluster.fencing_enabled AS fencing_enabled
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -1847,7 +1848,8 @@ SELECT cluster.cluster_id,
     fence_agents.options AS agent_options,
     vds_dynamic.maintenance_reason AS maintenance_reason,
     vds_dynamic.is_update_available AS is_update_available,
-    vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled
+    vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled,
+    cluster.fencing_enabled AS fencing_enabled
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

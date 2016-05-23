@@ -170,15 +170,17 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         if (getCluster() != null && !getCluster().supportsVirtService()) {
             return;
         }
-
-        if (!vdsStatic.isPmEnabled()) {
-            alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
-            // remove any test failure alerts
-            AlertDirector.removeVdsAlert(vdsStatic.getId(),
-                    AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
-        } else {
-            AlertDirector.removeVdsAlert(vdsStatic.getId(),
-                    AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
+        // Check first if PM is enabled on the cluster level
+        if (getVds().isFencingEnabled()) {
+            if (!vdsStatic.isPmEnabled()) {
+                alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
+                // remove any test failure alerts
+                AlertDirector.removeVdsAlert(vdsStatic.getId(),
+                        AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
+            } else {
+                AlertDirector.removeVdsAlert(vdsStatic.getId(),
+                        AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
+            }
         }
     }
 

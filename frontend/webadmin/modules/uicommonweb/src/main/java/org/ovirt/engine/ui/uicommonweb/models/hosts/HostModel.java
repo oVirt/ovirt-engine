@@ -325,6 +325,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         pmKdumpDetection = value;
     }
 
+    private EntityModel<Boolean> fencingEnabled;
+
+    public EntityModel<Boolean> getFencingEnabled() {
+        return fencingEnabled;
+    }
+
+    private void setFencingEnabled(EntityModel<Boolean> value) {
+        fencingEnabled = value;
+    }
+
     private EntityModel<Boolean> disableAutomaticPowerManagement;
 
     public EntityModel<Boolean> getDisableAutomaticPowerManagement() {
@@ -684,6 +694,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setDisableAutomaticPowerManagement(new EntityModel<Boolean>());
         getDisableAutomaticPowerManagement().setEntity(false);
         setPmKdumpDetection(new EntityModel<Boolean>());
+        setFencingEnabled(new EntityModel<Boolean>());
         getPmKdumpDetection().setEntity(true);
 
         setPmProxyPreferencesList(new ListModel<FenceProxyModel>());
@@ -987,6 +998,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             return;
         }
 
+        getFencingEnabled().setEntity(cluster.getFencingPolicy().isFencingEnabled());
+
         AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -1170,6 +1183,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }
         getDisableAutomaticPowerManagement().setEntity(vds.isDisablePowerManagementPolicy());
         getPmKdumpDetection().setEntity(vds.isPmKdumpDetection());
+        getFencingEnabled().setEntity(vds.isFencingEnabled());
         // Set other PM parameters.
         if (isEditWithPMemphasis) {
             setIsPowerManagementTabSelected(true);

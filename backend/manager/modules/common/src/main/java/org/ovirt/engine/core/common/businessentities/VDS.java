@@ -45,6 +45,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     private float maxSchedulingMemory;
     private String certificateSubject;
     private boolean hostedEngineHost;
+    private boolean fencingEnabled;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -1511,5 +1512,13 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setHostedEngineHost(boolean value) {
         hostedEngineHost = value;
+    }
+
+    public boolean isFencingEnabled() {
+        return fencingEnabled;
+    }
+
+    public void setFencingEnabled(boolean fencingEnabled) {
+        this.fencingEnabled = fencingEnabled;
     }
 }

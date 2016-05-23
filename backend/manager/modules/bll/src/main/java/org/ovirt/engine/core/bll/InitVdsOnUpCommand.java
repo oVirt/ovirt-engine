@@ -364,17 +364,20 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
             // PM alerts
             AuditLogableBase logable = new AuditLogableBase(getVds().getId());
-            if (getVds().isPmEnabled()) {
-                if (!vdsProxyFound) {
-                    logable.addCustomValue("Reason",
-                            auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
-                    AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
-                } else if (!fenceSucceeded) {
-                    logable.addCustomValue("Reason", fenceStatusResult.getMessage());
-                    AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+            // Check first if PM is enabled on the cluster level
+            if (getVds().isFencingEnabled()) {
+                if (getVds().isPmEnabled()) {
+                    if (!vdsProxyFound) {
+                        logable.addCustomValue("Reason",
+                                auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
+                        AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                    } else if (!fenceSucceeded) {
+                        logable.addCustomValue("Reason", fenceStatusResult.getMessage());
+                        AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                    }
+                } else {
+                    AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
                 }
-            } else {
-                AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
             }
         }
 
