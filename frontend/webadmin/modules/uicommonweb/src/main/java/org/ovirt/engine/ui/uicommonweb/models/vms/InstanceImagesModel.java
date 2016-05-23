@@ -245,7 +245,7 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
             storeNextDisk(lineModelIterator, vm);
         } else {
             diskModel.setVm(vm);
-
+            diskModel.getDiskVmElement().getId().setVmId(vm.getId());
             diskModel.store(new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
