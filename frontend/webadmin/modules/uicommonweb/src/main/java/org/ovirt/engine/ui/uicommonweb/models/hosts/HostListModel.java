@@ -919,7 +919,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         host.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(model.getPmProxyPreferences()));
 
-
         // Save other PM parameters.
         host.setPmEnabled(model.getIsPm().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
@@ -1032,7 +1031,6 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
-
                         Object[] array = (Object[]) result.getState();
                         HostListModel<Void> localModel = (HostListModel<Void>) array[0];
                         boolean localApproveInitiated = (Boolean) array[1];
