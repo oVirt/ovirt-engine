@@ -575,7 +575,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         if (getVm() != null) {
             parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
-            parameters.setDiskVmElement(parameters.getDiskVmElement());
+            parameters.setDiskVmElement(getParameters().getDiskVmElement());
         }
         return parameters;
     }
