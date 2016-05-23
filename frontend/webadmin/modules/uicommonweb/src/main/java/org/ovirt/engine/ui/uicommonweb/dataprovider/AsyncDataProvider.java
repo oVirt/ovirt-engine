@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -1212,6 +1213,36 @@ public class AsyncDataProvider {
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllClusters, doRefresh ? new VdcQueryParametersBase() :
                 new VdcQueryParametersBase().withoutRefresh(), aQuery);
+    }
+
+    public void getLabelList(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
+                if (source != null) {
+                    ArrayList<Label> list = (ArrayList<Label>) source;
+                    Collections.sort(list, new NameableComparator());
+                    return list;
+                }
+                return new ArrayList<Label>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllLabels, new VdcQueryParametersBase(), aQuery);
+    }
+
+    public void getLabelListByEntityId(AsyncQuery aQuery, Guid entityId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
+                if (source != null) {
+                    ArrayList<Label> list = (ArrayList<Label>) source;
+                    Collections.sort(list, new NameableComparator());
+                    return list;
+                }
+                return new ArrayList<Label>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetLabelByEntityId, new IdQueryParameters(entityId), aQuery);
     }
 
     public void getTemplateDiskList(AsyncQuery aQuery, Guid templateId) {

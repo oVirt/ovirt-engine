@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -606,6 +607,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private HostedEngineHostModel hostedEngineHostModel;
 
+    private ListModel<Label> labelList;
+
+    public void setLabelList(ListModel<Label> labelList) {
+        this.labelList = labelList;
+    }
+
+    public ListModel<Label> getLabelList() {
+        return labelList;
+    }
+
     public HostModel() {
         setUpdateHostsCommand(new UICommand("", new ICommandTarget() { //$NON-NLS-1$
             @Override
@@ -716,7 +727,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         setNetworkProviderModel(new HostNetworkProviderModel());
         setIsDiscoveredHosts(new EntityModel<Boolean>());
-
         setKernelCmdline(new EntityModel<String>());
         setKernelCmdlineIommu(new EntityModel<>(false));
         setKernelCmdlineKvmNested(new EntityModel<>(false));
@@ -725,6 +735,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         kernelCmdlineListener = new EnableableEventListener<>(null);
         setCurrentKernelCmdLine(new EntityModel<>(""));
         setHostedEngineHostModel(new HostedEngineHostModel());
+        setLabelList(new ListModel<Label>());
+        updateLabelList();
     }
 
     private void updatePmModels() {
@@ -1394,6 +1406,42 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             }
         });
         resetKernelCmdlineCheckboxes();
+    }
+
+    private void updateLabelList() {
+        final AsyncQuery getAllLabelsQuery = new AsyncQuery();
+        getAllLabelsQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object result) {
+                final List<Label> allLabels = (List<Label>) result;
+
+                if (getIsNew()) {
+                    labelList.setItems(allLabels);
+                    labelList.setSelectedItems(new ArrayList<Label>());
+                } else {
+                    AsyncQuery getLabelsByHostIdQuery = new AsyncQuery();
+
+                    getLabelsByHostIdQuery.asyncCallback = new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            List<Label> hostLabelsList = (List<Label>) returnValue;
+
+                            labelList.setItems(allLabels);
+                            labelList.setSelectedItems(hostLabelsList);
+                        }
+                    };
+
+                    AsyncDataProvider.getInstance().getLabelListByEntityId(getLabelsByHostIdQuery, getHostId());
+                }
+
+                // This is phase 1 of this feature. Phase 2 will introduce the ability to make
+                // changes to the selected labels via the UI. Until then, labels can be set through
+                // the REST API.
+                labelList.setIsChangeable(false);
+            }
+        };
+        AsyncDataProvider.getInstance().getLabelList(getAllLabelsQuery);
     }
 
     protected abstract boolean showInstallationProperties();
