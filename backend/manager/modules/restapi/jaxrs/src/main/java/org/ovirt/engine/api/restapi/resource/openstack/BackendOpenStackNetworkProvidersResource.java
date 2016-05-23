@@ -61,18 +61,21 @@ public class BackendOpenStackNetworkProvidersResource
         if (isFiltered()) {
             return getBackendCollection(
                 VdcQueryType.GetAllProviders,
-                new GetAllProvidersParameters(ProviderType.OPENSTACK_NETWORK)
+                new GetAllProvidersParameters(ProviderType.OPENSTACK_NETWORK, ProviderType.EXTERNAL_NETWORK)
             );
         }
         else {
-            return getBackendCollection(SearchType.Provider, getConstraint());
+            List<Provider> openstackCollection = getBackendCollection(SearchType.Provider, getConstraint(ProviderType.OPENSTACK_NETWORK.name()));
+            List<Provider> externalCollection =  getBackendCollection(SearchType.Provider, getConstraint(ProviderType.EXTERNAL_NETWORK.name()));
+            openstackCollection.addAll(externalCollection);
+            return openstackCollection;
         }
     }
 
-    private String getConstraint() {
+    private String getConstraint(String providerType) {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Providers: type=");
-        buffer.append(ProviderType.OPENSTACK_NETWORK.name());
+        buffer.append(providerType);
         String query = QueryHelper.getConstraint(httpHeaders, uriInfo, null, modelType, false);
         if (StringUtils.isNotBlank(query)) {
             buffer.append(" AND (");
