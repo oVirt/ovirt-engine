@@ -51,7 +51,8 @@ RUN cd /home/ovirt && mkdir -p ovirt-engine-$VERSION \
 
 RUN cd / \
     && patch -p0 < /home/ovirt/setup.patch \
-    && rm -rf /home/ovirt/.m2
+    && rm -rf /home/ovirt/.m2 \
+    && mv /home/ovirt/99-debug.conf $OVIRT_HOME/etc/ovirt-engine/engine.conf.d/
 
 # Persist this folder to keep the generated TLS certificates on the first start
 VOLUME $OVIRT_HOME/etc/pki/ovirt-engine
