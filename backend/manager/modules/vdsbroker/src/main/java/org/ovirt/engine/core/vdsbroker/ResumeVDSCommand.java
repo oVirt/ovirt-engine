@@ -17,20 +17,24 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends Mana
 
     @Override
     protected void executeVmCommand() {
-        ResumeVDSCommandParameters parameters = getParameters();
-        VMStatus retval = VMStatus.Unknown;
-        VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.ResumeBroker, parameters);
+        getVDSReturnValue().setReturnValue(VMStatus.Unknown);
+
+        VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(
+                VDSCommandType.ResumeBroker,
+                getParameters());
+
         if (vdsReturnValue.getSucceeded()) {
-            retval = VMStatus.PoweringUp;
-            resourceManager.addAsyncRunningVm(parameters.getVmId());
+            resourceManager.addAsyncRunningVm(getParameters().getVmId());
+            getVDSReturnValue().setReturnValue(VMStatus.PoweringUp);
         } else if (vdsReturnValue.getExceptionObject() != null) {
-            log.error("VDS::pause Failed resume VM '{}' in VDS = '{}' error = '{}'", parameters
-                    .getVmId(), getParameters().getVdsId(), vdsReturnValue.getExceptionString());
+            log.error("Failed to resume VM '{}' in VDS = '{}' error = '{}'",
+                    getParameters().getVmId(),
+                    getParameters().getVdsId(),
+                    vdsReturnValue.getExceptionString());
             getVDSReturnValue().setSucceeded(false);
             getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
             getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
             getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
         }
-        getVDSReturnValue().setReturnValue(retval);
     }
 }
