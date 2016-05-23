@@ -453,8 +453,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             getBaseDiskDao().save(getParameters().getDiskInfo());
             getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
             if (getVm() != null) {
+                // The disk VM element has to be added before the VM device since as a part of the VM device creation the
+                // boot order is determined so the VM device creation depends on the existance of the disk VM element
+                addDiskVmElementForDisk(getDiskVmElement());
                 addManagedDeviceForDisk(getParameters().getDiskInfo().getId(), ((LunDisk) getParameters().getDiskInfo()).isUsingScsiReservation());
-                addDiskVmElementForDisk(getParameters().getDiskInfo().getDiskVmElementForVm(getVmId()));
             }
             return null;
         });
