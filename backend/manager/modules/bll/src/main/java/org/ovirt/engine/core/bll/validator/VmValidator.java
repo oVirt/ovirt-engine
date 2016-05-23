@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,15 +18,18 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
@@ -131,6 +135,7 @@ public class VmValidator {
     public ValidationResult canDisableVirtioScsi(Collection<? extends Disk> vmDisks) {
         if (vmDisks == null) {
             vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
+            populateDisksWithVmData(vmDisks, vm.getId());
         }
 
         boolean isVirtioScsiDiskExist =
@@ -141,6 +146,13 @@ public class VmValidator {
         }
 
         return ValidationResult.VALID;
+    }
+
+    private void populateDisksWithVmData(Collection<? extends Disk> disks, Guid vmId) {
+        for (Disk disk : disks) {
+            DiskVmElement dve = getDiskVmElementDao().get(new VmDeviceId(disk.getId(), vmId));
+            disk.setDiskVmElements(Collections.singletonList(dve));
+        }
     }
 
     public DiskDao getDiskDao() {
@@ -218,4 +230,9 @@ public class VmValidator {
         }
         return ValidationResult.VALID;
     }
+
+    protected DiskVmElementDao getDiskVmElementDao() {
+        return DbFacade.getInstance().getDiskVmElementDao();
+    }
+
 }
