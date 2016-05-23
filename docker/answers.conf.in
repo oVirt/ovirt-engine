@@ -11,6 +11,7 @@ OVESETUP_CONFIG/firewallChangesReview=none:None
 OVESETUP_CONFIG/updateFirewall=bool:False
 OVESETUP_CONFIG/remoteEngineHostSshPort=none:None
 OVESETUP_CONFIG/storageType=none:None
+OVESETUP_CONFIG/adminUserId=str:49ec00bb-34d9-4cd0-a996-44b88b7c1098
 OSETUP_RPMDISTRO/requireRollback=none:None
 OSETUP_RPMDISTRO/enableUpgrade=bool:False
 OSETUP_RPMDISTRO/offlinePackager=bool:False
