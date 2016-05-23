@@ -756,8 +756,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         // Save changes.
         buildVmOnClone(model, vm);
 
-        vm.setCustomProperties(model.getCustomProperties().getEntity());
-
         vm.setUseHostCpuFlags(model.getHostCpu().getEntity());
         vm.setDiskMap(behavior.getVm().getDiskMap());
 
