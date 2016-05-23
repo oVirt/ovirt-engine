@@ -69,6 +69,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -105,6 +106,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private DiskDao diskDao;
     @Mock
     private VmDeviceDao vmDeviceDao;
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
 
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -628,14 +631,18 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     private void mockVmValidator() {
-        mockVmValidator(vm);
-    }
-
-    private void mockVmValidator(VM paramVm) {
-        VmValidator vmValidator = spy(new VmValidator(paramVm));
-        doReturn(vmValidator).when(command).createVmValidator(paramVm);
+        VmValidator vmValidator = spy(new VmValidator(vm));
+        doReturn(vmValidator).when(command).createVmValidator(vm);
         doReturn(dbFacade).when(vmValidator).getDbFacade();
         doReturn(diskDao).when(vmValidator).getDiskDao();
+        doReturn(getNoVirtioScsiDiskElement()).when(diskVmElementDao).get(any(VmDeviceId.class));
+        doReturn(diskVmElementDao).when(vmValidator).getDiskVmElementDao();
+    }
+
+    private DiskVmElement getNoVirtioScsiDiskElement() {
+        DiskVmElement dve = new DiskVmElement(Guid.Empty, vm.getId());
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        return dve;
     }
 
     private VmDevice createVmDevice() {

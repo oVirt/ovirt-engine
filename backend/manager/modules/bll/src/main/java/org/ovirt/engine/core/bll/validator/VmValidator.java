@@ -231,7 +231,7 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
-    protected DiskVmElementDao getDiskVmElementDao() {
+    public DiskVmElementDao getDiskVmElementDao() {
         return DbFacade.getInstance().getDiskVmElementDao();
     }
 
