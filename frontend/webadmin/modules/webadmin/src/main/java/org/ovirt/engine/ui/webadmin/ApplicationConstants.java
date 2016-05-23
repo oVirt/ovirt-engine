@@ -2427,7 +2427,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String vmwareCluster();
 
-    String vmwareVerifyCredentials();
+    String vmwareSslVerification();
 
     String ovaHost();
 

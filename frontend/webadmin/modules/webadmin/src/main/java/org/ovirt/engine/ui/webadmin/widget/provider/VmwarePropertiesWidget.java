@@ -93,7 +93,7 @@ public class VmwarePropertiesWidget extends AbstractModelBoundPopupWidget<Vmware
         vmwareDatacenterEditor.setLabel(constants.vmwareDataCenter());
         vmwareClusterEditor.setLabel(constants.vmwareCluster());
         proxyHostEditor.setLabel(constants.proxyHost());
-        verifySSLEditor.setLabel(constants.vmwareVerifyCredentials());
+        verifySSLEditor.setLabel(constants.vmwareSslVerification());
     }
 
     @Override

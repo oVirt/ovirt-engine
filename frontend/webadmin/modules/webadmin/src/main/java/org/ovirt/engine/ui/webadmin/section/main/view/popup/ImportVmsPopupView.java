@@ -326,7 +326,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         esxEditor.setLabel(constants.esxi());
         vmwareDatacenterEditor.setLabel(constants.vmwareDataCenter());
         vmwareClusterEditor.setLabel(constants.vmwareCluster());
-        verifyEditor.setLabel(constants.vmwareVerifyCredentials());
+        verifyEditor.setLabel(constants.vmwareSslVerification());
         usernameEditor.setLabel(constants.usernameProvider());
         passwordEditor.setLabel(constants.passwordProvider());
         proxyHostsEditor.setLabel(constants.proxyHost());
