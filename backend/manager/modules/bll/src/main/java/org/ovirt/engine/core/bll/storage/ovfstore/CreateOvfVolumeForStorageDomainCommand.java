@@ -53,7 +53,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
 
     @Override
     protected void executeCommand() {
-        AddDiskParameters diskParameters = new AddDiskParameters(null, createDisk(getStorageDomainId()));
+        AddDiskParameters diskParameters = new AddDiskParameters(createDisk(getStorageDomainId()));
         diskParameters.setStorageDomainId(getStorageDomainId());
         diskParameters.setParentCommand(getActionType());
         diskParameters.setParentParameters(getParameters());
