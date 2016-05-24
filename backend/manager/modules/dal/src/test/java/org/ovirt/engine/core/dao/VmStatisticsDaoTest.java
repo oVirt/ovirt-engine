@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,19 +20,16 @@ import org.springframework.dao.DataIntegrityViolationException;
  */
 public class VmStatisticsDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    private static final Guid NEW_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
 
-    private VmStaticDao vmStaticDao;
     private VmStatisticsDao dao;
-    private VmStatic newVmStatic;
     private VmStatistics newVmStatistics;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        vmStaticDao = dbFacade.getVmStaticDao();
         dao = dbFacade.getVmStatisticsDao();
-        newVmStatic = vmStaticDao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001"));
         newVmStatistics = new VmStatistics();
     }
 
@@ -53,14 +49,14 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testSave() {
-        newVmStatistics.setId(newVmStatic.getId());
+        newVmStatistics.setId(NEW_VM_ID);
         newVmStatistics.setMigrationProgressPercent(0);
         newVmStatistics.setMemoryUsageHistory(Arrays.asList(2, 3, 4));
         newVmStatistics.setCpuUsageHistory(Arrays.asList(5, 6, 7));
         newVmStatistics.setNetworkUsageHistory(Collections.emptyList());
         dao.save(newVmStatistics);
 
-        VmStatistics stats = dao.get(newVmStatic.getId());
+        VmStatistics stats = dao.get(NEW_VM_ID);
 
         assertNotNull(stats);
         assertEquals(newVmStatistics, stats);
