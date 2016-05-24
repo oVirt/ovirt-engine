@@ -167,7 +167,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         assertNull(device.getSnapshotId());
 
         existingDynamic2.setId(imageGroupId);
-        Integer readRate = new Integer(120);
+        Integer readRate = 120;
         existingDynamic2.setReadRate(readRate);
 
         // test that the record is updated when the active disk is attached to the vm
