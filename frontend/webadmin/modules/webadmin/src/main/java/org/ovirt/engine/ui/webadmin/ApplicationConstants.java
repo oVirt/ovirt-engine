@@ -626,6 +626,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPopupResiliencePolicyLabel();
 
+    String clusterAdditionalMigrationProperties();
+
     String clusterPopupBandwidthLabel();
 
     String clusterPopupClusterPolicyTabLabel();

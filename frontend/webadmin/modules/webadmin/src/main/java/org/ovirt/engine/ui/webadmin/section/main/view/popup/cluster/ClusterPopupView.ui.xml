@@ -317,7 +317,6 @@
                                         <g:HTML ui:field="migrationPolicyDetails" />
                                     </b:Column>
                                 </b:Row>
-
                                 <b:Row addStyleNames="{style.groupTitle}">
                                     <b:Column size="LG_12">
                                         <g:Label text="{constants.clusterPopupBandwidthLabel}" />
@@ -349,6 +348,22 @@
                                         <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_YESEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_YesLabel}" removeFormGroup="true" usePatternFly="true" />
                                         <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_HA_ONLYEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_HaLabel}" removeFormGroup="true" usePatternFly="true" />
                                         <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_NoLabel}" removeFormGroup="true" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.groupTitle}">
+                                    <b:Column size="LG_12">
+                                        <g:Label text="{constants.clusterAdditionalMigrationProperties}" />
+                                    </b:Column>
+                                </b:Row>
+
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                     </b:Column>
                                 </b:Row>
                             </b:Container>
@@ -398,12 +413,6 @@
                                     <b:Column size="LG_12">
                                         <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" usePatternFly="true" />
                                     </b:Column>
-                                </b:Row>
-                                <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>
