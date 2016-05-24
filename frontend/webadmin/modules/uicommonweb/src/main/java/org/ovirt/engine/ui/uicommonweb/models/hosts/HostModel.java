@@ -57,6 +57,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class HostModel extends Model implements HasValidatedTabs {
     public static final int HostNameMaxLength = 255;
@@ -65,6 +66,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     public static final String RootUserName = "root"; //$NON-NLS-1$
 
     UIConstants constants = ConstantsManager.getInstance().getConstants();
+
+    private EntityModel<String> currentKernelCmdLine;
+
+    public EntityModel<String> getCurrentKernelCmdLine() {
+        return currentKernelCmdLine;
+    }
+
+    public void setCurrentKernelCmdLine(EntityModel<String> currentKernelCmdLine) {
+        this.currentKernelCmdLine = currentKernelCmdLine;
+    }
 
     private CpuVendor lastNonNullCpuVendor;
 
@@ -711,6 +722,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setKernelCmdlineUnsafeInterrupts(new EntityModel<>(false));
         setKernelCmdlinePciRealloc(new EntityModel<>(false));
         kernelCmdlineListener = new EnableableEventListener<>(null);
+
+        setCurrentKernelCmdLine(new EntityModel<>(""));
+
     }
 
     private void updatePmModels() {
@@ -1098,6 +1112,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
         getUserName().setEntity(vds.getSshUsername());
         getAuthSshPort().setEntity(vds.getSshPort());
+        if (StringUtils.isNotEmpty(vds.getKernelArgs())) {
+            getCurrentKernelCmdLine().setEntity(constants.currentKernelCmdLine() + vds.getKernelArgs());
+        }
         setPort(vds);
         boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
         getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
