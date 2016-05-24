@@ -29,6 +29,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturnForXmlRpc;
 @NonTransactiveCommandAttribute
 public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends UploadImageCommand<T> implements QuotaStorageDependent {
 
+    private static final String FILE_URL_SCHEME = "file://";
+
     public UploadDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -50,7 +52,7 @@ public class UploadDiskImageCommand<T extends UploadDiskImageParameters> extends
     protected String prepareImage(Guid vdsId) {
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                     getPrepareParameters(vdsId));
-        return ((PrepareImageReturnForXmlRpc) vdsRetVal.getReturnValue()).getImagePath();
+        return FILE_URL_SCHEME + ((PrepareImageReturnForXmlRpc) vdsRetVal.getReturnValue()).getImagePath();
     }
 
     private PrepareImageVDSCommandParameters getPrepareParameters(Guid vdsId) {
