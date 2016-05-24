@@ -28,7 +28,7 @@ public class GlusterAuditLogUtil {
     }
 
     public void logVolumeMessage(final GlusterVolumeEntity volume, final AuditLogType logType) {
-        logAuditMessage(volume.getClusterId(), volume, null, logType, Collections.<String, String> emptyMap());
+        logAuditMessage(volume.getClusterId(), volume, null, logType, Collections.emptyMap());
     }
 
     public void logServerMessage(final VDS server, final AuditLogType logType) {
@@ -36,11 +36,11 @@ public class GlusterAuditLogUtil {
                 null,
                 server,
                 logType,
-                Collections.<String, String> emptyMap());
+                Collections.emptyMap());
     }
 
     public void logClusterMessage(final Guid clusterId, final AuditLogType logType) {
-        logAuditMessage(clusterId, null, null, logType, Collections.<String, String> emptyMap());
+        logAuditMessage(clusterId, null, null, logType, Collections.emptyMap());
     }
 
     public void logAuditMessage(final Guid clusterId,
