@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -16,6 +17,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.view.client.CellPreviewEvent;
 
 /**
  * <p>
@@ -23,7 +25,7 @@ import com.google.gwt.user.client.DOM;
  * Supports rendering Element ids via the oVirt Element-ID framework.
  * </p>
  */
-public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implements Cell<Boolean> {
+public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implements Cell<Boolean>, EventHandlingCell {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<input id=\"{0}\" type=\"checkbox\" tabindex=\"-1\" checked style=\"{1}\"/>")
@@ -161,5 +163,10 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
 
     public void setTooltip(SafeHtml tooltip) {
         this.tooltip = tooltip;
+    }
+
+    @Override
+    public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
+        return true;
     }
 }
