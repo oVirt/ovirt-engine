@@ -876,6 +876,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setOnlineCpus(assignStringValue(xmlRpcStruct, VdsProperties.online_cpus));
         vds.setCpuSpeedMh(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_speed_mh));
         vds.setPhysicalMemMb(assignIntValue(xmlRpcStruct, VdsProperties.physical_mem_mb));
+        vds.setKernelArgs(assignStringValue(xmlRpcStruct, VdsProperties.kernel_args));
 
         vds.setKvmEnabled(assignBoolValue(xmlRpcStruct, VdsProperties.kvm_enabled));
 

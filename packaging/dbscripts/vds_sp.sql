@@ -257,7 +257,8 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_supported_rng_sources VARCHAR(255),
     v_online_cpus TEXT,
     v_is_update_available BOOLEAN,
-    v_is_hostdev_enabled BOOLEAN
+    v_is_hostdev_enabled BOOLEAN,
+    v_kernel_args TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -320,7 +321,8 @@ BEGIN
             supported_rng_sources,
             online_cpus,
             is_update_available,
-            is_hostdev_enabled
+            is_hostdev_enabled,
+            kernel_args
             )
         VALUES (
             v_cpu_cores,
@@ -380,7 +382,8 @@ BEGIN
             v_supported_rng_sources,
             v_online_cpus,
             v_is_update_available,
-            v_is_hostdev_enabled
+            v_is_hostdev_enabled,
+            v_kernel_args
             );
     END;
 
@@ -463,7 +466,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_online_cpus TEXT,
     v_maintenance_reason TEXT,
     v_is_update_available BOOLEAN,
-    v_is_hostdev_enabled BOOLEAN
+    v_is_hostdev_enabled BOOLEAN,
+    v_kernel_args TEXT
     )
 RETURNS VOID
     --The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -529,7 +533,8 @@ BEGIN
             online_cpus = v_online_cpus,
             maintenance_reason = v_maintenance_reason,
             is_update_available = v_is_update_available,
-            is_hostdev_enabled = v_is_hostdev_enabled
+            is_hostdev_enabled = v_is_hostdev_enabled,
+            kernel_args = v_kernel_args
         WHERE vds_id = v_vds_id;
     END;
 
