@@ -140,6 +140,8 @@ public class ImportRepoImageCopyTaskHandler
             masterVm.setDefaultDisplayType(defaultDisplayType.getSecond());
         }
 
+
+        parameters.setBalloonEnabled(true);
         VdcReturnValueBase addVmTemplateReturnValue =
                 Backend.getInstance().runInternalAction(VdcActionType.AddVmTemplate,
                         parameters,
