@@ -16,6 +16,7 @@ import java.util.List;
 import javax.net.ssl.SSLException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -64,6 +65,10 @@ public abstract class BaseProviderProxy implements ProviderProxy {
                         CertificateChain.getSSLPeerCertificates(url),
                         CertificateChain.keyStoreToTrustAnchors( ExternalTrustStoreInitializer.getTrustStore()));
             } catch (IOException | GeneralSecurityException e) {
+                log.error("Failed to communicate with external provider '{}' due to error '{}'",
+                        hostProvider.getName(),
+                        ExceptionUtils.getRootCauseMessage(e));
+                log.debug("Exception", e);
                 handleException(e);
             }
         }
