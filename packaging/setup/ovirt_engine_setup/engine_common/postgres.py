@@ -434,9 +434,9 @@ class Provisioning(base.Base):
 
     def applyEnvironment(self):
         for k in DEK.DEFAULTS_KEYS:
-            if self.environment[self._dbenvkeys[k]] is None:
+            if self.environment.get(self._dbenvkeys[k]) is None:
                 self.environment[self._dbenvkeys[k]] = self._defaults[k]
-        if self.environment[self._dbenvkeys[DEK.PASSWORD]] is None:
+        if self.environment.get(self._dbenvkeys[DEK.PASSWORD]) is None:
             self.environment[
                 self._dbenvkeys[DEK.PASSWORD]
             ] = self.generatePassword()
