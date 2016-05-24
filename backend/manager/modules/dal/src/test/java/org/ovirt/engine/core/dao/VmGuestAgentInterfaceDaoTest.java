@@ -77,7 +77,7 @@ public class VmGuestAgentInterfaceDaoTest extends BaseDaoTestCase {
         guestAgentInterface.setMacAddress("AA:AA:AA:AA:AA:AA");
         guestAgentInterface.setInterfaceName("p2p3");
         guestAgentInterface.setIpv4Addresses(Arrays.asList("1.1.1.1", "2.2.2.2", "3.3.3.3"));
-        guestAgentInterface.setIpv6Addresses(Collections.<String>emptyList());
+        guestAgentInterface.setIpv6Addresses(Collections.emptyList());
         return guestAgentInterface;
     }
 
