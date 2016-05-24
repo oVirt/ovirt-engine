@@ -188,6 +188,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean hostDevicePassthroughEnabled;
 
+    private String kernelArgs;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -759,6 +761,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         return hostDevicePassthroughEnabled;
     }
 
+    public String getKernelArgs() {
+        return kernelArgs;
+    }
+
+    public void setKernelArgs(String kernelArgs) {
+        this.kernelArgs = kernelArgs;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -822,7 +832,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 additionalFeatures,
                 maintenanceReason,
                 updateAvailable,
-                hostDevicePassthroughEnabled
+                hostDevicePassthroughEnabled,
+                kernelArgs
         );
     }
 
@@ -897,6 +908,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(maintenanceReason, other.maintenanceReason)
                 && updateAvailable == other.updateAvailable
                 && Objects.equals(additionalFeatures, other.additionalFeatures)
+                && Objects.equals(kernelArgs, other.kernelArgs)
                 && Objects.equals(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled);
     }
 }

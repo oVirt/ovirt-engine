@@ -22,6 +22,7 @@ public final class VdsProperties {
     public static final String cpu_speed_mh = "cpuSpeed";
     public static final String kvm_enabled = "kvmEnabled";
     public static final String physical_mem_mb = "memSize";
+    public static final String kernel_args = "kernelArgs";
     public static final String Protocol = "protocol";
     public static final String reservedMem = "reservedMem";
     public static final String bootTime = "bootTime";

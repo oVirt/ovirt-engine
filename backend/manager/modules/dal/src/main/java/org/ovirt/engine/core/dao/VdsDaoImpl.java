@@ -428,6 +428,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             entity.setHostedEngineHost(rs.getBoolean("is_hosted_engine_host"));
             VdsStaticDaoImpl.KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVds(entity);
             entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
+            entity.setKernelArgs(rs.getString("kernel_args"));
             return entity;
         }
     }
