@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -170,7 +171,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         existingDynamic2.setReadRate(readRate);
 
         // test that the record is updated when the active disk is attached to the vm
-        dao.updateAllDiskImageDynamicWithDiskIdByVmId(Arrays.asList(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
+        dao.updateAllDiskImageDynamicWithDiskIdByVmId(Collections.singleton(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
                 existingDynamic2)));
 
         existingDynamic2.setId(imageId);
@@ -181,7 +182,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         dbFacade.getVmDeviceDao().update(device);
 
         existingDynamic2.setReadRate(150);
-        dao.updateAllDiskImageDynamicWithDiskIdByVmId(Arrays.asList(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
+        dao.updateAllDiskImageDynamicWithDiskIdByVmId(Collections.singleton(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
                 existingDynamic2)));
         assertEquals(readRate, dao.get(imageId).getReadRate());
     }
