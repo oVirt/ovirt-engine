@@ -117,6 +117,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
 
     private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds, boolean succeeded) {
         if (shouldExecuteEndMethod(commandBase)) {
+            commandBase.getReturnValue().setSucceeded(false);
             VdcReturnValueBase returnVal = commandBase.endAction();
 
             if (!returnVal.getSucceeded() && shouldRepeatEndMethodsOnFail(returnVal)) {
