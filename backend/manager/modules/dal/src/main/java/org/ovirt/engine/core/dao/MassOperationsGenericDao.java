@@ -57,7 +57,7 @@ public abstract class MassOperationsGenericDao<T extends BusinessEntity<ID>, ID 
 
         // To overcome possible deadlocks, we need to sort the collection
         List<T> sortedParamValues = new ArrayList<>(paramValues);
-        Collections.sort(sortedParamValues, BusinessEntityComparator.<T, ID> newInstance());
+        Collections.sort(sortedParamValues, BusinessEntityComparator.newInstance());
         getCallsHandler().executeStoredProcAsBatch(procedureName == null ? getProcedureNameForUpdate() : procedureName,
                 sortedParamValues, mapper);
     }
