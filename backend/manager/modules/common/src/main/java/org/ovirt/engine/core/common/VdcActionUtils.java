@@ -34,7 +34,8 @@ public final class VdcActionUtils {
                 VDSStatus.Up,
                 EnumSet.of(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
-                        VdcActionType.ApproveVds, VdcActionType.StartVds, VdcActionType.StopVds));
+                        VdcActionType.ApproveVds, VdcActionType.StartVds,
+                        VdcActionType.StopVds, VdcActionType.VdsPowerDown));
         vdsMatrix.put(
                 VDSStatus.Error,
                 EnumSet.of(VdcActionType.RemoveVds,
@@ -48,7 +49,7 @@ public final class VdcActionUtils {
                         VdcActionType.ClearNonResponsiveVdsVms,
                         VdcActionType.ApproveVds, VdcActionType.MaintenanceVds, VdcActionType.StartVds,
                         VdcActionType.StopVds, VdcActionType.RefreshHostCapabilities,
-                        VdcActionType.UpgradeHost));
+                        VdcActionType.UpgradeHost, VdcActionType.VdsPowerDown));
         vdsMatrix.put(
                 VDSStatus.NonResponsive,
                 EnumSet.of(VdcActionType.RemoveVds, VdcActionType.ActivateVds,
@@ -118,7 +119,9 @@ public final class VdcActionUtils {
                 EnumSet.of(VdcActionType.ActivateVds,
                         VdcActionType.ApproveVds,
                         VdcActionType.RefreshHostCapabilities,
-                        VdcActionType.UpgradeHost));
+                        VdcActionType.UpgradeHost,
+                        VdcActionType.SshHostReboot,
+                        VdcActionType.VdsPowerDown));
 
         vdsMatrix.put(
                 VDSStatus.Kdumping,

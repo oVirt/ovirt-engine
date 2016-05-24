@@ -1112,6 +1112,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String management();
 
+    String sshManagement();
+
     String installation();
 
     String configureLocalStorageHost();

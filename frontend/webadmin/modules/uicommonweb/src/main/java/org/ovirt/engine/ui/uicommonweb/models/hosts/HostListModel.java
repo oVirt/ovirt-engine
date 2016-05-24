@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
@@ -203,6 +204,26 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     private void setUpgradeCommand(UICommand value) {
         privateUpgradeCommand = value;
+    }
+
+    private UICommand privateSshRestartCommand;
+
+    public UICommand getSshRestartCommand() {
+        return privateSshRestartCommand;
+    }
+
+    private void setSshRestartCommand(UICommand value) {
+        privateSshRestartCommand = value;
+    }
+
+    private UICommand privateSshStopCommand;
+
+    public UICommand getSshStopCommand() {
+        return privateSshStopCommand;
+    }
+
+    private void setSshStopCommand(UICommand value) {
+        privateSshStopCommand = value;
     }
 
     private UICommand privateRestartCommand;
@@ -391,6 +412,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         setApproveCommand(new UICommand("Approve", this)); //$NON-NLS-1$
         setInstallCommand(new UICommand("Install", this)); //$NON-NLS-1$
         setUpgradeCommand(new UICommand("Upgrade", this)); //$NON-NLS-1$
+        setSshRestartCommand(new UICommand("Restart", this, true)); //$NON-NLS-1$
+        setSshStopCommand(new UICommand("Stop", this, true)); //$NON-NLS-1$
         setRestartCommand(new UICommand("Restart", this, true)); //$NON-NLS-1$
         setStartCommand(new UICommand("Start", this, true)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this, true)); //$NON-NLS-1$
@@ -1372,7 +1395,23 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); // $NON-NLS-1$
     }
 
+    public void sshRestart() {
+        restart("OnSshRestart");  //$NON-NLS-1$
+    }
+
     public void restart() {
+        restart("OnRestart");  //$NON-NLS-1$
+    }
+
+    public void stop() {
+        stop("OnStop");  //$NON-NLS-1$
+    }
+
+    public void sshStop() {
+        stop("OnSshStop");  //$NON-NLS-1$
+    }
+
+    public void restart(String uiCommand) {
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final UIMessages messages = ConstantsManager.getInstance().getMessages();
         ConfirmationModel model = new ConfirmationModel();
@@ -1393,7 +1432,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRestart", this); //$NON-NLS-1$
+        UICommand tempVar = new UICommand(uiCommand, this); //$NON-NLS-1$
         tempVar.setTitle(constants.ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
@@ -1401,6 +1440,63 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         tempVar2.setTitle(constants.cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
+    }
+
+    public void onSshStop() {
+        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+        if (model.getProgress() != null) {
+            return;
+        }
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        for (Object item : getSelectedItems()) {
+            VDS vds = (VDS) item;
+            VdsPowerDownParameters param = new VdsPowerDownParameters(vds.getId());
+            param.setFallbackToPowerManagement(false);
+            param.setKeepPolicyPMEnabled(true);
+            list.add(param);
+        }
+
+        model.startProgress();
+
+        Frontend.getInstance().runMultipleAction(
+            VdcActionType.VdsPowerDown, list,
+            new IFrontendMultipleActionAsyncCallback() {
+                @Override
+                public void executed(FrontendMultipleActionAsyncResult result) {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancelConfirm();
+                }
+            },
+            model
+        );
+    }
+
+    public void onSshRestart() {
+        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+        if (model.getProgress() != null) {
+            return;
+        }
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        for (Object item : getSelectedItems()) {
+            VDS vds = (VDS) item;
+            list.add(new VdsActionParameters(vds.getId()));
+        }
+
+        model.startProgress();
+
+        Frontend.getInstance().runMultipleAction(
+            VdcActionType.SshHostReboot, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancelConfirm();
+                    }
+                },
+                model
+        );
     }
 
     public void onRestart() {
@@ -1447,7 +1543,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, null);
     }
 
-    public void stop() {
+    public void stop(String uiCommand) {
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().stopHostsTitle());
@@ -1462,7 +1558,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
         model.setItems(items);
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnStop", this); //$NON-NLS-1$
+        UICommand tempVar = UICommand.createDefaultOkUiCommand(uiCommand, this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
@@ -1753,6 +1849,12 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.MaintenanceVds));
 
+        getSshRestartCommand().setIsExecutionAllowed(items.size() > 0
+            && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.SshHostReboot));
+
+        getSshStopCommand().setIsExecutionAllowed(items.size() > 0
+            && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.VdsPowerDown));
+
         getRestartCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.RestartVds) && isAllPMEnabled);
 
@@ -1890,6 +1992,12 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         else if (command == getUpgradeCommand()) {
             upgrade();
         }
+        else if (command == getSshRestartCommand()) {
+            sshRestart();
+        }
+        else if (command == getSshStopCommand()) {
+            sshStop();
+        }
         else if (command == getRestartCommand()) {
             restart();
         }
@@ -1952,6 +2060,12 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
         else if ("OnInstall".equals(command.getName())) { //$NON-NLS-1$
             onInstall();
+        }
+        else if ("OnSshRestart".equals(command.getName())) { //$NON-NLS-1$
+            onSshRestart();
+        }
+        else if ("OnSshStop".equals(command.getName())) { //$NON-NLS-1$
+            onSshStop();
         }
         else if ("OnRestart".equals(command.getName())) { //$NON-NLS-1$
             onRestart();

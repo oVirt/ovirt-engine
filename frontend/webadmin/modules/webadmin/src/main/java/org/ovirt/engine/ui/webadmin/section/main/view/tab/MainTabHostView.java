@@ -333,12 +333,33 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getStopCommand();
             }
         });
+        // Remote management via SSH drop down
+        List<ActionButtonDefinition<VDS>> sshSubActions = new LinkedList<>();
+
+        sshSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getSshRestartCommand();
+            }
+        });
+        sshSubActions.add(new WebAdminButtonDefinition<VDS>(constants.stopHost()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getSshStopCommand();
+            }
+        });
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             managementSubActions.add(
                 new WebAdminMenuBarButtonDefinition<>(
                     constants.pmHost(),
                     pmSubActions
+                )
+            );
+            managementSubActions.add(
+                new WebAdminMenuBarButtonDefinition<>(
+                    constants.sshManagement(),
+                    sshSubActions
                 )
             );
         }
