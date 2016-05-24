@@ -375,6 +375,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     DialogTab kernelTab;
 
+    @UiField
+    @Path("currentKernelCmdLine.entity")
+    Label currentKernelCmdLine;
+
     @UiField(provided = true)
     @Path("kernelCmdlineIommu.entity")
     EntityModelCheckBoxEditor kernelCmdlineIommu;

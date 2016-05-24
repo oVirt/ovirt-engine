@@ -391,6 +391,11 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
+                                        <g:Label ui:field="currentKernelCmdLine"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="kernelCmdlineIommu"
                                                                       label="{constants.hostKernelCmdlineIommu}"
                                                                       removeFormGroup="true"
