@@ -325,6 +325,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
             }
         };
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+        clusterModel.initMigrationPolicies(false);
     }
 
     public void edit() {
@@ -417,6 +418,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                         }
             }
         }));
+
+        clusterModel.initMigrationPolicies(true);
 
         if (getSystemTreeSelectedItem() != null && (getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster ||
                 getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster_Gluster)) {

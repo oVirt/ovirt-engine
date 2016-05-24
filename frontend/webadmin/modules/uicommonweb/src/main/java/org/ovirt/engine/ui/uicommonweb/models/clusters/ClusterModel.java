@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterF
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
+import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
@@ -62,6 +63,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTabs {
     private Map<Guid, PolicyUnit> policyUnitMap;
@@ -888,6 +890,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setEnableHaReservation(new EntityModel<>(false));
         setEnableOptionalReason(new EntityModel<>(false));
         setMigrationPolicies(new ListModel<MigrationPolicy>());
+        getMigrationPolicies().getSelectedItemChangedEvent().addListener(this);
         getEnableOptionalReason().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         setEnableHostMaintenanceReason(new EntityModel<>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
@@ -1280,7 +1283,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }));
         setCustomMigrationNetworkBandwidth(new EntityModel<Integer>());
         setMigrationBandwidthLimitType(new ListModel<MigrationBandwidthLimitType>());
+    }
 
+    public void initMigrationPolicies(boolean isEdit) {
         List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies();
         getMigrationPolicies().setItems(policies);
         if (isEdit) {
@@ -1503,6 +1508,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             else if (sender == getArchitecture()) {
                 architectureSelectedItemChanged(args);
             }
+            else if (sender == getMigrationPolicies()) {
+                migrationPoliciesChanged();
+            }
         }
         else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             EntityModel senderEntityModel = (EntityModel) sender;
@@ -1552,6 +1560,15 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }
             }
         }
+    }
+
+    private void migrationPoliciesChanged() {
+        boolean hasMigrationPolicy = getMigrationPolicies().getSelectedItem() != null
+                && !NoMigrationPolicy.ID.equals(getMigrationPolicies().getSelectedItem().getId());
+
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+        getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithNoMigrationPolicy());
+        getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithNoMigrationPolicy());
     }
 
     private void architectureSelectedItemChanged(EventArgs args) {
@@ -1647,8 +1664,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         updateMigrateOnError();
 
-        updateMigrationOptions();
-
         getMigrationPolicies().updateChangeability(ConfigurationValues.MigrationPoliciesSupported, version);
 
         refreshAdditionalClusterFeaturesList();
@@ -1739,16 +1754,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         List<List<AdditionalFeature>> clusterFeatureList = new ArrayList<>();
         clusterFeatureList.add(features);
         getAdditionalClusterFeatures().setItems(clusterFeatureList, selectedFeatures);
-    }
-
-    private void updateMigrationOptions() {
-        Version version = getVersion().getSelectedItem();
-        if (version == null) {
-            return;
-        }
-
-        autoConverge.setIsChangeable(true);
-        migrateCompressed.setIsChangeable(true);
     }
 
     private void updateMigrateOnError() {
