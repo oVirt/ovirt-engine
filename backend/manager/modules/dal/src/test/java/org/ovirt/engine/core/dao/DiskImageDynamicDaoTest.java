@@ -148,7 +148,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         existingDynamic.setReadLatency(100d);
         existingDynamic2.setReadLatency(0.00001d);
 
-        dao.updateAll(Arrays.asList(new DiskImageDynamic[] { existingDynamic, existingDynamic2 }));
+        dao.updateAll(Arrays.asList(existingDynamic, existingDynamic2));
 
         assertEquals(existingDynamic, dao.get(existingDynamic.getId()));
         assertEquals(existingDynamic2, dao.get(existingDynamic2.getId()));
