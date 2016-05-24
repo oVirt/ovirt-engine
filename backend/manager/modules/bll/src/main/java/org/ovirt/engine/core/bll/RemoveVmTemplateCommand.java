@@ -283,8 +283,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 }
                 return null;
             });
-        } else {
-            // if for some reason template doesn't have images, remove it now and not in end action
+        }
+        // if for some reason template doesn't have images, remove it now and not in end action
+        if (noAsyncOperations()) {
             handleEndAction();
         }
     }
