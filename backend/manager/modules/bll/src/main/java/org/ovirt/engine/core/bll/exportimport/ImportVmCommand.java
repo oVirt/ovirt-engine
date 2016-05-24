@@ -762,9 +762,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 saveBaseDisk(disk);
-                if (getParameters().isImportAsNewEntity()) {
-                    saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getVmId()));
-                }
+                saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getParameters().getVmId()));
                 saveDiskImageDynamic(disk);
             }
 

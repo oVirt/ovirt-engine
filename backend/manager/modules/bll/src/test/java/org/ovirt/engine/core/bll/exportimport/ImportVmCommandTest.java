@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -430,6 +431,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).saveImage(collapsedDisk);
         doNothing().when(cmd).saveBaseDisk(collapsedDisk);
         doNothing().when(cmd).saveDiskImageDynamic(collapsedDisk);
+        doNothing().when(cmd).saveDiskVmElement(any(Guid.class), any(Guid.class), any(DiskVmElement.class));
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", collapsedDisk.getDiskAlias());
@@ -504,9 +506,11 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cmd.init();
 
         DiskImage activeDisk = params.getVm().getImages().get(0);
+
         doNothing().when(cmd).saveImage(activeDisk);
         doNothing().when(cmd).saveDiskImageDynamic(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
+        doNothing().when(cmd).saveDiskVmElement(any(Guid.class), any(Guid.class), any(DiskVmElement.class));
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
 
         cmd.addVmImagesAndSnapshots();
