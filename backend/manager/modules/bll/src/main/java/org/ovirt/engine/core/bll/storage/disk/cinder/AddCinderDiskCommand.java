@@ -42,8 +42,10 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
         CinderDisk cinderDisk = createCinderDisk();
         String volumeId = getCinderBroker().createDisk(cinderDisk);
 
-        cinderDisk.setId(Guid.createGuidFromString(volumeId));
-        cinderDisk.setImageId(Guid.createGuidFromString(volumeId));
+        Guid volumeGuid = Guid.createGuidFromString(volumeId);
+        cinderDisk.setId(volumeGuid);
+        cinderDisk.setImageId(volumeGuid);
+        getDiskVmElement().getId().setDeviceId(volumeGuid);
         cinderDisk.setVolumeClassification(VolumeClassification.Volume);
         addCinderDiskToDB(cinderDisk);
 
@@ -65,8 +67,8 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
             getDiskImageDynamicDao().save(diskDynamic);
 
             if (getVm() != null) {
-                addManagedDeviceForDisk(cinderDisk.getId());
                 addDiskVmElementForDisk(getDiskVmElement());
+                addManagedDeviceForDisk(cinderDisk.getId());
             }
             return null;
         });
