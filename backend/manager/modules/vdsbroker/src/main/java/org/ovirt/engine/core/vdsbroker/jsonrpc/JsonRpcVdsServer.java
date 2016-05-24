@@ -1765,7 +1765,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         ticketDict.put("timeout", timeout);
         ticketDict.put("ops", ops);
         ticketDict.put("size", size);
-        ticketDict.put("path", url);  // ovirt-image-daemon still expects "path"
+        ticketDict.put("url", url);
 
         JsonRpcRequest request =
                 new RequestBuilder("Host.add_image_ticket")
