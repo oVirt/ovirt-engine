@@ -434,10 +434,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private void createNewDiskId() {
-        Guid newDiskId = Guid.newGuid();
-        getParameters().getDiskInfo().setId(newDiskId);
+        Guid diskId = getParameters().isUsePassedDiskId() ? getParameters().getDiskInfo().getId() : Guid.newGuid();
+        getParameters().getDiskInfo().setId(diskId);
         if (!isFloatingDisk()) {
-            getDiskVmElement().getId().setDeviceId(newDiskId);
+            getDiskVmElement().getId().setDeviceId(diskId);
         }
     }
 
@@ -504,6 +504,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setQuotaId(getQuotaId());
         parameters.setDiskProfileId(getDiskImageInfo().getDiskProfileId());
         parameters.setDiskAlias(getDiskAlias());
+        if (getParameters().isUsePassedImageId()) {
+            parameters.setDestinationImageId(getDiskImageInfo().getImageId());
+        }
+        parameters.setLeaveLocked(getParameters().isShouldRemainLockedOnSuccesfulExecution());
         parameters.setShouldRemainIllegalOnFailedExecution(getParameters().isShouldRemainIllegalOnFailedExecution());
         parameters.setStorageDomainId(getStorageDomainId());
 

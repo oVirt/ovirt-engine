@@ -15,6 +15,7 @@ public class ImportRepoImageParameters extends ImagesActionsParametersBase {
     private Guid clusterId;
     private boolean importAsTemplate;
     private String templateName;
+    private Phase nextPhase;
 
     public String getSourceRepoImageId() {
         return sourceRepoImageId;
@@ -62,5 +63,17 @@ public class ImportRepoImageParameters extends ImagesActionsParametersBase {
 
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
+    }
+
+    public Phase getNextPhase() {
+        return nextPhase;
+    }
+
+    public void setNextPhase(Phase nextPhase) {
+        this.nextPhase = nextPhase;
+    }
+
+    public enum Phase {
+        DOWNLOAD, END;
     }
 }

@@ -1,43 +1,59 @@
 package org.ovirt.engine.core.bll.storage.repoimage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
+import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageException;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
-import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.action.DownloadImageCommandParameters;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
-@SuppressWarnings("unused")
-@NonTransactiveCommandAttribute
-public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends BaseImagesCommand<T>
-        implements TaskHandlerCommand<ImportRepoImageParameters>, QuotaStorageDependent {
+public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T> implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     private OpenStackImageProviderProxy providerProxy;
 
@@ -56,8 +72,94 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         }
     }
 
-    protected ProviderProxyFactory getProviderProxyFactory() {
-        return ProviderProxyFactory.getInstance();
+    @Override
+    protected void executeCommand() {
+        setupParameters();
+        persistCommand(getParameters().getParentCommand(), true);
+        Backend.getInstance().runInternalAction(VdcActionType.AddDisk,
+                createAddDiskParameters(),
+                ExecutionHandler.createDefaultContextForTasks(getContext()));
+        getParameters().setNextPhase(ImportRepoImageParameters.Phase.DOWNLOAD);
+        persistCommand(getParameters().getParentCommand(), true);
+        setSucceeded(true);
+    }
+
+    private void setupParameters() {
+        getParameters().setImageGroupID(Guid.newGuid());
+        getParameters().setDestinationImageId(Guid.newGuid());
+        getParameters().setEntityInfo(
+                new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupID()));
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return new SerialChildCommandsExecutionCallback();
+    }
+
+    protected AddDiskParameters createAddDiskParameters() {
+        DiskImage diskImage = getParameters().getDiskImage();
+        ArrayList<Guid> storageIds = new ArrayList<>();
+        storageIds.add(getParameters().getStorageDomainId());
+        diskImage.setDiskAlias(getParameters().getDiskAlias());
+        diskImage.setStorageIds(storageIds);
+        diskImage.setStoragePoolId(getParameters().getStoragePoolId());
+        diskImage.setId(getParameters().getImageGroupID());
+        diskImage.setDiskProfileId(getParameters().getDiskProfileId());
+        diskImage.setImageId(getParameters().getDestinationImageId());
+        diskImage.setQuotaId(getParameters().getQuotaId());
+        AddDiskParameters parameters = new AddDiskParameters(diskImage);
+        parameters.setStorageDomainId(getParameters().getStorageDomainId());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setShouldRemainIllegalOnFailedExecution(true);
+        parameters.setShouldRemainLockedOnSuccesfulExecution(true);
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setUsePassedDiskId(true);
+        parameters.setUsePassedImageId(true);
+        return parameters;
+    }
+
+    private HttpLocationInfo prepareRepoImageLocation() {
+        return new HttpLocationInfo(
+                getProviderProxy().getImageUrl(getParameters().getSourceRepoImageId()),
+                getProviderProxy().getDownloadHeaders());
+    }
+
+    protected DownloadImageCommandParameters createDownloadImageParameters() {
+        DownloadImageCommandParameters parameters = new DownloadImageCommandParameters();
+        parameters.setDestinationImageId(getParameters().getDestinationImageId());
+        parameters.setStoragePoolId(getParameters().getStoragePoolId());
+        parameters.setStorageDomainId(getParameters().getStorageDomainId());
+        parameters.setImageGroupID(getParameters().getImageGroupID());
+        parameters.setHttpLocationInfo(prepareRepoImageLocation());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        return parameters;
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        if (getParameters().getNextPhase() == ImportRepoImageParameters.Phase.DOWNLOAD) {
+            getParameters().setNextPhase(ImportRepoImageParameters.Phase.END);
+            persistCommand(getParameters().getParentCommand(), true);
+            Backend.getInstance().runInternalAction(VdcActionType.DownloadImage,
+                    createDownloadImageParameters(),
+                    ExecutionHandler.createDefaultContextForTasks(getContext()));
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void handleFailure() {
+        updateDiskStatus(ImageStatus.ILLEGAL);
+        removeDisk();
+    }
+
+    public void removeDisk() {
+        Backend.getInstance().runInternalAction(VdcActionType.RemoveDisk,
+                new RemoveDiskParameters(getParameters().getImageGroupID()));
     }
 
     protected OpenStackImageProviderProxy getProviderProxy() {
@@ -69,50 +171,76 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     }
 
     @Override
-    protected List<SPMAsyncTaskHandler> initTaskHandlers() {
-        return Arrays.<SPMAsyncTaskHandler> asList(
-                new ImportRepoImageCreateTaskHandler(this),
-                new ImportRepoImageCopyTaskHandler(this)
-        );
-    }
-
-    /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */
-
-    @Override
-    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
-                           VdcActionType parentCommand, VdcObjectType entityType, Guid... entityIds) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
-    }
-
-    @Override
-    public void preventRollback() {
-        getParameters().setExecutionIndex(0);
-    }
-
-    @Override
-    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder() {
-        return super.persistAsyncTaskPlaceHolder(getActionType());
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
-    }
-
-    @Override
-    public ArrayList<Guid> getTaskIdList() {
-        return super.getTaskIdList();
-    }
-
-    @Override
-    public void taskEndSuccessfully() {
+    public void endSuccessfully() {
         super.endSuccessfully();
+        if (getParameters().getImportAsTemplate()) {
+            Guid newTemplateId = createTemplate();
+            // No reason for this to happen, but checking just to make sure
+            if (newTemplateId != null) {
+                attachDiskToTemplate(newTemplateId);
+            }
+        }
+        updateDiskStatus(ImageStatus.OK);
+        setSucceeded(true);
     }
+
+    @Override
+    public void endWithFailure() {
+        updateDiskStatus(ImageStatus.ILLEGAL);
+        setSucceeded(true);
+    }
+
+    private void updateDiskStatus(ImageStatus status) {
+        getParameters().getDiskImage().setImageStatus(status);
+        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), status);
+    }
+
+    private Guid createTemplate() {
+
+        VmTemplate blankTemplate = getVmTemplateDao().get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+        VmStatic masterVm = new VmStatic(blankTemplate);
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+
+        DiskImage templateDiskImage = getParameters().getDiskImage();
+        String vmTemplateName = getParameters().getTemplateName();
+        AddVmTemplateParameters parameters = new AddVmTemplateParameters(masterVm, vmTemplateName, templateDiskImage.getDiskDescription());
+
+        // Setting the user from the parent command, as the session might already be invalid
+        parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
+
+        // Setting the cluster ID, and other related properties derived from it
+        if (getParameters().getClusterId() != null) {
+            masterVm.setClusterId(getParameters().getClusterId());
+            Cluster vdsGroup = getCluster(masterVm.getClusterId());
+            masterVm.setOsId(osRepository.getDefaultOSes().get(vdsGroup.getArchitecture()));
+            DisplayType defaultDisplayType =
+                    osRepository.getGraphicsAndDisplays(masterVm.getOsId(), vdsGroup.getCompatibilityVersion()).get(0).getSecond();
+            masterVm.setDefaultDisplayType(defaultDisplayType);
+        }
+
+        parameters.setBalloonEnabled(true);
+
+        VdcReturnValueBase addVmTemplateReturnValue =
+                Backend.getInstance().runInternalAction(VdcActionType.AddVmTemplate,
+                        parameters,
+                        ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+        // No reason for this to return null, but checking just to make sure, and returning the created template, or null if failed
+        return addVmTemplateReturnValue.getActionReturnValue() != null ? (Guid) addVmTemplateReturnValue.getActionReturnValue() : null;
+    }
+
+    public Cluster getCluster(Guid clusterId) {
+        return getClusterDao().get(clusterId);
+    }
+
+    private void attachDiskToTemplate(Guid templateId) {
+        DiskImage templateDiskImage = getParameters().getDiskImage();
+        DiskVmElement dve = new DiskVmElement(templateDiskImage.getId(), templateId);
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        getDiskVmElementDao().save(dve);
+        VmDeviceUtils.addDiskDevice(templateId, templateDiskImage.getId());
+    }
+
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
@@ -123,11 +251,6 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         permissionSubjects.add(new PermissionSubject(getParameters().getSourceStorageDomainId(),
                 VdcObjectType.Storage, ActionGroup.ACCESS_IMAGE_STORAGE));
         return permissionSubjects;
-    }
-
-    @Override
-    protected void executeCommand() {
-        setSucceeded(true);
     }
 
     @Override

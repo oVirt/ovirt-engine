@@ -12,6 +12,9 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
     private boolean shouldRemainIllegalOnFailedExecution;
     private boolean skipDomainCheck;
     private Guid vdsId;
+    private boolean shouldRemainLockedOnSuccesfulExecution;
+    private boolean usePassedDiskId;
+    private boolean usePassedImageId;
 
     public AddDiskParameters() {
         storageDomainId = Guid.Empty;
@@ -73,5 +76,29 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
 
     public void setVdsId(Guid vdsId) {
         this.vdsId = vdsId;
+    }
+
+    public boolean isShouldRemainLockedOnSuccesfulExecution() {
+        return shouldRemainLockedOnSuccesfulExecution;
+    }
+
+    public void setShouldRemainLockedOnSuccesfulExecution(boolean shouldRemainLockedOnSuccesfulExecution) {
+        this.shouldRemainLockedOnSuccesfulExecution = shouldRemainLockedOnSuccesfulExecution;
+    }
+
+    public boolean isUsePassedDiskId() {
+        return usePassedDiskId;
+    }
+
+    public void setUsePassedDiskId(boolean usePassedDiskId) {
+        this.usePassedDiskId = usePassedDiskId;
+    }
+
+    public boolean isUsePassedImageId() {
+        return usePassedImageId;
+    }
+
+    public void setUsePassedImageId(boolean usePassedImageId) {
+        this.usePassedImageId = usePassedImageId;
     }
 }
