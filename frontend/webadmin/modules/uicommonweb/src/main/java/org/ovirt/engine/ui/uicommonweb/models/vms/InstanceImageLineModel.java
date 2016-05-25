@@ -62,14 +62,15 @@ public class InstanceImageLineModel extends EntityModel {
         if (diskModel.getEntity() instanceof InstanceImagesAttachDiskModel) {
             List<EntityModel<DiskModel>> disks = ((InstanceImagesAttachDiskModel) diskModel.getEntity()).getSelectedDisks();
             if (disks.size() != 0) {
-                updateName(disks.get(0).getEntity().getDisk());
+                updateName(disks.get(0).getEntity());
             }
         } else {
-            updateName(diskModel.getEntity().getDisk());
+            updateName(diskModel.getEntity());
         }
     }
 
-    private void updateName(Disk disk) {
+    private void updateName(DiskModel diskModel) {
+        Disk disk = diskModel.getDisk();
         if (disk == null) {
             return;
         }
@@ -90,7 +91,7 @@ public class InstanceImageLineModel extends EntityModel {
             type = constants.creatingDisk();
         }
 
-        name.setEntity(messages.vmDialogDisk(diskName, size, type, ""));
+        name.setEntity(messages.vmDialogDisk(diskName, size, type, diskModel.getIsBootable().getEntity() ? constants.bootDisk() : ""));
     }
 
     private void toggleActive() {
@@ -133,7 +134,7 @@ public class InstanceImageLineModel extends EntityModel {
 
             @Override
             protected void updateBootableDiskAvailable() {
-                updateBootableFrom(parentModel.getAllCurrentDisks());
+                updateBootableFrom(parentModel.getAllCurrentDisksModels());
             }
         };
 
@@ -195,7 +196,7 @@ public class InstanceImageLineModel extends EntityModel {
 
             @Override
             protected void updateBootableDiskAvailable() {
-                updateBootableFrom(parentModel.getAllCurrentDisks());
+                updateBootableFrom(parentModel.getAllCurrentDisksModels());
             }
 
             @Override
@@ -220,7 +221,7 @@ public class InstanceImageLineModel extends EntityModel {
                 ConstantsManager.getInstance().getConstants().attachVirtualDiskTitle(),
                 HelpTag.attach_virtual_disk, "attach_virtual_disk"); //$NON-NLS-1$
         showDialog(model);
-        model.initialize(parentModel.getAllCurrentDisks());
+        model.initialize(parentModel.getAllCurrentDisksModels());
         maybeLoadAttachableDisks(model);
     }
 
@@ -247,7 +248,7 @@ public class InstanceImageLineModel extends EntityModel {
     }
 
     private void showPreviouslyShownDialog() {
-        getDiskModel().getEntity().updateBootableFrom(parentModel.getAllCurrentDisks());
+        getDiskModel().getEntity().updateBootableFrom(parentModel.getAllCurrentDisksModels());
         if (getDiskModel().getEntity() instanceof InstanceImagesAttachDiskModel) {
             // needed to re-filter in case the OS or the compatibility version changed
             maybeLoadAttachableDisks((InstanceImagesAttachDiskModel) getDiskModel().getEntity());
@@ -283,7 +284,7 @@ public class InstanceImageLineModel extends EntityModel {
 
             @Override
             protected void updateBootableDiskAvailable() {
-                updateBootableFrom(parentModel.getAllCurrentDisks());
+                updateBootableFrom(parentModel.getAllCurrentDisksModels());
             }
         };
 
@@ -303,7 +304,7 @@ public class InstanceImageLineModel extends EntityModel {
 
         showDialog(model);
 
-        model.initialize(parentModel.getAllCurrentDisks());
+        model.initialize(parentModel.getAllCurrentDisksModels());
 
         if (getVm() != null) {
             model.setVm(getVm());

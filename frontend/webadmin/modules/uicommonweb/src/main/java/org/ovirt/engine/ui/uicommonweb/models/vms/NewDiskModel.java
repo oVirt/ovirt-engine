@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -99,7 +98,7 @@ public class NewDiskModel extends AbstractDiskModel {
     }
 
     @Override
-    public void initialize(List<Disk> currentDisks) {
+    public void initialize(List<DiskModel> currentDisks) {
         super.initialize(currentDisks);
         setDiskVmElement(new DiskVmElement(new VmDeviceId(null, getIsFloating() ? null : getVm().getId())));
     }

@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -14,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 public class DiskModel extends Model {
+    private DiskVmElement diskVmElement;
     private Disk disk;
     private VM vm;
 
@@ -151,6 +153,14 @@ public class DiskModel extends Model {
 
     public void setPluggedToRunningVm(boolean pluggedToRunningVm) {
         this.pluggedToRunningVm = pluggedToRunningVm;
+    }
+
+    protected DiskVmElement getDiskVmElement() {
+        return diskVmElement;
+    }
+
+    protected void setDiskVmElement(DiskVmElement diskVmElement) {
+        this.diskVmElement = diskVmElement;
     }
 
     public DiskModel() {
