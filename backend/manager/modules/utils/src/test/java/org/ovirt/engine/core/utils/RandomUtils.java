@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -445,6 +447,13 @@ public final class RandomUtils extends Random {
         }
 
         return pickRandom(enumClass.getEnumConstants());
+    }
+
+    /**
+     * @return A random MAC address.
+     */
+    public String nextMacAddress() {
+        return IntStream.range(0, 6).mapToObj(i -> Integer.toHexString(nextInt(0x10, 0x100))).collect(Collectors.joining(":"));
     }
 
     /* -- Utility methods -- */
