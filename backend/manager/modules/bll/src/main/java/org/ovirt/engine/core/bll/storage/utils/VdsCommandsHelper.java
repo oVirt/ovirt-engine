@@ -102,7 +102,7 @@ public class VdsCommandsHelper {
     public static Guid getHostForExecution(Guid poolId, Collection<Guid> hostsToFilter) {
         List<Guid> hostsForExecution = vdsDao
                 .getAllForStoragePoolAndStatus(poolId, VDSStatus.Up).stream()
-                .filter(x -> !hostsToFilter.contains(x))
+                .filter(x -> !hostsToFilter.contains(x.getId()))
                 .map(x -> x.getId()).collect(Collectors.toList());
         if (hostsForExecution.isEmpty()) {
             return null;
