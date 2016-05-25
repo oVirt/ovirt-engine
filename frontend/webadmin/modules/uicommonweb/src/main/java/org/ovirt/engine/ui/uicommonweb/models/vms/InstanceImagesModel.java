@@ -161,11 +161,10 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
         AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                Iterator<InstanceImageLineModel> lineModelIterator = orderedDisksIterator((List<Disk>) returnValue);
+                Iterator<InstanceImageLineModel> lineModelIterator = orderedDisksIterator((List<Disk>) returnValue, vm);
                 storeNextDisk(lineModelIterator, vm);
             }
         }), vm.getId());
-
     }
 
     /**
@@ -175,12 +174,12 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
      * It is needed because they can be other which make an another disk boot and the VM can not have more than one boot
      * disk - so the validation on server would fail.
      */
-    private Iterator<InstanceImageLineModel> orderedDisksIterator(List<Disk> disks) {
+    private Iterator<InstanceImageLineModel> orderedDisksIterator(List<Disk> disks, VM vm) {
         if (disks.size() == 0) {
             return getItems().iterator();
         }
 
-        Disk previouslyBootDisk = findBoot(disks);
+        Disk previouslyBootDisk = findBoot(disks, vm);
         if (previouslyBootDisk == null) {
             return getItems().iterator();
         }
@@ -223,9 +222,9 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
         return null;
     }
 
-    private Disk findBoot(List<Disk> disks) {
+    private Disk findBoot(List<Disk> disks, VM vm) {
         for (Disk disk : disks) {
-            DiskVmElement dve = disk.getDiskVmElementForVm(getVm().getId());
+            DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             if (dve != null && dve.isBoot()) {
                 return disk;
             }
