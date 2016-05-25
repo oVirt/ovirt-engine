@@ -44,7 +44,8 @@ import org.slf4j.LoggerFactory;
                 PolicyUnitParameter.HIGH_UTILIZATION,
                 PolicyUnitParameter.LOW_UTILIZATION,
                 PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
-                PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED
+                PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
+                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES
         }
 )
 public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
@@ -282,13 +283,13 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
 
     @Override
     protected List<VDS> getPrimarySources(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
-        int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
-                .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
-        final int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
-                .<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
+        int highUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
+                Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
+        final int lowUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.LOW_UTILIZATION.getDbName()),
+                Config.<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
         final int cpuOverCommitDurationMinutes =
-                tryParseWithDefault(parameters.get("CpuOverCommitDurationMinutes"), Config
-                        .<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
+                tryParseWithDefault(parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
+                        Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
         final int highVdsCount = Math
                 .min(Config.<Integer>getValue(ConfigValues.UtilizationThresholdInPercent)
                                 * highUtilization / 100,
@@ -306,13 +307,13 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     protected List<VDS> getPrimaryDestinations(Cluster cluster,
             List<VDS> candidateHosts,
             Map<String, String> parameters) {
-        int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
-                .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
-        int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
-                .<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
+        int highUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
+                Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
+        final int lowUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.LOW_UTILIZATION.getDbName()),
+                Config.<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
         final int cpuOverCommitDurationMinutes =
-                tryParseWithDefault(parameters.get("CpuOverCommitDurationMinutes"), Config
-                        .<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
+                tryParseWithDefault(parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
+                        Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
 
         final List<VDS> result = getNormallyUtilizedCPUHosts(cluster,
                 candidateHosts,
