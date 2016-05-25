@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -115,13 +116,7 @@ public class ReplacementUtilsTest {
     private boolean validateReplacementElementCount(Collection<String> replacements, String separator, int numOfElementsToShow) {
         String replacement = replacements.iterator().next();
         String[] values = replacement.split(separator);
-        int numOfElementsFound = 0;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i].contains( PROPERTY_NAME )) {
-                numOfElementsFound++;
-            }
-        }
-
+        int numOfElementsFound = (int) Arrays.stream(values).filter(v -> v.contains(PROPERTY_NAME)).count();
         return numOfElementsFound == numOfElementsToShow;
     }
 
@@ -139,14 +134,7 @@ public class ReplacementUtilsTest {
     }
 
     private boolean validateReplacementContains(Collection<String> replacements, String property) {
-        Iterator<String> iterator = replacements.iterator();
-        while (iterator.hasNext()) {
-            String replacement = iterator.next();
-            if (replacement.contains(property)) {
-                return true;
-            }
-        }
-        return false;
+        return replacements.stream().anyMatch(r -> r.contains(property));
     }
 
     private void validateReplacementsDoNotContainUnexpectedItems(Collection<String> replacements, List<Object> items) {
