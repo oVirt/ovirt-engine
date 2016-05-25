@@ -44,6 +44,7 @@ public class EditDiskModel extends AbstractDiskModel {
         getIsScsiPassthrough().setEntity(getDisk().isScsiPassthrough());
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
         getIsReadOnly().setEntity(getDisk().getReadOnly());
+        getIsBootable().setEntity(getDiskVmElement().isBoot());
 
         switch (getDisk().getDiskStorageType()) {
             case IMAGE:

@@ -272,6 +272,22 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
         return res;
     }
 
+    public List<DiskModel> getAllCurrentDisksModels() {
+        if (getItems() == null) {
+            return Collections.emptyList();
+        }
+        List<DiskModel> diskModels = new ArrayList<>();
+        for (InstanceImageLineModel line : getItems()) {
+            if (line.isGhost()) {
+                continue;
+            }
+
+            diskModels.add(line.getDiskModel().getEntity());
+        }
+
+        return diskModels;
+    }
+
     /**
      * Returns a list of non-sharable disks which have been set as to attach in the new/edit VM dialog but the dialog has not yet been submitted
      */

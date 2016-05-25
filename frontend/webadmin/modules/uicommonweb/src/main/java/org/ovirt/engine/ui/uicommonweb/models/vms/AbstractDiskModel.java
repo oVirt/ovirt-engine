@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -65,8 +64,6 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class AbstractDiskModel extends DiskModel {
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
-
-    private DiskVmElement diskVmElement;
 
     private EntityModel<Boolean> isWipeAfterDelete;
     private EntityModel<Boolean> isShareable;
@@ -317,14 +314,6 @@ public abstract class AbstractDiskModel extends DiskModel {
         return getVm() == null;
     }
 
-    protected DiskVmElement getDiskVmElement() {
-        return diskVmElement;
-    }
-
-    protected void setDiskVmElement(DiskVmElement diskVmElement) {
-        this.diskVmElement = diskVmElement;
-    }
-
     protected abstract boolean isDatacenterAvailable(StoragePool dataCenter);
 
     protected abstract DiskImage getDiskImage();
@@ -346,9 +335,9 @@ public abstract class AbstractDiskModel extends DiskModel {
         commonInitialize();
     }
 
-    public void initialize(List<Disk> currentDisks) {
+    public void initialize(List<DiskModel> currentDisks) {
         commonInitialize();
-        updateBootableFrom(currentDisks != null ? currentDisks : new ArrayList<Disk>());
+        updateBootableFrom(currentDisks != null ? currentDisks : new ArrayList<DiskModel>());
     }
 
     private void commonInitialize() {
@@ -487,17 +476,16 @@ public abstract class AbstractDiskModel extends DiskModel {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                updateBootableFrom(disks);
+                updateCanSetBoot(disks);
             }
         }), getVm().getId());
     }
 
-    public void updateBootableFrom(List<Disk> vmDisks) {
-        getIsBootable().setEntity(true);
+    public void updateCanSetBoot(List<Disk> vmDisks) {
         getIsBootable().setIsChangeable(true);
         if (getDisk() == null || !getDisk().isDiskSnapshot()) {
             for (Disk disk : vmDisks) {
-                if (disk.getDiskVmElementForVm(getVm().getId()).isBoot() && !disk.equals(getDisk())) {
+                if (disk.getDiskVmElementForVm(getVmId()).isBoot() && !disk.equals(getDisk())) {
                     getIsBootable().setEntity(false);
                     if (!disk.isDiskSnapshot()) {
                         getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
@@ -505,7 +493,23 @@ public abstract class AbstractDiskModel extends DiskModel {
                         break;
                     }
                 }
-         }
+            }
+        }
+    }
+
+    public void updateBootableFrom(List<DiskModel> vmDisks) {
+        getIsBootable().setIsChangeable(true);
+        if (getDisk() == null || !getDisk().isDiskSnapshot()) {
+            for (DiskModel disk : vmDisks) {
+                if (disk.getDiskVmElement().isBoot() && !disk.getDisk().equals(getDisk())) {
+                    getIsBootable().setEntity(false);
+                    if (!disk.getDisk().isDiskSnapshot()) {
+                        getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
+                        getIsBootable().setIsChangeable(false);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -1014,8 +1018,8 @@ public abstract class AbstractDiskModel extends DiskModel {
         getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : null);
 
         if (getVm() != null) {
-            diskVmElement.setBoot(getIsBootable().getEntity());
-            diskVmElement.setDiskInterface(getDiskInterface().getSelectedItem());
+            getDiskVmElement().setBoot(getIsBootable().getEntity());
+            getDiskVmElement().setDiskInterface(getDiskInterface().getSelectedItem());
         }
     }
 
