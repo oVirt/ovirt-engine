@@ -9,13 +9,16 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -23,6 +26,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -32,6 +36,13 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
@@ -41,7 +52,8 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-
+import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OvfManagerTest {
@@ -55,6 +67,9 @@ public class OvfManagerTest {
     private static final int EXISTING_OS_ID = 1;
     private static final int NONEXISTING_OS_ID = 2;
 
+    private static final int MIN_ENTITY_NAME_LENGTH = 3;
+    private static final int MAX_ENTITY_NAME_LENGTH = 30;
+
     @Mock
     private OsRepository osRepository;
 
@@ -64,6 +79,9 @@ public class OvfManagerTest {
     @ClassRule
     public static MockConfigRule mockConfigRule =
             new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.VdcVersion, "1.0.0.0"));
+
+    @Rule
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     private OvfManager manager;
 
@@ -113,16 +131,6 @@ public class OvfManagerTest {
         newVm.getStaticData().setLargeIconId(vm.getStaticData().getLargeIconId());
 
         assertEquals(vm.getStaticData(), newVm.getStaticData());
-    }
-
-    @Test
-    public void testVmOvfCreation() throws Exception {
-        VM vm = createVM();
-        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_6);
-        assertNotNull(xml);
-        final VM newVm = new VM();
-        manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
-        assertVm(vm, newVm, vm.getDbGeneration());
     }
 
     @Test
@@ -205,6 +213,68 @@ public class OvfManagerTest {
         assertEquals(LARGE_DEFAULT_ICON_ID, newVm.getStaticData().getLargeIconId());
     }
 
+    @Test
+    public void testVmExportAndImportAndExportAgainSymmetrical() throws Exception {
+        VM vm = createVM();
+        ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
+        String xml = manager.exportVm(vm, disks, Version.v4_0);
+        assertNotNull(xml);
+
+        VM newVm = new VM();
+        ArrayList<DiskImage> newDisks = new ArrayList<>();
+        manager.importVm(xml, newVm, newDisks, new ArrayList<>());
+        String newXml = manager.exportVm(vm, disks, Version.v4_0);
+
+        assertEquals(deleteExportDateValueFromXml(xml), deleteExportDateValueFromXml(newXml));
+    }
+
+    @Test
+    public void testVmExportAndImportIdentical() throws Exception {
+        VM vm = createVM();
+        ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
+        String xml = manager.exportVm(vm, disks, Version.v4_0);
+        assertNotNull(xml);
+
+        VM newVm = new VM();
+        ArrayList<DiskImage> newDisks = new ArrayList<>();
+        ArrayList<VmNetworkInterface> newInterfaces = new ArrayList<>();
+        manager.importVm(xml, newVm, newDisks, newInterfaces);
+
+        assertVm(vm, newVm, vm.getDbGeneration());
+        assertCollection(vm.getInterfaces(), newInterfaces);
+        assertCollection(disks, newDisks,
+                diskPair -> diskPair.getFirst().getDiskVmElementForVm(vm.getId()).
+                        equals(diskPair.getSecond().getDiskVmElementForVm(vm.getId())));
+    }
+
+    private <T extends BusinessEntity> void assertCollection(List<T> colA, List<T> colB) {
+        assertCollection(colA, colB, null);
+    }
+
+    private <T extends BusinessEntity> void assertCollection(List<T> colA, List<T> colB, Function<Pair<T, T>, Boolean> function) {
+        assertEquals(colA.size(), colB.size());
+        assertEquals(CollectionUtils.disjunction(colA, colB).size(), 0);
+
+        // Might look a bit overkill to check equals as well but disjunction is based on the hash so double checking is good
+        for (T itemA : colA) {
+            T itemB = colB.stream().filter(t -> t.getId().equals(itemA.getId())).findFirst().get();
+            assertEquals(itemA, itemB);
+            if (function != null) {
+                assertTrue(function.apply(new Pair<>(itemA, itemB)));
+            }
+        }
+
+    }
+
+    // TODO: An ugly hack since the writer writes the export date with the current time of the export which is
+    //       different obviously given the time passed between the two exports.
+    //       for now the export date will just be removed but in the future it's better to inject the date to the
+    //       writer.
+    private String deleteExportDateValueFromXml(String xml) throws Exception{
+        String xmlNoExportDate = xml.replaceFirst("<ExportDate>[\\s\\S]*?<\\/ExportDate>", "");
+        return xmlNoExportDate;
+    }
+
     private VM serializeAndDeserialize(VM inputVm) throws OvfReaderException {
         String xml = manager.exportVm(inputVm, new ArrayList<>(), Version.v3_6);
         assertNotNull(xml);
@@ -231,27 +301,73 @@ public class OvfManagerTest {
     }
 
     private static void initInterfaces(VM vm) {
-        VmNetworkInterface vmInterface = new VmNetworkInterface();
-        vmInterface.setStatistics(new VmNetworkStatistics());
-        vmInterface.setId(Guid.newGuid());
-        vmInterface.setName("eth77");
-        vmInterface.setNetworkName("blue");
-        vmInterface.setLinked(false);
-        vmInterface.setSpeed(1000);
-        vmInterface.setType(3);
-        vmInterface.setMacAddress("01:C0:81:21:71:17");
+        List<VmNetworkInterface> ifaces = new ArrayList<>();
+        RandomUtils rnd = RandomUtils.instance();
+        for (int i = 0; i < rnd.nextInt(2, 10); i++) {
+            VmNetworkInterface vmInterface = new VmNetworkInterface();
+            vmInterface.setStatistics(new VmNetworkStatistics());
+            vmInterface.setId(Guid.newGuid());
+            vmInterface.setVmId(vm.getId());
+            vmInterface.setName(generateRandomName());
+            vmInterface.setVnicProfileName(generateRandomName());
+            vmInterface.setNetworkName(generateRandomName());
+            vmInterface.setLinked(rnd.nextBoolean());
+            vmInterface.setSpeed(rnd.nextInt(1000));
+            vmInterface.setType(rnd.nextInt(10));
+            vmInterface.setMacAddress(rnd.nextMacAddress());
 
-        VmNetworkInterface vmInterface2 = new VmNetworkInterface();
-        vmInterface2.setStatistics(new VmNetworkStatistics());
-        vmInterface2.setId(Guid.newGuid());
-        vmInterface2.setName("eth88");
-        vmInterface2.setNetworkName(null);
-        vmInterface2.setLinked(true);
-        vmInterface2.setSpeed(1234);
-        vmInterface2.setType(1);
-        vmInterface2.setMacAddress("02:C1:92:22:25:28");
+            ifaces.add(vmInterface);
+        }
+        vm.setInterfaces(ifaces);
+    }
 
-        vm.setInterfaces(Arrays.asList(vmInterface, vmInterface2));
+    private static ArrayList<DiskImage> createDisksAndDiskVmElements(VM vm) {
+        ArrayList<DiskImage> disks = new ArrayList<>();
+        RandomUtils rnd = RandomUtils.instance();
+        for (int i = 0; i < rnd.nextInt(3, 10); i++) {
+            DiskImage disk = createVmDisk(vm);
+            disks.add(disk);
+        }
+        return disks;
+    }
+
+    private static DiskImage createVmDisk(VM vm) {
+        RandomUtils rnd = RandomUtils.instance();
+        DiskImage disk = new DiskImage();
+        disk.setId(Guid.newGuid());
+        disk.setVmSnapshotId(Guid.newGuid());
+        disk.setSize(rnd.nextLong(1000));
+        disk.setActualSize(rnd.nextLong(1000));
+        disk.setVolumeFormat(rnd.nextEnum(VolumeFormat.class));
+        disk.setVolumeType(rnd.nextEnum(VolumeType.class));
+        disk.setWipeAfterDelete(rnd.nextBoolean());
+        disk.setDiskAlias(generateRandomName());
+        disk.setDescription(generateRandomName());
+        disk.setImageId(Guid.newGuid());
+        disk.setStoragePoolId(Guid.newGuid());
+        disk.setPlugged(true);
+        disk.setReadOnly(false);
+        disk.setAppList(rnd.nextPropertyString(100));
+
+        Image image = new Image();
+        image.setActive(true);
+        image.setVolumeFormat(rnd.nextEnum(VolumeFormat.class));
+        image.setId(disk.getImageId());
+        image.setSnapshotId(disk.getSnapshotId());
+        image.setStatus(ImageStatus.OK);
+        disk.setImage(image);
+
+        DiskVmElement diskVmElement = new DiskVmElement(disk.getId(), vm.getId());
+        diskVmElement.setBoot(rnd.nextBoolean());
+        diskVmElement.setDiskInterface(rnd.nextEnum(DiskInterface.class));
+        disk.setDiskVmElements(Collections.singletonList(diskVmElement));
+
+        return disk;
+    }
+
+    private static String generateRandomName() {
+        RandomUtils rnd = RandomUtils.instance();
+        return rnd.nextPropertyString(rnd.nextInt(MIN_ENTITY_NAME_LENGTH, MAX_ENTITY_NAME_LENGTH));
     }
 
     private static VmTemplate createVmTemplate() {
