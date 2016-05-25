@@ -22,7 +22,7 @@ public class ReplacementUtilsTest {
 
     @Test
     public void replaceWithSingleItem() {
-        List<Object> items = Collections.<Object> singletonList(PROPERTY_VALUE);
+        List<Object> items = Collections.singletonList(PROPERTY_VALUE);
         validateReplacements(ReplacementUtils.replaceWith(PROPERTY_NAME, items), items);
     }
 
