@@ -137,7 +137,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                 properStateTemplates.add(template);
             }
         }
-        super.initTemplateWithVersion(properStateTemplates, previousTemplateId, useLatest);
+        super.initTemplateWithVersion(properStateTemplates, previousTemplateId, useLatest, getModel().getIsStateless().getEntity());
         updateIsDisksAvailable();
     }
 
