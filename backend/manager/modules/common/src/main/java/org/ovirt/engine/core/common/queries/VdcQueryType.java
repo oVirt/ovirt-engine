@@ -479,7 +479,7 @@ public enum VdcQueryType implements Serializable {
     IsUserApplicationContainerManager,
 
     // migration profiles
-    GetAllMigrationPolicies,
+    GetAllMigrationPolicies(VdcQueryAuthType.User),
 
     // Labels
     GetAllLabels,
