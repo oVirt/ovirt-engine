@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -138,9 +137,7 @@ public class ReplacementUtilsTest {
     }
 
     private void validateReplacementsDoNotContainUnexpectedItems(Collection<String> replacements, List<Object> items) {
-        Iterator<String> iterator = replacements.iterator();
-        while (iterator.hasNext()) {
-            String replacement = iterator.next();
+        for (String replacement : replacements) {
             for (int i = ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS; i < items.size(); i++) {
                 assertFalse(replacement.contains(buildPropertyValue(i)));
             }
