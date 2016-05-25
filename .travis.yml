@@ -20,3 +20,6 @@ cache:
     - $HOME/.m2
   before_cache:
     - rm -rf $HOME/.m2/repository/org/ovirt/
+branches:
+  only:
+    - master
