@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -22,6 +26,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -35,6 +40,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -56,6 +62,11 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
 
     @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
+
+    private Set<String> graphicsDeviceTypes = new HashSet<>(Arrays.asList(
+            GraphicsType.SPICE.toString().toLowerCase(),
+            GraphicsType.VNC.toString().toLowerCase()
+    ));
 
     public AddUnmanagedVmsCommand(T parameters, CommandContext context) {
         super(parameters, context);
@@ -79,34 +90,55 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             long fetchTime = System.nanoTime();
             Map<String, Object>[] vmsInfo = getVmsInfo();
             for (Map<String, Object> vmInfo : vmsInfo) {
-                Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
-                String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
-
-                if (isHostedEngineVm(vmId, vmNameOnHost)) {
-                    // its a hosted engine VM -> import it and skip the external VM phase
-                    importHostedEngineVm(vmInfo);
-                    continue;
-                }
-
-                VmStatic vmStatic = new VmStatic();
-                vmStatic.setId(vmId);
-                vmStatic.setCreationDate(new Date());
-                vmStatic.setClusterId(getClusterId());
-                vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
-                vmStatic.setOrigin(OriginType.EXTERNAL);
-                vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
-                vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
-                vmStatic.setSingleQxlPci(false);
-
-                setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
-                setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
-
-                addExternallyManagedVm(vmStatic);
-                addDevices(vmInfo, fetchTime);
-                log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
+                convertVm(defaultOsId, defaultDisplayType, fetchTime, vmInfo);
             }
         }
         setSucceeded(true);
+    }
+
+    // Visible for testing
+    protected void convertVm(int defaultOsId, DisplayType defaultDisplayType, long fetchTime, Map<String, Object>
+            vmInfo) {
+        Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
+        String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
+
+        if (isHostedEngineVm(vmId, vmNameOnHost)) {
+            // its a hosted engine VM -> import it
+            importHostedEngineVm(vmInfo);
+            return;
+        }
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setId(vmId);
+        vmStatic.setCreationDate(new Date());
+        vmStatic.setClusterId(getClusterId());
+        vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
+        vmStatic.setOrigin(OriginType.EXTERNAL);
+        vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
+        vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
+        vmStatic.setSingleQxlPci(false);
+
+        setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
+        setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
+
+        addExternallyManagedVm(vmStatic);
+        addDevices(vmInfo, fetchTime);
+        log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
+    }
+
+    private List<GraphicsDevice> extractGraphicsDevices(Guid vmId, Object[] devices) {
+        List<GraphicsDevice> graphicsDevices = new ArrayList<>();
+        for (Object o : devices) {
+            Map device = (Map<String, Object>) o;
+            String deviceName = (String) device.get(VdsProperties.Device);
+            if (graphicsDeviceTypes.contains(deviceName)) {
+                GraphicsDevice graphicsDevice = new GraphicsDevice(VmDeviceType.valueOf(deviceName.toUpperCase()));
+                graphicsDevice.setVmId(vmId);
+                graphicsDevice.setDeviceId(Guid.newGuid());
+                graphicsDevice.setIsManaged(true);
+                graphicsDevices.add(graphicsDevice);
+            }
+        }
+        return graphicsDevices;
     }
 
     private boolean isHostedEngineVm(Guid vmId, String vmNameOnHost) {
@@ -115,6 +147,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                 Objects.equals(vmNameOnHost, Config.<String>getValue(ConfigValues.HostedEngineVmName))
                 : dbVm.getOrigin() == OriginType.HOSTED_ENGINE;
     }
+
     /**
      * Gets VM full information for the given list of VMs.
      */
@@ -134,7 +167,8 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         return result;
     }
 
-    private void importHostedEngineVm(Map<String, Object> vmStruct) {
+    // Visible for testing
+    protected void importHostedEngineVm(Map<String, Object> vmStruct) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
         if (vm != null) {
             vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct, vm.getId()));
@@ -144,6 +178,19 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             }
             vm.setClusterId(getClusterId());
             vm.setRunOnVds(getVdsId());
+            List<GraphicsDevice> graphicsDevices = extractGraphicsDevices(vm.getId(),
+                    (Object[]) vmStruct.get(VdsProperties.Devices));
+            if (graphicsDevices.size() == 1
+                    && VmDeviceType.valueOf(graphicsDevices.get(0).getDevice().toUpperCase()) == VmDeviceType.VNC) {
+                vm.setDefaultDisplayType(DisplayType.vga);
+            } else {
+                vm.setDefaultDisplayType(DisplayType.qxl);
+            }
+            // HE VM does not support that feature, disable it
+            vm.setSingleQxlPci(false);
+            for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                vm.getManagedVmDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
+            }
             importHostedEngineVm(vm);
         }
     }
@@ -152,7 +199,8 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         ThreadPoolUtil.execute(() -> hostedEngineImporterProvider.get().doImport(vm));
     }
 
-    private void addExternallyManagedVm(VmStatic vmStatic) {
+    // Visible for testing
+    protected void addExternallyManagedVm(VmStatic vmStatic) {
         VdcReturnValueBase returnValue =
                 runInternalAction(VdcActionType.AddVmFromScratch,
                         new AddVmParameters(vmStatic),
@@ -162,7 +210,8 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         }
     }
 
-    private void addDevices(Map<String, Object> vmInfo, long fetchTime) {
+    // Visible for testing
+    protected void addDevices(Map<String, Object> vmInfo, long fetchTime) {
         VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(fetchTime);
         change.updateVmFromFullList(vmInfo);
         change.flush();

@@ -1,0 +1,236 @@
+{
+  "status" : "Up",
+  "nicModel" : "rtl8139,pv",
+  "emulatedMachine" : "rhel6.5.0",
+  "guestDiskMapping" : {
+    "46257889-c7b6-41ed-8" : {
+      "name" : "/dev/vda"
+    },
+    "QEMU_DVD-ROM" : {
+      "name" : "/dev/sr0"
+    }
+  },
+  "vmId" : "91bc00e4-a712-4a4a-ba8f-838be2c15f48",
+  "pid" : "5636",
+  "devices" : [ {
+    "alias" : "console0",
+    "specParams" : { },
+    "deviceType" : "console",
+    "deviceId" : "c1e54ed4-456b-4a4b-8fbf-51246e6700de",
+    "device" : "console",
+    "type" : "console"
+  }, {
+    "device" : "memballoon",
+    "specParams" : {
+      "model" : "none"
+    },
+    "deviceType" : "balloon",
+    "type" : "balloon",
+    "alias" : "balloon0"
+  }, {
+    "alias" : "scsi0",
+    "deviceType" : "controller",
+    "address" : {
+      "slot" : "0x04",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "scsi",
+    "model" : "virtio-scsi",
+    "type" : "controller"
+  }, {
+    "device" : "vnc",
+    "specParams" : {
+      "spiceSecureChannels" : "smain,sdisplay,sinputs,scursor,splayback,srecord,ssmartcard,susbredir",
+      "displayIp" : "0"
+    },
+    "deviceType" : "graphics",
+    "type" : "graphics",
+    "port" : "5900"
+  }, {
+    "nicModel" : "pv",
+    "macAddr" : "03:1B:4D:10:3F:11",
+    "linkActive" : true,
+    "network" : "ovirtmgmt",
+    "specParams" : { },
+    "filter" : "vdsm-no-mac-spoofing",
+    "alias" : "net0",
+    "deviceType" : "interface",
+    "deviceId" : "810e23c7-0b38-4c00-b320-c79690f1aa94",
+    "address" : {
+      "slot" : "0x03",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "bridge",
+    "type" : "interface",
+    "name" : "vnet0"
+  }, {
+    "index" : "2",
+    "iface" : "ide",
+    "name" : "hdc",
+    "alias" : "ide0-1-0",
+    "specParams" : { },
+    "readonly" : "True",
+    "deviceType" : "disk",
+    "deviceId" : "3a0108a8-2ba5-41f9-b12b-f37773a2b31b",
+    "address" : {
+      "bus" : "1",
+      "controller" : "0",
+      "type" : "drive",
+      "target" : "0",
+      "unit" : "0"
+    },
+    "device" : "cdrom",
+    "shared" : "false",
+    "path" : "",
+    "type" : "disk"
+  }, {
+    "poolID" : "00000000-0000-0000-0000-000000000000",
+    "volumeInfo" : {
+      "domainID" : "6cf52782-fda6-4f70-a814-b00c3a407c7d",
+      "volType" : "path",
+      "leaseOffset" : 0,
+      "volumeID" : "53d70181-063f-4880-ad88-ead2c4196f99",
+      "leasePath" : "/path/to/53d70181-063f-4880-ad88-ead2c4196f99.lease",
+      "imageID" : "46257889-c7b6-41ed-88b5-bd12349e5a02",
+      "path" : "/path/to/images/46257889-c7b6-41ed-88b5-bd12349e5a02/53d70181-063f-4880-ad88-ead2c4196f99"
+    },
+    "index" : "0",
+    "iface" : "virtio",
+    "apparentsize" : "10737418240",
+    "specParams" : { },
+    "imageID" : "46257889-c7b6-41ed-88b5-bd12349e5a02",
+    "readonly" : "False",
+    "deviceType" : "disk",
+    "shared" : "exclusive",
+    "truesize" : "2761613312",
+    "type" : "disk",
+    "domainID" : "6cf52782-fda6-4f70-a814-b00c3a407c7d",
+    "reqsize" : "0",
+    "format" : "raw",
+    "deviceId" : "46257889-c7b6-41ed-88b5-bd12349e5a02",
+    "address" : {
+      "slot" : "0x06",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "disk",
+    "path" : "/var/run/vdsm/storage/6cf52782-fda6-4f70-a814-b00c3a407c7d/46257889-c7b6-41ed-88b5-bd12349e5a02/53d70181-063f-4880-ad88-ead2c4196f99",
+    "propagateErrors" : "off",
+    "optional" : "false",
+    "name" : "vda",
+    "bootOrder" : "1",
+    "volumeID" : "53d70181-063f-4880-ad88-ead2c4196f99",
+    "alias" : "virtio-disk0",
+    "volumeChain" : [ {
+      "domainID" : "6cf52782-fda6-4f70-a814-b00c3a407c7d",
+      "volType" : "path",
+      "leaseOffset" : 0,
+      "volumeID" : "53d70181-063f-4880-ad88-ead2c4196f99",
+      "leasePath" : "/path/to/53d70181-063f-4880-ad88-ead2c4196f99.lease",
+      "imageID" : "46257889-c7b6-41ed-88b5-bd12349e5a02",
+      "path" : "/path/to/images/46257889-c7b6-41ed-88b5-bd12349e5a02/53d70181-063f-4880-ad88-ead2c4196f99"
+    } ]
+  }, {
+    "device" : "usb",
+    "alias" : "usb",
+    "deviceType" : "controller",
+    "type" : "controller",
+    "address" : {
+      "slot" : "0x01",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x2"
+    }
+  }, {
+    "device" : "ide",
+    "alias" : "ide",
+    "deviceType" : "controller",
+    "type" : "controller",
+    "address" : {
+      "slot" : "0x01",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x1"
+    }
+  }, {
+    "device" : "virtio-serial",
+    "alias" : "virtio-serial0",
+    "deviceType" : "controller",
+    "type" : "controller",
+    "address" : {
+      "slot" : "0x05",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    }
+  }, {
+    "device" : "unix",
+    "alias" : "channel0",
+    "deviceType" : "channel",
+    "type" : "channel",
+    "address" : {
+      "bus" : "0",
+      "controller" : "0",
+      "type" : "virtio-serial",
+      "port" : "1"
+    }
+  }, {
+    "device" : "unix",
+    "alias" : "channel1",
+    "deviceType" : "channel",
+    "type" : "channel",
+    "address" : {
+      "bus" : "0",
+      "controller" : "0",
+      "type" : "virtio-serial",
+      "port" : "2"
+    }
+  }, {
+    "device" : "unix",
+    "alias" : "channel2",
+    "deviceType" : "channel",
+    "type" : "channel",
+    "address" : {
+      "bus" : "0",
+      "controller" : "0",
+      "type" : "virtio-serial",
+      "port" : "3"
+    }
+  }, {
+    "device" : "vga",
+    "alias" : "video0",
+    "deviceType" : "video",
+    "type" : "video",
+    "address" : {
+      "slot" : "0x02",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    }
+  } ],
+  "smp" : "4",
+  "vmType" : "kvm",
+  "displayIp" : "0",
+  "display" : "vnc",
+  "displaySecurePort" : "-1",
+  "memSize" : 7052,
+  "displayPort" : "5900",
+  "cpuType" : "SandyBridge",
+  "spiceSecureChannels" : "smain,sdisplay,sinputs,scursor,splayback,srecord,ssmartcard,susbredir",
+  "statusTime" : "6134432800",
+  "vmName" : "VM",
+  "clientIp" : "",
+  "pauseCode" : "NOERR"
+}
