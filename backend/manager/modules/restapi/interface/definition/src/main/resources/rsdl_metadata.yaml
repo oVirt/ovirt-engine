@@ -438,6 +438,29 @@ actions:
             payload_file.type: xs:string
           action.use_sysprep: xs:boolean
           action.use_cloud_init: xs:boolean
+          action.vm.initialization.host_name: xs:string
+          action.vm.initialization.custom_script: xs:string
+          action.vm.initialization.active_directory_ou: xs:string
+          action.vm.initialization.authorized_ssh_keys: xs:string
+          action.vm.initialization.dns_search: xs:string
+          action.vm.initialization.dns_servers: xs:string
+          action.vm.initialization.domain: xs:string
+          action.vm.initialization.input_locale: xs:string
+          action.vm.initialization.nic_configurations.nic_configuration--COLLECTION:
+            nic_configuration.name: xs:string
+            nic_configuration.on_boot: xs:boolean
+            nic_configuration.boot_protocol: xs:string
+            nic_configuration.ip.address: xs:string
+            nic_configuration.ip.netmask: xs:string
+            nic_configuration.ip.gateway: xs:string
+          action.vm.initialization.org_name: xs:string
+          action.vm.initialization.regenerate_ssh_keys: xs:string
+          action.vm.initialization.root_password: xs:string
+          action.vm.initialization.system_locale: xs:string
+          action.vm.initialization.timezone: xs:string
+          action.vm.initialization.ui_language: xs:string
+          action.vm.initialization.user_name: xs:string
+          action.vm.initialization.windows_license_key: xs:string
         description: start a virtual machine in the system identified by the given id with the options specified in the request body
     headers:
       Filter: {value: true|false, required: false}
