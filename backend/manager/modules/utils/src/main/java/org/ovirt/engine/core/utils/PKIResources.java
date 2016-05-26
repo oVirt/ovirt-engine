@@ -46,7 +46,7 @@ public class PKIResources {
             engineCertificate = new Resource(
                     EngineLocalConfig.getInstance().getPKIEngineCert(),
                     Format.X509_PEM,
-                    Config.<String> getValue(ConfigValues.SSHKeyAlias));
+                    Config.getValue(ConfigValues.SSHKeyAlias));
         }
     }
 
