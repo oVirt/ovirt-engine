@@ -4,15 +4,27 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<g:FlowPanel>
-		<ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" />
-		<ge:StringEntityModelTextBoxEditor ui:field="esxEditor" />
-		<ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" />
-		<ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" />
-		<ge:EntityModelCheckBoxEditor ui:field="verifySSLEditor" />
-		<e:ListModelListBoxEditor ui:field="proxyHostEditor" />
-	</g:FlowPanel>
-
+    <g:FlowPanel>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <ge:EntityModelCheckBoxEditor ui:field="verifySSLEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+        <b:Row>
+            <e:ListModelListBoxEditor ui:field="proxyHostEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+        </b:Row>
+    </g:FlowPanel>
 </ui:UiBinder>
