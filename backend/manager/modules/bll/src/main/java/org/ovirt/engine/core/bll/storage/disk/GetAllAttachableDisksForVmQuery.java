@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetAllAttachableDisksForVmQuery<P extends GetAllAttachableDisksForVmQueryParameters> extends QueriesCommandBase<P> {
 
@@ -12,7 +11,7 @@ public class GetAllAttachableDisksForVmQuery<P extends GetAllAttachableDisksForV
 
     @Override
     protected void executeQueryCommand() {
-        setReturnValue(DbFacade.getInstance()
+        setReturnValue(getDbFacade()
                 .getDiskDao()
                 .getAllAttachableDisksByPoolId(getParameters().getStoragePoolId(),
                         getParameters().getVmId(),
