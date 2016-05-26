@@ -285,6 +285,11 @@
         <include name="common/businessentities/storage/LibvirtSecretUsageType.java" />
         <include name="common/businessentities/storage/LibvirtSecret.java" />
         <include name="common/businessentities/storage/LibvirtSecretUsageType.java" />
+        <include name="common/businessentities/LocationInfo.java" />
+        <include name="common/businessentities/HttpLocationInfo.java" />
+        <include name="common/businessentities/VdsmImageInfo.java" />
+        <include name="common/businessentities/ConnectionMethod.java" />
+        <include name="common/businessentities/ExternalLocationInfo.java" />
 
         <!-- Misc -->
         <include name="common/AuditLogType.java" />
