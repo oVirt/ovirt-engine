@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -17,11 +18,13 @@ import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
-import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -33,6 +36,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -42,6 +46,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -193,13 +198,13 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "100px"); //$NON-NLS-1$
 
-        imageDiskTable.addColumn(DisksViewColumns.getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
 
-        imageDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
+        imageDiskTable.addColumn(getReadOnlyCheckBoxColumn(),
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
                 "30px"); //$NON-NLS-1$
 
-        imageDiskTable.addColumn(DisksViewColumns.bootCheckboxColumn,
+        imageDiskTable.addColumn(getBootCheckBoxColumn(),
                 new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootableDisk())),
                 "30px"); //$NON-NLS-1$
 
@@ -309,13 +314,13 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(serialColumn, constants.serialSanStorage(), "70px"); //$NON-NLS-1$
 
-        lunDiskTable.addColumn(DisksViewColumns.getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
+        lunDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
 
-        lunDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
+        lunDiskTable.addColumn(getReadOnlyCheckBoxColumn(),
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
                 "30px"); //$NON-NLS-1$
 
-        lunDiskTable.addColumn(DisksViewColumns.bootCheckboxColumn,
+        lunDiskTable.addColumn(getBootCheckBoxColumn(),
                 new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootableDisk())),
                 "30px"); //$NON-NLS-1$
 
@@ -372,7 +377,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         cinderDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "100px"); //$NON-NLS-1$
 
-        cinderDiskTable.addColumn(DisksViewColumns.getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
+        cinderDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
 
         AbstractTextColumn<EntityModel> cinderVolumeTypeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
@@ -383,11 +388,11 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         cinderDiskTable.addColumn(cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), "90px"); //$NON-NLS-1$
 
-        cinderDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
+        cinderDiskTable.addColumn(getReadOnlyCheckBoxColumn(),
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
                 "30px"); //$NON-NLS-1$
 
-        cinderDiskTable.addColumn(DisksViewColumns.bootCheckboxColumn,
+        cinderDiskTable.addColumn(getBootCheckBoxColumn(),
                 new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootableDisk())),
                 "30px"); //$NON-NLS-1$
 
@@ -541,5 +546,69 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     public int setTabIndexes(int nextTabIndex) {
         isPluggedEditor.setTabIndex(nextTabIndex++);
         return nextTabIndex;
+    }
+
+    private AbstractCheckboxColumn<EntityModel> getReadOnlyCheckBoxColumn() {
+        AbstractCheckboxColumn<EntityModel> readOnlyCheckboxColumn = new AbstractCheckboxColumn<EntityModel>(
+            new FieldUpdater<EntityModel, Boolean>() {
+                @Override
+                public void update(int idx, EntityModel object, Boolean value) {
+                    DiskModel diskModel = (DiskModel) object.getEntity();
+                    diskModel.getDisk().setReadOnly(value);
+                }
+            })
+            {
+                @Override
+                protected boolean canEdit(EntityModel object) {
+                    DiskModel diskModel = (DiskModel) object.getEntity();
+                    Disk disk = diskModel.getDisk();
+                    boolean isScsiPassthrough = disk.isScsiPassthrough();
+                    boolean ideLimitation = diskModel.getDiskInterface().getSelectedItem() == DiskInterface.IDE;
+                    return !isScsiPassthrough && !ideLimitation;
+                }
+
+                @Override
+                public Boolean getValue(EntityModel object) {
+                    DiskModel diskModel = (DiskModel) object.getEntity();
+                    return diskModel.getDisk().getReadOnly();
+                }
+            };
+        return readOnlyCheckboxColumn;
+    }
+
+    private AbstractCheckboxColumn<EntityModel> getBootCheckBoxColumn() {
+        AbstractCheckboxColumn<EntityModel> bootCheckboxColumn = new AbstractCheckboxColumn<EntityModel>(
+            new FieldUpdater<EntityModel, Boolean>() {
+                @Override
+                public void update(int idx, EntityModel object, Boolean value) {
+                    DiskModel diskModel = (DiskModel) object.getEntity();
+                    diskModel.getIsBootable().setEntity(value);
+                }
+            })
+            {
+                @Override
+                protected boolean canEdit(EntityModel object) {
+                    return true;
+                }
+
+                @Override
+                public Boolean getValue(EntityModel object) {
+                    DiskModel diskModel = (DiskModel) object.getEntity();
+                    return diskModel.getIsBootable().getEntity();
+                }
+            };
+        return bootCheckboxColumn;
+    }
+
+
+    private Column getDiskInterfaceSelectionColumn() {
+        AbstractListModelListBoxColumn diskInterfaceStringColumn =
+                new AbstractListModelListBoxColumn<EntityModel, DiskInterface>(new EnumRenderer<DiskInterface>()) {
+            @Override
+            public ListModel getValue(EntityModel object) {
+                return ((DiskModel) object.getEntity()).getDiskInterface();
+            }
+        };
+        return diskInterfaceStringColumn;
     }
 }
