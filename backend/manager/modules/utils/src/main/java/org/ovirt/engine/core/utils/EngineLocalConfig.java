@@ -216,6 +216,14 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getFile("ENGINE_PKI_TRUST_STORE");
     }
 
+    public String getPKITrustStorePath() {
+        return getProperty("ENGINE_PKI_TRUST_STORE");
+    }
+
+    public String getHttpsPKITrustStorePath() {
+        return getProperty("ENGINE_HTTPS_PKI_TRUST_STORE");
+    }
+
     public String getPKITrustStorePassword() {
         return getProperty("ENGINE_PKI_TRUST_STORE_PASSWORD");
     }

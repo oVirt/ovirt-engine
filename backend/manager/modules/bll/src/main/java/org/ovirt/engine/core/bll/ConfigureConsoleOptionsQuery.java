@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.branding.BrandingManager;
@@ -262,6 +263,12 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             certificateSubject = getVdsCertificateSubject();
             caCertificate = certificate.getReturnValue();
         }
+
+        options.setCustomHttpsCertificateUsed(
+                !Objects.equals(
+                    EngineLocalConfig.getInstance().getPKITrustStorePath(),
+                    EngineLocalConfig.getInstance().getHttpsPKITrustStorePath()));
+
         options.setHostSubject(certificateSubject);
         options.setTrustStore(caCertificate);
 
