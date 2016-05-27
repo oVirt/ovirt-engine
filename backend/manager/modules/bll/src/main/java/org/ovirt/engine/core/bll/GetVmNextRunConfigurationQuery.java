@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -10,6 +11,10 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
 
     public GetVmNextRunConfigurationQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetVmNextRunConfigurationQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

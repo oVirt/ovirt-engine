@@ -52,7 +52,7 @@ public class BackendGraphicsConsoleResource
     public Response remove() {
         org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType();
 
-        List<GraphicsDevice> devices = DisplayHelper.getGraphicsDevicesForEntity(this, guid);
+        List<GraphicsDevice> devices = DisplayHelper.getGraphicsDevicesForEntity(this, guid, false);
         if (devices == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         }

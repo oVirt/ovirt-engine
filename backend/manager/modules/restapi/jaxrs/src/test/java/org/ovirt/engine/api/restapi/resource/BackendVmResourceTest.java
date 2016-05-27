@@ -142,7 +142,7 @@ public class BackendVmResourceTest
         setUpGetEntityNextRunExpectations();
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
-        setUpGetGraphicsExpectations(1);
+        setUpGetNextRunGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         control.replay();
         Vm response = resource.get();
@@ -1342,6 +1342,16 @@ public class BackendVmResourceTest
     protected void setUpGetGraphicsExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+                    IdQueryParameters.class,
+                    new String[] {},
+                    new Object[] {},
+                    Collections.singletonList(new GraphicsDevice(VmDeviceType.SPICE)));
+        }
+    }
+
+    protected void setUpGetNextRunGraphicsExpectations(int times) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetNextRunGraphicsDevices,
                     IdQueryParameters.class,
                     new String[] {},
                     new Object[] {},

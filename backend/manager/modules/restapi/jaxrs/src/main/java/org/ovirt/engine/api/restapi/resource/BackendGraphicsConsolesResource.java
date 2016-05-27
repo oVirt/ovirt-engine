@@ -46,7 +46,7 @@ public abstract class BackendGraphicsConsolesResource<T>
             graphicsTypeToGraphicsInfo = extractGraphicsInofs(entity);
         } else {
             // from devices (e.g. what is configured on the VM)
-            List<GraphicsType> graphicsTypes = DisplayHelper.getGraphicsTypesForEntity(this, guid);
+            List<GraphicsType> graphicsTypes = DisplayHelper.getGraphicsTypesForEntity(this, guid, true);
 
             graphicsTypeToGraphicsInfo = new HashMap<>();
             for (GraphicsType type : graphicsTypes) {

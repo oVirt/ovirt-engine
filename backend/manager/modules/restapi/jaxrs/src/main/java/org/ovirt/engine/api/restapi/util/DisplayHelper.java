@@ -26,17 +26,17 @@ public class DisplayHelper {
     /**
      * Returns graphics types of graphics devices of entity with given id.
      */
-    public static List<GraphicsType> getGraphicsTypesForEntity(BackendResource backendResource, Guid id) {
-        return getGraphicsTypesForEntity(backendResource, id, null);
+    public static List<GraphicsType> getGraphicsTypesForEntity(BackendResource backendResource, Guid id, boolean nextRun) {
+        return getGraphicsTypesForEntity(backendResource, id, null, nextRun);
     }
 
     public static List<GraphicsType> getGraphicsTypesForEntity(BackendResource backendResource, Guid id,
-            Map<Guid, List<GraphicsDevice>> cache) {
+            Map<Guid, List<GraphicsDevice>> cache, boolean nextRun) {
         List<GraphicsType> graphicsTypes = new ArrayList<>();
         List<GraphicsDevice> graphicsDevices;
 
         if (cache == null) {
-            graphicsDevices = getGraphicsDevicesForEntity(backendResource, id);
+            graphicsDevices = getGraphicsDevicesForEntity(backendResource, id, nextRun);
         } else {
             graphicsDevices = cache.get(id);
         }
@@ -50,9 +50,10 @@ public class DisplayHelper {
         return graphicsTypes;
     }
 
-    public static List<GraphicsDevice> getGraphicsDevicesForEntity(BackendResource backendResource, Guid id) {
+    public static List<GraphicsDevice> getGraphicsDevicesForEntity(BackendResource backendResource, Guid id,
+                                                                   boolean nextRun) {
         List<GraphicsDevice> graphicsDevices = backendResource.getEntity(List.class,
-                VdcQueryType.GetGraphicsDevices,
+                nextRun ? VdcQueryType.GetNextRunGraphicsDevices : VdcQueryType.GetGraphicsDevices,
                 new IdQueryParameters(id),
                 id.toString(), true);
 
@@ -96,7 +97,7 @@ public class DisplayHelper {
      * If there are multiple graphics, SPICE is preferred.
      */
     public static void adjustDisplayData(BackendResource res, Template template) {
-        adjustDisplayDataInternal(res, template, null);
+        adjustDisplayDataInternal(res, template, null, false);
     }
 
     /**
@@ -104,21 +105,22 @@ public class DisplayHelper {
      * Serves for BC purposes as VM can have more graphics devices, but old restapi allows us to set only one.
      * If there are multiple graphics, SPICE is preferred.
      */
-    public static void adjustDisplayData(BackendResource res, Vm vm) {
-        adjustDisplayData(res, vm, null);
+    public static void adjustDisplayData(BackendResource res, Vm vm, boolean nextRun) {
+        adjustDisplayData(res, vm, null, nextRun);
     }
 
-    public static void adjustDisplayData(BackendResource res, Vm vm, Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices) {
-        adjustDisplayDataInternal(res, vm, vmsGraphicsDevices);
+    public static void adjustDisplayData(BackendResource res, Vm vm, Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices,
+                                         boolean nextRun) {
+        adjustDisplayDataInternal(res, vm, vmsGraphicsDevices, nextRun);
     }
 
     private static void adjustDisplayDataInternal(BackendResource backendResource, BaseResource res,
-            Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices) {
+            Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices, boolean nextRun) {
         Display display = extractDisplayFromResource(res);
 
         if (display != null && !display.isSetType()) {
             List<GraphicsType> graphicsTypes = getGraphicsTypesForEntity(backendResource,
-                    new Guid(res.getId()), vmsGraphicsDevices);
+                    new Guid(res.getId()), vmsGraphicsDevices, nextRun);
 
             if (graphicsTypes.contains(GraphicsType.SPICE)) {
                 display.setType(DisplayType.SPICE);

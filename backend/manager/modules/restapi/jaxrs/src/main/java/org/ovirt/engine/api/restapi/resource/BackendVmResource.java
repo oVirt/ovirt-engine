@@ -136,7 +136,7 @@ public class BackendVmResource
         }
 
         if (vm != null) {
-            DisplayHelper.adjustDisplayData(this, vm);
+            DisplayHelper.adjustDisplayData(this, vm, isNextRunRequested());
             removeRestrictedInfo(vm);
         }
 
@@ -177,7 +177,7 @@ public class BackendVmResource
         );
 
         if (vm != null) {
-            DisplayHelper.adjustDisplayData(this, vm);
+            DisplayHelper.adjustDisplayData(this, vm, false);
             removeRestrictedInfo(vm);
         }
 

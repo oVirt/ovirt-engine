@@ -209,7 +209,7 @@ public class BackendVmsResource extends
 
         Vm result = (Vm) response.getEntity();
         if (result != null) {
-            DisplayHelper.adjustDisplayData(this, result);
+            DisplayHelper.adjustDisplayData(this, result, false);
             removeRestrictedInfo(result);
         }
 
@@ -606,7 +606,7 @@ public class BackendVmsResource extends
 
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
                 Vm vm = map(entity);
-                DisplayHelper.adjustDisplayData(this, vm, vmsGraphicsDevices);
+                DisplayHelper.adjustDisplayData(this, vm, vmsGraphicsDevices, false);
                 removeRestrictedInfo(vm);
                 collection.getVms().add(addLinks(populate(vm, entity)));
             }
