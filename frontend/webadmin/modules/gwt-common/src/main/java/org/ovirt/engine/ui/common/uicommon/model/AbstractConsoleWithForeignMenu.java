@@ -57,7 +57,7 @@ public abstract class AbstractConsoleWithForeignMenu extends AbstractConsole imp
                 .append("\nsso-token=").append(ssoToken) //$NON-NLS-1$
                 .append("\nadmin=").append(admin ? 1 : 0); //$NON-NLS-1$
 
-        if (options.getTrustStore() != null) {
+        if (options.getTrustStore() != null && !options.isCustomHttpsCertificateUsed()) {
             String trustStore= options.getTrustStore().replace("\n", "\\n"); //$NON-NLS-1$ //$NON-NLS-2$
             configBuilder.append("\nca=").append(trustStore); //$NON-NLS-1$
         }
