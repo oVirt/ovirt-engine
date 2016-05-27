@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.inject.Inject;
 
 public class ImportTemplateModel extends ImportVmFromExportDomainModel {
@@ -63,6 +64,10 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
             searchPattern.append(vmt_guidKey);
             searchPattern.append(template.getId().toString());
             searchPattern.append(orKey);
+
+            searchPattern.append(vmt_guidKey);
+            searchPattern.append(template.getBaseTemplateId().toString());
+            searchPattern.append(orKey);
         }
 
         return searchPattern.substring(0, searchPattern.length() - orKey.length());
@@ -75,6 +80,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
+                        UIConstants constants = ConstantsManager.getInstance().getConstants();
                         List<VmTemplate> vmtList = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                         List<ImportTemplateData> templateDataList = new ArrayList<>();
@@ -83,11 +89,9 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                             boolean templateExistsInSystem = vmtList.contains(template);
                             templateData.setExistsInSystem(templateExistsInSystem);
                             if (templateExistsInSystem) {
-                                templateData.getClone().setEntity(true);
-                                templateData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .importTemplateThatExistsInSystemMustClone());
-                                templateData.getClone().setIsChangeable(false);
+                                templateData.enforceClone(constants.importTemplateThatExistsInSystemMustClone());
+                            } else if (findAnyVmTemplateById(vmtList, template.getBaseTemplateId()) == null) {
+                                templateData.enforceClone(constants.importTemplateWithoutBaseMustClone());
                             }
                             templateDataList.add(templateData);
                         }
@@ -98,6 +102,15 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                                 doInit();
                             }
                         });
+                    }
+
+                    private VmTemplate findAnyVmTemplateById(List<VmTemplate> vmtList, Guid templateId) {
+                        for (VmTemplate vmt : vmtList) {
+                            if (templateId.equals(vmt.getId())) {
+                                return vmt;
+                            }
+                        }
+                        return null;
                     }
                 }));
 

@@ -755,6 +755,8 @@ public interface UIConstants extends Constants {
 
     String importTemplateThatExistsInSystemMustClone();
 
+    String importTemplateWithoutBaseMustClone();
+
     String importCloneVMMustCollapseSnapshots();
 
     String osVersionAbout();
