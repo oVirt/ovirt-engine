@@ -123,7 +123,7 @@ public class BackendVmPoolsResource
             model.setTemplate(new Template());
             model.getTemplate().setId(vm.getVmtGuid().toString());
             model = getMapper(VM.class, VmPool.class).map(vm, model);
-            DisplayHelper.adjustDisplayData(this, model.getVm());
+            DisplayHelper.adjustDisplayData(this, model.getVm(), false);
             if (vm.getInstanceTypeId() != null) {
                 model.setInstanceType(new InstanceType());
                 model.getInstanceType().setId(vm.getInstanceTypeId().toString());
