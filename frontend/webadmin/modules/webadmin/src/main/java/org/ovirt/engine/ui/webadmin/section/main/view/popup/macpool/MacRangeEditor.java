@@ -11,11 +11,13 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,6 +38,10 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
         WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
 
+    interface Style extends CssResource {
+        String elementStyle();
+    }
+
     @UiField
     @Path(value = "leftBound.entity")
     @WithElementId
@@ -45,6 +51,9 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
     @Path(value = "rightBound.entity")
     @WithElementId
     StringEntityModelTextBoxEditor rightBound;
+
+    @UiField
+    Style style;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -57,8 +66,10 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
 
         leftBound.setLabel(constants.macPoolWidgetLeftBound());
         rightBound.setLabel(constants.macPoolWidgetRightBound());
-        leftBound.getContentWidgetContainer().setWidth("130px"); //$NON-NLS-1$
-        rightBound.getContentWidgetContainer().setWidth("130px"); //$NON-NLS-1$
+        ((Element)leftBound.getElement().getChild(0)).addClassName(style.elementStyle());
+        ((Element)leftBound.getElement().getChild(1)).addClassName(style.elementStyle());
+        ((Element)rightBound.getElement().getChild(0)).addClassName(style.elementStyle());
+        ((Element)rightBound.getElement().getChild(1)).addClassName(style.elementStyle());
     }
 
     @Override

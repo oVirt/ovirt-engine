@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
@@ -14,7 +15,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-public class MacPoolWidget extends AbstractModelBoundPopupWidget<MacPoolModel> {
+public class MacPoolWidget extends AbstractModelBoundPopupWidget<MacPoolModel> implements PatternFlyCompatible {
 
     interface Driver extends SimpleBeanEditorDriver<MacPoolModel, MacPoolWidget> {
     }
@@ -60,6 +61,11 @@ public class MacPoolWidget extends AbstractModelBoundPopupWidget<MacPoolModel> {
     public MacPoolModel flush() {
         macRanges.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        macRanges.setUsePatternFly(use);
     }
 
 }
