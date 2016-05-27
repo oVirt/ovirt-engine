@@ -241,7 +241,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             Port port = locatePort(nic);
 
             List<String> securityGroups = getSecurityGroups(vnicProfile);
-            String hostId = NetworkUtils.getUniqueHostName(host);
+            String hostId = getHostId(host);
 
             if (port == null) {
                 com.woorea.openstack.quantum.model.Network externalNetwork =
@@ -287,6 +287,14 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             return runtimeProperties;
         } catch (RuntimeException e) {
             throw new EngineException(EngineError.PROVIDER_FAILURE, e);
+        }
+    }
+
+    private String getHostId(VDS host) {
+        if (host.getStaticData().getOpenstackNetworkProviderId() == null) {
+            return host.getHostName();
+        } else {
+            return NetworkUtils.getUniqueHostName(host);
         }
     }
 
