@@ -1656,6 +1656,7 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_dynamic.cpu_sockets AS cpu_sockets,
     vds_spm_id_map.vds_spm_id AS vds_spm_id,
     vds_static.otp_validity AS otp_validity,
+    vds_static.openstack_network_provider_id AS openstack_network_provider_id,
     CASE
         WHEN storage_pool.spm_vds_id = vds_static.vds_id
             THEN CASE
