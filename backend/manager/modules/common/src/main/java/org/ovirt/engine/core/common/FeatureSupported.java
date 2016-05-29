@@ -108,4 +108,9 @@ public class FeatureSupported {
     public static boolean adPartenerMacSupported(Version version) {
         return supportedInConfig(ConfigValues.AdPartnerMacSupported, version);
     }
+
+
+    public static boolean ipv6Supported(Version version) {
+        return supportedInConfig(ConfigValues.Ipv6Supported, version);
+    }
 }

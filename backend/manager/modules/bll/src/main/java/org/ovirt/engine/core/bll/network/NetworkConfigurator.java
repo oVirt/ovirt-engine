@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.host.HostSetupNetworkPoller;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -156,7 +157,9 @@ public class NetworkConfigurator {
         managementAttachment.setNicId(baseNicId);
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.setIPv4Addresses(Collections.singletonList(new NicToIpv4AddressFunction().apply(nic)));
-        ipConfiguration.setIpV6Addresses(Collections.singletonList(new NicToIpv6AddressFunction().apply(nic)));
+        if (FeatureSupported.ipv6Supported(host.getClusterCompatibilityVersion())) {
+            ipConfiguration.setIpV6Addresses(Collections.singletonList(new NicToIpv6AddressFunction().apply(nic)));
+        }
         managementAttachment.setIpConfiguration(ipConfiguration);
         parameters.getNetworkAttachments().add(managementAttachment);
         return parameters;
