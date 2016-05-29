@@ -1889,5 +1889,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     MigrationPolicies,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20480")
+    HostedEngineConfigDiskSizeInBytes,
+
     Invalid
 }

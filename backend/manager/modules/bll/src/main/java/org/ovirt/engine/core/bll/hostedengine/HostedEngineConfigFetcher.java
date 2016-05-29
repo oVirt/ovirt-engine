@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
@@ -123,7 +125,8 @@ public class HostedEngineConfigFetcher {
     }
 
     private byte[] downloadDisk(Guid spId, Guid sdId, Guid hostId, DiskImage diskImage) {
-        log.info("Found the HE configuration disk. Downloading the content in size of '{}'b", diskImage.getSize());
+        long downloadSize = Config.<Integer> getValue(ConfigValues.HostedEngineConfigDiskSizeInBytes);
+        log.info("Found the HE configuration disk. Downloading the content in size of {} bytes", downloadSize);
         return (byte[]) resourceManager.runVdsCommand(
                 VDSCommandType.RetrieveImageData,
                 new ImageHttpAccessVDSCommandParameters(
@@ -132,7 +135,7 @@ public class HostedEngineConfigFetcher {
                         sdId,
                         diskImage.getId(),
                         diskImage.getImageId(),
-                        1024 * 100L)).getReturnValue();
+                        downloadSize)).getReturnValue();
     }
 
     private Map<String, String> extractFileFromDisk(Map<String, String> configFromImage, byte[] diskData) {

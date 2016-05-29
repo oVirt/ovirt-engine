@@ -601,10 +601,12 @@ select fn_db_add_config_value('MigrationPolicies','[{"id":{"uuid":"80554327-0569
 
 select fn_db_add_config_value_for_versions_up_to('SriovHotPlugSupported','false','3.6');
 
+-- Hosted Engine
 select fn_db_add_config_value('HostedEngineVmName','HostedEngine','general');
 select fn_db_add_config_value('AutoImportHostedEngine','true','general');
 select fn_db_add_config_value('HostedEngineStorageDomainName','hosted_storage','general');
 select fn_db_add_config_value('AllowEditingHostedEngine','true','general');
+select fn_db_add_config_value('HostedEngineConfigDiskSizeInBytes','20480','general');
 
 select fn_db_add_config_value('ImageProxyAddress','localhost:54323','general');
 select fn_db_add_config_value('ImageProxySSLEnabled','true','general');
