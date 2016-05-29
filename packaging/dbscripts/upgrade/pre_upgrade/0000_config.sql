@@ -11,7 +11,7 @@ The following sections are available:
     Complex upgrades using temporary functions
 
 In each section (except simple/function sections), entries are ordered by key,
-please keep this when modifing this file.
+please keep this when modifying this file.
 
 PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 
@@ -310,6 +310,7 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 ', 'general');
 
 
+select fn_db_add_config_value_for_versions_up_to('Ipv6Supported', 'false', '4.0');
 select fn_db_add_config_value('IPTablesConfigSiteCustom','','general');
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
