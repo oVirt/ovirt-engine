@@ -52,6 +52,8 @@ public enum HelpTag {
 
     assign_users_and_groups_to_quota("assign_users_and_groups_to_quota", HelpTagType.WEBADMIN, "Quota Tab > Users Sub-Tab > Assign Users/Groups to Quota"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    update_ovfs("update_ovfs", HelpTagType.WEBADMIN, "Storage Tab > Update OVFs"), //$NON-NLS-1$ //$NON-NLS-2$
+
     bond_network_interfaces("bond_network_interfaces", HelpTagType.WEBADMIN, "Host Tab > Logical Network Sub-Tab > Bond Network Interfaces"), //$NON-NLS-1$ //$NON-NLS-2$
 
     brick_advanced("brick_advanced", HelpTagType.WEBADMIN, "[gluster] 'Brick Details' dialog (Volumes main tab -> Bricks sub tab)"), //$NON-NLS-1$ //$NON-NLS-2$

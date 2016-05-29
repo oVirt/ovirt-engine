@@ -158,6 +158,13 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return getMainModel().getRemoveCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.updateOvfsForStorage(),
+                CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getUpdateOvfsCommand();
+            }
+        });
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.destroyStorage(),
                 CommandLocation.OnlyFromContext) {
             @Override

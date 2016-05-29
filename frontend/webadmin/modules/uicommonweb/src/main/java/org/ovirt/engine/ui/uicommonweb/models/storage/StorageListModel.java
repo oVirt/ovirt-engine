@@ -8,6 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -112,6 +113,16 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         removeCommand = value;
     }
 
+    private UICommand updateOvfsCommand;
+
+    public UICommand getUpdateOvfsCommand() {
+        return updateOvfsCommand;
+    }
+
+    private void setUpdateOvfsCommand(UICommand value) {
+        updateOvfsCommand = value;
+    }
+
     private UICommand destroyCommand;
 
     public UICommand getDestroyCommand() {
@@ -173,6 +184,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         setImportDomainCommand(new UICommand("ImportDomain", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setUpdateOvfsCommand(new UICommand("UpdateOvfs", this)); //$NON-NLS-1$
         setDestroyCommand(new UICommand("Destroy", this)); //$NON-NLS-1$
         setScanDisksCommand(new UICommand("ScanDisks", this)); //$NON-NLS-1$
 
@@ -576,6 +588,17 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }), null, localFsOnly);
     }
 
+    private void updateOvfs() {
+        StorageDomain storage = getSelectedItem();
+        if (storage != null) {
+            ProcessOvfUpdateForStorageDomainCommandParameters params = new ProcessOvfUpdateForStorageDomainCommandParameters();
+            params.setStorageDomainId(storage.getId());
+            params.setStoragePoolId(storage.getStoragePoolId());
+            Frontend.getInstance().runAction(VdcActionType.ProcessOvfUpdateForStorageDomain, params, null, this);
+        }
+        cancel();
+    }
+
     private void onRemove() {
         if (getSelectedItem() != null) {
             StorageDomain storage = getSelectedItem();
@@ -918,6 +941,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 && item.getStatus() == StorageDomainStatus.Active
                 && item.getStorageDomainType().isDataDomain());
 
+        getUpdateOvfsCommand().setIsExecutionAllowed(item != null && items.size() == 1
+                && item.getStorageDomainType().isDataDomain()
+                && item.getStatus() == StorageDomainStatus.Active);
+
         // System tree dependent actions.
         boolean isAvailable =
                 !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage);
@@ -926,6 +953,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getRemoveCommand().setIsAvailable(isAvailable);
         getDestroyCommand().setIsAvailable(isAvailable);
         getScanDisksCommand().setIsAvailable(isAvailable);
+        getUpdateOvfsCommand().setIsAvailable(isAvailable);
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
@@ -962,6 +990,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
         else if (command == getRemoveCommand()) {
             remove();
+        }
+        else if (command == getUpdateOvfsCommand()) {
+            updateOvfs();
         }
         else if (command == getDestroyCommand()) {
             destroy();

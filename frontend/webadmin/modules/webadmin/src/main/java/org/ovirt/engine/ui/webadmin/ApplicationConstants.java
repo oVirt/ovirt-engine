@@ -1244,6 +1244,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String removeStorage();
 
+    String updateOvfsForStorage();
+
     String destroyStorage();
 
     String scanDisksStorage();
