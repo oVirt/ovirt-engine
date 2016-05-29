@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -106,33 +107,11 @@ public class StorageDomainValidator {
     }
 
     /**
-     * Verify there's enough space in the storage domain for creating cloned DiskImages with collapse.
-     * Space should be allocated according to the volumes type and format, and allocation policy,
-     * according to the following table:
-     *
-     *      | File Domain                             | Block Domain
-     * -----|-----------------------------------------|-------------
-     * qcow | preallocated : 1.1 * disk capacity      |1.1 * min(used ,capacity)
-     *      | sparse: 1.1 * min(used ,capacity)       |
-     * -----|-----------------------------------------|-------------
-     * raw  | preallocated: disk capacity             |disk capacity
-     *      | sparse: min(used,capacity)              |
-     *
+     * Returns the required space in the storage domain for creating cloned DiskImages with collapse.
      * */
     private double getTotalSizeForClonedDisks(Collection<DiskImage> diskImages) {
-        return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
-            double sizeForDisk = diskImage.getSize();
-            if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
-                    storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                double usedSpace = diskImage.getActualDiskWithSnapshotsSizeInBytes();
-                sizeForDisk = Math.min(diskImage.getSize(), usedSpace);
-            }
-
-            if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                sizeForDisk = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * sizeForDisk);
-            }
-            return sizeForDisk;
-        });
+        return getTotalSizeForDisksByMethod(diskImages, diskImage ->
+                ImagesHandler.getTotalSizeForClonedDisk(diskImage, storageDomain.getStorageStaticData()));
     }
 
     /**

@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -236,6 +237,34 @@ public final class ImagesHandler {
             }
         }
         return result;
+    }
+
+    /**
+     * Calculates the required space in the storage domain for creating cloned DiskImages with collapse.
+     * Space should be calculated according to the volumes type and format, and allocation policy,
+     * according to the following table:
+     *
+     *      | File Domain                             | Block Domain
+     * -----|-----------------------------------------|-------------
+     * qcow | preallocated : 1.1 * disk capacity      |1.1 * min(used ,capacity)
+     *      | sparse: 1.1 * min(used ,capacity)       |
+     * -----|-----------------------------------------|-------------
+     * raw  | preallocated: disk capacity             |disk capacity
+     *      | sparse: min(used,capacity)              |
+     *
+     * */
+    public static double getTotalSizeForClonedDisk(DiskImage diskImage, StorageDomainStatic storageDomain) {
+        double sizeForDisk = diskImage.getSize();
+        if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
+                storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
+            double usedSpace = diskImage.getActualDiskWithSnapshotsSizeInBytes();
+            sizeForDisk = Math.min(diskImage.getSize(), usedSpace);
+        }
+
+        if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+            sizeForDisk = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * sizeForDisk);
+        }
+        return sizeForDisk;
     }
 
     /**
