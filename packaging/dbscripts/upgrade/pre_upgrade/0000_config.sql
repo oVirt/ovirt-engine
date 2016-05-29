@@ -845,6 +845,15 @@ select fn_db_update_config_value('IPTablesConfig','
 -A INPUT -p tcp --dport 54322 -j ACCEPT
 # neutron gre mode
 -A INPUT -p gre -j ACCEPT
+# nfs
+-A INPUT -p tcp --dport 2049 -j ACCEPT
+-A INPUT -p udp --dport 2049 -j ACCEPT
+-A INPUT -p tcp --dport 32803 -j ACCEPT
+-A INPUT -p udp --dport 32769 -j ACCEPT
+-A INPUT -p tcp --dport 892 -j ACCEPT
+-A INPUT -p udp --dport 892 -j ACCEPT
+-A INPUT -p tcp --dport 662 -j ACCEPT
+-A INPUT -p udp --dport 662 -j ACCEPT
 
 @CUSTOM_RULES@
 
