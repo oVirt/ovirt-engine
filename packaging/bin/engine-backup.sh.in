@@ -236,7 +236,7 @@ usage() {
 	cat << __EOF__
 engine-backup: back up and restore ovirt-engine environment
 USAGE:
-    $0 [--mode=MODE] [--scope=SCOPE] [--file=FILE] [--log=FILE]
+    $0 --mode=MODE --scope=SCOPE --file=FILE --log=FILE [options]
  MODE is one of the following:
     backup                          back up system into FILE
     restore                         restore system from FILE
