@@ -132,7 +132,7 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
         @Override
         protected void executeCommand() {
-            // Intentionally empty - no behavior is requiered
+            // Intentionally empty - no behavior is required
         }
     }
 }
