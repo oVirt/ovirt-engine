@@ -841,6 +841,10 @@ select fn_db_update_config_value('IPTablesConfig','
 -A INPUT -p udp --dport 161 -j ACCEPT
 # Cockpit
 -A INPUT -p tcp --dport 9090 -j ACCEPT
+# image-proxy
+-A INPUT -p tcp --dport 54322 -j ACCEPT
+# neutron gre mode
+-A INPUT -p gre -j ACCEPT
 
 @CUSTOM_RULES@
 
