@@ -244,6 +244,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     private AddVmParameters buildAddVmParameters(Guid poolId, String vmName) {
         VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
         currVm.setName(vmName);
+        currVm.setStateless(!getVmPool().isStateful());
 
         if (getParameters().getVmLargeIcon() != null) {
             final VmIconIdSizePair iconIds = IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
@@ -375,10 +376,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
         if (getActionType() == VdcActionType.AddVmPoolWithVms && getParameters().getVmsCount() < 1) {
             return failValidation(EngineMessage.VM_POOL_CANNOT_CREATE_WITH_NO_VMS);
-        }
-
-        if (getParameters().getVmStaticData().isStateless()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
         }
 
         if (getParameters().getVmPool().getPrestartedVms() >

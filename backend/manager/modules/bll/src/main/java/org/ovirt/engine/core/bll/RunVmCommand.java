@@ -1186,7 +1186,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected boolean isRunAsStateless() {
         return getParameters().getRunAsStateless() != null ?
                 getParameters().getRunAsStateless()
-                : getVm().isStateless();
+                : getVm().getVmPoolId() == null && getVm().isStateless();
     }
 
     @Override
