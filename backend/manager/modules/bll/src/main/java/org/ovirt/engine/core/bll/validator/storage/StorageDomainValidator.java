@@ -15,11 +15,11 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class StorageDomainValidator {
 
-    private static final double QCOW_OVERHEAD_FACTOR = 1.1;
     private static final long INITIAL_BLOCK_ALLOCATION_SIZE = 1024L * 1024L * 1024L;
     private static final long EMPTY_QCOW_HEADER_SIZE = 1024L * 1024L;
 
@@ -129,7 +129,7 @@ public class StorageDomainValidator {
             }
 
             if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                sizeForDisk = Math.ceil(QCOW_OVERHEAD_FACTOR * sizeForDisk);
+                sizeForDisk = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * sizeForDisk);
             }
             return sizeForDisk;
         });
@@ -157,7 +157,7 @@ public class StorageDomainValidator {
             }
 
             if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                sizeForDisk = Math.ceil(QCOW_OVERHEAD_FACTOR * sizeForDisk);
+                sizeForDisk = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * sizeForDisk);
             }
             return sizeForDisk;
         });
