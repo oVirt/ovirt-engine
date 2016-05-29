@@ -713,10 +713,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (vmFromDB.getVmPoolId() != null && vmFromParams.isStateless()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
-        }
-
         if (!AddVmCommand.checkCpuSockets(
                 vmFromParams.getNumOfSockets(),
                 vmFromParams.getCpuPerSocket(),
