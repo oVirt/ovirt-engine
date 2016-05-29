@@ -15,9 +15,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
@@ -54,10 +52,10 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
 
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
-        when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(Collections.<StorageDomain>emptyList());
+        when(storageDomainDao.getAllForStoragePool(storagePool.getId())).thenReturn(Collections.emptyList());
 
         doReturn(storagePoolIsoMapDao).when(cmd).getStoragePoolIsoMapDao();
-        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.<StoragePoolIsoMap>emptyList());
+        when(storagePoolIsoMapDao.getAllForStorage(any(Guid.class))).thenReturn(Collections.emptyList());
     }
 
     public void initCommand() {
