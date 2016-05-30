@@ -856,7 +856,7 @@ public class VmAnalyzer {
                 if (dbVm != null) {
                     List<VmGuestAgentInterface> vmGuestAgentInterfaces = vdsmVm.getVmGuestAgentInterfaces();
                     int guestAgentNicHash = vmGuestAgentInterfaces == null ? 0 : vmGuestAgentInterfaces.hashCode();
-                    if (guestAgentNicHash != vdsmVmDynamic.getGuestAgentNicsHash()) {
+                    if (guestAgentNicHash != dbVm.getGuestAgentNicsHash()) {
                         if (vmDynamicToSave == null) {
                             saveDynamic(dbVm.getDynamicData());
                         }
