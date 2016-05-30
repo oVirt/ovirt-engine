@@ -121,7 +121,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         if (vdsReturnValue.getSucceeded()) {
             AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
-            getReturnValue().getInternalVdsmTaskIdList().add(
+            getTaskIdList().add(
                     createTask(taskId,
                             taskCreationInfo,
                             getParameters().getParentCommand(),
