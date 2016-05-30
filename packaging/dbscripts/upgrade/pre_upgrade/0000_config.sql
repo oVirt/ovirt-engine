@@ -233,6 +233,8 @@ select fn_db_add_config_value('IPTablesConfig',
 -A INPUT -i lo -j ACCEPT
 # vdsm
 -A INPUT -p tcp --dport @VDSM_PORT@ -j ACCEPT
+# ovirt-imageio-daemon
+-A INPUT -p tcp --dport 54322 -j ACCEPT
 # libvirt tls
 -A INPUT -p tcp --dport 16514 -j ACCEPT
 # SSH
@@ -652,6 +654,8 @@ select fn_db_update_config_value('IPTablesConfig','
 -A INPUT -i lo -j ACCEPT
 # vdsm
 -A INPUT -p tcp --dport @VDSM_PORT@ -j ACCEPT
+# ovirt-imageio-daemon
+-A INPUT -p tcp --dport 54322 -j ACCEPT
 # rpc.statd
 -A INPUT -p tcp --dport 111 -j ACCEPT
 -A INPUT -p udp --dport 111 -j ACCEPT
