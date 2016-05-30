@@ -56,13 +56,10 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
         getNetwork().setLabel(null);
 
         TransactionSupport.executeInNewTransaction(() -> {
-            addNetwork();
+            super.executeCommand();
+            getReturnValue().setActionReturnValue(getNetwork());
             return null;
         });
-    }
-
-    private void addNetwork() {
-        super.executeCommand();
     }
 
     @Override
