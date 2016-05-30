@@ -167,7 +167,10 @@ CREATE OR REPLACE FUNCTION InsertVmStatistics (
     v_memory_usage_history TEXT,
     v_cpu_usage_history TEXT,
     v_network_usage_history TEXT,
-    v_vm_guid UUID
+    v_vm_guid UUID,
+    v_guest_mem_free BIGINT,
+    v_guest_mem_buffered BIGINT,
+    v_guest_mem_cached BIGINT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -183,7 +186,10 @@ BEGIN
         vm_guid,
         memory_usage_history,
         cpu_usage_history,
-        network_usage_history
+        network_usage_history,
+        guest_mem_buffered,
+        guest_mem_cached,
+        guest_mem_free
         )
     VALUES (
         v_cpu_sys,
@@ -197,7 +203,10 @@ BEGIN
         v_vm_guid,
         v_memory_usage_history,
         v_cpu_usage_history,
-        v_network_usage_history
+        v_network_usage_history,
+        v_guest_mem_buffered,
+        v_guest_mem_cached,
+        v_guest_mem_free
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -214,7 +223,10 @@ CREATE OR REPLACE FUNCTION UpdateVmStatistics (
     v_memory_usage_history TEXT,
     v_cpu_usage_history TEXT,
     v_network_usage_history TEXT,
-    v_vm_guid UUID
+    v_vm_guid UUID,
+    v_guest_mem_buffered BIGINT,
+    v_guest_mem_free BIGINT,
+    v_guest_mem_cached BIGINT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -230,6 +242,9 @@ BEGIN
         memory_usage_history = v_memory_usage_history,
         cpu_usage_history = v_cpu_usage_history,
         network_usage_history = v_network_usage_history,
+        guest_mem_buffered = v_guest_mem_buffered,
+        guest_mem_free = v_guest_mem_free,
+        guest_mem_cached = v_guest_mem_cached,
         _update_date = LOCALTIMESTAMP
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
@@ -310,9 +325,6 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_vnc_port INT,
     v_vnc_ip VARCHAR(32),
     v_guest_agent_status INT,
-    v_guest_mem_free BIGINT,
-    v_guest_mem_buffered BIGINT,
-    v_guest_mem_cached BIGINT,
     v_guest_timezone_offset INT,
     v_guest_timezone_name VARCHAR(255),
     v_guestos_arch INT,
@@ -367,9 +379,6 @@ BEGIN
         vnc_port,
         vnc_ip,
         guest_agent_status,
-        guest_mem_buffered,
-        guest_mem_cached,
-        guest_mem_free,
         guest_timezone_offset,
         guest_timezone_name,
         guestos_arch,
@@ -422,9 +431,6 @@ BEGIN
         v_vnc_port,
         v_vnc_ip,
         v_guest_agent_status,
-        v_guest_mem_buffered,
-        v_guest_mem_cached,
-        v_guest_mem_free,
         v_guest_timezone_offset,
         v_guest_timezone_name,
         v_guestos_arch,
@@ -481,9 +487,6 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_vnc_port INT,
     v_vnc_ip VARCHAR(32),
     v_guest_agent_status INT,
-    v_guest_mem_buffered BIGINT,
-    v_guest_mem_free BIGINT,
-    v_guest_mem_cached BIGINT,
     v_guest_timezone_offset INT,
     v_guest_timezone_name VARCHAR(255),
     v_guestos_arch INT,
@@ -540,9 +543,6 @@ BEGIN
         vnc_port = v_vnc_port,
         vnc_ip = v_vnc_ip,
         guest_agent_status = v_guest_agent_status,
-        guest_mem_buffered = v_guest_mem_buffered,
-        guest_mem_free = v_guest_mem_free,
-        guest_mem_cached = v_guest_mem_cached,
         guest_timezone_offset = v_guest_timezone_offset,
         guest_timezone_name = v_guest_timezone_name,
         guestos_arch = v_guestos_arch,

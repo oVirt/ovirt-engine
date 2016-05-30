@@ -36,6 +36,9 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private Guid vmId;
     private ArrayList<VmNetworkInterface> interfaceStatistics;
     private Integer usageCpuPercent;
+    private Long guestMemoryCached;
+    private Long guestMemoryBuffered;
+    private Long guestMemoryFree;
 
     public VmStatistics() {
         cpuSys = 0.0;
@@ -63,7 +66,10 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 cpuUsageHistory,
                 networkUsageHistory,
                 memoryUsageHistory,
-                vNumaNodeStatisticsList
+                vNumaNodeStatisticsList,
+                guestMemoryFree,
+                guestMemoryBuffered,
+                guestMemoryCached
         );
     }
 
@@ -90,7 +96,10 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && Objects.equals(cpuUsageHistory, other.cpuUsageHistory)
                 && Objects.equals(networkUsageHistory, other.networkUsageHistory)
                 && Objects.equals(memoryUsageHistory, other.memoryUsageHistory)
-                && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList);
+                && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList)
+                && Objects.equals(guestMemoryBuffered, other.guestMemoryBuffered)
+                && Objects.equals(guestMemoryCached, other.guestMemoryCached)
+                && Objects.equals(guestMemoryFree, other.guestMemoryFree);
     }
 
     public Double getCpuSys() {
@@ -292,6 +301,30 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.vNumaNodeStatisticsList = vNumaNodeStatisticsList;
     }
 
+    public Long getGuestMemoryCached() {
+        return guestMemoryCached;
+    }
+
+    public void setGuestMemoryCached(Long guestMemoryCached) {
+        this.guestMemoryCached = guestMemoryCached;
+    }
+
+    public Long getGuestMemoryBuffered() {
+        return guestMemoryBuffered;
+    }
+
+    public void setGuestMemoryBuffered(Long guestMemoryBuffered) {
+        this.guestMemoryBuffered = guestMemoryBuffered;
+    }
+
+    public Long getGuestMemoryFree() {
+        return guestMemoryFree;
+    }
+
+    public void setGuestMemoryFree(Long guestMemoryFree) {
+        this.guestMemoryFree = guestMemoryFree;
+    }
+
     /**
      * Update data that was received from VDSM
      * @param vmStatistics - the reported statistics from VDSM
@@ -319,6 +352,9 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         // -------- memory --------------
         setUsageMemPercent(vmStatistics.getUsageMemPercent());
         addMemoryUsageHistory(getUsageMemPercent(), usageHistoryLimit);
+        setGuestMemoryBuffered(vmStatistics.getGuestMemoryBuffered());
+        setGuestMemoryCached(vmStatistics.getGuestMemoryCached());
+        setGuestMemoryFree(vmStatistics.getGuestMemoryFree());
 
         // -------- migration --------------
         setMigrationProgressPercent(vmStatistics.getMigrationProgressPercent());

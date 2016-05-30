@@ -79,9 +79,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private VmExitReason exitReason;
     private int guestCpuCount;
     private Map<GraphicsType, GraphicsInfo> graphicsInfos;
-    private Long guestMemoryCached;
-    private Long guestMemoryBuffered;
-    private Long guestMemoryFree;
     private String guestOsVersion;
     private String guestOsDistribution;
     private String guestOsCodename;
@@ -137,9 +134,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 exitReason,
                 emulatedMachine,
                 graphicsInfos,
-                guestMemoryFree,
-                guestMemoryBuffered,
-                guestMemoryCached,
                 guestOsTimezoneName,
                 guestOsTimezoneOffset,
                 guestOsArch,
@@ -200,9 +194,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && exitReason == other.exitReason
                 && Objects.equals(emulatedMachine, other.emulatedMachine)
                 && Objects.equals(graphicsInfos, other.getGraphicsInfos())
-                && Objects.equals(guestMemoryBuffered, other.guestMemoryBuffered)
-                && Objects.equals(guestMemoryCached, other.guestMemoryCached)
-                && Objects.equals(guestMemoryFree, other.guestMemoryFree)
                 && Objects.equals(guestOsTimezoneName, other.guestOsTimezoneName)
                 && guestOsTimezoneOffset == other.guestOsTimezoneOffset
                 && Objects.equals(guestOsVersion, other.guestOsVersion)
@@ -330,9 +321,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         exitReason = template.getExitReason();
         guestCpuCount = template.getGuestCpuCount();
         graphicsInfos = new HashMap<>(template.getGraphicsInfos());
-        guestMemoryCached = template.getGuestMemoryCached();
-        guestMemoryBuffered = template.getGuestMemoryBuffered();
-        guestMemoryFree = template.getGuestMemoryFree();
         guestOsVersion = template.getGuestOsVersion();
         guestOsDistribution = template.getGuestOsDistribution();
         guestOsCodename = template.getGuestOsCodename();
@@ -642,30 +630,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         this.emulatedMachine = emulatedMachine;
     }
 
-    public Long getGuestMemoryCached() {
-        return guestMemoryCached;
-    }
-
-    public void setGuestMemoryCached(Long guestMemoryCached) {
-        this.guestMemoryCached = guestMemoryCached;
-    }
-
-    public Long getGuestMemoryBuffered() {
-        return guestMemoryBuffered;
-    }
-
-    public void setGuestMemoryBuffered(Long guestMemoryBuffered) {
-        this.guestMemoryBuffered = guestMemoryBuffered;
-    }
-
-    public Long getGuestMemoryFree() {
-        return guestMemoryFree;
-    }
-
-    public void setGuestMemoryFree(Long guestMemoryFree) {
-        this.guestMemoryFree = guestMemoryFree;
-    }
-
     public int getGuestOsTimezoneOffset() {
         return guestOsTimezoneOffset;
     }
@@ -788,9 +752,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setLastWatchdogEvent(vm.getLastWatchdogEvent());
         setGuestCpuCount(vm.getGuestCpuCount());
         setGraphicsInfos(new HashMap<>(vm.getGraphicsInfos()));
-        setGuestMemoryBuffered(vm.getGuestMemoryBuffered());
-        setGuestMemoryCached(vm.getGuestMemoryCached());
-        setGuestMemoryFree(vm.getGuestMemoryFree());
         setGuestOsArch(vm.getGuestOsArch());
         setGuestOsCodename(vm.getGuestOsCodename());
         setGuestOsDistribution(vm.getGuestOsDistribution());

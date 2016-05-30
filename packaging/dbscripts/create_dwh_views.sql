@@ -336,8 +336,8 @@ SELECT c.vm_guid AS vm_id,
         ELSE TRUE
         END AS user_logged_in_to_guest,
     b.run_on_vds AS currently_running_on_host,
-    b.guest_mem_buffered AS memory_buffered_kb,
-    b.guest_mem_cached AS memory_cached_kb
+    c.guest_mem_buffered AS memory_buffered_kb,
+    c.guest_mem_cached AS memory_cached_kb
 FROM vm_dynamic b
 LEFT JOIN vm_statistics c
     ON c.vm_guid = b.vm_guid
