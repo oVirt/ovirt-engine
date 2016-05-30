@@ -63,7 +63,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
     protected boolean isConnWithSameDetailsExists(StorageServerConnections connection, Guid storagePoolId) {
         List<StorageServerConnections> connections = null;
         if (connection.getStorageType() == StorageType.LOCALFS) {
-            List<StorageServerConnections> connectionsForPool = storagePoolId == null ? Collections.<StorageServerConnections> emptyList() :
+            List<StorageServerConnections> connectionsForPool = storagePoolId == null ? Collections.emptyList() :
                     getStorageConnDao().getAllConnectableStorageSeverConnection(storagePoolId);
             List<StorageServerConnections> connectionsForPath = getStorageConnDao().getAllForStorage(connection.getConnection());
             connections = (List<StorageServerConnections>) CollectionUtils.intersection(connectionsForPool, connectionsForPath);
@@ -76,7 +76,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
             StorageServerConnections sameConnection = findConnectionWithSameDetails(connection);
             connections =
                     sameConnection != null ? Arrays.asList(sameConnection)
-                            : Collections.<StorageServerConnections> emptyList();
+                            : Collections.emptyList();
         }
 
         boolean isDuplicateConnExists = connections.size() > 1
