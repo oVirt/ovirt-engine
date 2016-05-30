@@ -211,6 +211,7 @@
         <include name="common/businessentities/HostDeviceId.java" />
         <include name="common/businessentities/HostDeviceView.java" />
         <include name="common/businessentities/ClusterEditWarnings.java" />
+        <include name="common/businessentities/HostedEngineDeployConfiguration.java" />
         <include name="common/job/*.java" />
 
         <!-- Console -->
