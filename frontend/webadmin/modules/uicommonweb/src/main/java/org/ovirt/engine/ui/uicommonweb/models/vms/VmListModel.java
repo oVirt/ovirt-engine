@@ -2259,6 +2259,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                     @Override
                     public void executeCommand(UICommand uiCommand) {
                         setWindow(null); // remove current window first
+                        model.clearVmModelsExceptItems();
                         setWindow(model);
                     }
                 }).setTitle(ConstantsManager.getInstance().getConstants().back())

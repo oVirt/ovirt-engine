@@ -818,6 +818,18 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         this.importedVmModels = importedVmModels;
     }
 
+    public void clearVmModelsExceptItems() {
+        Collection<EntityModel<VM>> savedVms;
+
+        savedVms = getImportedVmModels().getItems();
+        setImportedVmModels(new SortedListModel<>(new EntityModelLexoNumericNameableComparator<EntityModel<VM>, VM>()));
+        getImportedVmModels().setItems(savedVms);
+
+        savedVms = getExternalVmModels().getItems();
+        setExternalVmModels(new SortedListModel<>(new EntityModelLexoNumericNameableComparator<EntityModel<VM>, VM>()));
+        getExternalVmModels().setItems(savedVms);
+    }
+
     public EntityModel<String> getUsername() {
         return username;
     }
