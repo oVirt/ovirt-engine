@@ -20,6 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.NetworkPluginType;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
+import org.ovirt.engine.api.model.OpenStackNetworkProviderType;
 import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3OpenStackNetworkProvider;
@@ -77,6 +78,7 @@ public class V3OpenStackNetworkProviderInAdapter implements V3Adapter<V3OpenStac
         if (from.isSetUsername()) {
             to.setUsername(from.getUsername());
         }
+        to.setType(OpenStackNetworkProviderType.NEUTRON);
         return to;
     }
 }
