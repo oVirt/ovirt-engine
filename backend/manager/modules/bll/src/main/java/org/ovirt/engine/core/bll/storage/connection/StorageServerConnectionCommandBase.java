@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +74,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         else {
             StorageServerConnections sameConnection = findConnectionWithSameDetails(connection);
             connections =
-                    sameConnection != null ? Arrays.asList(sameConnection)
+                    sameConnection != null ? Collections.singletonList(sameConnection)
                             : Collections.emptyList();
         }
 
