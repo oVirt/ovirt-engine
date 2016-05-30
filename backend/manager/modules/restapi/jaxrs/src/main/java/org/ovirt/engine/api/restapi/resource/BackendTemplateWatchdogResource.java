@@ -91,7 +91,7 @@ public class BackendTemplateWatchdogResource
         get();
         WatchdogParameters parameters = new WatchdogParameters();
         parameters.setId(templateId);
-        parameters.setVm(true);
+        parameters.setVm(false);
         return performAction(VdcActionType.RemoveWatchdog, parameters);
     }
 
