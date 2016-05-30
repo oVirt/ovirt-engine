@@ -341,6 +341,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String usbPolicyVm();
 
+    String createdByUserVm();
+
     String clusterCompatibilityVersionVm();
 
     String quotaVm();

@@ -394,5 +394,7 @@ public interface UIMessages extends Messages {
     String uploadImageFailedToResumeSizeMessage(long priorFileBytes, long newFileBytes);
 
     String providerFailure();
+
+    String userName(String firstName, String lastName);
 }
 

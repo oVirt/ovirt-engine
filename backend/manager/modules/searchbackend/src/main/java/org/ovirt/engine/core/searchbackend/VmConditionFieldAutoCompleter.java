@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 
 public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
-
     public static final String NAME = "NAME";
     public static final String COMMENT = "COMMENT";
     public static final String STATUS = "STATUS";
@@ -43,6 +42,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String CUSTOM_EMULATED_MACHINE = "CUSTOM_EMULATED_MACHINE";
     public static final String CUSTOM_CPU_TYPE = "CUSTOM_CPU_TYPE";
     public static final String COMPATIBILITY_LEVEL = "COMPATIBILITY_LEVEL";
+    public static final String CREATED_BY_USER_ID = "CREATED_BY_USER_ID";
     private static final int MILISECOND = 1000;
 
     public VmConditionFieldAutoCompleter() {
@@ -76,6 +76,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         verbs.add(CUSTOM_EMULATED_MACHINE);
         verbs.add(CUSTOM_CPU_TYPE);
         verbs.add(COMPATIBILITY_LEVEL);
+        verbs.add(CREATED_BY_USER_ID);
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -109,6 +110,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(CUSTOM_EMULATED_MACHINE, String.class);
         getTypeDictionary().put(CUSTOM_CPU_TYPE, String.class);
         getTypeDictionary().put(COMPATIBILITY_LEVEL, String.class);
+        getTypeDictionary().put(CREATED_BY_USER_ID, UUID.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vm_name");
@@ -140,6 +142,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CUSTOM_EMULATED_MACHINE, "custom_emulated_machine");
         columnNameDict.put(CUSTOM_CPU_TYPE, "custom_cpu_name");
         columnNameDict.put(COMPATIBILITY_LEVEL, "cluster_compatibility_version");
+        columnNameDict.put(CREATED_BY_USER_ID, "created_by_user_id");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put(IP, "vm_ip_inet_array");

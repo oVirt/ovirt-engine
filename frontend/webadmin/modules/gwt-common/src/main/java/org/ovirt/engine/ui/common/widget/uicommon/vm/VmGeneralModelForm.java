@@ -34,6 +34,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     StringValueLabel origin = new StringValueLabel();
     StringValueLabel priority = new StringValueLabel();
     StringValueLabel usbPolicy = new StringValueLabel();
+    StringValueLabel createdByUser = new StringValueLabel();
     StringValueLabel defaultHost = new StringValueLabel();
     StringValueLabel customProperties = new StringValueLabel();
     StringValueLabel domain = new StringValueLabel();
@@ -91,6 +92,12 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 5, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 6, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 7, 1));
+        formBuilder.addFormItem(new FormItem(constants.createdByUserVm(), createdByUser, 8, 1) {
+            @Override
+            public boolean getIsAvailable() {
+                return getModel().getHasCreatedByUser();
+            }
+        });
 
         formBuilder.addFormItem(new FormItem(constants.originVm(), origin, 0, 2));
         formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 1, 2));

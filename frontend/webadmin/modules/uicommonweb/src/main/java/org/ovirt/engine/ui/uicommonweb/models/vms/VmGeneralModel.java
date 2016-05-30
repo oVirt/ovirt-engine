@@ -7,7 +7,9 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,6 +26,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
 public class VmGeneralModel extends AbstractGeneralModel<VM> {
@@ -31,6 +35,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
     final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     public static final EventDefinition updateCompleteEventDefinition;
     private Event<EventArgs> privateUpdateCompleteEvent;
@@ -442,6 +447,32 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private boolean hasCreatedByUser;
+
+    public boolean getHasCreatedByUser() {
+        return hasCreatedByUser;
+    }
+
+    public void setHasCreatedByUser(boolean value) {
+        if (hasCreatedByUser != value) {
+            hasCreatedByUser = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasCreatedByUser")); //$NON-NLS-1$
+        }
+    }
+
+    private String createdByUser;
+
+    public String getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(String value) {
+        if (!Objects.equals(createdByUser, value)) {
+            createdByUser = value;
+            onPropertyChanged(new PropertyChangedEventArgs("CreatedByUser")); //$NON-NLS-1$
+        }
+    }
+
     static {
         updateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class); //$NON-NLS-1$
     }
@@ -542,6 +573,33 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
         else {
             setAlert(null);
+        }
+
+        setHasCreatedByUser(vm.getCreatedByUserId() != null);
+        if (getHasCreatedByUser()) {
+            Frontend.getInstance().runQuery(VdcQueryType.GetDbUserByUserId, new IdQueryParameters(vm.getCreatedByUserId()),
+                    new AsyncQuery(this, new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object result) {
+                            DbUser dbUser = ((VdcQueryReturnValue) result).getReturnValue();
+                            if (dbUser != null) {
+                                setCreatedByUser(getUserName(dbUser));
+                            }
+                        }
+
+                        private String getUserName(DbUser dbUser) {
+                            if (StringUtils.isNotEmpty(dbUser.getFirstName()) || StringUtils.isNotEmpty(dbUser.getLastName())) {
+                                return messages.userName(
+                                        nullToEmpty(dbUser.getFirstName()),
+                                        nullToEmpty(dbUser.getLastName()));
+                            }
+                            return dbUser.getLoginName();
+                        }
+
+                        private String nullToEmpty(String val) {
+                            return val == null ? "" : val;
+                        }
+                    }));
         }
 
         setHasDefaultHost(vm.getDedicatedVmForVdsList().size() > 0);
