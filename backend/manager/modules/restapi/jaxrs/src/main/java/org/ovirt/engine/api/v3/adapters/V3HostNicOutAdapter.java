@@ -149,7 +149,7 @@ public class V3HostNicOutAdapter implements V3Adapter<HostNic, V3HostNIC> {
         String href = link.getHref();
         int index = href.lastIndexOf("/");
         if (index > 0) {
-            href = href.substring(0, index) + "labels";
+            href = href.substring(0, index + 1) + "labels";
             link.setHref(href);
         }
     }
