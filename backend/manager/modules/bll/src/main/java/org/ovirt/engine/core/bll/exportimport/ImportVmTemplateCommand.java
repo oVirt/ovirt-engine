@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
@@ -85,6 +86,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private Version effectiveCompatibilityVersion;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
+    private Guid sourceTemplateId;
 
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -185,6 +187,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             getVmTemplate().setDiskImageMap(imageMap);
         }
 
+        sourceTemplateId = getVmTemplateId();
         if (getParameters().isImportAsNewEntity()) {
             initImportClonedTemplate();
         }
@@ -449,6 +452,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             diskDynamic.setId(image.getImageId());
             diskDynamic.setActualSize(image.getActualSizeInBytes());
             getDiskImageDynamicDao().save(diskDynamic);
+
+            DiskVmElement dve = DiskVmElement.copyOf(image.getDiskVmElementForVm(sourceTemplateId),
+                    image.getId(), getVmTemplateId());
+            getDiskVmElementDao().save(dve);
+
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }
     }
