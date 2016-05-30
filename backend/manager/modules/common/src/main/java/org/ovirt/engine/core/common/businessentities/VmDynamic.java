@@ -56,6 +56,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     /* hash is reported by VDSM but we process it separately in the devices-monitoring (need to move this field elsewhere) */
     @UnchangeableByVdsm
     private String hash;
+    @UnchangeableByVdsm
     private int guestAgentNicsHash;
     @UnchangeableByVdsm
     private String exitMessage;
