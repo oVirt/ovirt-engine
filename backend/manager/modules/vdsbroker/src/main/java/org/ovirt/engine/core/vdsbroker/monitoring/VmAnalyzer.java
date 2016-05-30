@@ -877,8 +877,8 @@ public class VmAnalyzer {
      */
     private void prepareGuestAgentNetworkDevicesForUpdate() {
         List<VmGuestAgentInterface> vmGuestAgentInterfaces = vdsmVm.getVmGuestAgentInterfaces();
-        int guestAgentNicHash = vmGuestAgentInterfaces == null ? 0 : vmGuestAgentInterfaces.hashCode();
-        if (guestAgentNicHash != vdsmVm.getVmDynamic().getGuestAgentNicsHash()) {
+        int guestAgentNicHash = Objects.hashCode(vmGuestAgentInterfaces);
+        if (guestAgentNicHash != dbVm.getGuestAgentNicsHash()) {
             if (vmDynamicToSave == null) {
                 saveDynamic(dbVm.getDynamicData());
             }
