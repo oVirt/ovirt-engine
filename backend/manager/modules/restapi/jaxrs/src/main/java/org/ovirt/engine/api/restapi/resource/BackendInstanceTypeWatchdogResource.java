@@ -98,8 +98,18 @@ public class BackendInstanceTypeWatchdogResource
         @Override
         public VdcActionParametersBase getParameters(Watchdog model, VmWatchdog entity) {
             WatchdogParameters parameters = new WatchdogParameters();
-            parameters.setAction(WatchdogMapper.map(model.getAction()));
-            parameters.setModel(WatchdogMapper.map(model.getModel()));
+            if (model.isSetAction()) {
+                parameters.setAction(WatchdogMapper.map(model.getAction()));
+            }
+            else {
+                parameters.setAction(entity.getAction());
+            }
+            if (model.isSetModel()) {
+                parameters.setModel(WatchdogMapper.map(model.getModel()));
+            }
+            else {
+                parameters.setModel(entity.getModel());
+            }
             parameters.setId(instanceTypeId);
             parameters.setVm(false);
             return parameters;

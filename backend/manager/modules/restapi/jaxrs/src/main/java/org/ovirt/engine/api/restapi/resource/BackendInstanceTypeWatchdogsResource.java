@@ -60,8 +60,12 @@ public class BackendInstanceTypeWatchdogsResource
     public Response add(Watchdog watchdog) {
         validateParameters(watchdog, "action", "model");
         WatchdogParameters parameters = new WatchdogParameters();
-        parameters.setAction(WatchdogMapper.map(watchdog.getAction()));
-        parameters.setModel(WatchdogMapper.map(watchdog.getModel()));
+        if (watchdog.isSetAction()) {
+            parameters.setAction(WatchdogMapper.map(watchdog.getAction()));
+        }
+        if (watchdog.isSetModel()) {
+            parameters.setModel(WatchdogMapper.map(watchdog.getModel()));
+        }
         parameters.setId(instanteTypeId);
         parameters.setVm(false);
         return performCreate(VdcActionType.AddWatchdog, parameters, new WatchdogResolver());
