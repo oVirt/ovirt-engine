@@ -38,6 +38,7 @@ public class V3Application extends Application {
 
         // Add exception mappers:
         singletons.add(new V3InvalidValueExceptionMapper());
+        singletons.add(new V3IOExceptionMapper());
     }
 
     @Override
