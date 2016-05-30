@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -130,7 +131,7 @@ public class NewNetworkModel extends NetworkModel {
                 if (retVal != null && retVal.getSucceeded()) {
                     succeeded = true;
                 }
-                postSaveAction(succeeded ? (Guid) retVal.getActionReturnValue()
+                postSaveAction(succeeded ? (Network) retVal.getActionReturnValue()
                         : null,
                         succeeded);
             }
@@ -157,17 +158,16 @@ public class NewNetworkModel extends NetworkModel {
         }
     }
 
-    @Override
-    protected void postSaveAction(Guid networkGuid, boolean succeeded) {
-        super.postSaveAction(networkGuid, succeeded);
+    protected void postSaveAction(Network network, boolean succeeded) {
+        super.postSaveAction(network.getId(), succeeded);
 
         if (!succeeded) {
             return;
         }
 
-        attachNetworkToClusters(networkGuid);
+        attachNetworkToClusters(network.getId());
 
-        ProviderNetwork providedBy = getNetwork().getProvidedBy();
+        ProviderNetwork providedBy = network.getProvidedBy();
         if (getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null) {
             getSubnetModel().setExternalNetwork(providedBy);
             getSubnetModel().flush();
