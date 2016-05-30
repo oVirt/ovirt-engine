@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthenticationMethod;
@@ -115,6 +116,18 @@ public class HostMapper {
         }
         if (model.isSetCertificate()) {
             entity.setCertificateSubject(model.getCertificate().getSubject());
+        }
+        if (model.isSetOs()) {
+            mapOperatingSystem(model.getOs(), entity);
+        }
+        return entity;
+    }
+
+    public static VdsStatic mapOperatingSystem(OperatingSystem model, VdsStatic template) {
+        final VdsStatic entity = template != null ? template : new VdsStatic();
+        if (model.isSetCustomKernelCmdline()) {
+            entity.setCurrentKernelCmdline(model.getCustomKernelCmdline());
+            entity.setKernelCmdlineParsable(false);
         }
         return entity;
     }
@@ -228,7 +241,7 @@ public class HostMapper {
             version.setFullVersion(entity.getVersion().getRpmName());
             model.setVersion(version);
         }
-        model.setOs(getHostOs(entity.getHostOs()));
+        model.setOs(mapOperatingSystem(entity));
         model.setKsm(new Ksm());
         model.getKsm().setEnabled(Boolean.TRUE.equals(entity.getKsmState()));
         model.setTransparentHugepages(new TransparentHugePages());
@@ -330,19 +343,21 @@ public class HostMapper {
         return hostedEngine;
     }
 
-    private static OperatingSystem getHostOs(String hostOs) {
-        if (hostOs == null || hostOs.trim().length() == 0) {
-            return null;
+    private static OperatingSystem mapOperatingSystem(VDS entity) {
+        final OperatingSystem model = new OperatingSystem();
+        final String hostOs = entity.getHostOs();
+        if (hostOs != null && hostOs.trim().length() != 0) {
+            String[] hostOsInfo = hostOs.split(HOST_OS_DELEIMITER);
+            Version version = new Version();
+            version.setMajor(getIntegerValue(hostOsInfo, 1));
+            version.setMinor(getIntegerValue(hostOsInfo, 2));
+            version.setFullVersion(getFullHostOsVersion(hostOsInfo));
+            model.setType(hostOsInfo[0]);
+            model.setVersion(version);
         }
-        String[] hostOsInfo = hostOs.split(HOST_OS_DELEIMITER);
-        Version version = new Version();
-        version.setMajor(getIntegerValue(hostOsInfo, 1));
-        version.setMinor(getIntegerValue(hostOsInfo, 2));
-        version.setFullVersion(getFullHostOsVersion(hostOsInfo));
-        OperatingSystem os = new OperatingSystem();
-        os.setType(hostOsInfo[0]);
-        os.setVersion(version);
-        return os;
+        model.setCustomKernelCmdline(Objects.toString(entity.getCurrentKernelCmdline(), ""));
+        model.setReportedKernelCmdline(entity.getKernelArgs());
+        return model;
     }
 
     @Mapping(from = String.class, to = OsType.class)
