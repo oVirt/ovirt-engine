@@ -87,7 +87,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.di.Injector;
@@ -420,6 +419,7 @@ public class VmHandler {
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskMap().values(), false, false, true);
         List<CinderDisk> filteredCinderDisks = ImagesHandler.filterDisksBasedOnCinder(vm.getDiskMap().values());
         filteredDisks.addAll(filteredCinderDisks);
+        @SuppressWarnings("unchecked")
         Collection<? extends Disk> vmDisksToRemove = CollectionUtils.subtract(vm.getDiskMap().values(), filteredDisks);
         vm.clearDisks();
         updateDisksForVm(vm, filteredDisks);
@@ -715,10 +715,6 @@ public class VmHandler {
         }
 
         return validationResult;
-    }
-
-    private static VdsDynamicDao getVdsDynamicDao() {
-        return DbFacade.getInstance().getVdsDynamicDao();
     }
 
     public static void updateCurrentCd(Guid vdsId, VM vm, String currentCd) {
