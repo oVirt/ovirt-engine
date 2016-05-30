@@ -56,7 +56,10 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
                 .addValue("cpu_usage_history",
                         StringUtils.join(statistics.getCpuUsageHistory(), ","))
                 .addValue("network_usage_history",
-                        StringUtils.join(statistics.getNetworkUsageHistory(), ","));
+                        StringUtils.join(statistics.getNetworkUsageHistory(), ","))
+                .addValue("guest_mem_buffered", statistics.getGuestMemoryBuffered())
+                .addValue("guest_mem_cached", statistics.getGuestMemoryCached())
+                .addValue("guest_mem_free", statistics.getGuestMemoryFree());
     }
 
     @Override
@@ -82,6 +85,9 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
             entity.setCpuUsageHistory(asIntList((String) rs.getObject("cpu_usage_history")));
             entity.setNetworkUsageHistory(asIntList((String) rs.getObject("network_usage_history")));
             entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
+            entity.setGuestMemoryBuffered(getLong(rs, "guest_mem_buffered"));
+            entity.setGuestMemoryCached(getLong(rs, "guest_mem_cached"));
+            entity.setGuestMemoryFree(getLong(rs, "guest_mem_free"));
             return entity;
         }
     }

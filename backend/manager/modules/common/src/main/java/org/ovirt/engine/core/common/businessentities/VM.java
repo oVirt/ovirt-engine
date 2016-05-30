@@ -1929,27 +1929,27 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     public Long getGuestMemoryCached() {
-        return vmDynamic.getGuestMemoryCached();
+        return vmStatistics.getGuestMemoryCached();
     }
 
     public void setGuestMemoryCached(Long guestMemoryCached) {
-        vmDynamic.setGuestMemoryCached(guestMemoryCached);
+        vmStatistics.setGuestMemoryCached(guestMemoryCached);
     }
 
     public Long getGuestMemoryBuffered() {
-        return vmDynamic.getGuestMemoryBuffered();
+        return vmStatistics.getGuestMemoryBuffered();
     }
 
     public void setGuestMemoryBuffered(Long guestMemoryBuffered) {
-        vmDynamic.setGuestMemoryBuffered(guestMemoryBuffered);
+        vmStatistics.setGuestMemoryBuffered(guestMemoryBuffered);
     }
 
     public Long getGuestMemoryFree() {
-        return vmDynamic.getGuestMemoryFree();
+        return vmStatistics.getGuestMemoryFree();
     }
 
     public void setGuestMemoryFree(Long guestMemoryFree) {
-        vmDynamic.setGuestMemoryFree(guestMemoryFree);
+        vmStatistics.setGuestMemoryFree(guestMemoryFree);
     }
 
     public Guid getProviderId() {

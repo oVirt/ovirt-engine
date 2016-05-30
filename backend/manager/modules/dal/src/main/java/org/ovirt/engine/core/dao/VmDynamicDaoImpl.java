@@ -170,9 +170,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("spice_ip", spice != null ? spice.getIp() : null)
                 .addValue("vnc_port", vnc != null ? vnc.getPort() : null)
                 .addValue("vnc_ip", vnc != null ? vnc.getIp() : null)
-                .addValue("guest_mem_buffered", vm.getGuestMemoryBuffered())
-                .addValue("guest_mem_cached", vm.getGuestMemoryCached())
-                .addValue("guest_mem_free", vm.getGuestMemoryFree())
                 .addValue("guest_timezone_name", vm.getGuestOsTimezoneName())
                 .addValue("guest_timezone_offset", vm.getGuestOsTimezoneOffset())
                 .addValue("guestos_arch", vm.getGuestOsArch().getValue())
@@ -254,9 +251,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
             entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
             setGraphicsToEntity(rs, entity);
-            entity.setGuestMemoryBuffered(getLong(rs, "guest_mem_buffered"));
-            entity.setGuestMemoryCached(getLong(rs, "guest_mem_cached"));
-            entity.setGuestMemoryFree(getLong(rs, "guest_mem_free"));
             entity.setGuestOsTimezoneOffset(rs.getInt("guest_timezone_offset"));
             entity.setGuestOsTimezoneName(rs.getString("guest_timezone_name"));
             entity.setGuestOsArch(rs.getInt("guestos_arch"));

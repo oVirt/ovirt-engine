@@ -498,19 +498,6 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_guest_mem_stats)) {
-            Map<String, Object> sub = (Map<String, Object>)xmlRpcStruct.get(VdsProperties.vm_guest_mem_stats);
-            if (sub.containsKey(VdsProperties.vm_guest_mem_buffered)) {
-                vm.setGuestMemoryBuffered(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_buffered).toString()));
-            }
-            if (sub.containsKey(VdsProperties.vm_guest_mem_cached)) {
-                vm.setGuestMemoryCached(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_cached).toString()));
-            }
-            if (sub.containsKey(VdsProperties.vm_guest_mem_free)) {
-                vm.setGuestMemoryFree(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_free).toString()));
-            }
-        }
-
         if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
             String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
             vm.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
@@ -794,6 +781,19 @@ public class VdsBrokerObjectsBuilder {
         // ------------- vm memory statistics -----------------------
         vm.setUsageMemPercent(assignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
         vm.setVmBalloonInfo(getBalloonInfo(xmlRpcStruct));
+
+        if (xmlRpcStruct.containsKey(VdsProperties.vm_guest_mem_stats)) {
+            Map<String, Object> sub = (Map<String, Object>)xmlRpcStruct.get(VdsProperties.vm_guest_mem_stats);
+            if (sub.containsKey(VdsProperties.vm_guest_mem_buffered)) {
+                vm.setGuestMemoryBuffered(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_buffered).toString()));
+            }
+            if (sub.containsKey(VdsProperties.vm_guest_mem_cached)) {
+                vm.setGuestMemoryCached(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_cached).toString()));
+            }
+            if (sub.containsKey(VdsProperties.vm_guest_mem_free)) {
+                vm.setGuestMemoryFree(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_free).toString()));
+            }
+        }
 
         // ------------- vm migration statistics -----------------------
         Integer migrationProgress = assignIntValue(xmlRpcStruct, VdsProperties.vm_migration_progress_percent);
