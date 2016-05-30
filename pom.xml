@@ -65,7 +65,6 @@
     <javax.ejb.api.version>1.0.2.Final</javax.ejb.api.version>
     <javax.jstl.api.version>1.0.3.Final</javax.jstl.api.version>
     <javax.interceptor.api.version>1.0.0.Final</javax.interceptor.api.version>
-    <jcraft.jsch.version>0.1.42</jcraft.jsch.version>
     <dozer.version>5.2.0</dozer.version>
     <cxf.version>2.2.7</cxf.version>
     <sshd-core.version>0.11.0</sshd-core.version>
@@ -188,11 +187,6 @@
         <artifactId>jboss-servlet-api_3.1_spec</artifactId>
         <version>1.0.0.Final</version>
         <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.jcraft</groupId>
-        <artifactId>jsch</artifactId>
-        <version>${jcraft.jsch.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
