@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -45,7 +44,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.StorageDomainNameSizeLimit, 50),
-            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME),
             mockConfig(ConfigValues.WarningLowSpaceIndicator, 10),
             mockConfig(ConfigValues.CriticalSpaceActionBlocker, 5)
     );
@@ -116,19 +114,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testSwitchStorageDomainType() {
-        when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
-
-        StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
-        doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
-                any(HSMGetStorageDomainInfoVDSCommandParameters.class));
-
-        ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
-
-    @Test
-    public void testAddHostedEngineStorageSucceeds() {
-        parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
-
         when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(null);
 
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();

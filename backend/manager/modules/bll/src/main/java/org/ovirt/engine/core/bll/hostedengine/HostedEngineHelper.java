@@ -14,10 +14,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.ovirt_host_deploy.constants.Const;
 import org.ovirt.ovirt_host_deploy.constants.HostedEngineEnv;
@@ -26,14 +30,17 @@ public class HostedEngineHelper {
 
     private static final String HE_CONF_HOST_ID = "host_id";
 
-    private DbFacade dbFacade;
     private VM hostedEngineVm;
-    private StorageDomainStatic sd;
+    private StorageDomainStatic storageDomainStatic;
 
     @Inject
-    private HostedEngineHelper(DbFacade dbFacade) {
-        this.dbFacade = dbFacade;
-    }
+    private VmDao vmDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+
+    @Inject
+    private VdsSpmIdMapDao vdsSpmIdMapDao;
 
     @Inject
     private ResourceManager resourceManager;
@@ -43,16 +50,15 @@ public class HostedEngineHelper {
 
     @PostConstruct
     private void init() {
-        List<VmStatic> byName = dbFacade.getVmStaticDao().getAllByName(
+        List<VmStatic> byName = vmStaticDao.getAllByName(
                 Config.<String> getValue(ConfigValues.HostedEngineVmName));
         if (byName != null && !byName.isEmpty()) {
             VmStatic vmStatic = byName.get(0);
-            hostedEngineVm = dbFacade.getVmDao().get(vmStatic.getId());
+            hostedEngineVm = vmDao.get(vmStatic.getId());
             VmHandler.updateDisksFromDb(hostedEngineVm);
         }
 
-        sd = dbFacade.getStorageDomainStaticDao().getByName(
-                Config.<String> getValue(ConfigValues.HostedEngineStorageDomainName));
+        initHostedEngineStorageDomain();
     }
 
     public Map<String, String> createVdsDeployParams(Guid vdsId, HostedEngineDeployConfiguration.Action deployAction) {
@@ -94,18 +100,45 @@ public class HostedEngineHelper {
      * @return a numeric host id which identifies this host as part of hosted engine cluster
      */
     private int offerHostId(Guid vdsId) {
-            return  dbFacade.getVdsSpmIdMapDao().get(vdsId).getVdsSpmId();
+            return  vdsSpmIdMapDao.get(vdsId).getVdsSpmId();
     }
 
     public StorageDomainStatic getStorageDomain() {
-        return sd;
-    }
-
-    public static boolean isHostedEngineDomain(final StorageDomain storageDomain) {
-        return Config.<String> getValue(ConfigValues.HostedEngineStorageDomainName).equals(storageDomain.getName());
+        return storageDomainStatic;
     }
 
     /**
+     * This method will return true if the hosted engine vm is already imported and it's disk is on the storage domain.
+     * There might be a case where the hosted engine storage domain is imported and the vm is not yet imported. In that
+     * case the method will return false even though the storage domain is a hosted storage domain.
+     */
+    public boolean isHostedEngineStorageDomain(final StorageDomain storageDomain) {
+        List<VM> vms = vmDao.getAllForStorageDomain(storageDomain.getId());
+        if(vms == null){
+            return false;
+        }
+        return vms.stream().filter(VM::isHostedEngine).findAny().isPresent();
+    }
+
+    private void initHostedEngineStorageDomain(){
+        if(hostedEngineVm == null){
+            return;
+        }
+        List<DiskImage> diskList = hostedEngineVm.getDiskList();
+        if(diskList == null || diskList.isEmpty()){
+            return;
+        }
+        DiskImage disk = diskList.get(0);
+        List<StorageDomain> allStorageDomainsByImageId = DbFacade.getInstance().getStorageDomainDao().
+                getAllStorageDomainsByImageId(disk.getImageId());
+        if(allStorageDomainsByImageId == null || allStorageDomainsByImageId.isEmpty()){
+            return;
+        }
+        StorageDomain storageDomain = allStorageDomainsByImageId.get(0);
+        storageDomainStatic = storageDomain == null ? null : storageDomain.getStorageStaticData();
+    }
+
+    /*
      * @return The Guid of the DC the engine VM is running under
      */
     public Guid getStoragePoolId() {

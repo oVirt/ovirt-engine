@@ -27,8 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -48,8 +46,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 /**
  * <pre>
  * Try to import the hosted engine storage domain which is already connected to the host by the hosted engine broker.
- * We use 1) the Storage Domain name from the config values
- * <code>{@linkplain org.ovirt.engine.core.common.config.ConfigValues#HostedEngineStorageDomainName}</code>
+ * We use 1) the storage domain id that is fetched from the hosted engine vm and then passed as a parameter to the command
  * 2) The connection details are fetched from the deviceList
  * {@link org.ovirt.engine.core.common.vdscommands.VDSCommandType#GetDeviceList} connected in vdsm
  * (as the domain already connected) and crossed the storage domain info.
@@ -235,7 +232,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                         null));
         if (allDomainsQuery.getSucceeded()) {
             for (StorageDomain sd : (List<StorageDomain>) allDomainsQuery.getReturnValue()) {
-                if (sd.getName().equals(Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName))) {
+                if(sd.getId().equals(getParameters().getStorageDomainId())){
                     heStorageDomain = sd;
                     return true;
                 }
