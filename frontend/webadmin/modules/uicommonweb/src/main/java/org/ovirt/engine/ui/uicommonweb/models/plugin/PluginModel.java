@@ -10,11 +10,11 @@ public class PluginModel extends SearchableListModel<Void, Void> {
         this.listName = historyToken;
         setSearchString(searchPrefix.endsWith(":") ? searchPrefix : searchPrefix + ":"); //$NON-NLS-1$ //$NON-NLS-2$
         setApplicationPlace(historyToken);
+        setDefaultSearchString("");
     }
 
     @Override
     protected String getListName() {
         return listName;
     }
-
 }

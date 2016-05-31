@@ -373,6 +373,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
             RefObject<String> tempRef_prefix = new RefObject<>(prefix);
             RefObject<String> tempRef_search = new RefObject<>(search);
             String searchString = getSelectedItem().getDefaultSearchString();
+            // Model is known to be != null
             if (model.getType().equals(SystemTreeItemType.System)
                     && listModelSearchStringHistory.get(getSelectedItem()) != null) {
                 searchString = listModelSearchStringHistory.get(getSelectedItem());
