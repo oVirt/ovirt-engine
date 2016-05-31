@@ -511,7 +511,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     }
 
     private void changeSelectedTabIfNeeded(SystemTreeItemModel model) {
-        if (getSelectedItem() != null && getSelectedItem().getIsAvailable()) {
+        if (getSelectedItem() != null && getSelectedItem().getIsAvailable() && !(selectedItem instanceof PluginModel)) {
             // Do not change tab if we can't show it
             return;
         } else {
