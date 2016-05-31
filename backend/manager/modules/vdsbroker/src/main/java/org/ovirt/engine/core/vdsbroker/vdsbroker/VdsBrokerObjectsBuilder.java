@@ -171,6 +171,9 @@ public class VdsBrokerObjectsBuilder {
                     image.setShareable(false);
                     image.setId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.DeviceId)));
                     image.setImageId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.VolumeId)));
+                    Guid domainId = Guid.createGuidFromString((String) deviceMap.get(VdsProperties.DomainId));
+                    List<Guid> domainIds = Collections.singletonList(domainId);
+                    image.setStorageIds(new ArrayList<>(domainIds));
                     // TODO not sure how to extract that info
                     image.setVolumeType(VolumeType.Preallocated);
 

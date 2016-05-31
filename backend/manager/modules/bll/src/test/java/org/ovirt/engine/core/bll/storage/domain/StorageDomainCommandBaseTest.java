@@ -8,17 +8,16 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -26,18 +25,18 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class StorageDomainCommandBaseTest extends BaseCommandTest {
     private static final Guid[] GUIDS = new Guid[] {
             new Guid("11111111-1111-1111-1111-111111111111"),
             new Guid("22222222-2222-2222-2222-222222222222")
     };
+    private final Guid HE_SD_ID = new Guid("33333333-3333-3333-3333-333333333333");
 
     private static final String HE_STORAGE_DOMAIN_NAME = "heStorageDomain";
 
@@ -47,18 +46,14 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     @Mock
     private StorageDomainDao storageDomainDao;
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HostedEngineStorageDomainName, HE_STORAGE_DOMAIN_NAME)
-            );
+    @Mock
+    private VmDao vmDao;
 
+    @Mock
+    private HostedEngineHelper hostedEngineHelper;
 
-    public StorageDomainCommandBase<StorageDomainParametersBase> cmd;
-
-    @Before
-    public void setUp() {
-        createTestCommand();
-    }
+    @InjectMocks
+    public StorageDomainCommandBase<StorageDomainParametersBase> cmd = spy(new TestStorageCommandBase(new StorageDomainParametersBase()));
 
     @Test
     public void statusMatches() {
@@ -167,24 +162,28 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     @Test
     public void shouldElectActiveDataDomain() {
         final StorageDomain domain = prepareStorageDomainForElection(StorageDomainStatus.Active, "not he domain name");
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
         assertEquals(domain, cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectActiveHostedEngineDomain() {
         prepareStorageDomainForElection(StorageDomainStatus.Active, HE_STORAGE_DOMAIN_NAME);
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
         assertEquals(null, cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectUnknownHostedEngineDomain() {
         prepareStorageDomainForElection(StorageDomainStatus.Unknown, HE_STORAGE_DOMAIN_NAME);
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
         assertEquals(null, cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectInactiveHostedEngineDomain() {
         prepareStorageDomainForElection(StorageDomainStatus.Inactive, HE_STORAGE_DOMAIN_NAME);
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
         assertEquals(null, cmd.electNewMaster(false, true, false));
     }
 
@@ -201,6 +200,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         storageDomain.setStorageName(name);
         storageDomain.setStatus(status);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
+        storageDomain.setId(HE_SD_ID);
         return storageDomain;
     }
 
@@ -240,11 +240,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         domain.setStatus(status);
         domain.setStorageType(StorageType.CINDER);
         when(cmd.getStorageDomain()).thenReturn(domain);
-    }
-
-    private void createTestCommand() {
-        StorageDomainParametersBase parameters = new StorageDomainParametersBase();
-        cmd = spy(new TestStorageCommandBase(parameters));
     }
 
     private static class TestStorageCommandBase extends StorageDomainCommandBase<StorageDomainParametersBase> {

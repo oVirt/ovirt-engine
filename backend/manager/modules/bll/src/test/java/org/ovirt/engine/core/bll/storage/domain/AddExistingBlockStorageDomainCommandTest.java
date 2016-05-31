@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +34,6 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME),
             mockConfig(ConfigValues.WarningLowSpaceIndicator, 10),
             mockConfig(ConfigValues.CriticalSpaceActionBlocker, 5)
     );
@@ -80,15 +78,6 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
                 command.getReturnValue()
                         .getValidationMessages()
                         .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST.toString()));
-    }
-
-    @Test
-    public void testAddHostedEngineStorageSucceeds() {
-        doReturn(getLUNs()).when(command).getLUNsFromVgInfo(parameters.getStorageDomain().getStorage());
-        doReturn(Collections.emptyList()).when(command).getAllLuns();
-
-        parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
-        assertTrue(command.canAddDomain());
     }
 
     private static StorageDomainStatic getStorageDomain() {

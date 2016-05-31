@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper.isHostedEngineDomain;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +16,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
@@ -60,6 +59,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
+
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     @Inject
     protected EventQueue eventQueue;
@@ -370,7 +372,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         StorageDomain storageDomain = getStorageDomain();
 
         for (StorageDomain dbStorageDomain : storageDomains) {
-            if (isHostedEngineDomain(dbStorageDomain)) {
+            if (hostedEngineHelper.isHostedEngineStorageDomain(dbStorageDomain)) {
                 continue;
             }
             if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
