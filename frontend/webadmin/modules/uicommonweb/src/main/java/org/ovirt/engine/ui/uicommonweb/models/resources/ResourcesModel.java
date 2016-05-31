@@ -233,10 +233,10 @@ public class ResourcesModel extends SearchableListModel {
                 getRunningVMsPercentage().setEntity(list.isEmpty() ? 0 : runningVMs * 100 / list.size());
                 getDefinedCPUs().setEntity(definedCPUs);
                 getUsedCPUs().setEntity(usedCPUs);
-                getUsedCPUsPercentage().setEntity(usedCPUs * 100 / definedCPUs);
+                getUsedCPUsPercentage().setEntity(definedCPUs == 0 ? 0 : usedCPUs * 100 / definedCPUs);
                 getDefinedMemory().setEntity(sizeParser(definedMemory));
                 getUsedMemory().setEntity(sizeParser(usedMemory));
-                getUsedMemoryPercentage().setEntity(usedMemory * 100 / definedMemory);
+                getUsedMemoryPercentage().setEntity(definedMemory == 0 ? 0 : usedMemory * 100 / definedMemory);
                 getTotalDisksSize().setEntity(totalDisksSize >= 1 ? totalDisksSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
                 getTotalSnapshotsSize().setEntity(totalSnapshotsSize >= 1 ? totalSnapshotsSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
                 getNumOfSnapshots().setEntity(numOfSnapshots);
