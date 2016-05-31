@@ -18,10 +18,18 @@
         .floatRight {
             float: right;
         }
+
+        .overflowAuto {
+            overflow: auto;
+        }
+
+        .clearBoth {
+            clear: both;
+        }
     </ui:style>
 
-    <g:FlowPanel ui:field="container">
-      <g:FlowPanel ui:field="labelPanel">
+    <g:FlowPanel ui:field="container" addStyleNames="{style.overflowAuto}">
+      <g:FlowPanel ui:field="labelPanel" addStyleNames="{style.floatLeft}">
         <l:EnableableFormLabel ui:field="label" addStyleNames="{style.floatLeft}" />
         <d:InfoIcon ui:field="infoIcon" addStyleNames="{style.infoIcon}" />
       </g:FlowPanel>
