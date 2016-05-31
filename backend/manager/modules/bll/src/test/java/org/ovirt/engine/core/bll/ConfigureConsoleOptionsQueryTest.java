@@ -10,6 +10,10 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -27,8 +31,28 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 
 public class ConfigureConsoleOptionsQueryTest extends BaseCommandTest {
+
+    @ClassRule
+    public static MockEngineLocalConfigRule mockEngineLocalConfigRule;
+
+    static {
+        try {
+            mockEngineLocalConfigRule = new MockEngineLocalConfigRule(
+                    new MockEngineLocalConfigRule.KeyValue(
+                            "ENGINE_PKI_TRUST_STORE",
+                            URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8")),
+                    new MockEngineLocalConfigRule.KeyValue(
+                            "ENGINE_HTTPS_PKI_TRUST_STORE",
+                            URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8"))
+            );
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Mock
     BackendInternal backend;
