@@ -26,14 +26,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
@@ -65,6 +63,8 @@ public class HostedEngineImporter {
     private StoragePoolDao storagePoolDao;
     @Inject
     private OsRepository osRepository;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     /**
      * Import the VM into ovirt engine by removing the old, un-managed VM
@@ -79,7 +79,8 @@ public class HostedEngineImporter {
         }
         VdcReturnValueBase heVmImported;
         // get the special sd of hosted engine
-        StorageDomain sd = getHEStorageDomain(vm);
+        Guid storageDomainId = vm.getImages().get(0).getStorageIds().get(0);
+        StorageDomain sd = getHEStorageDomain(vm, storagePool, storageDomainId);
         // no point in trying this without the SD
         if (sd != null
                 && (sd.getStatus() == StorageDomainStatus.Active)
@@ -100,14 +101,13 @@ public class HostedEngineImporter {
         } else {
             if (sd == null) {
                 log.debug("Skip trying to import the Hosted Engine VM. Storage Domain '{}' doesn't exist",
-                        Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName));
+                        storageDomainId);
                 auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_SD_NOT_EXIT);
             } else {
                 log.debug("Skip trying to import the Hosted Engine VM. Storage Domain '{}' isn't ACTIVE", sd);
                 auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_SD_NOT_ACTIVE);
             }
         }
-
     }
 
     private boolean removedHEVM(VM vm) {
@@ -158,24 +158,16 @@ public class HostedEngineImporter {
         return parameters;
     }
 
-    private StorageDomain getHEStorageDomain(VM vm) {
-        ArrayList<StorageDomain> searchResult =
-                backend.runInternalQuery(
-                        VdcQueryType.Search,
-                        new SearchParameters(
-                                "Storage: name=" + Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName),
-                                SearchType.StorageDomain
-                        )
-                ).getReturnValue();
-        if (searchResult != null && !searchResult.isEmpty()) {
-            return searchResult.get(0);
-        } else {
-            StorageDomainManagementParameter importParams = new StorageDomainManagementParameter();
-            importParams.setVdsId(vm.getRunOnVds());
-            return backend.runInternalAction(
+    private StorageDomain getHEStorageDomain(VM vm, StoragePool storagePool, Guid storageDomainId) {
+        StorageDomain storageDomain = storageDomainDao.getForStoragePool(storageDomainId, storagePool.getId());
+        if(storageDomain != null){
+            return  storageDomain;
+        }
+        StorageDomainManagementParameter importParams = new StorageDomainManagementParameter();
+        importParams.setStorageDomainId(storageDomainId);
+        importParams.setVdsId(vm.getRunOnVds());
+        return backend.runInternalAction(
                     VdcActionType.ImportHostedEngineStorageDomain,
                     importParams).getActionReturnValue();
-        }
     }
-
 }

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
-import org.ovirt.engine.core.common.constants.StorageConstants;
 
 public enum ConfigValues {
     @TypeConverterAttribute(String.class)
@@ -1477,10 +1476,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
     MaxSchedulerWeight,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
-    HostedEngineStorageDomainName,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")

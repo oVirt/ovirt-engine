@@ -38,6 +38,8 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     private StorageDomain storageDomain;
 
+    GetStorageDomainsWithAttachedStoragePoolGuidQuery query = getQuery();
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -56,6 +58,8 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
         doReturn(Boolean.TRUE).when(getQuery()).connectStorageDomain(eq(storageDomain));
         doReturn(Boolean.TRUE).when(getQuery()).disconnectStorageDomain(eq(storageDomain));
+
+        doReturn(Boolean.FALSE).when(getQuery()).containsRunningHostedEngine(any(StorageDomain.class));
     }
 
     @Test
@@ -175,6 +179,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         returnValue.setReturnValue(storageDomainToPoolId);
         when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValue);
+
 
         // Execute command
         getQuery().executeQueryCommand();

@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -12,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -24,6 +25,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends StorageDomainsAndStoragePoolIdQueryParameters> extends QueriesCommandBase<P> {
 
     private Guid vdsId;
+
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     public GetStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters) {
         super(parameters);
@@ -97,8 +101,8 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
      * Some domains may have Hosted Engine VM running while importing them.
      * We want to avoid disconnecting before the import in that case, otherwise they'll crash
      */
-    private boolean containsRunningHostedEngine(StorageDomain storageDomain) {
-        return storageDomain.getName().equals(Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName));
+    public boolean containsRunningHostedEngine(StorageDomain storageDomain) {
+        return hostedEngineHelper.isHostedEngineStorageDomain(storageDomain);
     }
 
     public Guid getVdsId() {

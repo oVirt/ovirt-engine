@@ -12,7 +12,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.storage.domain.ImportHostedEngineStorageDomainCommand.SUPPORTED_DOMAIN_TYPES;
-import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -50,13 +48,11 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -75,13 +71,9 @@ public class ImportHostedEngineStorageDomainCommandTest {
     private static final Guid HE_SD_ID = Guid.createGuidFromString("35100000-0000-0000-0000-000000000000");
     private static final Guid HE_VDS_ID = Guid.createGuidFromString("35200000-0000-0000-0000-000000000000");
     private static final Guid VG_ID = Guid.createGuidFromString("35300000-0000-0000-0000-000000000000");
-    private static final String HOSTED_STORAGE_NAME = "hosted_storage";
     private static final String ISCSIUSER = "iscsiuser";
     private static final String ISCSIPASS = "iscsipass";
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            mockConfig(ConfigValues.HostedEngineStorageDomainName, HOSTED_STORAGE_NAME));
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
     @Mock
@@ -163,7 +155,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = mockGetExistingDomain(true);
         sd.setStorageType(StorageType.CINDER);
-        sd.setStorageName(HOSTED_STORAGE_NAME);
+        sd.setId(HE_SD_ID);
 
         cmd.init();
         ValidateTestUtils.runAndAssertValidateFailure(
@@ -182,7 +174,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
         StorageDomain sd = mockGetExistingDomain(true);
         int i = new Random().nextInt(SUPPORTED_DOMAIN_TYPES.length);
         sd.setStorageType(SUPPORTED_DOMAIN_TYPES[i]);
-        sd.setStorageName(HOSTED_STORAGE_NAME);
+        sd.setId(HE_SD_ID);
 
         cmd.init();
         assertTrue(cmd.validate());
@@ -192,8 +184,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
     public void callConcreteAddSD() {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = mockGetExistingDomain(true);
-        sd.setStorageName(HOSTED_STORAGE_NAME);
         sd.setStorageType(StorageType.NFS);
+        sd.setId(HE_SD_ID);
         mockCommandCall(VdcActionType.AddExistingFileStorageDomain, true);
         mockCommandCall(VdcActionType.AttachStorageDomainToPool, true);
 
@@ -214,7 +206,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = mockGetExistingDomain(true);
         sd.setId(HE_SD_ID);
-        sd.setStorageName(HOSTED_STORAGE_NAME);
         sd.setStorageType(StorageType.ISCSI);
         sd.setStorage(VG_ID.toString());
         mockCommandCall(VdcActionType.RemoveDisk, false);
@@ -275,6 +266,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
     protected void prepareCommand() {
         parameters.setStoragePoolId(HE_SP_ID);
         parameters.setVdsId(HE_VDS_ID);
+        parameters.setStorageDomainId(HE_SD_ID);
         // vds
         doReturn(vdsDao).when(cmd).getVdsDao();
         VDS vds = new VDS();
