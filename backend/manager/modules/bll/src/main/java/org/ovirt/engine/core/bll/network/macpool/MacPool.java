@@ -68,4 +68,5 @@ public interface MacPool {
 
     boolean isDuplicateMacAddressesAllowed();
 
+    boolean isMacInRange(String mac);
 }

@@ -112,6 +112,11 @@ public class MacPoolUsingRanges implements MacPool {
     }
 
     @Override
+    public boolean isMacInRange(String mac) {
+        return macsStorage.isMacInRange(MacAddressRangeUtils.macToLong(mac));
+    }
+
+    @Override
     public boolean isDuplicateMacAddressesAllowed() {
         return this.allowDuplicates;
     }

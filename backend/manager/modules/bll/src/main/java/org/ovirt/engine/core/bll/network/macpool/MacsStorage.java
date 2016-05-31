@@ -128,4 +128,8 @@ class MacsStorage {
         }
         return null;
     }
+
+    boolean isMacInRange(Long mac) {
+        return findIncludingRange(mac) != null;
+    }
 }
