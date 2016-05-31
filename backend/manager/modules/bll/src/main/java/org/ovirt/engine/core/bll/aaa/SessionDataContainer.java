@@ -203,13 +203,18 @@ public class SessionDataContainer {
             ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
             Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
             Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
+            boolean sessionValid = ssoSessionValidator.isSessionValid(
+                    (String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME));
             if (((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) ||
                     !(boolean) sessionMap.get(SESSION_VALID_PARAMETER_NAME) ||
-                    !ssoSessionValidator.isSessionValid((String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))) {
+                    !sessionValid) {
                 removeSessionImpl(entry.getKey(),
                         Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED,
                         "Session has expired for principal %1$s",
                         getUserName(entry.getKey()));
+                if (sessionValid) {
+                   SsoOAuthServiceUtils.revoke((String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME));
+                }
             }
         }
     }
