@@ -36,6 +36,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
 
     private VdsStatic host;
 
+    @Override
     @Before
     public void setUp() {
         Cluster cluster = new Cluster();
@@ -43,6 +44,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
         cluster.setId(Guid.newGuid());
         cluster.setCompatibilityVersion(Version.v3_6);
         cluster.setArchitecture(ArchitectureType.x86);
+        cluster.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
 
         clusterDao.save(cluster);
 
