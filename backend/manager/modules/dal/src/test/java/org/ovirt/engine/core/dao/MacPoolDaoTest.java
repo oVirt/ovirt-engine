@@ -58,8 +58,8 @@ public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoo
 
         final MacRange macRange = new MacRange();
         macRange.setMacPoolId(macPool.getId());
-        macRange.setMacFrom("01:C0:81:21:71:17");
-        macRange.setMacTo("01:C1:81:21:71:17");
+        macRange.setMacFrom("01:c0:81:21:71:17");
+        macRange.setMacTo("01:c1:81:21:71:17");
 
         macPool.getRanges().add(macRange);
 
