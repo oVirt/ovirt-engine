@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.Comparator;
+
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.searchbackend.SessionConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -39,6 +41,7 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                         return Long.toString(session.getId());
                     }
                 };
+        sessionDbIdColumn.makeSortable(SessionConditionFieldAutoCompleter.SESSION_DB_ID);
         getTable().addColumn(sessionDbIdColumn, constants.sessionDbId(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<UserSession> userNameColumn =
@@ -77,6 +80,7 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                         return session.getSourceIp();
                     }
                 };
+        sourceIpColumn.makeSortable(SessionConditionFieldAutoCompleter.SOURCE_IP);
         getTable().addColumn(sourceIpColumn, constants.sourceIp(), "200px"); //$NON-NLS-1$
 
         final DateTimeFormat dateFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
@@ -90,6 +94,14 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                                 dateFormat.format(session.getSessionStartTime());
                     }
                 };
+        sessionStartColumn.makeSortable(
+            new Comparator<UserSession>() {
+                @Override
+                public int compare(UserSession s1, UserSession s2) {
+                    return s1.getSessionStartTime().compareTo(s2.getSessionStartTime());
+                }
+            }
+        );
         getTable().addColumn(sessionStartColumn, constants.sessionStartTime(), "200px"); //$NON-NLS-1$
 
         AbstractTextColumn<UserSession> sessionLastActiveColumn =
@@ -101,6 +113,14 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                                 dateFormat.format(session.getSessionLastActiveTime());
                     }
                 };
+        sessionLastActiveColumn.makeSortable(
+            new Comparator<UserSession>() {
+                @Override
+                public int compare(UserSession s1, UserSession s2) {
+                    return s1.getSessionLastActiveTime().compareTo(s2.getSessionLastActiveTime());
+                }
+            }
+        );
         getTable().addColumn(sessionLastActiveColumn, constants.sessionLastActiveTime(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {
