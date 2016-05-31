@@ -51,19 +51,23 @@ public class VmsListFetcher {
         this.resourceManager = resourceManager;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean fetch() {
-        VDSReturnValue getList =
-                getResourceManager().runVdsCommand(
-                        VDSCommandType.List,
-                        new VdsIdAndVdsVDSCommandParametersBase(vdsManager.getCopyVds()));
-        if (getList.getSucceeded()) {
-            vdsmVms = (Map<Guid, VmInternalData>) getList.getReturnValue();
+        VDSReturnValue pollReturnValue = poll();
+        if (pollReturnValue.getSucceeded()) {
+            vdsmVms = (Map<Guid, VmInternalData>) pollReturnValue.getReturnValue();
             onFetchVms();
             return true;
         } else {
             onError();
             return false;
         }
+    }
+
+    protected VDSReturnValue poll() {
+        return getResourceManager().runVdsCommand(
+                VDSCommandType.List,
+                new VdsIdAndVdsVDSCommandParametersBase(vdsManager.getCopyVds()));
     }
 
     protected void onFetchVms() {

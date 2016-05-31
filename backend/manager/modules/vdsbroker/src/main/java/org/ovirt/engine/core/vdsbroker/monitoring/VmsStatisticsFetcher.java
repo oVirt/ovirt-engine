@@ -1,14 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import java.util.Map;
-
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
@@ -24,19 +20,10 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
     }
 
     @Override
-    public boolean fetch() {
-        VDSReturnValue getStats = ResourceManager.getInstance()
-                .runVdsCommand(
-                        VDSCommandType.GetAllVmStats,
-                        new VdsIdAndVdsVDSCommandParametersBase(vdsManager.getCopyVds()));
-        if (getStats.getSucceeded()) {
-            vdsmVms = (Map<Guid, VmInternalData>) getStats.getReturnValue();
-            onFetchVms();
-            return true;
-        } else {
-            onError();
-            return false;
-        }
+    protected VDSReturnValue poll() {
+        return getResourceManager().runVdsCommand(
+                VDSCommandType.GetAllVmStats,
+                new VdsIdAndVdsVDSCommandParametersBase(vdsManager.getCopyVds()));
     }
 
     @Override
