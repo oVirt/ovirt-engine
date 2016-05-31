@@ -11,8 +11,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VmsStatisticsFetcher extends VmsListFetcher {
+
+    private static final Logger log = LoggerFactory.getLogger(VmsStatisticsFetcher.class);
+    private StringBuilder logBuilder;
 
     public VmsStatisticsFetcher(VdsManager vdsManager) {
         super(vdsManager);
@@ -35,7 +40,26 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
     }
 
     @Override
+    protected void onFetchVms() {
+        if (log.isDebugEnabled()) {
+            logBuilder = new StringBuilder();
+        }
+        super.onFetchVms();
+        log.info("Fetched {} VMs from VDS '{}'",
+                vdsmVms.size(),
+                vdsManager.getVdsId());
+        if (log.isDebugEnabled()) {
+            log.debug(logBuilder.toString());
+        }
+    }
+
+    @Override
     protected void gatherChangedVms(VM dbVm, VmInternalData vdsmVm) {
         changedVms.add(new Pair<>(dbVm, vdsmVm));
+        if (log.isDebugEnabled()) {
+            logBuilder.append(String.format("%s:%s ",
+                    vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
+                    vdsmVm.getVmDynamic().getStatus()));
+        }
     }
 }
