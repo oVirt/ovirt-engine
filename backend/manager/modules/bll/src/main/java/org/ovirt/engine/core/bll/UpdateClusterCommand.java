@@ -192,16 +192,18 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         List<VM> vmList = getVmDao().getAllForCluster(getParameters().getCluster().getId());
 
         for (VM vm : vmList) {
-            VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+            if (!vm.isExternalVm() && !vm.isHostedEngine()) {
+                VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
 
-            VdcReturnValueBase result = runInternalAction(
-                            VdcActionType.UpdateVm,
-                            updateParams,
-                            cloneContextAndDetachFromParent());
+                VdcReturnValueBase result = runInternalAction(
+                        VdcActionType.UpdateVm,
+                        updateParams,
+                        cloneContextAndDetachFromParent());
 
-            if (!result.getSucceeded()) {
-                getReturnValue().setFault(result.getFault());
-                return false;
+                if (!result.getSucceeded()) {
+                    getReturnValue().setFault(result.getFault());
+                    return false;
+                }
             }
         }
         return true;
