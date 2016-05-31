@@ -25,6 +25,7 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
 
     protected interface Style extends CssResource {
         String floatLeft();
+        String overflowAuto();
     }
 
     @UiField(provided = true)
@@ -72,10 +73,16 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
 
     public void setLabelColSize(ColumnSize size) {
         labelPanel.addStyleName(size.getCssName());
+        switchToBootstrapMode();
     }
 
     public void setWidgetColSize(ColumnSize size) {
         contentWidget.addStyleName(size.getCssName());
+        switchToBootstrapMode();
+    }
+
+    private void switchToBootstrapMode() {
+        container.removeStyleName(style.overflowAuto());
     }
 
     @Override
