@@ -189,7 +189,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         // unregister all libvirt secrets if needed
         VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
                 VDSCommandType.RegisterLibvirtSecrets,
-                new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.<LibvirtSecret>emptyList(), true));
+                new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.emptyList(), true));
         if (!returnValue.getSucceeded()) {
             log.error("Failed to unregister libvirt secret on vds {}.", parameters.getVds().getName());
             return new Pair<>(false, AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
