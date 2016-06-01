@@ -97,7 +97,7 @@ public class OvfHelper {
      * Adds the given vm metadata to the given map
      */
     private String buildMetadataDictionaryForVm(VM vm) {
-        ArrayList<DiskImage> AllVmImages = new ArrayList<>();
+        ArrayList<DiskImage> allVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
 
         for (DiskImage diskImage : filteredDisks) {
@@ -105,10 +105,10 @@ public class OvfHelper {
             for (DiskImage disk : images) {
                 disk.setDiskVmElements(Collections.singletonList(diskImage.getDiskVmElementForVm(vm.getId())));
             }
-            AllVmImages.addAll(images);
+            allVmImages.addAll(images);
         }
 
-        return ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, allVmImages, ClusterUtils.getCompatibilityVersion(vm));
     }
 
     private void loadVmData(VM vm) {
