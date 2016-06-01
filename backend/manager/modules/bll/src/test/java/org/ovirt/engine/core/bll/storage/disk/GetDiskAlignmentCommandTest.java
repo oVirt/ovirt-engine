@@ -161,7 +161,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateFloatingDisk() {
-        when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.<VM>emptyList());
+        when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.emptyList());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
     }
@@ -176,7 +176,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVdsNotFound() {
         when(vdsDao.getAllForClusterWithStatus(groupId, VDSStatus.Up))
-                .thenReturn(Collections.<VDS>emptyList());
+                .thenReturn(Collections.emptyList());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
     }
