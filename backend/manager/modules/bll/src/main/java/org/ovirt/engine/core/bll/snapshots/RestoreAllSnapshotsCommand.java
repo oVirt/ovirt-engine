@@ -260,6 +260,12 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
     }
 
+    private boolean isSnapshotEligibleToBeDeleted(Snapshot candidateSnapshotToRemove) {
+        return candidateSnapshotToRemove != null
+                && (candidateSnapshotToRemove.getType() != SnapshotType.REGULAR ||
+                candidateSnapshotToRemove.getCreationDate().getTime() > removedSnapshot.getCreationDate().getTime());
+    }
+
     protected void deleteOrphanedImages(List<CinderDisk> cinderDisksToRemove) {
         VdcReturnValueBase returnValue;
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
@@ -487,10 +493,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             if (image.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage parentImage = getDiskImageDao().getSnapshotById(image.getParentId());
                 Guid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
+                Snapshot candidateSnapToRemove = getSnapshotDao().get(snapshotToRemove);
 
-                while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
+                while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)
+                        && isSnapshotEligibleToBeDeleted(candidateSnapToRemove)) {
                     snapshotsToRemove.add(snapshotToRemove);
-
                     parentImage = getDiskImageDao().getSnapshotById(parentImage.getParentId());
                     snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
                 }
@@ -506,7 +513,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
             List<Guid> redundantSnapshotIdsToDelete = CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(
                     image.getId(), criticalSnapshotsChain);
-            snapshotsToRemove.addAll(redundantSnapshotIdsToDelete);
+            snapshotsToRemove.addAll(redundantSnapshotIdsToDelete.stream()
+                    .filter(snapIdToDelete -> isSnapshotEligibleToBeDeleted(getSnapshotDao().get(snapIdToDelete)))
+                    .collect(Collectors.toList()));
         }
     }
 
