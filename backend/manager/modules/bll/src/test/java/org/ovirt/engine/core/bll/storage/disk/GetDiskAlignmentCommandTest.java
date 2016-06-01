@@ -70,28 +70,21 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
 
     private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd;
 
-    private Guid vmId;
     private Guid diskId;
-    private Guid poolId;
-    private Guid storageDomainId;
     private Guid groupId;
-    private Guid vdsId;
     private DiskImage disk;
     private VM vm;
-    private VDS vds;
-    private VmDevice vmDevice;
     private StoragePool storagePool;
     private StorageDomain storageDomain;
-    private Cluster cluster;
 
     @Before
     public void setUp() {
-        vmId = Guid.newGuid();
+        Guid vmId = Guid.newGuid();
         diskId = Guid.newGuid();
-        poolId = Guid.newGuid();
-        storageDomainId = Guid.newGuid();
+        Guid poolId = Guid.newGuid();
+        Guid storageDomainId = Guid.newGuid();
         groupId = Guid.newGuid();
-        vdsId = Guid.newGuid();
+        Guid vdsId = Guid.newGuid();
 
         disk = new DiskImage();
         disk.setId(diskId);
@@ -106,13 +99,13 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         vm.setClusterId(groupId);
 
         VmDeviceId vmDeviceId = new VmDeviceId(diskId, vmId);
-        vmDevice = new VmDevice();
+        VmDevice vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
 
-        cluster = new Cluster();
+        Cluster cluster = new Cluster();
         cluster.setId(groupId);
 
-        vds = new VDS();
+        VDS vds = new VDS();
         vds.setId(vdsId);
 
         storagePool = new StoragePool();
