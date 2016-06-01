@@ -102,9 +102,7 @@ public class OvfHelper {
 
         for (DiskImage diskImage : filteredDisks) {
             List<DiskImage> images = ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
-            for (DiskImage disk : images) {
-                disk.setDiskVmElements(Collections.singletonList(diskImage.getDiskVmElementForVm(vm.getId())));
-            }
+            images.stream().forEach(d -> d.setDiskVmElements(Collections.singletonList(diskImage.getDiskVmElementForVm(vm.getId()))));
             allVmImages.addAll(images);
         }
 
