@@ -2102,8 +2102,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
         setValidTab(TabName.CLUSTER_POLICY_TAB, getCustomPropertySheet().getIsValid());
 
-        getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation(),
-                new ClusterVersionChangeValidation(hasActiveVm, getEntity().getCompatibilityVersion()) });
+        final IValidation[] versionValidations = getIsNew()
+                ? new IValidation[] { new NotEmptyValidation() }
+                : new IValidation[] { new NotEmptyValidation(),
+                        new ClusterVersionChangeValidation(hasActiveVm, getEntity().getCompatibilityVersion()) };
+        getVersion().validateSelectedItem(versionValidations);
 
         getManagementNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
