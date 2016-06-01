@@ -70,7 +70,7 @@ public abstract class StoragePoolQueryBase<P extends VdcQueryParametersBase>  ex
         final Set<Guid> macPoolIds = clusters.stream().map(Cluster::getMacPoolId).collect(toSet());
 
         //each cluster, due to db constraint, must have not null reference to pool, thus collection cannot be empty.
-        storagePool.setMacPoolId(macPoolIds.size() > 1 ? null : macPoolIds.iterator().next());
+        storagePool.setMacPoolId(macPoolIds.size() != 1 ? null : macPoolIds.iterator().next());
     }
 
     /**
