@@ -616,28 +616,37 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
                 if (column instanceof SortableColumn) {
                     SortableColumn<T, ?> sortableColumn = (SortableColumn<T, ?>) column;
                     boolean sortApplied = false;
+                    Comparator<? super T> comparator = sortableColumn.getComparator();
+                    boolean supportsServerSideSorting = searchableModel != null && searchableModel.supportsServerSideSorting();
 
-                    // Apply server-side sorting, if supported by the model
-                    if (searchableModel != null && searchableModel.supportsServerSideSorting()) {
+                    // If server-side sorting is supported by the model, but the column
+                    // uses Comparator for client-side sorting, use client-side sorting
+                    if (supportsServerSideSorting && comparator != null) {
+                        sortedModel.setComparator(comparator, event.isSortAscending());
+                        sortApplied = true;
+                    }
+
+                    // Otherwise, if server-side sorting is supported by the model,
+                    // update model's sort options and reload its items via search query
+                    else if (supportsServerSideSorting) {
+                        sortedModel.setComparator(null);
                         if (searchableModel.isSearchValidForServerSideSorting()) {
                             searchableModel.updateSortOptions(sortableColumn.getSortBy(), event.isSortAscending());
                             sortApplied = true;
                         } else {
+                            // Search string not valid, cannot perform search query
                             searchableModel.clearSortOptions();
                         }
                     }
 
                     // Otherwise, fall back to client-side sorting
-                    else {
-                        Comparator<? super T> comparator = sortableColumn.getComparator();
-                        if (comparator != null) {
-                            sortedModel.setComparator(comparator, event.isSortAscending());
-                            sortApplied = true;
+                    else if (comparator != null) {
+                        sortedModel.setComparator(comparator, event.isSortAscending());
+                        sortApplied = true;
 
-                            // SortedListModel.setComparator does not sort the items
-                            if (searchableModel == null) {
-                                sortedModel.setItems(sortedModel.getItems());
-                            }
+                        // SortedListModel.setComparator does not sort the items
+                        if (searchableModel == null) {
+                            sortedModel.setItems(sortedModel.getItems());
                         }
                     }
 
