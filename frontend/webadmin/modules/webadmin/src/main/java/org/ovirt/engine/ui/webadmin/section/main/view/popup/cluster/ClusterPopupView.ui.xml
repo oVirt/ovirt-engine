@@ -98,24 +98,6 @@
             line-height: 20px;
         }
 
-        .labelStyle {
-            margin-top: 3px;
-        }
-
-        .labelStyle {
-            font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-
-        .optimizationTabPanel {
-            height: 470px;
-        }
-
-        .sectionPanel {
-            margin-bottom: 20px;
-        }
-
         .additionalFeaturesExpanderContent {
             margin-left: 15px;
             display: none;
@@ -135,8 +117,6 @@
 
         .groupTitle {
             font-weight: bold;
-            padding-top: 10px;
-            padding-bottom: 5px;
         }
 
         .firstRow {
@@ -185,16 +165,9 @@
         .contentStyle {
         }
 
-        .inlineWidget {
-          display: inline-block;
-          float: left;
+        .floatRight {
+            float: right;
         }
-
-        .indentedButton {
-          margin-left: 10px;
-          margin-top: 5px;
-        }
-
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -286,7 +259,7 @@
                             <b:Container addStyleNames="{style.container}">
                                 <b:Row addStyleNames="{style.firstRow}">
                                     <b:Column size="LG_12">
-                                        <g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.floatLeft}" text="{constants.clusterPopupMemoryOptimizationPanelTitle}" />
+                                        <g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.floatLeft} {style.groupTitle}" text="{constants.clusterPopupMemoryOptimizationPanelTitle}" />
                                         <d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo}" />
                                         <ge:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" label="{constants.clusterPopupOptimizationNoneLabel}" removeFormGroup="true" usePatternFly="true" />
                                         <ge:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" removeFormGroup="true" usePatternFly="true" />
@@ -296,20 +269,20 @@
                                 </b:Row>
                                 <b:Row ui:field="cpuThreadsRow">
                                     <b:Column size="LG_12">
-                                        <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.floatLeft}" text="{constants.clusterPopupCpuThreadsPanelTitle}" />
+                                        <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.floatLeft} {style.groupTitle}" text="{constants.clusterPopupCpuThreadsPanelTitle}" />
                                         <d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" label="{constants.clusterPopupCountThreadsAsCoresLabel}" removeFormGroup="true" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:Label text="{constants.ballooningLabelTitle}" />
+                                        <g:Label text="{constants.ballooningLabelTitle}" addStyleNames="{style.groupTitle}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="enableBallooning" label="{constants.enableBallooningLabel}" removeFormGroup="true" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:Label text="{constants.ksmLabelTitle}" />
+                                        <g:Label text="{constants.ksmLabelTitle}" addStyleNames="{style.groupTitle}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="enableKsm" label="{constants.enableKsmLabel}" removeFormGroup="true" usePatternFly="true" />
                                         <e:ListModelRadioGroupEditor ui:field="ksmPolicyForNumaEditor" usePatternFly="true" />
                                     </b:Column>
@@ -322,14 +295,16 @@
                     <t:DialogTab ui:field="migrationTab" label="{constants.clusterPopupMigrationTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.groupTitle} {style.firstRow}">
-                                    <b:Column size="LG_12">
+                                <b:Row addStyleNames="{style.firstRow}">
+                                    <b:Column size="LG_6" addStyleNames="{style.groupTitle}">
                                         <g:Label text="{constants.clusterMigrationPolicyLabel}" />
+                                    </b:Column>
+                                    <b:Column size="LG_6">
+                                        <e:ListModelListBoxEditor ui:field="migrationPolicyEditor" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <e:ListModelListBoxEditor ui:field="migrationPolicyEditor" addStyleNames="{style.floatLeft}" />
                                         <g:HTML ui:field="migrationPolicyDetails" />
                                     </b:Column>
                                 </b:Row>
@@ -371,16 +346,11 @@
                                         <g:Label text="{constants.clusterAdditionalMigrationProperties}" />
                                     </b:Column>
                                 </b:Row>
-
                                 <b:Row>
-                                    <b:Column size="LG_12">
-                                        <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                    </b:Column>
+                                    <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_12">
-                                        <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                    </b:Column>
+                                    <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>
@@ -395,13 +365,13 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:Label addStyleNames="{style.labelStyle}" text="{constants.clusterPolicyPropertiesLabel}" />
+                                        <g:Label addStyleNames="{style.groupTitle}" text="{constants.clusterPolicyPropertiesLabel}" />
                                         <k:KeyValueWidget ui:field="customPropertiesSheetEditor" addStyleNames="{style.keyValueWidget}" usePatternFly="true"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:Label ui:field="schedulerOptimizationPanelTitle" addStyleNames="{style.floatLeft}" text="{constants.schedulerOptimizationPanelLabel}" />
+                                        <g:Label ui:field="schedulerOptimizationPanelTitle" addStyleNames="{style.floatLeft} {style.groupTitle}" text="{constants.schedulerOptimizationPanelLabel}" />
                                         <d:InfoIcon ui:field="schedulerOptimizationInfoIcon" addStyleNames="{style.panelInfo}" />
                                     </b:Column>
                                 </b:Row>
@@ -420,7 +390,7 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:Label ui:field="additionPropsPanelTitle" text="{constants.clusterPolicyAdditionalPropsPanelTitle}" />
+                                        <g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.groupTitle}" text="{constants.clusterPolicyAdditionalPropsPanelTitle}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" removeFormGroup="true" usePatternFly="true" label="{constants.clusterPolicyEnableTrustedServiceLabel}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" removeFormGroup="true" usePatternFly="true" label="{constants.clusterPolicyEnableHaReservationLabel}" />
                                     </b:Column>
@@ -483,13 +453,17 @@
                 <t:tab>
                     <t:DialogTab ui:field="macPoolTab" label="{constants.clusterMacPoolTab}">
                         <t:content>
-                            <g:FlowPanel>
-                                <g:FlowPanel>
-                                    <e:ListModelListBoxEditor ui:field="macPoolListEditor" addStyleNames="{style.inlineWidget}" />
-                                    <c:UiCommandButton ui:field="addMacPoolButton" addStyleNames="{style.inlineWidget} {style.indentedButton}" />
-                                </g:FlowPanel>
-                              <m:MacPoolWidget ui:field="macPoolWidget" />
-                            </g:FlowPanel>
+                           <b:Container addStyleNames="{style.container}">
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <e:ListModelListBoxEditor ui:field="macPoolListEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <c:UiCommandButton ui:field="addMacPoolButton" addStyleNames="{style.floatRight}" />
+                                    </b:Column>
+                                </b:Row>
+                                <m:MacPoolWidget ui:field="macPoolWidget" usePatternFly="true" />
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

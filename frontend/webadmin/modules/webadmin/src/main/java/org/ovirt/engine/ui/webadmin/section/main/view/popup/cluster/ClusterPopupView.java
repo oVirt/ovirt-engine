@@ -606,6 +606,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         customPropertiesSheetEditor = new KeyValueWidget<>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
         migrationBandwidthLimitTypeEditor = new BootstrapListBoxListModelEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer());
+        migrationPolicyEditor.hideLabel();
         macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());
         macPoolListEditor.setLabel(constants.clusterPopupMacPoolLabel());
     }
@@ -865,8 +866,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         String editorContentWidget();
 
         String timeTextBoxEditorWidget();
-
-        String optimizationTabPanel();
 
         String generalTabTopDecorator();
 

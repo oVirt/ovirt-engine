@@ -55,6 +55,7 @@ public class ListModelRadioGroupEditor<T> extends AbstractValidatedWidgetWithLab
         if (use) {
             getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
             removeContentWidgetStyleName(Styles.FORM_CONTROL);
+            getValidatedWidgetStyle().setPadding(0, Unit.PX);
             getFormLabel().setVisible(false);
         }
     }
