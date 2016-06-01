@@ -131,6 +131,7 @@ public class AttachDiskModel extends NewDiskModel {
                                 diskModel.getDiskInterface().setItems(diskInterfaces);
                                 diskModel.getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
                                 if (!getIsBootable().getIsChangable()) {
+                                    diskModel.getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
                                     diskModel.getIsBootable().setIsChangeable(false);
                                 }
                             }
