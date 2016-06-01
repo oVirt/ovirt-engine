@@ -14,6 +14,12 @@
 %global ovirt_build_locales 0
 %global _ovirt_build_extra_flags -D gwt.userAgent=gecko1_8
 %endif
+%if 0%{?ovirt_build_draft}
+%global _ovirt_build_ut 0
+%global ovirt_build_all_user_agents 0
+%global ovirt_build_locales 0
+%global _ovirt_build_extra_flags -D gwt.userAgent=gecko1_8 -P gwtdraft
+%endif
 %if 0%{!?ovirt_build_ut:1}
 %if 0%{?_ovirt_build_ut:1}
 %global ovirt_build_ut %{_ovirt_build_ut}
