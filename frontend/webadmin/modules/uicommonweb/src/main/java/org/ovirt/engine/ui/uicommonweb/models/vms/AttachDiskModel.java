@@ -67,6 +67,19 @@ public class AttachDiskModel extends NewDiskModel {
         if (getVm().getId() != null) {
             loadAttachableDisks();
         }
+
+        getIsBootable().setIsChangeable(true);
+    }
+
+    @Override
+    public void updateCanSetBoot(List<Disk> vmDisks) {
+        boolean bootDiskFound = false;
+        for (Disk disk : vmDisks) {
+            if (disk.getDiskVmElementForVm(getVmId()).isBoot()) {
+                getIsBootable().setIsChangeable(false);
+                return;
+            }
+        }
     }
 
     public void loadAttachableDisks() {
@@ -117,11 +130,13 @@ public class AttachDiskModel extends NewDiskModel {
                             for (DiskModel diskModel : diskModels) {
                                 diskModel.getDiskInterface().setItems(diskInterfaces);
                                 diskModel.getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
+                                if (!getIsBootable().getIsChangable()) {
+                                    diskModel.getIsBootable().setIsChangeable(false);
+                                }
                             }
                             List<EntityModel<DiskModel>> entities = Linq.toEntityModelList(
                                     Linq.filterDisksByType(diskModels, diskStorageType));
                             initAttachableDisks(entities);
-
                         }
                     }), getVmId());
                 }
