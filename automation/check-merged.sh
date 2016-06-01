@@ -1,6 +1,18 @@
 #!/bin/bash -xe
 
 BUILD_UT=0
+RUN_DAO_TESTS=0
+
+dao_tests_path1=backend/manager/modules/dal
+dao_tests_path2=("dao_tests_path2=backend/manager/modules/common/src/main/"
+                 "java/org/ovirt/engine/core/common/businessentities")
+
+if git show --pretty="format:" --name-only | egrep \
+    "(sql|$dao_tests_path1|${dao_tests_path2[0]}${dao_tests_path2[1]})" | \
+    egrep -v -q "backend/manager/modules/dal/src/main/resources/bundles"; then
+    RUN_DAO_TESTS=1
+fi
+
 SUFFIX=".git$(git rev-parse --short HEAD)"
 MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
@@ -40,6 +52,12 @@ cat >"$MAVEN_SETTINGS" <<EOS
 </mirrors>
 </settings>
 EOS
+
+# Run Dao tests
+if [[ $RUN_DAO_TESTS -eq 1 ]]; then
+    automation/dao-tests.sh "$EXTRA_BUILD_FLAGS"
+fi
+
 # remove any previous artifacts
 rm -rf output
 rm -f ./*tar.gz
