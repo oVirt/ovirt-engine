@@ -78,9 +78,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     List<DiskImage> imagesFromPreviewSnapshot = new ArrayList<>();
 
     /**
-     * The snapshot id which will be removed (the stateless/preview/active image).
+     * The snapshot which will be removed (the stateless/preview/active image).
      */
-    private Guid removedSnapshotId;
+    private Snapshot removedSnapshot;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -125,7 +125,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     continue;
                 }
                 ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
-                        getVmId(), getSnapshot(), removedSnapshotId);
+                        getVmId(), getSnapshot(), removedSnapshot.getId());
                 VdcReturnValueBase returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
                 // Save the first fault
                 if (succeeded && !returnValue.getSucceeded()) {
@@ -142,7 +142,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         if (!getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty()) {
             deleteOrphanedImages(cinderDisksToRemove);
-            if (!restoreCinderDisks(removedSnapshotId, cinderDisksToRestore, cinderDisksToRemove, cinderVolumesToRemove)) {
+            if (!restoreCinderDisks(removedSnapshot.getId(),
+                    cinderDisksToRestore,
+                    cinderDisksToRemove,
+                    cinderVolumesToRemove)) {
                 log.error("Error to restore Cinder volumes snapshots");
             }
         } else {
@@ -448,9 +451,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      */
     private void restoreConfiguration(Snapshot targetSnapshot) {
         SnapshotsManager snapshotsManager = new SnapshotsManager();
-        removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
-        snapshotsToRemove.add(removedSnapshotId);
-        snapshotsManager.removeAllIllegalDisks(removedSnapshotId, getVmId());
+        removedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+        snapshotsToRemove.add(removedSnapshot.getId());
+        snapshotsManager.removeAllIllegalDisks(removedSnapshot.getId(), getVmId());
 
         snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 targetSnapshot,
@@ -474,12 +477,12 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * The traversal between snapshots is done according to the {@link DiskImage} level.
      */
     protected void prepareToDeletePreviewBranch(List<DiskImage> imagesFromActiveSnapshot) {
-        removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW);
+        removedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
         Guid previewedSnapshotId =
                 getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
         getSnapshotDao().updateStatus(previewedSnapshotId, SnapshotStatus.OK);
-        snapshotsToRemove.add(removedSnapshotId);
-        List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(removedSnapshotId);
+        snapshotsToRemove.add(removedSnapshot.getId());
+        List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(removedSnapshot.getId());
         for (DiskImage image : images) {
             if (image.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage parentImage = getDiskImageDao().getSnapshotById(image.getParentId());
