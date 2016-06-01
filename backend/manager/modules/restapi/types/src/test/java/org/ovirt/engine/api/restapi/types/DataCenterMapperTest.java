@@ -31,7 +31,6 @@ public class DataCenterMapperTest extends
         assertEquals(model.getComment(), transform.getComment());
         assertEquals(model.isLocal(), transform.isLocal());
         assertEquals(model.getStorageFormat(), transform.getStorageFormat());
-        assertEquals(model.getMacPool().getId(), transform.getMacPool().getId());
         assertEquals(model.getQuotaMode(), transform.getQuotaMode());
     }
 

@@ -38,6 +38,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
@@ -256,6 +257,12 @@ public class BackendVmResource
     @Override
     public VmApplicationsResource getApplicationsResource() {
         return inject(new BackendVmApplicationsResource(guid));
+    }
+
+    @Override
+    public AssignedAffinityLabelsResource getAffinityLabelsResource() {
+        // TODO: Implement this.
+        return null;
     }
 
     @Override

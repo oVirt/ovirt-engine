@@ -45,6 +45,7 @@ import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.resource.AffinityLabelsResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.ClustersResource;
@@ -636,5 +637,11 @@ public class BackendApiResource
     @Override
     public VnicProfilesResource getVnicProfilesResource() {
         return inject(new BackendVnicProfilesResource());
+    }
+
+    @Override
+    public AffinityLabelsResource getAffinityLabelsResource() {
+        // TODO: Implement this.
+        return null;
     }
 }
