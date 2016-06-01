@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
-import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.QuotaModeType;
 import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -38,10 +37,6 @@ public class DataCenterMapper {
             entity.setCompatibilityVersion(VersionMapper.map(model.getVersion()));
         }
 
-        if (model.isSetMacPool() && model.getMacPool().isSetId()) {
-            entity.setMacPoolId(GuidUtils.asGuid(model.getMacPool().getId()));
-        }
-
         if (model.isSetQuotaMode()) {
             entity.setQuotaEnforcementType(map(model.getQuotaMode()));
         }
@@ -73,11 +68,6 @@ public class DataCenterMapper {
             if (storageFormat!=null) {
                 model.setStorageFormat(storageFormat);
             }
-        }
-
-        if (entity.getMacPoolId() != null) {
-            model.setMacPool(new MacPool());
-            model.getMacPool().setId(entity.getMacPoolId().toString());
         }
 
         if (entity.getQuotaEnforcementType() != null) {

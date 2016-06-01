@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.FenceAgentsResource;
@@ -631,6 +632,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public AssignedTagsResource getTagsResource() {
         return inject(new BackendHostTagsResource(id));
+    }
+
+    @Override
+    public AssignedAffinityLabelsResource getAffinityLabelsResource() {
+        // TODO: Implement this.
+        return null;
     }
 
     @Override

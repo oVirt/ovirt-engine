@@ -51,9 +51,6 @@ public class V3DataCenterInAdapter implements V3Adapter<V3DataCenter, DataCenter
         if (from.isSetLocal()) {
             to.setLocal(from.isLocal());
         }
-        if (from.isSetMacPool()) {
-            to.setMacPool(adaptIn(from.getMacPool()));
-        }
         if (from.isSetName()) {
             to.setName(from.getName());
         }
