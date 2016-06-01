@@ -504,7 +504,6 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 warningLabel.setHTML(wrapInUnorderedList(disk.getWarningLabel().getEntity()));
             }
         });
-
         revealDiskPanel(disk);
     }
 
@@ -588,7 +587,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             {
                 @Override
                 protected boolean canEdit(EntityModel object) {
-                    return true;
+                    EntityModel<Boolean> bootModel = ((DiskModel) object.getEntity()).getIsBootable();
+                    return  bootModel.getIsChangable() || bootModel.getEntity() == true;
                 }
 
                 @Override
