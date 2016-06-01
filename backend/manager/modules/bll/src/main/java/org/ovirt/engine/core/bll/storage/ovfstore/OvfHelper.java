@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -101,6 +102,9 @@ public class OvfHelper {
 
         for (DiskImage diskImage : filteredDisks) {
             List<DiskImage> images = ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
+            for (DiskImage disk : images) {
+                disk.setDiskVmElements(Collections.singletonList(diskImage.getDiskVmElementForVm(vm.getId())));
+            }
             AllVmImages.addAll(images);
         }
 
