@@ -1405,6 +1405,7 @@ actions:
           cluster.error_handling.on_error: xs:string
           cluster.virt_service: xs:boolean
           cluster.gluster_service: xs:boolean
+          cluster.scheduling_policy.id|name: xs:string
           cluster.threads_as_cores: xs:boolean
           cluster.tunnel_migration: xs:boolean
           cluster.ballooning_enabled: xs:boolean
