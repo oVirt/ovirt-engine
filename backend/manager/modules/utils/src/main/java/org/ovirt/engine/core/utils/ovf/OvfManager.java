@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ public class OvfManager {
     private OvfVmIconDefaultsProvider iconDefaultsProvider = SimpleDependencyInjector.getInstance().get(
             OvfVmIconDefaultsProvider.class);
 
-    public String exportVm(VM vm, ArrayList<DiskImage> images, Version version) {
+    public String exportVm(VM vm, List<DiskImage> images, Version version) {
         OvfWriter ovf = new OvfVmWriter(vm, images, version);
         buildOvf(ovf);
 
@@ -40,8 +39,8 @@ public class OvfManager {
 
     public void importVm(String ovfstring,
             VM vm,
-            ArrayList<DiskImage> images,
-            ArrayList<VmNetworkInterface> interfaces)
+            List<DiskImage> images,
+            List<VmNetworkInterface> interfaces)
             throws OvfReaderException {
 
         OvfReader ovf = null;
@@ -61,7 +60,7 @@ public class OvfManager {
     }
 
     public void importTemplate(String ovfstring, VmTemplate vmTemplate,
-            ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces)
+            List<DiskImage> images, List<VmNetworkInterface> interfaces)
             throws OvfReaderException {
 
         OvfReader ovf = null;

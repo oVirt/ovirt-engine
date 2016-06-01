@@ -28,8 +28,8 @@ public class OvfVmReader extends OvfReader {
 
     public OvfVmReader(XmlDocument document,
             VM vm,
-            ArrayList<DiskImage> images,
-            ArrayList<VmNetworkInterface> interfaces) {
+            List<DiskImage> images,
+            List<VmNetworkInterface> interfaces) {
         super(document, images, interfaces, vm.getStaticData());
         _vm = vm;
         _vm.setInterfaces(interfaces);
@@ -213,7 +213,7 @@ public class OvfVmReader extends OvfReader {
     }
 
     // function returns the index of the image that has no parent
-    private static int getFirstImage(ArrayList<DiskImage> images, DiskImage curr) {
+    private static int getFirstImage(List<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (curr.getParentId().equals(images.get(i).getImageId())) {
                 return i;
@@ -223,7 +223,7 @@ public class OvfVmReader extends OvfReader {
     }
 
     // function returns the index of image that is it's child
-    private static int getNextImage(ArrayList<DiskImage> images, DiskImage curr) {
+    private static int getNextImage(List<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (images.get(i).getParentId().equals(curr.getImageId())) {
                 return i;
@@ -245,7 +245,7 @@ public class OvfVmReader extends OvfReader {
     @Override
     protected void readSnapshotsSection(XmlNode section) {
         XmlNodeList list = selectNodes(section, "Snapshot");
-        ArrayList<Snapshot> snapshots = new ArrayList<>();
+        List<Snapshot> snapshots = new ArrayList<>();
         _vm.setSnapshots(snapshots);
 
         for (XmlNode node : list) {

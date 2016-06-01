@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -22,8 +23,8 @@ public class OvfTemplateReader extends OvfReader {
 
     public OvfTemplateReader(XmlDocument document,
             VmTemplate vmTemplate,
-            ArrayList<DiskImage> images,
-            ArrayList<VmNetworkInterface> interfaces) {
+            List<DiskImage> images,
+            List<VmNetworkInterface> interfaces) {
         super(document, images, interfaces, vmTemplate);
         _vmTemplate = vmTemplate;
     }

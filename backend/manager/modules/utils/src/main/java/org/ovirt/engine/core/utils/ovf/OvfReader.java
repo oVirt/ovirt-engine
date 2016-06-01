@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,8 +60,8 @@ public abstract class OvfReader implements IOvfBuilder {
     private static final Logger log = LoggerFactory.getLogger(OvfReader.class);
 
     protected OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-    protected ArrayList<DiskImage> _images;
-    protected ArrayList<VmNetworkInterface> interfaces;
+    protected List<DiskImage> _images;
+    protected List<VmNetworkInterface> interfaces;
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
     private static final int BYTES_IN_GB = 1024 * 1024 * 1024;
@@ -73,7 +72,7 @@ public abstract class OvfReader implements IOvfBuilder {
     private DisplayType defaultDisplayType;
     private String lastReadEntry = "";
 
-    public OvfReader(XmlDocument document, ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces, VmBase vmBase) {
+    public OvfReader(XmlDocument document, List<DiskImage> images, List<VmNetworkInterface> interfaces, VmBase vmBase) {
         _images = images;
         this.interfaces = interfaces;
         _document = document;
