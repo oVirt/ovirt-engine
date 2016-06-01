@@ -97,7 +97,7 @@ public class OvfHelper {
      * Adds the given vm metadata to the given map
      */
     private String buildMetadataDictionaryForVm(VM vm) {
-        ArrayList<DiskImage> allVmImages = new ArrayList<>();
+        List<DiskImage> allVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
 
         for (DiskImage diskImage : filteredDisks) {
