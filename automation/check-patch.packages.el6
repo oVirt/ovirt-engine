@@ -6,3 +6,5 @@ python-pep8
 python-devel
 git
 maven3
+postgresql-server
+postgresql-jdbc
