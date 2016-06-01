@@ -280,11 +280,21 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
     }
 
     private void initValues() {
-        boolean newAttachment = networkAttachment != null && networkAttachment.getId() == null;
-        boolean syncedNetwork = networkAttachment != null && networkAttachment.getReportedConfigurations() != null
-                && networkAttachment.getReportedConfigurations().isNetworkInSync();
-        boolean shouldBeSyncedNetwork = !syncedNetwork && Boolean.TRUE.equals(getIsToSync().getEntity());
-        if (newAttachment || syncedNetwork || shouldBeSyncedNetwork) {
+        if (networkAttachment == null) {
+            return;
+        }
+
+        boolean newAttachment = networkAttachment.getId() == null;
+
+        // If the 'ReportedConfigurations' of the attachment is 'null' it means the attachment wasn't reported from the
+        // engine (all the attachments reported from the engine have
+        // 'ReportedConfigurations'). So it means this network is for sure in sync, since the ui already modified it and
+        // created new instance of the attachment for it (an out-of-sync network cannot be modified).
+        boolean attachmentNotReportedByTheEngine = networkAttachment.getReportedConfigurations() == null;
+
+        boolean syncedNetwork = attachmentNotReportedByTheEngine || networkAttachment.getReportedConfigurations().isNetworkInSync();
+        boolean syncRequestedByUser = !syncedNetwork && Boolean.TRUE.equals(getIsToSync().getEntity());
+        if (newAttachment || syncedNetwork || syncRequestedByUser) {
             syncWith(new InterfacePropertiesAccessor.FromNetworkAttachmentForModel(networkAttachment, networkQos, nic));
         } else {
             syncWith(new InterfacePropertiesAccessor.FromNic(nic));
