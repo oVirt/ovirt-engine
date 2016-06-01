@@ -133,6 +133,7 @@ public class BackendVmPoolResource
                 vm.getStaticData().setOsId(template.getOsId());
                 vm.getStaticData().setDefaultDisplayType(template.getDefaultDisplayType());
                 vm.getStaticData().setMigrationSupport(template.getMigrationSupport());
+                vm.getStaticData().setVmInit(template.getVmInit());
             }
             if (incoming.isSetUseLatestTemplateVersion()) {
                 vm.setUseLatestVersion(incoming.isUseLatestTemplateVersion());
