@@ -28,17 +28,25 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
 
     @Override
     protected void onFetchVms() {
-        logBuilder = new StringBuilder(String.format("Poll %s:", vdsManager.getVdsId()));
+        if (log.isDebugEnabled()) {
+            logBuilder = new StringBuilder();
+        }
         super.onFetchVms();
-        logBuilder.append(String.format("(%d VMs)", changedVms.size()));
-        log.info(logBuilder.toString());
+        log.info("Fetched {} VMs from VDS '{}'",
+                vdsmVms.size(),
+                vdsManager.getVdsId());
+        if (log.isDebugEnabled()) {
+            log.debug(logBuilder.toString());
+        }
     }
 
     @Override
     protected void gatherChangedVms(VM dbVm, VmInternalData vdsmVm) {
         changedVms.add(new Pair<>(dbVm, vdsmVm));
-        logBuilder.append(String.format(" %s:%s",
-                vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
-                vdsmVm.getVmDynamic().getStatus()));
+        if (log.isDebugEnabled()) {
+            logBuilder.append(String.format("%s:%s",
+                    vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
+                    vdsmVm.getVmDynamic().getStatus()));
+        }
     }
 }
