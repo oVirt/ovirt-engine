@@ -223,23 +223,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected void executeVmCommand() {
         Guid createdSnapshotId = updateActiveSnapshotId();
         setActionReturnValue(createdSnapshotId);
-
         MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
         freezeVm();
         createSnapshotsForDisks();
         memoryImageBuilder.build();
         addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
         fastForwardDisksToActiveSnapshot();
-
-        // means that there are no asynchronous tasks to execute and that we can
-        // end the command synchronously
-        boolean pendingAsyncTasks = !getTaskIdList().isEmpty() ||
-                !CommandCoordinatorUtil.getChildCommandIds(getCommandId()).isEmpty();
-        if (!pendingAsyncTasks) {
-            getParameters().setTaskGroupSuccess(true);
-            incrementVmGeneration();
-        }
-
         setSucceeded(true);
     }
 
@@ -289,10 +278,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private Snapshot addSnapshotToDB(Guid snapshotId, MemoryImageBuilder memoryImageBuilder) {
         // Reset cachedSelectedActiveDisks so new Cinder volumes can be fetched when calling getDisksList.
         cachedSelectedActiveDisks = null;
-        boolean taskExists = !getDisksList().isEmpty() || memoryImageBuilder.isCreateTasks();
         return new SnapshotsManager().addSnapshot(snapshotId,
                 getParameters().getDescription(),
-                taskExists ? SnapshotStatus.LOCKED : SnapshotStatus.OK,
+                SnapshotStatus.LOCKED,
                 getParameters().getSnapshotType(),
                 getVm(),
                 true,
@@ -377,13 +365,22 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return result;
     }
 
+    private boolean shouldPerformLiveSnapshot(Snapshot snapshot) {
+        return isLiveSnapshotApplicable() && snapshot != null &&
+                (snapshotWithMemory(snapshot) || !getDisksList().isEmpty());
+    }
+
+    private boolean snapshotWithMemory(Snapshot snapshot) {
+        return getParameters().isSaveMemory() && snapshot.containsMemory();
+    }
+
     @Override
     protected void endVmCommand() {
         Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
         // if the snapshot was not created in the DB
         // the command should also be handled as a failure
         boolean taskGroupSucceeded = createdSnapshot != null && getParameters().getTaskGroupSuccess();
-        boolean liveSnapshotRequired = isLiveSnapshotApplicable();
+        boolean liveSnapshotRequired = shouldPerformLiveSnapshot(createdSnapshot);
         boolean liveSnapshotSucceeded = false;
 
         if (taskGroupSucceeded) {
@@ -394,7 +391,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             } else {
                 // If the created snapshot contains memory, remove the memory volumes as
                 // they are not going to be in use since no live snapshot is created
-                if (getParameters().isSaveMemory() && createdSnapshot.containsMemory()) {
+                if (snapshotWithMemory(createdSnapshot)) {
                     logMemorySavingFailed();
                     getSnapshotDao().removeMemoryFromSnapshot(createdSnapshot.getId());
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
@@ -405,7 +402,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 revertToActiveSnapshot(createdSnapshot.getId());
                 // If the removed snapshot contained memory, remove the memory volumes
                 // Note that the memory volumes might not have been created
-                if (getParameters().isSaveMemory() && createdSnapshot.containsMemory()) {
+                if (snapshotWithMemory(createdSnapshot)) {
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
             } else {
