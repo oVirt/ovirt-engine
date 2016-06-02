@@ -27,12 +27,16 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> {
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    NetworkFilterDao networkFilterDao;
 
     public AddNetworkCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -51,7 +55,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             getNetworkDao().save(getNetwork());
 
             if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
-                getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork()));
+                getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork(), networkFilterDao));
             }
 
             NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), getNetwork().getId());

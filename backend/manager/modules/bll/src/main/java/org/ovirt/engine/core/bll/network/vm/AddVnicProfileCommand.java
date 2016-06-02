@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,19 +57,12 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
 
     private void updateDefaultNetworkFilterIfRequired() {
         if (getParameters().isUseDefaultNetworkFiterId()) {
-            final NetworkFilter networkFilter = resolveVnicProfileDefaultNetworkFilter();
+            final NetworkFilter networkFilter = NetworkHelper.resolveVnicProfileDefaultNetworkFilter(networkFilterDao);
             if (networkFilter != null) {
                 final Guid networkFilterId = networkFilter.getId();
                 setNetworkFilterId(networkFilterId);
             }
         }
-    }
-
-    private NetworkFilter resolveVnicProfileDefaultNetworkFilter() {
-        if (Config.<Boolean> getValue(ConfigValues.EnableMACAntiSpoofingFilterRules)) {
-            return networkFilterDao.getNetworkFilterByName(NetworkFilter.VDSM_NO_MAC_SPOOFING);
-        }
-        return null;
     }
 
     @Override

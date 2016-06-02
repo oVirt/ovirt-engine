@@ -13,10 +13,14 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -63,13 +67,23 @@ public class NetworkHelper {
         }
     }
 
-    public static VnicProfile createVnicProfile(Network net) {
+    public static VnicProfile createVnicProfile(Network net, NetworkFilterDao networkFilterDao) {
         VnicProfile profile = new VnicProfile();
         profile.setId(Guid.newGuid());
         profile.setName(net.getName());
         profile.setNetworkId(net.getId());
         profile.setPortMirroring(false);
+
+        NetworkFilter defaultNetworkFilter = resolveVnicProfileDefaultNetworkFilter(networkFilterDao);
+        profile.setNetworkFilterId(defaultNetworkFilter == null ? null : defaultNetworkFilter.getId());
         return profile;
+    }
+
+    public static NetworkFilter resolveVnicProfileDefaultNetworkFilter(NetworkFilterDao networkFilterDao) {
+        if (Config.<Boolean> getValue(ConfigValues.EnableMACAntiSpoofingFilterRules)) {
+            return networkFilterDao.getNetworkFilterByName(NetworkFilter.VDSM_NO_MAC_SPOOFING);
+        }
+        return null;
     }
 
     public static Network getNetworkByVnicProfileId(Guid vnicProfileId) {
