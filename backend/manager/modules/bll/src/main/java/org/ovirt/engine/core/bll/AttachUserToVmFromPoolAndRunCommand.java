@@ -11,18 +11,20 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
@@ -163,8 +165,6 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
 
     @Override
     protected void executeCommand() {
-        getParameters().setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
-
         initPoolUser();
         boolean isPrestartedVm = false;
         Guid vmToAttach;
@@ -183,7 +183,8 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
                         VdcObjectType.VM);
                 PermissionsOperationsParameters permParams = new PermissionsOperationsParameters(perm);
                 permParams.setShouldBeLogged(false);
-                permParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
+                permParams.setParentCommand(getActionType());
+                permParams.setParentParameters(getParameters());
                 VdcReturnValueBase vdcReturnValueFromAddPerm = runInternalAction(VdcActionType.AddPermission,
                         permParams,
                         cloneContext().withoutExecutionContext().withoutLock());
@@ -205,9 +206,10 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
             setVm(getVmDao().get(vmToAttach));
             RunVmParams runVmParams = new RunVmParams(vmToAttach);
             runVmParams.setSessionId(getParameters().getSessionId());
-            runVmParams.setParentParameters(getParameters());
             runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
-            runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
+            runVmParams.setParentCommand(getActionType());
+            runVmParams.setParentParameters(getParameters());
+            runVmParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             runVmParams.setRunAsStateless(!getVmPool().isStateful());
             ExecutionContext runVmContext = createRunVmContext();
             VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
@@ -242,45 +244,51 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
         return ctx;
     }
 
+    private RunVmParams getChildRunVmParameters() {
+        if (getParameters().getImagesParameters() == null) {
+            return null;
+        }
+        return (RunVmParams) getParameters().getImagesParameters()
+                .stream()
+                .filter(p -> p instanceof RunVmParams)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean isRunVmSucceeded() {
+        RunVmParams runVmParams = getChildRunVmParameters();
+        return runVmParams == null
+                || CommandCoordinatorUtil.getCommandEntity(runVmParams.getCommandId()).getReturnValue().getSucceeded();
+    }
+
     @Override
     protected void endSuccessfully() {
-        if (getVm() != null) {
-            if (getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
-                setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
-                        getParameters().getImagesParameters().get(0),
-                        cloneContext().withoutLock().withoutExecutionContext()).getSucceeded());
-
-                if (!getSucceeded()) {
-                    log.warn("EndSuccessfully: endAction of RunVm failed, detaching user from Vm");
-                    detachUserFromVmFromPool(); // just in case.
-                    getReturnValue().setEndActionTryAgain(false);
-                }
-            }
-            else {
-                // Pool-snapshot is gone (probably due to processVmPoolOnStopVm
-                // treatment) ->
-                // no point in running the VM or trying to run again the endAction
-                // method:
-                log.warn("EndSuccessfully: No images were created for Vm, detaching user from Vm");
-                detachUserFromVmFromPool(); // just in case.
+        RunVmParams runVmParams = getChildRunVmParameters();
+        if (runVmParams != null) {
+            setVmId(runVmParams.getVmId());
+            if (!isRunVmSucceeded()) {
+                log.warn("endSuccessfully: RunVm failed, detaching user from VM");
+                detachUserFromVmFromPool();
                 getReturnValue().setEndActionTryAgain(false);
             }
         } else {
             setCommandShouldBeLogged(false);
-            log.warn("AttachUserToVmFromPoolAndRunCommand::EndSuccessfully: Vm is null - not performing full endAction");
-            setSucceeded(true);
+            log.warn("endSuccessfully: VM is null");
         }
+        setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
-        setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
-                getParameters().getImagesParameters().get(0),
-                cloneContext().withoutExecutionContext().withoutLock()).getSucceeded());
-        if (!getSucceeded()) {
-            log.warn("AttachUserToVmFromPoolAndRunCommand::EndWitFailure: endAction of RunVm Failed");
+        RunVmParams runVmParams = getChildRunVmParameters();
+        if (runVmParams != null) {
+            setVmId(runVmParams.getVmId());
+            log.warn("endWithFailure: RunVm failed, detaching user from VM");
+            detachUserFromVmFromPool();
+        } else {
+            log.warn("endWithFailure: VM is null");
         }
-        detachUserFromVmFromPool();
+        setSucceeded(true);
     }
 
     @Override
@@ -300,7 +308,6 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
     }
 
     protected void detachUserFromVmFromPool() {
-        // Detach user from vm from pool:
         if (!Guid.Empty.equals(getAdUserId())) {
             Permission perm = getPermissionDao()
                     .getForRoleAndAdElementAndObject(
@@ -335,6 +342,11 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
                     vm.getMemSizeMb()));
         }
         return list;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return new ConcurrentChildCommandsExecutionCallback();
     }
 
 }
