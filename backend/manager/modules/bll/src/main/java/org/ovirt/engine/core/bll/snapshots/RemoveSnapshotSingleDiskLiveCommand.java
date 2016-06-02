@@ -371,6 +371,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
 
         topImage.setSize(baseImage.getSize());
+        topImage.setActualSizeInBytes(imageFromVdsm.getActualSizeInBytes());
         topImage.setImageStatus(ImageStatus.OK);
         getBaseDiskDao().update(topImage);
         getImageDao().update(topImage.getImage());
