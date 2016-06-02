@@ -834,7 +834,7 @@ CREATE OR REPLACE FUNCTION getElementIdsByIdAndGroups(
     v_id UUID,
     v_group_ids TEXT
     )
-RETURNS SETOF idUuidType STABLE
+RETURNS SETOF idUuidType IMMUTABLE
 AS $FUNCTION$
 BEGIN
     RETURN QUERY
@@ -1111,7 +1111,7 @@ LANGUAGE plpgsql;
 
 -- Computes number of vcpus for vm_static
 CREATE OR REPLACE FUNCTION fn_get_num_of_vcpus(vm_static)
-RETURNS INT STABLE
+RETURNS INT IMMUTABLE
 AS $PROCEDURE$
 
 BEGIN
