@@ -44,9 +44,15 @@ public class V3NetworkLabelOutAdapter implements V3Adapter<NetworkLabel, V3Label
         if (from.isSetId()) {
             to.setId(from.getId());
         }
-        if (from.isSetHref()) {
-            to.setHref(from.getHref());
+
+        // In version 4 of the API the "label" URL segment has been renamed to "networklabels", so we need to replace
+        // it to preserve backwards compatibility with version 3:
+        String href = from.getHref();
+        if (href != null) {
+            href = href.replace("/networklabels/", "/labels/");
+            to.setHref(href);
         }
+
         if (from.isSetName()) {
             to.setName(from.getName());
         }
