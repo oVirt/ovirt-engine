@@ -46,7 +46,6 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     @ClassRule
     public static MockConfigRule mcr =
     new MockConfigRule(
-            mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()),
             mockConfig(ConfigValues.DisplayUncaughtUIExceptions, Boolean.TRUE));
 
     @Mock

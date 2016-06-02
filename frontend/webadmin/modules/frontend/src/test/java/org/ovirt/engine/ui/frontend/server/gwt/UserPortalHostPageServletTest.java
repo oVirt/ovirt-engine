@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
-
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +17,6 @@ public class UserPortalHostPageServletTest extends AbstractGwtDynamicHostPageSer
     @ClassRule
     public static MockConfigRule mcr =
             new MockConfigRule(
-                    mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()),
                     mockConfig(ConfigValues.DisplayUncaughtUIExceptions, Boolean.TRUE));
 
 
