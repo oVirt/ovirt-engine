@@ -9,6 +9,26 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmParams extends VmOperationParameterBase {
+
+    public enum RunVmFlow {
+        /** regular flow */
+        RUN,
+        /** run VM which is paused */
+        RESUME_PAUSE,
+        /** run VM which is suspended */
+        RESUME_HIBERNATE,
+        /** create the stateless images in order to run the VM as stateless */
+        CREATE_STATELESS_IMAGES,
+        /** remove stateless images that remained from last time the VM ran as stateless */
+        REMOVE_STATELESS_IMAGES,
+        /** wrap things up after the VM reach UP state */
+        RUNNING_SUCCEEDED;
+
+        public boolean isStateless() {
+            return this == RunVmFlow.CREATE_STATELESS_IMAGES || this == RunVmFlow.REMOVE_STATELESS_IMAGES;
+        }
+    }
+
     private static final long serialVersionUID = 3311307677963231320L;
 
     private BootSequence bootSequence;
@@ -32,6 +52,8 @@ public class RunVmParams extends VmOperationParameterBase {
     private Boolean bootMenuEnabled;
     private Boolean spiceFileTransferEnabled;
     private Boolean spiceCopyPasteEnabled;
+
+    private RunVmFlow cachedFlow;
 
     public RunVmParams() {
     }
@@ -271,4 +293,13 @@ public class RunVmParams extends VmOperationParameterBase {
     public void setSpiceCopyPasteEnabled(Boolean spiceCopyPasteEnabled) {
         this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
     }
+
+    public RunVmFlow getCachedFlow() {
+        return cachedFlow;
+    }
+
+    public void setCachedFlow(RunVmFlow cachedFlow) {
+        this.cachedFlow = cachedFlow;
+    }
+
 }

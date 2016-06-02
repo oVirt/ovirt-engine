@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -92,27 +93,6 @@ import org.slf4j.LoggerFactory;
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
 
-    enum RunVmFlow {
-        /** regular flow */
-        RUN,
-        /** run VM which is paused */
-        RESUME_PAUSE,
-        /** run VM which is suspended */
-        RESUME_HIBERNATE,
-        /** create the stateless images in order to run the VM as stateless */
-        CREATE_STATELESS_IMAGES,
-        /** remove stateless images that remained from last time the VM ran as stateless */
-        REMOVE_STATELESS_IMAGES,
-        /** wrap things up after the VM reach UP state */
-        RUNNING_SUCCEEDED;
-
-        public boolean isStateless() {
-            return this == RunVmFlow.CREATE_STATELESS_IMAGES || this == RunVmFlow.REMOVE_STATELESS_IMAGES;
-        }
-    }
-
-    /** Cache the current flow the command is in. use {@link #getFlow()} to retrieve the flow */
-    private RunVmFlow cachedFlow;
     /** Note: this field should not be used directly, use {@link #isStatelessSnapshotExistsForVm()} instead */
     private Boolean cachedStatelessSnapshotExistsForVm;
     /** Indicates whether there is a possibility that the active snapshot's memory was already restored */
@@ -366,7 +346,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private RunVmFlow setFlow(RunVmFlow flow) {
-        return cachedFlow = flow;
+        getParameters().setCachedFlow(flow);
+        return flow;
     }
 
     /**
@@ -376,6 +357,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * @return the flow in which the command is operating
      */
     protected RunVmFlow getFlow() {
+        RunVmFlow cachedFlow = getParameters().getCachedFlow();
         if (cachedFlow != null) {
             return cachedFlow;
         }
@@ -1091,15 +1073,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
+    private boolean shouldEndSnapshotCreation() {
+        return getFlow() == RunVmFlow.CREATE_STATELESS_IMAGES && isStatelessSnapshotExistsForVm();
+    }
+
     @Override
     protected void endSuccessfully() {
-        if (isStatelessSnapshotExistsForVm()) {
+        if (shouldEndSnapshotCreation()) {
             getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0),
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
             getParameters().setShouldBeLogged(false);
             getParameters().setRunAsStateless(false);
+            getParameters().setCachedFlow(null);
 
             setSucceeded(getBackend().runInternalAction(
                     getActionType(), getParameters(), createContextForRunStatelessVm()).getSucceeded());
@@ -1120,6 +1107,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private CommandContext createContextForRunStatelessVm() {
         Step step = getExecutionContext().getStep();
+
+        if (step == null) {
+            return cloneContextAndDetachFromParent();
+        }
+
         // Retrieve the job object and its steps as this the endSuccessfully stage of command execution -
         // at this is a new instance of the command is used
         // (comparing with the execution state) so all information on the job and steps should be retrieved.
@@ -1148,7 +1140,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void endWithFailure() {
-        if (isStatelessSnapshotExistsForVm()) {
+        if (shouldEndSnapshotCreation()) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), cloneContext().withoutExecutionContext()
                             .withoutLock());
