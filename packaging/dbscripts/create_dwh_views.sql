@@ -73,14 +73,7 @@ FROM storage_domain_dynamic
 INNER JOIN storage_domain_static
     ON (storage_domain_dynamic.id = storage_domain_static.id)
 LEFT JOIN storage_domain_shared_status
-    ON storage_domain_shared_status.storage_id = storage_domain_static.id
-LEFT JOIN (
-    SELECT storage_id,
-        MAX(status) AS status
-    FROM storage_pool_iso_map
-    GROUP BY storage_id
-    ) AS status_table
-    ON storage_domain_static.id = status_table.storage_id;
+    ON storage_domain_shared_status.storage_id = storage_domain_static.id;
 
 CREATE OR REPLACE VIEW dwh_cluster_configuration_history_view AS
 
