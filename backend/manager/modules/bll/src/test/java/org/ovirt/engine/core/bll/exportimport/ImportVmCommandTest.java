@@ -489,6 +489,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).updateImage(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
         doNothing().when(cmd).updateActiveSnapshot(any(Guid.class));
+        doNothing().when(cmd).saveDiskVmElement(any(Guid.class), any(Guid.class), any(DiskVmElement.class));
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
