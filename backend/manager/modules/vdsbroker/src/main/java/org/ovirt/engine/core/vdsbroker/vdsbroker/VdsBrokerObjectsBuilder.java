@@ -2354,6 +2354,8 @@ public class VdsBrokerObjectsBuilder {
             }
             if (params.containsKey(VdsProperties.IS_ASSIGNABLE)) {
                 device.setAssignable(assignBoolValue(params, VdsProperties.IS_ASSIGNABLE));
+            } else {
+                device.setAssignable(true);
             }
 
             devices.add(device);
