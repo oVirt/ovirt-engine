@@ -74,8 +74,12 @@ public class V3VmNicServer extends V3Server<VmNicResource> {
         // Convert the NIC to the V4 format:
         Nic v4Nic = adaptIn(v3Nic);
 
-        // Populate the VNIC profile:
-        setVnicProfile(vmId, v3Nic, v4Nic);
+        // In version 4 of the API changes to the network or port mirroring configuration of the NIC require a change
+        // of the VNIC profile, so if any of those attributes is present in the update sent by the user we need to find
+        // a VNIC profile that is compatible, and assign it.
+        if (v3Nic.isSetNetwork() || v3Nic.isSetPortMirroring()) {
+            setVnicProfile(vmId, v3Nic, v4Nic);
+        }
 
         // Pass the modified request to the V4 server:
         try {

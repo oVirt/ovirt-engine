@@ -15,6 +15,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.helpers;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Objects;
@@ -79,6 +80,7 @@ public class V3NICHelper {
         profilesService.list().getVnicProfiles().stream()
             .filter(profile -> validNetworkIds.contains(profile.getNetwork().getId()))
             .filter(profile -> isProfileCompatible(profile, v3Nic))
+            .sorted(comparing(VnicProfile::getName))
             .map(VnicProfile::getId)
             .findFirst()
             .ifPresent(id -> {
