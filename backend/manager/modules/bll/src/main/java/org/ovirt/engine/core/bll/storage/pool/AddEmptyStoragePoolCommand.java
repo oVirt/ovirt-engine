@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
@@ -36,7 +36,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     private ManagementNetworkUtil managementNetworkUtil;
 
     @Inject
-    private HostNetworkQosDao hostNetworkQosDao;
+    private NetworkFilterDao networkFilterDao;
 
     public AddEmptyStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -84,7 +84,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         getNetworkDao().save(net);
 
         NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
-        VnicProfile profile = NetworkHelper.createVnicProfile(net);
+        VnicProfile profile = NetworkHelper.createVnicProfile(net, networkFilterDao);
         getVnicProfileDao().save(profile);
         NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(), profile.getId(), true);
     }

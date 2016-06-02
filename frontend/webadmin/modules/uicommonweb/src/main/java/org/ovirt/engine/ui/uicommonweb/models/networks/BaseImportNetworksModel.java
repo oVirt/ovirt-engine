@@ -307,7 +307,7 @@ public class BaseImportNetworksModel extends Model {
         VnicProfile vnicProfile = new VnicProfile();
         vnicProfile.setName(network.getName());
         vnicProfile.setNetworkId(network.getId());
-        AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile);
+        AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile, true);
         parameters.setPublicUse(publicUse);
         Frontend.getInstance().runAction(VdcActionType.AddVnicProfile, parameters, new IFrontendActionAsyncCallback() {
 
