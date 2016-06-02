@@ -4,14 +4,15 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.HasEnabled;
 
-public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<String>> implements HasValueChangeHandlers<EntityModel<String>> {
+public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<String>>
+    implements HasValueChangeHandlers<EntityModel<String>>, HasEnabled {
 
     public interface Driver extends SimpleBeanEditorDriver<EntityModel<String>, DnsServerEditor> {
     }
@@ -25,7 +26,6 @@ public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<S
     public DnsServerEditor() {
         stringEditor = new StringEntityModelTextBoxEditor();
         initWidget(stringEditor);
-        getElement().getStyle().setMarginTop(10, Unit.PX);
         driver.initialize(this);
     }
 
@@ -49,5 +49,23 @@ public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<S
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<EntityModel<String>> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
+    }
+
+    public void setUsePatternFly(boolean use) {
+        stringEditor.setUsePatternFly(use);
+    }
+
+    public void hideLabel() {
+        stringEditor.hideLabel();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return stringEditor.isEnabled();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        stringEditor.setEnabled(enabled);
     }
 }

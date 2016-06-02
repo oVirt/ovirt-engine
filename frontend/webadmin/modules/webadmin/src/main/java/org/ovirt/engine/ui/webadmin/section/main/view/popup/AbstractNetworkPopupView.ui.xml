@@ -9,51 +9,20 @@
     xmlns:v="urn:import:org.ovirt.engine.ui.webadmin.widget.vnicProfile"
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-    xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
+    xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractNetworkPopupView.WidgetStyle">
+    <ui:style>
 
        .generalTabTopDecorator {
             background-color: #D3D3D3;
-            margin-bottom: 5px;
-            margin-top: 4px;
-            margin-right: 3px;
-            padding-top: 6px;
-            padding-bottom: 6px;
         }
 
-        .mainLabel {
+        .headerLabel {
             font-weight: bold;
-            padding: 5px;
-        }
-
-        .dependentField {
-            margin-left: 10px;
-        }
-
-        .valueBox {
-            width: 100px;
-        }
-
-        .noPadding {
-            padding: 0px !important;
-            top: 0 !important;
-        }
-
-        .mtuSelector {
-            padding: 0px;
-            float: none;
-            display: inline-block;
-            width: 100%;
-            padding-left: 15px;
-            padding-top: 5px;
-        }
-
-        .vmNetworkStyle {
-            padding: 0px !important;
-            width: auto !important;
         }
 
         .vmNetworkImage {
@@ -61,42 +30,26 @@
             margin-top: 4px;
         }
 
-        .tree {
-            overflow: auto;
-        }
-
         .message {
             color: blue;
             font-size: 8pt;
-            padding: 5px;
         }
 
         .qosStyle {
             margin-left: 20px;
         }
 
-        .propertyWidth {
-            width: 338px;
+        .floatLeft {
+            float: left;
         }
 
-        .mtuWrapper {
-            line-height: 45px;
+        .container {
+            width: 100%;
         }
 
-        .mtuLabel {
-            position: relative;
-            top: 10px !important;
-            display: block;
+        .topElement {
+            padding-top: 15px;
         }
-
-        .inlineBlock {
-            display: inline-block;
-        }
-
-        .floatRight {
-            float: right;
-        }
-
     </ui:style>
 
     <d:SimpleDialogPanel ui:field="mainPanel" width="780px" height="565px">
@@ -105,70 +58,123 @@
                 <t:tab>
                     <t:DialogTab ui:field="generalTab">
                         <t:content>
-                            <g:FlowPanel>
-                                <g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
-                                    <g:HTML ui:field="messageLabel" addStyleNames="{style.message}"/>
-                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-                                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-                                    <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
-                                </g:FlowPanel>
-                                <g:FlowPanel>
-                                    <g:Label ui:field="exportLabel" addStyleNames="{style.mainLabel}" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="exportEditor" />
-                                    <e:ListModelListBoxEditor ui:field="externalProviderEditor" addStyleNames="{style.dependentField}" />
-                                    <ge:StringEntityModelTextBoxEditor ui:field="neutronPhysicalNetwork" addStyleNames="{style.dependentField}" />
-                                </g:FlowPanel>
-                                <g:FlowPanel>
-                                    <g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
-                                    <ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.propertyWidth}" />
-                                    <g:HorizontalPanel addStyleNames="{style.dependentField}">
-                                        <ge:EntityModelCheckBoxEditor ui:field="vlanTagging"/>
-                                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="vlanTag" />
-                                    </g:HorizontalPanel>
-                                    <g:HorizontalPanel addStyleNames="{style.dependentField}">
-                                        <ge:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
-                                        <g:Image resource="{resources.networkVm}" addStyleNames="{style.vmNetworkImage}" />
-                                    </g:HorizontalPanel>
-                                    <e:ListModelRadioGroupEditor ui:field="mtuSelectorEditor" addStyleNames="{style.dependentField} {style.mtuWrapper} {style.propertyWidth}" />
-                                    <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-                                        <e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
+                                    <b:Column size="LG_12">
+                                        <g:HTML ui:field="messageLabel" addStyleNames="{style.message}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
+                                    <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <g:Label ui:field="exportLabel" addStyleNames="{style.headerLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="exportEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="externalProviderEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="neutronPhysicalNetwork" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <g:Label ui:field="mainLabel" addStyleNames="{style.headerLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:ListModelSuggestBoxEditor ui:field="networkLabel" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_6">
+                                        <ge:EntityModelCheckBoxEditor ui:field="vlanTagging" usePatternFly="true" />
+                                    </b:Column>
+                                    <b:Column size="LG_6">
+                                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="vlanTag" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" addStyleNames="{style.floatLeft}" usePatternFly="true" />
+                                        <g:Image resource="{resources.networkVm}" addStyleNames="{style.vmNetworkImage} {style.floatLeft}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_6">
+                                        <g:Label text="{constants.mtuLabel}" />
+                                    </b:Column>
+                                    <b:Column size="LG_6">
+                                        <e:ListModelRadioGroupEditor ui:field="mtuSelectorEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="qosEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_2" offset="LG_10">
                                         <w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
-                                    </g:HorizontalPanel>
-                                </g:FlowPanel>
-                            </g:FlowPanel>
+                                    </b:Column>
+                                </b:Row>
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="clusterTab">
                         <t:content>
-                            <g:VerticalPanel ui:field="attachPanel">
-                                <g:Label ui:field="assignLabel" addStyleNames="{style.mainLabel}"/>
-                                <g:ScrollPanel height="160px" width="100%">
-                                    <e:EntityModelCellTable ui:field="clustersTable" />
-                                </g:ScrollPanel>
-                            </g:VerticalPanel>
+                            <b:Container ui:field="attachContainer" addStyleNames="{style.container}">
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <b:Column size="LG_12">
+                                        <g:Label ui:field="assignLabel" addStyleNames="{style.headerLabel}"/>
+                                    </b:Column>
+                                    <b:Column size="LG_12">
+                                        <e:EntityModelCellTable ui:field="clustersTable" />
+                                    </b:Column>
+                                </b:Row>
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="subnetTab">
                         <t:content>
-                            <g:FlowPanel>
-                                <ge:EntityModelCheckBoxEditor ui:field="createSubnetEditor" />
-                                <p:ExternalSubnetWidget ui:field="subnetWidget" />
-                            </g:FlowPanel>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <b:Column size="LG_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="createSubnetEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                                <p:ExternalSubnetWidget ui:field="subnetWidget" usePatternFly="true" />
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="profilesTab">
                         <t:content>
-                            <g:FlowPanel>
-                                <g:Label ui:field="profilesLabel" addStyleNames="{style.mainLabel}" />
-                                <v:VnicProfilesEditor ui:field="profilesEditor" />
-                            </g:FlowPanel>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <b:Column size="LG_12">
+                                        <g:Label ui:field="profilesLabel" addStyleNames="{style.headerLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <v:VnicProfilesEditor ui:field="profilesEditor" usePatternFly="true" />
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

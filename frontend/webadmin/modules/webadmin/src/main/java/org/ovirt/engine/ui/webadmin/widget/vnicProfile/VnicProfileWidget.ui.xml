@@ -1,51 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:style type="org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfileWidget.WidgetStyle" >
-		.publicUse {
-			width: 100%;
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-    	.publicUseElement {
-			float: left;
-			line-height: 35px;
-    	}
+    <ui:style>
+        .container {
+            width: 100%;
+        }
 
-		.qos {
-			width: 135px;
-		}
+        .infoIcon {
+            float: left;
+            padding-left: 2px;
+        }
 
-		.name {
-			width: 160px;
-		}
-
-		.publicUsePanel {
-			width: 125px;
-			margin-left: 10px;
-		}
-
-		.qosPanel {
-			width: 185px;
-			margin-left: 20px;
-		}
-
-		.containerStyle {
-			margin-right: 10px;
-		}
+        .floatLeft {
+            float: left;
+        }
     </ui:style>
-	<g:HorizontalPanel addStyleNames="{style.containerStyle}">
-		<ge:StringEntityModelTextBoxOnlyEditor ui:field="nameEditor" />
-		<g:FlowPanel addStyleNames="{style.publicUsePanel}">
-			<ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.publicUseElement}"/>
-			<d:InfoIcon ui:field="publicInfo" addStyleNames="{style.publicUseElement}"/>
-		</g:FlowPanel>
-		<g:SimplePanel addStyleNames="{style.qosPanel}">
-			<e:ListModelListBoxEditor ui:field="networkQoSEditor"/>
-		</g:SimplePanel>
-	</g:HorizontalPanel>
+
+    <g:FlowPanel>
+        <b:Row>
+            <b:Column size="LG_4">
+                <ge:StringEntityModelTextBoxOnlyEditor ui:field="nameEditor" />
+            </b:Column>
+            <b:Column size="LG_3">
+                <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.floatLeft}" label="{constants.profilePublicUseInstanceTypeLabel}" />
+                <d:InfoIcon ui:field="publicInfo" addStyleNames="{style.infoIcon}"/>
+            </b:Column>
+            <b:Column size="LG_1">
+                <g:Label text="{constants.profileQoSInstanceTypeLabel}" />
+            </b:Column>
+            <b:Column size="LG_4">
+                <e:ListModelListBoxEditor ui:field="networkQoSEditor" />
+            </b:Column>
+        </b:Row>
+    </g:FlowPanel>
 
 </ui:UiBinder>

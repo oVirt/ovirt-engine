@@ -43,5 +43,4 @@ public class ListModelListBoxEditor<T> extends AbstractValidatedWidgetWithLabel<
     public WidgetWithLabelEditor<T, ListModelListBoxEditor<T>> asEditor() {
         return editor;
     }
-
 }

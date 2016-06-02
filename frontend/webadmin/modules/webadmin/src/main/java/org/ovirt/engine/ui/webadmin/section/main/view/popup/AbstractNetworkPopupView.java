@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.ArrayList;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -43,14 +44,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends AbstractTabbedModelBoundPopupView<T>
@@ -142,14 +141,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public final EntityModelCellTable<ListModel<NetworkClusterModel>> clustersTable;
 
     @UiField
-    public VerticalPanel attachPanel;
+    public Container attachContainer;
 
     @UiField
     @Ignore
     public HTML messageLabel;
-
-    @UiField
-    public WidgetStyle style;
 
     @UiField(provided = true)
     @Path(value = "createSubnet.entity")
@@ -208,12 +204,12 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         mtuEditor = new IntegerEntityModelTextBoxOnlyEditor();
+        mtuEditor.setUsePatternFly(true);
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.clustersTable = new EntityModelCellTable<>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable();
         localize();
-        addStyles();
     }
 
     protected void localize() {
@@ -234,31 +230,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         commentEditor.setLabel(constants.commentLabel());
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
-        mtuSelectorEditor.setLabel(constants.mtuLabel());
         qosEditor.setLabel(constants.hostNetworkQos());
         createSubnetEditor.setLabel(constants.createSubnetLabel());
 
         profilesLabel.setText(constants.profilesLabel());
-    }
-
-   protected void addStyles() {
-        vlanTag.addContentWidgetContainerStyleName(style.valueBox());
-        mtuSelectorEditor.addLabelStyleName(style.noPadding());
-        mtuSelectorEditor.addLabelStyleName(style.mtuLabel());
-        mtuSelectorEditor.addContentWidgetContainerStyleName(style.mtuSelector());
-        mtuEditor.addContentWidgetContainerStyleName(style.valueBox());
-        mtuEditor.addWrapperStyleName(style.inlineBlock());
-        mtuEditor.addWrapperStyleName(style.floatRight());
-        networkLabel.addContentWidgetContainerStyleName(style.valueBox());
-        qosEditor.addContentWidgetContainerStyleName(style.valueBox());
-        isVmNetworkEditor.addContentWidgetContainerStyleName(style.vmNetworkStyle());
-        isVmNetworkEditor.asCheckBox().addStyleName(style.vmNetworkStyle());
-        vlanTagging.addContentWidgetContainerStyleName(style.noPadding());
-        vlanTagging.asCheckBox().addStyleName(style.noPadding());
-        networkLabel.addLabelStyleName(style.noPadding());
-        networkLabel.addLabelStyleName(style.inlineBlock());
-        qosEditor.addLabelStyleName(style.noPadding());
-        qosEditor.addLabelStyleName(style.inlineBlock());
     }
 
     @Override
@@ -462,21 +437,4 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public DialogTabPanel getTabPanel() {
         return tabPanel;
     }
-
-    interface WidgetStyle extends CssResource {
-        String valueBox();
-
-        String noPadding();
-
-        String mtuSelector();
-
-        String vmNetworkStyle();
-
-        String inlineBlock();
-
-        String mtuLabel();
-
-        String floatRight();
-    }
-
 }

@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -23,12 +24,12 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfileModel> implements HasValueChangeHandlers<VnicProfileModel> {
+public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfileModel>
+    implements HasValueChangeHandlers<VnicProfileModel>, PatternFlyCompatible {
 
     interface Driver extends SimpleBeanEditorDriver<VnicProfileModel, VnicProfileWidget> {
     }
@@ -58,9 +59,6 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     @WithElementId("networkQoS")
     public ListModelListBoxEditor<NetworkQoS> networkQoSEditor;
 
-    @UiField
-    WidgetStyle style;
-
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -70,19 +68,11 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         publicInfo = new InfoIcon(templates.italicText(constants.profilePublicUseLabel()));
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
+        networkQoSEditor.hideLabel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        publicUseEditor.setLabel(constants.profilePublicUseInstanceTypeLabel());
-        networkQoSEditor.setLabel(constants.profileQoSInstanceTypeLabel());
 
-        initStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-    }
-
-    private void initStyles() {
-        nameEditor.addContentWidgetContainerStyleName(style.name());
-        publicUseEditor.addContentWidgetContainerStyleName(style.publicUse());
-        networkQoSEditor.addContentWidgetContainerStyleName(style.qos());
     }
 
     @Override
@@ -108,12 +98,11 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
         return addHandler(handler, ValueChangeEvent.getType());
     }
 
-    interface WidgetStyle extends CssResource {
-        String name();
-
-        String publicUse();
-
-        String qos();
+    @Override
+    public void setUsePatternFly(boolean use) {
+        publicUseEditor.setUsePatternFly(use);
+        networkQoSEditor.setUsePatternFly(use);
+        nameEditor.setUsePatternFly(use);
     }
 
 }

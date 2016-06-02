@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.vnicProfile;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
+import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -12,13 +12,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VnicProfilesEditor extends ScrollableAddRemoveRowWidget<NetworkProfilesModel, VnicProfileModel, VnicProfileWidget> {
+public class VnicProfilesEditor extends AddRemoveRowWidget<NetworkProfilesModel, VnicProfileModel, VnicProfileWidget> {
 
     interface WidgetUiBinder extends UiBinder<Widget, VnicProfilesEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
     private Guid dcId;
+
+    private boolean usePatternFly = false;
 
     public VnicProfilesEditor() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -39,6 +41,7 @@ public class VnicProfilesEditor extends ScrollableAddRemoveRowWidget<NetworkProf
     @Override
     protected VnicProfileWidget createWidget(VnicProfileModel value) {
         VnicProfileWidget vnicProfileWidget = new VnicProfileWidget();
+        vnicProfileWidget.setUsePatternFly(usePatternFly);
         vnicProfileWidget.edit(value);
         return vnicProfileWidget;
     }
@@ -63,4 +66,9 @@ public class VnicProfilesEditor extends ScrollableAddRemoveRowWidget<NetworkProf
         widget.networkQoSEditor.setEnabled(!becomingGhost && value.getNetworkQoS().getIsChangable());
     }
 
+    @Override
+    public void setUsePatternFly(boolean use) {
+        super.setUsePatternFly(use);
+        this.usePatternFly = use;
+    }
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.provider;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -17,7 +18,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.inject.Inject;
 
-public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<ExternalSubnetModel> {
+public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<ExternalSubnetModel> implements PatternFlyCompatible {
 
     interface Driver extends SimpleBeanEditorDriver<ExternalSubnetModel, ExternalSubnetWidget> {
     }
@@ -89,5 +90,10 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
     public ExternalSubnetModel flush() {
         dnsServersEditor.flush();
         return driver.flush();
+    }
+
+    @Override
+    public void setUsePatternFly(boolean use) {
+        dnsServersEditor.setUsePatternFly(use);
     }
 }
