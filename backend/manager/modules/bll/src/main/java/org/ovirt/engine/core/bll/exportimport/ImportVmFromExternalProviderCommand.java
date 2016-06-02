@@ -224,13 +224,12 @@ implements QuotaStorageDependent {
 
     @Override
     protected void processImages() {
-        if (getVm().getOrigin() == OriginType.KVM && !getVm().getImages().isEmpty()) {
-            getVm().getImages().get(0).getDiskVmElementForVm(getVmId()).setBoot(true);
-        }
         ArrayList<Guid> diskIds = new ArrayList<>();
+        boolean isFirstDisk = true;
         for (DiskImage image : getVm().getImages()) {
-            Guid diskId = createDisk(image);
+            Guid diskId = createDisk(image, getVm().getOrigin() == OriginType.KVM && isFirstDisk);
             diskIds.add(diskId);
+            isFirstDisk = false;
         }
         getParameters().setDisks(diskIds);
 
@@ -259,7 +258,7 @@ implements QuotaStorageDependent {
         }
     }
 
-    private Guid createDisk(DiskImage image) {
+    private Guid createDisk(DiskImage image, boolean isBoot) {
         image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
 
         AddDiskParameters diskParameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), image);
@@ -271,6 +270,7 @@ implements QuotaStorageDependent {
 
         DiskVmElement dve = new DiskVmElement(image.getId(), getVmId());
         dve.setDiskInterface(DiskInterface.VirtIO);
+        dve.setBoot(isBoot);
         diskParameters.setDiskVmElement(dve);
 
         VdcReturnValueBase vdcReturnValueBase =
