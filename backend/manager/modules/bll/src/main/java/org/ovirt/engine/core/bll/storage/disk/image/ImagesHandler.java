@@ -823,6 +823,7 @@ public final class ImagesHandler {
 
                 if (newImage != null) {
                     log.debug("Adding image '{}' to vmSnapshot '{}'", newImage.getImageId(), snapshot.getId());
+                    newImage.setDiskVmElements(Collections.singletonList(getDiskVmElementDao().get(new VmDeviceId(newImage.getId(), vmSnapshot.getId()))));
                     snapshotImages.add(newImage);
                 }
 
