@@ -803,6 +803,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 updateImage(disk);
                 saveBaseDisk(disk);
+                saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getParameters().getVmId()));
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
