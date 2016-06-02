@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
-  <version>4.0.0.2-SNAPSHOT</version>
+  <version>4.0.0.2</version>
   <packaging>pom</packaging>
   <name>ovirt-root</name>
   <description>oVirt Engine Root Project</description>
@@ -44,7 +44,7 @@
     <model.version>4.0.20</model.version>
 
     <!-- oVirt extentions versions -->
-    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
+    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
 
     <!-- Dependencies Versions -->
     <junit.version>4.11</junit.version>
@@ -71,7 +71,7 @@
     <sshd-core.version>0.11.0</sshd-core.version>
     <otopi.version>1.5.0</otopi.version>
     <ovirt-host-deploy.version>1.5.0</ovirt-host-deploy.version>
-    <vdsm-jsonrpc-java.version>1.2.3-SNAPSHOT</vdsm-jsonrpc-java.version>
+    <vdsm-jsonrpc-java.version>1.2.3</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
     <gwt.version>2.6.1</gwt.version>
     <mockito.version>1.9.0</mockito.version>
@@ -431,7 +431,7 @@
       </snapshots>
     </repository>
     <repository>
-      <!-- Required till we build without -SNAPSHOT dependencies -->
+      <!-- Required till we build without  dependencies -->
       <id>sonatype-snapshots</id>
       <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
       <snapshots>
@@ -670,7 +670,7 @@
           <dependency>
             <groupId>org.ovirt.engine</groupId>
             <artifactId>ovirt-findbugs-filters</artifactId>
-            <version>4.0.0.2-SNAPSHOT</version>
+            <version>4.0.0.2</version>
           </dependency>
         </dependencies>
       </plugin>
