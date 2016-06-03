@@ -150,8 +150,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     private void hideLabels() {
         passwordEditor.hideLabel();
         publicKeyEditor.hideLabel();
-        overrideIpTablesEditor.hideLabel();
-        activateHostAfterInstallEditor.hideLabel();
     }
 
     private void applyModeCustomizations() {
