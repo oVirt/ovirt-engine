@@ -80,7 +80,6 @@ public class BackendApiResourceTest extends EasyMockSupport {
     protected static int ACTIVE_STORAGE_DOMAINS = 6;
 
     private static final String[] relationships = {
-        "capabilities",
         "clusters",
         "clusters/search",
         "datacenters",
@@ -131,7 +130,6 @@ public class BackendApiResourceTest extends EasyMockSupport {
     };
 
     private static final String[] relationshipsGlusterOnly = {
-            "capabilities",
             "clusters",
             "clusters/search",
             "events",
@@ -150,7 +148,6 @@ public class BackendApiResourceTest extends EasyMockSupport {
     };
 
     private static final String[] hrefs = {
-        BASE_PATH + "/capabilities",
         BASE_PATH + "/clusters",
         BASE_PATH + "/clusters?search={query}",
         BASE_PATH + "/datacenters",
@@ -201,7 +198,6 @@ public class BackendApiResourceTest extends EasyMockSupport {
     };
 
     private static final String[] hrefsGlusterOnly = {
-            BASE_PATH + "/capabilities",
             BASE_PATH + "/clusters",
             BASE_PATH + "/clusters?search={query}",
             BASE_PATH + "/events",

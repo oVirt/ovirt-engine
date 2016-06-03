@@ -31,7 +31,6 @@ public class ApiRootLinksCreator {
 
     public static Collection<DetailedLink> getLinks(String baseUri) {
         Collection<DetailedLink> links = new LinkedList<>();
-        links.add(createLink("capabilities", baseUri));
         links.add(createLink("clusters", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("datacenters", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams(), baseUri));
@@ -71,7 +70,6 @@ public class ApiRootLinksCreator {
 
     public static Collection<DetailedLink> getGlusterLinks(String baseUri) {
         Collection<DetailedLink> links = new LinkedList<>();
-        links.add(createLink("capabilities", baseUri));
         links.add(createLink("clusters", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams(), baseUri));
         links.add(createLink("hosts", LinkFlags.SEARCHABLE, baseUri));
