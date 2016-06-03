@@ -26,8 +26,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -47,7 +45,6 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.resource.AffinityLabelsResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
-import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
@@ -466,12 +463,6 @@ public class BackendApiResource
     @Override
     public BookmarksResource getBookmarksResource() {
         return inject(new BackendBookmarksResource());
-    }
-
-    @GET
-    @Path("capabilities")
-    public CapabilitiesResource getCapabilitiesResource() {
-        return inject(new BackendCapabilitiesResource());
     }
 
     @Override
