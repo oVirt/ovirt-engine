@@ -56,6 +56,7 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsCommandExecutor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorFactory;
 import org.slf4j.Logger;
@@ -102,6 +103,9 @@ public class ResourceManager implements BackendService {
 
     @Inject
     private MonitoringStrategyFactory monitoringStrategyFactory;
+
+    @Inject
+    Instance<VdsCommandExecutor> commandExecutor;
 
     private ResourceManager() {
         this.parallelism = Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize);
@@ -448,8 +452,7 @@ public class ResourceManager implements BackendService {
         VDSCommandBase<P> command = createCommand(commandType, parameters);
 
         if (command != null) {
-            command.execute();
-            return command.getVDSReturnValue();
+            return commandExecutor.get().execute(command, commandType);
         }
 
         return null;
@@ -460,7 +463,7 @@ public class ResourceManager implements BackendService {
 
         if (command != null) {
             command.setAsync(true);
-            command.execute();
+            commandExecutor.get().execute(command, commandType);
 
             VDSReturnValue value = command.getVDSReturnValue();
             if (!VDSAsyncReturnValue.class.isInstance(value)) {
