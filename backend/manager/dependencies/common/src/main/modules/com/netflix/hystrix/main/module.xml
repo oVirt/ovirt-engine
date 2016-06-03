@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.1" name="com.netflix.hystrix">
+
+    <resources>
+        <resource-root path="hystrix-core.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="org.slf4j"/>
+        <module name="com.netflix.config"/>
+        <module name="io.reactivex.rxjava"/>
+        <module name="sun.jdk"/>
+    </dependencies>
+
+</module>

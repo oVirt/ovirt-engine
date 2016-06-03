@@ -196,6 +196,8 @@ BuildRequires:	python3-devel
 %endif
 BuildRequires:	systemd
 BuildRequires:	unzip
+BuildRequires:	hystrix-core
+BuildRequires:	hystrix-metrics-event-stream
 
 Requires(pre):	shadow-utils
 
@@ -232,6 +234,8 @@ Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
 Requires:	yum-plugin-versionlock
+Requires:	hystrix-core
+Requires:	hystrix-metrics-event-stream
 
 %if 0%{?rhel}
 # FOP 1.1 is available only on EL7, Fedora >= 23 contains FOP 2.0, which is not

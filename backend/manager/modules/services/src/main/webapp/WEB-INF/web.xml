@@ -18,6 +18,47 @@
     <dispatcher>ERROR</dispatcher>
   </filter-mapping>
 
+  <filter>
+    <filter-name>SsoRestApiAuthFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiAuthFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SsoRestApiAuthFilter</filter-name>
+    <url-pattern>/hystrix.stream</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>SsoRestApiNegotiationFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiNegotiationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SsoRestApiNegotiationFilter</filter-name>
+    <url-pattern>/hystrix.stream</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>EnforceAuthFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.aaa.filters.EnforceAuthFilter</filter-class>
+    <init-param>
+      <param-name>scheme.basic_auth</param-name>
+      <param-value>Basic realm="RESTAPI"</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>EnforceAuthFilter</filter-name>
+    <url-pattern>/hystrix.stream</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <display-name>HystrixMetricsStreamServlet</display-name>
+    <servlet-name>HystrixMetricsStreamServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.services.HystrixServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>HystrixMetricsStreamServlet</servlet-name>
+      <url-pattern>/hystrix.stream</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>pki-resource</servlet-name>
     <servlet-class>org.ovirt.engine.core.services.PKIResourceServlet</servlet-class>

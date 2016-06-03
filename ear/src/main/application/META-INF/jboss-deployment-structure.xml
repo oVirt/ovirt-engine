@@ -28,6 +28,12 @@
       <module name="org.springframework" export="true"/>
       <module name="org.yaml.snakeyaml" export="true"/>
 
+      <module name="io.reactivex.rxjava" export="true" optional="true"/>
+      <module name="com.netflix.hystrix" export="true" optional="true"/>
+      <module name="com.netflix.config" export="true" optional="true"/>
+      <module name="com.netflix.hystrix.contrib" export="true" optional="true"/>
+      <module name="com.fasterxml.jackson.core.jackson-core" export="true" optional="true"/>
+
       <module name="org.ovirt.engine.api.ovirt-engine-extensions-api" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.aaa" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.branding" export="true" meta-inf="import"/>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.1" name="com.netflix.hystrix.contrib">
+
+    <resources>
+        <resource-root path="hystrix-metrics-event-stream.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="org.slf4j"/>
+        <module name="com.netflix.config"/>
+        <module name="com.netflix.hystrix"/>
+        <module name="com.fasterxml.jackson.core.jackson-core"/>
+        <module name="javax.servlet.api"/>
+    </dependencies>
+
+</module>

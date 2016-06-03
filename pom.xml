@@ -92,6 +92,10 @@
     <c3p0.version>0.9.1.1</c3p0.version>
     <aopalliance.version>1.0</aopalliance.version>
     <snmp4j.version>2.2.2</snmp4j.version>
+    <!-- hystrix -->
+    <hystrix.version>1.4.14</hystrix.version>
+    <archaius.version>0.4.1</archaius.version>
+    <rxjava.version>1.0.8</rxjava.version>
     <!-- OpenStack -->
     <openstack-client.version>3.1.1</openstack-client.version>
 
@@ -340,6 +344,27 @@
         <version>2.0.0</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <!--hystrix dependencies -->
+      <dependency>
+       <groupId>com.netflix.hystrix</groupId>
+       <artifactId>hystrix-metrics-event-stream</artifactId>
+       <version>${hystrix.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.netflix.hystrix</groupId>
+        <artifactId>hystrix-core</artifactId>
+        <version>${hystrix.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.reactivex</groupId>
+        <artifactId>rxjava</artifactId>
+        <version>${rxjava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.netflix.archaius</groupId>
+        <artifactId>archaius-core</artifactId>
+        <version>${archaius.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -31,6 +31,8 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.executor.BackendActionExecutor;
+import org.ovirt.engine.core.bll.executor.BackendQueryExecutor;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.interceptors.CorrelationIdTrackerInterceptor;
 import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
@@ -148,6 +150,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private VdsDynamicDao vdsDynamicDao;
     @Inject
     private BusinessEntitySnapshotDao businessEntitySnapshotDao;
+
+    @Inject
+    private Instance<BackendActionExecutor> actionExecutor;
+
+    @Inject
+    private Instance<BackendQueryExecutor> queryExecutor;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -509,7 +517,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         command.setInternalExecution(runAsInternal);
         ExecutionHandler.prepareCommandForMonitoring(command, command.getActionType(), runAsInternal);
 
-        returnValue = command.executeAction();
+        returnValue = actionExecutor.get().execute(command);
         returnValue.setCorrelationId(command.getParameters().getCorrelationId());
         returnValue.setJobId(command.getJobId());
         return returnValue;
@@ -574,9 +582,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         }
         QueriesCommandBase<?> command = createQueryCommand(actionType, parameters, engineContext);
         command.setInternalExecution(!isPerformUserCheck);
-        command.execute();
-        return command.getQueryReturnValue();
-
+        return queryExecutor.get().execute(command, actionType);
     }
 
     protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,

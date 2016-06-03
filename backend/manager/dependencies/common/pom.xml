@@ -20,6 +20,25 @@
        .jar files that will be added to the modules archive: -->
 
   <dependencies>
+    <dependency>
+      <groupId>com.netflix.hystrix</groupId>
+      <artifactId>hystrix-metrics-event-stream</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.netflix.hystrix</groupId>
+      <artifactId>hystrix-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.reactivex</groupId>
+      <artifactId>rxjava</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.netflix.archaius</groupId>
+      <artifactId>archaius-core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>commons-configuration</groupId>
@@ -333,6 +352,26 @@
           <configuration>
             <generateIndex>false</generateIndex>
             <modules>
+              <module>
+                <groupId>com.netflix.hystrix</groupId>
+                <artifactId>hystrix-metrics-event-stream</artifactId>
+                <moduleName>com.netflix.hystrix.contrib</moduleName>
+              </module>
+              <module>
+                <groupId>com.netflix.archaius</groupId>
+                <artifactId>archaius-core</artifactId>
+                <moduleName>com.netflix.config</moduleName>
+              </module>
+              <module>
+                <groupId>com.netflix.hystrix</groupId>
+                <artifactId>hystrix-core</artifactId>
+                <moduleName>com.netflix.hystrix</moduleName>
+              </module>
+              <module>
+                <groupId>io.reactivex</groupId>
+                <artifactId>rxjava</artifactId>
+                <moduleName>io.reactivex.rxjava</moduleName>
+              </module>
 
               <module>
                 <groupId>commons-configuration</groupId>

@@ -1906,6 +1906,10 @@ public enum ConfigValues {
     HostedEngineConfigDiskSizeInBytes,
 
     @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    HystrixMonitoringEnabled,
+
+    @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     Ipv6Supported,
 
