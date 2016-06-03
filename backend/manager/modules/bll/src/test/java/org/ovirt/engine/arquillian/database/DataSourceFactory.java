@@ -1,6 +1,7 @@
 package org.ovirt.engine.arquillian.database;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.enterprise.inject.Produces;
@@ -35,7 +36,9 @@ public class DataSourceFactory {
     public DataSourceFactory() throws ClassNotFoundException, IOException {
         ClassLoader.getSystemClassLoader().loadClass("org.postgresql.Driver");
         Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/test-database.properties"));
+        try (InputStream resource = getClass().getResourceAsStream("/test-database.properties")) {
+            properties.load(resource);
+        }
         dataSource = new SingleConnectionDataSource(
                 System.getProperty("engine.db.url", properties.getProperty("engine.db.url")),
                 System.getProperty("engine.db.username", properties.getProperty("engine.db.username")),
