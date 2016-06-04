@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -35,17 +34,8 @@ public class ImportVmsPopupPresenterWidget extends AbstractModelBoundPopupPresen
     public void init(final ImportVmsModel model) {
         super.init(model);
         addDataCenterListener();
-        addImportSourceListener();
+        addExportDomainListener();
         updateExportDomainLoadButtonEnabledState();
-    }
-
-    private void addImportSourceListener() {
-        getModel().getImportSources().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateExportDomainLoadButtonEnabledState();
-            }
-        });
     }
 
     private void addDataCenterListener() {
@@ -64,11 +54,21 @@ public class ImportVmsPopupPresenterWidget extends AbstractModelBoundPopupPresen
                 }
             }
         });
+    }
 
+    private void addExportDomainListener() {
+        getModel().getExportDomain().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
+                                    Object sender,
+                                    PropertyChangedEventArgs args) {
+                updateExportDomainLoadButtonEnabledState();
+            }
+        });
     }
 
     private void updateExportDomainLoadButtonEnabledState() {
-        final boolean enabled = getModel().getExportDomain() != null
+        final boolean enabled = getModel().getExportDomain().getEntity() != null
                 && getModel().getDataCenters().getIsChangable();
         getView().getLoadVmsFromExportDomainButton().setEnabled(enabled);
     }
