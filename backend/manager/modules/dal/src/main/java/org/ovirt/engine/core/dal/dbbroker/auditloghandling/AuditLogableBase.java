@@ -81,6 +81,7 @@ import org.slf4j.LoggerFactory;
 
 public class AuditLogableBase extends TimeoutBase {
     private static final Logger log = LoggerFactory.getLogger(AuditLogableBase.class);
+    private static final String COMMA_SEPARATOR = ", ";
 
     @Inject
     protected AuditLogDirector auditLogDirector;
@@ -537,6 +538,12 @@ public class AuditLogableBase extends TimeoutBase {
         return this;
     }
 
+    public void setCustomCommaSeparatedValues(
+            final String name,
+            final Collection<String> values) {
+        setCustomValues(name, values, COMMA_SEPARATOR);
+    }
+
     public void setCustomValues(
             final String name,
             final Collection<String> values,
@@ -544,6 +551,10 @@ public class AuditLogableBase extends TimeoutBase {
         final String value = values.stream().collect(Collectors.joining(separator));
         allocateCustomValues();
         customValues.put(name.toLowerCase(), value);
+    }
+
+    public void appendCustomCommaSeparatedValue(final String name, final String value) {
+        appendCustomValue(name, value, COMMA_SEPARATOR);
     }
 
     public void appendCustomValue(final String name, final String value, final String separator) {

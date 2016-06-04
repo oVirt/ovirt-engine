@@ -129,7 +129,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 // check if there is host which can be used for HE
                 if (!canScheduleVm(vm)) {
                     succeeded = false;
-                    appendCustomValue("failedVms", vm.getName(), ",");
+                    appendCustomCommaSeparatedValue("failedVms", vm.getName());
                     log.error("There is no host capable of running the hosted engine VM");
                 }
                 // The Hosted Engine vm is migrated by the HA agent
@@ -139,7 +139,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || vm.isAutoStartup())) {
                 if (!migrateVm(vm, parentContext)) {
                     succeeded = false;
-                    appendCustomValue("failedVms", vm.getName(), ",");
+                    appendCustomCommaSeparatedValue("failedVms", vm.getName());
                     log.error("Failed to migrate VM '{}'", vm.getName());
                 }
             }

@@ -1032,6 +1032,22 @@ public class AuditLogableBaseTest {
     }
 
     @Test
+    public void setCustomCommaSeparatedValues() {
+        final AuditLogableBase underTest = new TestAuditLogableBase();
+
+        final String key = "foo";
+        final String s1 = NAME + 1;
+        final String s2 = NAME + 2;
+        final List<String> values = Arrays.asList(s1, s2);
+        final String sep = ", ";
+
+        underTest.setCustomCommaSeparatedValues(key, values);
+        final String actual = underTest.getCustomValue(key);
+
+        assertEquals(String.format("%s%s%s", s1, sep, s2), actual);
+    }
+
+    @Test
     public void appendCustomValueAppend() {
         final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";

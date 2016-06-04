@@ -62,8 +62,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends VmCommand<T> {
 
-    private static final String COMMA_SEPARATOR = ", ";
-
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
     private Guid sourceDomainId = Guid.Empty;
@@ -433,7 +431,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private AuditLogableBase createExternalMacsAuditLog(VM vm, Set<String> externalMacs) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVmId(vm.getId());
-        logable.setCustomValues("MACAddr", externalMacs, COMMA_SEPARATOR);
+        logable.setCustomCommaSeparatedValues("MACAddr", externalMacs);
         return logable;
     }
 

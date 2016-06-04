@@ -25,11 +25,11 @@ public class AttachUserToTagCommand<T extends AttachEntityToTagParameters> exten
                     DbFacade.getInstance().getTagDao().attachUserToTag(map);
                     noActionDone = false;
                     if (user != null) {
-                        appendCustomValue("AttachUsersNames", user.getLoginName(), ", ");
+                        appendCustomCommaSeparatedValue("AttachUsersNames", user.getLoginName());
                     }
                 } else {
                     if (user != null) {
-                        appendCustomValue("AttachUsersNamesExists", user.getLoginName(), ", ");
+                        appendCustomCommaSeparatedValue("AttachUsersNamesExists", user.getLoginName());
                     }
                 }
             }

@@ -20,7 +20,7 @@ public class DetachUserGroupFromTagCommand<T extends AttachEntityToTagParameters
                 DbGroup group = DbFacade.getInstance().getDbGroupDao().get(groupGuid);
                 if (DbFacade.getInstance().getTagDao().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) != null) {
                     if (group != null) {
-                        appendCustomValue("DetachGroupsNames", group.getName(), ", ");
+                        appendCustomCommaSeparatedValue("DetachGroupsNames", group.getName());
                     }
                     DbFacade.getInstance().getTagDao().detachUserGroupFromTag(getTagId(), groupGuid);
                     noActionDone = false;

@@ -29,12 +29,12 @@ public class AttachTemplatesToTagCommand<T extends AttachEntityToTagParameters> 
             VmTemplate template = DbFacade.getInstance().getVmTemplateDao().get(templateGuid);
             if (template != null) {
                 if (DbFacade.getInstance().getTagDao().getTagTemplateByTagIdAndByTemplateId(getTagId(), templateGuid) == null) {
-                    appendCustomValue("TemplatesNames", template.getName(), ", ");
+                    appendCustomCommaSeparatedValue("TemplatesNames", template.getName());
                     TagsTemplateMap map = new TagsTemplateMap(getTagId(), templateGuid);
                     DbFacade.getInstance().getTagDao().attachTemplateToTag(map);
                     noActionDone = false;
                 } else {
-                    appendCustomValue("TemplatesNamesExists", template.getName(), ", ");
+                    appendCustomCommaSeparatedValue("TemplatesNamesExists", template.getName());
                 }
             }
         }
