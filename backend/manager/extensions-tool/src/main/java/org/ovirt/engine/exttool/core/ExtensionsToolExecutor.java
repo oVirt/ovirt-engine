@@ -1,8 +1,12 @@
 package org.ovirt.engine.exttool.core;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
@@ -29,6 +34,11 @@ public class ExtensionsToolExecutor {
     private static String PACKAGE_VERSION = System.getProperty("org.ovirt.engine.exttool.core.packageVersion");
     private static String PACKAGE_DISPLAY_NAME = System.getProperty("org.ovirt.engine.exttool.core.packageDisplayName");
     private static String ENGINE_ETC = System.getProperty("org.ovirt.engine.exttool.core.engineEtc");
+    private static String AAA_JAAS_USE_TICKET_CACHE = System.getProperty("org.ovirt.engine.exttool.core.useTicketCache");
+    private static String AAA_JAAS_TICKET_CACHE_FILE = System.getProperty("org.ovirt.engine.exttool.core.ticketCacheFile");
+    private static String AAA_JAAS_USE_KEYTAB = System.getProperty("org.ovirt.engine.exttool.core.useKeytab");
+    private static String AAA_JAAS_KEYTAB_FILE = System.getProperty("org.ovirt.engine.exttool.core.keytabFile");
+    private static String JAAS_CONF = System.getProperty("java.security.auth.login.config");
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ExtensionsToolExecutor.class);
     private static final Logger OVIRT_LOGGER = Logger.getLogger("org.ovirt");
@@ -37,9 +47,12 @@ public class ExtensionsToolExecutor {
 
     public static void main(String... args) {
         int exitStatus = 1;
+        Path tempJAASConf = null;
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(args));
 
         try {
+            tempJAASConf = createTemporaryJAASconfiguration();
+
             final Map<String, String> contextSubstitutions = new HashMap<>();
             contextSubstitutions.put("@ENGINE_ETC@", ENGINE_ETC);
             contextSubstitutions.put("@PROGRAM_NAME@", PROGRAM_NAME);
@@ -87,6 +100,7 @@ public class ExtensionsToolExecutor {
                 throw new ExitException(1);
             }
             moduleService.parseArguments(cmdArgs);
+
             log.info("========================================================================");
             log.info("============================ Initialization ============================");
             log.info("========================================================================");
@@ -108,9 +122,67 @@ public class ExtensionsToolExecutor {
         } catch (Throwable t) {
             log.error(t.getMessage() != null ? t.getMessage() : t.getClass().getName());
             log.debug("Exception:", t);
+        } finally {
+            if (tempJAASConf != null) {
+                try {
+                    Files.delete(tempJAASConf);
+                } catch (IOException ex) {
+                    log.warn("Failed to delete temporary file '{}'", tempJAASConf.toString());
+                }
+            }
         }
         log.debug("Exiting with status '{}'", exitStatus);
         System.exit(exitStatus);
+    }
+
+    /**
+     * This method creates a temporary JAAS configuration file, which reflect configuration of Wildfly picketbox
+     * framework used in ovirt-engine. Then change system property to use this new configuration.
+     *
+     * @return path to temporary JAAS confiugration file
+     * @throws IOException is thrown when temporary JAAS configuration fails to create
+     */
+    private static Path createTemporaryJAASconfiguration() throws IOException {
+        // Copy original JAAS configuration to new temporary file:
+        Path tempJAASConf = Files.createTempFile("jaas", ".conf");
+        Files.copy(new File(JAAS_CONF).toPath(), tempJAASConf, StandardCopyOption.REPLACE_EXISTING);
+
+        // Append additional JAAS configuraion which reflect Wildfly picketbox configuration:
+        try (FileWriter fw = new FileWriter(tempJAASConf.toFile(), true)) {
+            String ticketCacheFile = "";
+            if (StringUtils.isNotEmpty(AAA_JAAS_TICKET_CACHE_FILE)) {
+                ticketCacheFile = String.format("ticketCache=\"%s\"", AAA_JAAS_TICKET_CACHE_FILE);
+            }
+
+            String keytabFile = "";
+            if (StringUtils.isNotEmpty(AAA_JAAS_KEYTAB_FILE)) {
+                keytabFile = String.format("keyTab=\"%s\"", AAA_JAAS_KEYTAB_FILE);
+            }
+
+            fw.write(
+                String.format(
+                    "oVirtKerbAAA {%n" +
+                        "com.sun.security.auth.module.Krb5LoginModule%n" +
+                        "required%n" +
+                        "client=true%n" +
+                        "useTicketCache=%s%n" +
+                        "%s%n" +  // ticket cache path
+                        "useKeyTab=%s%n" +
+                        "%s%n" +  // keytab path
+                        "doNotPrompt=true%n" +
+                        ";%n" +
+                        "};%n",
+                    AAA_JAAS_USE_TICKET_CACHE,
+                    ticketCacheFile,
+                    AAA_JAAS_USE_KEYTAB,
+                    keytabFile
+                )
+            );
+        }
+        // Run tool with temporary JAAS configuration:
+        System.setProperty("java.security.auth.login.config", tempJAASConf.toString());
+
+        return tempJAASConf;
     }
 
     private static void loadExtensions(

@@ -227,6 +227,9 @@ DB_BACKUP_FILE_NAME="engine_backup.db"
 DWHDB_BACKUP_FILE_NAME="dwh_backup.db"
 REPORTSDB_BACKUP_FILE_NAME="reports_backup.db"
 
+PACKAGE_VERSION_FILENAME="version"
+OS_VERSION_FILENAME="os_version"
+
 FAILURE_NOTIFIED=
 
 cleanup() {
@@ -469,6 +472,14 @@ MY_REPORTS_DB_SECURED=False
 MY_REPORTS_DB_SECURED_VALIDATION=False
 MY_REPORTS_DB_CREDS=
 RESTORE_PERMISSIONS=
+VALID_BACKUP_RESTORE_PAIRS="3.6 4.0"
+# A newline-separated list of pair. E.g. if we want to allow 4.0->4.1,
+#VALID_BACKUP_RESTORE_PAIRS="3.6 4.0
+#4.0 4.1"
+BACKUP_VERSION=
+INSTALLED_VERSION=
+EXCLUDED_FILES_ON_RESTORE="etc/ovirt-engine/engine-config/engine-config.properties
+etc/ovirt-engine-setup.conf.d/*packaging*"
 
 compressor_to_tar_option() {
 	local res
@@ -911,7 +922,8 @@ dobackup() {
 		log "Backing up reports database to ${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}"
 		backupDB "${tardir}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${REPORTS_DB_DUMP_COMPRESSOR}" "${REPORTS_DB_DUMP_FORMAT}"
 	fi
-	echo "${PACKAGE_VERSION}" > "${tardir}/version" || logdie "Can't create ${tardir}/version"
+	echo "${PACKAGE_VERSION}" > "${tardir}/${PACKAGE_VERSION_FILENAME}" || logdie "Can't create ${tardir}/${PACKAGE_VERSION_FILENAME}"
+	getOSVersion > "${tardir}/${OS_VERSION_FILENAME}" || logdie "Can't create ${tardir}/${OS_VERSION_FILENAME}"
 	dump_config_for_restore > "${tardir}/config" || logdie "Can't create ${tardir}/config"
 	log "Creating md5sum at ${tardir}/md5sum"
 	createmd5 "${tardir}" "${tardir}/md5sum"
@@ -922,6 +934,10 @@ dobackup() {
 		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" 1 "Finished"
 	fi
 
+}
+
+getOSVersion() {
+	python -c 'import platform; d = platform.linux_distribution(full_distribution_name=0); print("%s%s" % (d[0], d[1].split(".")[0]))'
 }
 
 createtar() {
@@ -1144,10 +1160,16 @@ __EOF
 }
 
 verifyVersion() {
-	local installed_version="$(echo ${PACKAGE_VERSION} | cut -d . -f 1-2)"
-	local backup_version="$(cat ${TEMP_FOLDER}/version | cut -d . -f 1-2)"
-	[ "${installed_version}" == "${backup_version}" ] \
-		|| logdie "Backup version '${backup_version}' doesn't match installed version"
+	INSTALLED_VERSION="$(echo ${PACKAGE_VERSION} | cut -d . -f 1-2)"
+	BACKUP_VERSION="$(cat ${TEMP_FOLDER}/${PACKAGE_VERSION_FILENAME} | cut -d . -f 1-2)"
+	local ok=
+	while read validbck validres; do
+		[ "${BACKUP_VERSION}" = "${validbck}" -a "${INSTALLED_VERSION}" = "${validres}" ] && ok=1
+	done << __EOF__
+${VALID_BACKUP_RESTORE_PAIRS}
+__EOF__
+	[ "${INSTALLED_VERSION}" == "${BACKUP_VERSION}" ] && ok=1
+	[ -z "${ok}" ] && logdie "Backup was created by version '${BACKUP_VERSION}' and can not be restored using the installed version ${INSTALLED_VERSION}"
 }
 
 bz_cat() {
@@ -1317,7 +1339,60 @@ resetDwhCurrentlyRunning() {
 restoreFiles() {
 	local paths="$1"
 	local archive="$2"
-	tar -C / -pSsxf "${archive}" || logdie "Failed restoring ${paths}"
+
+	local os=$(getOSVersion)
+	local os_at_backup=
+	if [ -s "${TEMP_FOLDER}/${OS_VERSION_FILENAME}" ]; then
+		os_at_backup=$(cat ${TEMP_FOLDER}/${OS_VERSION_FILENAME})
+	else
+		# In previous versions we didn't keep this inside the backup
+		os_at_backup="Unknown"
+	fi
+	local POSTINSTALL="/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf"
+	local APACHE_CONFIGURED_LINE="OVESETUP_APACHE/configured=bool:True"
+
+	# Extract files to temp dir
+	local temp_files="${TEMP_FOLDER}/files.d"
+	mkdir -p "${temp_files}"
+	tar -C "${temp_files}" -pSsx -f "${archive}" || \
+		logdie "Failed extracting ${archive}"
+
+	# Do not restore/overwrite some files
+	local excluded_files="${TEMP_FOLDER}/excluded_files"
+	cat >> "${excluded_files}" << __EOF__
+${EXCLUDED_FILES_ON_RESTORE}
+__EOF__
+	local exclude_apache=
+	if [ "${os}" != "${os_at_backup}" ] && grep -q "^${APACHE_CONFIGURED_LINE}\$" "${temp_files}/${POSTINSTALL}"; then
+		exclude_apache=1
+		cat << __EOF__
+------------------------------------------------------------------------------
+Please note:
+
+Operating system is different from the one used during backup.
+Current operating system: ${os}
+Operating system at backup: ${os_at_backup}
+
+Apache httpd configuration will not be restored.
+You will be asked about it on the next engine-setup run.
+------------------------------------------------------------------------------
+__EOF__
+		cat >> "${excluded_files}" << __EOF__
+etc/httpd/conf.d/ssl.conf
+etc/httpd/conf.d/ovirt-engine-root-redirect.conf
+__EOF__
+	fi
+
+	# Restore!
+	tar -C / -pSsx --exclude-from "${excluded_files}" -f "${archive}" || \
+		logdie "Failed restoring ${paths}"
+
+	# Make next engine-setup ask about apache
+	if [ -n "${exclude_apache}" ]; then
+		local ESC_APACHE_CONFIGURED_LINE=$(echo "${APACHE_CONFIGURED_LINE}" | sed 's;/;\\/;')
+		sed -i "/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL}"
+	fi
+
 	if selinuxenabled; then
 		echo "${paths}" | while read -r path; do
 			if [ -e "${path}" ]; then

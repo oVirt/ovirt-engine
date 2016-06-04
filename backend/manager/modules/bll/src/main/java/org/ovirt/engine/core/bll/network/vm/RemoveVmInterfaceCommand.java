@@ -51,6 +51,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
+                vmStaticDao.incrementDbGeneration(getParameters().getVmId());
                 getVmNicDao().remove(getParameters().getInterfaceId());
                 getDbFacade().getVmNetworkStatisticsDao().remove(getParameters().getInterfaceId());
                 getDbFacade().getVmDeviceDao().remove(new VmDeviceId(getParameters().getInterfaceId(),

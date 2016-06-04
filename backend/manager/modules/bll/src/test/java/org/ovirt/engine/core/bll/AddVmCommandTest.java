@@ -44,6 +44,8 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -77,6 +79,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -124,6 +127,9 @@ public class AddVmCommandTest {
 
     @Mock
     VdsGroupDao vdsGroupDao;
+
+    @Mock
+    VmStaticDao vmStaticDao;
 
     @Mock
     BackendInternal backend;
@@ -464,11 +470,16 @@ public class AddVmCommandTest {
         when(vmDao.get(Matchers.<Guid>any(Guid.class))).thenReturn(vm);
     }
 
+    private void initializeVmStaticDaoMock(VM vm) {
+        when(vmStaticDao.get(any(Guid.class))).thenReturn(vm.getStaticData());
+    }
+
     private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB,
             final int sizeRequired) {
         VM vm = initializeMock(domainSizeGB, sizeRequired);
         AddVmCommand<AddVmParameters> cmd = createCommand(vm);
         initCommandMethods(cmd);
+        initializeVmStaticDaoMock(vm);
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         doReturn(createStoragePool()).when(cmd).getStoragePool();
         return cmd;
@@ -502,6 +513,7 @@ public class AddVmCommandTest {
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
         doReturn(deviceDao).when(cmd).getVmDeviceDao();
+        doReturn(vmStaticDao).when(cmd).getVmStaticDao();
     }
 
     private void mockStorageDomainDaoGetForStoragePool(int domainSpaceGB) {
@@ -558,6 +570,18 @@ public class AddVmCommandTest {
             vdsGroup.setCompatibilityVersion(Version.v3_3);
             vdsGroup.setCpuName("Intel Conroe Family");
             vdsGroup.setArchitecture(ArchitectureType.x86_64);
+        }
+
+        return vdsGroup;
+    }
+
+    private VDSGroup createPpcVdsGroup() {
+        if (vdsGroup == null) {
+            vdsGroup = new VDSGroup();
+            vdsGroup.setVdsGroupId(Guid.newGuid());
+            vdsGroup.setCompatibilityVersion(Version.v3_6);
+            vdsGroup.setCpuName("PPC8");
+            vdsGroup.setArchitecture(ArchitectureType.ppc64);
         }
 
         return vdsGroup;
@@ -773,10 +797,10 @@ public class AddVmCommandTest {
         doReturn(true).when(cmd).validateSpaceRequirements();
         doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
-        VDSGroup cluster = new VDSGroup();
-        cluster.setArchitecture(ArchitectureType.ppc64);
-        cluster.setCompatibilityVersion(Version.getLast());
-        doReturn(cluster).when(cmd).getVdsGroup();
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setArchitecture(ArchitectureType.ppc64);
+        vdsGroup.setCompatibilityVersion(Version.v3_3);
+        doReturn(vdsGroup).when(cmd).getVdsGroup();
 
         return cmd;
     }
@@ -793,5 +817,30 @@ public class AddVmCommandTest {
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
+    }
+
+    @Test
+    public void testBlockUseHostCpuWithPPCArch() {
+        mockConfig();
+        AddVmCommand<AddVmParameters> cmd = setupCanAddPpcTest();
+        cmd.setCompatibilityVersion(Version.v3_3.toString());
+        doReturn(Collections.<DiskImageBase> emptyList()).when(cmd).getImagesToCheckDestinationStorageDomains();
+        VDSGroup cluster = createPpcVdsGroup();
+        when(vdsGroupDao.get(any(Guid.class))).thenReturn(cluster);
+        doReturn(vdsGroupDao).when(dbFacade).getVdsGroupDao();
+        doReturn(true).when(cmd).areParametersLegal(Collections.<String> emptyList());
+        doReturn(true).when(cmd).canDoAddVmCommand();
+        doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
+        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.ppc64);
+        cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
+        cmd.getParameters().getVm().setUseHostCpuFlags(true);
+        cmd.getParameters().getVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        cmd.getParameters().getVm().setVdsGroupId(cluster.getId());
+        cmd.getParameters().getVm().setVmOs(OsType.Other.ordinal());
+
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH.toString()));
     }
 }

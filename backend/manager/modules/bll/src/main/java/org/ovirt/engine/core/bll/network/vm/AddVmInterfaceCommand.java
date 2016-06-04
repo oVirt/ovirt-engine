@@ -54,6 +54,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
+                    bumpVmVersion();
                     addInterfaceToDb(getInterface());
                     addInterfaceDeviceToDb();
                     getCompensationContext().stateChanged();

@@ -965,14 +965,21 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         && (getClusterCompatibilityVersion().compareTo(Version.v3_2) >= 0);
         boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
 
-        if (clusterSupportsHostCpu && nonMigratable) {
+        if (clusterSupportsHostCpu && nonMigratable && !clusterHasPpcArchitecture()) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
             getModel().getHostCpu().setChangeProhibitionReason(constants.hosCPUUnavailable());
             getModel().getHostCpu().setIsChangeable(false);
-
         }
+    }
+
+    private boolean clusterHasPpcArchitecture() {
+        VDSGroup vdsGroup = getModel().getSelectedCluster();
+
+        return vdsGroup != null
+                && vdsGroup.getArchitecture() != null
+                && vdsGroup.getArchitecture().isPpcFamily();
     }
 
     public void updateHaAvailability() {

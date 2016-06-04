@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.slf4j.Logger;
@@ -198,8 +200,18 @@ public class MultipleActionsRunner {
                     command.getActionType(),
                     command.isInternalExecution());
         }
+        if (!isInternal) {
+            logExecution(command.getParameters().getSessionId(), String.format("command %s", actionType));
+        }
         CorrelationIdTracker.setCorrelationId(command.getCorrelationId());
         command.executeAction();
+    }
+
+    private void logExecution(String sessionId, String details) {
+        DbUser user = SessionDataContainer.getInstance().getUser(sessionId, false);
+        log.debug("Executing {}{}",
+                details,
+                user == null ? "." : String.format(" for user %s@%s.", user.getLoginName(), user.getDomain()));
     }
 
     public void setIsRunOnlyIfAllCanDoPass(boolean isRunOnlyIfAllCanDoPass) {

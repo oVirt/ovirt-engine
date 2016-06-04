@@ -259,3 +259,32 @@ ENGINE_EXTENSION_PATH="${ENGINE_USR}/extensions.d:${ENGINE_ETC}/extensions.d"
 #
 # ENGINE_EXTENSION_ENABLED_<name>=false
 #
+
+#
+# Specify custom krb5.conf file (if empty the default is /etc/krb5.conf)
+#
+AAA_KRB5_CONF_FILE=
+
+#
+# All following options are used for JAAS 'oVirtKerbAAA' client configuration
+#
+
+#
+# Enable/disable usage of ticket cache file for authentication
+#
+AAA_JAAS_USE_TICKET_CACHE=false
+
+#
+# Specify custom ticket cache file (if empty the default is /tmp/krb5cc_${UID} where UID if used id of ovirt user)
+#
+AAA_JAAS_TICKET_CACHE_FILE=
+
+#
+# Enable/disable usage of keytab file for authentication
+#
+AAA_JAAS_USE_KEYTAB=false
+
+#
+# Specify custom keytab file (if empty the default is ${OVIRT_HOME}/krb5.keytab where OVIRT_HOME is home directory of ovirt user)
+#
+AAA_JAAS_KEYTAB_FILE=

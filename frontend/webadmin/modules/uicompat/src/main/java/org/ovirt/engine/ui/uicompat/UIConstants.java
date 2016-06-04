@@ -2303,7 +2303,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Event Details")
     String eventDetailsTitle();
 
-    @DefaultStringValue("'Use Host CPU' is only available for cluster compatible with ver 3.2 or higher, when 'Do not allow migration' is selected or 'Allow manual migration' is selected and no host is specified) ")
+    @DefaultStringValue("'Use Host CPU' is only available for non-PPC-based clusters compatible with ver 3.2 or higher, when 'Do not allow migration' is selected or 'Allow manual migration' is selected and no host is specified.) ")
     String hosCPUUnavailable();
 
     @DefaultStringValue("'CPU Pinning topology' is only available for cluster compatible with ver 3.1 or higher, when 'Do not allow migration' is selected and host is specified")
@@ -3020,4 +3020,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Stop Gluster service")
     String stopGlusterServices();
+
+    @DefaultStringValue("There is no cluster supporting selected VM(s) architecture in selected Data Center")
+    String noClusterSupportingArchitectureInDC();
+
+    @DefaultStringValue("Selected Virtual Machines have to have same architecture.")
+    String sameArchitectureRequired();
 }

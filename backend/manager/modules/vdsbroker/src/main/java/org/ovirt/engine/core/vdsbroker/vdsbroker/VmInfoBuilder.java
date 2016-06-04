@@ -130,10 +130,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      */
     private Map<String, Object> buildVmGraphicsSpecParamsFromVm(Map<GraphicsType, GraphicsInfo> infos) {
         Map<String, Object> specParamsFromVm = null;
-        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
+        if (infos != null) {
             // harmless if added to VNC devices. Just noise.
             specParamsFromVm = new HashMap();
-            addVmSpiceOptions(infos, specParamsFromVm);
+            addVmGraphicsOptions(infos, specParamsFromVm, false);
         }
         return specParamsFromVm;
     }

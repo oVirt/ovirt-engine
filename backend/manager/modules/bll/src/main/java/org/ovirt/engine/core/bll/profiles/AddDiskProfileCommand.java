@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -18,6 +19,10 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
 
     public AddDiskProfileCommand(DiskProfileParameters parameters) {
         super(parameters);
+    }
+
+    public AddDiskProfileCommand(DiskProfileParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

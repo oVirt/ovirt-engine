@@ -34,4 +34,11 @@ public enum ArchitectureType implements Identifiable {
     public static ArchitectureType forValue(int value) {
         return valueToArchitecture.get(value);
     }
+
+    public boolean isPpcFamily() {
+        return (this == ArchitectureType.ppc
+                || this == ArchitectureType.ppc64
+                || this == ArchitectureType.ppc64le
+                || this == ArchitectureType.ppcle);
+    }
 }

@@ -496,6 +496,22 @@
             </login-module>
           </authentication>
         </security-domain>
+        <!-- This security-domain enables authentication via ticket cache or keytab. -->
+        <security-domain name="oVirtKerbAAA">
+          <authentication>
+            <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required">
+              <module-option name="useTicketCache" value="$getboolean('AAA_JAAS_USE_TICKET_CACHE')"/>
+              #if $getstring('AAA_JAAS_TICKET_CACHE_FILE') != ""
+              <module-option name="ticketCache" value="$getstring('AAA_JAAS_TICKET_CACHE_FILE')"/>
+              #end if
+              <module-option name="useKeyTab" value="$getboolean('AAA_JAAS_USE_KEYTAB')"/>
+              #if $getstring('AAA_JAAS_KEYTAB_FILE') != ""
+              <module-option name="keyTab" value="$getstring('AAA_JAAS_KEYTAB_FILE')"/>
+              #end if
+              <module-option name="doNotPrompt" value="true"/>
+            </login-module>
+          </authentication>
+        </security-domain>
       </security-domains>
     </subsystem>
 

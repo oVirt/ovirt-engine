@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
@@ -96,11 +95,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             public Void runInTransaction() {
                 StorageDomainStatic storageStaticData = getStorageDomain().getStorageStaticData();
                 DbFacade.getInstance().getStorageDomainStaticDao().save(storageStaticData);
-                // create default disk profile for type master or data storage domains
-                if (storageStaticData.getStorageDomainType().isDataDomain()) {
-                    getDiskProfileDao().save(DiskProfileHelper.createDiskProfile(storageStaticData.getId(),
-                            storageStaticData.getStorageName()));
-                }
+
                 getCompensationContext().snapshotNewEntity(storageStaticData);
                 StorageDomainDynamic newStorageDynamic =
                         new StorageDomainDynamic(null, getStorageDomain().getId(), null);
@@ -111,6 +106,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                 return null;
             }
         });
+        if (getStorageDomain().getStorageDomainType().isDataDomain()) {
+            createDefaultDiskProfile();
+        }
     }
 
     protected void updateStorageDomainDynamicFromIrs() {

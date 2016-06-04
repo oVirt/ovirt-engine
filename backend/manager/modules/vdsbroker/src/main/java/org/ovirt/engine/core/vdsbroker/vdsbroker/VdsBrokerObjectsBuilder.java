@@ -2352,6 +2352,9 @@ public class VdsBrokerObjectsBuilder {
             if (params.containsKey(VdsProperties.NET_INTERFACE_NAME)) {
                 device.setNetworkInterfaceName(params.get(VdsProperties.NET_INTERFACE_NAME).toString());
             }
+            if (params.containsKey(VdsProperties.IS_ASSIGNABLE)) {
+                device.setAssignable(assignBoolValue(params, VdsProperties.IS_ASSIGNABLE));
+            }
 
             devices.add(device);
         }

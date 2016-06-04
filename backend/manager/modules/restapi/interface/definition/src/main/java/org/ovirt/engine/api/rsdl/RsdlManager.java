@@ -7,16 +7,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.model.DetailedLinks;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
@@ -45,6 +46,7 @@ public class RsdlManager {
     private static final String ILLEGAL_ACTION_LINK_SUFFIX = "/";
 
     private static final String METADATA_FILE_NAME = "/rsdl_metadata.yaml";
+    private static final String LINKS_FILE_NAME = "/rsdl_links.xml";
 
     public static void main(String[] args) throws ClassNotFoundException, IOException {
         System.out.println("Generating RSDL files...");
@@ -58,7 +60,7 @@ public class RsdlManager {
         generateRsdlFile(metadata, outputFileNameGluster, ApiRootLinksCreator.getGlusterRels(baseUri));
 
         System.out.println("The following files have been generated: \n" + outputFileName + "\n"
-                + outputFileNameGluster);
+            + outputFileNameGluster);
     }
 
 
@@ -77,16 +79,27 @@ public class RsdlManager {
     }
 
     private static void generateRsdlFile(MetaData metadata, String outputFileName, List<String> rels)
-            throws IOException, ClassNotFoundException {
+        throws IOException, ClassNotFoundException {
+        // Generate the RSDL document from the metadata and the list of rels:
         RSDL rsdl = buildRsdl(metadata, rels);
+
+        // Some of the links can't be generated automatically. For example, the link for the action that deletes a
+        // template NIC can't be generated automatically because the interface that it uses is generic, and there is
+        // no way that the RSDL generator can infer the existence of that method inspecting only the interfaces. For
+        // those cases the links are pre-built in the "rsdl_links.xml" file, so we need to load it and merge the links
+        // with the generated RSDL.
+        DetailedLinks additionalLinks = loadLinks();
+        rsdl.getLinks().getLinks().addAll(additionalLinks.getLinks());
+
+        // Write the generated RSDL to a file:
         serializeRsdl(rsdl, outputFileName);
     }
 
     public static RSDL loadRsdl(ApplicationMode applicationMode, String prefix) throws IOException {
         // Decide what version of the RSDL document to load:
         String fileName =
-                applicationMode == ApplicationMode.GlusterOnly ? ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME)
-                        : ("/" + RsdlIOManager.RSDL_RESOURCE_NAME);
+            applicationMode == ApplicationMode.GlusterOnly ? ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME)
+                : ("/" + RsdlIOManager.RSDL_RESOURCE_NAME);
 
         // During runtime the RSDL document is loaded lazily, and the prefix is extracted from the request URL. As a
         // result, depending on what URL is requested first, it may contain trailing slashes. So to make sure that the
@@ -108,14 +121,12 @@ public class RsdlManager {
                 String href = node.getNodeValue();
                 if (href.startsWith(QUERY_PARAMETER)) {
                     href = prefix + href;
-                }
-                else {
+                } else {
                     href = prefix + "/" + href;
                 }
                 node.setNodeValue(href);
             }
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             throw new IOException(exception);
         }
 
@@ -130,23 +141,23 @@ public class RsdlManager {
     }
 
     private static RSDL buildRsdl(MetaData metadata, List<String> rels) throws IOException,
-            ClassNotFoundException {
+        ClassNotFoundException {
         RsdlBuilder builder = new RsdlBuilder(rels, metadata)
-        .description(RSDL_DESCRIPTION)
-        .rel(RSDL_REL)
-                .href(QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER)
-        .schema(new SchemaBuilder()
-            .rel(SCHEMA_REL)
-            .href(QUERY_PARAMETER + SCHEMA_CONSTRAINT_PARAMETER)
-            .name(SCHEMA_NAME)
-            .description(SCHEMA_DESCRIPTION)
-            .build())
-        .generalMetadata(new GeneralMetadataBuilder()
-            .rel(GENERAL_METADATA_REL)
-            .href("*")
-            .name(GENERAL_METADATA_NAME)
-            .description(GENERAL_METADATA_DESCRIPTION)
-            .build());
+            .description(RSDL_DESCRIPTION)
+            .rel(RSDL_REL)
+            .href(QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER)
+            .schema(new SchemaBuilder()
+                .rel(SCHEMA_REL)
+                .href(QUERY_PARAMETER + SCHEMA_CONSTRAINT_PARAMETER)
+                .name(SCHEMA_NAME)
+                .description(SCHEMA_DESCRIPTION)
+                .build())
+            .generalMetadata(new GeneralMetadataBuilder()
+                .rel(GENERAL_METADATA_REL)
+                .href("*")
+                .name(GENERAL_METADATA_NAME)
+                .description(GENERAL_METADATA_DESCRIPTION)
+                .build());
         RSDL rsdl = builder.build();
         return rsdl;
     }
@@ -224,5 +235,14 @@ public class RsdlManager {
             signatures = new ArrayList<>();
         }
         body.setSignatures(signatures);
+    }
+
+    /**
+     * Loads the file that contains additional links that need to be added to the generated RSDL document.
+     */
+    private static DetailedLinks loadLinks() throws IOException {
+        try (InputStream stream = RsdlManager.class.getResourceAsStream(LINKS_FILE_NAME)) {
+            return JAXB.unmarshal(new StreamSource(stream), DetailedLinks.class);
+        }
     }
 }

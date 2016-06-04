@@ -218,7 +218,7 @@ Summary:	Management server for Open Virtualization
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
 URL:		http://www.ovirt.org
-Source0:	http://resources.ovirt.org/pub/ovirt-3.6-snapshot/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
+Source0:	http://resources.ovirt.org/pub/ovirt-3.6/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 
 BuildArch:	noarch
 
@@ -368,7 +368,7 @@ Requires:	mailcap
 Requires:	mod_ssl
 Requires:	novnc
 Requires:	openssh
-Requires:	vdsm-jsonrpc-java >= 1.1.9
+Requires:	vdsm-jsonrpc-java >= 1.1.12
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.4.0
@@ -678,7 +678,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.4.0
 Requires:	ovirt-host-deploy-offline >= 1.4.0
-Requires:	vdsm-jsonrpc-java >= 1.1.9
+Requires:	vdsm-jsonrpc-java >= 1.1.12
 
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
@@ -1316,6 +1316,15 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
+* Fri May  6 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.6.2-1
+- Bump version to 3.6.6.2
+
+* Tue May  3 2016 Rafael Martins <rmartins@redhat.com> - 3.6.6.1-1
+- Bump version to 3.6.6.1
+
+* Mon Apr 25 2016 Rafael Martins <rmartins@redhat.com> - 3.6.6-1
+- Bump version to 3.6.6
+
 * Mon Feb 22 2016 Rafael Martins <rmartins@redhat.com> - 3.6.3.3-1
 - Bump version to 3.6.3.3
 

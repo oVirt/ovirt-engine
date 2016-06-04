@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -40,6 +42,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -245,16 +248,23 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         externalVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
-                return externalVmModel.getEntity().getName();
+                return toCellString(externalVmModel);
             }
         }, constants.name());
 
         importedVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
-                return externalVmModel.getEntity().getName();
+                return toCellString(externalVmModel);
             }
         }, constants.name());
+    }
+
+    private String toCellString(EntityModel<VM> vmModel) {
+        return vmModel.getEntity().getName()
+                + " (" //$NON-NLS-1$
+                + Objects.toString(vmModel.getEntity().getClusterArch(), "?") //$NON-NLS-1$
+                + ")"; //$NON-NLS-1$
     }
 
     @Override
@@ -268,21 +278,10 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
         model.getProblemDescription().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             public void eventRaised(org.ovirt.engine.ui.uicompat.Event<? extends EventArgs> ev, Object object, EventArgs args) {
-                errorPanel.setVisible(false);
-                warningPanel.setVisible(false);
-                String message = model.getProblemDescription().getEntity();
-                if (message == null) {
-                    return;
-                }
-                if (model.getProblemDescription().getIsValid()) {
-                    warningMessage.setText(message);
-                    warningPanel.setVisible(true);
-                } else {
-                    errorMessage.setText(message);
-                    errorPanel.setVisible(true);
-                }
+                updateErrorAndWarning(model);
             }
         });
+        updateErrorAndWarning(model);
 
         updatePanelsVisibility(model);
         model.getImportSources().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -312,6 +311,22 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         });
     }
 
+    private void updateErrorAndWarning(ImportVmsModel model) {
+        errorPanel.setVisible(false);
+        warningPanel.setVisible(false);
+        String message = model.getProblemDescription().getEntity();
+        if (message == null) {
+            return;
+        }
+        if (model.getProblemDescription().getIsValid()) {
+            warningMessage.setText(message);
+            warningPanel.setVisible(true);
+        } else {
+            errorMessage.setText(message);
+            errorPanel.setVisible(true);
+        }
+    }
+
     private void updatePanelsVisibility(ImportVmsModel model) {
         exportPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.EXPORT_DOMAIN);
         vmwarePanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
@@ -322,5 +337,20 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @Override
     public ImportVmsModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public HasEnabled getLoadVmsFromExportDomainButton() {
+        return loadVmsFromExportDomainButton;
+    }
+
+    @Override
+    public HasEnabled getLoadVmsFromVmwareButton() {
+        return loadVmsFromVmwareButton;
+    }
+
+    @Override
+    public HasEnabled getLoadOvaButton() {
+        return loadOvaButton;
     }
 }

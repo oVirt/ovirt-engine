@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -15,19 +21,24 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -91,6 +102,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private EntityModel<String> problemDescription;
     private UIConstants constants;
     private UIMessages messages;
+
+    /** Data Center Id -> Architectures that are supported by at least one virt cluster */
+    private Map<Guid, Set<ArchitectureType>> clusterArchitecturesInDataCenters;
 
     @Inject
     public ImportVmsModel(
@@ -191,6 +205,33 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setHashName("import_virtual_machine"); //$NON-NLS-1$
 
         initDataCenters();
+        initDataCenterCpuArchitectureMap();
+    }
+
+    private void initDataCenterCpuArchitectureMap() {
+        final AsyncQuery callback = new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object nothing, Object returnValue) {
+                List<VDSGroup> allClusters = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                clusterArchitecturesInDataCenters = new HashMap<>();
+                for (VDSGroup cluster : allClusters) {
+                    if (cluster.supportsVirtService() && cluster.getArchitecture() != null) {
+                        addArchitecture(cluster.getStoragePoolId(), cluster.getArchitecture());
+                    }
+                }
+            }
+
+            private void addArchitecture(Guid dataCenterId, ArchitectureType architecture) {
+                Set<ArchitectureType> architectures = clusterArchitecturesInDataCenters.get(dataCenterId);
+                if (architectures == null) {
+                    architectures = new HashSet<>();
+                    clusterArchitecturesInDataCenters.put(dataCenterId, architectures);
+                }
+                architectures.add(architecture);
+            }
+        });
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), callback);
+
     }
 
     private INewAsyncCallback createGetStorageDomainsByStoragePoolIdCallback(final StoragePool dataCenter) {
@@ -230,6 +271,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             }
         }
         return null;
+    }
+
+    public StorageDomain getExportDomain() {
+        return exportDomain;
     }
 
     private void providerChanged() {
@@ -593,6 +638,48 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         Collection<EntityModel<VM>> selectedVms = getImportedVmModels().getSelectedItems();
         Collection<EntityModel<VM>> totalVmsSetToImport = getImportedVmModels().getItems();
         getDefaultCommand().setIsExecutionAllowed(selectedVms.size() < totalVmsSetToImport.size());
+    }
+
+    /**
+     * @return true if selection of VMs to import if valid with regard to CPU architecture, false otherwise
+     */
+    public boolean validateArchitectures() {
+        final List<VM> vmsToImport = getVmsToImport();
+        final StoragePool dataCenter = getDataCenters().getSelectedItem();
+
+        if (vmsToImport.isEmpty() || dataCenter == null) {
+            return false;
+        }
+
+        return validateSameArchitecture(vmsToImport)
+                && validateClusterExistsForArchitecture(vmsToImport.get(0).getClusterArch(), dataCenter);
+    }
+
+    private boolean validateClusterExistsForArchitecture(ArchitectureType architecture, StoragePool dataCenter) {
+        if (clusterArchitecturesInDataCenters == null // we want validation to fail if map initialization failed
+                || clusterArchitecturesInDataCenters.get(dataCenter.getId()) == null
+                || !clusterArchitecturesInDataCenters.get(dataCenter.getId()).contains(architecture)) {
+            showErrorPopup(constants.noClusterSupportingArchitectureInDC());
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateSameArchitecture(List<VM> vmsToImport) {
+        final ArchitectureType architectureOfFirst = vmsToImport.get(0).getClusterArch();
+        for (VM vm : vmsToImport) {
+            if (!Objects.equals(architectureOfFirst, vm.getClusterArch())) {
+                showErrorPopup(constants.sameArchitectureRequired());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void showErrorPopup(String message) {
+        final ErrorPopupManager popupManager =
+                (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
+        popupManager.show(message);
     }
 
     public UICommand getAddImportCommand() {

@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
@@ -47,6 +49,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -58,6 +61,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     public static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
     public static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
     private static final int Kb = 1024;
+
+    @Inject
+    protected VmStaticDao vmStaticDao;
 
     protected final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
