@@ -80,7 +80,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private EntityModel<String> password;
     private ListModel<VDS> proxyHosts;
 
-    private StorageDomain exportDomain;
+    private EntityModel<StorageDomain> exportDomain;
     private String exportPath;
     private String exportName;
     private String exportDescription;
@@ -135,6 +135,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setImportedVmModels(new SortedListModel<>(new EntityModelLexoNumericNameableComparator<EntityModel<VM>, VM>()));
 
         setVmwareProviders(new ListModel<Provider<VmwareVmProviderProperties>>());
+
+        setExportDomain(new EntityModel<StorageDomain>());
 
         // VMWARE
         setProxyHosts(new ListModel<VDS>());
@@ -197,8 +199,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         switch(importSources.getSelectedItem()) {
         case EXPORT_DOMAIN:
             importFromExportDomainModel.setEntity(null);
-            importFromExportDomainModel.init(getVmsToImport(), exportDomain.getId());
-            importFromExportDomainModel.setEntity(exportDomain.getId());
+            importFromExportDomainModel.init(getVmsToImport(), exportDomain.getEntity().getId());
+            importFromExportDomainModel.setEntity(exportDomain.getEntity().getId());
             selectedImportVmModel = importFromExportDomainModel;
             break;
         case VMWARE:
@@ -278,12 +280,12 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             public void onSuccess(Object model, Object ReturnValue) {
                 List<StorageDomain> storageDomains = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
-               exportDomain = getExportDomain(storageDomains);
-               if (exportDomain == null) {
+               exportDomain.setEntity(getExportDomain(storageDomains));
+               if (exportDomain.getEntity() == null) {
                    stopProgress();
                } else {
-                   setExportName(exportDomain.getName());
-                   setExportDescription(exportDomain.getDescription());
+                   setExportName(exportDomain.getEntity().getName());
+                   setExportDescription(exportDomain.getEntity().getDescription());
                    // get export-path
                    AsyncQuery _asyncQuery = new AsyncQuery();
                    _asyncQuery.setModel(this);
@@ -295,10 +297,15 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                            stopProgress();
                        }
                    };
-                   AsyncDataProvider.getInstance().getStorageConnectionById(_asyncQuery, exportDomain.getStorage(), true);
+                   AsyncDataProvider.getInstance().getStorageConnectionById(_asyncQuery, exportDomain.getEntity().getStorage(), true);
                }
+               validateSource();
             }
         };
+    }
+
+    public void setExportDomain(EntityModel<StorageDomain> exportDomain) {
+        this.exportDomain = exportDomain;
     }
 
     private static StorageDomain getExportDomain(List<StorageDomain> storageDomains) {
@@ -311,7 +318,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         return null;
     }
 
-    public StorageDomain getExportDomain() {
+    public EntityModel<StorageDomain> getExportDomain() {
         return exportDomain;
     }
 
@@ -358,6 +365,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                clearVms();
+                exportDomain.setEntity(null);
+
                 StoragePool dataCenter = dataCenters.getSelectedItem();
                 Frontend.getInstance().runQuery(
                         VdcQueryType.GetStorageDomainsByStoragePoolId,
@@ -439,12 +449,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             }
         });
         importSources.setSelectedItem(ImportSource.EXPORT_DOMAIN);
-        validateSource();
     }
 
     private void validateSource() {
         clearProblem();
-        if (importSources.getSelectedItem() == ImportSource.EXPORT_DOMAIN && exportDomain == null) {
+        if (importSources.getSelectedItem() == ImportSource.EXPORT_DOMAIN && exportDomain.getEntity() == null) {
             setError(constants.notAvailableWithNoActiveExportDomain());
         }
     }
@@ -500,7 +509,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         clearProblem();
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
-                new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getId()),
+                new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getEntity().getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
