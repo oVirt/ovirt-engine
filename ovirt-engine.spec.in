@@ -209,6 +209,7 @@ Requires:	%{name}-userportal = %{version}-%{release}
 Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
+Requires:	%{name}-dashboard >= 1.0.0
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
@@ -1077,6 +1078,7 @@ fi
 %changelog
 * Thu Jun 02 2016 Rafael Martins <rmartins@redhat.com> - 4.0.0.2-1
 - Rebase on version 4.0.0.2
+- Add dependency for ovirt-engine-dashboard.
 
 * Wed Jun 01 2016 Simone Tiraboschi <stirabos@redhat.com> - 4.0.0.1-1
 - Rebase on version 4.0.0.1
