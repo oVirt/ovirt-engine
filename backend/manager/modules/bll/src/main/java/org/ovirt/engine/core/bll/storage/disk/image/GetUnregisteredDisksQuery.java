@@ -68,7 +68,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
             VdcQueryReturnValue unregQueryReturn = runInternalQuery(VdcQueryType.GetUnregisteredDisk,
                     unregQueryParams);
             if (unregQueryReturn.getSucceeded()) {
-                unregisteredDisks.add(unregQueryReturn.<Disk>getReturnValue());
+                unregisteredDisks.add(unregQueryReturn.getReturnValue());
             } else {
                 log.debug("Could not get populated disk: {}", unregQueryReturn.getExceptionString());
             }
