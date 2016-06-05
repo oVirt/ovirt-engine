@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -47,6 +49,11 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
             returnValue = false;
         } else if (p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
             addCanDoActionMessage(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
+            returnValue = false;
+        }
+        if(!Objects.equals(p.getAdElementId(), getParameters().getTargetId())
+            && getDbUserDao().get(getParameters().getTargetId()) != null) {
+            addCanDoActionMessage(EngineMessage.INHERITED_PERMISSION_CANT_BE_REMOVED);
             returnValue = false;
         }
         return returnValue;

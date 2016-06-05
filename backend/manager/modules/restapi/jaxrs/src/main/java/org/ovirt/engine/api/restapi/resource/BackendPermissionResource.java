@@ -20,12 +20,15 @@ public class BackendPermissionResource
         implements PermissionResource {
 
     protected BackendAssignedPermissionsResource parent;
+    private Guid targetId;
     private Class<? extends BaseResource> suggestedParentType;
 
     protected BackendPermissionResource(String id,
+                                        Guid targetId,
                                         BackendAssignedPermissionsResource parent,
                                         Class<? extends BaseResource> suggestedParentType) {
         super(id, Permission.class, org.ovirt.engine.core.common.businessentities.Permission.class);
+        this.targetId = targetId;
         this.parent = parent;
         this.suggestedParentType = suggestedParentType;
     }
@@ -56,7 +59,10 @@ public class BackendPermissionResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemovePermission, new PermissionsOperationsParameters(getPermissions()));
+        return performAction(
+            VdcActionType.RemovePermission,
+            new PermissionsOperationsParameters(getPermissions(), targetId)
+        );
     }
 
     private org.ovirt.engine.core.common.businessentities.Permission getPermissions() {

@@ -1,0 +1,241 @@
+{
+  "acpiEnable" : "true",
+  "emulatedMachine" : "pc-i440fx-rhel7.2.0",
+  "pid" : "6149",
+  "memGuaranteedSize" : 6,
+  "transparentHugePages" : "true",
+  "displayPort" : "5901",
+  "displaySecurePort" : "5902",
+  "spiceSslCipherSuite" : "DEFAULT",
+  "cpuType" : "SandyBridge",
+  "smp" : "1",
+  "pauseCode" : "NOERR",
+  "guestNumaNodes" : [ {
+    "nodeIndex" : 0,
+    "cpus" : "0",
+    "memory" : "6"
+  } ],
+  "smartcardEnable" : "false",
+  "custom" : {
+    "device_1bf92c14-518f-4658-83cd-c5a223852cc7device_43d5c9e0-49b9-41c6-b63c-c5d68dc19c58device_ba0ae2b5-a916-4bc6-b28b-32c886af5b30device_0450d01e-a01a-4495-a6b4-81b739a9ec7f" : "VmDevice:{id='VmDeviceId:{deviceId='0450d01e-a01a-4495-a6b4-81b739a9ec7f', vmId='aa63be3a-8760-4018-84b3-eb62f8eb4ba6'}', device='spicevmc', type='CHANNEL', bootOrder='0', specParams='[]', address='{bus=0, controller=0, type=virtio-serial, port=3}', managed='false', plugged='true', readOnly='false', deviceAlias='channel2', customProperties='[]', snapshotId='null', logicalName='null', usingScsiReservation='false'}",
+    "device_1bf92c14-518f-4658-83cd-c5a223852cc7device_43d5c9e0-49b9-41c6-b63c-c5d68dc19c58" : "VmDevice:{id='VmDeviceId:{deviceId='43d5c9e0-49b9-41c6-b63c-c5d68dc19c58', vmId='aa63be3a-8760-4018-84b3-eb62f8eb4ba6'}', device='unix', type='CHANNEL', bootOrder='0', specParams='[]', address='{bus=0, controller=0, type=virtio-serial, port=1}', managed='false', plugged='true', readOnly='false', deviceAlias='channel0', customProperties='[]', snapshotId='null', logicalName='null', usingScsiReservation='false'}",
+    "device_1bf92c14-518f-4658-83cd-c5a223852cc7" : "VmDevice:{id='VmDeviceId:{deviceId='1bf92c14-518f-4658-83cd-c5a223852cc7', vmId='aa63be3a-8760-4018-84b3-eb62f8eb4ba6'}', device='ide', type='CONTROLLER', bootOrder='0', specParams='[]', address='{slot=0x01, bus=0x00, domain=0x0000, type=pci, function=0x1}', managed='false', plugged='true', readOnly='false', deviceAlias='ide', customProperties='[]', snapshotId='null', logicalName='null', usingScsiReservation='false'}",
+    "device_1bf92c14-518f-4658-83cd-c5a223852cc7device_43d5c9e0-49b9-41c6-b63c-c5d68dc19c58device_ba0ae2b5-a916-4bc6-b28b-32c886af5b30" : "VmDevice:{id='VmDeviceId:{deviceId='ba0ae2b5-a916-4bc6-b28b-32c886af5b30', vmId='aa63be3a-8760-4018-84b3-eb62f8eb4ba6'}', device='unix', type='CHANNEL', bootOrder='0', specParams='[]', address='{bus=0, controller=0, type=virtio-serial, port=2}', managed='false', plugged='true', readOnly='false', deviceAlias='channel1', customProperties='[]', snapshotId='null', logicalName='null', usingScsiReservation='false'}"
+  },
+  "vmType" : "kvm",
+  "memSize" : 6,
+  "smpCoresPerSocket" : "1",
+  "vmName" : "test",
+  "nice" : "0",
+  "status" : "Up",
+  "maxMemSize" : 4194304,
+  "bootMenuEnable" : "false",
+  "vmId" : "aa63be3a-8760-4018-84b3-eb62f8eb4ba6",
+  "copyPasteEnable" : "true",
+  "displayIp" : "0",
+  "smpThreadsPerCore" : "1",
+  "guestDiskMapping" : { },
+  "spiceSecureChannels" : "smain,sinputs,scursor,splayback,srecord,sdisplay,susbredir,ssmartcard",
+  "fileTransferEnable" : "true",
+  "nicModel" : "rtl8139,pv",
+  "keyboardLayout" : "en-us",
+  "kvmEnable" : "true",
+  "devices" : [ {
+    "alias" : "serial0",
+    "specParams" : {
+      "consoleType" : "serial",
+      "enableSocket" : "true"
+    },
+    "deviceType" : "console",
+    "deviceId" : "98195ee3-44cd-4d5f-8c04-ccb28a75162e",
+    "device" : "console",
+    "type" : "console"
+  }, {
+    "target" : 6144,
+    "specParams" : {
+      "model" : "virtio"
+    },
+    "alias" : "balloon0",
+    "deviceType" : "balloon",
+    "deviceId" : "5c850889-05f7-4ffe-9e83-a0e85258d2e1",
+    "address" : {
+      "slot" : "0x06",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "memballoon",
+    "type" : "balloon"
+  }, {
+    "index" : "0",
+    "alias" : "scsi0",
+    "specParams" : { },
+    "deviceType" : "controller",
+    "deviceId" : "3ed8856d-5a34-4cf8-90a0-c053a16cfcf0",
+    "address" : {
+      "slot" : "0x04",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "scsi",
+    "model" : "virtio-scsi",
+    "type" : "controller"
+  }, {
+    "specParams" : { },
+    "alias" : "virtio-serial0",
+    "deviceType" : "controller",
+    "deviceId" : "d5a9591f-55ed-46ef-8293-ed816e080a64",
+    "address" : {
+      "slot" : "0x05",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "virtio-serial",
+    "type" : "controller"
+  }, {
+    "specParams" : {
+      "vram" : "8192",
+      "vgamem" : "16384",
+      "heads" : "1",
+      "ram" : "65536"
+    },
+    "alias" : "video0",
+    "deviceType" : "video",
+    "deviceId" : "447913f3-693b-4b46-a66a-c295febf1274",
+    "address" : {
+      "slot" : "0x02",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "qxl",
+    "type" : "video"
+  }, {
+    "tlsPort" : "5902",
+    "specParams" : {
+      "fileTransferEnable" : "true",
+      "copyPasteEnable" : "true",
+      "displayIp" : "0"
+    },
+    "deviceType" : "graphics",
+    "deviceId" : "c30792d7-b919-4e9b-873e-113c89088ae8",
+    "device" : "spice",
+    "type" : "graphics",
+    "port" : "5901"
+  }, {
+    "nicModel" : "pv",
+    "macAddr" : "00:1a:4a:16:01:51",
+    "linkActive" : true,
+    "network" : "ovirtmgmt",
+    "specParams" : {
+      "inbound" : { },
+      "outbound" : { }
+    },
+    "bootOrder" : "1",
+    "filter" : "vdsm-no-mac-spoofing",
+    "alias" : "net0",
+    "deviceType" : "interface",
+    "deviceId" : "5b78f22d-aca4-48f5-8ddc-96702ab1aa39",
+    "address" : {
+      "slot" : "0x03",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x0"
+    },
+    "device" : "bridge",
+    "type" : "interface",
+    "name" : "vnet1"
+  }, {
+    "index" : "2",
+    "iface" : "ide",
+    "name" : "hdc",
+    "alias" : "ide0-1-0",
+    "specParams" : {
+      "path" : ""
+    },
+    "readonly" : "True",
+    "deviceType" : "disk",
+    "deviceId" : "09f69fda-728c-491b-94b6-d9724c1cf150",
+    "address" : {
+      "bus" : "1",
+      "controller" : "0",
+      "type" : "drive",
+      "target" : "0",
+      "unit" : "0"
+    },
+    "device" : "cdrom",
+    "shared" : "false",
+    "path" : "",
+    "type" : "disk"
+  }, {
+    "device" : "usb",
+    "alias" : "usb",
+    "deviceType" : "controller",
+    "type" : "controller",
+    "address" : {
+      "slot" : "0x01",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x2"
+    }
+  }, {
+    "device" : "ide",
+    "alias" : "ide",
+    "deviceType" : "controller",
+    "type" : "controller",
+    "address" : {
+      "slot" : "0x01",
+      "bus" : "0x00",
+      "domain" : "0x0000",
+      "type" : "pci",
+      "function" : "0x1"
+    }
+  }, {
+    "device" : "unix",
+    "alias" : "channel0",
+    "deviceType" : "channel",
+    "type" : "channel",
+    "address" : {
+      "bus" : "0",
+      "controller" : "0",
+      "type" : "virtio-serial",
+      "port" : "1"
+    }
+  }, {
+    "device" : "unix",
+    "alias" : "channel1",
+    "deviceType" : "channel",
+    "type" : "channel",
+    "address" : {
+      "bus" : "0",
+      "controller" : "0",
+      "type" : "virtio-serial",
+      "port" : "2"
+    }
+  }, {
+    "device" : "spicevmc",
+    "alias" : "channel2",
+    "deviceType" : "channel",
+    "type" : "channel",
+    "address" : {
+      "bus" : "0",
+      "controller" : "0",
+      "type" : "virtio-serial",
+      "port" : "3"
+    }
+  } ],
+  "display" : "qxl",
+  "timeOffset" : "0",
+  "maxVCpus" : "16",
+  "clientIp" : "",
+  "statusTime" : "6211738140",
+  "maxMemSlots" : 16
+}

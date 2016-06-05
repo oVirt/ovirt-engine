@@ -26,6 +26,7 @@ public class BackendPermissionResourceTest
 
     public BackendPermissionResourceTest() {
         super(new BackendPermissionResource(GUIDS[0].toString(),
+                                            GUIDS[1],
                                             new BackendAssignedPermissionsResource(GUIDS[0],
                                                                                    VdcQueryType.GetPermissionsForObject,
                                                                                    new GetPermissionsForObjectParameters(GUIDS[0]),
@@ -45,7 +46,7 @@ public class BackendPermissionResourceTest
     public void testBadGuid() throws Exception {
         control.replay();
         try {
-            new BackendPermissionResource("foo", null, null);
+            new BackendPermissionResource("foo", null, null, null);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
