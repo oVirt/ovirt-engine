@@ -44,7 +44,7 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
     protected void gatherChangedVms(VM dbVm, VmInternalData vdsmVm) {
         changedVms.add(new Pair<>(dbVm, vdsmVm));
         if (log.isDebugEnabled()) {
-            logBuilder.append(String.format("%s:%s",
+            logBuilder.append(String.format("%s:%s ",
                     vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
                     vdsmVm.getVmDynamic().getStatus()));
         }
