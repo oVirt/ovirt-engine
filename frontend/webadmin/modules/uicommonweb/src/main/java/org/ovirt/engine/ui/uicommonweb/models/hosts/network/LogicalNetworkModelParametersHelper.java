@@ -44,7 +44,8 @@ public class LogicalNetworkModelParametersHelper {
                 nicToTakeParamsFrom = targetNic;
             }
 
-            if (nicToTakeParamsFrom != null) {
+            boolean newlyCreatedBond = nicToTakeParamsFrom != null && nicToTakeParamsFrom.getId() == null;
+            if (nicToTakeParamsFrom != null && !newlyCreatedBond) {
                 applyOnAttachmentParamsFrom(new InterfacePropertiesAccessor.FromNic(nicToTakeParamsFrom),
                         networkAttachment);
             }
