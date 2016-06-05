@@ -201,7 +201,9 @@ public class VmAnalyzer {
 
     private void processUnmanagedVm() {
         unmanagedVm = true;
-        saveDynamic(vdsmVm.getVmDynamic());
+        VmDynamic vmDynamic = vdsmVm.getVmDynamic();
+        vmDynamic.setRunOnVds(vdsManager.getVdsId());
+        saveDynamic(vmDynamic);
     }
 
     void proceedVmReportedOnOtherHost() {
