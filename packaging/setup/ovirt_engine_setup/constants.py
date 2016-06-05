@@ -249,6 +249,7 @@ class Const(object):
             '-tools-backup',
             '-userportal',
             '-webadmin-portal',
+            '-dashboard',
         )
 
     FILE_GROUP_SECTION_PREFIX = 'file_group_'
