@@ -10,7 +10,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Please select an item...")
     String emptyListBoxText();
 
-    @DefaultStringValue("http://www.ovirt.org")
+    @DefaultStringValue("http://www.eayun.com")
     String vendorUrl();
 
     @DefaultStringValue("Operation Canceled")
