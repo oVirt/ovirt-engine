@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
-import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -861,8 +860,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     @Override
-    public HasUiCommandClickHandlers getMacPoolButton() {
+    public UiCommandButton getMacPoolButton() {
         return addMacPoolButton;
+    }
+
+    @Override
+    public void makeMacPoolButtonInvisible() {
+        addMacPoolButton.setVisible(false);
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {

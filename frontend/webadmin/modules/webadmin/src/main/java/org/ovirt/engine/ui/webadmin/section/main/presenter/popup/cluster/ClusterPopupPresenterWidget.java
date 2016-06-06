@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
@@ -38,6 +39,8 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
         void updateMacPool(MacPoolModel macPoolModel);
 
         HasUiCommandClickHandlers getMacPoolButton();
+
+        void makeMacPoolButtonInvisible();
     }
 
     private static final ApplicationMessages messages = AssetProvider.getMessages();
@@ -104,14 +107,19 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
             }
         });
 
-        getView().getMacPoolButton().setCommand(model.getAddMacPoolCommand());
-        getView().getMacPoolButton().addClickHandler(new ClickHandler() {
+        final UICommand addMacPoolCommand = model.getAddMacPoolCommand();
+        if (addMacPoolCommand == null) {
+            getView().makeMacPoolButtonInvisible();
+        } else {
+            getView().getMacPoolButton().setCommand(addMacPoolCommand);
+            getView().getMacPoolButton().addClickHandler(new ClickHandler() {
 
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().getMacPoolButton().getCommand().execute(model);
-            }
-        });
+                @Override
+                public void onClick(ClickEvent event) {
+                    getView().getMacPoolButton().getCommand().execute(model);
+                }
+            });
+        }
     }
 
     /**
