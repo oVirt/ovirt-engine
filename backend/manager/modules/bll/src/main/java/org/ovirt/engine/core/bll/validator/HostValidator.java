@@ -174,7 +174,8 @@ public class HostValidator {
             return ValidationResult.VALID;
         }
         final Cluster cluster = clusterDao.get(host.getClusterId());
-        if (cluster.getCompatibilityVersion().less(Version.v4_0)) {
+        if (cluster.getCompatibilityVersion().less(Version.v4_0)
+                && heConfig.getDeployAction() != HostedEngineDeployConfiguration.Action.NONE) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DEPLOYMENT_UNSUPPORTED,
                     "$deployAction " + heConfig.getDeployAction().name().toLowerCase(),
