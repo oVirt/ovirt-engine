@@ -381,6 +381,16 @@ public class HostValidatorTest {
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DEPLOYMENT_UNSUPPORTED));
     }
 
+    @Test
+    public void allow36HostWithoutDeployingHostedEngine() {
+        when(hostedEngineHelper.isVmManaged()).thenReturn(false);
+        mockCluster(Version.v3_6);
+        when(host.getClusterId()).thenReturn(Guid.Empty);
+        HostedEngineDeployConfiguration heConfig =
+                new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.NONE);
+        assertThat(validator.supportsDeployingHostedEngine(heConfig), isValid());
+    }
+
     public void mockCluster(Version version) {
         Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(version);
