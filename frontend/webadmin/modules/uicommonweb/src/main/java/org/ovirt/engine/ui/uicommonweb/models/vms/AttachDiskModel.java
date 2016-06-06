@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class AttachDiskModel extends NewDiskModel {
@@ -76,10 +77,36 @@ public class AttachDiskModel extends NewDiskModel {
         boolean bootDiskFound = false;
         for (Disk disk : vmDisks) {
             if (disk.getDiskVmElementForVm(getVmId()).isBoot()) {
-                getIsBootable().setIsChangeable(false);
-                return;
+                bootDiskFound = true;
+                break;
             }
         }
+        if (bootDiskFound) {
+            getIsBootable().setIsChangeable(false);
+        }
+        else {
+            addBootChangeListener();
+        }
+    }
+
+    private void addBootChangeListener() {
+        // Whenever the changeability of isBootable changes propagate it to all child DiskModels to reflect it in the view
+        getIsBootable().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                    for (ListModel<EntityModel<DiskModel>> disks : getAttachableDisksMap().values()) {
+                        if (disks.getItems() != null) {
+                            for (EntityModel<DiskModel> disk : disks.getItems()) {
+                                boolean isChangeBootAllowed = ((EntityModel) sender).getIsChangable();
+                                disk.getEntity().getIsBootable().setIsChangeable(isChangeBootAllowed);
+                            }
+                            disks.getItemsChangedEvent().raise(disks, EventArgs.EMPTY);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public void loadAttachableDisks() {
@@ -113,6 +140,7 @@ public class AttachDiskModel extends NewDiskModel {
 
         @Override
         public void onSuccess(Object model, Object returnValue) {
+            final AttachDiskModel parentModel = (AttachDiskModel) model;
             List<Disk> disks = adjustReturnValue(returnValue);
             Collections.sort(disks, new DiskByDiskAliasComparator());
             final ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
@@ -130,7 +158,16 @@ public class AttachDiskModel extends NewDiskModel {
                             for (DiskModel diskModel : diskModels) {
                                 diskModel.getDiskInterface().setItems(diskInterfaces);
                                 diskModel.getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
-                                if (!getIsBootable().getIsChangable()) {
+                                if (getIsBootable().getIsChangable()) { // no point in adding a listener if the value cam't be changed
+                                    diskModel.getIsBootable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+                                        @Override
+                                        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                                            boolean isBootableMarked = (Boolean) ((EntityModel) sender).getEntity();
+                                            parentModel.getIsBootable().setIsChangeable(!isBootableMarked);
+                                        }
+                                    });
+                                }
+                                else {
                                     diskModel.getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
                                     diskModel.getIsBootable().setIsChangeable(false);
                                 }
