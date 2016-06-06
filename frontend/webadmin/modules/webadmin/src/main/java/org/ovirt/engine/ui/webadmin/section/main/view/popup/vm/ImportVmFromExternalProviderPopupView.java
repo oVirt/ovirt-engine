@@ -541,7 +541,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractImageResourceColumn<DiskImage> bootableDiskColumn = new AbstractImageResourceColumn<DiskImage>() {
             @Override
             public ImageResource getValue(DiskImage object) {
-                boolean isBoot = object.getDiskVmElements().iterator().next().isBoot();
+                boolean isBoot = !object.getDiskVmElements().isEmpty() && object.getDiskVmElements().iterator().next().isBoot();
                 return isBoot ? getDefaultImage() : null;
             }
 
@@ -552,7 +552,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
             @Override
             public SafeHtml getTooltip(DiskImage object) {
-                if (object.getDiskVmElements().iterator().next().isBoot()) {
+                if (!object.getDiskVmElements().isEmpty() && object.getDiskVmElements().iterator().next().isBoot()) {
                     return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
                 }
                 return null;
