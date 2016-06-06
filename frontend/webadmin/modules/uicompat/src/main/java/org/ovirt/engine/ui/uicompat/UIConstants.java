@@ -353,8 +353,6 @@ public interface UIConstants extends Constants {
 
     String hostBricksTitle();
 
-    String staticIpAddressSameAsHostname();
-
     String interfaceListTitle();
 
     String confirmTitle();

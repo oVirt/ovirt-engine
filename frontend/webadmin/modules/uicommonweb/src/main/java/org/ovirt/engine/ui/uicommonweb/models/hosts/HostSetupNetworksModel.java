@@ -356,11 +356,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 networkDialogModel.getIpv6Gateway().setIsAvailable(false);
             }
 
-            if (nic != null && nic.getId() != null) {
-                networkDialogModel.setStaticIpv4ChangeAllowed(!getEntity().getHostName().equals(nic.getIpv4Address()));
-                networkDialogModel.setStaticIpv6ChangeAllowed(!getEntity().getHostName().equals(nic.getIpv6Address()));
-            }
-
             networkDialogModel.getQosOverridden().setIsAvailable(true);
             networkDialogModel.getQosModel().setIsAvailable(true);
 

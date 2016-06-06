@@ -44,8 +44,6 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
     private EntityModel<Boolean> isToSync;
     private HostNetworkQosParametersModel qosModel;
     private KeyValueModel customPropertiesModel;
-    private boolean staticIpv4ChangeAllowed = true;
-    private boolean staticIpv6ChangeAllowed = true;
     private EntityModel<Boolean> qosOverridden;
 
     public NetworkAttachmentModel(Network network,
@@ -218,16 +216,6 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         this.isToSync = isToSync;
     }
 
-    public void setStaticIpv4ChangeAllowed(boolean value) {
-        this.staticIpv4ChangeAllowed = value;
-        updateCanSpecifyIpv4();
-    }
-
-    public void setStaticIpv6ChangeAllowed(boolean value) {
-        this.staticIpv6ChangeAllowed = value;
-        updateCanSpecifyIpv6();
-    }
-
     public EntityModel<Boolean> getQosOverridden() {
         return qosOverridden;
     }
@@ -319,18 +307,14 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
     private void updateCanSpecifyIpv4() {
         boolean isChangeable = bootProtocolsAvailable && getIsStaticIpv4Address();
-        getIpv4Address().setChangeProhibitionReason(isChangeable && !staticIpv4ChangeAllowed
-                ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
-        getIpv4Address().setIsChangeable(isChangeable && staticIpv4ChangeAllowed);
+        getIpv4Address().setIsChangeable(isChangeable);
         getIpv4Subnet().setIsChangeable(isChangeable);
         getIpv4Gateway().setIsChangeable(isChangeable);
     }
 
     private void updateCanSpecifyIpv6() {
         boolean isChangeable = bootProtocolsAvailable && getIsStaticIpv6Address();
-        getIpv6Address().setChangeProhibitionReason(isChangeable && !staticIpv6ChangeAllowed
-                ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
-        getIpv6Address().setIsChangeable(isChangeable && staticIpv6ChangeAllowed);
+        getIpv6Address().setIsChangeable(isChangeable);
         getIpv6Prefix().setIsChangeable(isChangeable);
         getIpv6Gateway().setIsChangeable(isChangeable);
     }
