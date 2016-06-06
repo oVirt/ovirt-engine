@@ -26,6 +26,8 @@ public class BondPanel extends HostInterfaceHorizontalPanel {
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private static final String INVALID_AD_PARTNER_MAC = "00:00:00:00:00:00";//$NON-NLS-1$
+
     public BondPanel(HostInterfaceLineModel lineModel, VDS vds) {
         super();
 
@@ -72,7 +74,8 @@ public class BondPanel extends HostInterfaceHorizontalPanel {
     }
 
     private boolean isAdPartnerMacValid(Bond bond, VDS vds){
-        boolean isAdPartnerMacEmpty = bond.getAdPartnerMac() == null || bond.getAdPartnerMac().isEmpty();
+        String partnerMac = bond.getAdPartnerMac();
+        boolean isAdPartnerMacEmpty = partnerMac == null || partnerMac.isEmpty() || partnerMac.equals(INVALID_AD_PARTNER_MAC);
         boolean isIfcUp = InterfaceStatus.UP.equals(bond.getStatistics().getStatus());
         boolean isBond4 = BondMode.BOND4.equals(BondMode.parseBondMode(bond.getBondOptions()));
         boolean isAdPartnerSupportedForCluster = (Boolean)AsyncDataProvider.getInstance().getConfigValuePreConverted(
