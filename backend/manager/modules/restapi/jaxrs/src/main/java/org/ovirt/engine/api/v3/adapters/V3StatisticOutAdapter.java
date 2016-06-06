@@ -85,24 +85,6 @@ public class V3StatisticOutAdapter implements V3Adapter<Statistic, V3Statistic> 
         if (from.isSetStep()) {
             to.setStep(adaptOut(from.getStep()));
         }
-        if (from.isSetType()) {
-            V3Values toValues = to.getValues();
-            if (toValues == null) {
-                toValues = new V3Values();
-                to.setValues(toValues);
-            }
-            switch (from.getType()) {
-                case DECIMAL:
-                    toValues.setType(V3ValueType.DECIMAL);
-                    break;
-                case INTEGER:
-                    toValues.setType(V3ValueType.INTEGER);
-                    break;
-                case STRING:
-                    toValues.setType(V3ValueType.STRING);
-                    break;
-            }
-        }
         if (from.isSetUnit()) {
             switch (from.getUnit()) {
                 case BITS_PER_SECOND:
@@ -129,8 +111,22 @@ public class V3StatisticOutAdapter implements V3Adapter<Statistic, V3Statistic> 
             }
         }
         if (from.isSetValues()) {
-            to.setValues(new V3Values());
-            to.getValues().getValues().addAll(adaptOut(from.getValues().getValues()));
+            V3Values toValues = new V3Values();
+            toValues.getValues().addAll(adaptOut(from.getValues().getValues()));
+            if (from.isSetType()) {
+                switch (from.getType()) {
+                case DECIMAL:
+                    toValues.setType(V3ValueType.DECIMAL);
+                    break;
+                case INTEGER:
+                    toValues.setType(V3ValueType.INTEGER);
+                    break;
+                case STRING:
+                    toValues.setType(V3ValueType.STRING);
+                    break;
+                }
+            }
+            to.setValues(toValues);
         }
         if (from.isSetVm()) {
             to.setVm(adaptOut(from.getVm()));
