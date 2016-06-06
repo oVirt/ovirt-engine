@@ -135,7 +135,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     private Long getInitialSize() {
         DiskImage diskImage = getParameters().getDiskInfo();
         Long initialSize = null;
-        if (getStorageDomain().getStorageType().isBlockDomain() &&
+        if (ImagesHandler.isImageInitialSizeSupported(getStorageDomain().getStorageType()) &&
                 diskImage.getImage().getVolumeType().equals(VolumeType.Sparse) &&
                 diskImage.getActualSizeInBytes() != 0) {
             initialSize = diskImage.getActualSizeInBytes();

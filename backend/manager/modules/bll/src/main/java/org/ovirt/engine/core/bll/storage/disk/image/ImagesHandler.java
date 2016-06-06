@@ -267,6 +267,10 @@ public final class ImagesHandler {
         return sizeForDisk;
     }
 
+    public static boolean isImageInitialSizeSupported(StorageType storageType) {
+        return storageType.isBlockDomain();
+    }
+
     /**
      * Returns a list of image IDs for the specified DiskImages collection.
      *
