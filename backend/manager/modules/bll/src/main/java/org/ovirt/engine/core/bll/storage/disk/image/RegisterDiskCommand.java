@@ -55,7 +55,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                             getStoragePoolId());
             VdcQueryReturnValue unregQueryReturn = runInternalQuery(VdcQueryType.GetUnregisteredDisk, unregQueryParams);
             if (unregQueryReturn.getSucceeded()) {
-                setDiskImage(unregQueryReturn.<DiskImage> getReturnValue());
+                setDiskImage(unregQueryReturn.getReturnValue());
             }
         } else {
             setDiskImage(getParameters().getDiskImage());
