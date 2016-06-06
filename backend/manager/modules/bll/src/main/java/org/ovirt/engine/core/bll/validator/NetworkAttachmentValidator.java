@@ -3,19 +3,15 @@ package org.ovirt.engine.core.bll.validator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -23,7 +19,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.network.predicate.IpAddressPredicate;
 
 public class NetworkAttachmentValidator {
 
@@ -139,49 +134,6 @@ public class NetworkAttachmentValidator {
     public ValidationResult nicNameIsSet() {
         return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_DOES_NOT_HAVE_NAME_SET)
                 .when(attachment.getNicName() == null && attachment.getNicId() == null);
-    }
-
-    /**
-     * Checks if a network is configured incorrectly:
-     * <ul>
-     * <li>If the host was added to the system using its IP address as the computer name for the certification creation,
-     * it is forbidden to modify the IP address without reinstalling the host.</li>
-     * </ul>
-     */
-    public ValidationResult networkIpAddressWasSameAsHostnameAndChanged(
-            BusinessEntityMap<VdsNetworkInterface> existingInterfaces) {
-        IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        if (ipConfiguration != null) {
-            VdsNetworkInterface existingIface = existingInterfaces.get(attachment.getNicName());
-            if (existingIface != null) {
-                final Predicate<String> isManagementIpPredicate = new IpAddressPredicate(host.getHostName());
-                if (ipConfiguration.hasIpv4PrimaryAddressSet()
-                        && ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
-                    String oldIpv4Address = existingIface.getIpv4Address();
-                    return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED,
-                            ReplacementUtils.createSetVariableString(
-                                    VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
-                                    getNetwork().getName()))
-                            .when(isManagementIpPredicate.test(oldIpv4Address)
-                                    && !new IpAddressPredicate(oldIpv4Address)
-                                            .test(ipConfiguration.getIpv4PrimaryAddress().getAddress()));
-                }
-                if (ipConfiguration.hasIpv6PrimaryAddressSet()
-                        && ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == Ipv6BootProtocol.STATIC_IP) {
-                    String oldIpv6Address = existingIface.getIpv6Address();
-                    return ValidationResult
-                            .failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED,
-                                    ReplacementUtils.createSetVariableString(
-                                            VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
-                                            getNetwork().getName()))
-                            .when(isManagementIpPredicate.test(oldIpv6Address)
-                                    && !new IpAddressPredicate(oldIpv6Address)
-                                            .test(ipConfiguration.getIpv6PrimaryAddress().getAddress()));
-                }
-            }
-        }
-
-        return ValidationResult.VALID;
     }
 
     public ValidationResult networkNotChanged(NetworkAttachment oldAttachment) {
