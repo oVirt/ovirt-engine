@@ -288,6 +288,7 @@ Summary:	%{ovirt_product_name_short} library
 Group:		%{ovirt_product_group}
 Requires:	m2crypto
 Requires:	python-daemon
+Conflicts:	python-daemon = 2.1.0
 
 %description lib
 %{ovirt_product_name_short} library
