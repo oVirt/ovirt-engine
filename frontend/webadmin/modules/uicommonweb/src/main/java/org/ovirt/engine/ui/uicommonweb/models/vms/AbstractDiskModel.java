@@ -994,6 +994,10 @@ public abstract class AbstractDiskModel extends DiskModel {
                 break;
             case IMAGE:
                 DiskImage diskImage = getDiskImage();
+                // For a long time it was possible to delete all disk profiles
+                if (getDiskProfile().getSelectedItem() != null) {
+                    diskImage.setDiskProfileId(getDiskProfile().getSelectedItem().getId());
+                }
                 updateQuota(diskImage);
                 updateDiskSize(diskImage);
                 setDisk(diskImage);
