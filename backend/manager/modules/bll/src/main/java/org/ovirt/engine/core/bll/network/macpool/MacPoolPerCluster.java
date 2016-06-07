@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
@@ -35,6 +36,9 @@ public class MacPoolPerCluster {
 
     @Inject
     MacPoolFactory macPoolFactory;
+
+    @Inject
+    private DbFacade dbFacade;
 
     private static final Logger log = LoggerFactory.getLogger(MacPoolPerCluster.class);
 
