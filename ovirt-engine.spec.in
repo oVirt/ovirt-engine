@@ -648,6 +648,7 @@ done << __EOF__
 %{engine_jboss_modules}/common/org/ovirt/engine/core/uutils/main/uutils.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/extensions/builtin/main/builtin.jar
 %{engine_ear}/docs.war/WEB-INF/lib/branding.jar
+%{engine_ear}/enginesso.war/WEB-INF/lib/branding.jar
 %{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
 %{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
 %{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
