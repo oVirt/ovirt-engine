@@ -33,6 +33,9 @@ public class MacPoolPerDc {
     @Inject
     MacPoolFactory macPoolFactory;
 
+    @Inject
+    private DbFacade dbFacade;
+
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
     static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
     static final String POOL_TO_BE_REMOVED_DOES_NOT_EXIST_EXCEPTION_MESSAGE =
