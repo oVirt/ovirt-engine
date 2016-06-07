@@ -24,7 +24,7 @@
     </ui:style>
 
     <g:FlowPanel>
-        <g:Label ui:field="diskAllocationLabel" addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
+        <g:Label ui:field="diskAllocationLabel" visible="false" addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
         <g:SimplePanel ui:field="diskListHeaderPanel" />
         <g:FlowPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel} {style.overflow}" />
     </g:FlowPanel>
