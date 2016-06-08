@@ -69,6 +69,10 @@ public class BackendOpenStackImageResource
             if (action.isImportAsTemplate()) {
                 validateParameters(action, "cluster.id|name");
                 parameters.setClusterId(getClusterId(action));
+
+                if (action.isSetTemplate() && action.getTemplate().isSetName()) {
+                    parameters.setTemplateName(action.getTemplate().getName());
+                }
             }
             parameters.setImportAsTemplate(action.isImportAsTemplate());
         }
