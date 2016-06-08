@@ -153,6 +153,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         addtionalFeaturesSupported = new HashSet<>();
         ksmMergeAcrossNumaNodes = true;
         migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
+        requiredSwitchTypeForCluster = SwitchType.LEGACY;
     }
 
     @Override
