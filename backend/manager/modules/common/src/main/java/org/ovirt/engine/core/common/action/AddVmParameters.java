@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.TemplateProvisioningMethod;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -12,7 +11,6 @@ public class AddVmParameters extends VmManagementParametersBase {
     private static final long serialVersionUID = 8641610721114989096L;
 
     private ArrayList<DiskImage> diskInfoList;
-    private TemplateProvisioningMethod templateProvisioningMethod = TemplateProvisioningMethod.THIN;
     private Guid diskOperatorAuthzPrincipalDbId;
     private Guid poolId;
 
@@ -26,14 +24,6 @@ public class AddVmParameters extends VmManagementParametersBase {
 
     public AddVmParameters(VM vm) {
         this(vm.getStaticData());
-    }
-
-    public TemplateProvisioningMethod getTemplateProvisioningMethod() {
-        return templateProvisioningMethod;
-    }
-
-    public void setTemplateProvisioningMethod(TemplateProvisioningMethod templateProvisioningMethod) {
-        this.templateProvisioningMethod = templateProvisioningMethod;
     }
 
     public Guid getDiskOperatorAuthzPrincipalDbId() {
