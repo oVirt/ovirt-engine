@@ -17,11 +17,10 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
-public class BondPanel extends HorizontalPanel {
+public class BondPanel extends HostInterfaceHorizontalPanel {
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();

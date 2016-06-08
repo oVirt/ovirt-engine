@@ -21,7 +21,7 @@ public class InterfacePanel extends VerticalPanel {
     }
 }
 
-class InterfaceElementPanel extends HorizontalPanel {
+class InterfaceElementPanel extends HostInterfaceHorizontalPanel {
 
     public InterfaceElementPanel(HostInterface hostInterface) {
         super();

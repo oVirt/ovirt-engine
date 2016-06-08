@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SumUpRenderer;
@@ -10,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -26,7 +26,7 @@ public class StatisticsPanel extends VerticalPanel {
     }
 }
 
-class StatisticsElementPanel extends TogglePanel {
+class StatisticsElementPanel extends HostInterfaceHorizontalPanel {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -34,7 +34,7 @@ class StatisticsElementPanel extends TogglePanel {
     private final NullableNumberLabel<Long> txTotalLabel;
 
     public StatisticsElementPanel(HostInterface hostInterface) {
-        super(hostInterface);
+        super();
         rxTotalLabel = new NullableNumberLabel<>();
         txTotalLabel = new NullableNumberLabel<>();
         add(createRow(hostInterface));
