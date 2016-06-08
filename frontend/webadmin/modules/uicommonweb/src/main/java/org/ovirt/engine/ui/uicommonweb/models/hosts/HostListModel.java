@@ -69,6 +69,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.HostMaintenanceConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
@@ -1177,12 +1178,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
     }
 
-    private void maintenance(boolean isMaintenanceReasonVisible, boolean isStopGlusterServiceRequired) {
+    private void maintenance(boolean isMaintenanceReasonVisible, boolean supportsGlusterService) {
         if (getConfirmWindow() != null) {
             return;
         }
 
-        ConfirmationModel model = new ConfirmationModel();
+        HostMaintenanceConfirmationModel model = new HostMaintenanceConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().maintenanceHostsTitle());
         model.setHelpTag(HelpTag.maintenance_host);
@@ -1191,10 +1192,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 .getConstants()
                 .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
         model.setReasonVisible(isMaintenanceReasonVisible);
-        if (isStopGlusterServiceRequired) {
+        if (supportsGlusterService) {
+            model.getStopGlusterServices().setIsAvailable(true);
+            model.getStopGlusterServices().setEntity(false);
+
             model.getForce().setIsAvailable(true);
-            model.setForceLabel(ConstantsManager.getInstance().getConstants().stopGlusterServices());
             model.getForce().setEntity(false);
+            model.setForceLabel(ConstantsManager.getInstance().getConstants().ignoreGlusterQuorumChecks());
         }
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         ArrayList<String> vdss = new ArrayList<>();
@@ -1211,35 +1215,36 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     public void onMaintenance() {
-        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+        HostMaintenanceConfirmationModel model = (HostMaintenanceConfirmationModel) getConfirmWindow();
 
         if (model.getProgress() != null) {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         ArrayList<Guid> vdss = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             vdss.add(vds.getId());
         }
-        list.add(new MaintenanceNumberOfVdssParameters(vdss,
+        MaintenanceNumberOfVdssParameters params = new MaintenanceNumberOfVdssParameters(vdss,
                 false,
                 model.getReason().getEntity(),
-                model.getForce().getEntity()));
+                model.getStopGlusterServices().getEntity(),
+                model.getForce().getEntity());
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.MaintenanceNumberOfVdss, list,
-                new IFrontendMultipleActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.MaintenanceNumberOfVdss,
+                params,
+                new IFrontendActionAsyncCallback() {
                     @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-
+                    public void executed(FrontendActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.stopProgress();
-                        cancelConfirm();
-
+                        if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                            cancelConfirm();
+                        }
                     }
                 }, model);
     }

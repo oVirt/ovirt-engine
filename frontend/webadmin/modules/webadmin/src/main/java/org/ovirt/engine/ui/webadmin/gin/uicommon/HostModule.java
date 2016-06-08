@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -85,6 +86,7 @@ public class HostModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<HostPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<HostMaintenanceConfirmationPopupPresenterWidget> hostMaintenanceConfirmationPopupProvider,
             final Provider<ManualFencePopupPresenterWidget> manualFenceConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider,
@@ -120,7 +122,7 @@ public class HostModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostListModel<Void> source,
                             UICommand lastExecutedCommand) {
                         if (lastExecutedCommand == getModel().getRemoveCommand() || lastExecutedCommand == getModel().getMaintenanceCommand()) {
-                            return removeConfirmPopupProvider.get();
+                            return hostMaintenanceConfirmationPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getManualFenceCommand()) {
                             return manualFenceConfirmPopupProvider.get();
                         } else {

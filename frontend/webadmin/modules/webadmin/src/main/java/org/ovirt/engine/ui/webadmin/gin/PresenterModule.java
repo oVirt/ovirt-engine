@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
+import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
@@ -1365,6 +1367,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(HostFenceProxyPopupPresenterWidget.class,
                 HostFenceProxyPopupPresenterWidget.ViewDef.class,
                 HostFenceProxyPopupView.class);
+        bindPresenterWidget(HostMaintenanceConfirmationPopupPresenterWidget.class,
+                HostMaintenanceConfirmationPopupPresenterWidget.ViewDef.class,
+                HostMaintenanceConfirmationPopupView.class);
 
         // Storage
         bindPresenterWidget(StoragePopupPresenterWidget.class,

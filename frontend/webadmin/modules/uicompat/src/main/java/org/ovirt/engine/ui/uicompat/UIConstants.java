@@ -1999,6 +1999,8 @@ public interface UIConstants extends Constants {
 
     String stopGlusterServices();
 
+    String ignoreGlusterQuorumChecks();
+
     String noClusterSupportingArchitectureInDC();
 
     String sameArchitectureRequired();
