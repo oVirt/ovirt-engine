@@ -118,6 +118,7 @@ public class BackendVmPoolResource
                               : null;
                 if (existing != null) {
                     vm.setVmtGuid(existing.getVmtGuid());
+                    vm.setVmInit(existing.getVmInit());
                 }
             }
 
@@ -131,7 +132,9 @@ public class BackendVmPoolResource
                 vm.getStaticData().setOsId(template.getOsId());
                 vm.getStaticData().setDefaultDisplayType(template.getDefaultDisplayType());
                 vm.getStaticData().setMigrationSupport(template.getMigrationSupport());
-                vm.getStaticData().setVmInit(template.getVmInit());
+                if (vm.getVmInit() == null) {
+                    vm.setVmInit(template.getVmInit());
+                }
             }
             if (incoming.isSetUseLatestTemplateVersion()) {
                 vm.setUseLatestVersion(incoming.isUseLatestTemplateVersion());
