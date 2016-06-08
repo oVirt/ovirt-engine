@@ -122,9 +122,7 @@ public class ImportRepoImageCopyTaskHandler
         OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
         DiskImage templateDiskImage = getEnclosingCommand().getParameters().getDiskImage();
-        String templateName = getEnclosingCommand().getParameters().getTemplateName();
-        // Following the same convention as the glance disk name, using a GlanceTemplate prefix, followed by a short identifier
-        String vmTemplateName = templateName != null ? templateName : "GlanceTemplate-" + Guid.newGuid().toString().substring(0, 7);
+        String vmTemplateName = getEnclosingCommand().getParameters().getTemplateName();
         AddVmTemplateParameters parameters = new AddVmTemplateParameters(masterVm, vmTemplateName, templateDiskImage.getDiskDescription());
 
         // Setting the user from the parent command, as the session might already be invalid

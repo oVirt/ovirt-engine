@@ -44,7 +44,16 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     public ImportRepoImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         getParameters().setCommandType(getActionType());
+        setDefaultTemplateName();
         addAuditLogCustomValues();
+    }
+
+    private void setDefaultTemplateName() {
+        if (getParameters().getImportAsTemplate() && getParameters().getTemplateName() == null) {
+            // Following the same convention as the glance disk name,
+            // using a GlanceTemplate prefix, followed by a short identifier.
+            getParameters().setTemplateName("GlanceTemplate-" + Guid.newGuid().toString().substring(0, 7));
+        }
     }
 
     protected ProviderProxyFactory getProviderProxyFactory() {
