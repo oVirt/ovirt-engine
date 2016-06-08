@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.compat.VersionTransform;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -51,7 +52,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         AbstractTextColumn<VDSGroup> versionColumn = new AbstractTextColumn<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getCompatibilityVersion().getValue();
+                return VersionTransform.getEayunVersion(object.getCompatibilityVersion()).getValue();
             }
         };
         versionColumn.makeSortable();

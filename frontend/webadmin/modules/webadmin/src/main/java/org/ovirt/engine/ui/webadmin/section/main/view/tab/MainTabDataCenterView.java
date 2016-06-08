@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.compat.VersionTransform;
 import org.ovirt.engine.core.searchbackend.StoragePoolFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -91,7 +92,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         AbstractTextColumn<StoragePool> versionColumn = new AbstractTextColumn<StoragePool>() {
             @Override
             public String getValue(StoragePool object) {
-                return object.getCompatibilityVersion().getValue();
+                return VersionTransform.getEayunVersion(object.getCompatibilityVersion()).getValue();
             }
         };
         versionColumn.makeSortable(StoragePoolFieldAutoCompleter.COMPATIBILITY_VERSION);

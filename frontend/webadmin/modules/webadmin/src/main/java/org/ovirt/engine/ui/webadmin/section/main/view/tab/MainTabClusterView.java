@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.compat.VersionTransform;
 import org.ovirt.engine.core.searchbackend.ClusterConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -84,7 +85,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         AbstractTextColumn<VDSGroup> versionColumn = new AbstractTextColumn<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getCompatibilityVersion().getValue();
+                return VersionTransform.getEayunVersion(object.getCompatibilityVersion()).getValue();
             }
         };
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "150px"); //$NON-NLS-1$
