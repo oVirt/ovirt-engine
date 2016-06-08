@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -985,6 +988,47 @@ public class AuditLogableBaseTest {
         b.appendCustomValue(key, value, sep);
         final String s = b.getCustomValue(key);
         assertEquals(value, s);
+    }
+
+    @Test
+    public void setCustomValues() {
+        final AuditLogableBase underTest = new TestAuditLogableBase();
+        final String key = "foo";
+        doSetCustomValuesTest(underTest, key);
+    }
+
+    @Test
+    public void setCustomValuesOverridesExistingValues() {
+        final AuditLogableBase underTest = new TestAuditLogableBase();
+        final String key = "foo";
+        underTest.appendCustomValue(key, "test value", null);
+
+        doSetCustomValuesTest(underTest, key);
+    }
+
+    @Test
+    public void setCustomValuesOverridesDoesNotAffectsOtherKeys() {
+        final AuditLogableBase underTest = new TestAuditLogableBase();
+        final String key1 = "foo";
+        final String key2 = "bar";
+        underTest.appendCustomValue(key2,  "test value 2", null);
+
+        doSetCustomValuesTest(underTest, key1);
+
+        assertThat(underTest.getCustomValue(key2), is("test value 2"));
+    }
+
+    private void doSetCustomValuesTest(AuditLogableBase underTest, String key) {
+        final String value1 = NAME + 1;
+        final String value2 = NAME + 2;
+        final List<String> values = Arrays.asList(value1, value2);
+        final String sep = "_";
+
+        underTest.setCustomValues(key, values, sep);
+        final String actual = underTest.getCustomValue(key);
+
+        final String expected = String.format("%s%s%s", value1, sep, value2);
+        assertEquals(expected, actual);
     }
 
     @Test

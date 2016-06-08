@@ -433,7 +433,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private AuditLogableBase createExternalMacsAuditLog(VM vm, Set<String> externalMacs) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVmId(vm.getId());
-        externalMacs.stream().forEach(mac -> logable.appendCustomValue("MACAddr", mac, COMMA_SEPARATOR));
+        logable.setCustomValues("MACAddr", externalMacs, COMMA_SEPARATOR);
         return logable;
     }
 
