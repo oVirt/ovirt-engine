@@ -26,6 +26,15 @@ import websockify
 from ovirt_engine import configfile, service, ticket
 
 
+def websockify_has_plugins():
+    try:
+        import websockify.token_plugins as imported
+        wstokens = imported
+    except ImportError:
+        wstokens = None
+    return wstokens is not None
+
+
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine')
 
@@ -142,6 +151,11 @@ class Daemon(service.Daemon):
         ) as f:
             peer = f.read()
 
+        if websockify_has_plugins():
+            kwargs = {'token_plugin': 'TokenFile'}
+        else:
+            kwargs = {'target_cfg': '/dummy'}
+
         OvirtWebSocketProxy(
             listen_host=self._config.get('PROXY_HOST'),
             listen_port=self._config.get('PROXY_PORT'),
@@ -162,12 +176,12 @@ class Daemon(service.Daemon):
                 else self._config.get('TRACE_FILE')
             ),
             web=None,
-            target_cfg='/dummy',
             target_host=None,
             target_port=None,
             wrap_mode='exit',
             wrap_cmd=None,
-            RequestHandlerClass=OvirtProxyRequestHandler
+            RequestHandlerClass=OvirtProxyRequestHandler,
+            **kwargs
         ).start_server()
 
 
