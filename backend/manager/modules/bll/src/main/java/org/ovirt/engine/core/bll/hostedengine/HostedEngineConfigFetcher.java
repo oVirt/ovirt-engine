@@ -17,13 +17,18 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.ImageHttpAccessVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -46,6 +51,8 @@ public class HostedEngineConfigFetcher {
     @Inject
     private Instance<HostedEngineHelper> heHelper;
 
+    @Inject
+    private BackendInternal backend;
     /**
      * Retrieve the hosted engine configuration from the configuration disk on the hosted engine domain.
      * The disk contains the config in a key value format
@@ -67,7 +74,7 @@ public class HostedEngineConfigFetcher {
             // If exist, download its content. It holds all the configuration that was saved during the
             // install of the 1st hosted engine host.
             if (configDisk.isPresent()) {
-                final byte[] diskData = downloadDisk(spId, sdId, hostId, configDisk.get());
+                final byte[] diskData = downloadDisk(spId, sdId, configDisk.get());
                 if (diskData != null) {
                     // the content of the disk is a tar which contains the hosted-engine.conf file
                     configFromImage = extractFileFromDisk(configFromImage, diskData);
@@ -124,18 +131,20 @@ public class HostedEngineConfigFetcher {
                 new GetImageInfoVDSCommandParameters(spId, sdId, diskId, volumeId));
     }
 
-    private byte[] downloadDisk(Guid spId, Guid sdId, Guid hostId, DiskImage diskImage) {
-        long downloadSize = Config.<Integer> getValue(ConfigValues.HostedEngineConfigDiskSizeInBytes);
+    private byte[] downloadDisk(Guid spId, Guid sdId, DiskImage diskImage) {
+        long downloadSize = Config.<Integer>getValue(ConfigValues.HostedEngineConfigDiskSizeInBytes);
         log.info("Found the HE configuration disk. Downloading the content in size of {} bytes", downloadSize);
-        return (byte[]) resourceManager.runVdsCommand(
-                VDSCommandType.RetrieveImageData,
-                new ImageHttpAccessVDSCommandParameters(
-                        hostId,
-                        spId,
+        VdcReturnValueBase returnValue = backend.runInternalAction(VdcActionType.RetrieveImageData,
+                new RetrieveImageDataParameters(spId,
                         sdId,
                         diskImage.getId(),
                         diskImage.getImageId(),
-                        downloadSize)).getReturnValue();
+                        downloadSize));
+        if (returnValue.getSucceeded()) {
+            return (byte[]) returnValue.getActionReturnValue();
+        } else {
+            throw new EngineException(EngineError.ENGINE, "Failed to download the HE configuration disk");
+        }
     }
 
     private Map<String, String> extractFileFromDisk(Map<String, String> configFromImage, byte[] diskData) {
