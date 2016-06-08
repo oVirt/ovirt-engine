@@ -28,14 +28,6 @@ public class AddVmParameters extends VmManagementParametersBase {
         this(vm.getStaticData());
     }
 
-    public ArrayList<DiskImage> getDiskInfoList() {
-        return diskInfoList;
-    }
-
-    public void setDiskInfoList(ArrayList<DiskImage> diskInfoList) {
-        this.diskInfoList = diskInfoList != null ? diskInfoList : new ArrayList<DiskImage>();
-    }
-
     public TemplateProvisioningMethod getTemplateProvisioningMethod() {
         return templateProvisioningMethod;
     }

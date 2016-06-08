@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -76,11 +75,6 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     protected boolean validate() {
         if (getCluster() == null && Guid.Empty.equals(super.getStorageDomainId())) {
             return failValidation(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
-        }
-
-        if (!ImagesHandler.checkImagesConfiguration(getStorageDomainId(),
-                getParameters().getDiskInfoList(), getReturnValue().getValidationMessages())) {
-            return false;
         }
 
         return super.validate();
