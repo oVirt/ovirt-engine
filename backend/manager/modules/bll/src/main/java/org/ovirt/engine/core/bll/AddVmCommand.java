@@ -61,7 +61,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
@@ -103,7 +102,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.di.Injector;
@@ -1629,42 +1627,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             getParameters().getGraphicsDevices());
 
         // If not set by user, choose proper graphics device according to the cluster architecture
-        autoSelectGraphicsDevice();
-    }
-
-    protected void autoSelectGraphicsDevice() {
-        if (getParameters().getGraphicsDevices().isEmpty() // if not set by user in params
-                && getCluster() != null) { // and Cluster is known
-            DisplayType defaultDisplayType = getParameters().getVmStaticData().getDefaultDisplayType();
-
-            int osId = getParameters().getVmStaticData().getOsId();
-            Version compatibilityVersion = getEffectiveCompatibilityVersion();
-
-            List<GraphicsType> templateGraphics = VmDeviceUtils.getGraphicsTypesOfEntity(vmDevicesSourceId);
-            // if the template graphics device is supported then use it
-            // otherwise choose the first supported graphics device
-            if (!VmValidationUtils.isGraphicsAndDisplaySupported(osId, compatibilityVersion, templateGraphics, defaultDisplayType)) {
-                GraphicsType defaultGraphicsType = null;
-                List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, compatibilityVersion);
-                for (Pair<GraphicsType, DisplayType> pair : pairs) {
-                    if (pair.getSecond().equals(defaultDisplayType)) {
-                        defaultGraphicsType = pair.getFirst();
-                        break;
-                    }
-                }
-
-                if (defaultGraphicsType != null) {
-                    for (GraphicsType graphicsType : GraphicsType.values()) {// reset graphics devices
-                        getParameters().getGraphicsDevices().put(graphicsType, null);
-                    }
-
-                    VmDeviceType vmDisplayType = defaultGraphicsType.getCorrespondingDeviceType();
-
-                    GraphicsDevice defaultGraphicsDevice = new GraphicsDevice(vmDisplayType);
-                    getParameters().getGraphicsDevices().put(defaultGraphicsType, defaultGraphicsDevice);
-                }
-            }
-        }
+        VmHandler.autoSelectGraphicsDevice(vmDevicesSourceId,
+                getParameters().getVmStaticData(),
+                getCluster(),
+                getParameters().getGraphicsDevices(),
+                getEffectiveCompatibilityVersion());
     }
 
     protected boolean isTemplateInValidDc() {

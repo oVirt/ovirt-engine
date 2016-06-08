@@ -48,6 +48,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
  * A test case for {@link AddVmTemplateCommand}
@@ -77,6 +78,8 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private DiskImagesValidator diskImagesValidator;
     @Mock
+    private VmDeviceDao deviceDao;
+    @Mock
     private DbFacade dbFacade;
 
     @Before
@@ -105,6 +108,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
         mockOsRepository();
         SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
+        doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
 
         // Using the compensation constructor since the normal one contains DB access
         cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(
