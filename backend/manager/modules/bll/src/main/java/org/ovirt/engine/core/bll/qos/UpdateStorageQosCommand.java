@@ -32,7 +32,8 @@ public class UpdateStorageQosCommand extends UpdateQosCommandBase<StorageQos, Qo
     @Override
     protected void executeCommand() {
         super.executeCommand();
-
-        vmSlaPolicyUtils.refreshRunningVmsWithStorageQos(getQosId(), getQos());
+        if (getSucceeded()) {
+            vmSlaPolicyUtils.refreshRunningVmsWithStorageQos(getQosId(), getQos());
+        }
     }
 }
