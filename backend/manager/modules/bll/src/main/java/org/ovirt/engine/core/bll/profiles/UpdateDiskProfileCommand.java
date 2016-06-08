@@ -12,20 +12,14 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
-import org.ovirt.engine.core.dao.qos.StorageQosDao;
 
 public class UpdateDiskProfileCommand extends UpdateProfileCommandBase<DiskProfileParameters, DiskProfile, DiskProfileValidator> {
 
     @Inject
     private VmSlaPolicyUtils vmSlaPolicyUtils;
-
-    @Inject
-    private StorageQosDao storageQosDao;
-
 
     public UpdateDiskProfileCommand(DiskProfileParameters parameters) {
         super(parameters);
@@ -72,14 +66,10 @@ public class UpdateDiskProfileCommand extends UpdateProfileCommandBase<DiskProfi
             return;
         }
 
-        StorageQos qos;
-        if (newQos == null || Guid.Empty.equals(newQos)) {
-            qos = new StorageQos();
-        } else {
-            qos = storageQosDao.get(newQos);
-        }
-
         // Update policies of all running vms
-        vmSlaPolicyUtils.refreshRunningVmsWithDiskProfile(getProfileId(), qos);
+        // Profile changes are already persisted in the database
+        if (getSucceeded()) {
+            vmSlaPolicyUtils.refreshRunningVmsWithDiskProfile(getProfileId());
+        }
     }
 }

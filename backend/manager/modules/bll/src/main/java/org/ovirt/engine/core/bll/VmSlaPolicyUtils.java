@@ -28,6 +28,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @Singleton
@@ -47,6 +48,9 @@ public class VmSlaPolicyUtils {
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private StorageQosDao storageQosDao;
 
     @Inject
     private BackendInternal backend;
@@ -130,6 +134,10 @@ public class VmSlaPolicyUtils {
     }
 
     public void refreshVmsStorageQos(Map<Guid, List<DiskImage>> vmDiskMap, StorageQos newQos) {
+        // No QoS means default QoS which means unlimited
+        if (newQos == null) {
+            newQos = new StorageQos();
+        }
         for (Map.Entry<Guid, List<DiskImage>> entry : vmDiskMap.entrySet()) {
             final VmSlaPolicyParameters cmdParams = new VmSlaPolicyParameters(entry.getKey());
 
@@ -149,9 +157,10 @@ public class VmSlaPolicyUtils {
         refreshVmsStorageQos(getRunningVmDiskImageMapWithQos(storageQosId), newQos);
     }
 
-    public void refreshRunningVmsWithDiskProfile(Guid diskProfileId, StorageQos newQos) {
+    public void refreshRunningVmsWithDiskProfile(Guid diskProfileId) {
         refreshVmsStorageQos(
                 getRunningVmDiskImageMapWithProfiles(Collections.singleton(diskProfileId)),
-                newQos);
+                storageQosDao.getQosByDiskProfileId(diskProfileId)
+        );
     }
 }

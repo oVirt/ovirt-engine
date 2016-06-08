@@ -39,8 +39,9 @@ public class RemoveStorageQosCommand extends RemoveQosCommandBase<StorageQos, Qo
 
         super.executeCommand();
 
-        // After successful command, refresh qos
-        StorageQos unlimitedQos = new StorageQos();
-        vmSlaPolicyUtils.refreshVmsStorageQos(vmDisksMap, unlimitedQos);
+        // After successful command, set everything to unlimited
+        if (getSucceeded()) {
+            vmSlaPolicyUtils.refreshVmsStorageQos(vmDisksMap, new StorageQos());
+        }
     }
 }
