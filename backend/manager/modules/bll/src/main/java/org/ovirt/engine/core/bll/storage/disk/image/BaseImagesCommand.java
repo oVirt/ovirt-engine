@@ -27,10 +27,8 @@ import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * Base class for all image handling commands
@@ -243,19 +241,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DiskImageDynamic destinationDiskDynamic = getDiskImageDynamicDao().get(getDestinationDiskImage().getImageId());
         if (destinationDiskDynamic != null) {
             destinationDiskDynamic.setActualSize(fromIRS.getActualSizeInBytes());
-            updateDiskImageDynamic(destinationDiskDynamic);
+            getDiskImageDynamicDao().update(destinationDiskDynamic);
         }
-    }
-
-    protected void updateDiskImageDynamic(DiskImageDynamic diskImageDynamic) {
-        // We need to update DiskImageDynamic objects without a transaction(if present) to avoid
-        // deadlocks with VmsMonitoring updates to the same table.
-        // As the update is just for the size, we shouldn't care if its committed even if the wrapping transaction
-        // is rolled back.
-        TransactionSupport.executeInScope(TransactionScopeOption.Suppress, () -> {
-            getDiskImageDynamicDao().update(diskImageDynamic);
-            return null;
-        });
     }
 
     protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext, boolean active) {
