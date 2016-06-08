@@ -70,10 +70,11 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     protected GlusterGeoRepSession getSession(String masterVolumeName, Map<String, Object> innerMap) {
         GlusterGeoRepSession geoRepSession = new GlusterGeoRepSession();
         // sessionKey in the form - the uuid is the gluster server uuid on master
-        // <sessionKey>11ae7a03-e793-4270-8fc4-b42def8b3051:ssh://192.168.122.14::slave2</sessionKey>
+        // <sessionKey>11ae7a03-e793-4270-8fc4-b42def8b3051:ssh://192.168.122.14::slave2:bd52ddf1-9659-4168-8197-c62e9f3e855c</sessionKey>
         String sessionKey = (String) innerMap.get(SESSION_KEY);
         String sessSplit[] = sessionKey.split("([://]+)");
-        String slaveNode = sessSplit[sessSplit.length - 2];
+        // Older gluster versions doesn't have slave volume ID in the sessionKey, it is added in Glusterfs 3.7.12
+        String slaveNode = sessSplit[2];
         if(slaveNode.contains("@")) {
             String[] hostComponents = slaveNode.split("@");
             slaveNode = hostComponents[hostComponents.length - 1];
