@@ -11,10 +11,13 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.VmSlaPolicyUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -81,6 +84,9 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private final List<VM> vmsDiskPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
+
+    @Inject
+    VmSlaPolicyUtils vmSlaPolicyUtils;
 
     /**
      * vm device for the given vm and disk
@@ -481,6 +487,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 getImageStorageDomainMapDao().updateDiskProfileByImageGroupIdAndStorageDomainId(newDisk.getId(),
                         newDisk.getStorageIds().get(0),
                         newDisk.getDiskProfileId());
+                vmSlaPolicyUtils.refreshRunningVmsWithDiskProfile(newDisk.getDiskProfileId());
             }
         }
     }
