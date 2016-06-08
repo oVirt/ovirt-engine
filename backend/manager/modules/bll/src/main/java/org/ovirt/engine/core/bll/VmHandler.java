@@ -1119,6 +1119,44 @@ public class VmHandler {
         parametersStaticData.setDefaultDisplayType(defaultDisplayType);
     }
 
+    public static void autoSelectGraphicsDevice(Guid srcEntityId,
+                                                VmStatic parametersStaticData,
+                                                Cluster cluster,
+                                                Map<GraphicsType, GraphicsDevice> graphicsDevices,
+                                                Version compatibilityVersion) {
+        if (graphicsDevices.isEmpty() // if not set by user in params
+                && cluster != null) { // and Cluster is known
+            DisplayType defaultDisplayType = parametersStaticData.getDefaultDisplayType();
+
+            int osId = parametersStaticData.getOsId();
+
+            List<GraphicsType> sourceGraphics = VmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId);
+            // if the source graphics device is supported then use it
+            // otherwise choose the first supported graphics device
+            if (!VmValidationUtils.isGraphicsAndDisplaySupported(osId, compatibilityVersion, sourceGraphics, defaultDisplayType)) {
+                GraphicsType defaultGraphicsType = null;
+                List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, compatibilityVersion);
+                for (Pair<GraphicsType, DisplayType> pair : pairs) {
+                    if (pair.getSecond().equals(defaultDisplayType)) {
+                        defaultGraphicsType = pair.getFirst();
+                        break;
+                    }
+                }
+
+                if (defaultGraphicsType != null) {
+                    for (GraphicsType graphicsType : GraphicsType.values()) {// reset graphics devices
+                        graphicsDevices.put(graphicsType, null);
+                    }
+
+                    VmDeviceType vmDisplayType = defaultGraphicsType.getCorrespondingDeviceType();
+
+                    GraphicsDevice defaultGraphicsDevice = new GraphicsDevice(vmDisplayType);
+                    graphicsDevices.put(defaultGraphicsType, defaultGraphicsDevice);
+                }
+            }
+        }
+    }
+
     private static boolean isDisplayTypeSupported(DisplayType displayType, List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays) {
         for (Pair<GraphicsType, DisplayType> pair : graphicsAndDisplays) {
             if (displayType.equals(pair.getSecond())) {

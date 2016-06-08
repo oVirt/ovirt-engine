@@ -81,6 +81,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -135,10 +136,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             // API backward compatibility
             if (VmDeviceUtils.shouldOverrideSoundDevice(
                     getParameters().getMasterVm(),
-                    getVm() == null ? CompatibilityVersionUtils.getEffective(parameterMasterVm, getCluster())
-                            : getVm().getCompatibilityVersion(),
+                    getMasterVmCompatibilityVersion(),
                     getParameters().isSoundDeviceEnabled())) {
                 parameters.setSoundDeviceEnabled(true);
+            }
+
+            if (getParameters().isSoundDeviceEnabled() == null) {
+                parameters.setSoundDeviceEnabled(false);
             }
 
             if (getParameters().isConsoleEnabled() == null) {
@@ -146,10 +150,17 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
             VmHandler.updateDefaultTimeZone(parameterMasterVm);
             VmHandler.autoSelectUsbPolicy(getParameters().getMasterVm());
+
             VmHandler.autoSelectDefaultDisplayType(getVmId(),
                     getParameters().getMasterVm(),
                     getCluster(),
                     getParameters().getGraphicsDevices());
+
+            VmHandler.autoSelectGraphicsDevice(getVmId(),
+                    parameterMasterVm,
+                    getCluster(),
+                    getParameters().getGraphicsDevices(),
+                    getMasterVmCompatibilityVersion());
 
             separateCustomProperties(parameterMasterVm);
         }
@@ -168,13 +179,18 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         parameters.setUseCinderCommandCallback(!getCinderDisks().isEmpty());
     }
 
+    private Version getMasterVmCompatibilityVersion() {
+        return getVm() == null
+                ? CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), getCluster())
+                : getVm().getCompatibilityVersion();
+    }
+
     protected void separateCustomProperties(VmStatic parameterMasterVm) {
         if (getCluster() != null) {
             // Parses the custom properties field that was filled by frontend to
             // predefined and user defined fields
             VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                    getVm() == null ? CompatibilityVersionUtils.getEffective(parameterMasterVm, getCluster())
-                            : getVm().getCompatibilityVersion(), parameterMasterVm);
+                    getMasterVmCompatibilityVersion(), parameterMasterVm);
         }
     }
 
