@@ -45,7 +45,7 @@ public class VLanPanel extends VerticalPanel {
     }
 }
 
-class VLanElementPanel extends HorizontalPanel {
+class VLanElementPanel extends HostInterfaceHorizontalPanel {
 
     private static final ApplicationResources resources = AssetProvider.getResources();
 
