@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.compat.VersionTransform;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
@@ -73,7 +74,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
                 new AbstractTextColumn<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
-                        return object.getCompatibilityVersion().toString();
+                        return VersionTransform.getEayunVersion(object.getCompatibilityVersion()).getValue();
                     }
                 };
         compatibilityVersionColumn.makeSortable();

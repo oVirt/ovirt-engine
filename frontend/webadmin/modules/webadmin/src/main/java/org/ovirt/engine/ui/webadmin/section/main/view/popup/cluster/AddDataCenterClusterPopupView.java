@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.compat.VersionTransform;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -50,7 +51,7 @@ public class AddDataCenterClusterPopupView extends AbstractModelBoundPopupView<L
         dataCentersTable.addColumn(new AbstractEntityModelTextColumn<StoragePool>() {
             @Override
             public String getText(StoragePool entity) {
-                return entity.getCompatibilityVersion().getValue();
+                return VersionTransform.getEayunVersion(entity.getCompatibilityVersion()).getValue();
             }
         }, constants.comptVersDc());
     }

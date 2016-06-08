@@ -7,6 +7,7 @@
 		<!--======================COMPAT====================== -->
 		<!--Required by UICommon/Common's business entities -->
 		<include name="compat/Version.java" />
+		<include name="compat/VersionTransform.java" />
 		<include name="compat/RpmVersion.java" />
 		<!-- Required by common's entities -->
 		<include name="compat/StringHelper.java" />

@@ -13,7 +13,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ValueListBox;
 
 /**
  * List box widget that adapts to UiCommon list model items.

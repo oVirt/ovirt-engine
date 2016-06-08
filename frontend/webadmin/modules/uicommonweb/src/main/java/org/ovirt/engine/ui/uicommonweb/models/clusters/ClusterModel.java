@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.compat.VersionTransform;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -1925,6 +1926,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             public void onSuccess(Object model, Object result) {
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<Version> versions = (ArrayList<Version>) result;
+                versions = VersionTransform.cutVersionList(versions);
                 Version selectedVersion = clusterModel.getVersion().getSelectedItem();
                 clusterModel.getVersion().setItems(versions);
                 if (!clusterModel.getIsEdit() && (selectedVersion == null ||

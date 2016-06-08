@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
+import org.ovirt.engine.core.compat.VersionTransform;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
@@ -84,7 +85,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>> versionColumn = new AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                return object.getFirst().getCompatibilityVersion().getValue();
+                return VersionTransform.getEayunVersion(object.getFirst().getCompatibilityVersion()).getValue();
             }
         };
         versionColumn.makeSortable();
