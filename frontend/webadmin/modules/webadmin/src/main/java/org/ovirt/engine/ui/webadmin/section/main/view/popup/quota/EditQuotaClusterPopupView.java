@@ -91,9 +91,9 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
 
     private void addStyles() {
         memValueEditor.addContentWidgetContainerStyleName(style.textBoxWidth());
-        memValueEditor.addLabelStyleName(style.labelVisible());
+        memValueEditor.hideLabel();
         cpuValueEditor.addContentWidgetContainerStyleName(style.textBoxWidth());
-        cpuValueEditor.addLabelStyleName(style.labelVisible());
+        cpuValueEditor.hideLabel();
     }
 
     private void initRadioButtonEditors() {

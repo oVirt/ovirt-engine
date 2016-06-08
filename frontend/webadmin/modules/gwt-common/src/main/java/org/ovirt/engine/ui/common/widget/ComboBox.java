@@ -32,13 +32,13 @@ public class ComboBox<T> extends Composite {
         this.listBoxEditor = listBoxEditor;
         this.textBoxEditor = textBoxEditor;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        this.listBoxEditor.hideLabel();
+        this.textBoxEditor.hideLabel();
     }
 
     public void setUsePatternFly(boolean use) {
         listBoxEditor.setUsePatternFly(use);
         textBoxEditor.setUsePatternFly(use);
-        listBoxEditor.addLabelStyleName(style.listBoxLabel());
-        textBoxEditor.addLabelStyleName(style.textBoxLabel());
         if (!use) {
             addStyles();
         } else {

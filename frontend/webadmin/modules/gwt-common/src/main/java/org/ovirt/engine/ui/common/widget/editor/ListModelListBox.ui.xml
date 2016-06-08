@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
+
+    <ui:style type="org.ovirt.engine.ui.common.widget.editor.ListModelListBox.Style">
+        .button {
+            width: 100%;
+            padding-right: 25px;
+        }
+
+        .fullWidth {
+            width: 100%!important;
+        }
+
+        .scrollableMenu {
+            height: auto;
+            max-height: 130px;
+            overflow-x: hidden;
+            min-width: 50px;
+            width: auto;
+        }
+
+        .selected {
+            background-color: #0099d3!important;
+            border-color: #0076b7!important;
+            color: #fff!important;
+            padding-right: 40px!important;
+        }
+
+        .selectedValue {
+            display: inline-block;
+            position: relative;
+            left: 0px;
+            right: 0px;
+            overflow: hidden;
+            width: 100%;
+            text-align: left;
+        }
+
+        .liPosition {
+            position: relative;
+        }
+
+        .inlineBlock {
+            display: inline-block;
+        }
+
+        .checkIcon {
+            position: absolute;
+            right: 15px;
+            margin-top: 5px;
+        }
+
+        .labelContainer {
+            font-style: italic;
+            margin: 0px;
+            text-align: left;
+        }
+
+        .label {
+            padding-top: 5px;
+        }
+
+    </ui:style>
+
+    <g:FlowPanel ui:field="container">
+        <g:FlowPanel ui:field="dropdownPanel" addStyleNames="btn-group {style.fullWidth} dropdown">
+            <g:Button ui:field="dropdownButton" />
+        </g:FlowPanel>
+    </g:FlowPanel>
+
+</ui:UiBinder>
+

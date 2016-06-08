@@ -8,11 +8,10 @@
 
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView.Style">
         .overflow {
-            overflow: auto;
+            overflow: visible;
         }
 
         .diskListPanel {
-            position: absolute;
             width: 100%;
         }
 

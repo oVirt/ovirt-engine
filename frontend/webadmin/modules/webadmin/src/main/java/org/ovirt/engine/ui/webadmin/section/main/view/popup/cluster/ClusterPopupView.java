@@ -31,10 +31,9 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelCheckBoxGroup;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.BootstrapListBoxListModelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -307,12 +306,12 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @UiField(provided = true)
     @Path(value = "migrationBandwidthLimitType.selectedItem")
     @WithElementId
-    BootstrapListBoxListModelEditor<MigrationBandwidthLimitType> migrationBandwidthLimitTypeEditor;
+    ListModelListBoxEditor<MigrationBandwidthLimitType> migrationBandwidthLimitTypeEditor;
 
     @UiField
     @Path(value = "customMigrationNetworkBandwidth.entity")
     @WithElementId
-    IntegerEntityModelEditor customMigrationBandwidthLimitEditor;
+    IntegerEntityModelLabelEditor customMigrationBandwidthLimitEditor;
 
     @UiField
     @WithElementId
@@ -515,6 +514,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         initAdditionalFeaturesExpander();
 
         serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
+        customMigrationBandwidthLimitEditor.hideLabel();
 
         addStyles();
         driver.initialize(this);
@@ -625,7 +625,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         migrateCompressedEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromGlobal()));
 
-        migrationBandwidthLimitTypeEditor = new BootstrapListBoxListModelEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
+        migrationBandwidthLimitTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
+        migrationBandwidthLimitTypeEditor.hideLabel();
         migrationPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer());
         migrationPolicyEditor.hideLabel();
         macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());

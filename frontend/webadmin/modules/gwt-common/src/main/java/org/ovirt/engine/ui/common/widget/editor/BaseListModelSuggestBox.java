@@ -17,6 +17,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
@@ -39,7 +40,8 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
 
     private T value;
 
-    private SuggestBox suggestBox;
+    @UiField(provided=true)
+    protected SuggestBox suggestBox;
 
     private ListModelSuggestionDisplay suggestionDisplay;
 

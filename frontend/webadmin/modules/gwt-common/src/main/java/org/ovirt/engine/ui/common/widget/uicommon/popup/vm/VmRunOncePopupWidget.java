@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -33,32 +34,30 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceModel> {
 
     interface Driver extends UiCommonEditorDriver<RunOnceModel, VmRunOncePopupWidget> {
     }
+    private static final String CONTENT = "content";  //$NON-NLS-1$
 
     interface ViewUiBinder extends UiBinder<ScrollPanel, VmRunOncePopupWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -68,35 +67,32 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    interface Style extends CssResource {
-        String attachImageCheckBoxLabel();
-
-        String attachImageSelectBoxLabel();
-
-        String attachImageSelectbox();
-
-    }
-
-    @UiField
-    Style style;
-
     @UiField
     @WithElementId
     DisclosurePanel generalBootOptionsPanel;
+
+    @UiField
+    Container generalBootOptionsContainer;
 
     @UiField
     @WithElementId
     DisclosurePanel linuxBootOptionsPanel;
 
     @UiField
+    Container linuxBootOptionsContainer;
+
+    @UiField
     @WithElementId
     DisclosurePanel initialRunPanel;
 
     @UiField
-    @WithElementId
-    VerticalPanel runOnceSpecificSysprepOptions;
+    Container initialRunContainer;
 
     @UiField
+    @WithElementId
+    FlowPanel runOnceSpecificSysprepOptions;
+
+    @UiField(provided = true)
     @Path(value = "isCloudInitEnabled.entity")
     @WithElementId
     EntityModelCheckBoxEditor cloudInitEnabledEditor;
@@ -111,16 +107,28 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     DisclosurePanel systemPanel;
 
     @UiField
+    Container systemContainer;
+
+    @UiField
     @WithElementId
     DisclosurePanel hostPanel;
+
+    @UiField
+    Container hostContainer;
 
     @UiField
     @WithElementId
     DisclosurePanel displayProtocolPanel;
 
     @UiField
+    Container displayProtocolContainer;
+
+    @UiField
     @WithElementId
     DisclosurePanel customPropertiesPanel;
+
+    @UiField
+    Container customPropertiesContainer;
 
     @UiField
     @Path(value = "floppyImage.selectedItem")
@@ -246,7 +254,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     ButtonBase bootSequenceDownButton;
 
     @UiField
-    AbsolutePanel bootSequencePanel;
+    Column bootSequenceColumn;
 
     @UiField
     @Ignore
@@ -298,7 +306,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiFactory
     protected DisclosurePanel createPanel(String label) {
@@ -313,50 +320,32 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initBootSequenceBox();
 
-        localize();
         addStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
+
+        fixStylesForPatternfly();
     }
 
-    void localize() {
-        // Boot Options
-        runAsStatelessEditor.setLabel(constants.runOncePopupRunAsStatelessLabel());
-        runAndPauseEditor.setLabel(constants.runOncePopupRunAndPauseLabel());
-        attachFloppyEditor.setLabel(constants.runOncePopupAttachFloppyLabel());
-        attachIsoEditor.setLabel(constants.runOncePopupAttachIsoLabel());
-        bootSequenceLabel.setText(constants.runOncePopupBootSequenceLabel());
-
-        // Linux Boot Options
-        kernelImageEditor.setLabel(constants.runOncePopupKernelPathLabel());
-        initrdImageEditor.setLabel(constants.runOncePopupInitrdPathLabel());
-        kernelParamsEditor.setLabel(constants.runOncePopupKernelParamsLabel());
-
-        // Cloud Init
-        cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabel());
-
-        // WindowsSysprep
-        sysprepToEnableLabel.setText(constants.runOnceSysPrepToEnableLabel());
-        sysPrepDomainNameListBoxEditor.setLabel(constants.runOncePopupSysPrepDomainNameLabel());
-        useAlternateCredentialsEditor.setLabel(constants.runOnceUseAlternateCredentialsLabel());
-        sysPrepUserNameEditor.setLabel(constants.runOncePopupSysPrepUserNameLabel());
-        sysPrepPasswordEditor.setLabel(constants.runOncePopupSysPrepPasswordLabel());
-        sysPrepPasswordVerificationEditor.setLabel(constants.runOncePopupSysPrepPasswordVerificationLabel());
-
-        // Display Protocol
-        displayConsoleVncEditor.setLabel(constants.runOncePopupDisplayConsoleVncLabel());
-        vncKeyboardLayoutEditor.setLabel(constants.vncKeyboardLayoutVmPopup());
-
-        displayConsoleSpiceEditor.setLabel(constants.runOncePopupDisplayConsoleSpiceLabel());
-        spiceFileTransferEnabledEditor.setLabel(constants.spiceFileTransferEnabled());
-        spiceCopyPasteEnabledEditor.setLabel(constants.spiceCopyPasteEnabled());
-
-        // System Tab
-        emulatedMachine.setLabel(constants.emulatedMachineLabel());
-        customCpu.setLabel(constants.cpuModelLabel());
-
-        // Host Tab
-        isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
+    private void fixStylesForPatternfly() {
+        generalBootOptionsContainer.removeStyleName(CONTENT);
+        generalBootOptionsContainer.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        linuxBootOptionsContainer.removeStyleName(CONTENT);
+        linuxBootOptionsContainer.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        initialRunContainer.removeStyleName(CONTENT);
+        initialRunContainer.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        systemContainer.removeStyleName(CONTENT);
+        systemContainer.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        hostContainer.removeStyleName(CONTENT);
+        hostContainer.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        displayProtocolContainer.removeStyleName(CONTENT);
+        displayProtocolContainer.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        customPropertiesContainer.removeStyleName(CONTENT);
+        customPropertiesContainer.getParent().getElement().getStyle().setOverflow(Overflow.VISIBLE);
+        floppyImageEditor.hideLabel();
+        isoImageEditor.hideLabel();
+        kernelImageEditor.hideLabel();
+        defaultHostEditor.hideLabel();
     }
 
     void initCheckBoxEditors() {
@@ -368,6 +357,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         useAlternateCredentialsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloudInitEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void initListBoxEditors() {
@@ -410,19 +400,13 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         sysPrepDomainNameListBoxEditor = new ListModelListBoxEditor<>();
         sysPrepDomainNameTextBoxEditor = new StringEntityModelTextBoxEditor();
 
-        sysPrepDomainNameListBoxEditor.asListBox().addDomHandler(new FocusHandler() {
-            @Override
-            public void onFocus(FocusEvent event) {
-                sysPrepDomainNameListBoxEditor.asListBox().setSelectedIndex(-1);
-            }
-        }, FocusEvent.getType());
+        sysPrepDomainNameListBoxEditor.asListBox().addValueChangeHandler(new ValueChangeHandler<String>() {
 
-        sysPrepDomainNameListBoxEditor.asListBox().addDomHandler(new ChangeHandler() {
             @Override
-            public void onChange(ChangeEvent event) {
+            public void onValueChange(ValueChangeEvent<String> event) {
                 runOnceModel.sysPrepListBoxChanged();
             }
-        }, ChangeEvent.getType());
+        });
 
         sysPrepDomainNameComboBox = new ComboBox<>(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
 
@@ -450,15 +434,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void initBootSequenceBox() {
         bootSequenceBox = new ListBox(false);
-        bootSequenceBox.setWidth("475px"); //$NON-NLS-1$
         bootSequenceBox.setHeight("60px"); //$NON-NLS-1$
-
-        VerticalPanel boxPanel = new VerticalPanel();
-        boxPanel.setWidth("100%"); //$NON-NLS-1$
-        boxPanel.add(bootSequenceBox);
-        bootSequencePanel.add(boxPanel);
-
-        localizeBootSequenceButtons();
+        bootSequenceBox.setWidth("100%"); //$NON-NLS-1$
+        bootSequenceColumn.add(bootSequenceBox);
     }
 
     void addStyles() {
@@ -466,12 +444,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         initialRunPanel.setVisible(false);
         systemPanel.setVisible(true);
         hostPanel.setVisible(true);
-        attachFloppyEditor.addContentWidgetContainerStyleName(style.attachImageCheckBoxLabel());
-        attachIsoEditor.addContentWidgetContainerStyleName(style.attachImageCheckBoxLabel());
-        floppyImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
-        isoImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
-        floppyImageEditor.addContentWidgetContainerStyleName(style.attachImageSelectbox());
-        isoImageEditor.addContentWidgetContainerStyleName(style.attachImageSelectbox());
     }
 
     @Override
@@ -681,17 +653,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
                 bootSequenceUpButton.setEnabled(bootSequenceModel.getMoveItemUpCommand().getIsExecutionAllowed());
                 bootSequenceDownButton.setEnabled(bootSequenceModel.getMoveItemDownCommand().getIsExecutionAllowed());
-
-                // the setEnabled resets the label for some reason, so need to set it back
-                localizeBootSequenceButtons();
             }
 
         });
-    }
-
-    protected void localizeBootSequenceButtons() {
-        bootSequenceUpButton.setText(constants.bootSequenceUpButtonLabel());
-        bootSequenceDownButton.setText(constants.bootSequenceDownButtonLabel());
     }
 
     private void updateBootSequenceItems() {

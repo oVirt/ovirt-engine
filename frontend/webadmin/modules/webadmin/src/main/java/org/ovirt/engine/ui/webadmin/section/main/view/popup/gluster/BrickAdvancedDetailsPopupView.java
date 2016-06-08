@@ -216,17 +216,6 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         mountOptionsEditor.addContentWidgetContainerStyleName(style.generalValue());
         fileSystemEditor.addContentWidgetContainerStyleName(style.generalValue());
 
-        totalAllocatedEditor.addLabelStyleName(style.memStatLabel());
-        freeBlocksEditor.addLabelStyleName(style.memStatLabel());
-        freeFastbinBlocksEditor.addLabelStyleName(style.memStatLabel());
-        mmappedBlocksEditor.addLabelStyleName(style.memStatLabel());
-        spaceAllocatedMmappedEditor.addLabelStyleName(style.memStatLabel());
-        maxTotalAllocatedEditor.addLabelStyleName(style.memStatLabel());
-        spaceFreedFastbinEditor.addLabelStyleName(style.memStatLabel());
-        totalAllocatedSpaceEditor.addLabelStyleName(style.memStatLabel());
-        totalFreeSpaceEditor.addLabelStyleName(style.memStatLabel());
-        releasableFreeSpaceEditor.addLabelStyleName(style.memStatLabel());
-
         totalAllocatedEditor.addContentWidgetContainerStyleName(style.memStatValue());
         freeBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());
         freeFastbinBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());

@@ -11,11 +11,9 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
@@ -94,7 +92,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-    private static final UIConstants uiConstants = ConstantsManager.getInstance().getConstants();
 
     @Inject
     public NfsStorageView() {
@@ -138,7 +135,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         retransmissionsEditor.setLabel(constants.storagePopupNfsRetransmissionsLabel());
         timeoutEditor.setLabel(constants.storagePopupNfsTimeoutLabel());
         mountOptionsEditor.setLabel(constants.storagePopupAdditionalMountOptionsLabel());
-        mountOptionsEditor.setLabelTooltip(uiConstants.mountOptionsHint());
         expander.setTitleWhenCollapsed(constants.storagePopupConnectionLabel());
         expander.setTitleWhenExpanded(constants.storagePopupConnectionLabel());
     }
@@ -147,7 +143,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     public void edit(final NfsStorageModel object) {
         driver.edit(object);
 
-        EntityModel version = (EntityModel) object.getVersion().getSelectedItem();
+        EntityModel<NfsVersion> version = object.getVersion().getSelectedItem();
         versionListEditor.asEditor().setValue(version);
 
         pathExampleLabel.setVisible(object.getPath().getIsChangable());

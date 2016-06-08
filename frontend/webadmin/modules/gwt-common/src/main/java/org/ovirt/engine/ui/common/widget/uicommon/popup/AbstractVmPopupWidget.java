@@ -1418,7 +1418,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         defaultHostEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<VDS>(),
                 new ModeSwitchingVisibilityRenderer());
-        defaultHostEditor.asListBox().setVisibleItemCount(3);
         defaultHostEditor.hideLabel();
 
         migrationModeEditor =

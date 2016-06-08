@@ -4,55 +4,13 @@
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
-    <ui:style type="org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBox.Style">
-        .mainStyle,.enabledMainPanel,.disabledMainPanel {
-            display: inline-block;
-            border: 1px solid black;
-            vertical-align: middle;
-        }
-
-        .maxWidth {
-            width: 100%;
-        }
-
-        .suggestBoxStyle {
-            border-width: 0px;
-        }
-
-        .suggestBoxStyle_legacy {
-            vertical-align: top;
-            height: 15px;
-            padding-left: 4px;
-        }
-
-        .imagesWrapper {
-            float: right;
-        }
-
-        .dropDownStyle {
-            vertical-align: top;
-        }
-
-        .suggestBoxWrapperStyle_legacy {
-            height: 17px;
-        }
-
-        .suggestBoxWrapperStyle {
-            margin-right: 15px;
-        }
-
-        .enabledMainPanel {
-            background-color: white;
-        }
-    </ui:style>
-
-    <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.enabledMainPanel}">
-        <g:FlowPanel addStyleNames="{style.imagesWrapper}">
-            <g:Image ui:field="dropDownImage" addStyleNames="{style.dropDownStyle}" resource='{resources.comboBoxDropDownIcon}' />
-        </g:FlowPanel>
-
-        <g:FlowPanel addStyleNames="{style.suggestBoxWrapperStyle} {style.suggestBoxWrapperStyle_legacy} lmtalb_suggestboxWrapper_pfly_fix">
-            <g:SuggestBox addStyleNames="{style.suggestBoxStyle} {style.maxWidth} {style.suggestBoxStyle_legacy} lmtalb_suggestbox_pfly_fix gwt-ListBox" ui:field="suggestBox" />
+    <g:FlowPanel ui:field="mainPanel" addStyleNames="combobox-container">
+        <g:FlowPanel addStyleNames="input-group">
+            <g:SuggestBox ui:field="suggestBox" addStyleNames="combobox input-large form-control" />
+            <g:HTMLPanel ui:field="dropdownIcon" tag="span" addStyleNames="input-group-addon dropdown-toggle">
+                <g:HTMLPanel tag="span" addStyleNames="caret" />
+                <g:HTMLPanel tag="span" addStyleNames="glyphicon glyphicon-remove" />
+            </g:HTMLPanel>
         </g:FlowPanel>
     </g:FlowPanel>
 

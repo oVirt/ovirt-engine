@@ -26,8 +26,6 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
     }
 
     interface Style extends CssResource {
-        String isoImageEditorLabel();
-
         String isoImageEditorBox();
     }
 
@@ -49,8 +47,8 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
     }
 
     void addStyles() {
-        isoImageEditor.addLabelStyleName(style.isoImageEditorLabel());
         isoImageEditor.addContentWidgetContainerStyleName(style.isoImageEditorBox());
+        isoImageEditor.hideLabel();
     }
 
     @Override

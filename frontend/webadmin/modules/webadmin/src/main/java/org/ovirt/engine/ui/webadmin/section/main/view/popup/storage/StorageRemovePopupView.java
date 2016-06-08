@@ -77,7 +77,6 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
     }
 
     void addStyles() {
-        formatEditor.setLabelStyleName(style.formatLabel());
         formatEditor.addContentWidgetContainerStyleName(style.formatContentWidget());
     }
 

@@ -65,8 +65,6 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
         String labelEditorContent();
 
         String labelEditorWrapper();
-
-        String labelEditorsPanel();
     }
 
     @UiField
@@ -157,7 +155,6 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
     protected void addStyles() {
         numOfVfs.addContentWidgetContainerStyleName(style.valueWidth());
         labelsWidget.titleLabel.addStyleName(style.labelsTitle());
-        labelsWidget.scrollPanel.addStyleName(style.labelEditorsPanel());
     }
 
     interface Style extends CssResource {

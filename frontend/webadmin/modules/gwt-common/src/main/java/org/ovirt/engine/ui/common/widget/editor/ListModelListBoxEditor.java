@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.ui.ListBox;
 
 /**
  * Composite Editor that uses {@link ListModelListBox}.
@@ -35,12 +34,17 @@ public class ListModelListBoxEditor<T> extends AbstractValidatedWidgetWithLabel<
         this(renderer, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
-    public ListBox asListBox() {
-        return getContentWidget().asListBox();
+    public ListModelListBox<T> asListBox() {
+        return getContentWidget();
     }
 
     @Override
     public WidgetWithLabelEditor<T, ListModelListBoxEditor<T>> asEditor() {
         return editor;
+    }
+
+    @Override
+    public String getLabel() {
+        return editor.getText();
     }
 }

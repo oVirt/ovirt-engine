@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 
 public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImportGeneralModel> {
 
@@ -83,7 +83,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
         driver.cleanup();
     }
 
-    private Widget getOperatingSystemWidget() {
+    private IsWidget getOperatingSystemWidget() {
         ImportSource source = getModel().getSource();
         return source == ImportSource.EXPORT_DOMAIN ? os : operatingSystems;
     }

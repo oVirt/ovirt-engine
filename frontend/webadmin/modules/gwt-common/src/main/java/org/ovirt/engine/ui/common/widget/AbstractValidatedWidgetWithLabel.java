@@ -2,14 +2,15 @@ package org.ovirt.engine.ui.common.widget;
 
 import java.util.List;
 
-import org.gwtbootstrap3.client.ui.FormLabel;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
-import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.editor.EditorStateUpdateEvent;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+import org.ovirt.engine.ui.common.widget.label.HasWidgetLabels;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTooltip;
+import org.ovirt.engine.ui.common.widget.label.WidgetLabel;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -53,7 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?> & TakesValue<T> &
     HasValueChangeHandlers<T>> extends AbstractValidatedWidget
-        implements HasLabel, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, HasElementId, Focusable,
+        implements HasLabel, HasEnabledWithHints, HasWidgetLabels, HasAccess, HasAllKeyHandlers, HasElementId, Focusable,
         FocusableComponentsContainer, PatternFlyCompatible {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
@@ -86,7 +87,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     FlowPanel wrapperPanel;
 
     @UiField
-    FormLabel label;
+    WidgetLabel label;
 
     @UiField
     FlowPanel contentWidgetContainer;
@@ -94,15 +95,10 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     SimplePanel sizeContainer;
 
     @UiField
-    WidgetTooltip labelTooltip;
-
-    @UiField
     WidgetTooltip contentWidgetContainerTooltip;
 
     @UiField
     Style style;
-
-    protected String labelConfiguredTooltip = null;
 
     protected String contentWidgetContainerConfiguredTooltip = null;
 
@@ -131,8 +127,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         super.initWidget(wrapperWidget);
         contentWidgetContainer.add(contentWidget);
 
-        label.addStyleName(OvirtCss.LABEL_ENABLED);
-
         // Assign ID to content widget element if it's missing or empty
         Element contentWidgetElement = getContentWidgetElement();
         if (contentWidgetElement.getId() == null || contentWidgetElement.getId().isEmpty()) {
@@ -140,8 +134,11 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         }
     }
 
-    protected FormLabel getFormLabel() {
-        return label;
+    protected LabelWithTooltip getFormLabel() {
+        if (label instanceof LabelWithTooltip) {
+            return (LabelWithTooltip)label;
+        }
+        throw new IllegalStateException("No label defined in widget that requires a label"); //$NON-NLS-1$
     }
 
     /**
@@ -158,7 +155,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void setUsePatternFly(final boolean usePatternfly) {
         this.usePatternfly = usePatternfly;
         // toggle styles -- remove both PatternFly and non-PatternFly styles
-        removeLabelStyleName(style.label_legacy());
         removeContentWidgetStyleName(style.maxWidth());
         removeContentWidgetStyleName(Styles.FORM_CONTROL);
         removeContentWidgetContainerStyleName(style.contentWidgetContainer_legacy());
@@ -170,7 +166,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         // add the proper styles
         if (usePatternfly) {
             addContentWidgetStyleName(Styles.FORM_CONTROL);
-            addContentWidgetContainerStyleName(Styles.INPUT_GROUP);
             addContentWidgetContainerStyleName(style.maxWidth());
             if (!removeFormGroup) {
                 addWrapperStyleName(Styles.FORM_GROUP);
@@ -183,7 +178,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
             }
         }
         else {
-            addLabelStyleName(style.label_legacy());
             addContentWidgetStyleName(style.maxWidth());
             addContentWidgetContainerStyleName(style.contentWidgetContainer_legacy());
             addContentWidgetContainerStyleName("avw_contentWidgetContainer_pfly_fix"); //$NON-NLS-1$
@@ -200,7 +194,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     public void setLabelColSize(ColumnSize size) {
-        addLabelStyleName(size.getCssName());
+        getFormLabel().setAddStyleNames(size.getCssName());
     }
 
     public void setWidgetColSize(ColumnSize size) {
@@ -253,13 +247,16 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     @Override
-    public String getLabel() {
-        return label.getElement().getInnerText();
+    public void setLabel(String labelText) {
+        getFormLabel().setText(labelText);
     }
 
-    @Override
-    public void setLabel(String labelText) {
-        label.getElement().setInnerText(labelText);
+    public void setLabelTooltip(String tooltip) {
+        getFormLabel().setTooltip(tooltip);
+    }
+
+    public String getLabel() {
+        return getFormLabel().getText();
     }
 
     @Override
@@ -322,11 +319,10 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void setEnabled(boolean enabled) {
         contentWidget.setEnabled(enabled);
 
+        getFormLabel().setEnabled(enabled);
         if (enabled) {
-            getFormLabel().getElement().replaceClassName(OvirtCss.LABEL_DISABLED, OvirtCss.LABEL_ENABLED);
             setWidgetTooltip("");
-        } else {
-            getFormLabel().getElement().replaceClassName(OvirtCss.LABEL_ENABLED, OvirtCss.LABEL_DISABLED);
+            label.setEnabled(true);
         }
     }
 
@@ -334,6 +330,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void disable(String disabilityHint) {
         setEnabled(false);
         setWidgetTooltip(disabilityHint);
+        label.disable(disabilityHint);
     }
 
     @Override
@@ -341,9 +338,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         if (editorStateValid) {
             super.markAsValid();
         }
-        labelTooltip.setText(labelConfiguredTooltip);
-        labelTooltip.reconfigure();
-        setLabelTooltipStyle(labelConfiguredTooltip);
+        label.setEnabled(true);
         contentWidgetContainerTooltip.setText(contentWidgetContainerConfiguredTooltip);
         contentWidgetContainerTooltip.reconfigure();
     }
@@ -352,16 +347,24 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void markAsInvalid(List<String> validationHints) {
         super.markAsInvalid(validationHints);
         String tooltipText = getValidationTooltipText(validationHints);
-        labelTooltip.setText(tooltipText);
-        labelTooltip.reconfigure();
-        addLabelStyleName(OvirtCss.HAS_TOOLTIP);
+        label.disable(tooltipText);
         contentWidgetContainerTooltip.setText(tooltipText);
         contentWidgetContainerTooltip.reconfigure();
     }
 
     public void setWidgetTooltip(String text) {
         setContentWidgetContainerTooltip(text);
-        setLabelTooltip(text);
+    }
+
+    @Override
+    public void removeLabel(WidgetLabel label) {
+        label.setFor(null);
+    }
+
+    @Override
+    public void addLabel(WidgetLabel label) {
+        label.setFor(getContentWidgetElement().getId());
+        this.label = label;
     }
 
     public void setContentWidgetContainerTooltip(String tooltipText) {
@@ -370,27 +373,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidgetContainerTooltip.reconfigure();
     }
 
-    public void setLabelTooltip(String tooltipText) {
-        labelConfiguredTooltip = tooltipText;
-        labelTooltip.setText(tooltipText);
-        labelTooltip.reconfigure();
-        setLabelTooltipStyle(tooltipText);
-    }
-
-    /**
-     * Toggle the label tooltip style (to give a visual clue that this label can be hovered over).
-     */
-    protected void setLabelTooltipStyle(String tooltipText) {
-        if (tooltipText == null || tooltipText.isEmpty()) {
-            removeLabelStyleName(OvirtCss.HAS_TOOLTIP);
-        }
-        else {
-            addLabelStyleName(OvirtCss.HAS_TOOLTIP);
-        }
-    }
-
     // set styleNames on my components
-
     public void addContentWidgetStyleName(String styleName) {
         getContentWidget().asWidget().addStyleName(styleName);
     }
@@ -415,24 +398,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidgetContainer.removeStyleName(styleName);
     }
 
-    public void addLabelStyleName(String styleName) {
-        getFormLabel().addStyleName(styleName);
-    }
-
-    public void removeLabelStyleName(String styleName) {
-        getFormLabel().removeStyleName(styleName);
-    }
-
-    public void setLabelStyleName(String styleName) {
-        getFormLabel().setStyleName(styleName);
-    }
-
     /**
      * @param styleNames space or comma-delimited list of style names
      */
     public void addLabelStyleNames(String styleNames) {
         for (String name : styleNames.split("[,\\s]+")) { //$NON-NLS-1$
-            addLabelStyleName(name);
+            getFormLabel().setAddStyleNames(name);
         }
     }
 
@@ -457,7 +428,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
 
     public void hideLabel() {
-        getFormLabel().setVisible(false);
+        getFormLabel().asWidget().setVisible(false);
     }
 
     public VisibilityRenderer getRenderer() {

@@ -87,10 +87,6 @@
             margin-top: 32px;
         }
 
-        .labelEditorsPanel {
-            height: 100% !important;
-            overflow: hidden !important;
-        }
 	</ui:style>
 
 	<d:SimpleDialogPanel width="515px" height="600px">

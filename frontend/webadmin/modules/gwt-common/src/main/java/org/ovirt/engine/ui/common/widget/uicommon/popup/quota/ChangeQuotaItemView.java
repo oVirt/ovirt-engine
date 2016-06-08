@@ -75,10 +75,9 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
         updateEditorStyle(quotaListEditor, editorStyle);
     }
 
-    private void updateEditorStyle(AbstractValidatedWidgetWithLabel editor, String contentStyle) {
+    private void updateEditorStyle(AbstractValidatedWidgetWithLabel<?, ?> editor, String contentStyle) {
         editor.setContentWidgetContainerStyleName(contentStyle);
         editor.addWrapperStyleName(style.editorWrapper());
-        editor.setLabelStyleName(style.editorLabel());
     }
 
     @Override

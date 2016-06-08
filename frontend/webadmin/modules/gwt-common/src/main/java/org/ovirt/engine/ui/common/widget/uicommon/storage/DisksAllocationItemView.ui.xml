@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationItemView.WidgetStyle">
+    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationItemView.WidgetStyle">
 
-		.editorLabel {
-			display: none;
-		}
+        .editorLabel {
+            display: none;
+        }
 
-		.editorContent,
-		.editorContentNarrow {
-			width: 98px;
-			margin: 2px;
-			line-height: 15px;
-		}
+        .editorContent,
+        .editorContentNarrow {
+            width: 98px;
+            margin: 2px;
+            line-height: 15px;
+        }
 
-		.editorContentNarrow {
-			width: 75px;
-		}
-		
-		.editorWrapper {
-			display: block;
-		}
-			
-	</ui:style>	
-	
-	<g:HorizontalPanel width="100%">
-		<ge:StringEntityModelLabelEditor ui:field="diskAliasLabel" />
-		<ge:StringEntityModelTextBoxEditor ui:field="diskAliasEditor" />
-		<ge:StringEntityModelLabelEditor ui:field="diskSizeLabel" />
-		<ge:StringEntityModelLabelEditor ui:field="sourceStorageLabel" />
-		<e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
-		<e:ListModelListBoxEditor ui:field="volumeFormatListEditor" />
-		<e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
-		<e:ListModelListBoxEditor ui:field="storageListEditor" />
-		<e:ListModelListBoxEditor ui:field="diskProfileListEditor" />
-		<e:ListModelListBoxEditor ui:field="quotaListEditor" />
-	</g:HorizontalPanel>
+        .editorContentNarrow {
+            width: 75px;
+        }
+
+        .editorWrapper {
+            display: block;
+        }
+
+    </ui:style>
+
+    <g:HorizontalPanel width="100%">
+        <l:EnableableFormLabel ui:field="diskAliasLabel" />
+        <ge:StringEntityModelTextBoxEditor ui:field="diskAliasEditor" usePatternFly="true" />
+        <l:EnableableFormLabel ui:field="diskSizeLabel" />
+        <l:EnableableFormLabel ui:field="sourceStorageLabel" />
+        <e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
+        <e:ListModelListBoxEditor ui:field="volumeFormatListEditor" />
+        <e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
+        <e:ListModelListBoxEditor ui:field="storageListEditor" />
+        <e:ListModelListBoxEditor ui:field="diskProfileListEditor" />
+        <e:ListModelListBoxEditor ui:field="quotaListEditor" />
+    </g:HorizontalPanel>
 
 </ui:UiBinder>

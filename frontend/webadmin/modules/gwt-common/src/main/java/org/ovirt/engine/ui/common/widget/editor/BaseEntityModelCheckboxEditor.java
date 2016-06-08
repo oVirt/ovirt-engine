@@ -53,7 +53,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         // align content widget container to the left and hide the LabelElement
         if (useCheckBoxWidgetLabel) {
             getContentWidgetContainer().getElement().getStyle().setFloat(Float.LEFT);
-            getFormLabel().setVisible(false);
+            getFormLabel().asWidget().setVisible(false);
             if (useFullWidthIfAvailable) {
                 getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
             }

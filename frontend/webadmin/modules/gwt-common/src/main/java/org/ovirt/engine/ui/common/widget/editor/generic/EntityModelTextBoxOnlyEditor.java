@@ -31,7 +31,7 @@ public class EntityModelTextBoxOnlyEditor<T> extends AbstractValidatedWidgetWith
 
         // Fix styles.
         if (!isUsePatternfly()) {
-            getFormLabel().setVisible(false);
+            getFormLabel().asWidget().setVisible(false);
             com.google.gwt.dom.client.Style panelStyle = getContentWidgetContainer().getElement().getStyle();
             panelStyle.setFloat(com.google.gwt.dom.client.Style.Float.NONE);
         }

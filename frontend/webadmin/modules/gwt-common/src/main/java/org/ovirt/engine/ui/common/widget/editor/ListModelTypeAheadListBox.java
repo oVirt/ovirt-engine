@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor.SuggestBoxRenderer;
@@ -27,19 +26,17 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 /**
@@ -49,24 +46,13 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
  */
 public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
-    private static final String LMTALB_LISTBOX_PFLY_FIX = "lmtalb_listbox_pfly_fix"; //$NON-NLS-1$
-    private static final String LMTALB_WRAPPER_LISTBOX_PFLY_FIX = "lmtalb_suggestboxWrapper_pfly_fix"; //$NON-NLS-1$
-    private static final String LMTALB_SUGGESTBOX_PFLY_FIX = "lmtalb_suggestbox_pfly_fix"; //$NON-NLS-1$
-    private static final String PATTERNFLY_IMAGE_HEIGHT = "26px"; //$NON-NLS-1$
-
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-
-    @UiField(provided = true)
-    SuggestBox suggestBox;
-
-    @UiField
-    Image dropDownImage;
 
     @UiField
     FlowPanel mainPanel;
 
     @UiField
-    Style style;
+    HTMLPanel dropdownIcon;
 
     private final SuggestBoxRenderer<T> renderer;
 
@@ -81,19 +67,6 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
     private HandlerRegistration eventHandler;
 
-    interface Style extends CssResource {
-
-        String enabledMainPanel();
-
-        String disabledMainPanel();
-
-        String suggestBoxStyle_legacy();
-
-        String suggestBoxWrapperStyle_legacy();
-
-        String maxWidth();
-    }
-
     interface ViewUiBinder extends UiBinder<FlowPanel, ListModelTypeAheadListBox<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -104,29 +77,12 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         this.renderer = renderer;
         this.autoAddToValidValues = autoAddToValidValues;
 
-        suggestBox = asSuggestBox();
-
         // this needs to be handled by focus on text box and clicks on drop down image
         setAutoHideEnabled(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
-        mainPanel.addStyleName(LMTALB_LISTBOX_PFLY_FIX);
-
+        suggestBox.getElement().setAttribute("autocomplete", "off"); //$NON-NLS-1$ //$NON-NLS-2$
+        dropdownIcon.getElement().setAttribute("data-dropdown", "dropdown"); //$NON-NLS-1$ //$NON-NLS-2$
         registerListeners();
-    }
-
-    public void setUsePatternFly(final boolean usePatternFly) {
-        if (usePatternFly) {
-            mainPanel.removeStyleName(LMTALB_LISTBOX_PFLY_FIX);
-            mainPanel.removeStyleName(Styles.FORM_CONTROL);
-            mainPanel.addStyleName(style.maxWidth());
-            suggestBox.removeStyleName(style.suggestBoxStyle_legacy());
-            suggestBox.removeStyleName(LMTALB_SUGGESTBOX_PFLY_FIX);
-            suggestBox.addStyleName(Styles.FORM_CONTROL);
-            suggestBox.getParent().removeStyleName(LMTALB_WRAPPER_LISTBOX_PFLY_FIX);
-            suggestBox.getParent().removeStyleName(style.suggestBoxWrapperStyle_legacy());
-            dropDownImage.setHeight(PATTERNFLY_IMAGE_HEIGHT);
-        }
     }
 
     private void registerListeners() {
@@ -143,14 +99,12 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             }
         }));
 
-        handlerRegistrations.add(dropDownImage.addMouseDownHandler(new FocusHandlerEnablingMouseHandlers(handlers)));
-        handlerRegistrations.add(dropDownImage.addMouseUpHandler(new FocusHandlerEnablingMouseHandlers(handlers) {
-            @Override
-            public void onMouseUp(MouseUpEvent event) {
-                super.onMouseUp(event);
-                switchSuggestions();
-            }
-        }));
+        handlerRegistrations.add(dropdownIcon.addDomHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    switchSuggestions();
+                }
+        }, ClickEvent.getType()));
 
         handlerRegistrations.add(getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseDownEvent.getType()));
 
@@ -293,12 +247,6 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     }
 
     @Override
-    public void setValue(T value) {
-        addToValidValuesIfNeeded(value);
-        super.setValue(value);
-    }
-
-    @Override
     public void setValue(T value, boolean fireEvents) {
         addToValidValuesIfNeeded(value);
         super.setValue(value, fireEvents);
@@ -342,17 +290,6 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             asSuggestBox().getElement().getStyle().setColor("gray"); //$NON-NLS-1$
         } else {
             asSuggestBox().getElement().getStyle().clearColor();
-        }
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-
-        if (enabled) {
-            mainPanel.getElement().replaceClassName(style.disabledMainPanel(), style.enabledMainPanel());
-        } else {
-            mainPanel.getElement().replaceClassName(style.enabledMainPanel(), style.disabledMainPanel());
         }
     }
 
@@ -421,7 +358,7 @@ class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
     private SuggestBoxRenderer<T> renderer;
     private final SuggestionMatcher matcher;
 
-    // inited to avoid null checks
+    // intended to avoid null checks
     private Collection<T> data = new ArrayList<>();
 
     public RenderableSuggestOracle(SuggestBoxRenderer<T> renderer, SuggestionMatcher matcher) {

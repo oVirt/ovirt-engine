@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /*
@@ -29,10 +28,6 @@ public class ListModelListBoxOnlyEditor<T> extends AbstractValidatedWidgetWithLa
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 
-    public ListBox asListBox() {
-        return getContentWidget().asListBox();
-    }
-
     @Override
     public WidgetWithLabelEditor<T, ListModelListBoxOnlyEditor<T>> asEditor() {
         return editor;
@@ -44,7 +39,7 @@ public class ListModelListBoxOnlyEditor<T> extends AbstractValidatedWidgetWithLa
 
         if (!isUsePatternfly()) {
             // Fix styles.
-            getFormLabel().setVisible(false);
+            hideLabel();
             com.google.gwt.dom.client.Style panelStyle = getContentWidgetContainer().getElement().getStyle();
             panelStyle.setFloat(com.google.gwt.dom.client.Style.Float.NONE);
         }

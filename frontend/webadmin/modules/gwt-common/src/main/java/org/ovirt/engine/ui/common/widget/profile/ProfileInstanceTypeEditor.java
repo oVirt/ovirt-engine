@@ -70,7 +70,7 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
     public void edit(final VnicInstanceType model) {
         driver.edit(model);
 
-        profileEditor.addLabelStyleName(style.noDisplay());
+        profileEditor.hideLabel();
         profileEditor.addContentWidgetContainerStyleName(style.contentStyle());
         profileEditor.setElementId(ElementIdUtils.createElementId(elementId, model.getNetworkInterface().getName()));
         syncSelectedItemWithNetworkInterface(model);

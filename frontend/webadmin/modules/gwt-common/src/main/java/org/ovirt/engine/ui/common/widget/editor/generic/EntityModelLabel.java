@@ -28,6 +28,7 @@ public class EntityModelLabel<T> extends ValueBox<T> implements EditorWidget<T, 
 
     @Override
     public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
         if (enabled) {
             getElement().replaceClassName(OvirtCss.LABEL_DISABLED, OvirtCss.LABEL_ENABLED);
         } else {

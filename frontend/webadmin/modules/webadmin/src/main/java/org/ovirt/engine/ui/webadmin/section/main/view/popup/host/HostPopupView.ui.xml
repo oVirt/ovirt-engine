@@ -451,7 +451,7 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <ge:TextEntityModelEditor ui:field="kernelCmdlineText" addStyleNames="{style.monospace}"/>
+                                        <ge:StringEntityModelLabelEditor ui:field="kernelCmdlineText" addStyleNames="{style.monospace}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>

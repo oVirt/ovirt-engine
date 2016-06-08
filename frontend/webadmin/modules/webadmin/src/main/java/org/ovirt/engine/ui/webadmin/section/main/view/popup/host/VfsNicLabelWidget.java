@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 import java.util.Collection;
 import java.util.Set;
 
-import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
+import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsNicLabelModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -19,7 +19,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VfsNicLabelWidget extends ScrollableAddRemoveRowWidget<VfsNicLabelModel, ListModel<String>, NicLabelEditor> implements HasValueChangeHandlers<Set<String>> {
+public class VfsNicLabelWidget extends AddRemoveRowWidget<VfsNicLabelModel, ListModel<String>, NicLabelEditor> implements HasValueChangeHandlers<Set<String>> {
 
     private String labelEditorStyle;
     private String editorWrapperStyle;

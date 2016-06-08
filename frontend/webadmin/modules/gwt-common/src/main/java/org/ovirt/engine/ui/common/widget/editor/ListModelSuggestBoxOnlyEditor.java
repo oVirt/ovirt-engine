@@ -9,7 +9,7 @@ public class ListModelSuggestBoxOnlyEditor extends ListModelSuggestBoxEditor {
     @Override
     protected void initWidget(Widget wrapperWidget) {
         super.initWidget(wrapperWidget);
-        getFormLabel().setVisible(false);
+        hideLabel();
         getContentWidgetContainer().getElement().getStyle().setFloat(Float.NONE);
     }
 

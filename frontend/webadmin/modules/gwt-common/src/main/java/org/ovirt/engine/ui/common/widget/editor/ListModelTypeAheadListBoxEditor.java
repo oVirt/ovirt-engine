@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
@@ -54,9 +55,10 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         return editor;
     }
 
-    public void setUsePatternFly(final boolean usePatternFly) {
-        super.setUsePatternFly(usePatternFly);
-        getContentWidget().setUsePatternFly(usePatternFly);
+    @Override
+    public void setUsePatternFly(final boolean usePatternfly) {
+        super.setUsePatternFly(usePatternfly);
+        removeContentWidgetStyleName(Styles.FORM_CONTROL);
     }
 
     @Override

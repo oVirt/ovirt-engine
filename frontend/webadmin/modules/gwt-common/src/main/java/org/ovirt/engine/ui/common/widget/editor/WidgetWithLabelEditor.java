@@ -136,4 +136,8 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
             ((HasCleanup) widgetWithLabel).cleanup();
         }
     }
+
+    public String getText() {
+        return widgetWithLabel.getLabel();
+    }
 }

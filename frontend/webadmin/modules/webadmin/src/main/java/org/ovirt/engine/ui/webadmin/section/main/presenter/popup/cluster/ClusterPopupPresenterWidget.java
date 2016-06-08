@@ -36,6 +36,7 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
         HasEnabledWithHints getMigrationBandwidthLimitTypeEditor();
 
         HasEnabledWithHints getCustomMigrationBandwidthLimitEditor();
+
         void updateMacPool(MacPoolModel macPoolModel);
 
         HasUiCommandClickHandlers getMacPoolButton();
@@ -87,6 +88,7 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
                             AsyncDataProvider.getInstance().getMigrationPoliciesSupportedVersions(), ", "); //$NON-NLS-1$
                     final String message = messages.onlyAvailableInCompatibilityVersions(supportedVersions);
                     getView().getMigrationBandwidthLimitTypeEditor().disable(message);
+                    getView().getMigrationBandwidthLimitTypeEditor().setEnabled(false);
                     updateCustomMigrationBandwidthLimitEnabledState(model, message);
                 }
             }

@@ -370,7 +370,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         initListBoxEditors();
         initComboBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
+        sysprepScriptEditor.hideLabel();
+        customScriptEditor.hideLabel();
         initAdvancedParameterExpanders();
 
         localize();
@@ -510,7 +511,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     }
 
     void addStyles() {
-        networkListEditor.addLabelStyleName(style.displayNone());
+        networkListEditor.hideLabel();
         setNetworkDetailsStyle(false);
         setNetworkStaticDetailsStyle(false);
 

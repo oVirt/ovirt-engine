@@ -19,8 +19,8 @@
     }
     </ui:style>
 
-    <g:ScrollPanel ui:field="scrollPanel">
+    <g:FlowPanel>
         <g:FlowPanel ui:field="contentPanel" addStyleNames="{style.margin}"/>
-    </g:ScrollPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

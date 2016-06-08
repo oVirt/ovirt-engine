@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.common.widget.tooltip;
 
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
-import com.google.gwt.user.client.ui.Widget;
+
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * Wrapper around Bootstrap Tooltip that sets up oVirt-specific config values.
@@ -9,8 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class WidgetTooltip extends Tooltip {
 
-    public WidgetTooltip(Widget w) {
-        super(w);
+    public WidgetTooltip(IsWidget w) {
+        super(w.asWidget());
         init();
     }
 

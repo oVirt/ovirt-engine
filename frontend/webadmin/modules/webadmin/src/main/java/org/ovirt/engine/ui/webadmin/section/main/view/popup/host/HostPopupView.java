@@ -41,10 +41,10 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.TextEntityModelEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -411,7 +411,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     @Path("kernelCmdline.entity")
-    TextEntityModelEditor kernelCmdlineText;
+    StringEntityModelLabelEditor kernelCmdlineText;
 
     @UiField
     @Ignore
@@ -428,8 +428,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
-
-    private static final int VISIBLE_ITEM_COUNT = 3;
 
     @Inject
     public HostPopupView(EventBus eventBus, FenceAgentsEditor fenceAgentEditor,
@@ -548,7 +546,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         labelEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<org.ovirt.engine.core.common.businessentities.Label>(),
                 new VisibilityRenderer.SimpleVisibilityRenderer());
-        labelEditor.asListBox().setVisibleItemCount(VISIBLE_ITEM_COUNT);
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -886,7 +883,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         if (items == null) {
             return;
         }
-        int i = 0;
+
         // Recreate SPM related controls.
         for (Object item : items) {
 
@@ -910,7 +907,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             Column column = new Column(ColumnSize.LG_12, rb);
             row.add(column);
             spmContainer.add(row);
-            i++;
         }
     }
 

@@ -53,8 +53,16 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
         getLabel().setText(text);
     }
 
+    public String getText() {
+        return getLabel().getText();
+    }
+
     private EnableableFormLabel getLabel() {
         return (EnableableFormLabel) tooltip.getWidget();
+    }
+
+    public void setTooltip(String tooltipText) {
+        tooltip.setText(tooltipText);
     }
 
     @Override

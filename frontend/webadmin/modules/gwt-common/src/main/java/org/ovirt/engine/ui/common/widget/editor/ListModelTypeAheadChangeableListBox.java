@@ -46,13 +46,6 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
         grayOutPlaceholderText(isEmptyReplace);
     }
 
-    @Override
-    protected void showAllSuggestions() {
-        String lastText = suggestBox.getText();
-        super.showAllSuggestions();
-        suggestBox.setText(lastText);
-    }
-
     protected void setNullReplacementString(String nullReplacementText) {
         this.nullReplacementText = nullReplacementText;
     }

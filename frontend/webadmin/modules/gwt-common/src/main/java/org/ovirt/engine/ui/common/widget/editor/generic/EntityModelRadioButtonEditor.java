@@ -49,7 +49,7 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
         if (useRadioButtonWidgetLabel) {
             getContentWidgetContainer().getElement().getStyle().setFloat(Float.LEFT);
             getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
-            getFormLabel().setVisible(false);
+            hideLabel();
         }
         // patternfly hacks
         getContentWidgetElement().addClassName("cbe_checkbox_pfly_fix"); //$NON-NLS-1$
@@ -62,16 +62,6 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
     @Override
     public WidgetWithLabelEditor<Boolean, EntityModelRadioButtonEditor> asEditor() {
         return editor;
-    }
-
-    @Override
-    protected void applyCommonValidationStyles() {
-        // Suppress radio button styling, as different browsers behave
-        // differently when styling radio button input elements
-        getValidatedWidgetStyle().setBorderStyle(BorderStyle.NONE);
-        if (!isUsePatternfly()) {
-            getValidatedWidgetStyle().setPadding(5, Unit.PX);
-        }
     }
 
     @Override

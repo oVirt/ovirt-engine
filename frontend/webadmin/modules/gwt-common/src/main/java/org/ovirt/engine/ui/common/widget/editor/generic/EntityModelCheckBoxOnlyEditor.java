@@ -23,7 +23,7 @@ public class EntityModelCheckBoxOnlyEditor extends EntityModelCheckBoxEditor {
     protected void initWidget(Widget wrapperWidget) {
         super.initWidget(wrapperWidget);
 
-        getFormLabel().setVisible(false);
+        hideLabel();
         getContentWidget().getElement().getStyle().setFloat(Float.NONE);
     }
 }

@@ -14,8 +14,8 @@ import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -52,7 +52,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @UiField
     @Ignore
-    StringEntityModelLabelEditor diskAliasLabel;
+    EnableableFormLabel diskAliasLabel;
 
     @UiField
     @Path(value = "alias.entity")
@@ -60,11 +60,11 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @UiField
     @Ignore
-    StringEntityModelLabelEditor diskSizeLabel;
+    EnableableFormLabel diskSizeLabel;
 
     @UiField
     @Path(value = "sourceStorageDomainName.entity")
-    StringEntityModelLabelEditor sourceStorageLabel;
+    EnableableFormLabel sourceStorageLabel;
 
     @UiField(provided = true)
     @Path(value = "volumeType.selectedItem")
@@ -105,29 +105,36 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
+        diskAliasEditor.hideLabel();
     }
 
     void initEditors() {
         volumeTypeListEditor = new ListModelListBoxEditor<>(new EnumRenderer<VolumeType>());
+        volumeTypeListEditor.hideLabel();
 
         storageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
+        storageListEditor.hideLabel();
 
         volumeFormatListEditor = new ListModelListBoxEditor<>(new EnumRenderer<VolumeFormat>());
+        volumeFormatListEditor.hideLabel();
 
         sourceStorageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
+        sourceStorageListEditor.hideLabel();
 
         diskProfileListEditor = new ListModelListBoxEditor<>(new NameRenderer<DiskProfile>());
+        diskProfileListEditor.hideLabel();
 
         quotaListEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
+        quotaListEditor.hideLabel();
     }
 
     void updateStyles(Boolean isNarrowStyle) {
         String editorStyle = isNarrowStyle ? style.editorContentNarrow() : style.editorContent();
 
-        updateEditorStyle(diskAliasLabel, editorStyle);
+        updateLabelStyle(diskAliasLabel, editorStyle);
         updateEditorStyle(diskAliasEditor, editorStyle);
-        updateEditorStyle(diskSizeLabel, editorStyle);
-        updateEditorStyle(sourceStorageLabel, editorStyle);
+        updateLabelStyle(diskSizeLabel, editorStyle);
+        updateLabelStyle(sourceStorageLabel, editorStyle);
         updateEditorStyle(volumeTypeListEditor, editorStyle);
         updateEditorStyle(volumeFormatListEditor, editorStyle);
         updateEditorStyle(sourceStorageListEditor, editorStyle);
@@ -136,10 +143,13 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         updateEditorStyle(quotaListEditor, editorStyle);
     }
 
-    private void updateEditorStyle(AbstractValidatedWidgetWithLabel editor, String contentStyle) {
+    private void updateEditorStyle(AbstractValidatedWidgetWithLabel<?, ?> editor, String contentStyle) {
         editor.setContentWidgetContainerStyleName(contentStyle);
         editor.addWrapperStyleName(style.editorWrapper());
-        editor.setLabelStyleName(style.editorLabel());
+    }
+
+    private void updateLabelStyle(EnableableFormLabel label, String contentStyle) {
+        label.addStyleName(contentStyle);
     }
 
     public void setIsAliasChangeable(boolean changeable) {
@@ -151,21 +161,17 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     public void edit(final DiskModel object) {
         driver.edit(object);
 
-        diskAliasLabel.asValueBox().setValue(object.getAlias().getEntity());
-        diskAliasLabel.setWidgetTooltip(object.getAlias().getEntity());
+        diskAliasLabel.setText(object.getAlias().getEntity());
 
-        diskSizeLabel.asValueBox().setValue(new DiskSizeRenderer<Integer>(SizeConverter.SizeUnit.GiB).render(
+        diskSizeLabel.setText(new DiskSizeRenderer<Integer>(SizeConverter.SizeUnit.GiB).render(
                 object.getSize().getEntity()));
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
         object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
 
-        sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0). //$NON-NLS-1$
-                getStyle().setBorderColor("transparent"); //$NON-NLS-1$
-
         StorageDomain sourceDomain = object.getSourceStorageDomain().getSelectedItem();
         if (sourceDomain != null) {
-            sourceStorageLabel.setWidgetTooltip(object.getSourceStorageDomain().getSelectedItem().getName());
+            sourceStorageLabel.setText(object.getSourceStorageDomain().getSelectedItem().getName());
         }
 
         updateStyles(object.getQuota().getIsAvailable());
@@ -183,13 +189,13 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @Override
     public void setElementId(String elementId) {
-        diskAliasLabel.setElementId(
+        diskAliasLabel.setId(
                 ElementIdUtils.createElementId(elementId, "diskName")); //$NON-NLS-1$
         diskAliasEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "diskAlias")); //$NON-NLS-1$
-        diskSizeLabel.setElementId(
+        diskSizeLabel.setId(
                 ElementIdUtils.createElementId(elementId, "diskSize")); //$NON-NLS-1$
-        sourceStorageLabel.setElementId(
+        sourceStorageLabel.setId(
                 ElementIdUtils.createElementId(elementId, "sourceStorageDomainName")); //$NON-NLS-1$
         volumeTypeListEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "volumeType")); //$NON-NLS-1$

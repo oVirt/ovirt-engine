@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.ui.ListBox;
 
 /**
  * The editor associated with a ListBox that allows multiple selections.
@@ -73,10 +72,6 @@ public class ListModelMultipleSelectListBoxEditor<T>
     public ListModelMultipleSelectListBoxEditor(Renderer<T> renderer, VisibilityRenderer visibilityRenderer) {
         super(new ListModelMultipleSelectListBox<>(new SingletonListRendererAdapter<>(renderer)), visibilityRenderer);
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
-    }
-
-    public ListBox asListBox() {
-        return getContentWidget().asListBox();
     }
 
     @Override

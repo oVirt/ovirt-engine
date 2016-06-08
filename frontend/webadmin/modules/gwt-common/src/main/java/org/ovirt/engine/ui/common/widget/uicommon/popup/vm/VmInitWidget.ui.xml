@@ -60,13 +60,9 @@
             float: left;
         }
 
-        .container {
-            width: 100%;
-        }
-
     </ui:style>
 
-    <g:FlowPanel addStyleNames="{style.container}" ui:field="mainPanel">
+    <g:FlowPanel ui:field="mainPanel">
       <g:FlowPanel ui:field="syspreptOptionsContent">
         <b:Row>
           <w:EntityModelWidgetWithInfo ui:field="windowsHostnameEditorWithInfo" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
@@ -127,7 +123,7 @@
             <g:FlowPanel ui:field="sysprepScriptExpanderContent" >
               <b:Row>
                 <b:Column size="LG_12">
-                  <ge:StringEntityModelTextAreaEditor ui:field="sysprepScriptEditor" labelStyleName="{style.displayNone}" usePatternFly="true" />
+                  <ge:StringEntityModelTextAreaEditor ui:field="sysprepScriptEditor" usePatternFly="true" />
                 </b:Column>
               </b:Row>
             </g:FlowPanel>
@@ -223,7 +219,7 @@
               <b:Row>
                 <b:Column size="LG_12">
                   <d:InfoIcon ui:field="customScriptInfoIcon" addStyleNames="{style.customScriptInfoIconStyle}" />
-                  <ge:StringEntityModelTextAreaEditor ui:field="customScriptEditor" labelStyleName="{style.displayNone}" usePatternFly="true" />
+                  <ge:StringEntityModelTextAreaEditor ui:field="customScriptEditor" usePatternFly="true" />
                 </b:Column>
               </b:Row>
             </g:FlowPanel>

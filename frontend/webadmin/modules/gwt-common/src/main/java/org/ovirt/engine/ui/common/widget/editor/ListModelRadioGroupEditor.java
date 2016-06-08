@@ -56,17 +56,7 @@ public class ListModelRadioGroupEditor<T> extends AbstractValidatedWidgetWithLab
             getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
             removeContentWidgetStyleName(Styles.FORM_CONTROL);
             getValidatedWidgetStyle().setPadding(0, Unit.PX);
-            getFormLabel().setVisible(false);
-        }
-    }
-
-    @Override
-    protected void applyCommonValidationStyles() {
-        // Suppress radio button styling, as different browsers behave
-        // differently when styling radio button input elements
-        getValidatedWidgetStyle().setBorderStyle(BorderStyle.NONE);
-        if (!isUsePatternfly()) {
-            getValidatedWidgetStyle().setPadding(5, Unit.PX);
+            hideLabel();
         }
     }
 
