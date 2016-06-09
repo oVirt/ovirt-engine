@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper.isHostedEngineDomain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -364,7 +363,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             return null;
         }
 
-        Collections.sort(storageDomains, LastTimeUsedAsMasterComp.instance);
+        Collections.sort(storageDomains, Comparator.comparing(StorageDomain::getLastTimeUsedAsMaster));
 
         StorageDomain newMaster = null;
         StorageDomain storageDomain = getStorageDomain();
@@ -467,16 +466,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected void executeInNewTransaction(TransactionMethod<?> method) {
         TransactionSupport.executeInNewTransaction(method);
-    }
-
-    private static final class LastTimeUsedAsMasterComp implements Comparator<StorageDomain>, Serializable {
-        private static final long serialVersionUID = -7736904426129973519L;
-        public static final LastTimeUsedAsMasterComp instance = new LastTimeUsedAsMasterComp();
-
-        @Override
-        public int compare(StorageDomain o1, StorageDomain o2) {
-            return Long.compare(o1.getLastTimeUsedAsMaster(), o2.getLastTimeUsedAsMaster());
-        }
     }
 
     protected CommandEntityDao getCommandEntityDao() {
