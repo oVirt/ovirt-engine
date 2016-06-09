@@ -135,7 +135,7 @@ public class InitializationMapper {
         }
 
         if (model.isSetActiveDirectoryOu()) {
-            entity.setUserName(model.getActiveDirectoryOu());
+            entity.setActiveDirectoryOU(model.getActiveDirectoryOu());
         }
 
         if (model.isSetOrgName()) {
