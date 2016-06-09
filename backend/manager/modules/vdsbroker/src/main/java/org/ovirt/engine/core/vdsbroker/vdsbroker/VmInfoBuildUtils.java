@@ -37,7 +37,11 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilderBase.VnicProfileProperties;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
@@ -47,12 +51,24 @@ public class VmInfoBuildUtils {
 
     private static final String FIRST_MASTER_MODEL = "ich9-ehci1";
 
-    private final DbFacade dbFacade;
+    private final NetworkDao networkDao;
+    private final NetworkFilterDao networkFilterDao;
+    private final NetworkQoSDao networkQosDao;
+    private final StorageQosDao storageQosDao;
+    private final VnicProfileDao vnicProfileDao;
 
     @Inject
-    VmInfoBuildUtils(DbFacade dbFacade) {
-        Objects.requireNonNull(dbFacade);
-        this.dbFacade = dbFacade;
+    VmInfoBuildUtils(
+            NetworkDao networkDao,
+            NetworkFilterDao networkFilterDao,
+            NetworkQoSDao networkQosDao,
+            StorageQosDao storageQosDao,
+            VnicProfileDao vnicProfileDao) {
+        this.networkDao = Objects.requireNonNull(networkDao);
+        this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
+        this.networkQosDao = Objects.requireNonNull(networkQosDao);
+        this.storageQosDao = Objects.requireNonNull(storageQosDao);
+        this.vnicProfileDao = Objects.requireNonNull(vnicProfileDao);
     }
 
     OsRepository getOsRepository() {
@@ -110,10 +126,8 @@ public class VmInfoBuildUtils {
     /**
      * Prepare the ioTune limits map and add it to the specParams if supported by the cluster
      *
-     * @param vmDevice
-     *            The disk device with QoS limits
-     * @param storageQos
-     *            StorageQos
+     * @param vmDevice   The disk device with QoS limits
+     * @param storageQos StorageQos
      */
     public void handleIoTune(VmDevice vmDevice, StorageQos storageQos) {
         if (storageQos != null) {
@@ -128,7 +142,7 @@ public class VmInfoBuildUtils {
         if (diskImage.getDiskProfileId() == null) {
             return null;
         }
-        return getDbFacade().getStorageQosDao().getQosByDiskProfileId(diskImage.getDiskProfileId());
+        return storageQosDao.getQosByDiskProfileId(diskImage.getDiskProfileId());
     }
 
     public String evaluateInterfaceType(VmInterfaceType ifaceType, boolean vmHasAgent) {
@@ -160,8 +174,8 @@ public class VmInfoBuildUtils {
 
         Map<String, Object> specParams = new HashMap<>();
 
-        VnicProfile vnicProfile = getDbFacade().getVnicProfileDao().get(vmInterface.getVnicProfileId());
-        Network network = getDbFacade().getNetworkDao().get(vnicProfile.getNetworkId());
+        VnicProfile vnicProfile = vnicProfileDao.get(vmInterface.getVnicProfileId());
+        Network network = networkDao.get(vnicProfile.getNetworkId());
         if (NetworkUtils.isVlan(network)) {
             specParams.put(VdsProperties.VLAN_ID, network.getVlanId());
         }
@@ -183,9 +197,9 @@ public class VmInfoBuildUtils {
         String networkName = "";
         List<VnicProfileProperties> unsupportedFeatures = new ArrayList<>();
         if (nic.getVnicProfileId() != null) {
-            vnicProfile = getDbFacade().getVnicProfileDao().get(nic.getVnicProfileId());
+            vnicProfile = vnicProfileDao.get(nic.getVnicProfileId());
             if (vnicProfile != null) {
-                network = getDbFacade().getNetworkDao().get(vnicProfile.getNetworkId());
+                network = networkDao.get(vnicProfile.getNetworkId());
                 networkName = network.getName();
                 VmInfoBuilder.log.debug("VNIC '{}' is using profile '{}' on network '{}'",
                         nic.getName(),
@@ -213,8 +227,11 @@ public class VmInfoBuildUtils {
             Network network) {
 
         if (vnicProfile != null && vnicProfile.isPortMirroring()) {
-            struct.put(VdsProperties.PORT_MIRRORING, network == null ? Collections.<String> emptyList()
-                    : Collections.singletonList(network.getName()));
+            struct.put(
+                    VdsProperties.PORT_MIRRORING,
+                    network == null
+                            ? Collections.<String> emptyList()
+                            : Collections.singletonList(network.getName()));
         }
 
     }
@@ -228,7 +245,7 @@ public class VmInfoBuildUtils {
             specParams = new HashMap<>();
             struct.put(VdsProperties.SpecParams, specParams);
         }
-        NetworkQoS networkQoS = (qosId == null) ? new NetworkQoS() : getDbFacade().getNetworkQosDao().get(qosId);
+        NetworkQoS networkQoS = (qosId == null) ? new NetworkQoS() : networkQosDao.get(qosId);
         NetworkQosMapper qosMapper =
                 new NetworkQosMapper(specParams, VdsProperties.QOS_INBOUND, VdsProperties.QOS_OUTBOUND);
         qosMapper.serialize(networkQoS);
@@ -275,11 +292,10 @@ public class VmInfoBuildUtils {
 
     public NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {
         if (vmNic.getVnicProfileId() != null) {
-            VnicProfile vnicProfile = getDbFacade().getVnicProfileDao().get(vmNic.getVnicProfileId());
+            VnicProfile vnicProfile = vnicProfileDao.get(vmNic.getVnicProfileId());
             if (vnicProfile != null) {
                 final Guid networkFilterId = vnicProfile.getNetworkFilterId();
-                return networkFilterId == null ? null
-                        : getDbFacade().getNetworkFilterDao().getNetworkFilterById(networkFilterId);
+                return networkFilterId == null ? null : networkFilterDao.getNetworkFilterById(networkFilterId);
             }
         }
         return null;
@@ -401,7 +417,4 @@ public class VmInfoBuildUtils {
         return addressMap;
     }
 
-    public DbFacade getDbFacade() {
-        return dbFacade;
-    }
 }

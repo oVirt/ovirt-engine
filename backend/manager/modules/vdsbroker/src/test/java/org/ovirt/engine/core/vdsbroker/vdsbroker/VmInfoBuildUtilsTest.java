@@ -17,17 +17,25 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.NetworkFilterDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmInfoBuildUtilsTest {
 
     @Mock
-    private DbFacade dbFacade;
-
+    private NetworkDao networkDao;
+    @Mock
+    private NetworkFilterDao networkFilterDao;
+    @Mock
+    private NetworkQoSDao networkQosDao;
     @Mock
     private StorageQosDao storageQosDao;
+    @Mock
+    private VnicProfileDao vnicProfileDao;
 
     @InjectMocks
     private VmInfoBuildUtils underTest;
@@ -41,7 +49,6 @@ public class VmInfoBuildUtilsTest {
     @Before
     public void setUp() {
         diskImage.setDiskProfileId(Guid.newGuid());
-        when(dbFacade.getStorageQosDao()).thenReturn(storageQosDao);
 
         qos = new StorageQos();
         qos.setId(Guid.newGuid());
@@ -86,6 +93,7 @@ public class VmInfoBuildUtilsTest {
         assertNull(vmDevice.getSpecParams());
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Long> getIoTune(VmDevice vmDevice) {
         return (Map<String, Long>) vmDevice.getSpecParams().get(VdsProperties.Iotune);
     }

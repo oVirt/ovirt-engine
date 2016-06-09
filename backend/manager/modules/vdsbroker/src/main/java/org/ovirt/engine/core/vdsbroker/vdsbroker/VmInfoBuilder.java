@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
@@ -39,7 +40,9 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllers;
 import org.ovirt.engine.core.vdsbroker.architecture.GetBootableDiskIndex;
@@ -54,21 +57,28 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static final String CLOUD_INIT_VOL_ID = "config-2";
     private static final Base64 BASE_64 = new Base64(0, null);
 
+    private final VdsNumaNodeDao vdsNumaNodeDao;
+    private final VmDeviceDao vmDeviceDao;
+    private final VmNumaNodeDao vmNumaNodeDao;
+    private final VmInfoBuildUtils vmInfoBuildUtils;
+
     private final List<Map<String, Object>> devices = new ArrayList<>();
     private List<VmDevice> managedDevices = null;
     private Guid vdsId;
     private int numOfReservedScsiIndexes = 0;
 
-    private final DbFacade dbFacade;
-    private final VmInfoBuildUtils vmInfoBuildUtils;
-
     public VmInfoBuilder(VM vm,
             Guid vdsId,
             Map createInfo,
-            DbFacade dbFacade,
+            VdsNumaNodeDao vdsNumaNodeDao,
+            VmDeviceDao vmDeviceDao,
+            VmNumaNodeDao vmNumaNodeDao,
             VmInfoBuildUtils vmInfoBuildUtils) {
-        this.dbFacade = dbFacade;
-        this.vmInfoBuildUtils = vmInfoBuildUtils;
+        this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
+        this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
+        this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
+        this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
+
         this.vm = vm;
         this.vdsId = vdsId;
         this.createInfo = createInfo;
@@ -80,10 +90,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmVideoCards() {
-        List<VmDevice> vmVideoDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.VIDEO);
+        List<VmDevice> vmVideoDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.VIDEO);
         for (VmDevice vmVideoDevice : vmVideoDevices) {
             // skip unmanaged devices (handled separately)
             if (!vmVideoDevice.getIsManaged()) {
@@ -195,11 +202,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addDevice(struct, vmDevice, vm.getCdPath());
         } else {
             // get vm device for this CD from DB
-            List<VmDevice> vmDevices =
-                    dbFacade.getVmDeviceDao()
-                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceGeneralType.DISK,
-                                    VmDeviceType.CDROM.getName());
+            List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                    vm.getId(),
+                    VmDeviceGeneralType.DISK,
+                    VmDeviceType.CDROM.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unmanaged devices (handled separately)
                 if (!vmDevice.getIsManaged()) {
@@ -251,14 +257,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addDevice(struct, vmDevice, vm.getFloppyPath());
         } else {
             // get vm device for this Floppy from DB
-            List<VmDevice> vmDevices =
-                    dbFacade
-                            .getVmDeviceDao()
-                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceGeneralType.DISK,
-                                    VmDeviceType.FLOPPY.getName());
+            List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                    vm.getId(),
+                    VmDeviceGeneralType.DISK,
+                    VmDeviceType.FLOPPY.getName());
             for (VmDevice vmDevice : vmDevices) {
-                // skip unamanged devices (handled separtely)
+                // skip unmanaged devices (handled separately)
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
@@ -422,15 +426,15 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmNetworkInterfaces() {
         Map<VmDeviceId, VmDevice> devicesByDeviceId =
-                Entities.businessEntitiesById(dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                Entities.businessEntitiesById(
+                        vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                                vm.getId(),
                                 VmDeviceGeneralType.INTERFACE,
                                 VmDeviceType.BRIDGE.getName()));
 
-        devicesByDeviceId.putAll(Entities.businessEntitiesById(dbFacade
-                .getVmDeviceDao()
-                .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+        devicesByDeviceId.putAll(Entities.businessEntitiesById(
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                        vm.getId(),
                         VmDeviceGeneralType.INTERFACE,
                         VmDeviceType.HOST_DEVICE.getName())));
 
@@ -479,11 +483,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void buildVmDevicesFromDb(VmDeviceGeneralType generalType, boolean addAddress, Map<String, Object> extraSpecParams) {
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vm.getId(),
-                                generalType);
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), generalType);
 
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
@@ -508,10 +508,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildUnmanagedDevices() {
         Map<String, String> customMap = createInfo.containsKey(VdsProperties.Custom) ?
                 (Map<String, String>) createInfo.get(VdsProperties.Custom) : new HashMap<>();
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getUnmanagedDevicesByVmId(vm.getId());
+        List<VmDevice> vmDevices = vmDeviceDao.getUnmanagedDevicesByVmId(vm.getId());
         if (!vmDevices.isEmpty()) {
             StringBuilder id = new StringBuilder();
             for (VmDevice vmDevice : vmDevices) {
@@ -679,12 +676,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void buildVmUsbControllers() {
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceGeneralType.CONTROLLER,
-                                VmDeviceType.USB.getName());
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.USB.getName());
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
@@ -706,8 +701,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private void buildVmUsbSlots() {
         List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
+                vmDeviceDao
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                 VmDeviceGeneralType.REDIR,
                                 VmDeviceType.SPICEVMC.getName());
@@ -731,12 +725,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void buildSmartcardDevice() {
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceGeneralType.SMARTCARD,
-                                VmDeviceType.SMARTCARD.getName());
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.SMARTCARD,
+                VmDeviceType.SMARTCARD.getName());
 
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
@@ -769,8 +761,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         } else {
             // get vm device for this Balloon from DB
             List<VmDevice> vmDevices =
-                    dbFacade
-                            .getVmDeviceDao()
+                    vmDeviceDao
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                     VmDeviceGeneralType.BALLOON,
                                     VmDeviceType.MEMBALLOON.getName());
@@ -802,11 +793,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmWatchdog() {
-        List<VmDevice> watchdogs =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vm.getId(),
-                                VmDeviceGeneralType.WATCHDOG);
+        List<VmDevice> watchdogs = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.WATCHDOG);
         for (VmDevice watchdog : watchdogs) {
             HashMap watchdogFromRpc = new HashMap();
             watchdogFromRpc.put(VdsProperties.Type, VmDeviceGeneralType.WATCHDOG.getValue());
@@ -822,12 +809,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmVirtioScsi() {
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceGeneralType.CONTROLLER,
-                                VmDeviceType.VIRTIOSCSI.getName());
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.VIRTIOSCSI.getName());
 
         Map<DiskInterface, Integer> controllerIndexMap =
                 ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
@@ -850,12 +835,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmVirtioSerial() {
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceGeneralType.CONTROLLER,
-                                VmDeviceType.VIRTIOSERIAL.getName());
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.VIRTIOSERIAL.getName());
 
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
@@ -868,12 +851,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     protected void buildVmRngDevice() {
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceGeneralType.RNG,
-                                VmDeviceType.VIRTIO.getName());
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.RNG,
+                VmDeviceType.VIRTIO.getName());
 
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
@@ -895,10 +876,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * have almost the same libvirt version support
      */
     private void addNumaSetting() {
-        List<VmNumaNode> vmNumaNodes =
-                dbFacade.getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
-        List<VdsNumaNode> totalVdsNumaNodes = dbFacade.getVdsNumaNodeDao()
-                .getAllVdsNumaNodeByVdsId(vdsId);
+        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
+        List<VdsNumaNode> totalVdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
         if (totalVdsNumaNodes.isEmpty()) {
             log.warn("No NUMA nodes found for host {} for vm {} {}",  vdsId, vm.getName(), vm.getId());
             return;
@@ -944,10 +923,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmHostDevices() {
-        List<VmDevice> vmDevices =
-                dbFacade
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.HOSTDEV);
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.HOSTDEV);
 
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
