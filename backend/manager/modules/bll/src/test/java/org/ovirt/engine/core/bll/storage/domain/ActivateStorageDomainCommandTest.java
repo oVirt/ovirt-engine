@@ -164,7 +164,7 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
 
     private void createNonUpVds() {
         when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up)))
-                .thenReturn(Collections.<VDS>emptyList());
+                .thenReturn(Collections.emptyList());
     }
 
     private void createCommand() {
