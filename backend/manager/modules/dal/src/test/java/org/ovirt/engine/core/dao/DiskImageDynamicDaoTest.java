@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -106,6 +108,15 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         assertEquals(existingDynamic, result);
     }
 
+    public DiskImageDynamic createDiskImageDynamic(Guid id) {
+        DiskImageDynamic dynamic = new DiskImageDynamic();
+        dynamic.setReadLatency(0d);
+        dynamic.setFlushLatency(0.0202020d);
+        dynamic.setWriteLatency(null);
+        dynamic.setId(id);
+        return dynamic;
+    }
+
     @Test
     public void testSave() {
         DiskImage newImage = new DiskImage();
@@ -118,14 +129,8 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         newImage.setId(Guid.newGuid());
         imageDao.save(newImage.getImage());
         diskDao.save(newImage);
-        DiskImageDynamic dynamic = new DiskImageDynamic();
-        dynamic.setread_rate(5);
-        dynamic.setwrite_rate(6);
-        dynamic.setReadLatency(0d);
-        dynamic.setFlushLatency(0.0202020d);
-        dynamic.setWriteLatency(null);
-        dynamic.setId(newImage.getImageId());
-        dao.save(dynamic);
+        DiskImageDynamic dynamic = createDiskImageDynamic(newImage.getImageId());
+        dao.save(createDiskImageDynamic(newImage.getImageId()));
         DiskImageDynamic result = dao.get(dynamic.getId());
         assertNotNull(result);
         assertEquals(dynamic, result);
@@ -186,5 +191,20 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         dao.updateAllDiskImageDynamicWithDiskIdByVmId(Arrays.<Pair<Guid, DiskImageDynamic>>asList(new Pair(FixturesTool.VM_RHEL5_POOL_57,
                 existingDynamic2)));
         assertEquals(readRate, dao.get(imageId).getread_rate());
+    }
+
+    @Test
+    public void sortDiskImageDynamicForUpdate() throws Exception {
+        Guid firstGuid = Guid.Empty;
+        Guid secondGuid = Guid.createGuidFromString("11111111-1111-1111-1111-111111111111");
+        Guid thirdGuid = Guid.createGuidFromString("22222222-2222-2222-2222-222222222222");
+        List<Pair<Guid, DiskImageDynamic>> diskImageDynamicForVm = new LinkedList<>();
+        diskImageDynamicForVm.add(new Pair<>(Guid.Empty, createDiskImageDynamic(thirdGuid)));
+        diskImageDynamicForVm.add(new Pair<>(Guid.Empty, createDiskImageDynamic(secondGuid)));
+        diskImageDynamicForVm.add(new Pair<>(Guid.Empty, createDiskImageDynamic(firstGuid)));
+        List<Pair<Guid, DiskImageDynamic>> sortedList =
+                ((DiskImageDynamicDaoImpl)dao).sortDiskImageDynamicForUpdate(diskImageDynamicForVm);
+        Collections.reverse(diskImageDynamicForVm);
+        assertEquals(diskImageDynamicForVm, sortedList);
     }
 }

@@ -98,18 +98,23 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
         };
     }
 
-    @Override
-    public void updateAllDiskImageDynamicWithDiskIdByVmId(Collection<Pair<Guid, DiskImageDynamic>> diskImageDynamicForVm) {
+    public static List<Pair<Guid, DiskImageDynamic>> sortDiskImageDynamicForUpdate(Collection<Pair<Guid,
+            DiskImageDynamic>> diskImageDynamicForVm) {
         List<Pair<Guid, DiskImageDynamic>> sortedDisks = new ArrayList<>();
         sortedDisks.addAll(diskImageDynamicForVm);
         Collections.sort(sortedDisks, new Comparator<Pair<Guid, DiskImageDynamic>>() {
 
             @Override
             public int compare(Pair<Guid, DiskImageDynamic> o1, Pair<Guid, DiskImageDynamic> o2) {
-                return o1.getFirst().compareTo(o2.getFirst());
+                return o1.getSecond().getId().compareTo(o2.getSecond().getId());
             }
         });
+        return sortedDisks;
+    }
+
+    @Override
+    public void updateAllDiskImageDynamicWithDiskIdByVmId(Collection<Pair<Guid, DiskImageDynamic>> diskImageDynamicForVm) {
         getCallsHandler().executeStoredProcAsBatch("Updatedisk_image_dynamic_by_disk_id_and_vm_id",
-                sortedDisks, getBatchImageGroupMapper());
+                sortDiskImageDynamicForUpdate(diskImageDynamicForVm), getBatchImageGroupMapper());
     }
 }
