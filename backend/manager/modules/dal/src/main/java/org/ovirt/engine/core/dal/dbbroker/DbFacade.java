@@ -290,10 +290,6 @@ public class DbFacade {
         instance = this;
     }
 
-    public SimpleJdbcCallsHandler getCallsHandler() {
-        return callsHandler;
-    }
-
     /**
      * Return the correct Dao for the given {@link BusinessEntity} class.
      *
@@ -1195,7 +1191,7 @@ public class DbFacade {
                     .addValue("os_id", e.getKey())
                     .addValue("os_name", e.getValue()));
         }
-        getCallsHandler().executeStoredProcAsBatch("insert_osinfo", executions);
+        callsHandler.executeStoredProcAsBatch("insert_osinfo", executions);
     }
 
     public IscsiBondDao getIscsiBondDao() {
