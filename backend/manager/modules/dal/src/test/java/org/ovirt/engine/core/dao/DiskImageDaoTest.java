@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -9,15 +13,10 @@ import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.dao.FixturesTool.IMAGE_ID;
 import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-
 /**
  * <code>DiskImageDaoTest</code> provides unit tests to validate {@link DiskImageDao}.
  */
