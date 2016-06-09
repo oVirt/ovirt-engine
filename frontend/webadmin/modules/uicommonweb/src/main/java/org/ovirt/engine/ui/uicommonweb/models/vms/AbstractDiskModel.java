@@ -399,6 +399,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                             break;
                     }
                 }
+                updatePassDiscardAvailability();
             }
         }), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
@@ -730,11 +731,49 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsSgIoUnfiltered().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
         getIsScsiPassthrough().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
         getIsUsingScsiReservation().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
+        updatePassDiscardAvailability();
 
         updateScsiPassthroughChangeability();
         updateScsiReservationChangeability();
         updateReadOnlyChangeability();
         updatePlugChangeability();
+        updatePassDiscardChangeability();
+    }
+
+    private void updatePassDiscardAvailability() {
+        if (!AsyncDataProvider.getInstance().isPassDiscardFeatureSupported(
+                getDataCenter().getSelectedItem().getCompatibilityVersion())) {
+            getPassDiscard().setIsAvailable(false);
+            return;
+        }
+        if (getIsFloating()) {
+            getPassDiscard().setIsAvailable(false);
+        } else {
+            DiskInterface selectedInterface = getDiskInterface().getSelectedItem();
+            DiskStorageType selectedDiskStorageType = getDiskStorageType().getEntity();
+            boolean isApplicableInterface = selectedInterface == DiskInterface.VirtIO_SCSI ||
+                    selectedInterface == DiskInterface.IDE;
+            boolean isApplicableDiskStorageType = selectedDiskStorageType == DiskStorageType.LUN ||
+                    selectedDiskStorageType == DiskStorageType.IMAGE;
+            boolean isApplicableStorageType = selectedDiskStorageType == DiskStorageType.LUN ||
+                    (getStorageDomain().getSelectedItem() != null &&
+                            getStorageDomain().getSelectedItem().getStorageType().isInternal());
+
+            if (isApplicableInterface && isApplicableDiskStorageType && isApplicableStorageType) {
+                getPassDiscard().setIsAvailable(true);
+                if (!getIsNew()) {
+                    getPassDiscard().setEntity(getDiskVmElement().isPassDiscard());
+                }
+            } else {
+                // Reset PassDiscard's availability and value.
+                getPassDiscard().setIsAvailable(false);
+                getPassDiscard().setEntity(false);
+            }
+        }
+    }
+
+    private void updatePassDiscardChangeability() {
+        getPassDiscard().setIsChangeable(isEditEnabled());
     }
 
     protected void updateScsiPassthroughChangeability() {
@@ -887,6 +926,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         updateQuota(getDataCenter().getSelectedItem());
         updateDiskProfiles(getDataCenter().getSelectedItem());
         updateCinderVolumeTypes();
+        updatePassDiscardAvailability();
     }
 
     public boolean validate() {
@@ -1017,6 +1057,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         if (getVm() != null) {
             getDiskVmElement().setBoot(getIsBootable().getEntity());
             getDiskVmElement().setDiskInterface(getDiskInterface().getSelectedItem());
+            getDiskVmElement().setPassDiscard(getPassDiscard().getEntity());
         }
     }
 

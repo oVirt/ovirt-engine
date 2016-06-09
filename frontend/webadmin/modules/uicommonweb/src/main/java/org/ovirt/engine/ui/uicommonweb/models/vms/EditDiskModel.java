@@ -44,6 +44,7 @@ public class EditDiskModel extends AbstractDiskModel {
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
         getIsReadOnly().setEntity(getDisk().getReadOnly());
         getIsBootable().setEntity(getDiskVmElement().isBoot());
+        getPassDiscard().setEntity(getDiskVmElement().isPassDiscard());
 
         switch (getDisk().getDiskStorageType()) {
             case IMAGE:
@@ -164,6 +165,7 @@ public class EditDiskModel extends AbstractDiskModel {
             getIsShareable().setIsChangeable(false);
             getIsBootable().setIsChangeable(false);
             getDiskInterface().setIsChangeable(false);
+            getPassDiscard().setIsChangeable(false);
             getIsReadOnly().setIsChangeable(false);
         }
     }

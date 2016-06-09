@@ -158,6 +158,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     EntityModelCheckBoxEditor isReadOnlyEditor;
 
     @UiField(provided = true)
+    @Path("passDiscard.entity")
+    @WithElementId("passDiscard")
+    EntityModelCheckBoxEditor passDiscardEditor;
+
+    @UiField(provided = true)
     @Path("isUsingScsiReservation.entity")
     @WithElementId("isUsingScsiReservation")
     EntityModelCheckBoxEditor isUsingScsiReservationEditor;
@@ -249,6 +254,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isShareableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isReadOnlyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        passDiscardEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isUsingScsiReservationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isScsiPassthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -504,6 +510,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isBootableEditor.setTabIndex(nextTabIndex++);
         isShareableEditor.setTabIndex(nextTabIndex++);
         isReadOnlyEditor.setTabIndex(nextTabIndex++);
+        passDiscardEditor.setTabIndex(nextTabIndex++);
         isScsiPassthroughEditor.setTabIndexes(nextTabIndex++);
         isSgIoUnfilteredEditor.setTabIndex(nextTabIndex++);
         isUsingScsiReservationEditor.setTabIndex(nextTabIndex++);

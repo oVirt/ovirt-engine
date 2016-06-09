@@ -96,7 +96,8 @@ public enum ConfigurationValues {
     MigrationPolicies,
     AdPartnerMacSupported,
     OvsSupported,
-    GetNamesOfVmsFromExternalProviderSupported;
+    GetNamesOfVmsFromExternalProviderSupported,
+    PassDiscardSupported(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

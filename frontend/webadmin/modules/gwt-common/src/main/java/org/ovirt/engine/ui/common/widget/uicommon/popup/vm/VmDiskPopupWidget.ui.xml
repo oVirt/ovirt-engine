@@ -94,6 +94,8 @@
                     <ge:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" label="{constants.isBootableVmDiskPopup}" />
                     <ge:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}" label="{constants.isShareableVmDiskPopup}" />
                     <ge:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}" label="{constants.isReadOnlyVmDiskPopup}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="passDiscardEditor"
+                                                  addStyleNames="{style.checkBoxEditor}" label="{constants.passDiscardVmDiskPopup}" />
                     <ge:EntityModelCheckBoxEditor ui:field="isScsiPassthroughEditor"
                                                   addStyleNames="{style.checkBoxEditor}" label="{constants.isScsiPassthroughEditor}" />
                     <ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor"

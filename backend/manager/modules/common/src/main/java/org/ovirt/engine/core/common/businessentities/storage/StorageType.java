@@ -59,6 +59,10 @@ public enum StorageType implements Identifiable {
         return subtype == Subtype.BLOCK;
     }
 
+    public boolean isInternal() {
+        return isFileDomain() || isBlockDomain();
+    }
+
     public boolean isLocal() {
         return this == LOCALFS;
     }

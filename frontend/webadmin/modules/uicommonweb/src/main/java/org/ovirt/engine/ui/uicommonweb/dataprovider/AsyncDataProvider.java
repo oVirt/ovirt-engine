@@ -3267,4 +3267,9 @@ public class AsyncDataProvider {
     public boolean isGetNamesOfVmsFromExternalProviderSupported(Version dataCenterVersion) {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.GetNamesOfVmsFromExternalProviderSupported, dataCenterVersion.toString());
     }
+
+    public boolean isPassDiscardFeatureSupported(Version dataCenterVersion) {
+        return (Boolean) getConfigValuePreConverted(
+                ConfigurationValues.PassDiscardSupported, dataCenterVersion.getValue());
+    }
 }
