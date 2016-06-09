@@ -237,12 +237,14 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             networkConfigurator.refreshNetworkConfiguration();
             networkConfigurator.createManagementNetworkIfRequired();
         } catch (VDSNetworkException e) {
+            log.error("Exception", e);
             throw new VdsInstallException(
                 VDSStatus.NonResponsive,
                 "Network error during communication with the host",
                 e
             );
         } catch (Exception e) {
+            log.error("Exception", e);
             throw new VdsInstallException(
                 VDSStatus.NonOperational,
                 "Failed to configure management network on the host",
