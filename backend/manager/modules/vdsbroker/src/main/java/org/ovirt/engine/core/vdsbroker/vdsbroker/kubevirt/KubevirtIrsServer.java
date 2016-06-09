@@ -2,6 +2,9 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker.kubevirt;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GetVmsInfoReturnForXmlRpc;
@@ -20,6 +23,12 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 public class KubevirtIrsServer implements IIrsServer {
 
     private final Guid vdsId;
+
+    @Inject
+    CloseableHttpClient httpClient;
+
+    @Inject
+    ServiceDiscovery serviceDiscovery;
 
     public KubevirtIrsServer(Guid vdsId) {
         this.vdsId = vdsId;

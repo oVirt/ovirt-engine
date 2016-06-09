@@ -7,7 +7,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
@@ -63,6 +66,12 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturnForXmlRpc;
 public class KubevirtVdsServer implements IVdsServer {
 
     private final Guid vdsId;
+
+    @Inject
+    CloseableHttpClient httpClient;
+
+    @Inject
+    ServiceDiscovery serviceDiscovery;
 
     public KubevirtVdsServer(Guid vdsId) {
         this.vdsId = vdsId;
