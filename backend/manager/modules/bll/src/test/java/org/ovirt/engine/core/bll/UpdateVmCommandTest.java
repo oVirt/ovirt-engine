@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -72,6 +73,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -111,9 +113,11 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     private VmTemplateDao vmTemplateDao;
     @Mock
-    CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Mock
     private DiskVmElementDao diskVmElementDao;
+    @Mock
+    private VdsNumaNodeDao vdsNumaNodeDao;
     @Mock
     OsRepository osRepository;
 
@@ -125,6 +129,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
+    @InjectMocks
+    private NumaValidator numaValidator;
 
     private static final Map<String, String> migrationMap = new HashMap<>();
 
@@ -170,7 +176,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
         injectorRule.bind(DbFacade.class, dbFacade);
         injectorRule.bind(InClusterUpgradeValidator.class, inClusterUpgradeValidator);
 
@@ -225,6 +230,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
 
         doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
+        doReturn(numaValidator).when(command).getNumaValidator();
     }
 
     @Test

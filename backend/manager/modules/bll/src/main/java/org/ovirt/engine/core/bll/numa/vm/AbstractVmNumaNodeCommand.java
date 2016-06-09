@@ -24,6 +24,9 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
     @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
 
+    @Inject
+    private NumaValidator numaValidator;
+
     private List<VmNumaNode> vmNumaNodesForValidation;
 
     public AbstractVmNumaNodeCommand(T parameters, CommandContext cmdContext) {
@@ -60,10 +63,10 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         if (getVm() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
-        if (!validate(NumaValidator.checkVmNumaIndexDuplicates(getParameters().getVmNumaNodeList()))) {
+        if (!validate(getNumaValidator().checkVmNumaIndexDuplicates(getParameters().getVmNumaNodeList()))) {
             return false;
         }
-        return validate(NumaValidator.checkVmNumaNodesIntegrity(getVm(), getVmNumaNodesForValidation()));
+        return validate(getNumaValidator().checkVmNumaNodesIntegrity(getVm(), getVmNumaNodesForValidation()));
     }
 
     protected List<VmNumaNode> getVmNumaNodesForValidation() {
@@ -82,5 +85,9 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
             }
         }
         return Arrays.asList();
+    }
+
+    protected NumaValidator getNumaValidator() {
+        return numaValidator;
     }
 }

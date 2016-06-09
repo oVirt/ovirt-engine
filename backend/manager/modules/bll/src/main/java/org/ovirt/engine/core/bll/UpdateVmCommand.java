@@ -18,7 +18,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -845,8 +844,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
-        if (!validate(NumaValidator.checkVmNumaNodesIntegrity(getParameters().getVm(), getParameters().getVm().getvNumaNodeList())
-        )) {
+        if (!validate(getNumaValidator().checkVmNumaNodesIntegrity(
+                getParameters().getVm(),
+                getParameters().getVm().getvNumaNodeList()))) {
             return false;
         }
 

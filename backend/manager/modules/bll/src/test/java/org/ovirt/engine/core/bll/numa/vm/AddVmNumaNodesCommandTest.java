@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.numa.vm;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,6 +20,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -52,6 +54,9 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
     @Mock
     private VmDao vmDao;
 
+    @InjectMocks
+    private NumaValidator numaValidator;
+
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.SupportNUMAMigration, false)
@@ -64,8 +69,6 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() throws Exception {
-        super.setUpSessionDataContainer();
-
         SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
         DbFacade.setInstance(dbFacade);
 
@@ -242,6 +245,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         when(dbFacade.getVmNumaNodeDao()).thenReturn(vmNumaNodeDao);
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);
         when(dbFacade.getVmDao()).thenReturn(vmDao);
+        doReturn(numaValidator).when(command).getNumaValidator();
         command.init();
         return command;
     }

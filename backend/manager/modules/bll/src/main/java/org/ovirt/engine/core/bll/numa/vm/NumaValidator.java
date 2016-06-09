@@ -5,9 +5,13 @@ import static java.lang.Integer.min;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -21,14 +25,22 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 
+@ApplicationScoped
 public class NumaValidator {
+
+    private final VdsNumaNodeDao vdsNumaNodeDao;
+
+    @Inject
+    NumaValidator(VdsNumaNodeDao vdsNumaNodeDao) {
+        this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
+    }
 
     /**
      * preferred supports single pinned vnuma node (without that VM fails to run in libvirt)
      */
-    private static ValidationResult checkNumaPreferredTuneMode(NumaTuneMode numaTuneMode,
+    private ValidationResult checkNumaPreferredTuneMode(NumaTuneMode numaTuneMode,
             List<VmNumaNode> vmNumaNodes) {
         // check tune mode
         if (numaTuneMode != NumaTuneMode.PREFERRED) {
@@ -57,7 +69,7 @@ public class NumaValidator {
      * @param cpuCores      number of virtual cpu cores
      * @return the validation result
      */
-    private static ValidationResult checkVmNumaNodeCount(int numaNodeCount, int cpuCores) {
+    private ValidationResult checkVmNumaNodeCount(int numaNodeCount, int cpuCores) {
 
         if (cpuCores < numaNodeCount) {
             return new ValidationResult(EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS,
@@ -74,7 +86,7 @@ public class NumaValidator {
      * @param vmNumaNodes to check for duplicates
      * @return {@link ValidationResult#VALID} if no duplicates exist
      */
-    public static ValidationResult checkVmNumaIndexDuplicates(final List<VmNumaNode> vmNumaNodes) {
+    public ValidationResult checkVmNumaIndexDuplicates(final List<VmNumaNode> vmNumaNodes) {
         Set<Integer> indices = new HashSet<>();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             if (!indices.add(vmNumaNode.getIndex())) {
@@ -92,7 +104,7 @@ public class NumaValidator {
      * @param vmNumaNodes to check if indices are continuous
      * @return {@link ValidationResult#VALID} if no indices are missing
      */
-    public static ValidationResult checkVmNumaIndexContinuity(final List<VmNumaNode> vmNumaNodes) {
+    public ValidationResult checkVmNumaIndexContinuity(final List<VmNumaNode> vmNumaNodes) {
         Set<Integer> indices = vmNumaNodes.stream().map(VmNumaNode::getIndex).collect(Collectors.toSet());
         List<Integer> missingIndices = IntStream.range(0, vmNumaNodes.size()).filter(i -> !indices.contains(i))
                 .boxed().collect(Collectors.toList());
@@ -115,7 +127,7 @@ public class NumaValidator {
      * @param vm to check
      * @return validation result
      */
-    public static ValidationResult validateVmNumaConfig(final VM vm, final List<VmNumaNode> vmNumaNodes) {
+    public ValidationResult validateVmNumaConfig(final VM vm, final List<VmNumaNode> vmNumaNodes) {
 
         if (vmNumaNodes.isEmpty()) {
             return ValidationResult.VALID;
@@ -155,7 +167,7 @@ public class NumaValidator {
      * @param hostNumaNodes from a host
      * @return weather the vm can run on the hostNumaNodes or not
      */
-    public static ValidationResult validateNumaCompatibility(final VM vm, final List<VmNumaNode> vmNumaNodes, final
+    public ValidationResult validateNumaCompatibility(final VM vm, final List<VmNumaNode> vmNumaNodes, final
     List<VdsNumaNode>
             hostNumaNodes) {
 
@@ -200,7 +212,7 @@ public class NumaValidator {
      * @param vm to check
      * @return validation result
      */
-    public static ValidationResult validateVmPinning(final VM vm) {
+    public ValidationResult validateVmPinning(final VM vm) {
 
         //TODO Proper validation for multiple hosts for SupportNumaMigration was never implemented. Implement it.
         // validate - pinning is mandatory, since migration is not allowed
@@ -222,7 +234,7 @@ public class NumaValidator {
      * @param vmNumaNodes to use for validation
      * @return the validation result
      */
-    public static ValidationResult checkVmNumaNodesIntegrity(final VM vm, final List<VmNumaNode> vmNumaNodes) {
+    public ValidationResult checkVmNumaNodesIntegrity(final VM vm, final List<VmNumaNode> vmNumaNodes) {
         if (vmNumaNodes.isEmpty()) {
             return ValidationResult.VALID;
         }
@@ -243,12 +255,12 @@ public class NumaValidator {
             return validationResult;
         }
 
-        final List<VdsNumaNode> hostNumaNodes = DbFacade.getInstance().getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(
-                vm.getDedicatedVmForVdsList().get(0));
+        final List<VdsNumaNode> hostNumaNodes =
+                vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vm.getDedicatedVmForVdsList().get(0));
         return validateNumaCompatibility(vm, vmNumaNodes, hostNumaNodes);
     }
 
-    private static String formatMissingIndices(List<Integer> missingIndices) {
+    private String formatMissingIndices(List<Integer> missingIndices) {
         String str = StringUtils.join(missingIndices.subList(0, min(10, missingIndices.size())), ", ");
         if (missingIndices.size() > 10) {
             str = str + ", ...";

@@ -2,8 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -29,6 +32,10 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
      * the virsh man page.
      */
     public static final int MAXIMUM_CPU_SHARES = 262144;
+
+
+    @Inject
+    private NumaValidator numaValidator;
 
     private InstanceType instanceType;
     private Version effectiveCompatibilityVersion;
@@ -174,5 +181,9 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setMigrationPolicyId(instanceType.getMigrationPolicyId());
 
         }
+    }
+
+    protected NumaValidator getNumaValidator() {
+        return numaValidator;
     }
 }

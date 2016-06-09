@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -697,7 +696,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!validate(NumaValidator.checkVmNumaNodesIntegrity(getParameters().getVm(), getParameters().getVm().getvNumaNodeList()))) {
+        if (!validate(getNumaValidator().checkVmNumaNodesIntegrity(
+                getParameters().getVm(),
+                getParameters().getVm().getvNumaNodeList()))) {
             return false;
         }
 
