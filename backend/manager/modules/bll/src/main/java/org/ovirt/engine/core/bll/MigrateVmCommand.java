@@ -575,7 +575,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         if (!validate(new MultipleVmsValidator(vm).vmNotHavingPluggedDiskSnapshots(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))
-                || !validate(vmValidator.vmNotHavingPassthroughVnics())) {
+                || !validate(vmValidator.allPassthroughVnicsMigratable())) {
             return false;
         }
 

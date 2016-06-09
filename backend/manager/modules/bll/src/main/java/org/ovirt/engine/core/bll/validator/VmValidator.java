@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -174,22 +177,37 @@ public class VmValidator {
     }
 
     /**
-     * @return ValidationResult indicating whether a vm contains passthrough vnics
+     * @return ValidationResult indicating whether a vm contains non-migratable, plugged, passthrough vnics
      */
-    public ValidationResult vmNotHavingPassthroughVnics() {
+    public ValidationResult allPassthroughVnicsMigratable() {
         List<VmNetworkInterface> vnics =
                 getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId());
 
-        List<String> passthroughVnicNames =
-                vnics.stream().filter(VmNic::isPassthrough).map(VmNic::getName).collect(Collectors.toList());
+        List<String> nonMigratablePassthroughVnicNames = vnics.stream()
+                .filter(isVnicMigratable(vm).negate())
+                .map(VmNic::getName)
+                .collect(Collectors.toList());
 
-        if (!passthroughVnicNames.isEmpty()) {
-            Collection<String> replacements = ReplacementUtils.replaceWith("interfaces", passthroughVnicNames);
+        if (!nonMigratablePassthroughVnicNames.isEmpty()) {
+            Collection<String> replacements =
+                    ReplacementUtils.replaceWith("interfaces", nonMigratablePassthroughVnicNames);
             replacements.add(String.format("$vmName %s", vm.getName()));
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_NON_MIGRATABLE_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
                     replacements);
         }
         return ValidationResult.VALID;
+    }
+
+    private Predicate<? super VmNetworkInterface> isVnicMigratable(VM vm) {
+        return vnic -> !vnic.isPassthrough() || !vnic.isPlugged()
+                || (FeatureSupported.sriovHotPlugSupported(vm.getClusterCompatibilityVersion())
+                        && getVnicProfile(vnic).isMigratable());
+    }
+
+    private VnicProfile getVnicProfile(VmNic vnic) {
+        VnicProfile profile = getDbFacade().getVnicProfileDao().get(vnic.getVnicProfileId());
+        return profile;
     }
 
     /**
