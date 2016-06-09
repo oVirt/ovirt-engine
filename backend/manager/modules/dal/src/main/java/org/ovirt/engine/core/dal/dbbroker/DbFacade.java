@@ -290,13 +290,6 @@ public class DbFacade {
     }
 
     /**
-     * Visible for testing
-     */
-    public static void setInstance(DbFacade dbFacade){
-        instance = dbFacade;
-    }
-
-    /**
      * Returns a singleton instance of {@link BookmarkDao}.
      *
      * @return the dao

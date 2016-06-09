@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -71,10 +70,6 @@ public class RemoveVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() throws Exception {
-
-        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
-        DbFacade.setInstance(dbFacade);
-
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
         existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(0, NODE_ID_0),
                 createVmNumaNodeWithId(1, NODE_ID_1), createVmNumaNodeWithId(2, NODE_ID_2)));

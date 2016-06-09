@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -69,9 +68,6 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() throws Exception {
-        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
-        DbFacade.setInstance(dbFacade);
-
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
         existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0), createVmNumaNode(1)));
         newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(2), createVmNumaNode(3)));
