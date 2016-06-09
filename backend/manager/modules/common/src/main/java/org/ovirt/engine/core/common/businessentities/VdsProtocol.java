@@ -9,7 +9,8 @@ import java.util.Map;
  */
 public enum VdsProtocol {
     XML(0),
-    STOMP(1);
+    STOMP(1),
+    KUBEVIRT(2);
 
     private static final Map<Integer, VdsProtocol> MAPPING = new HashMap<Integer, VdsProtocol>();
     static {

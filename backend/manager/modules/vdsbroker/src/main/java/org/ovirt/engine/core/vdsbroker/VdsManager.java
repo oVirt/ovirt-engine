@@ -188,6 +188,7 @@ public class VdsManager {
         int heartbeat = Config.<Integer> getValue(ConfigValues.vdsHeartbeatInSeconds) * 1000;
         int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
         vdsProxy = TransportFactory.createVdsServer(
+                cachedVds.getId(),
                 cachedVds.getProtocol(),
                 cachedVds.getVdsGroupCompatibilityVersion(),
                 cachedVds.getHostName(),

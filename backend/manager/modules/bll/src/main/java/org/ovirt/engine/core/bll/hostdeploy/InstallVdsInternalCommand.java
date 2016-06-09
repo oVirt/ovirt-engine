@@ -205,12 +205,14 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                             auditLogDirector)) {
                         if (detector.shouldCheckProtocolTofallback()) {
                             // we need to check whether we are connecting to vdsm which supports xmlrpc only
-                            if (!detector.attemptConnection()) {
-                                detector.stopConnection();
-                                if (detector.attemptFallbackProtocol()) {
-                                    detector.setFallbackProtocol();
-                                } else {
-                                    throw new VdsInstallException(VDSStatus.InstallFailed, "Host is not reachable");
+                            if (!detector.attemptKubevirtConnection()) {
+                                if (!detector.attemptConnection()) {
+                                    detector.stopConnection();
+                                    if (detector.attemptFallbackProtocol()) {
+                                        detector.setFallbackProtocol();
+                                    } else {
+                                        throw new VdsInstallException(VDSStatus.InstallFailed, "Host is not reachable");
+                                    }
                                 }
                             }
                         }

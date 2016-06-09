@@ -69,6 +69,7 @@ public class ProtocolDetector implements AutoCloseable {
      * @return <code>true</code> if connected or <code>false</code> if connection failed.
      */
     public boolean attemptConnection() {
+
         boolean connected = false;
         try {
             for (int i = 0; i < this.retryAttempts; i++) {
@@ -89,6 +90,16 @@ public class ProtocolDetector implements AutoCloseable {
             log.debug("Exception", e);
         }
         return connected;
+    }
+
+    public boolean attemptKubevirtConnection() {
+        //TODO Kubevirt do something reasonable here
+        if (vds.getName().startsWith("kubevirt")) {
+            vds.setProtocol(VdsProtocol.KUBEVIRT);
+            resourceManager.AddVds(vds, false);
+            return true;
+        }
+        return false;
     }
 
     /**
