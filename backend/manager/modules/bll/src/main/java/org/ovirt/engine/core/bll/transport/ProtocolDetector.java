@@ -70,9 +70,12 @@ public class ProtocolDetector implements AutoCloseable {
      */
     public boolean attemptConnection() {
         boolean connected = false;
-        try {
-            for (int i = 0; i < this.retryAttempts; i++) {
-                long timeout = Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
+        long timeout = Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
+        for (int i = 0; i < this.retryAttempts; i++) {
+            try {
+                if (i != 0) {
+                    Thread.sleep(this.connectionTimeout);
+                }
                 FutureVDSCall<VDSReturnValue> task =
                         resourceManager.runFutureVdsCommand(FutureVDSCommandType.TimeBoundPoll,
                                 new TimeBoundPollVDSCommandParameters(vds.getId(), timeout, TimeUnit.SECONDS));
@@ -81,12 +84,11 @@ public class ProtocolDetector implements AutoCloseable {
                 if (connected) {
                     break;
                 }
-                Thread.sleep(this.connectionTimeout);
+            } catch (TimeoutException | InterruptedException | XmlRpcRunTimeException ignored) {
+            } catch (Exception e) {
+                log.warn("Failed to connect to host", e.getMessage());
+                log.debug("Exception", e);
             }
-        } catch (TimeoutException | InterruptedException | XmlRpcRunTimeException ignored) {
-        } catch (Exception e) {
-            log.warn("Failed to connect to host", e.getMessage());
-            log.debug("Exception", e);
         }
         return connected;
     }
