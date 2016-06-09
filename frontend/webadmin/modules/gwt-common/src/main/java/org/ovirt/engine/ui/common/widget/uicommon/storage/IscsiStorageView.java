@@ -68,9 +68,9 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     private double treeCollapsedHeight = 206;
     private double treeExpandedHeight = 305;
-    private double lunsTreeHeight = 348;
-    private double tabContentHeight = 340;
-    private double tabHeight = 194;
+    private double lunsTreeHeight = 342;
+    private double tabContentHeight = 376;
+    private double tabHeight = 188;
     private double textTop = 80;
     private double textLeft = -92;
 
