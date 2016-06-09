@@ -74,6 +74,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dal.utils.CacheManager;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdcOptionDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
@@ -125,6 +130,17 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private SessionDataContainer sessionDataContainer;
     @Inject
     private VDSBrokerFrontend resourceManger;
+
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VmIconDao vmIconDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VdcOptionDao vdcOptionDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -306,7 +322,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
      * It removes unused vm icons that remains in DB due to potential errors in commands.
      */
     private void iconCleanup() {
-        dbFacade.getVmIconDao().removeAllUnusedIcons();
+        vmIconDao.removeAllUnusedIcons();
     }
 
     private void updatePredefinedIcons() {
@@ -326,7 +342,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initAttestation() {
-        List<Cluster> clusters = dbFacade.getClusterDao().getTrustedClusters();
+        List<Cluster> clusters = clusterDao.getTrustedClusters();
         List<VDS> trustedVdsList = new ArrayList<>();
         List<String> trustedVdsNames = new ArrayList<>();
 
@@ -334,8 +350,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             return;
         }
         for (Cluster cluster : clusters) {
-            List<VDS> hostsInCluster = dbFacade.getVdsDao().
-                    getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
+            List<VDS> hostsInCluster = vdsDao.getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
             if (hostsInCluster != null) {
                 trustedVdsList.addAll(hostsInCluster);
             }
@@ -357,7 +372,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private void setNonOperational(NonOperationalReason reason, VDS vds) {
         vds.setNonOperationalReason(reason);
         vds.setStatus(VDSStatus.NonOperational);
-        dbFacade.getVdsDynamicDao().update(vds.getDynamicData());
+        vdsDynamicDao.update(vds.getDynamicData());
     }
 
     private void initSearchDependencies() {
@@ -433,7 +448,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Since reload of configuration values is not fully supported, we have to get this value from DB
         // and can not use the cached configuration.
         String mode =
-                dbFacade.getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),
+                vdcOptionDao.getByNameAndVersion(ConfigValues.EngineMode.name(),
                         ConfigCommon.defaultConfigurationVersion).getOptionValue();
         if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
             return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
@@ -548,7 +563,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         Class<CommandBase<? extends VdcActionParametersBase>> clazz =
                 CommandsFactory.getQueryClass(actionType.name());
         if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
-            String mode = dbFacade.getVdcOptionDao().getByNameAndVersion
+            String mode = vdcOptionDao.getByNameAndVersion
                     (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion).getOptionValue();
             if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
                 return getErrorQueryReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
