@@ -33,6 +33,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         vnicProfile.setPortMirroring(false);
         vnicProfile.setPassthrough(false);
         vnicProfile.setNetworkFilterId(FixturesTool.VNIC_PROFILE_NETWORK_FILTER);
+        vnicProfile.setMigratable(true);
     }
 
     /**
@@ -56,6 +57,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, result.getId());
         assertFalse(result.isPortMirroring());
         assertFalse(result.isPassthrough());
+        assertTrue(result.isMigratable());
     }
 
     /**
@@ -82,6 +84,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PASSTHROUGH_PROFILE,
                 result.getId());
         assertTrue(result.isPassthrough());
+        assertFalse(result.isMigratable());
     }
 
     /**
@@ -140,6 +143,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         assertFalse(result.isPortMirroring());
         assertFalse(result.isPassthrough());
         assertEquals(vnicProfile.getNetworkFilterId(), result.getNetworkFilterId());
+        assertTrue(result.isMigratable());
     }
 
     /**
@@ -150,6 +154,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         dao.save(vnicProfile);
         vnicProfile.setPortMirroring(true);
         vnicProfile.setPassthrough(true);
+        vnicProfile.setMigratable(true);
         dao.update(vnicProfile);
         VnicProfile result = dao.get(vnicProfile.getId());
         assertNotNull(result);
@@ -157,6 +162,7 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         assertTrue(result.isPortMirroring());
         assertTrue(result.isPassthrough());
         assertEquals(vnicProfile.getNetworkFilterId(), result.getNetworkFilterId());
+        assertTrue(result.isMigratable());
     }
 
     /**

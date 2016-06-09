@@ -1798,6 +1798,7 @@
         <column>network_qos_id</column>
         <column>port_mirroring</column>
         <column>passthrough</column>
+        <column>migratable</column>
         <column>custom_properties</column>
         <column>description</column>
         <column>_create_date</column>
@@ -1810,6 +1811,7 @@
             <value>de956031-6be2-43d6-bb90-5191c9253314</value>
             <value>false</value>
             <value>false</value>
+            <value>true</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>vnic profile description</value>
             <value>2013-07-02 08:38:36</value>
@@ -1823,6 +1825,7 @@
             <value>de956031-6be2-43d6-bb90-5191c9253315</value>
             <value>true</value>
             <value>false</value>
+            <value>true</value>
             <null />
             <null />
             <value>2013-07-02 08:38:36</value>
@@ -1836,6 +1839,7 @@
             <null />
             <value>false</value>
             <value>true</value>
+            <value>false</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <null />
             <value>2013-07-02 08:38:36</value>
@@ -1849,6 +1853,7 @@
             <null />
             <value>false</value>
             <value>false</value>
+            <value>true</value>
             <value>{ "prop1" : "true" }</value>
             <null />
             <value>2013-07-02 08:38:36</value>
@@ -1862,6 +1867,7 @@
             <value>de956031-6be2-43d6-bb90-5191c9253314</value>
             <value>false</value>
             <value>false</value>
+            <value>true</value>
             <value>{}</value>
             <null />
             <value>2013-07-02 08:38:36</value>

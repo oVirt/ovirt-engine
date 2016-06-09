@@ -1603,6 +1603,7 @@ CREATE OR REPLACE FUNCTION InsertVnicProfile (
     v_network_qos_id UUID,
     v_port_mirroring BOOLEAN,
     v_passthrough BOOLEAN,
+    v_migratable BOOLEAN,
     v_custom_properties TEXT,
     v_description TEXT,
     v_network_filter_id UUID
@@ -1616,6 +1617,7 @@ BEGIN
         network_qos_id,
         port_mirroring,
         passthrough,
+        migratable,
         custom_properties,
         description,
         network_filter_id
@@ -1627,6 +1629,7 @@ BEGIN
         v_network_qos_id,
         v_port_mirroring,
         v_passthrough,
+        v_migratable,
         v_custom_properties,
         v_description,
         v_network_filter_id
@@ -1641,6 +1644,7 @@ CREATE OR REPLACE FUNCTION UpdateVnicProfile (
     v_network_qos_id UUID,
     v_port_mirroring BOOLEAN,
     v_passthrough BOOLEAN,
+    v_migratable BOOLEAN,
     v_custom_properties TEXT,
     v_description TEXT,
     v_network_filter_id UUID
@@ -1654,6 +1658,7 @@ BEGIN
         network_qos_id = v_network_qos_id,
         port_mirroring = v_port_mirroring,
         passthrough = v_passthrough,
+        migratable = v_migratable,
         custom_properties = v_custom_properties,
         description = v_description,
         _update_date = LOCALTIMESTAMP,

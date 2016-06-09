@@ -32,6 +32,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
 
     private boolean portMirroring;
     private boolean passthrough;
+    private boolean migratable;
     private String description;
     private Map<String, String> customProperties;
     private Guid networkFilterId;
@@ -69,6 +70,14 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
 
     public void setPassthrough(boolean passthrough) {
         this.passthrough = passthrough;
+    }
+
+    public boolean isMigratable() {
+        return migratable;
+    }
+
+    public void setMigratable(boolean migratable) {
+        this.migratable = migratable;
     }
 
     public Map<String, String> getCustomProperties() {
@@ -126,6 +135,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
                 networkQosId,
                 portMirroring,
                 passthrough,
+                migratable,
                 description,
                 networkFilterId
         );
@@ -147,6 +157,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
                 && Objects.equals(networkQosId, other.networkQosId)
                 && portMirroring == other.portMirroring
                 && passthrough == other.passthrough
+                && migratable == other.migratable
                 && Objects.equals(description, other.description)
                 && Objects.equals(networkFilterId, other.networkFilterId);
     }
@@ -159,6 +170,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
                 .append("networkQosId", getNetworkQosId())
                 .append("portMirroring", isPortMirroring())
                 .append("passthrough", isPassthrough())
+                .append("migratable", isMigratable())
                 .append("customProperties", getCustomProperties())
                 .append("description", getDescription())
                 .append("networkFilterId", getNetworkFilterId())
