@@ -7,16 +7,22 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
+import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class BatchProcedureCallTest extends BaseDaoTestCase {
 
     private TagDao dao;
+
+    @Inject
+    private DbEngineDialect dbEngineDialect;
 
     public BatchProcedureCallTest() {
     }
@@ -28,8 +34,7 @@ public class BatchProcedureCallTest extends BaseDaoTestCase {
     }
 
     protected CustomMapSqlParameterSource getParamsSource(Tags tag) {
-        CustomMapSqlParameterSource paramsSource = new CustomMapSqlParameterSource(
-                dbFacade.getDbEngineDialect());
+        CustomMapSqlParameterSource paramsSource = new CustomMapSqlParameterSource(dbEngineDialect);
         paramsSource.addValue("description", tag.getDescription())
                 .addValue("tag_id", tag.getTagId())
                 .addValue("tag_name", tag.getTagName())

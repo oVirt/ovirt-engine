@@ -30,9 +30,10 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
     private static ConcurrentMap<String, StoredProcedureMetaData> storedProceduresMap =
             new ConcurrentHashMap<>();
 
-    private String procName;
-    private List<MapSqlParameterSource> executions;
-    private SimpleJdbcCallsHandler handler;
+    private final String procName;
+    private final List<MapSqlParameterSource> executions;
+    private final SimpleJdbcCallsHandler handler;
+    private final DbEngineDialect dbEngineDialect;
 
     public BatchProcedureExecutionConnectionCallback(SimpleJdbcCallsHandler handler,
             String procName,
@@ -40,6 +41,7 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
         this.handler = handler;
         this.procName = procName;
         this.executions = executions;
+        this.dbEngineDialect = handler.getDialect();
     }
 
     @Override
@@ -164,12 +166,8 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
         for (Map.Entry<String, SqlCallParameter> paramOrderEntry : paramOrder.entrySet()) {
             String paramName = paramOrderEntry.getKey();
             Object value = values.get(paramName);
-            if (value == null && paramName.startsWith(DbFacade.getInstance().getDbEngineDialect().getParamNamePrefix())) {
-                value =
-                        values.get(paramName.substring(DbFacade.getInstance()
-                                .getDbEngineDialect()
-                                .getParamNamePrefix()
-                                .length()));
+            if (value == null && paramName.startsWith(dbEngineDialect.getParamNamePrefix())) {
+                value = values.get(paramName.substring(dbEngineDialect.getParamNamePrefix().length()));
             }
 
             SqlCallParameter sqlParam = paramOrderEntry.getValue();

@@ -290,10 +290,6 @@ public class DbFacade {
         instance = this;
     }
 
-    public DbEngineDialect getDbEngineDialect() {
-        return dbEngineDialect;
-    }
-
     public SimpleJdbcCallsHandler getCallsHandler() {
         return callsHandler;
     }
