@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.pool.RefreshStoragePoolAndDisconnectAsyncOperationFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -62,6 +63,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Inject
     protected EventQueue eventQueue;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -466,6 +470,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected void executeInNewTransaction(TransactionMethod<?> method) {
         TransactionSupport.executeInNewTransaction(method);
+    }
+
+    protected VmDeviceUtils getVmDeviceUtils() {
+        return vmDeviceUtils;
     }
 
     protected CommandEntityDao getCommandEntityDao() {

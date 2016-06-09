@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -95,7 +94,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         // update cached image
         VmHandler.updateDisksFromDb(getVm());
         // update vm device boot order
-        VmDeviceUtils.updateBootOrder(getVm().getId());
+        getVmDeviceUtils().updateBootOrder(getVm().getId());
         getVmStaticDao().incrementDbGeneration(getVm().getId());
         setSucceeded(true);
     }

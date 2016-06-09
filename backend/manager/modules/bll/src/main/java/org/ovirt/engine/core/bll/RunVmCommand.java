@@ -32,7 +32,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -700,7 +699,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // Before running the VM we update its devices, as they may
         // need to be changed due to configuration option change
-        VmDeviceUtils.updateVmDevicesOnRun(getVm().getStaticData());
+        getVmDeviceUtils().updateVmDevicesOnRun(getVm().getStaticData());
 
         updateGraphicsInfos();
 

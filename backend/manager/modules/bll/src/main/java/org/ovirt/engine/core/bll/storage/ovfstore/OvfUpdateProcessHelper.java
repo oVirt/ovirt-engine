@@ -33,10 +33,12 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 
 public class OvfUpdateProcessHelper {
-    private OvfManager ovfManager;
+    private final OvfManager ovfManager;
+    private final VmDeviceUtils vmDeviceUtils;
 
-    public OvfUpdateProcessHelper() {
-        ovfManager = new OvfManager();
+    public OvfUpdateProcessHelper(VmDeviceUtils vmDeviceUtils) {
+        this.vmDeviceUtils = vmDeviceUtils;
+        this.ovfManager = new OvfManager();
     }
 
     /**
@@ -73,7 +75,7 @@ public class OvfUpdateProcessHelper {
      * Loads additional need vm data for it's ovf
      */
     public void loadVmData(VM vm) {
-        VmDeviceUtils.setVmDevices(vm.getStaticData());
+        vmDeviceUtils.setVmDevices(vm.getStaticData());
         if (vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
@@ -112,7 +114,7 @@ public class OvfUpdateProcessHelper {
      * Loads additional need template data for it's ovf
      */
     public void loadTemplateData(VmTemplate template) {
-        VmDeviceUtils.setVmDevices(template);
+        vmDeviceUtils.setVmDevices(template);
         if (template.getInterfaces() == null || template.getInterfaces().isEmpty()) {
             template.setInterfaces(getVmNetworkInterfaceDao()
                     .getAllForTemplate(template.getId()));

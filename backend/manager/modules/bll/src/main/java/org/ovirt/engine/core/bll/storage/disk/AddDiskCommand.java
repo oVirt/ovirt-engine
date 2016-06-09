@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -466,7 +465,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private VmDevice addManagedDeviceForDisk(Guid diskId, Boolean isUsingScsiReservation) {
-        return  VmDeviceUtils.addDiskDevice(
+        return  getVmDeviceUtils().addDiskDevice(
                 getVmId(),
                 diskId,
                 shouldDiskBePlugged(),

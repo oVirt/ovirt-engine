@@ -33,13 +33,15 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
  */
 public class DiskValidator {
 
-    private Disk disk;
+    private final VmDeviceUtils vmDeviceUtils;
+    private final Disk disk;
 
     protected static final String DISK_NAME_VARIABLE = "DiskName";
     protected static final String VM_NAME_VARIABLE = "VmName";
 
-    public DiskValidator(Disk disk) {
+    public DiskValidator(Disk disk, VmDeviceUtils vmDeviceUtils) {
         this.disk = disk;
+        this.vmDeviceUtils = vmDeviceUtils;
     }
 
     /**
@@ -82,7 +84,7 @@ public class DiskValidator {
     }
 
     public boolean isVirtioScsiControllerAttached(Guid vmId) {
-        return VmDeviceUtils.hasVirtioScsiController(vmId);
+        return vmDeviceUtils.hasVirtioScsiController(vmId);
     }
 
     public ValidationResult isDiskPluggedToVmsThatAreNotDown(boolean checkOnlyVmsSnapshotPluggedTo, List<Pair<VM, VmDevice>> vmsForDisk) {

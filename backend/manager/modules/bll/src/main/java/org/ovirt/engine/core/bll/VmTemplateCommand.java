@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
@@ -41,6 +42,10 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
 
     @Inject
     private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -281,5 +286,9 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         }
 
         return false;
+    }
+
+    protected VmDeviceUtils getVmDeviceUtils() {
+        return vmDeviceUtils;
     }
 }

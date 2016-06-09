@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -58,6 +61,9 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 @InternalCommandAttribute
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
         implements QuotaStorageDependent, SerialChildExecutingCommand {
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
@@ -511,7 +517,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected DiskValidator createDiskValidator(Disk disk) {
-        return new DiskValidator(disk);
+        return new DiskValidator(disk, vmDeviceUtils);
     }
 
     protected StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {

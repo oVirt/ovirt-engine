@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -202,7 +201,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         getVmStaticDao().update(newVmStatic);
         if (getVm().isNotRunning()) {
             updateVmPayload();
-            VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
+            getVmDeviceUtils().updateVmDevices(getParameters(), oldVm);
             updateWatchdog();
             updateRngDevice();
             updateGraphicsDevices();
@@ -316,7 +315,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 true,
                 StringUtils.EMPTY,
                 Collections.<DiskImage> emptyList(),
-                VmDeviceUtils.getVmDevicesForNextRun(getVm(), getParameters()),
+                getVmDeviceUtils().getVmDevicesForNextRun(getVm(), getParameters()),
                 getCompensationContext());
     }
 
@@ -521,7 +520,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
 
             if (!getParameters().isClearPayload()) {
-                VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), getVmId()),
+                getVmDeviceUtils().addManagedDevice(new VmDeviceId(Guid.newGuid(), getVmId()),
                         VmDeviceGeneralType.DISK,
                         payload.getDeviceType(),
                         payload.getSpecParams(),
@@ -697,7 +696,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // Check if number of monitors passed is legal
         if (!VmHandler.isNumOfMonitorsLegal(
-                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmId()), getParameters().getGraphicsDevices()),
+                VmHandler.getResultingVmGraphics(
+                        getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
+                        getParameters().getGraphicsDevices()),
                 getParameters().getVmStaticData().getNumOfMonitors(),
                 getReturnValue().getValidationMessages())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
@@ -751,7 +752,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // Check if the graphics and display from parameters are supported
         if (!VmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
-                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmId()), getParameters().getGraphicsDevices()),
+                VmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
+                        getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getValidationMessages(),
                 getEffectiveCompatibilityVersion())) {
@@ -1083,18 +1085,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     public boolean isVirtioScsiEnabledForVm(Guid vmId) {
-        return VmDeviceUtils.hasVirtioScsiController(vmId);
+        return getVmDeviceUtils().hasVirtioScsiController(vmId);
     }
 
     protected boolean isBalloonEnabled() {
         Boolean balloonEnabled = getParameters().isBalloonEnabled();
-        return balloonEnabled != null ? balloonEnabled : VmDeviceUtils.hasMemoryBalloon(getVmId());
+        return balloonEnabled != null ? balloonEnabled : getVmDeviceUtils().hasMemoryBalloon(getVmId());
     }
 
     protected boolean isSoundDeviceEnabled() {
         Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
         return soundDeviceEnabled != null ? soundDeviceEnabled :
-                VmDeviceUtils.hasSoundDevice(getVmId());
+                getVmDeviceUtils().hasSoundDevice(getVmId());
     }
 
     protected boolean hasWatchdog() {

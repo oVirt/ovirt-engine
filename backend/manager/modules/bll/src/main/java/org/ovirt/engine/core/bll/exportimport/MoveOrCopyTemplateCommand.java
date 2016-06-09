@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -109,7 +108,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
     protected final void endVmTemplateRelatedOps() {
         if (getVmTemplate() != null) {
-            VmDeviceUtils.setVmDevices(getVmTemplate());
+            getVmDeviceUtils().setVmDevices(getVmTemplate());
             VmHandler.updateVmInitFromDB(getVmTemplate(), true);
             incrementDbGeneration();
             VmTemplateHandler.unlockVmTemplate(getVmTemplateId());

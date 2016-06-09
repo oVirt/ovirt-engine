@@ -6,11 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
@@ -31,6 +34,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     private List<VdcReturnValueBase> vdcReturnValues = new ArrayList<>();
     private List<MoveDiskParameters> moveDiskParametersList = new ArrayList<>();
@@ -82,7 +88,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     private boolean verifyUnsupportedDisks() {
         for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
             Disk disk = getDiskDao().get(moveDiskParameters.getImageGroupID());
-            DiskValidator diskValidator = new DiskValidator(disk);
+            DiskValidator diskValidator = new DiskValidator(disk, vmDeviceUtils);
             if (!validate(diskValidator.validateUnsupportedDiskStorageType(
                     DiskStorageType.LUN, DiskStorageType.CINDER))) {
                 return false;

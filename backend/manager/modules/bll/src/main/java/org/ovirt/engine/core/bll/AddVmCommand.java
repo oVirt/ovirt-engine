@@ -35,7 +35,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -171,7 +170,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             setVmTemplateId(templateIdToUse);
 
             // API backward compatibility
-            if (VmDeviceUtils.shouldOverrideSoundDevice(
+            if (getVmDeviceUtils().shouldOverrideSoundDevice(
                     getParameters().getVmStaticData(),
                     getEffectiveCompatibilityVersion(),
                     getParameters().isSoundDeviceEnabled())) {
@@ -600,7 +599,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         // Check if the graphics and display from parameters are supported
         if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getVmStaticData().getOsId(),
-                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
+                VmHandler.getResultingVmGraphics(
+                        getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
+                        getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getValidationMessages(),
                 getEffectiveCompatibilityVersion())) {
@@ -965,14 +966,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         // add or remove the smartcard according to user request
         boolean smartcardOnDeviceSource = getInstanceTypeId() != null ? getInstanceType().isSmartcardEnabled() : getVmTemplate().isSmartcardEnabled();
         if (getVm().isSmartcardEnabled() != smartcardOnDeviceSource) {
-            VmDeviceUtils.updateSmartcardDevice(getVm().getId(), getVm().isSmartcardEnabled());
+            getVmDeviceUtils().updateSmartcardDevice(getVm().getId(), getVm().isSmartcardEnabled());
         }
     }
 
     protected void addVmWatchdog() {
         VmWatchdog vmWatchdog = getParameters().getWatchdog();
         if (vmWatchdog != null) {
-            VdcActionType actionType = VmDeviceUtils.hasWatchdog(getVmTemplateId()) ?
+            VdcActionType actionType = getVmDeviceUtils().hasWatchdog(getVmTemplateId()) ?
                     VdcActionType.UpdateWatchdog : VdcActionType.AddWatchdog;
             runInternalAction(
                     actionType,
@@ -1006,7 +1007,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null) {
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), getParameters().getVmId()),
+            getVmDeviceUtils().addManagedDevice(new VmDeviceId(Guid.newGuid(), getParameters().getVmId()),
                     VmDeviceGeneralType.DISK,
                     payload.getDeviceType(),
                     payload.getSpecParams(),
@@ -1016,7 +1017,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void copyVmDevices() {
-        VmDeviceUtils.copyVmDevices(vmDevicesSourceId,
+        getVmDeviceUtils().copyVmDevices(vmDevicesSourceId,
                 getVmId(),
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 isSoundDeviceEnabled(),
@@ -1042,7 +1043,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         .getVmDeviceByVmIdTypeAndDevice(vmDisksSource.getId(),
                                 VmDeviceGeneralType.DISK,
                                 VmDeviceType.DISK.getName());
-        VmDeviceUtils.copyDiskDevices(
+        getVmDeviceUtils().copyDiskDevices(
                 getVmId(),
                 disks,
                 getSrcDeviceIdToTargetDeviceIdMapping()
@@ -1587,7 +1588,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {
-        return VmDeviceUtils.hasVirtioScsiController(vmId);
+        return getVmDeviceUtils().hasVirtioScsiController(vmId);
     }
 
     /**
@@ -1651,7 +1652,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
     protected boolean checkNumberOfMonitors() {
         Collection<GraphicsType> graphicsTypes = VmHandler.getResultingVmGraphics(
-                VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()),
+                getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
                 getParameters().getGraphicsDevices());
         int numOfMonitors = getParameters().getVmStaticData().getNumOfMonitors();
 

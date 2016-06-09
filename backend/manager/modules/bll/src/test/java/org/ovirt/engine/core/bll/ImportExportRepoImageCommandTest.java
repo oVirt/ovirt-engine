@@ -7,9 +7,11 @@ import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Rule;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -49,6 +51,9 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
 
     @Mock
     private OpenStackImageProviderProxy providerProxy;
+
+    @InjectMocks
+    protected VmDeviceUtils vmDeviceUtils;
 
     private Guid providerId;
 

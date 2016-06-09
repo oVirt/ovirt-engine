@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -509,7 +508,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     }
 
     protected boolean updateVmInSpm() {
-        OvfUpdateProcessHelper ovfHelper = new OvfUpdateProcessHelper();
+        OvfUpdateProcessHelper ovfHelper = new OvfUpdateProcessHelper(getVmDeviceUtils());
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
         ovfHelper.loadVmData(getVm());
         ovfHelper.buildMetadataDictionaryForVm(getVm(),
@@ -536,7 +535,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private void populateVmData(VM vm) {
         VmHandler.updateDisksFromDb(vm);
         VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
-        VmDeviceUtils.setVmDevices(vm.getStaticData());
+        getVmDeviceUtils().setVmDevices(vm.getStaticData());
     }
 
     private void endCopyCollapseOperations(VM vm) {

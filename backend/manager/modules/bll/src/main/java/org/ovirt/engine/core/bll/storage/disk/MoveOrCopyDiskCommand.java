@@ -145,7 +145,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean isDiskUsedAsOvfStore() {
-        return validate(new DiskValidator(getImage()).isDiskUsedAsOvfStore());
+        return validate(createDiskValidator().isDiskUsedAsOvfStore());
     }
 
     /**
@@ -574,6 +574,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected DiskValidator createDiskValidator() {
-        return new DiskValidator(getImage());
+        return new DiskValidator(getImage(), getVmDeviceUtils());
     }
 }

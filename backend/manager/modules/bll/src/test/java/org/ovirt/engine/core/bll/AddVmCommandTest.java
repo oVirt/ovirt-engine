@@ -28,6 +28,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -75,6 +76,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -154,13 +156,23 @@ public class AddVmCommandTest extends BaseCommandTest {
     @Mock
     DbFacade dbFacade;
 
+    @Mock
+    private VmDeviceDao vmDeviceDao;
+
+    @Mock
+    private DiskDao diskDao;
+
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
+
     @Before
     public void initTest() {
         mockCpuFlagsManagerHandler();
         mockOsRepository();
-        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
         doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
-        VmDeviceUtils.init();
+
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
+        VmHandler.init();
     }
 
     @Test
@@ -419,6 +431,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), anyList());
         mockDaos(result);
         mockBackend(result);
+        mockVmDeviceUtils(result);
         initCommandMethods(result);
         result.macPoolPerCluster = this.macPoolPerCluster;
         result.postConstruct();
@@ -678,6 +691,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         cmd = spy(cmd);
         mockDaos(cmd);
         mockBackend(cmd);
+        mockVmDeviceUtils(cmd);
         doReturn(new Cluster()).when(cmd).getCluster();
         generateStorageToDisksMap(cmd);
         initDestSDs(cmd);
@@ -687,7 +701,11 @@ public class AddVmCommandTest extends BaseCommandTest {
         return cmd;
     }
 
-     protected void generateStorageToDisksMap(AddVmCommand<? extends AddVmParameters> command) {
+    private void mockVmDeviceUtils(AddVmCommand<AddVmParameters> cmd) {
+        doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
+    }
+
+    protected void generateStorageToDisksMap(AddVmCommand<? extends AddVmParameters> command) {
         command.storageToDisksMap = new HashMap<>();
         command.storageToDisksMap.put(STORAGE_DOMAIN_ID_1, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_1));
         command.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_2));

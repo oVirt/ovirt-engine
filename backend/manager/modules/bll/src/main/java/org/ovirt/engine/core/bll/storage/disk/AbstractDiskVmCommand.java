@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -130,19 +129,19 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {
-        return VmDeviceUtils.hasVirtioScsiController(vmId);
+        return getVmDeviceUtils().hasVirtioScsiController(vmId);
     }
 
     protected boolean isBalloonEnabled(Guid vmId) {
-        return VmDeviceUtils.hasMemoryBalloon(vmId);
+        return getVmDeviceUtils().hasMemoryBalloon(vmId);
     }
 
     protected boolean isSoundDeviceEnabled(Guid vmId) {
-        return VmDeviceUtils.hasSoundDevice(vmId);
+        return getVmDeviceUtils().hasSoundDevice(vmId);
     }
 
     protected boolean hasWatchdog(Guid vmId) {
-        return VmDeviceUtils.hasWatchdog(vmId);
+        return getVmDeviceUtils().hasWatchdog(vmId);
     }
 
     /** Updates the VM's disks from the database */
@@ -209,7 +208,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected DiskValidator getDiskValidator(Disk disk) {
-        return new DiskValidator(disk);
+        return new DiskValidator(disk, getVmDeviceUtils());
     }
 
     protected boolean isVmNotInPreviewSnapshot() {

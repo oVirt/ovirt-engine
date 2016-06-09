@@ -22,10 +22,16 @@ public class ChangeVmClusterValidator {
 
     private Cluster targetCluster;
 
-    public ChangeVmClusterValidator(VmCommand parentCommand, Guid targetClusterId, Version vmCustomCompatibilityVersion) {
+    private final VmDeviceUtils vmDeviceUtils;
+
+    public ChangeVmClusterValidator(VmCommand parentCommand,
+            Guid targetClusterId,
+            Version vmCustomCompatibilityVersion,
+            VmDeviceUtils vmDeviceUtils) {
         this.parentCommand = parentCommand;
         this.targetClusterId = targetClusterId;
         this.vmCompatibilityVersion = vmCustomCompatibilityVersion;
+        this.vmDeviceUtils = vmDeviceUtils;
     }
 
     protected boolean validate() {
@@ -78,14 +84,14 @@ public class ChangeVmClusterValidator {
             // Check if the display type is supported
             if (!VmHandler.isGraphicsAndDisplaySupported(
                     vm.getOs(),
-                    VmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
+                    vmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
                     vm.getDefaultDisplayType(),
                     parentCommand.getReturnValue().getValidationMessages(),
                     vmCompatibilityVersion)) {
                 return false;
             }
 
-            if (VmDeviceUtils.hasVirtioScsiController(vm.getId())) {
+            if (vmDeviceUtils.hasVirtioScsiController(vm.getId())) {
                 // Verify OS compatibility
                 if (!VmHandler.isOsTypeSupportedForVirtioScsi(
                         vm.getOs(),

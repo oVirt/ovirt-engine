@@ -102,6 +102,7 @@ public class VmHandler {
     private static CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     private static final Logger log = LoggerFactory.getLogger(VmHandler.class);
+    private static VmDeviceUtils vmDeviceUtils;
 
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
@@ -118,6 +119,7 @@ public class VmHandler {
                 VmManagementParametersBase.class };
 
         cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
+        vmDeviceUtils = Injector.get(VmDeviceUtils.class);
 
         osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
@@ -830,15 +832,15 @@ public class VmHandler {
         String typeName = type != VmDeviceType.UNKNOWN ? type.getName() : null;
 
         if (value == null) {
-            if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, false)) {
+            if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, false)) {
                 updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, false));
             }
         } else if (value instanceof Boolean) {
-            if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (Boolean) value)) {
+            if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (Boolean) value)) {
                 updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, (Boolean) value));
             }
         } else if (value instanceof VmDevice) {
-            if (VmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (VmDevice) value)) {
+            if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (VmDevice) value)) {
                 updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, (VmDevice) value));
             }
         } else {
@@ -1095,8 +1097,9 @@ public class VmHandler {
         }
 
         for (Map.Entry<DisplayType, Set<GraphicsType>> entry : displayGraphicsSupport.entrySet()) {
-            if (entry.getValue().containsAll(VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId),
-                    graphicsDevices))) {
+            final List<GraphicsType> graphicsTypes = vmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId);
+            final Set<GraphicsType> resultingVmGraphics = getResultingVmGraphics(graphicsTypes, graphicsDevices);
+            if (entry.getValue().containsAll(resultingVmGraphics)) {
                 defaultDisplayType = entry.getKey();
                 break;
             }
@@ -1125,7 +1128,7 @@ public class VmHandler {
 
             int osId = parametersStaticData.getOsId();
 
-            List<GraphicsType> sourceGraphics = VmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId);
+            List<GraphicsType> sourceGraphics = vmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId);
             // if the source graphics device is supported then use it
             // otherwise choose the first supported graphics device
             if (!VmValidationUtils.isGraphicsAndDisplaySupported(osId, compatibilityVersion, sourceGraphics, defaultDisplayType)) {

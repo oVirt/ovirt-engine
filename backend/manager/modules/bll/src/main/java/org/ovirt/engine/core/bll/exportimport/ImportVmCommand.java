@@ -35,7 +35,6 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -617,7 +616,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             if (useCopyImages) {
                 moveOrCopyAllImageGroups();
             }
-            VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
+            getVmDeviceUtils().addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
             if (getParameters().isImportAsNewEntity()) {
                 getParameters().setVm(getVm());
                 setVmId(getVm().getId());

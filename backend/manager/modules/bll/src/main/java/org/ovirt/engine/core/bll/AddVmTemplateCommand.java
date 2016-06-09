@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -134,7 +134,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setClusterId(parameterMasterVm.getClusterId());
 
             // API backward compatibility
-            if (VmDeviceUtils.shouldOverrideSoundDevice(
+            if (getVmDeviceUtils().shouldOverrideSoundDevice(
                     getParameters().getMasterVm(),
                     getMasterVmCompatibilityVersion(),
                     getParameters().isSoundDeviceEnabled())) {
@@ -217,7 +217,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void updateVmDevices() {
-        VmDeviceUtils.setVmDevices(getVm().getStaticData());
+        getVmDeviceUtils().setVmDevices(getVm().getStaticData());
     }
 
     protected List<DiskImage> getVmDisksFromDB() {
@@ -324,18 +324,18 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
             Set<GraphicsType> graphicsToSkip = getParameters().getGraphicsDevices().keySet();
             if (isVmInDb) {
-                VmDeviceUtils.copyVmDevices(getVmId(),
+                getVmDeviceUtils().copyVmDevices(getVmId(),
                         getVmTemplateId(),
                         srcDeviceIdToTargetDeviceIdMapping,
                         getParameters().isSoundDeviceEnabled(),
                         getParameters().isConsoleEnabled(),
                         getParameters().isVirtioScsiEnabled(),
-                        VmDeviceUtils.hasMemoryBalloon(getVmId()),
+                        getVmDeviceUtils().hasMemoryBalloon(getVmId()),
                         graphicsToSkip,
                         false);
             } else {
                 // for instance type and new template without a VM
-                VmDeviceUtils.copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,
+                getVmDeviceUtils().copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,
                         getVmTemplateId(),
                         srcDeviceIdToTargetDeviceIdMapping,
                         getParameters().isSoundDeviceEnabled(),
@@ -403,7 +403,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Check if the display type is supported
         Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
         if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
-                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcId),
+                VmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(srcId),
                         getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
                 getReturnValue().getValidationMessages(),

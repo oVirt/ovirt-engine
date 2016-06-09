@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
@@ -54,6 +56,9 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T> implements SerialChildExecutingCommand, QuotaStorageDependent {
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     private OpenStackImageProviderProxy providerProxy;
 
@@ -238,7 +243,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         DiskVmElement dve = new DiskVmElement(templateDiskImage.getId(), templateId);
         dve.setDiskInterface(DiskInterface.VirtIO);
         getDiskVmElementDao().save(dve);
-        VmDeviceUtils.addDiskDevice(templateId, templateDiskImage.getId());
+        vmDeviceUtils.addDiskDevice(templateId, templateDiskImage.getId());
     }
 
 

@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
@@ -73,6 +74,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /** A test case for the {@link UpdateVmCommand}. */
 public class UpdateVmCommandTest extends BaseCommandTest {
@@ -107,10 +109,11 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     private VmDeviceDao vmDeviceDao;
     @Mock
-    private DiskVmElementDao diskVmElementDao;
-
+    private VmTemplateDao vmTemplateDao;
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
     @Mock
     OsRepository osRepository;
 
@@ -119,6 +122,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     @Mock
     InClusterUpgradeValidator inClusterUpgradeValidator;
+
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
 
     private static final Map<String, String> migrationMap = new HashMap<>();
 
@@ -217,6 +223,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
         doReturn(true).when(command).isBalloonEnabled();
         doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
+
+        doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
     }
 
     @Test
@@ -345,7 +353,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private void mockVmDevice(VmDevice vmDevice) {
         when(vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Arrays.asList(vmDevice));
         doReturn(vmDeviceDao).when(dbFacade).getVmDeviceDao();
-        VmDeviceUtils.init();
     }
 
     @Test

@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -151,7 +150,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setPriority(instanceType.getPriority());
             vmStatic.setTunnelMigration(instanceType.getTunnelMigration());
 
-            List<VmDevice> vmDevices = VmDeviceUtils.getMemoryBalloons(instanceType.getId());
+            List<VmDevice> vmDevices = getVmDeviceUtils().getMemoryBalloons(instanceType.getId());
             vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
             if (vmDevices.isEmpty()) {
                 getParameters().setBalloonEnabled(false);
@@ -163,5 +162,4 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
         }
     }
-
 }

@@ -52,6 +52,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
@@ -63,6 +64,11 @@ import org.slf4j.LoggerFactory;
  */
 public class SnapshotsManager {
     private static final Logger log = LoggerFactory.getLogger(SnapshotsManager.class);
+    private final VmDeviceUtils vmDeviceUtils;
+
+    public SnapshotsManager() {
+        vmDeviceUtils = Injector.get(VmDeviceUtils.class);
+    }
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
@@ -375,7 +381,7 @@ public class SnapshotsManager {
         }
 
         if (vmDevices == null) {
-            VmDeviceUtils.setVmDevices(vm.getStaticData());
+            vmDeviceUtils.setVmDevices(vm.getStaticData());
         } else {
             vm.getStaticData().setManagedDeviceMap(vmDevices);
         }
@@ -480,7 +486,7 @@ public class SnapshotsManager {
                 }
             }
 
-            VmDeviceUtils.addImportedDevices(vm.getStaticData(), false);
+            vmDeviceUtils.addImportedDevices(vm.getStaticData(), false);
         }
     }
 

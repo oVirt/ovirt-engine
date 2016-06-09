@@ -30,10 +30,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -93,6 +95,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
+
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
     private StoragePool pool1;
@@ -110,9 +115,10 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
         command = Mockito.spy(new ProcessOvfUpdateForStoragePoolCommand<>(
                 new ProcessOvfUpdateForStoragePoolParameters(), null));
-        ovfUpdateProcessHelper = Mockito.spy(new OvfUpdateProcessHelper());
+        ovfUpdateProcessHelper = Mockito.spy(new OvfUpdateProcessHelper(vmDeviceUtils));
         doReturn(ITEMS_COUNT_PER_UPDATE).when(command).loadConfigValue();
         doReturn(new ArrayList<DiskImage>()).when(ovfUpdateProcessHelper).getAllImageSnapshots(any(DiskImage.class));
         doCallRealMethod().when(command).executeCommand();

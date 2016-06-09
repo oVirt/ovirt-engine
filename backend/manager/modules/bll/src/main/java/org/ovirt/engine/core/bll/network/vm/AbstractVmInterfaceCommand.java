@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.MacAddressValidator;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
@@ -84,10 +83,10 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         return checkPciAndIdeLimit(vm.getOs(),
                 vm.getCompatibilityVersion(),
                 vm.getNumOfMonitors(), allInterfaces, diskVmElements,
-                VmDeviceUtils.hasVirtioScsiController(getVmId()),
-                VmDeviceUtils.hasWatchdog(getVmId()),
-                VmDeviceUtils.hasMemoryBalloon(getVmId()),
-                VmDeviceUtils.hasSoundDevice(getVmId()),
+                getVmDeviceUtils().hasVirtioScsiController(getVmId()),
+                getVmDeviceUtils().hasWatchdog(getVmId()),
+                getVmDeviceUtils().hasMemoryBalloon(getVmId()),
+                getVmDeviceUtils().hasSoundDevice(getVmId()),
                 getReturnValue().getValidationMessages());
     }
 

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -348,7 +347,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             moveOrCopyAllImageGroups(getVmTemplateId(), getImages());
         }
 
-        VmDeviceUtils.addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
+        getVmDeviceUtils().addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
 
         if (!doesVmTemplateContainImages || getParameters().isImagesExistOnTargetStorageDomain()) {
             endMoveOrCopyCommand();

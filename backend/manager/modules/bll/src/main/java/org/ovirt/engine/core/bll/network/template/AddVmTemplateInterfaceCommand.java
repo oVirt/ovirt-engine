@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -37,7 +36,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                         getParameters().getInterface().getType()).getSpeed());
 
         getVmNicDao().save(getParameters().getInterface());
-        VmDeviceUtils.addInterface(
+        getVmDeviceUtils().addInterface(
                 getParameters().getVmTemplateId(),
                 getParameters().getInterface().getId(),
                 getParameters().getInterface().isPlugged(),
@@ -74,10 +73,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                     getVmTemplate().getNumOfMonitors(),
                     interfacesForCheckPciLimit,
                     getTemplateDiskVmElements(),
-                    VmDeviceUtils.hasVirtioScsiController(getVmTemplate().getId()),
-                    VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
-                    VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),
-                    VmDeviceUtils.hasSoundDevice(getVmTemplate().getId()),
+                    getVmDeviceUtils().hasVirtioScsiController(getVmTemplate().getId()),
+                    getVmDeviceUtils().hasWatchdog(getVmTemplate().getId()),
+                    getVmDeviceUtils().hasMemoryBalloon(getVmTemplate().getId()),
+                    getVmDeviceUtils().hasSoundDevice(getVmTemplate().getId()),
                     getReturnValue().getValidationMessages())) {
                 return false;
             }

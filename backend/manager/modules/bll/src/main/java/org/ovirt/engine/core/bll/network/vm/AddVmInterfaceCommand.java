@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -75,7 +74,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     }
 
     private void addInterfaceDeviceToDb() {
-        VmDevice vmDevice = VmDeviceUtils.addInterface(
+        VmDevice vmDevice = getVmDeviceUtils().addInterface(
                 getParameters().getVmId(),
                 getInterface().getId(),
                 getInterface().isPlugged(),

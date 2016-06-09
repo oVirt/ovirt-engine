@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -254,7 +253,7 @@ implements QuotaStorageDependent {
     protected void addVmInterfaces() {
         super.addVmInterfaces();
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            VmDeviceUtils.addInterface(getVmId(), iface.getId(), iface.isPlugged(), false);
+            getVmDeviceUtils().addInterface(getVmId(), iface.getId(), iface.isPlugged(), false);
         }
     }
 

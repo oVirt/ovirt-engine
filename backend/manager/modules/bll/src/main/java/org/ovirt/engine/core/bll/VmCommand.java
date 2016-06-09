@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -48,6 +49,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Inject
     protected MacPoolPerCluster macPoolPerCluster;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     @Inject
     private VmDao vmDao;
@@ -461,5 +465,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected void unlockSnapshot(Guid snapshotId) {
         // if we got here, the target snapshot exists for sure
         getSnapshotDao().updateStatus(snapshotId, Snapshot.SnapshotStatus.OK);
+    }
+
+    protected VmDeviceUtils getVmDeviceUtils() {
+        return vmDeviceUtils;
     }
 }

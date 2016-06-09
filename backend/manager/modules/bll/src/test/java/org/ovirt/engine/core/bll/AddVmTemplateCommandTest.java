@@ -20,9 +20,11 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -82,6 +84,9 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private DbFacade dbFacade;
 
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
+
     @Before
     public void setUp() {
         // The VM to use
@@ -140,6 +145,11 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(clusterDao).when(cmd).getClusterDao();
+        doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
+
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
+        VmHandler.init();
+
         cmd.postConstruct();
         cmd.setVmId(vmId);
         cmd.setClusterId(clusterId);
@@ -148,6 +158,8 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     protected void mockOsRepository() {
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        vmDeviceUtils.init();
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
         VmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.getMinimumRam(vm.getVmOsId(), Version.getLast())).thenReturn(0);

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -73,7 +72,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        DiskValidator oldDiskValidator = new DiskValidator(disk);
+        DiskValidator oldDiskValidator = new DiskValidator(disk, getVmDeviceUtils());
         ValidationResult isHostedEngineDisk = oldDiskValidator.validateNotHostedEngineDisk();
         if (!isHostedEngineDisk.isValid()) {
             return validate(isHostedEngineDisk);
@@ -235,7 +234,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     }
 
     protected void updateBootOrderInVmDevice() {
-        VmDeviceUtils.updateBootOrder(getVm().getId());
+        getVmDeviceUtils().updateBootOrder(getVm().getId());
     }
 
     private void updateDiskVmSnapshotId() {

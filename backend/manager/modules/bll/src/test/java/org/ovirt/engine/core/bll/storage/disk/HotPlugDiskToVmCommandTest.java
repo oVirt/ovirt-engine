@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
@@ -75,8 +77,11 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Mock
     private DiskVmElementDao diskVmElementDao;
 
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
+
     @Spy
-    private DiskValidator diskValidator = new DiskValidator(disk);
+    private DiskValidator diskValidator = new DiskValidator(disk, vmDeviceUtils);
 
     @Mock
     private SnapshotsValidator snapshotsValidator;

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -62,6 +65,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T>
         implements QuotaStorageDependent {
 
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
+
     private Disk disk;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
@@ -93,7 +99,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private boolean validateHostedEngineDisks() {
-        DiskValidator oldDiskValidator = new DiskValidator(getDisk());
+        DiskValidator oldDiskValidator = new DiskValidator(getDisk(), vmDeviceUtils);
         if (getDisk().getVmEntityType() != null && getDisk().getVmEntityType().isVmType()) {
             for (VM vm : getVmsForDiskId()) {
                 if (!validate(oldDiskValidator.validRemovableHostedEngineDisks(vm))) {

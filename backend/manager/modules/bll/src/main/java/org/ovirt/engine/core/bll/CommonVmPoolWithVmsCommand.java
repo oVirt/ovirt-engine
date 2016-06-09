@@ -72,6 +72,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     @Inject
     MacPoolPerCluster poolPerCluster;
 
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
@@ -259,7 +261,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         parameters.setParentParameters(getParameters());
         // check if device is enabled or we need to override it to true
         parameters.setSoundDeviceEnabled(Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled())
-                || VmDeviceUtils.shouldOverrideSoundDevice(
+                || vmDeviceUtils.shouldOverrideSoundDevice(
                             getParameters().getVmStaticData(),
                             getEffectiveCompatibilityVersion(),
                             getParameters().isSoundDeviceEnabled()));

@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -161,7 +160,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
 
     private void updateBootOrder() {
         TransactionSupport.executeInNewTransaction(() -> {
-            VmDeviceUtils.updateBootOrder(getVm().getId());
+            getVmDeviceUtils().updateBootOrder(getVm().getId());
             return null;
         });
     }

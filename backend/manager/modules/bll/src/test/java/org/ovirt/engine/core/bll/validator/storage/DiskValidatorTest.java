@@ -19,9 +19,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -50,6 +52,10 @@ public class DiskValidatorTest {
     private OsRepository osRepository;
     @Mock
     private VmDao vmDao;
+
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
+
     private DiskValidator validator;
     private DiskImage disk;
     private LunDisk lunDisk;
@@ -99,13 +105,13 @@ public class DiskValidatorTest {
         initializeOsRepository(1, DiskInterface.VirtIO);
         disk = createDiskImage();
         disk.setDiskAlias("disk1");
-        validator = spy(new DiskValidator(disk));
+        validator = spy(new DiskValidator(disk, vmDeviceUtils));
         doReturn(vmDao).when(validator).getVmDao();
     }
 
     private void setupForLun() {
         lunDisk = createLunDisk();
-        lunValidator = spy(new DiskValidator(lunDisk));
+        lunValidator = spy(new DiskValidator(lunDisk, vmDeviceUtils));
         doReturn(vmDao).when(lunValidator).getVmDao();
     }
 

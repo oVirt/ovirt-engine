@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.InjectorRule;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -89,6 +91,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Mock
     private MacPoolPerCluster macPoolPerCluster;
+
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
 
     @Before
     public void setUp() throws IOException {
@@ -214,6 +219,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private void initCommand(OvfEntityData resultOvfEntityData) {
         ImportVmParameters parameters = createParametersWhenImagesExistOnTargetStorageDomain();
         initUnregisteredOVFData(resultOvfEntityData);
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
         cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters));
         cmd.init();
         doReturn(mock(MacPool.class)).when(cmd).getMacPool();

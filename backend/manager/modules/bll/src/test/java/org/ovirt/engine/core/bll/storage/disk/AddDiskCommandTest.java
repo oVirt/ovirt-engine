@@ -20,12 +20,14 @@ import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -107,6 +109,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private DiskValidator diskValidator;
+
+    @InjectMocks
+    private VmDeviceUtils vmDeviceUtils;
 
     /**
      * The command under test.
@@ -453,7 +458,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     private DiskValidator spyDiskValidator(Disk disk) {
-        DiskValidator diskValidator = spy(new DiskValidator(disk));
+        DiskValidator diskValidator = spy(new DiskValidator(disk, vmDeviceUtils));
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         return diskValidator;
     }

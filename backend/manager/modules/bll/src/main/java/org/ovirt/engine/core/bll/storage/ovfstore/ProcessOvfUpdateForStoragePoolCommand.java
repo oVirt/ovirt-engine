@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.di.Injector;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
@@ -56,7 +58,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     public ProcessOvfUpdateForStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStoragePoolId(parameters.getStoragePoolId());
-        ovfUpdateProcessHelper = new OvfUpdateProcessHelper();
+        ovfUpdateProcessHelper = new OvfUpdateProcessHelper(Injector.get(VmDeviceUtils.class));
         activeDataDomainsIds = new LinkedList<>();
     }
 

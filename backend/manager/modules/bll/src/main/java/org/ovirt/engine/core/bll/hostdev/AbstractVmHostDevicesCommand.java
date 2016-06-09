@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -120,6 +119,6 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
         for (VmDevice device : existingDevices) {
             result.add(new VmHostDevice(device));
         }
-        return VmDeviceUtils.vmDevicesByDevice(result);
+        return getVmDeviceUtils().vmDevicesByDevice(result);
     }
 }

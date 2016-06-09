@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -27,6 +28,8 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     @Before
     public void setUp() {
         super.setUp();
+
+        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
 
         ImportRepoImageParameters importParameters = new ImportRepoImageParameters();
 

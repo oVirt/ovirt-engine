@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public class GetVirtioScsiControllersQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     public GetVirtioScsiControllersQuery(P parameters) {
         super(parameters);
@@ -11,7 +16,7 @@ public class GetVirtioScsiControllersQuery<P extends IdQueryParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(VmDeviceUtils.getVirtioScsiControllers(getParameters().getId(),
+        getQueryReturnValue().setReturnValue(vmDeviceUtils.getVirtioScsiControllers(getParameters().getId(),
                 getUserID(), getParameters().isFiltered()));
     }
 }

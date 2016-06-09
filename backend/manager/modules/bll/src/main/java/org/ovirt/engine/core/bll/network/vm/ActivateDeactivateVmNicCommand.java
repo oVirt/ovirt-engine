@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
@@ -315,7 +314,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         return () -> {
             vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG);
             getVmDeviceDao().update(vmDevice);
-            VmDeviceUtils.updateBootOrder(getVm().getId());
+            getVmDeviceUtils().updateBootOrder(getVm().getId());
             return null;
         };
     }

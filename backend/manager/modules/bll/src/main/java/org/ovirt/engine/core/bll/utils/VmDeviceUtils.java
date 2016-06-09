@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -43,8 +45,11 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
@@ -55,22 +60,32 @@ public class VmDeviceUtils {
     private static final int COMPANION_USB_CONTROLLERS = 3;
     private static final int VNC_MIN_MONITORS = 1;
     private static final int SINGLE_QXL_MONITORS = 1;
-    public static final Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
-    private static OsRepository osRepository;
-    private static DbFacade dbFacade;
-    private static VmDeviceDao dao;
+    private static final Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
 
-    static {
+    private final VmDao vmDao;
+    private final VmDeviceDao vmDeviceDao;
+    private final DiskDao diskDao;
+    private final ClusterDao clusterDao;
+    private final VmTemplateDao vmTemplateDao;
+
+    private OsRepository osRepository;
+
+    @Inject
+    VmDeviceUtils(VmDao vmDao,
+            VmDeviceDao vmDeviceDao,
+            DiskDao diskDao,
+            ClusterDao clusterDao,
+            VmTemplateDao vmTemplateDao) {
+        this.vmDao = vmDao;
+        this.vmDeviceDao = vmDeviceDao;
+        this.diskDao = diskDao;
+        this.clusterDao = clusterDao;
+        this.vmTemplateDao = vmTemplateDao;
         init();
     }
 
-    /**
-     * Useful for tests that want to re-initialize the static dependencies using newly mocked objects.
-     */
-    public static void init() {
+    public void init() {
         osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-        dbFacade = SimpleDependencyInjector.getInstance().get(DbFacade.class);
-        dao = dbFacade.getVmDeviceDao();
     }
 
     /*
@@ -87,7 +102,7 @@ public class VmDeviceUtils {
      * @param dstCdPath CD path on the destination VM
      * @return  CD path to be used on the destination VM
      */
-    private static String getCdPath(String srcCdPath, String dstCdPath) {
+    private String getCdPath(String srcCdPath, String dstCdPath) {
         if (!StringUtils.isEmpty(dstCdPath)) {
             return dstCdPath;
         } else if (!StringUtils.isEmpty(srcCdPath)) {
@@ -100,7 +115,7 @@ public class VmDeviceUtils {
     /**
      * Determine the bus interface (IDE, SCSI, SATA etc.) to be used for CD device in the given VM.
      */
-    public static String getCdInterface(VM vm) {
+    public String getCdInterface(VM vm) {
         return osRepository.getCdInterface(
                 vm.getOs(),
                 vm.getCompatibilityVersion(),
@@ -112,20 +127,20 @@ public class VmDeviceUtils {
      *
      * <b>Note:</b> Only one CD is currently supported.
      */
-    private static void updateCdPath(VmBase oldVmBase, VmBase newVmBase) {
+    private void updateCdPath(VmBase oldVmBase, VmBase newVmBase) {
         List<VmDevice> cdList = getCdDevices(oldVmBase.getId());
         if (cdList.size() > 0) { // this is done only for safety, each VM must have at least an empty CD
             VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
             cd.getSpecParams().putAll(getCdDeviceSpecParams("", newVmBase.getIsoPath()));
-            dao.update(cd);
+            vmDeviceDao.update(cd);
         }
     }
 
     /**
      * Get list of all CD-ROM devices in the VM.
      */
-    public static List<VmDevice> getCdDevices(Guid vmId) {
-        return dao.getVmDeviceByVmIdTypeAndDevice(
+    public List<VmDevice> getCdDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.CDROM.getName());
@@ -134,21 +149,21 @@ public class VmDeviceUtils {
     /**
      * Check if the VM has a CD-ROM device.
      */
-    public static boolean hasCdDevice(Guid vmId) {
+    public boolean hasCdDevice(Guid vmId) {
         return !getCdDevices(vmId).isEmpty();
     }
 
     /**
      * Get CD-ROM device spec params.
      */
-    private static Map<String, Object> getCdDeviceSpecParams(String srcCdPath, String dstCdPath) {
+    private Map<String, Object> getCdDeviceSpecParams(String srcCdPath, String dstCdPath) {
         return Collections.<String, Object> singletonMap(VdsProperties.Path, getCdPath(srcCdPath, dstCdPath));
     }
 
     /**
      * Add CD-ROM device with given CD path to the VM.
      */
-    public static VmDevice addCdDevice(Guid vmId, String cdPath) {
+    public VmDevice addCdDevice(Guid vmId, String cdPath) {
         return addManagedDevice(
             new VmDeviceId(Guid.newGuid(), vmId),
             VmDeviceGeneralType.DISK,
@@ -161,7 +176,7 @@ public class VmDeviceUtils {
     /**
      * Add CD-ROM device with empty CD path to the VM.
      */
-    public static VmDevice addCdDevice(Guid vmId) {
+    public VmDevice addCdDevice(Guid vmId) {
         return addCdDevice(vmId, "");
     }
 
@@ -172,7 +187,7 @@ public class VmDeviceUtils {
     /**
      * Update smartcard device in the new VM, if its state should be different from the old VM.
      */
-    private static void updateSmartcardDevice(VM oldVm, VmBase newVm) {
+    private void updateSmartcardDevice(VM oldVm, VmBase newVm) {
         if (newVm.isSmartcardEnabled() == oldVm.isSmartcardEnabled()) {
             return;
         }
@@ -186,7 +201,7 @@ public class VmDeviceUtils {
      * @param vmId  id of the VM to be modified
      * @param smartcardEnabled  enable/disable flag
      */
-    public static void updateSmartcardDevice(Guid vmId, boolean smartcardEnabled) {
+    public void updateSmartcardDevice(Guid vmId, boolean smartcardEnabled) {
         if (smartcardEnabled) {
             if (!hasSmartcardDevice(vmId)) {
                 addSmartcardDevice(vmId);
@@ -199,8 +214,8 @@ public class VmDeviceUtils {
     /**
      * Get list of all smartcard devices in the VM.
      */
-    public static List<VmDevice> getSmartcardDevices(Guid vmId) {
-        return dao.getVmDeviceByVmIdTypeAndDevice(
+    public List<VmDevice> getSmartcardDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.SMARTCARD,
                 VmDeviceType.SMARTCARD.getName());
@@ -209,21 +224,21 @@ public class VmDeviceUtils {
     /**
      * Remove all smartcard devices from the VM.
      */
-    public static void removeSmartcardDevices(Guid vmId) {
+    public void removeSmartcardDevices(Guid vmId) {
         removeVmDevices(getSmartcardDevices(vmId));
     }
 
     /**
      * Check if the VM has a smartcard device.
      */
-    public static boolean hasSmartcardDevice(Guid vmId) {
+    public boolean hasSmartcardDevice(Guid vmId) {
         return !getSmartcardDevices(vmId).isEmpty();
     }
 
     /**
      * Add new smartcard device to the VM.
      */
-    public static VmDevice addSmartcardDevice(Guid vmId) {
+    public VmDevice addSmartcardDevice(Guid vmId) {
         return addManagedDevice(
                 new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.SMARTCARD,
@@ -236,7 +251,7 @@ public class VmDeviceUtils {
     /**
      * Returns smartcard device spec params.
      */
-    private static Map<String, Object> getSmartcardDeviceSpecParams() {
+    private Map<String, Object> getSmartcardDeviceSpecParams() {
         Map<String, Object> specParams = new HashMap<>();
         specParams.put("mode", "passthrough");
         specParams.put("type", "spicevmc");
@@ -252,7 +267,7 @@ public class VmDeviceUtils {
      *
      * @param consoleEnabled true/false to enable/disable device respectively, null to leave it untouched
      */
-    public static void updateConsoleDevice(Guid vmId, Boolean consoleEnabled) {
+    public void updateConsoleDevice(Guid vmId, Boolean consoleEnabled) {
         if (consoleEnabled == null) {
             return; //we don't want to update the device
         }
@@ -269,8 +284,8 @@ public class VmDeviceUtils {
     /**
      * Get list of all console devices in the VM.
      */
-    public static List<VmDevice> getConsoleDevices(Guid vmId) {
-        return dao.getVmDeviceByVmIdTypeAndDevice(
+    public List<VmDevice> getConsoleDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.CONSOLE,
                 VmDeviceType.CONSOLE.getName());
@@ -279,21 +294,21 @@ public class VmDeviceUtils {
     /**
      * Remove all console devices from the VM.
      */
-    public static void removeConsoleDevices(Guid vmId) {
+    public void removeConsoleDevices(Guid vmId) {
         removeVmDevices(getConsoleDevices(vmId));
     }
 
     /**
      * Check if the VM has a console device.
      */
-    public static boolean hasConsoleDevice(Guid vmId) {
+    public boolean hasConsoleDevice(Guid vmId) {
         return !getConsoleDevices(vmId).isEmpty();
     }
 
     /**
      * Add new console device to the VM.
      */
-    public static VmDevice addConsoleDevice(Guid vmId) {
+    public VmDevice addConsoleDevice(Guid vmId) {
         return addManagedDevice(
                 new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.CONSOLE,
@@ -306,7 +321,7 @@ public class VmDeviceUtils {
     /**
      * Returns console device spec params.
      */
-    private static Map<String, Object> getConsoleDeviceSpecParams() {
+    private Map<String, Object> getConsoleDeviceSpecParams() {
         Map<String, Object> specParams = new HashMap<>();
         specParams.put("enableSocket", "true");
         specParams.put("consoleType", "serial");
@@ -323,7 +338,7 @@ public class VmDeviceUtils {
      *
      * @param isVirtioScsiEnabled    true/false to enable/disable device respectively, null to leave it untouched
      */
-    public static void updateVirtioScsiController(Guid vmId, Boolean isVirtioScsiEnabled) {
+    public void updateVirtioScsiController(Guid vmId, Boolean isVirtioScsiEnabled) {
         if (isVirtioScsiEnabled == null) {
             return; //we don't want to update the device
         }
@@ -340,7 +355,7 @@ public class VmDeviceUtils {
     /**
      * Add new VirtIO-SCSI controller to the VM.
      */
-    public static VmDevice addVirtioScsiController(Guid vmId) {
+    public VmDevice addVirtioScsiController(Guid vmId) {
         return addManagedDevice(
             new VmDeviceId(Guid.newGuid(), vmId),
             VmDeviceGeneralType.CONTROLLER,
@@ -353,15 +368,15 @@ public class VmDeviceUtils {
     /**
      * Get list of all VirtIO-SCSI controllers in the VM.
      */
-    public static List<VmDevice> getVirtioScsiControllers(Guid vmId) {
+    public List<VmDevice> getVirtioScsiControllers(Guid vmId) {
         return getVirtioScsiControllers(vmId, null, false);
     }
 
     /**
      * Get list of VirtIO-SCSI controllers in the VM.
      */
-    public static List<VmDevice> getVirtioScsiControllers(Guid vmId, Guid userID, boolean isFiltered) {
-        return dao.getVmDeviceByVmIdTypeAndDevice(
+    public List<VmDevice> getVirtioScsiControllers(Guid vmId, Guid userID, boolean isFiltered) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.CONTROLLER,
                 VmDeviceType.VIRTIOSCSI.getName(),
@@ -372,14 +387,14 @@ public class VmDeviceUtils {
     /**
      * Remove all VirtIO-SCSI controllers from the VM.
      */
-    public static void removeVirtioScsiControllers(Guid vmId) {
+    public void removeVirtioScsiControllers(Guid vmId) {
         removeVmDevices(getVirtioScsiControllers(vmId));
     }
 
     /**
      * Check if the VM has a VirtIO-SCSI controller.
      */
-    public static boolean hasVirtioScsiController(Guid vmId) {
+    public boolean hasVirtioScsiController(Guid vmId) {
         return !getVirtioScsiControllers(vmId).isEmpty();
     }
 
@@ -394,7 +409,7 @@ public class VmDeviceUtils {
      * @param compatibilityVersion  cluster compatibility version
      * @param isSoundDeviceEnabled  true/false to enable/disable device respectively, null to leave it untouched
      */
-    public static void updateSoundDevice(VmBase oldVmBase, VmBase newVmBase, Version compatibilityVersion,
+    public void updateSoundDevice(VmBase oldVmBase, VmBase newVmBase, Version compatibilityVersion,
                                          Boolean isSoundDeviceEnabled) {
         boolean osChanged = oldVmBase.getOsId() != newVmBase.getOsId();
         updateSoundDevice(newVmBase.getId(), newVmBase.getOsId(), compatibilityVersion, isSoundDeviceEnabled, osChanged);
@@ -407,7 +422,7 @@ public class VmDeviceUtils {
      * @param isSoundDeviceEnabled  true/false to enable/disable device respectively, null to leave it untouched
      * @param recreate              true to recreate the device even if it already exists
      */
-    public static void updateSoundDevice(Guid vmId, int osId, Version compatibilityVersion,
+    public void updateSoundDevice(Guid vmId, int osId, Version compatibilityVersion,
                                          Boolean isSoundDeviceEnabled, boolean recreate) {
         boolean removeDevice = false;
         boolean createDevice = false;
@@ -437,21 +452,21 @@ public class VmDeviceUtils {
     /**
      * Get list of all sound devices in the VM.
      */
-    public static List<VmDevice> getSoundDevices(Guid vmId) {
-        return dao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.SOUND);
+    public List<VmDevice> getSoundDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.SOUND);
     }
 
     /**
      * Add new sound device to the VM.
      */
-    public static VmDevice addSoundDevice(VmBase vmBase) {
+    public VmDevice addSoundDevice(VmBase vmBase) {
         return addSoundDevice(vmBase.getId(), vmBase.getOsId(), ClusterUtils.getCompatibilityVersion(vmBase));
     }
 
     /**
      * Add new sound device to the VM.
      */
-    public static VmDevice addSoundDevice(Guid vmId, int osId, Version compatibilityVersion) {
+    public VmDevice addSoundDevice(Guid vmId, int osId, Version compatibilityVersion) {
         String soundDevice = osRepository.getSoundDevice(osId, compatibilityVersion);
         return addManagedDevice(
                 new VmDeviceId(Guid.newGuid(), vmId),
@@ -465,7 +480,7 @@ public class VmDeviceUtils {
     /**
      * Check if the VM has a sound device.
      */
-    public static boolean hasSoundDevice(Guid vmId) {
+    public boolean hasSoundDevice(Guid vmId) {
         return !getSoundDevices(vmId).isEmpty();
     }
 
@@ -480,7 +495,7 @@ public class VmDeviceUtils {
      *  <li>VM is of desktop type</li>
      * </ul>
      */
-    public static boolean shouldOverrideSoundDevice(VmStatic vmStatic, Version compatibilityVersion,
+    public boolean shouldOverrideSoundDevice(VmStatic vmStatic, Version compatibilityVersion,
                                                     Boolean soundDeviceEnabled) {
         return soundDeviceEnabled == null &&
                 osRepository.isSoundDeviceEnabled(vmStatic.getOsId(), compatibilityVersion) &&
@@ -491,7 +506,7 @@ public class VmDeviceUtils {
      * Video device
      */
 
-    private static void updateVideoDevices(VmBase oldVmBase, VmBase newVmBase) {
+    private void updateVideoDevices(VmBase oldVmBase, VmBase newVmBase) {
         boolean displayTypeChanged = oldVmBase.getDefaultDisplayType() != newVmBase.getDefaultDisplayType();
         boolean numOfMonitorsChanged = newVmBase.getDefaultDisplayType() == DisplayType.qxl &&
                 oldVmBase.getNumOfMonitors() != newVmBase.getNumOfMonitors();
@@ -504,7 +519,7 @@ public class VmDeviceUtils {
         }
     }
 
-    private static int getNeededNumberOfVideoDevices(VmBase vmBase) {
+    private int getNeededNumberOfVideoDevices(VmBase vmBase) {
         int maxMonitorsSpice = vmBase.getSingleQxlPci() ? SINGLE_QXL_MONITORS : vmBase.getNumOfMonitors();
         int maxMonitorsVnc = Math.max(VNC_MIN_MONITORS, vmBase.getNumOfMonitors());
 
@@ -514,7 +529,7 @@ public class VmDeviceUtils {
     /**
      * Add given number of video devices to the VM.
      */
-    public static void addVideoDevices(VmBase vmBase, int numberOfVideoDevices) {
+    public void addVideoDevices(VmBase vmBase, int numberOfVideoDevices) {
         for (int i = 0; i < numberOfVideoDevices; i++) {
             addManagedDevice(
                     new VmDeviceId(Guid.newGuid(), vmBase.getId()),
@@ -531,21 +546,21 @@ public class VmDeviceUtils {
      *
      * @return a map of device parameters
      */
-    private static Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
+    private Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
         return VideoDeviceSettings.getVideoDeviceSpecParams(vmBase);
     }
 
     /**
      * Get list of all video devices in the VM.
      */
-    public static List<VmDevice> getVideoDevices(Guid vmId) {
-        return dao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.VIDEO);
+    public List<VmDevice> getVideoDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.VIDEO);
     }
 
     /**
      * Remove all video devices from the VM.
      */
-    public static void removeVideoDevices(Guid vmId) {
+    public void removeVideoDevices(Guid vmId) {
         removeVmDevices(getVideoDevices(vmId));
     }
 
@@ -561,7 +576,7 @@ public class VmDeviceUtils {
      * @param hostDev     true if NIC is a host device, false if it is a bridge
      * @return  the device added
      */
-    public static VmDevice addInterface(Guid vmId, Guid deviceId, boolean plugged, boolean hostDev) {
+    public VmDevice addInterface(Guid vmId, Guid deviceId, boolean plugged, boolean hostDev) {
         return addInterface(vmId, deviceId, plugged, hostDev, null);
     }
 
@@ -573,7 +588,7 @@ public class VmDeviceUtils {
      * @param hostDev     true if NIC is a host device, false if it is a bridge
      * @return  the device added
      */
-    public static VmDevice addInterface(Guid vmId, Guid deviceId, boolean plugged, boolean hostDev, String address) {
+    public VmDevice addInterface(Guid vmId, Guid deviceId, boolean plugged, boolean hostDev, String address) {
         return addManagedDevice(
             new VmDeviceId(deviceId, vmId),
             VmDeviceGeneralType.INTERFACE,
@@ -586,7 +601,7 @@ public class VmDeviceUtils {
             false);
     }
 
-    private static boolean canPlugInterface(VmNic iface) {
+    private boolean canPlugInterface(VmNic iface) {
         VmInterfaceManager vmIfaceManager = new VmInterfaceManager();
         if (vmIfaceManager.existsPluggedInterfaceWithSameMac(iface)) {
             vmIfaceManager.auditLogMacInUseUnplug(iface);
@@ -603,7 +618,7 @@ public class VmDeviceUtils {
     /**
      * Add given number of USB controllers to the VM.
      */
-    public static void addUsbControllers(Guid vmId, int numberOfControllers) {
+    public void addUsbControllers(Guid vmId, int numberOfControllers) {
         // For each controller we need to create one EHCI and companion UHCI controllers
         for (int index = 0; index < numberOfControllers; index++) {
             addManagedDevice(
@@ -628,7 +643,7 @@ public class VmDeviceUtils {
     /**
      * Returns USB controller spec params.
      */
-    private static Map<String, Object> getUsbControllerSpecParams(String model, int controllerNumber, int index) {
+    private Map<String, Object> getUsbControllerSpecParams(String model, int controllerNumber, int index) {
         Map<String, Object> specParams = new HashMap<>();
         specParams.put(VdsProperties.Model, model + controllerNumber);
         specParams.put(VdsProperties.Index, Integer.toString(index));
@@ -638,8 +653,8 @@ public class VmDeviceUtils {
     /**
      * Get list of all USB controllers in the VM.
      */
-    public static List<VmDevice> getUsbControllers(Guid vmId) {
-        return dao.getVmDeviceByVmIdTypeAndDevice(
+    public List<VmDevice> getUsbControllers(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.CONTROLLER,
                 VmDeviceType.USB.getName());
@@ -648,7 +663,7 @@ public class VmDeviceUtils {
     /**
      * Remove all USB controllers from the VM.
      */
-    public static void removeUsbControllers(Guid vmId) {
+    public void removeUsbControllers(Guid vmId) {
         removeVmDevices(getUsbControllers(vmId));
     }
 
@@ -659,7 +674,7 @@ public class VmDeviceUtils {
     /**
      * Update USB slots in the new VM, if USB policy of the new VM differs from one of the old VM.
      */
-    private static void updateUsbSlots(VmBase oldVm, VmBase newVm) {
+    private void updateUsbSlots(VmBase oldVm, VmBase newVm) {
         UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
         UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
         int currentNumberOfSlots = 0;
@@ -703,7 +718,7 @@ public class VmDeviceUtils {
     /**
      * Returns number of USB controllers that needs to be created for the given number of USB slots.
      */
-    private static int getNeededNumberOfUsbControllers(int numberOfSlots) {
+    private int getNeededNumberOfUsbControllers(int numberOfSlots) {
         int numberOfControllers = numberOfSlots / SLOTS_PER_CONTROLLER;
         // Need to add another controller if we have a remainder
         if (numberOfSlots % SLOTS_PER_CONTROLLER != 0) {
@@ -715,7 +730,7 @@ public class VmDeviceUtils {
     /**
      * Add given number of USB slots to the VM
      */
-    public static void addUsbSlots(Guid vmId, int numberOfSlots) {
+    public void addUsbSlots(Guid vmId, int numberOfSlots) {
         for (int index = 1; index <= numberOfSlots; index++) {
             addManagedDevice(
                     new VmDeviceId(Guid.newGuid(), vmId),
@@ -730,8 +745,8 @@ public class VmDeviceUtils {
     /**
      * Get list of all USB slots in the VM.
      */
-    public static List<VmDevice> getUsbSlots(Guid vmId) {
-        return dao.getVmDeviceByVmIdTypeAndDevice(
+    public List<VmDevice> getUsbSlots(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.REDIR,
                 VmDeviceType.SPICEVMC.getName());
@@ -740,14 +755,14 @@ public class VmDeviceUtils {
     /**
      * Remove all USB slots from the VM.
      */
-    public static void removeUsbSlots(Guid vmId) {
+    public void removeUsbSlots(Guid vmId) {
         removeVmDevices(getUsbSlots(vmId));
     }
 
     /**
      * Remove the given number of USB slots from the VM.
      */
-    public static void removeUsbSlots(Guid vmId, int numberOfSlotsToRemove) {
+    public void removeUsbSlots(Guid vmId, int numberOfSlotsToRemove) {
         removeVmDevices(getUsbSlots(vmId), numberOfSlotsToRemove);
     }
 
@@ -760,7 +775,7 @@ public class VmDeviceUtils {
      *
      * @param isBalloonEnabled    true/false to enable/disable device respectively, null to leave it untouched
      */
-    public static void updateMemoryBalloon(Guid vmId, Boolean isBalloonEnabled) {
+    public void updateMemoryBalloon(Guid vmId, Boolean isBalloonEnabled) {
         if (isBalloonEnabled == null) {
             return; //we don't want to update the device
         }
@@ -777,7 +792,7 @@ public class VmDeviceUtils {
     /**
      * Add new memory balloon device to the VM.
      */
-    public static VmDevice addMemoryBalloon(Guid vmId) {
+    public VmDevice addMemoryBalloon(Guid vmId) {
         return addManagedDevice(
                 new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.BALLOON,
@@ -787,29 +802,29 @@ public class VmDeviceUtils {
                 true);
     }
 
-    private static Map<String, Object> getMemoryBalloonSpecParams() {
+    private Map<String, Object> getMemoryBalloonSpecParams() {
         return Collections.<String, Object> singletonMap(VdsProperties.Model, VdsProperties.Virtio);
     }
 
     /**
      * Get list of all memory balloon devices in the VM.
      */
-    public static List<VmDevice> getMemoryBalloons(Guid vmId) {
-        return dao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.BALLOON);
+    public List<VmDevice> getMemoryBalloons(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.BALLOON);
     }
 
     /**
      * Remove all memory balloon devices from the VM.
      */
-    public static void removeMemoryBalloons(Guid vmId) {
+    public void removeMemoryBalloons(Guid vmId) {
         removeVmDevices(getMemoryBalloons(vmId), 1);
     }
 
     /**
      * Check if the VM has a memory balloon device.
      */
-    public static boolean hasMemoryBalloon(Guid vmId) {
-        return dao.isMemBalloonEnabled(vmId);
+    public boolean hasMemoryBalloon(Guid vmId) {
+        return vmDeviceDao.isMemBalloonEnabled(vmId);
     }
 
     /*
@@ -819,14 +834,14 @@ public class VmDeviceUtils {
     /**
      * Get list of all RNG devices in the VM.
      */
-    public static List<VmDevice> getRngDevices(Guid vmId) {
-        return dao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG);
+    public List<VmDevice> getRngDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG);
     }
 
     /**
      * Check if the VM has an RNG device.
      */
-    public static boolean hasRngDevice(Guid vmId) {
+    public boolean hasRngDevice(Guid vmId) {
         return !getRngDevices(vmId).isEmpty();
     }
 
@@ -837,7 +852,7 @@ public class VmDeviceUtils {
     /**
      * Get list of graphics device types present in the VM.
      */
-    public static List<GraphicsType> getGraphicsTypesOfEntity(Guid entityId) {
+    public List<GraphicsType> getGraphicsTypesOfEntity(Guid entityId) {
         List<GraphicsType> result = new ArrayList<>();
 
         if (entityId != null) {
@@ -855,15 +870,15 @@ public class VmDeviceUtils {
     /**
      * Get list of all graphics devices in the VM.
      */
-    public static List<VmDevice> getGraphicsDevices(Guid vmId) {
-        return dao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS);
+    public List<VmDevice> getGraphicsDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS);
     }
 
     /**
      * Get list of graphics devices of the given type present in the VM.
      */
-    public static List<VmDevice> getGraphicsDevices(Guid vmId, GraphicsType type) {
-        return dao.getVmDeviceByVmIdTypeAndDevice(
+    public List<VmDevice> getGraphicsDevices(Guid vmId, GraphicsType type) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.GRAPHICS,
                 type.name().toLowerCase());
@@ -872,7 +887,7 @@ public class VmDeviceUtils {
     /**
      * Check if the VM has a graphics device of the given type.
      */
-    public static boolean hasGraphicsDevice(Guid vmId, GraphicsType type) {
+    public boolean hasGraphicsDevice(Guid vmId, GraphicsType type) {
         return !getGraphicsDevices(vmId, type).isEmpty();
     }
 
@@ -883,14 +898,14 @@ public class VmDeviceUtils {
     /**
      * Get list of all watchdogs in the VM.
      */
-    public static List<VmDevice> getWatchdogs(Guid vmId) {
-        return dao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.WATCHDOG);
+    public List<VmDevice> getWatchdogs(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.WATCHDOG);
     }
 
     /**
      * Check if the VM has a watchdog.
      */
-    public static boolean hasWatchdog(Guid vmId) {
+    public boolean hasWatchdog(Guid vmId) {
         return !getWatchdogs(vmId).isEmpty();
     }
 
@@ -902,16 +917,16 @@ public class VmDeviceUtils {
      * Copy disk devices from the given list of devices to the destination VM. Device ids are changed in accordance
      * with the mapping given.
      */
-    public static void copyDiskDevices(Guid dstId,
-                                       List<VmDevice> srcDevices,
-                                       Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping) {
+    public void copyDiskDevices(Guid dstId,
+            List<VmDevice> srcDevices,
+            Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping) {
         for (VmDevice device : srcDevices) {
             if (VmDeviceType.DISK.getName().equals(device.getDevice())) {
                 if (srcDeviceIdToDstDeviceIdMapping.containsKey(device.getDeviceId())) {
                     Guid dstDeviceId = srcDeviceIdToDstDeviceIdMapping.get(device.getDeviceId());
                     device.setId(new VmDeviceId(dstDeviceId, dstId));
                     device.setSpecParams(EMPTY_SPEC_PARAMS);
-                    dao.save(device);
+                    vmDeviceDao.save(device);
                 }
             }
         }
@@ -920,21 +935,21 @@ public class VmDeviceUtils {
     /**
      * Add a new disk device to the VM.
      */
-    public static VmDevice addDiskDevice(Guid vmId, Guid deviceId) {
+    public VmDevice addDiskDevice(Guid vmId, Guid deviceId) {
         return addDiskDevice(vmId, deviceId, true, false, "", false);
     }
 
     /**
      * Add a new disk device to the VM.
      */
-    public static VmDevice addDiskDevice(Guid vmId, Guid deviceId, String address) {
+    public VmDevice addDiskDevice(Guid vmId, Guid deviceId, String address) {
         return addDiskDevice(vmId, deviceId, true, false, address, false);
     }
 
     /**
      * Add a new disk device to the VM.
      */
-    public static VmDevice addDiskDevice(Guid vmId, Guid deviceId, Boolean isPlugged, Boolean isReadOnly,
+    public VmDevice addDiskDevice(Guid vmId, Guid deviceId, Boolean isPlugged, Boolean isReadOnly,
                                          boolean isUsingScsiReservation) {
         return addDiskDevice(vmId, deviceId, isPlugged, isReadOnly, "", isUsingScsiReservation);
     }
@@ -942,7 +957,7 @@ public class VmDeviceUtils {
     /**
      * Add a new disk device to the VM.
      */
-    public static VmDevice addDiskDevice(Guid vmId, Guid deviceId, Boolean isPlugged, Boolean isReadOnly,
+    public VmDevice addDiskDevice(Guid vmId, Guid deviceId, Boolean isPlugged, Boolean isReadOnly,
                                          String address, boolean isUsingScsiReservation) {
         return addManagedDevice(
                 new VmDeviceId(deviceId, vmId),
@@ -963,7 +978,7 @@ public class VmDeviceUtils {
      * @param diskImages collection of DiskImage objects to get the set of Disks from
      * @return the resulting set of disks
      */
-    public static Set<BaseDisk> getDisks(Collection<DiskImage> diskImages) {
+    public Set<BaseDisk> getDisks(Collection<DiskImage> diskImages) {
         Map<Guid, BaseDisk> diskMap = new HashMap<>();
         for (Disk diskImage : diskImages) {
             diskMap.put(diskImage.getId(), diskImage);
@@ -979,7 +994,7 @@ public class VmDeviceUtils {
      * If default boot sequence differs in the old and new VMs, updates boot order in all devices in the new VM
      * according to the new default boot sequence. Stores the updated devices in the DB.
      */
-    private static void updateBootOrder(VmBase oldVmBase, VmBase newVmBase) {
+    private void updateBootOrder(VmBase oldVmBase, VmBase newVmBase) {
         if (oldVmBase.getDefaultBootSequence() != newVmBase.getDefaultBootSequence()) {
             updateBootOrder(newVmBase.getId());
         }
@@ -989,20 +1004,20 @@ public class VmDeviceUtils {
      * Updates boot order in all devices in the VM according to the default boot sequence.
      * Stores the updated devices in the DB.
      */
-    public static void updateBootOrder(Guid vmId) {
-        VM vm = dbFacade.getVmDao().get(vmId);
+    public void updateBootOrder(Guid vmId) {
+        VM vm = vmDao.get(vmId);
         if (vm != null) {
             // Returns the devices sorted in ascending order
-            List<VmDevice> devices = dao.getVmDeviceByVmId(vmId);
+            List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
             // Reset current boot order
             for (VmDevice device: devices) {
                 device.setBootOrder(0);
             }
-            VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vmId));
+            VmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
             VmHandler.updateDisksVmDataForVm(vm);
             VmHandler.updateNetworkInterfacesFromDb(vm);
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
-            dao.updateBootOrderInBatch(devices);
+            vmDeviceDao.updateBootOrderInBatch(devices);
         }
     }
 
@@ -1013,7 +1028,7 @@ public class VmDeviceUtils {
     /**
      * Get address of the given managed device in the VM. If the device does not exist, returns empty string.
      */
-    public static String getVmDeviceAddress(VmBase vmBase, final Guid deviceId) {
+    public String getVmDeviceAddress(VmBase vmBase, final Guid deviceId) {
         VmDevice device = vmBase.getManagedDeviceMap().get(deviceId);
         if (device != null) {
             return device.getAddress();
@@ -1025,20 +1040,20 @@ public class VmDeviceUtils {
     /**
      * Remove all devices in the list.
      */
-    public static void removeVmDevices(List<VmDevice> devices) {
+    public void removeVmDevices(List<VmDevice> devices) {
         for (VmDevice device : devices) {
-            dao.remove(device.getId());
+            vmDeviceDao.remove(device.getId());
         }
     }
 
     /**
      * Remove the given number of devices starting from the end of the list.
      */
-    public static void removeVmDevices(List<VmDevice> devices, int numberOfDevicesToRemove) {
+    public void removeVmDevices(List<VmDevice> devices, int numberOfDevicesToRemove) {
         int size = devices.size();
         for (int index = 1; index <= numberOfDevicesToRemove; index++) {
             if (size >= index) {
-                dao.remove(devices.get(size - index).getId());
+                vmDeviceDao.remove(devices.get(size - index).getId());
             }
         }
     }
@@ -1046,9 +1061,9 @@ public class VmDeviceUtils {
     /**
      * Read devices from the DB and set managed and unmanaged device lists in VmBase.
      */
-    public static void setVmDevices(VmBase vmBase) {
-        List<VmDevice> devices = dao.getVmDeviceByVmId(vmBase.getId());
-        vmBase.setUnmanagedDeviceList(dao.getUnmanagedDevicesByVmId(vmBase.getId()));
+    public void setVmDevices(VmBase vmBase) {
+        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmBase.getId());
+        vmBase.setUnmanagedDeviceList(vmDeviceDao.getUnmanagedDevicesByVmId(vmBase.getId()));
         Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<>();
         for (VmDevice device : devices) {
             if (device.getIsManaged()) {
@@ -1061,7 +1076,7 @@ public class VmDeviceUtils {
     /**
      * Check if the given device is disk or network interface device.
      */
-    private static boolean isDiskOrInterface(VmDevice vmDevice) {
+    private boolean isDiskOrInterface(VmDevice vmDevice) {
         return VmDeviceCommonUtils.isDisk(vmDevice) || VmDeviceCommonUtils.isNetwork(vmDevice);
     }
 
@@ -1071,7 +1086,7 @@ public class VmDeviceUtils {
      * @param params    changes made
      * @param oldVm     previous state of the VM being modified
      */
-    public static void updateVmDevices(VmManagementParametersBase params, VM oldVm) {
+    public void updateVmDevices(VmManagementParametersBase params, VM oldVm) {
         VmBase oldVmBase = oldVm.getStaticData();
         VmBase newVmBase = params.getVmStaticData();
         if (newVmBase == null) {
@@ -1095,7 +1110,7 @@ public class VmDeviceUtils {
      *
      * This method is executed before running the VM.
      */
-    public static void updateVmDevicesOnRun(VmBase vmBase) {
+    public void updateVmDevicesOnRun(VmBase vmBase) {
         if (vmBase != null) {
             updateUsbSlots(vmBase, vmBase);
         }
@@ -1104,7 +1119,7 @@ public class VmDeviceUtils {
     /**
      * Copy devices from the given VmDevice list to the destination VM/VmBase.
      */
-    public static void copyVmDevices(Guid srcId,
+    public void copyVmDevices(Guid srcId,
                                      Guid dstId,
                                      VmBase dstVmBase,
                                      List<VmDevice> srcDevices,
@@ -1131,7 +1146,7 @@ public class VmDeviceUtils {
 
         Cluster cluster = null;
         if (dstVmBase.getClusterId() != null) {
-            cluster = DbFacade.getInstance().getClusterDao().get(dstVmBase.getClusterId());
+            cluster = clusterDao.get(dstVmBase.getClusterId());
         }
 
         for (VmDevice device : srcDevices) {
@@ -1180,7 +1195,7 @@ public class VmDeviceUtils {
                 case VIDEO:
                     if (dstIsVm) {
                         // Source is template and target is VM. Video devices will be created according
-                        // to the new VmStatic params.
+                        // to the new Vm params.
                         continue;
                     }
                     specParams.putAll(getVideoDeviceSpecParams(dstVmBase));
@@ -1249,7 +1264,7 @@ public class VmDeviceUtils {
             }
             device.setId(new VmDeviceId(deviceId, dstId));
             device.setSpecParams(specParams);
-            dao.save(device);
+            vmDeviceDao.save(device);
         }
 
         if (!hasCd) {
@@ -1292,7 +1307,7 @@ public class VmDeviceUtils {
     /**
      * Copy devices from the source to the destination VM.
      */
-    public static void copyVmDevices(Guid srcId,
+    public void copyVmDevices(Guid srcId,
                                      Guid dstId,
                                      Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                                      boolean isSoundEnabled,
@@ -1304,7 +1319,7 @@ public class VmDeviceUtils {
 
         VmBase srcVmBase = getVmBase(srcId);
         VmBase dstVmBase = getVmBase(dstId);
-        List<VmDevice> srcDevices = dao.getVmDeviceByVmId(srcId);
+        List<VmDevice> srcDevices = vmDeviceDao.getVmDeviceByVmId(srcId);
 
         copyVmDevices(srcId, dstId, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
                 isSoundEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, graphicsToSkip,
@@ -1313,7 +1328,7 @@ public class VmDeviceUtils {
 
 
     /** @see #canCopyHostDevices(VmBase, VmBase) */
-    public static boolean canCopyHostDevices(Guid srcId, VmBase dstVm) {
+    public boolean canCopyHostDevices(Guid srcId, VmBase dstVm) {
         return canCopyHostDevices(getVmBase(srcId), dstVm);
     }
 
@@ -1322,7 +1337,7 @@ public class VmDeviceUtils {
      * More specifically it checks that no discrepancy between source and destination 'dedicatedVmForVds' occurred,
      * since host device consistency depends on this value.
      */
-    public static boolean canCopyHostDevices(VmBase srcVm, VmBase dstVm) {
+    public boolean canCopyHostDevices(VmBase srcVm, VmBase dstVm) {
         return new HashSet<>(srcVm.getDedicatedVmForVdsList()).equals(new HashSet<>(dstVm.getDedicatedVmForVdsList()));
     }
 
@@ -1332,12 +1347,12 @@ public class VmDeviceUtils {
      * @param vmId ID of a VM or Template
      * @return VmStatic if a VM of given ID was found, VmTemplate otherwise.
      */
-    private static VmBase getVmBase(Guid vmId) {
-        VM vm = dbFacade.getVmDao().get(vmId);
+    private VmBase getVmBase(Guid vmId) {
+        VM vm = vmDao.get(vmId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
 
         if (vmBase == null) {
-            vmBase = dbFacade.getVmTemplateDao().get(vmId);
+            vmBase = vmTemplateDao.get(vmId);
         }
 
         return vmBase;
@@ -1354,7 +1369,7 @@ public class VmDeviceUtils {
      * @param isReadOnly    is device read-only
      * @return      newly created VmDevice instance
      */
-    public static VmDevice addManagedDevice(VmDeviceId id,
+    public VmDevice addManagedDevice(VmDeviceId id,
                                             VmDeviceGeneralType generalType,
                                             VmDeviceType type,
                                             Map<String, Object> specParams,
@@ -1377,7 +1392,7 @@ public class VmDeviceUtils {
      * @param isUsingScsiReservation    is device using SCSI reservation
      * @return      newly created VmDevice instance
      */
-    public static VmDevice addManagedDevice(VmDeviceId id,
+    public VmDevice addManagedDevice(VmDeviceId id,
                                             VmDeviceGeneralType generalType,
                                             VmDeviceType type,
                                             Map<String, Object> specParams,
@@ -1402,7 +1417,7 @@ public class VmDeviceUtils {
                         null,
                         null,
                         isUsingScsiReservation);
-        dao.save(managedDevice);
+        vmDeviceDao.save(managedDevice);
 
         // If we've added Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (generalType == VmDeviceGeneralType.DISK || generalType == VmDeviceGeneralType.INTERFACE) {
@@ -1415,7 +1430,7 @@ public class VmDeviceUtils {
     /**
      * Add devices to an imported VM or template.
      */
-    public static void addImportedDevices(VmBase vmBase, boolean isImportAsNewEntity) {
+    public void addImportedDevices(VmBase vmBase, boolean isImportAsNewEntity) {
         if (isImportAsNewEntity) {
             setNewIdInImportedCollections(vmBase);
         }
@@ -1427,8 +1442,8 @@ public class VmDeviceUtils {
         addImportedInterfaces(vmBase, vmDevicesToUpdate);
         addImportedOtherDevices(vmBase, vmDevicesToAdd);
 
-        dao.saveAll(vmDevicesToAdd);
-        dao.updateAll(vmDevicesToUpdate);
+        vmDeviceDao.saveAll(vmDevicesToAdd);
+        vmDeviceDao.updateAll(vmDevicesToUpdate);
     }
 
     /**
@@ -1436,7 +1451,7 @@ public class VmDeviceUtils {
      *
      * @param vmDevicesToUpdate    list of devices to be updated in the DB
      */
-    private static void addImportedDiskDevices(VmBase vmBase, List<VmDevice> vmDevicesToUpdate) {
+    private void addImportedDiskDevices(VmBase vmBase, List<VmDevice> vmDevicesToUpdate) {
         final Guid vmId = vmBase.getId();
         for (BaseDisk disk : getDisks(vmBase.getImages())) {
             Guid deviceId = disk.getId();
@@ -1450,7 +1465,7 @@ public class VmDeviceUtils {
      *
      * @param vmDevicesToUpdate    list of devices to be updated in the DB
      */
-    private static void addImportedInterfaces(VmBase vmBase, List<VmDevice> vmDevicesToUpdate) {
+    private void addImportedInterfaces(VmBase vmBase, List<VmDevice> vmDevicesToUpdate) {
 
         for (VmNic iface : vmBase.getInterfaces()) {
             Guid deviceId = iface.getId();
@@ -1473,7 +1488,7 @@ public class VmDeviceUtils {
      *
      * @param vmDeviceToAdd     list of devices to be added to the DB
      */
-    private static void addImportedOtherDevices(VmBase vmBase, List<VmDevice> vmDeviceToAdd) {
+    private void addImportedOtherDevices(VmBase vmBase, List<VmDevice> vmDeviceToAdd) {
         boolean hasCd = false;
         boolean hasSound = false;
 
@@ -1525,7 +1540,7 @@ public class VmDeviceUtils {
      *
      * @param vmDevicesToUpdate    list of devices to be updated in the DB
      */
-    private static void updateImportedVmDevice(VmBase vmBase,
+    private void updateImportedVmDevice(VmBase vmBase,
                                                VmDevice vmDevice,
                                                Guid deviceId,
                                                List<VmDevice> vmDevicesToUpdate) {
@@ -1542,7 +1557,7 @@ public class VmDeviceUtils {
     /**
      * Set newly generated ids for all devices in the VM, except disks and network interfaces.
      */
-    private static void setNewIdInImportedCollections(VmBase vmBase) {
+    private void setNewIdInImportedCollections(VmBase vmBase) {
         for (VmDevice managedDevice : vmBase.getManagedDeviceMap().values()) {
             if (!isDiskOrInterface(managedDevice)) {
                 managedDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
@@ -1561,11 +1576,11 @@ public class VmDeviceUtils {
      * @param deviceEnabled indicates whether the user asked to enable the device.
      * @return true if a change has been requested; otherwise, false
      */
-    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
+    public boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
                                           boolean deviceEnabled) {
         List<VmDevice> vmDevices = deviceTypeName != null ?
-                dao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
-                dao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
+                vmDeviceDao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
 
         return deviceEnabled == vmDevices.isEmpty();
     }
@@ -1578,11 +1593,11 @@ public class VmDeviceUtils {
      * @param device device object provided by user
      * @return true if a change has been requested; otherwise, false
      */
-    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
+    public boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
                                           VmDevice device) {
         List<VmDevice> vmDevices = deviceTypeName != null ?
-                dao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
-                dao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
+                vmDeviceDao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
 
         if (device == null) {
             return !vmDevices.isEmpty();
@@ -1612,7 +1627,7 @@ public class VmDeviceUtils {
      *                                       EditableDeviceOnVmStatusField (e.g. parameters file)
      * @return a map of device ID to VmDevice
      */
-    public static Map<Guid, VmDevice> getVmDevicesForNextRun(VM vm, Object objectWithEditableDeviceFields) {
+    public Map<Guid, VmDevice> getVmDevicesForNextRun(VM vm, Object objectWithEditableDeviceFields) {
         setVmDevices(vm.getStaticData());
         Map<Guid, VmDevice> vmManagedDeviceMap = vm.getManagedVmDeviceMap();
 
@@ -1665,7 +1680,7 @@ public class VmDeviceUtils {
         return vmManagedDeviceMap;
     }
 
-    public static <E extends VmDevice> Map<String, E> vmDevicesByDevice(Collection<E> deviceList) {
+    public <E extends VmDevice> Map<String, E> vmDevicesByDevice(Collection<E> deviceList) {
         return deviceList == null
                 ? Collections.emptyMap()
                 : deviceList.stream()

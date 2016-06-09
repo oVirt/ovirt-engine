@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -202,7 +201,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // Check if the display type is supported
         if (returnValue) {
             returnValue = VmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
-                    VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
+                    VmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
                     getReturnValue().getValidationMessages(),
                     getVmTemplate().getCompatibilityVersion());
@@ -235,9 +234,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getParameters().getVmTemplateData().getNumOfMonitors(),
                     interfaces,
                     diskVmElements,
-                    VmDeviceUtils.hasVirtioScsiController(getParameters().getVmTemplateData().getId()),
+                    getVmDeviceUtils().hasVirtioScsiController(getParameters().getVmTemplateData().getId()),
                     hasWatchdog(getParameters().getVmTemplateData().getId()),
-                    VmDeviceUtils.hasMemoryBalloon(getParameters().getVmTemplateData().getId()),
+                    getVmDeviceUtils().hasMemoryBalloon(getParameters().getVmTemplateData().getId()),
                     isSoundDeviceEnabled(),
                     getReturnValue().getValidationMessages())) {
                 returnValue = false;
@@ -290,7 +289,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     protected boolean isSoundDeviceEnabled() {
         Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
         return soundDeviceEnabled != null ? soundDeviceEnabled :
-                VmDeviceUtils.hasSoundDevice(getParameters().getVmTemplateData().getId());
+                getVmDeviceUtils().hasSoundDevice(getParameters().getVmTemplateData().getId());
     }
 
     @Override
@@ -363,17 +362,17 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         VmHandler.updateVmInitToDB(getVmTemplate());
         DbFacade.getInstance().getVmTemplateDao().update(getVmTemplate());
         // also update the smartcard device
-        VmDeviceUtils.updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
+        getVmDeviceUtils().updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
         // update audio device
-        VmDeviceUtils.updateSoundDevice(oldTemplate,
+        getVmDeviceUtils().updateSoundDevice(oldTemplate,
                 getVmTemplate(),
                 getVmTemplate().getCompatibilityVersion(),
                 getParameters().isSoundDeviceEnabled());
 
-        VmDeviceUtils.updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
-        VmDeviceUtils.updateVirtioScsiController(getVmTemplateId(), getParameters().isVirtioScsiEnabled());
+        getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
+        getVmDeviceUtils().updateVirtioScsiController(getVmTemplateId(), getParameters().isVirtioScsiEnabled());
         if (getParameters().isBalloonEnabled() != null) {
-            VmDeviceUtils.updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
+            getVmDeviceUtils().updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
         }
     }
 

@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -107,10 +106,10 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 getVmTemplate().getNumOfMonitors(),
                 interfaces,
                 getTemplateDiskVmElements(),
-                VmDeviceUtils.hasVirtioScsiController(getVmTemplate().getId()),
-                VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
-                VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),
-                VmDeviceUtils.hasSoundDevice(getVmTemplate().getId()),
+                getVmDeviceUtils().hasVirtioScsiController(getVmTemplate().getId()),
+                getVmDeviceUtils().hasWatchdog(getVmTemplate().getId()),
+                getVmDeviceUtils().hasMemoryBalloon(getVmTemplate().getId()),
+                getVmDeviceUtils().hasSoundDevice(getVmTemplate().getId()),
                 getReturnValue().getValidationMessages());
     }
 

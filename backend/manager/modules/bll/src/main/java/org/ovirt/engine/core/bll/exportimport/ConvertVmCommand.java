@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -279,7 +278,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         vmStatic.setImages(new ArrayList<>());
         vmStatic.setInterfaces(new ArrayList<>());
         ImportUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
-        VmDeviceUtils.addImportedDevices(vmStatic, false);
+        getVmDeviceUtils().addImportedDevices(vmStatic, false);
         saveDiskVmElements(vm);
         getVmDeviceDao().updateBootOrderInBatch(new ArrayList<>(vm.getManagedVmDeviceMap().values()));
     }

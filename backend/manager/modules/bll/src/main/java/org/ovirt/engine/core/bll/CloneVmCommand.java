@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
@@ -155,7 +154,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     public VM getVm() {
         if (vm == null) {
             vm = getVmDao().get(oldVmId);
-            VmDeviceUtils.setVmDevices(vm.getStaticData());
+            getVmDeviceUtils().setVmDevices(vm.getStaticData());
             VmHandler.updateDisksFromDb(vm);
             VmHandler.updateVmGuestAgentVersion(vm);
             VmHandler.updateNetworkInterfacesFromDb(vm);

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -421,7 +420,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     protected void copyVmDevices() {
         List<VmDevice> devices = new ArrayList<>(getVmFromConfiguration().getUnmanagedDeviceList());
         devices.addAll(getVmFromConfiguration().getManagedVmDeviceMap().values());
-        VmDeviceUtils.copyVmDevices(getSourceVmId(),
+        getVmDeviceUtils().copyVmDevices(getSourceVmId(),
                 getVmId(),
                 getVm().getStaticData(),
                 devices,
@@ -432,7 +431,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 isBalloonEnabled(),
                 getParameters().getGraphicsDevices().keySet(),
                 false,
-                VmDeviceUtils.canCopyHostDevices(getSourceVmId(), getVm().getStaticData()));
+                getVmDeviceUtils().canCopyHostDevices(getSourceVmId(), getVm().getStaticData()));
     }
 
     protected abstract VM getVmFromConfiguration();
