@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.factory.VmInfoBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +54,8 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     private VmInfoBuilderBase createBuilder() {
-        return new VmInfoBuilder(vm, getParameters().getVdsId(), createInfo);
+        final VmInfoBuilderFactory vmInfoBuilderFactory = Injector.get(VmInfoBuilderFactory.class);
+        return vmInfoBuilderFactory.createVmInfoBuilder(vm, getParameters().getVdsId(), createInfo);
     }
 
     private void buildVmData() {

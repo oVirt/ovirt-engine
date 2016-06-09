@@ -3,6 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -13,6 +15,9 @@ import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
+
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     protected Map<String, Object> struct = new HashMap<>();
 
@@ -47,14 +52,14 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
             addAddress(map, vmDevice.getAddress());
             map.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
             map.put(VdsProperties.NIC_TYPE,
-                    VmInfoBuilder.evaluateInterfaceType(VmInterfaceType.forValue(nic.getType()), vm
-                            .getHasAgent()));
+                    vmInfoBuildUtils.evaluateInterfaceType(VmInterfaceType.forValue(nic.getType()),
+                            vm.getHasAgent()));
             map.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
-            VmInfoBuilder.addProfileDataToNic(map, vm, vmDevice, nic);
-            VmInfoBuilder.addNetworkFiltersToNic(map, nic);
+            vmInfoBuildUtils.addProfileDataToNic(map, vm, vmDevice, nic);
+            vmInfoBuildUtils.addNetworkFiltersToNic(map, nic);
         } else {
-            VmInfoBuilder.addNetworkVirtualFunctionProperties(map, nic, vmDevice, vmDevice.getHostDevice(), vm);
+            vmInfoBuildUtils.addNetworkVirtualFunctionProperties(map, nic, vmDevice, vmDevice.getHostDevice(), vm);
         }
         return map;
     }

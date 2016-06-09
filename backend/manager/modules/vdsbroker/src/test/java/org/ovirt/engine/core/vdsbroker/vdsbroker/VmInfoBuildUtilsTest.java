@@ -10,19 +10,18 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VmInfoBuilderTest {
+public class VmInfoBuildUtilsTest {
 
     @Mock
     private DbFacade dbFacade;
@@ -30,9 +29,10 @@ public class VmInfoBuilderTest {
     @Mock
     private StorageQosDao storageQosDao;
 
-    private StorageQos qos;
+    @InjectMocks
+    private VmInfoBuildUtils underTest;
 
-    private VM vm;
+    private StorageQos qos;
 
     private VmDevice vmDevice;
 
@@ -41,8 +41,6 @@ public class VmInfoBuilderTest {
     @Before
     public void setUp() {
         diskImage.setDiskProfileId(Guid.newGuid());
-        SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
-        DbFacade.setInstance(dbFacade);
         when(dbFacade.getStorageQosDao()).thenReturn(storageQosDao);
 
         qos = new StorageQos();
@@ -69,7 +67,7 @@ public class VmInfoBuilderTest {
         qos.setMaxThroughput(100);
         qos.setMaxIops(10000);
 
-        VmInfoBuilder.handleIoTune(vmDevice, VmInfoBuilder.loadStorageQos(diskImage));
+        underTest.handleIoTune(vmDevice, underTest.loadStorageQos(diskImage));
 
         assertIoTune(getIoTune(vmDevice), 100L * MB_TO_BYTES, 0, 0, 10000, 0, 0);
     }
@@ -77,14 +75,14 @@ public class VmInfoBuilderTest {
     @Test
     public void testNoStorageQuotaAssigned() {
         when(storageQosDao.getQosByDiskProfileId(diskImage.getDiskProfileId())).thenReturn(null);
-        VmInfoBuilder.handleIoTune(vmDevice, VmInfoBuilder.loadStorageQos(diskImage));
+        underTest.handleIoTune(vmDevice, underTest.loadStorageQos(diskImage));
         assertNull(vmDevice.getSpecParams());
     }
 
     @Test
     public void testNoCpuProfileAssigned() {
         diskImage.setDiskProfileId(null);
-        VmInfoBuilder.handleIoTune(vmDevice, VmInfoBuilder.loadStorageQos(diskImage));
+        underTest.handleIoTune(vmDevice, underTest.loadStorageQos(diskImage));
         assertNull(vmDevice.getSpecParams());
     }
 

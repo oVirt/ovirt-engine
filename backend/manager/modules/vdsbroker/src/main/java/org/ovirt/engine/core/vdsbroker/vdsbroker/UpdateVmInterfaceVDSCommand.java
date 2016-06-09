@@ -3,11 +3,16 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 
 public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDSParameters> {
+
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     public UpdateVmInterfaceVDSCommand(VmNicDeviceVDSParameters parameters) {
         super(parameters);
@@ -28,7 +33,7 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
         deviceStruct.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
         VmDevice vmDevice = getParameters().getVmDevice();
 
-        VmInfoBuilder.addProfileDataToNic(deviceStruct, getParameters().getVm(), vmDevice, nic);
+        vmInfoBuildUtils.addProfileDataToNic(deviceStruct, getParameters().getVm(), vmDevice, nic);
 
         return deviceStruct;
     }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -19,6 +21,9 @@ import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
+
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     protected Map<String, Object> sendInfo = new HashMap<>();
 
@@ -83,7 +88,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 drive.put(VdsProperties.ImageId, diskImage.getId().toString());
                 drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
 
-                VmInfoBuilder.handleIoTune(vmDevice, VmInfoBuilder.loadStorageQos(diskImage));
+                vmInfoBuildUtils.handleIoTune(vmDevice, vmInfoBuildUtils.loadStorageQos(diskImage));
 
                 if (vmDevice.getSpecParams() != null) {
                     drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
@@ -116,7 +121,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 break;
             case CINDER:
                 CinderDisk cinderDisk = (CinderDisk) disk;
-                VmInfoBuilder.buildCinderDisk(cinderDisk, drive);
+                vmInfoBuildUtils.buildCinderDisk(cinderDisk, drive);
                 drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
                 break;
         }

@@ -49,7 +49,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilder;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuildUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
@@ -58,6 +58,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     protected AbstractDiskVmCommand(Guid commandId) {
         super(commandId);
@@ -249,10 +252,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 int sPaprVscsiIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
 
                 if (diskInterface == DiskInterface.VirtIO_SCSI) {
-                    Map<VmDevice, Integer> vmDeviceUnitMap = VmInfoBuilder.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
+                    Map<VmDevice, Integer> vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
                     return getAddressMapForScsiDisk(address, vmDeviceUnitMap, vmDevice, virtioScsiIndex, false);
                 } else if (diskInterface == DiskInterface.SPAPR_VSCSI) {
-                    Map<VmDevice, Integer> vmDeviceUnitMap = VmInfoBuilder.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
+                    Map<VmDevice, Integer> vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
                     return getAddressMapForScsiDisk(address, vmDeviceUnitMap, vmDevice, sPaprVscsiIndex, true);
                 }
             } finally {
@@ -268,7 +271,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                                        int controllerIndex,
                                        boolean reserveFirstAddress) {
         Map<String, String> addressMap;
-        int availableUnit = VmInfoBuilder.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress);
+        int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress);
 
         // If address has been already set before, verify its uniqueness;
         // Otherwise, set address according to the next available unit.
@@ -276,10 +279,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             addressMap = XmlRpcStringUtils.string2Map(address);
             int unit = Integer.parseInt(addressMap.get(VdsProperties.Unit));
             if (vmDeviceUnitMap.containsValue(unit)) {
-                addressMap = VmInfoBuilder.createAddressForScsiDisk(controllerIndex, availableUnit);
+                addressMap = vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
             }
         } else {
-            addressMap = VmInfoBuilder.createAddressForScsiDisk(controllerIndex, availableUnit);
+            addressMap = vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
         }
 
         // Updating device's address immediately (instead of waiting to VmsMonitoring)
