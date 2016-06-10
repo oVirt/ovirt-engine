@@ -92,7 +92,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
         // Perform volume bricks on server and up server null check
         if (returnValue && isGlusterEnabled()) {
-            upServer = getClusterUtils().getUpServer(getClusterId());
+            upServer = getGlusterUtils().getUpServer(getClusterId());
             if (!getParameters().isForceAction()) {
                 // fail if host has bricks on a volume
                 if (hasVolumeBricksOnServer()) {
@@ -196,13 +196,17 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         getGlusterHooksDao().removeAllInCluster(getClusterId());
     }
 
+    public GlusterUtil getGlusterUtils() {
+        return GlusterUtil.getInstance();
+    }
+
     public ClusterUtils getClusterUtils() {
         return ClusterUtils.getInstance();
     }
 
     private void glusterHostRemove() {
         if (clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
-            try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(getClusterId())) {
+            try (EngineLock lock = getGlusterUtils().acquireGlusterLockWait(getClusterId())) {
                 VDSReturnValue returnValue =
                         runVdsCommand(
                                 VDSCommandType.RemoveGlusterServer,
@@ -221,7 +225,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                     if (returnValue.getVdsError().getCode() == EngineError.GlusterHostRemoveFailedException) {
                         List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer);
                         if (glusterServers != null) {
-                            if (!GlusterUtil.getInstance().isHostExists(glusterServers, getVds())) {
+                            if (!getGlusterUtils().isHostExists(glusterServers, getVds())) {
                                 setSucceeded(true);
                             }
                         }

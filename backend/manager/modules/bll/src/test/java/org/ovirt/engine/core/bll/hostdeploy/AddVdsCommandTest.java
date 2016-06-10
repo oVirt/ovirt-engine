@@ -168,7 +168,7 @@ public class AddVdsCommandTest {
         when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
         when(vdsDaoMock.getAllForCluster(any(Guid.class))).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
                 : VDSStatus.Initializing));
-        when(clusterUtils.getUpServer(any(Guid.class))).thenReturn(upServer);
+        when(glusterUtil.getUpServer(any(Guid.class))).thenReturn(upServer);
 
         //commandMock.log = log;
     }

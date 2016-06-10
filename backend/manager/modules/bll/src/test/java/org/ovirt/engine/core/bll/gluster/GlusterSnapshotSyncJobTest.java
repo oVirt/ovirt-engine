@@ -25,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -70,9 +69,6 @@ public class GlusterSnapshotSyncJobTest {
     private GlusterVolumeDao volumeDao;
 
     @Mock
-    private ClusterUtils clusterUtils;
-
-    @Mock
     private GlusterVolumeSnapshotDao snapshotDao;
 
     @Mock
@@ -109,7 +105,6 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(volumeDao).when(syncJob).getGlusterVolumeDao();
         doReturn(snapshotDao).when(syncJob).getGlusterVolumeSnapshotDao();
         doReturn(snapshotConfigDao).when(syncJob).getGlusterVolumeSnapshotConfigDao();
-        doReturn(clusterUtils).when(syncJob).getClusterUtils();
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
 
         doReturn(getClusters()).when(clusterDao).getAll();
@@ -117,7 +112,7 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getVolumes()).when(volumeDao).getByClusterId(CLUSTER_ID_1);
         doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1)).when(volumeDao)
                 .getByName(CLUSTER_ID_1, VOLUME_NAME_1);
-        doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
+        doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
         doNothing().when(glusterUtil).alertVolumeSnapshotLimitsReached(any(GlusterVolumeEntity.class));
         doNothing().when(glusterUtil).checkAndRemoveVolumeSnapshotLimitsAlert(any(GlusterVolumeEntity.class));

@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
@@ -48,7 +48,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private static final Guid SERVER_ID = Guid.newGuid();
     private static final String SERVER_NAME = "server1";
     private GlusterVolumeAdvancedDetails expectedVolumeAdvancedDetails;
-    private ClusterUtils clusterUtils;
+    private GlusterUtil glusterUtils;
     private VdsDao vdsDao;
     private GlusterVolumeDao volumeDao;
 
@@ -147,7 +147,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     }
 
     private void setupMock() {
-        clusterUtils = mock(ClusterUtils.class);
+        glusterUtils = mock(GlusterUtil.class);
         vdsDao = mock(VdsDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
         GlusterBrickDao brickDao = mock(GlusterBrickDao.class);
@@ -187,7 +187,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         // Server is fetched directly from the brick's server,
         // and clusterUtils is not used to fetch a random UP server
         verify(vdsDao, times(1)).get(SERVER_ID);
-        verifyZeroInteractions(clusterUtils);
+        verifyZeroInteractions(glusterUtils);
     }
 
     @Test (expected = RuntimeException.class)
@@ -202,8 +202,8 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     public void testQueryForNullBrickId() {
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
         doReturn(null).when(getQueryParameters()).getBrickId();
-        doReturn(clusterUtils).when(getQuery()).getClusterUtils();
-        doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getRandomUpServer(CLUSTER_ID);
+        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
+        doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getRandomUpServer(CLUSTER_ID);
 
         getQuery().executeQueryCommand();
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = getQuery().getQueryReturnValue().getReturnValue();
@@ -213,6 +213,6 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
 
         // Brick's server is not fetched, rather clusterUtil is used to fetch a random UP server
         verifyZeroInteractions(vdsDao);
-        verify(clusterUtils, times(1)).getRandomUpServer(CLUSTER_ID);
+        verify(glusterUtils, times(1)).getRandomUpServer(CLUSTER_ID);
     }
 }

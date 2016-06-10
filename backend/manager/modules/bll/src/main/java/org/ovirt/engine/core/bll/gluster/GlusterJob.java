@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
@@ -62,10 +61,6 @@ public abstract class GlusterJob {
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {
         return Backend.getInstance().getResourceManager().runVdsCommand(commandType, params);
-    }
-
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
     }
 
     protected VdsStatisticsDao getVdsStatisticsDao() {

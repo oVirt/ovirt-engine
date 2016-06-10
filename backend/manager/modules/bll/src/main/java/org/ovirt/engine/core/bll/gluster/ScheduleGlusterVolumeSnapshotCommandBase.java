@@ -56,8 +56,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         }
 
         // Validate the scheduling dates (start and end by dates)
-        Date convertedStartDate = getGlusterUtil().convertDate(schedule.getStartDate(), schedule.getTimeZone());
-        Date convertedEndByDate = getGlusterUtil().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+        Date convertedStartDate = getGlusterUtils().convertDate(schedule.getStartDate(), schedule.getTimeZone());
+        Date convertedEndByDate = getGlusterUtils().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
 
         if (schedule.getRecurrence() != null
                 && schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN
@@ -79,8 +79,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         }
 
         // convert the start date and end by date to the given timezone
-        Date convertedStartDate = getGlusterUtil().convertDate(schedule.getStartDate(), schedule.getTimeZone());
-        Date convertedEndByDate = getGlusterUtil().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+        Date convertedStartDate = getGlusterUtils().convertDate(schedule.getStartDate(), schedule.getTimeZone());
+        Date convertedEndByDate = getGlusterUtils().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
 
         String cronExpression = GlusterUtil.getInstance().getCronExpression(schedule);
         if (cronExpression == null) {
@@ -109,8 +109,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
     }
 
     @Override
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
+    protected GlusterUtil getGlusterUtils() {
+        return super.getGlusterUtils();
     }
 
     protected DBSchedulerUtilQuartzImpl getDbSchedulUtil() {

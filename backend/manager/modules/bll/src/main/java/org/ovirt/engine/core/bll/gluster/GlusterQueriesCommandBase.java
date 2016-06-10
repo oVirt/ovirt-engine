@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -57,8 +57,8 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         return getGlusterVolumeDao().getById(volumeId).getName();
     }
 
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
+    protected GlusterUtil getGlusterUtils() {
+        return GlusterUtil.getInstance();
     }
 
     protected GlusterGeoRepDao getGeoRepDao() {
@@ -78,7 +78,7 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
     }
 
     protected Guid getUpServerId(Guid clusterId) {
-        VDS vds = getClusterUtils().getUpServer(clusterId);
+        VDS vds = getGlusterUtils().getUpServer(clusterId);
         if (vds == null) {
             throw new RuntimeException("No up server found");
         }
@@ -90,7 +90,7 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
     }
 
     protected Guid getRandomUpServerId(Guid clusterId) {
-        VDS vds = getClusterUtils().getRandomUpServer(clusterId);
+        VDS vds = getGlusterUtils().getRandomUpServer(clusterId);
         if (vds == null) {
             throw new RuntimeException("No up server found");
         }

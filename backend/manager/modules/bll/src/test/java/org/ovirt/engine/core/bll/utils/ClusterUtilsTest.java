@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -11,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
@@ -49,10 +46,4 @@ public class ClusterUtilsTest {
         return vds;
     }
 
-    @Test
-    public void testGetAllVdsWithStatus() {
-        VDS vds = clusterUtils.getUpServer(CLUSTER_ID);
-        assertNotNull(vds);
-        assertEquals(vds, getVds(VDSStatus.Up));
-    }
 }

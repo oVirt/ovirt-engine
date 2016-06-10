@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -58,7 +58,7 @@ public class GlusterHookSyncJobTest {
         new Guid("AAAAAAAA-3333-3333-3333-333333333333")};
 
     @Mock
-    private ClusterUtils clusterUtils;
+    private GlusterUtil glusterUtil;
 
     @Mock
     private GlusterHooksDao hooksDao;
@@ -97,9 +97,9 @@ public class GlusterHookSyncJobTest {
         hookSyncJob = Mockito.spy(GlusterHookSyncJob.getInstance());
         logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
         hookSyncJob.setLogUtil(logUtil);
-        doReturn(clusterUtils).when(hookSyncJob).getClusterUtils();
-        doReturn(getServers()).when(clusterUtils).getAllUpServers(CLUSTER_GUIDS[0]);
-        doReturn(Collections.emptyList()).when(clusterUtils).getAllUpServers(CLUSTER_GUIDS[1]);
+        doReturn(glusterUtil).when(hookSyncJob).getGlusterUtil();
+        doReturn(getServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[0]);
+        doReturn(Collections.emptyList()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[1]);
         doNothing().when(logUtil).logAuditMessage(any(Guid.class),
                 any(GlusterVolumeEntity.class),
                 any(VDS.class),

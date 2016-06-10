@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -84,7 +84,7 @@ public class GlusterServiceSyncJobTest {
     private GlusterClusterServiceDao clusterServiceDao;
 
     @Mock
-    private ClusterUtils clusterUtil;
+    private GlusterUtil glusterUtil;
 
     @Mock
     private ClusterDao clusterDao;
@@ -112,10 +112,10 @@ public class GlusterServiceSyncJobTest {
         doReturn(serverServiceDao).when(syncJob).getGlusterServerServiceDao();
         doReturn(clusterServiceDao).when(syncJob).getGlusterClusterServiceDao();
         doReturn(clusterDao).when(syncJob).getClusterDao();
-        doReturn(clusterUtil).when(syncJob).getClusterUtils();
+        doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(serviceNameMap).when(syncJob).getServiceNameMap();
 
-        doReturn(upServers).when(clusterUtil).getAllUpServers(CLUSTER_ID);
+        doReturn(upServers).when(glusterUtil).getAllUpServers(CLUSTER_ID);
         doReturn(Collections.singletonList(createCluster())).when(clusterDao).getAll();
         doReturn(createServerServices(SERVER1_ID, GlusterServiceStatus.RUNNING)).when(serverServiceDao)
                 .getByServerId(SERVER1_ID);
@@ -124,7 +124,7 @@ public class GlusterServiceSyncJobTest {
         doReturn(createServerServices(SERVER3_ID, GlusterServiceStatus.RUNNING)).when(serverServiceDao)
                 .getByServerId(SERVER3_ID);
         doReturn(existingClusterServices).when(clusterServiceDao).getByClusterId(CLUSTER_ID);
-        doReturn(createServers()).when(clusterUtil).getAllServers(CLUSTER_ID);
+        doReturn(createServers()).when(glusterUtil).getAllUpServers(CLUSTER_ID);
 
         doNothing().when(syncJob).acquireLock(SERVER1_ID);
         doNothing().when(syncJob).releaseLock(SERVER1_ID);
@@ -265,7 +265,7 @@ public class GlusterServiceSyncJobTest {
         verify(clusterDao, times(1)).getAll();
 
         // get all servers of the cluster
-        verify(clusterUtil, times(1)).getAllServers(CLUSTER_ID);
+        verify(glusterUtil, times(1)).getAllUpServers(CLUSTER_ID);
 
         // Fetch existing services from server1
         verify(serverServiceDao, times(1)).getByServerId(SERVER1_ID);

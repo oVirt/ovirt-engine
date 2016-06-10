@@ -1,13 +1,10 @@
 package org.ovirt.engine.core.bll.utils;
 
 import java.util.List;
-import java.util.Random;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -22,39 +19,7 @@ public class ClusterUtils {
         return instance;
     }
 
-    /**
-     * Returns a server that is in {@link VDSStatus#Up} status.<br>
-     * This server is chosen randomly from all the Up servers.
-     *
-     * @return One of the servers in up status
-     */
-    public VDS getRandomUpServer(Guid clusterId) {
-        List<VDS> servers = getAllUpServers(clusterId);
-        if (servers == null || servers.isEmpty()) {
-            return null;
-        }
-        return servers.get(new Random().nextInt(servers.size()));
-    }
-
-    /**
-     * Returns a server that is in {@link VDSStatus#Up} status.<br>
-     * This server is returned as first from list of the Up servers.
-     *
-     * @return One of the servers in up status
-     */
-    public VDS getUpServer(Guid clusterId) {
-        List<VDS> servers = getAllUpServers(clusterId);
-        if (servers == null || servers.isEmpty()) {
-            return null;
-        }
-        return servers.get(0);
-    }
-
-    public List<VDS> getAllUpServers(Guid clusterId) {
-        return getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
-    }
-
-    public List<VDS> getAllServers(Guid clusterId) {
+     public List<VDS> getAllServers(Guid clusterId) {
         return getVdsDao().getAllForCluster(clusterId);
     }
 

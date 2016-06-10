@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -56,9 +55,5 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
                         EngineMessage.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS)), null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
-    }
-
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
     }
 }

@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -58,6 +59,8 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
+    private GlusterUtil glusterUtils;
+    @Mock
     private ClusterUtils clusterUtils;
 
     public GlusterHookCommandTest() {
@@ -74,7 +77,8 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
 
     public void setupMocks(T cmd, boolean hookFound, GlusterHookEntity hookEntity) {
 
-        when(clusterUtils.getAllUpServers(CLUSTER_ID)).thenReturn(getGlusterServers());
+        when(glusterUtils.getAllUpServers(CLUSTER_ID)).thenReturn(getGlusterServers());
+        doReturn(glusterUtils).when(cmd).getGlusterUtils();
         doReturn(clusterUtils).when(cmd).getClusterUtils();
         if (hookFound) {
             when(hooksDao.getById(HOOK_ID)).thenReturn(hookEntity);

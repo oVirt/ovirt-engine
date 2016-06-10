@@ -385,7 +385,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     }
 
     private Map<String, GlusterGeoRepSession> getSessionsFromCLI(Cluster cluster, GlusterVolumeEntity volume) {
-        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No UP server found in cluster '{}' for geo-rep monitoring", cluster.getName());
             return null;
@@ -413,7 +413,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     }
 
     private List<GlusterGeoRepSessionDetails> getSessionDetailFromCLI(Cluster cluster, GlusterGeoRepSession session) {
-        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No UP server found in cluster: {} for geo-rep monitoring", cluster.getName());
             return null;
@@ -442,7 +442,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
     private List<GlusterGeoRepSessionConfiguration> getSessionConfigFromCLI(Cluster cluster,
             GlusterGeoRepSession session) {
-        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No UP server found in cluster: {} for geo-rep monitoring", cluster.getName());
             return null;

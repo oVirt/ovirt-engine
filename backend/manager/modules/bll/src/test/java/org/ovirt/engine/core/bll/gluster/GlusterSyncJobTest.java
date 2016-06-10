@@ -33,7 +33,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -85,9 +84,6 @@ public class GlusterSyncJobTest {
     private static final String REPL_VOL_NAME = "repl-vol";
 
     private static final String DIST_VOL_NAME = "dist-vol";
-
-    @Mock
-    private ClusterUtils clusterUtils;
 
     @Mock
     private GlusterUtil glusterUtil;
@@ -267,9 +263,9 @@ public class GlusterSyncJobTest {
         glusterManager.setLogUtil(logUtil);
         mockDaos();
 
-        doReturn(clusterUtils).when(glusterManager).getClusterUtils();
-        doReturn(existingServer1).when(clusterUtils).getUpServer(any(Guid.class));
-        doReturn(existingServer1).when(clusterUtils).getRandomUpServer(any(Guid.class));
+        doReturn(glusterUtil).when(glusterManager).getGlusterUtil();
+        doReturn(existingServer1).when(glusterUtil).getUpServer(any(Guid.class));
+        doReturn(existingServer1).when(glusterUtil).getRandomUpServer(any(Guid.class));
 
         doNothing().when(logUtil).logServerMessage(any(VDS.class), any(AuditLogType.class));
         doNothing().when(logUtil).logVolumeMessage(any(GlusterVolumeEntity.class), any(AuditLogType.class));
@@ -326,7 +322,7 @@ public class GlusterSyncJobTest {
         InOrder inOrder =
                 inOrder(clusterDao,
                         vdsDao,
-                        clusterUtils,
+                        glusterUtil,
                         glusterManager,
                         vdsStatisticsDao,
                         vdsDynamicDao,
@@ -342,7 +338,7 @@ public class GlusterSyncJobTest {
         inOrder.verify(vdsDao, times(1)).getAllForCluster(CLUSTER_ID);
 
         // get the UP server from cluster
-        inOrder.verify(clusterUtils, times(1)).getUpServer(CLUSTER_ID);
+        inOrder.verify(glusterUtil, times(1)).getUpServer(CLUSTER_ID);
 
         // acquire lock on the cluster
         inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
@@ -642,7 +638,7 @@ public class GlusterSyncJobTest {
     }
 
     private void verifyMocksForHeavyWeight() {
-        InOrder inOrder = inOrder(clusterDao, clusterUtils, volumeDao, glusterManager, brickDao);
+        InOrder inOrder = inOrder(clusterDao, glusterUtil, volumeDao, glusterManager, brickDao);
 
         // all clusters fetched from db
         inOrder.verify(clusterDao, times(1)).getAll();
@@ -650,7 +646,7 @@ public class GlusterSyncJobTest {
         VerificationMode mode = times(1);
 
         // get the UP server from cluster
-        inOrder.verify(clusterUtils, mode).getRandomUpServer(CLUSTER_ID);
+        inOrder.verify(glusterUtil, mode).getRandomUpServer(CLUSTER_ID);
 
         // get volumes of the cluster
         inOrder.verify(volumeDao, mode).getByClusterId(CLUSTER_ID);

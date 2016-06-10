@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -72,6 +73,9 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     private ClusterUtils clusterUtils;
 
     @Mock
+    private GlusterUtil glusterUtils;
+
+    @Mock
     private GlusterVolumeDao volumeDao;
 
     @Mock
@@ -115,11 +119,12 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         doReturn(hooksDao).when(command).getGlusterHooksDao();
         doReturn(cluster).when(clusterDao).get(Mockito.any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
+        doReturn(glusterUtils).when(command).getGlusterUtils();
         doReturn(backend).when(command).getBackend();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(vdsStatisticsDao).when(command).getVdsStatisticsDao();
-        when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
+        when(glusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
 
     private void mockHasMultipleClusters(Boolean isMultiple) {

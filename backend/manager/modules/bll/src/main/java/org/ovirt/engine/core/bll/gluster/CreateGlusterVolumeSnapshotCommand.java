@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -73,7 +72,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                     continue;
                 }
 
-                VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
+                VDS slaveUpServer = getGlusterUtils().getRandomUpServer(slaveVolume.getClusterId());
                 if (slaveUpServer == null) {
                     handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
                             "No up server found in slave cluster of geo-rep session");
@@ -126,7 +125,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                     getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
 
                     // check if the snapshot soft limit reached now for the volume and alert
-                    getGlusterUtil().alertVolumeSnapshotLimitsReached(slaveVolume);
+                    getGlusterUtils().alertVolumeSnapshotLimitsReached(slaveVolume);
                 }
             }
         }
@@ -166,7 +165,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             getDbFacade().getGlusterVolumeSnapshotDao().save(createdSnapshot);
             addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, createdSnapshot.getSnapshotName());
             // check if the snapshot soft limit reached now for the volume and alert
-            getGlusterUtil().alertVolumeSnapshotLimitsReached(getGlusterVolume());
+            getGlusterUtils().alertVolumeSnapshotLimitsReached(getGlusterVolume());
         }
 
         // Resume the snapshot paused sessions by engine
