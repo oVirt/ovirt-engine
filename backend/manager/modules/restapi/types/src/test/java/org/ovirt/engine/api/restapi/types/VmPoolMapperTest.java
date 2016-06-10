@@ -22,5 +22,6 @@ public class VmPoolMapperTest extends AbstractInvertibleMappingTest<VmPool, org.
         assertEquals(model.getCluster().getId(), transform.getCluster().getId());
         assertEquals(model.getMaxUserVms(), transform.getMaxUserVms());
         assertEquals(model.getDisplay().getProxy(), transform.getDisplay().getProxy());
+        assertEquals(model.isStateful(), transform.isStateful());
     }
 }
