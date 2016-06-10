@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -16,10 +15,8 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -63,8 +60,6 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
     private static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
     private static final Guid NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
 
-    private static final Guid ADMIN_ROLE_TYPE_FROM_FIXTURE_ID = new Guid("F5972BFA-7102-4D33-AD22-9DD421BFBA78");
-    private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
 
     /**
@@ -128,42 +123,6 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
         }
     }
 
-    @Test
-    public void testUpdateLastAdminCheckStatus() {
-
-        // Getting a nonAdmin user that is defined in the fixtures
-        DbUser nonAdminUser =
-                dbFacade.getDbUserDao().getByUsernameAndDomain("userportal2@testportal.redhat.com",
-                        "testportal.redhat.com");
-
-        assertNotNull(nonAdminUser);
-        assertFalse(nonAdminUser.isAdmin());
-
-        // execute and validate when not admin
-        dbFacade.updateLastAdminCheckStatus(nonAdminUser.getId());
-        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
-
-        assertFalse(nonAdminUser.isAdmin());
-
-        Permission perms = new Permission();
-        perms.setRoleType(RoleType.ADMIN);
-
-        // An available role from the fixtures
-        perms.setRoleId(ADMIN_ROLE_TYPE_FROM_FIXTURE_ID);
-        perms.setAdElementId(nonAdminUser.getId());
-        perms.setObjectId(SYSTEM_OBJECT_ID);
-        perms.setObjectType(VdcObjectType.System);
-
-        // Save the permission to the DB and make sure it has been saved
-        dbFacade.getPermissionDao().save(perms);
-        assertNotNull(dbFacade.getPermissionDao().get(perms.getId()));
-
-        // execute and validate when admin
-        dbFacade.updateLastAdminCheckStatus(nonAdminUser.getId());
-        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
-
-        assertTrue(nonAdminUser.isAdmin());
-    }
 
     @Test
     public void testGetEntityNameByIdAndTypeForVM() {

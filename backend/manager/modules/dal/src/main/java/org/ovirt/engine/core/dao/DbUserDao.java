@@ -114,4 +114,12 @@ public interface DbUserDao extends Dao, SearchDao<DbUser> {
      *            the user
      */
     void saveOrUpdate(DbUser user);
+
+    /**
+     * User presentation in GUI have a distinction between ADMIN/USER user. The distinction is determined by their
+     * permissions or their group's permissions. when Permission with the role type Admin is found, set the DbUser
+     * isAdmin flag to ADMIN Type or to USER otherwise. Make the change only if the value is different to what it is
+     * saved to db
+     */
+    void updateLastAdminCheckStatus(Guid... userIds);
 }

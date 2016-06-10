@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -175,6 +176,14 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
         setIdIfNeeded(user);
         new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("InsertOrUpdateUser")
                 .execute(new DbUserMapSqlParameterSource(user));
+    }
+
+    @Override
+    public void updateLastAdminCheckStatus(Guid... userIds) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("userIds", StringUtils.join(userIds, ","));
+
+        new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("UpdateLastAdminCheckStatus").execute(parameterSource);
     }
 
     private void setIdIfNeeded(DbUser user) {

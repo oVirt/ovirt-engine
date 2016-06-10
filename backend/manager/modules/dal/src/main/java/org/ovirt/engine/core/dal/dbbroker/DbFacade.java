@@ -10,7 +10,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.ExternalVariable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -353,20 +352,6 @@ public class DbFacade {
 
         String resultKey = dbEngineDialect.getFunctionReturnKey();
         return dbResults.get(resultKey) != null ? dbResults.get(resultKey).toString() : null;
-    }
-
-    /**
-     * User presentation in GUI have a distinction between ADMIN/USER user. The distinction is determined by their
-     * permissions or their group's permissions. when Permission with the role type Admin is found, set the DbUser
-     * isAdmin flag to ADMIN Type or to USER otherwise. Make the change only if the value is different to what it is
-     * saved to db
-     */
-    public void updateLastAdminCheckStatus(Guid... userIds) {
-        MapSqlParameterSource parameterSource =
-                getCustomMapSqlParameterSource().addValue("userIds", StringUtils.join(userIds, ","));
-
-        new SimpleJdbcCall(jdbcTemplate).withProcedureName("UpdateLastAdminCheckStatus")
-                .execute(parameterSource);
     }
 
     /***

@@ -70,7 +70,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         }
 
         getPermissionDao().remove(perms.getId());
-        getDbFacade().updateLastAdminCheckStatus(userId);
+        getDbUserDao().updateLastAdminCheckStatus(userId);
         setSucceeded(true);
     }
 
