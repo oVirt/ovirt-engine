@@ -50,6 +50,9 @@ public class VmPoolMapper {
         if (model.isSetType()) {
             entity.setVmPoolType(map(model.getType(), null));
         }
+        if (model.isSetStateful()) {
+            entity.setStateful(model.isStateful());
+        }
         return entity;
     }
 
@@ -103,6 +106,7 @@ public class VmPoolMapper {
             model.setDisplay(display);
         }
         model.setType(map(entity.getVmPoolType(), null));
+        model.setStateful(entity.isStateful());
 
         return model;
     }
