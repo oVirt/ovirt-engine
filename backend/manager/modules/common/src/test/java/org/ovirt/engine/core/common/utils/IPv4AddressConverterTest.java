@@ -60,4 +60,9 @@ public class IPv4AddressConverterTest {
     public void checkInvalidStringIpv4AddressConversion() {
         assertEquals("", underTest.convertPrefixToNetmask("a'"));
     }
+
+    @Test
+    public void checkConvertPrefixWithTrailingSlashToIpv4Address(){
+        runConvertPrefixToIpv4Address("255.255.0.0", "/16");
+    }
 }

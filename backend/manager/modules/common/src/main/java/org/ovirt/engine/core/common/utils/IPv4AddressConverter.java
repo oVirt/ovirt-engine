@@ -42,6 +42,7 @@ public class IPv4AddressConverter implements IPAddressConverter {
      */
     @Override
     public String convertPrefixToNetmask(String prefix) {
+        prefix = removeLeadingSlashFromNetmaskIfPresent(prefix);
         int prefixAsInt = Integer.parseInt(prefix);
         int mask = prefixAsInt == 0 ? 0 : 0xffffffff ^ (1 << 32 - prefixAsInt) - 1;
         byte[] netmaskByteArray = new byte[] { (byte) (mask >>> 24),
@@ -54,5 +55,12 @@ public class IPv4AddressConverter implements IPAddressConverter {
             stringBuilder.append(".").append(octet);
         }
         return stringBuilder.substring(1);
+    }
+
+    private String removeLeadingSlashFromNetmaskIfPresent(String prefix){
+        if (prefix != null && prefix.startsWith("/")){
+            return prefix.substring(1);
+        }
+        return prefix;
     }
 }
