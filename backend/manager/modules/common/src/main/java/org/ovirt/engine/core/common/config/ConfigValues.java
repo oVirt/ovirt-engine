@@ -1893,7 +1893,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("20480")
     HostedEngineConfigDiskSizeInBytes,
 
-    @TypeConverterAttribute(String.class)
+    @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     Ipv6Supported,
 
