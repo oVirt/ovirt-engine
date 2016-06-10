@@ -318,10 +318,6 @@ public class DbFacade {
         return getDao(daoType);
     }
 
-    public JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
-    }
-
     @SuppressWarnings("unchecked")
     private <T extends Dao> T getDao(Class<T> daoType) {
         for (Dao dao : daos) {
