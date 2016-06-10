@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -66,8 +65,6 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
 
     private static final Guid ADMIN_ROLE_TYPE_FROM_FIXTURE_ID = new Guid("F5972BFA-7102-4D33-AD22-9DD421BFBA78");
     private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
-    private static final int NUM_OF_VM_IN_FIXTURES_WITH_STATUS_MIGRATING_FROM = 2;
-    private static final int NUM_OF_USERS_IN_FIXTURES = 4;
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
 
     /**
@@ -166,19 +163,6 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
         nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
 
         assertTrue(nonAdminUser.isAdmin());
-    }
-
-    @Test
-    public void testGetSystemStatisticsValueWithSpecifiedStatus() {
-        int numOfVmWithStatusMigratingFrom =
-                dbFacade.getSystemStatisticsValue("VM", Integer.toString(VMStatus.MigratingFrom.getValue()));
-        assertTrue(numOfVmWithStatusMigratingFrom == NUM_OF_VM_IN_FIXTURES_WITH_STATUS_MIGRATING_FROM);
-    }
-
-    @Test
-    public void testGetSystemStatisticsValueWithoutSpecifiedStatus() {
-        int numOfUsers = dbFacade.getSystemStatisticsValue("User", "");
-        assertTrue(numOfUsers == NUM_OF_USERS_IN_FIXTURES);
     }
 
     @Test

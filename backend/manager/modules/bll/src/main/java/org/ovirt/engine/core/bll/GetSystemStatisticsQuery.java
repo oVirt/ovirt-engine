@@ -3,14 +3,21 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
+import org.ovirt.engine.core.dao.SystemStatisticsDao;
 
 public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private SystemStatisticsDao systemStatisticsDao;
+
     public GetSystemStatisticsQuery(P parameters) {
         super(parameters);
     }
@@ -55,7 +62,7 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
     }
 
     private int getTotalVMsStat() {
-        return getDbFacade().getSystemStatisticsValue(VM_ENTITY_NAME);
+        return systemStatisticsDao.getSystemStatisticsValue(VM_ENTITY_NAME);
     }
 
     private int getActiveVMsStat() {
@@ -67,41 +74,41 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
                 String.valueOf(VMStatus.PoweringDown.getValue()),
                 String.valueOf(VMStatus.Paused.getValue()),
                 String.valueOf(VMStatus.Unknown.getValue())};
-        return getDbFacade().getSystemStatisticsValue(VM_ENTITY_NAME,
+        return systemStatisticsDao.getSystemStatisticsValue(VM_ENTITY_NAME,
                 StringUtils.join(activeVmStatuses, COMMA_DELIMITER));
     }
 
     private int getTotalHostsStat() {
-        return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME);
+        return systemStatisticsDao.getSystemStatisticsValue(HOST_ENTITY_NAME);
     }
 
     private int getActiveHostsStat() {
         String[] activeVdsStatuses =
                 {String.valueOf(VDSStatus.Up.getValue()),
                         String.valueOf(VDSStatus.PreparingForMaintenance.getValue())};
-        return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME,
+        return systemStatisticsDao.getSystemStatisticsValue(HOST_ENTITY_NAME,
                 StringUtils.join(activeVdsStatuses, COMMA_DELIMITER));
     }
 
     private int getMaintenanceHostsStat() {
-        return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME,
+        return systemStatisticsDao.getSystemStatisticsValue(HOST_ENTITY_NAME,
                 String.valueOf(VDSStatus.Maintenance.getValue()));
     }
 
     private int getTotalUsersStat() {
-        return getDbFacade().getSystemStatisticsValue(USER_ENTITY_NAME);
+        return systemStatisticsDao.getSystemStatisticsValue(USER_ENTITY_NAME);
     }
 
     private int getActiveUsersStat() {
-        return getDbFacade().getSystemStatisticsValue(USER_ENTITY_NAME, USER_ACTIVE_STATUS);
+        return systemStatisticsDao.getSystemStatisticsValue(USER_ENTITY_NAME, USER_ACTIVE_STATUS);
     }
 
     private int getTotalStorageDomainsStat() {
-        return getDbFacade().getSystemStatisticsValue(TOTAL_STORAGE_DOMAIN_ENTITY_NAME);
+        return systemStatisticsDao.getSystemStatisticsValue(TOTAL_STORAGE_DOMAIN_ENTITY_NAME);
     }
 
     private int getActiveStorageDomainsStat() {
-        return getDbFacade().getSystemStatisticsValue(ACTIVE_STORAGE_DOMAIN_ENTITY_NAME,
+        return systemStatisticsDao.getSystemStatisticsValue(ACTIVE_STORAGE_DOMAIN_ENTITY_NAME,
                 String.valueOf(StorageDomainStatus.Active.getValue()));
     }
 

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -186,7 +184,6 @@ import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
@@ -356,28 +353,6 @@ public class DbFacade {
 
         String resultKey = dbEngineDialect.getFunctionReturnKey();
         return dbResults.get(resultKey) != null ? dbResults.get(resultKey).toString() : null;
-    }
-
-    public Integer getSystemStatisticsValue(String entity) {
-        return getSystemStatisticsValue(entity, "");
-    }
-
-    public Integer getSystemStatisticsValue(String entity, String status) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("entity", entity).addValue(
-                "status", status);
-
-        RowMapper<Integer> mapper = new RowMapper<Integer>() {
-            @Override
-            public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getInt("val");
-            }
-        };
-
-        Map<String, Object> dbResults =
-                dbEngineDialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName("Getsystem_statistics")
-                        .returningResultSet("RETURN_VALUE", mapper).execute(parameterSource);
-
-        return (Integer) DbFacadeUtils.asSingleResult((List<?>) dbResults.get("RETURN_VALUE"));
     }
 
     /**
