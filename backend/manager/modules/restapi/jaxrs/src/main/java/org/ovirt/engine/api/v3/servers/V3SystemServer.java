@@ -16,7 +16,10 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
+import static java.util.stream.Collectors.joining;
+
 import java.io.IOException;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -33,9 +36,12 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.SystemResource;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.types.V3API;
 import org.ovirt.engine.api.v3.types.V3Action;
+import org.ovirt.engine.api.v3.types.V3Link;
 import org.ovirt.engine.api.v3.types.V3RSDL;
 
 @Path("/")
@@ -47,6 +53,7 @@ public class V3SystemServer extends V3Server<SystemResource> {
 
     @GET
     public Response get(@Context HttpHeaders headers, @Context UriInfo ui) {
+        // Check if the RSDL was requested, and return it:
         if (ParametersHelper.getParameter(headers, ui, "rsdl") != null) {
             try {
                 V3RSDL rsdl = getRSDL();
@@ -59,7 +66,14 @@ public class V3SystemServer extends V3Server<SystemResource> {
                 );
             }
         }
-        return adaptResponse(getDelegate()::get);
+
+        // Adapt the V4 response:
+        Response response = adaptResponse(getDelegate()::get);
+
+        // Replace the "Link" header with links calculated from the response body:
+        response = replaceLinkHeader(response);
+
+        return response;
     }
 
     private V3RSDL getRSDL() throws IOException {
@@ -68,7 +82,38 @@ public class V3SystemServer extends V3Server<SystemResource> {
 
     @HEAD
     public Response head() {
-        return adaptResponse(getDelegate()::get);
+        // We need the V4 response for the GET method, as the response for the HEAD response doesn't contain an entity
+        // and thus doesn't contain the links:
+        Response response = adaptResponse(getDelegate()::get);
+
+        // Replace the "Link" header with links calculated from the response body:
+        response = replaceLinkHeader(response);
+
+        // Clear the response body:
+        response = Response.fromResponse(response)
+            .entity(null)
+            .build();
+
+        return response;
+    }
+
+    private Response replaceLinkHeader(Response response) {
+        Object entity = response.getEntity();
+        if (entity != null && entity instanceof V3API) {
+            V3API api = (V3API) entity;
+            List<V3Link> links = api.getLinks();
+            if (links != null) {
+                String root = CurrentManager.get().getRoot();
+                String header = links.stream()
+                    .map(link -> String.format("<%s%s>; rel=%s", root, link.getHref(), link.getRel()))
+                    .collect(joining(","));
+                response = Response.fromResponse(response)
+                    .header("Link", null)
+                    .header("Link", header)
+                    .build();
+            }
+        }
+        return response;
     }
 
     @Path("capabilities")
