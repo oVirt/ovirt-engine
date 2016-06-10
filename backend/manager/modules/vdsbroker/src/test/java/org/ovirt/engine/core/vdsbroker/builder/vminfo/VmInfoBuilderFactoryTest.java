@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.vdsbroker.factory;
+package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -12,21 +12,28 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuildUtils;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilder;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmInfoBuilderFactoryTest {
 
     @Mock
-    private VdsNumaNodeDao vdsNumaNodeDao;
+    private  ClusterDao clusterDao;
     @Mock
-    private VmDeviceDao vmDeviceDao;
+    private  NetworkClusterDao networkClusterDao;
     @Mock
-    private VmNumaNodeDao vmNumaNodeDao;
+    private  NetworkDao networkDao;
+    @Mock
+    private  VdsNumaNodeDao vdsNumaNodeDao;
+    @Mock
+    private  VmDeviceDao vmDeviceDao;
+    @Mock
+    private  VmNumaNodeDao vmNumaNodeDao;
     @Mock
     private VmInfoBuildUtils vmInfoBuildUtils;
 
@@ -36,7 +43,7 @@ public class VmInfoBuilderFactoryTest {
     @Test
     public void testCreateVmInfoBuilder() {
         final VmInfoBuilder actual = underTest.createVmInfoBuilder(new VM(), Guid.newGuid(), new HashMap());
-        assertThat(actual, instanceOf(VmInfoBuilder.class));
+        assertThat(actual, instanceOf(VmInfoBuilderImpl.class));
     }
 
 }

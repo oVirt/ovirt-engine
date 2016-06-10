@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,9 +13,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -36,18 +38,25 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilderBase.VnicProfileProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class VmInfoBuildUtils {
+    private static final Logger log = LoggerFactory.getLogger(VmInfoBuildUtils.class);
 
     private static final String FIRST_MASTER_MODEL = "ich9-ehci1";
 
@@ -55,6 +64,7 @@ public class VmInfoBuildUtils {
     private final NetworkFilterDao networkFilterDao;
     private final NetworkQoSDao networkQosDao;
     private final StorageQosDao storageQosDao;
+    private final VmDeviceDao vmDeviceDao;
     private final VnicProfileDao vnicProfileDao;
 
     @Inject
@@ -63,11 +73,13 @@ public class VmInfoBuildUtils {
             NetworkFilterDao networkFilterDao,
             NetworkQoSDao networkQosDao,
             StorageQosDao storageQosDao,
+            VmDeviceDao vmDeviceDao,
             VnicProfileDao vnicProfileDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
         this.storageQosDao = Objects.requireNonNull(storageQosDao);
+        this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vnicProfileDao = Objects.requireNonNull(vnicProfileDao);
     }
 
@@ -80,7 +92,7 @@ public class VmInfoBuildUtils {
         CinderConnectionInfo connectionInfo = cinderDisk.getCinderConnectionInfo();
         CinderVolumeDriver cinderVolumeDriver = CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
         if (cinderVolumeDriver == null) {
-            VmInfoBuilder.log.error("Unsupported Cinder volume driver: '{}' (disk: '{}')",
+            log.error("Unsupported Cinder volume driver: '{}' (disk: '{}')",
                     connectionInfo.getDriverVolumeType(),
                     cinderDisk.getDiskAlias());
             return;
@@ -151,13 +163,6 @@ public class VmInfoBuildUtils {
                 : ifaceType.getInternalName();
     }
 
-    public void addBootOrder(VmDevice vmDevice, Map<String, Object> struct) {
-        String s = String.valueOf(vmDevice.getBootOrder());
-        if (!StringUtils.isEmpty(s) && !s.equals("0")) {
-            struct.put(VdsProperties.BootOrder, s);
-        }
-    }
-
     public void addNetworkVirtualFunctionProperties(Map<String, Object> struct,
             VmNic vmInterface,
             VmDevice vmDevice,
@@ -167,7 +172,7 @@ public class VmInfoBuildUtils {
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.HostDev, vfName);
 
-        VmInfoBuilder.addAddress(vmDevice, struct);
+        addAddress(vmDevice, struct);
         struct.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
         addBootOrder(vmDevice, struct);
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
@@ -184,7 +189,6 @@ public class VmInfoBuildUtils {
         addCustomPropertiesForDevice(struct,
                 vm,
                 vmDevice,
-                vm.getClusterCompatibilityVersion(),
                 getVnicCustomProperties(vnicProfile));
     }
 
@@ -201,7 +205,7 @@ public class VmInfoBuildUtils {
             if (vnicProfile != null) {
                 network = networkDao.get(vnicProfile.getNetworkId());
                 networkName = network.getName();
-                VmInfoBuilder.log.debug("VNIC '{}' is using profile '{}' on network '{}'",
+                log.debug("VNIC '{}' is using profile '{}' on network '{}'",
                         nic.getName(),
                         vnicProfile,
                         networkName);
@@ -216,13 +220,12 @@ public class VmInfoBuildUtils {
         addCustomPropertiesForDevice(struct,
                 vm,
                 vmDevice,
-                vm.getCompatibilityVersion(),
                 getVnicCustomProperties(vnicProfile));
 
-        VmInfoBuilder.reportUnsupportedVnicProfileFeatures(vm, nic, vnicProfile, unsupportedFeatures);
+        reportUnsupportedVnicProfileFeatures(vm, nic, vnicProfile, unsupportedFeatures);
     }
 
-    public void addPortMirroringToVmInterface(Map<String, Object> struct,
+    private void addPortMirroringToVmInterface(Map<String, Object> struct,
             VnicProfile vnicProfile,
             Network network) {
 
@@ -236,7 +239,7 @@ public class VmInfoBuildUtils {
 
     }
 
-    public void addQosForDevice(Map<String, Object> struct, VnicProfile vnicProfile) {
+    private void addQosForDevice(Map<String, Object> struct, VnicProfile vnicProfile) {
 
         Guid qosId = vnicProfile.getNetworkQosId();
         @SuppressWarnings("unchecked")
@@ -251,7 +254,7 @@ public class VmInfoBuildUtils {
         qosMapper.serialize(networkQoS);
     }
 
-    public Map<String, String> getVnicCustomProperties(VnicProfile vnicProfile) {
+    private Map<String, String> getVnicCustomProperties(VnicProfile vnicProfile) {
         Map<String, String> customProperties = null;
 
         if (vnicProfile != null) {
@@ -261,10 +264,9 @@ public class VmInfoBuildUtils {
         return customProperties == null ? new HashMap<>() : customProperties;
     }
 
-    public void addCustomPropertiesForDevice(Map<String, Object> struct,
+    private void addCustomPropertiesForDevice(Map<String, Object> struct,
             VM vm,
             VmDevice vmDevice,
-            Version clusterVersion,
             Map<String, String> customProperties) {
 
         if (customProperties == null) {
@@ -290,7 +292,7 @@ public class VmInfoBuildUtils {
         }
     }
 
-    public NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {
+    private NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {
         if (vmNic.getVnicProfileId() != null) {
             VnicProfile vnicProfile = vnicProfileDao.get(vmNic.getVnicProfileId());
             if (vnicProfile != null) {
@@ -301,7 +303,7 @@ public class VmInfoBuildUtils {
         return null;
     }
 
-    public void addFloppyDetails(VmDevice vmDevice, Map<String, Object> struct) {
+    void addFloppyDetails(VmDevice vmDevice, Map<String, Object> struct) {
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
@@ -310,7 +312,7 @@ public class VmInfoBuildUtils {
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
 
-    public void addCdDetails(VmDevice vmDevice, Map<String, Object> struct, VM vm) {
+    void addCdDetails(VmDevice vmDevice, Map<String, Object> struct, VM vm) {
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
 
@@ -332,7 +334,7 @@ public class VmInfoBuildUtils {
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
 
-    public void setVdsPropertiesFromSpecParams(Map<String, Object> specParams, Map<String, Object> struct) {
+    void setVdsPropertiesFromSpecParams(Map<String, Object> specParams, Map<String, Object> struct) {
         Set<Entry<String, Object>> values = specParams.entrySet();
         for (Entry<String, Object> currEntry : values) {
             if (currEntry.getValue() instanceof String) {
@@ -348,7 +350,7 @@ public class VmInfoBuildUtils {
      * before the other controllers. There is an open bug on libvirt on that. Until then we make sure it is passed
      * first.
      */
-    public boolean isFirstMasterController(String model) {
+    boolean isFirstMasterController(String model) {
         return model.equalsIgnoreCase(FIRST_MASTER_MODEL);
     }
 
@@ -366,7 +368,7 @@ public class VmInfoBuildUtils {
         return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.SPAPR_VSCSI, true);
     }
 
-    public Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
+    private Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
             DiskInterface scsiInterface,
             boolean reserveFirstTwoLuns) {
         List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
@@ -376,7 +378,7 @@ public class VmInfoBuildUtils {
         for (Disk disk : disks) {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             if (dve.getDiskInterface() == scsiInterface) {
-                VmDevice vmDevice = VmInfoBuilder.getVmDeviceByDiskId(disk.getId(), vm.getId());
+                VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
                 Map<String, String> address = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
                 String unitStr = address.get(VdsProperties.Unit);
 
@@ -415,6 +417,50 @@ public class VmInfoBuildUtils {
         addressMap.put(VdsProperties.target, "0");
         addressMap.put(VdsProperties.Unit, String.valueOf(unit));
         return addressMap;
+    }
+
+    void addAddress(VmDevice vmDevice, Map<String, Object> struct) {
+        Map<String, String> addressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
+        if (!addressMap.isEmpty()) {
+            struct.put(VdsProperties.Address, addressMap);
+        }
+    }
+
+    VmDevice getVmDeviceByDiskId(Guid diskId, Guid vmId) {
+        // get vm device for this disk from DB
+        return vmDeviceDao.get(new VmDeviceId(diskId, vmId));
+    }
+
+    void addBootOrder(VmDevice vmDevice, Map<String, Object> struct) {
+        String s = String.valueOf(vmDevice.getBootOrder());
+        if (!StringUtils.isEmpty(s) && !s.equals("0")) {
+            struct.put(VdsProperties.BootOrder, s);
+        }
+    }
+
+    private void reportUnsupportedVnicProfileFeatures(VM vm,
+            VmNic nic,
+            VnicProfile vnicProfile,
+            List<VnicProfileProperties> unsupportedFeatures) {
+
+        if (unsupportedFeatures.isEmpty()) {
+            return;
+        }
+
+        AuditLogableBase event = new AuditLogableBase();
+        event.setVmId(vm.getId());
+        event.setClusterId(vm.getClusterId());
+        event.setCustomId(nic.getId().toString());
+        event.setCompatibilityVersion(vm.getCompatibilityVersion().toString());
+        event.addCustomValue("NicName", nic.getName());
+        event.addCustomValue("VnicProfile", vnicProfile == null ? null : vnicProfile.getName());
+        String[] unsupportedFeatureNames = new String[unsupportedFeatures.size()];
+        for (int i = 0; i < unsupportedFeatures.size(); i++) {
+            unsupportedFeatureNames[i] = unsupportedFeatures.get(i).getFeatureName();
+        }
+
+        event.addCustomValue("UnsupportedFeatures", StringUtils.join(unsupportedFeatureNames, ", "));
+        new AuditLogDirector().log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
     }
 
 }

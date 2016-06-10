@@ -1,19 +1,22 @@
-package org.ovirt.engine.core.vdsbroker.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -25,6 +28,9 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
@@ -37,50 +43,81 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllers;
 import org.ovirt.engine.core.vdsbroker.architecture.GetBootableDiskIndex;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmSerialNumberBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
-public class VmInfoBuilder extends VmInfoBuilderBase {
+final class VmInfoBuilderImpl implements VmInfoBuilder {
+
+    private static final Logger log = LoggerFactory.getLogger(VmInfoBuilderImpl.class);
 
     private static final String DEVICES = "devices";
     private static final String USB_BUS = "usb";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
     private static final Base64 BASE_64 = new Base64(0, null);
 
-    private final VdsNumaNodeDao vdsNumaNodeDao;
-    private final VmDeviceDao vmDeviceDao;
-    private final VmNumaNodeDao vmNumaNodeDao;
     private final VmInfoBuildUtils vmInfoBuildUtils;
+    private final VdsNumaNodeDao vdsNumaNodeDao;
+    private final VmNumaNodeDao vmNumaNodeDao;
+    private final NetworkClusterDao networkClusterDao;
+    private final NetworkDao networkDao;
+    private final VmDeviceDao vmDeviceDao;
+    private final ClusterDao clusterDao;
 
     private final List<Map<String, Object>> devices = new ArrayList<>();
+    private final Map<String, Object> createInfo;
+    private final VM vm;
+
+    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private List<VmDevice> managedDevices = null;
     private Guid vdsId;
+    private Cluster cluster;
     private int numOfReservedScsiIndexes = 0;
 
-    public VmInfoBuilder(VM vm,
+    VmInfoBuilderImpl(
+            VM vm,
             Guid vdsId,
-            Map createInfo,
+            Map<String, Object> createInfo,
+            ClusterDao clusterDao,
+            NetworkClusterDao networkClusterDao,
+            NetworkDao networkDao,
             VdsNumaNodeDao vdsNumaNodeDao,
             VmDeviceDao vmDeviceDao,
             VmNumaNodeDao vmNumaNodeDao,
             VmInfoBuildUtils vmInfoBuildUtils) {
+        this.clusterDao = Objects.requireNonNull(clusterDao);
+        this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
+        this.networkDao = Objects.requireNonNull(networkDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
         this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
 
-        this.vm = vm;
         this.vdsId = vdsId;
+        this.vm = vm;
         this.createInfo = createInfo;
         final boolean hasNonDefaultBootOrder = vm.getBootSequence() != vm.getDefaultBootSequence();
         if (hasNonDefaultBootOrder) {
@@ -89,7 +126,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
-    protected void buildVmVideoCards() {
+    public void buildVmVideoCards() {
         List<VmDevice> vmVideoDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.VIDEO);
         for (VmDevice vmVideoDevice : vmVideoDevices) {
             // skip unmanaged devices (handled separately)
@@ -100,7 +137,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, vmVideoDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmVideoDevice.getDevice());
-            addAddress(vmVideoDevice, struct);
+            vmInfoBuildUtils.addAddress(vmVideoDevice, struct);
             struct.put(VdsProperties.SpecParams, vmVideoDevice.getSpecParams());
             struct.put(VdsProperties.DeviceId, String.valueOf(vmVideoDevice.getId().getDeviceId()));
             addToManagedDevices(vmVideoDevice);
@@ -108,71 +145,27 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    /**
-     * Builds graphics cards for a vm.
-     * If there is a pre-filled information about graphics in graphics info (this means vm is run via run once ),
-     * this information is used to create graphics devices. Otherwise graphics devices are build from database.
-     */
     @Override
-    protected void buildVmGraphicsDevices() {
-        boolean graphicsOverriden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
+    public void buildVmGraphicsDevices() {
+        boolean graphicsOverridden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
 
         Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
 
         Map<String, Object> specParamsFromVm = null;
         if (infos != null) {
-            specParamsFromVm = new HashMap();
+            specParamsFromVm = new HashMap<>();
             addVmGraphicsOptions(infos, specParamsFromVm);
         }
 
-        if (graphicsOverriden) {
-            buildVmGraphicsDevicesOverriden(infos, specParamsFromVm);
+        if (graphicsOverridden) {
+            buildVmGraphicsDevicesOverridden(infos, specParamsFromVm);
         } else {
             buildVmGraphicsDevicesFromDb(specParamsFromVm);
         }
     }
 
-    /**
-     * Creates graphics devices from graphics info - this will override the graphics devices from the db.
-     * Used when vm is run via run once.
-     *
-     * @param graphicsInfos - vm graphics
-     */
-    private void buildVmGraphicsDevicesOverriden(Map<GraphicsType, GraphicsInfo> graphicsInfos, Map<String, Object> extraSpecParams) {
-        for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : graphicsInfos.entrySet()) {
-            Map struct = new HashMap();
-            struct.put(VdsProperties.Type, VmDeviceGeneralType.GRAPHICS.getValue());
-            struct.put(VdsProperties.Device, graphicsInfo.getKey().name().toLowerCase());
-            struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
-            if (extraSpecParams != null) {
-                struct.put(VdsProperties.SpecParams, extraSpecParams);
-            }
-            devices.add(struct);
-        }
-
-        if (!graphicsInfos.isEmpty()) {
-            String legacyGraphicsType = (graphicsInfos.size() == 2)
-                    ? VdsProperties.QXL
-                    : graphicsTypeToLegacyDisplayType(graphicsInfos.keySet().iterator().next());
-
-            createInfo.put(VdsProperties.display, legacyGraphicsType);
-        }
-    }
-
-    /**
-     * Builds vm graphics from database.
-     */
-    private void buildVmGraphicsDevicesFromDb(Map<String, Object> extraSpecParams) {
-        buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams);
-
-        String legacyDisplay = deriveDisplayTypeLegacy();
-        if (legacyDisplay != null) {
-            createInfo.put(VdsProperties.display, legacyDisplay);
-        }
-    }
-
     @Override
-    protected void buildVmCD() {
+    public void buildVmCD() {
         Map<String, Object> struct;
         boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.CDROM;
         // check if we have payload CD
@@ -220,7 +213,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct = new HashMap<>();
                 String cdPath = vm.getCdPath();
                 vmInfoBuildUtils.addCdDetails(vmDevice, struct, vm);
-                addAddress(vmDevice, struct);
+                vmInfoBuildUtils.addAddress(vmDevice, struct);
                 addDevice(struct, vmDevice, cdPath == null ? "" : cdPath);
             }
         }
@@ -228,7 +221,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
-    protected void buildVmFloppy() {
+    public void buildVmFloppy() {
         // check if we have payload Floppy
         boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.FLOPPY;
         if (hasPayload) {
@@ -286,7 +279,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
-    protected void buildVmDrives() {
+    public void buildVmDrives() {
         boolean bootDiskFound = false;
         List<Disk> disks = getSortedDisks();
         Map<VmDevice, Integer> vmDeviceVirtioScsiUnitMap =
@@ -308,9 +301,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         for (Disk disk : disks) {
             Map<String, Object> struct = new HashMap<>();
             // get vm device for this disk from DB
-            VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
+            VmDevice vmDevice = vmInfoBuildUtils.getVmDeviceByDiskId(disk.getId(), vm.getId());
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
-            // skip unamanged devices (handled separtely)
+            // skip unmanaged devices (handled separately)
             if (!vmDevice.getIsManaged()) {
                 continue;
             }
@@ -334,7 +327,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         // disk 2 -> iothread 1
                         // disk 3 -> iothread 2
                         int pinTo = pinnedDriveIndex % vm.getNumOfIoThreads() + 1;
-                        pinnedDriveIndex ++;
+                        pinnedDriveIndex++;
                         vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinTo);
                     }
 
@@ -360,7 +353,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     if (StringUtils.isEmpty(vmDevice.getAddress())) {
                         // Explicitly define device's address if missing
                         int unit = vmDeviceSpaprVscsiUnitMap.get(vmDevice);
-                        vmDevice.setAddress(vmInfoBuildUtils.createAddressForScsiDisk(sPaprVscsiIndex, unit).toString());
+                        vmDevice.setAddress(
+                                vmInfoBuildUtils.createAddressForScsiDisk(sPaprVscsiIndex, unit).toString());
                     }
                     break;
                 default:
@@ -372,33 +366,35 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     bootDiskFound = true;
                     struct.put(VdsProperties.Index, getBootableDiskIndex(disk));
                 }
-                addAddress(vmDevice, struct);
+                vmInfoBuildUtils.addAddress(vmDevice, struct);
                 switch (disk.getDiskStorageType()) {
-                    case IMAGE:
-                        DiskImage diskImage = (DiskImage) disk;
-                        struct.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
-                        struct.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
-                        struct.put(VdsProperties.ImageId, diskImage.getId().toString());
-                        struct.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
-                        struct.put(VdsProperties.Format, diskImage.getVolumeFormat().toString()
-                                .toLowerCase());
-                        struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
-                                .toLowerCase());
+                case IMAGE:
+                    DiskImage diskImage = (DiskImage) disk;
+                    struct.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
+                    struct.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
+                    struct.put(VdsProperties.ImageId, diskImage.getId().toString());
+                    struct.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
+                    struct.put(VdsProperties.Format, diskImage.getVolumeFormat()
+                            .toString()
+                            .toLowerCase());
+                    struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors()
+                            .toString()
+                            .toLowerCase());
 
-                        if (!qosCache.containsKey(diskImage.getDiskProfileId())) {
-                            qosCache.put(diskImage.getDiskProfileId(), vmInfoBuildUtils.loadStorageQos(diskImage));
-                        }
-                        vmInfoBuildUtils.handleIoTune(vmDevice, qosCache.get(diskImage.getDiskProfileId()));
-                        break;
-                    case LUN:
-                        LunDisk lunDisk = (LunDisk) disk;
-                        struct.put(VdsProperties.Guid, lunDisk.getLun().getLUNId());
-                        struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
-                        struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
-                        break;
-                    case CINDER:
-                        vmInfoBuildUtils.buildCinderDisk((CinderDisk) disk, struct);
-                        break;
+                    if (!qosCache.containsKey(diskImage.getDiskProfileId())) {
+                        qosCache.put(diskImage.getDiskProfileId(), vmInfoBuildUtils.loadStorageQos(diskImage));
+                    }
+                    vmInfoBuildUtils.handleIoTune(vmDevice, qosCache.get(diskImage.getDiskProfileId()));
+                    break;
+                case LUN:
+                    LunDisk lunDisk = (LunDisk) disk;
+                    struct.put(VdsProperties.Guid, lunDisk.getLun().getLUNId());
+                    struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+                    struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
+                    break;
+                case CINDER:
+                    vmInfoBuildUtils.buildCinderDisk((CinderDisk) disk, struct);
+                    break;
                 }
                 vmInfoBuildUtils.addBootOrder(vmDevice, struct);
                 struct.put(VdsProperties.Shareable,
@@ -416,15 +412,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
     }
 
-    private int getBootableDiskIndex(Disk disk) {
-        int index = ArchStrategyFactory.getStrategy(vm.getClusterArch()).
-                run(new GetBootableDiskIndex(numOfReservedScsiIndexes)).returnValue();
-        log.info("Bootable disk '{}' set to index '{}'", disk.getId(), index);
-        return index;
-    }
-
     @Override
-    protected void buildVmNetworkInterfaces() {
+    public void buildVmNetworkInterfaces() {
         Map<VmDeviceId, VmDevice> devicesByDeviceId =
                 Entities.businessEntitiesById(
                         vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
@@ -445,7 +434,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
             if (vmDevice != null && vmDevice.getIsManaged() && vmDevice.getIsPlugged()) {
 
-                Map struct = new HashMap();
+                Map<String, Object> struct = new HashMap<>();
                 VmInterfaceType ifaceType = VmInterfaceType.rtl8139;
 
                 if (vmInterface.getType() != null) {
@@ -473,53 +462,33 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
-    protected void buildVmSoundDevices() {
+    public void buildVmSoundDevices() {
         buildVmDevicesFromDb(VmDeviceGeneralType.SOUND, true, null);
     }
 
     @Override
-    protected void buildVmConsoleDevice() {
+    public void buildVmConsoleDevice() {
         buildVmDevicesFromDb(VmDeviceGeneralType.CONSOLE, false, null);
     }
 
-    private void buildVmDevicesFromDb(VmDeviceGeneralType generalType, boolean addAddress, Map<String, Object> extraSpecParams) {
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), generalType);
-
-        for (VmDevice vmDevice : vmDevices) {
-            Map struct = new HashMap();
-            struct.put(VdsProperties.Type, vmDevice.getType().getValue());
-            struct.put(VdsProperties.Device, vmDevice.getDevice());
-
-            Map<String, Object> specParams = vmDevice.getSpecParams();
-            if (extraSpecParams != null) {
-                specParams.putAll(extraSpecParams);
-            }
-            struct.put(VdsProperties.SpecParams, specParams);
-
-            struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-            if (addAddress) {
-                addAddress(vmDevice, struct);
-            }
-            devices.add(struct);
-        }
-    }
-
     @Override
-    protected void buildUnmanagedDevices() {
-        Map<String, String> customMap = createInfo.containsKey(VdsProperties.Custom) ?
-                (Map<String, String>) createInfo.get(VdsProperties.Custom) : new HashMap<>();
+    public void buildUnmanagedDevices() {
+        @SuppressWarnings("unchecked")
+        Map<String, String> customMap = createInfo.containsKey(VdsProperties.Custom)
+                ? (Map<String, String>) createInfo.get(VdsProperties.Custom)
+                : new HashMap<>();
         List<VmDevice> vmDevices = vmDeviceDao.getUnmanagedDevicesByVmId(vm.getId());
         if (!vmDevices.isEmpty()) {
             StringBuilder id = new StringBuilder();
             for (VmDevice vmDevice : vmDevices) {
-                Map struct = new HashMap();
+                Map<String, Object> struct = new HashMap<>();
                 id.append(VdsProperties.Device);
                 id.append("_");
                 id.append(vmDevice.getDeviceId());
                 if (VmDeviceCommonUtils.isInWhiteList(vmDevice.getType(), vmDevice.getDevice())) {
                     struct.put(VdsProperties.Type, vmDevice.getType().getValue());
                     struct.put(VdsProperties.Device, vmDevice.getDevice());
-                    addAddress(vmDevice, struct);
+                    vmInfoBuildUtils.addAddress(vmDevice, struct);
                     struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                     struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                     devices.add(struct);
@@ -533,7 +502,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
-    protected void buildVmBootSequence() {
+    public void buildVmBootSequence() {
         // Check if boot sequence in parameters is different from default boot sequence
         if (managedDevices != null) {
             // recalculate boot order from source devices and set it to target devices
@@ -542,7 +511,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
                     managedDevices);
             for (VmDevice vmDevice : managedDevices) {
-                for (Map struct : devices) {
+                for (Map<String, Object> struct : devices) {
                     String deviceId = (String) struct.get(VdsProperties.DeviceId);
                     if (deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
                         if (vmDevice.getBootOrder() > 0) {
@@ -558,7 +527,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
-    protected void buildSysprepVmPayload(String sysPrepContent) {
+    public void buildSysprepVmPayload(String sysPrepContent) {
 
         // We do not validate the size of the content being passed to the VM payload by VmPayload.isPayloadSizeLegal().
         // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
@@ -588,12 +557,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
-    protected void buildCloudInitVmPayload(Map<String, byte[]> cloudInitContent) {
+    public void buildCloudInitVmPayload(Map<String, byte[]> cloudInitContent) {
         VmPayload vmPayload = new VmPayload();
         vmPayload.setDeviceType(VmDeviceType.CDROM);
         vmPayload.setVolumeId(CLOUD_INIT_VOL_ID);
-        for (Map.Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
-            vmPayload.getFiles().put(entry.getKey(), new String(BASE_64.encode(entry.getValue()), Charset.forName(CharEncoding.UTF_8)));
+        for (Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
+            vmPayload.getFiles().put(entry.getKey(),
+                    new String(BASE_64.encode(entry.getValue()), Charset.forName(CharEncoding.UTF_8)));
         }
 
         VmDevice vmDevice =
@@ -615,11 +585,370 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         addDevice(struct, vmDevice, "");
     }
 
-    static void addAddress(VmDevice vmDevice, Map<String, Object> struct) {
-        Map<String, String> addressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
-        if (!addressMap.isEmpty()) {
-            struct.put(VdsProperties.Address, addressMap);
+    @Override
+    public void buildVmUsbDevices() {
+        buildVmUsbControllers();
+        buildVmUsbSlots();
+        buildSmartcardDevice();
+    }
+
+    @Override
+    public void buildVmMemoryBalloon() {
+        if (vm.isRunOnce() && vm.isBalloonEnabled()) {
+            Map<String, Object> specParams = new HashMap<>();
+            specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+            VmDevice vmDevice =
+                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
+                            VmDeviceGeneralType.BALLOON,
+                            VmDeviceType.MEMBALLOON.getName(),
+                            "",
+                            0,
+                            specParams,
+                            true,
+                            true,
+                            true,
+                            "",
+                            null,
+                            null,
+                            null);
+            addMemBalloonDevice(vmDevice);
+        } else {
+            // get vm device for this Balloon from DB
+            List<VmDevice> vmDevices =
+                    vmDeviceDao
+                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                    VmDeviceGeneralType.BALLOON,
+                                    VmDeviceType.MEMBALLOON.getName());
+            for (VmDevice vmDevice : vmDevices) {
+                // skip unamanged devices (handled separtely)
+                if (!vmDevice.getIsManaged()) {
+                    continue;
+                }
+                addMemBalloonDevice(vmDevice);
+                break; // only one memory balloon should exist
+            }
         }
+    }
+
+    @Override
+    public void buildVmWatchdog() {
+        List<VmDevice> watchdogs = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.WATCHDOG);
+        for (VmDevice watchdog : watchdogs) {
+            Map<String, Object> watchdogFromRpc = new HashMap<>();
+            watchdogFromRpc.put(VdsProperties.Type, VmDeviceGeneralType.WATCHDOG.getValue());
+            watchdogFromRpc.put(VdsProperties.Device, watchdog.getDevice());
+            Map<String, Object> specParams = watchdog.getSpecParams();
+            if (specParams == null) {
+                specParams = new HashMap<>();
+            }
+            watchdogFromRpc.put(VdsProperties.SpecParams, specParams);
+            addDevice(watchdogFromRpc, watchdog, null);
+        }
+    }
+
+    @Override
+    public void buildVmVirtioScsi() {
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.VIRTIOSCSI.getName());
+
+        Map<DiskInterface, Integer> controllerIndexMap =
+                ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
+
+        int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
+            struct.put(VdsProperties.Device, VdsProperties.Scsi);
+            struct.put(VdsProperties.Model, VdsProperties.VirtioScsi);
+            struct.put(VdsProperties.Index, Integer.toString(virtioScsiIndex));
+            vmInfoBuildUtils.addAddress(vmDevice, struct);
+
+            virtioScsiIndex++;
+
+            addDevice(struct, vmDevice, null);
+        }
+    }
+
+    @Override
+    public void buildVmVirtioSerial() {
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.VIRTIOSERIAL.getName());
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
+            struct.put(VdsProperties.Device, VdsProperties.VirtioSerial);
+            vmInfoBuildUtils.addAddress(vmDevice, struct);
+
+            addDevice(struct, vmDevice, null);
+        }
+    }
+
+    @Override
+    public void buildVmRngDevice() {
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.RNG,
+                VmDeviceType.VIRTIO.getName());
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.RNG.getValue());
+            struct.put(VdsProperties.Device, VmDeviceType.VIRTIO.getName());
+            struct.put(VdsProperties.Model, VdsProperties.Virtio);
+            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            addDevice(struct, vmDevice, null);
+        }
+    }
+
+    @Override
+    public void buildVmNumaProperties() {
+        addNumaSetting();
+    }
+
+    @Override
+    public void buildVmProperties() {
+        createInfo.put(VdsProperties.vm_guid, vm.getId().toString());
+        createInfo.put(VdsProperties.vm_name, vm.getName());
+        createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
+
+        if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
+            createInfo.put(VdsProperties.maxMemSize, VmCommonUtils.maxMemorySizeWithHotplugInMb(vm));
+            createInfo.put(VdsProperties.maxMemSlots, Config.getValue(ConfigValues.MaxMemorySlots));
+        }
+
+        createInfo.put(VdsProperties.mem_guaranteed_size_mb, vm.getMinAllocatedMem());
+        createInfo.put(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
+        createInfo.put(VdsProperties.num_of_cpus, String.valueOf(vm.getNumOfCpus()));
+        if (vm.getNumOfIoThreads() != 0) {
+            createInfo.put(VdsProperties.numOfIoThreads, vm.getNumOfIoThreads());
+        }
+
+        if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
+            createInfo.put(VdsProperties.cores_per_socket, Integer.toString(vm.getCpuPerSocket()));
+            createInfo.put(VdsProperties.threads_per_core, Integer.toString(vm.getThreadsPerCpu()));
+            if (FeatureSupported.supportedInConfig(
+                    ConfigValues.HotPlugCpuSupported,
+                    vm.getCompatibilityVersion(),
+                    vm.getClusterArch())) {
+                createInfo.put(
+                        VdsProperties.max_number_of_cpus,
+                        calcMaxVCpu().toString());
+            }
+        }
+        addCpuPinning();
+        if (vm.getEmulatedMachine() != null) {
+            createInfo.put(VdsProperties.emulatedMachine, vm.getEmulatedMachine());
+        }
+
+        createInfo.put(VdsProperties.kvmEnable, vm.getKvmEnable()
+                .toString()
+                .toLowerCase());
+        createInfo.put(VdsProperties.acpiEnable, vm.getAcpiEnable()
+                .toString()
+                .toLowerCase());
+        createInfo.put(VdsProperties.BOOT_MENU_ENABLE, Boolean.toString(vm.isBootMenuEnabled()));
+
+        createInfo.put(VdsProperties.Custom,
+                VmPropertiesUtils.getInstance().getVMProperties(vm.getCompatibilityVersion(),
+                        vm.getStaticData()));
+        createInfo.put(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
+        if (vm.isRunAndPause()) {
+            createInfo.put(VdsProperties.launch_paused_param, "true");
+        }
+        if (vm.isUseHostCpuFlags()) {
+            createInfo.put(VdsProperties.cpuType,
+                    "hostPassthrough");
+        } else if (vm.getCpuName() != null) { // uses dynamic vm data which was already updated by runVmCommand
+            createInfo.put(VdsProperties.cpuType, vm.getCpuName());
+        }
+        createInfo.put(VdsProperties.niceLevel,
+                String.valueOf(vm.getNiceLevel()));
+        if (vm.getCpuShares() > 0) {
+            createInfo.put(VdsProperties.cpuShares,
+                    String.valueOf(vm.getCpuShares()));
+        }
+        if (!StringUtils.isEmpty(vm.getHibernationVolHandle())) {
+            createInfo.put(VdsProperties.hiberVolHandle,
+                    vm.getHibernationVolHandle());
+        }
+
+        if (osRepository.isLinux(vm.getVmOsId())) {
+            createInfo.put(VdsProperties.PitReinjection, "false");
+        }
+
+        if (vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC)) {
+            createInfo.put(VdsProperties.TabletEnable, "true");
+        }
+        createInfo.put(VdsProperties.transparent_huge_pages,
+                vm.isTransparentHugePages() ? "true" : "false");
+
+        if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion())) {
+            createInfo.put(VdsProperties.hypervEnable, "true");
+        }
+    }
+
+    @Override
+    public void buildVmNetworkCluster() {
+        // set Display network
+        List<NetworkCluster> all = networkClusterDao.getAllForCluster(vm.getClusterId());
+        NetworkCluster networkCluster = null;
+        for (NetworkCluster tempNetworkCluster : all) {
+            if (tempNetworkCluster.isDisplay()) {
+                networkCluster = tempNetworkCluster;
+                break;
+            }
+        }
+        if (networkCluster != null) {
+            Network net = null;
+            List<Network> allNetworks = networkDao.getAll();
+            for (Network tempNetwork : allNetworks) {
+                if (tempNetwork.getId().equals(networkCluster.getNetworkId())) {
+                    net = tempNetwork;
+                    break;
+                }
+            }
+            if (net != null) {
+                createInfo.put(VdsProperties.DISPLAY_NETWORK, net.getName());
+            }
+        }
+    }
+
+    @Override
+    public void buildVmBootOptions() {
+        // Boot Options
+        if (!StringUtils.isEmpty(vm.getInitrdUrl())) {
+            createInfo.put(VdsProperties.InitrdUrl, vm.getInitrdUrl());
+        }
+        if (!StringUtils.isEmpty(vm.getKernelUrl())) {
+            createInfo.put(VdsProperties.KernelUrl, vm.getKernelUrl());
+
+            if (!StringUtils.isEmpty(vm.getKernelParams())) {
+                createInfo.put(VdsProperties.KernelParams,
+                        vm.getKernelParams());
+            }
+        }
+    }
+
+    @Override
+    public void buildVmTimeZone() {
+        // get vm timezone
+        String timeZone = getTimeZoneForVm(vm);
+
+        final String javaZoneId;
+        if (osRepository.isWindows(vm.getOs())) {
+            // convert to java & calculate offset
+            javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
+        } else {
+            javaZoneId = timeZone;
+        }
+
+        int offset = 0;
+        if (javaZoneId != null) {
+            offset = TimeZone.getTimeZone(javaZoneId).getOffset(
+                    new Date().getTime()) / 1000;
+        }
+        createInfo.put(VdsProperties.utc_diff, "" + offset);
+    }
+
+    @Override
+    public void buildVmSerialNumber() {
+        new VmSerialNumberBuilder(vm, getCluster(), createInfo).buildVmSerialNumber();
+    }
+
+    @Override
+    public void buildVmHostDevices() {
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.HOSTDEV);
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceType.HOST_DEVICE.getName());
+            struct.put(VdsProperties.Device, vmDevice.getDevice());
+            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            struct.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
+            vmInfoBuildUtils.addAddress(vmDevice, struct);
+            devices.add(struct);
+        }
+    }
+
+    /**
+     * Creates graphics devices from graphics info - this will override the graphics devices from the db. Used when vm
+     * is run via run once.
+     *
+     * @param graphicsInfos
+     *            - vm graphics
+     */
+    private void buildVmGraphicsDevicesOverridden(
+            Map<GraphicsType, GraphicsInfo> graphicsInfos,
+            Map<String, Object> extraSpecParams) {
+
+        for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : graphicsInfos.entrySet()) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.GRAPHICS.getValue());
+            struct.put(VdsProperties.Device, graphicsInfo.getKey().name().toLowerCase());
+            struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
+            if (extraSpecParams != null) {
+                struct.put(VdsProperties.SpecParams, extraSpecParams);
+            }
+            devices.add(struct);
+        }
+
+        if (!graphicsInfos.isEmpty()) {
+            String legacyGraphicsType = (graphicsInfos.size() == 2)
+                    ? VdsProperties.QXL
+                    : graphicsTypeToLegacyDisplayType(graphicsInfos.keySet().iterator().next());
+
+            createInfo.put(VdsProperties.display, legacyGraphicsType);
+        }
+    }
+
+    /**
+     * Builds vm graphics from database.
+     */
+    private void buildVmGraphicsDevicesFromDb(Map<String, Object> extraSpecParams) {
+        buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams);
+
+        String legacyDisplay = deriveDisplayTypeLegacy();
+        if (legacyDisplay != null) {
+            createInfo.put(VdsProperties.display, legacyDisplay);
+        }
+    }
+
+    private void buildVmDevicesFromDb(VmDeviceGeneralType generalType,
+            boolean addAddress,
+            Map<String, Object> extraSpecParams) {
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), generalType);
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, vmDevice.getType().getValue());
+            struct.put(VdsProperties.Device, vmDevice.getDevice());
+
+            Map<String, Object> specParams = vmDevice.getSpecParams();
+            if (extraSpecParams != null) {
+                specParams.putAll(extraSpecParams);
+            }
+            struct.put(VdsProperties.SpecParams, specParams);
+
+            struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
+            if (addAddress) {
+                vmInfoBuildUtils.addAddress(vmDevice, struct);
+            }
+            devices.add(struct);
+        }
+    }
+
+    private int getBootableDiskIndex(Disk disk) {
+        int index = ArchStrategyFactory.getStrategy(vm.getClusterArch())
+                .run(new GetBootableDiskIndex(numOfReservedScsiIndexes))
+                .returnValue();
+        log.info("Bootable disk '{}' set to index '{}'", disk.getId(), index);
+        return index;
     }
 
     private void addNetworkInterfaceProperties(Map<String, Object> struct,
@@ -630,7 +959,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.LINK_ACTIVE, String.valueOf(vmInterface.isLinked()));
 
-        addAddress(vmDevice, struct);
+        vmInfoBuildUtils.addAddress(vmDevice, struct);
         struct.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
         vmInfoBuildUtils.addBootOrder(vmDevice, struct);
         struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
@@ -681,13 +1010,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 VmDeviceGeneralType.CONTROLLER,
                 VmDeviceType.USB.getName());
         for (VmDevice vmDevice : vmDevices) {
-            Map struct = new HashMap();
+            Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
             vmInfoBuildUtils.setVdsPropertiesFromSpecParams(vmDevice.getSpecParams(), struct);
             struct.put(VdsProperties.SpecParams, new HashMap<String, Object>());
             struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-            addAddress(vmDevice, struct);
+            vmInfoBuildUtils.addAddress(vmDevice, struct);
             String model = (String) struct.get(VdsProperties.Model);
 
             // This is a workaround until libvirt will fix the requirement to order these controllers
@@ -700,28 +1029,21 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void buildVmUsbSlots() {
-        List<VmDevice> vmDevices =
-                vmDeviceDao
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceGeneralType.REDIR,
-                                VmDeviceType.SPICEVMC.getName());
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.REDIR,
+                VmDeviceType.SPICEVMC.getName());
+
         for (VmDevice vmDevice : vmDevices) {
-            Map struct = new HashMap();
+            Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
             struct.put(VdsProperties.Bus, USB_BUS);
             struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
             struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-            addAddress(vmDevice, struct);
+            vmInfoBuildUtils.addAddress(vmDevice, struct);
             devices.add(struct);
         }
-    }
-
-    @Override
-    protected void buildVmUsbDevices() {
-        buildVmUsbControllers();
-        buildVmUsbSlots();
-        buildSmartcardDevice();
     }
 
     private void buildSmartcardDevice() {
@@ -731,48 +1053,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 VmDeviceType.SMARTCARD.getName());
 
         for (VmDevice vmDevice : vmDevices) {
-            Map struct = new HashMap();
+            Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
             addDevice(struct, vmDevice, null);
-        }
-    }
-
-    @Override
-    protected void buildVmMemoryBalloon() {
-        if (vm.isRunOnce() && vm.isBalloonEnabled()) {
-            Map<String, Object> specParams = new HashMap<>();
-            specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-            VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                            VmDeviceGeneralType.BALLOON,
-                            VmDeviceType.MEMBALLOON.getName(),
-                            "",
-                            0,
-                            specParams,
-                            true,
-                            true,
-                            true,
-                            "",
-                            null,
-                            null,
-                            null);
-            addMemBalloonDevice(vmDevice);
-        } else {
-            // get vm device for this Balloon from DB
-            List<VmDevice> vmDevices =
-                    vmDeviceDao
-                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceGeneralType.BALLOON,
-                                    VmDeviceType.MEMBALLOON.getName());
-            for (VmDevice vmDevice : vmDevices) {
-                // skip unamanged devices (handled separtely)
-                if (!vmDevice.getIsManaged()) {
-                    continue;
-                }
-                addMemBalloonDevice(vmDevice);
-                break; // only one memory balloon should exist
-            }
         }
     }
 
@@ -787,99 +1071,19 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             vmDevice.setSpecParams(specParams);
         }
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-        addAddress(vmDevice, struct);
+        vmInfoBuildUtils.addAddress(vmDevice, struct);
         addDevice(struct, vmDevice, null);
     }
 
-    @Override
-    protected void buildVmWatchdog() {
-        List<VmDevice> watchdogs = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.WATCHDOG);
-        for (VmDevice watchdog : watchdogs) {
-            HashMap watchdogFromRpc = new HashMap();
-            watchdogFromRpc.put(VdsProperties.Type, VmDeviceGeneralType.WATCHDOG.getValue());
-            watchdogFromRpc.put(VdsProperties.Device, watchdog.getDevice());
-            Map<String, Object> specParams = watchdog.getSpecParams();
-            if (specParams == null) {
-                specParams = new HashMap<>();
-            }
-            watchdogFromRpc.put(VdsProperties.SpecParams, specParams);
-            addDevice(watchdogFromRpc, watchdog, null);
-        }
-    }
-
-    @Override
-    protected void buildVmVirtioScsi() {
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
-                vm.getId(),
-                VmDeviceGeneralType.CONTROLLER,
-                VmDeviceType.VIRTIOSCSI.getName());
-
-        Map<DiskInterface, Integer> controllerIndexMap =
-                ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
-
-        int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
-
-        for (VmDevice vmDevice : vmDevices) {
-            Map<String, Object> struct = new HashMap<>();
-            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
-            struct.put(VdsProperties.Device, VdsProperties.Scsi);
-            struct.put(VdsProperties.Model, VdsProperties.VirtioScsi);
-            struct.put(VdsProperties.Index, Integer.toString(virtioScsiIndex));
-            addAddress(vmDevice, struct);
-
-            virtioScsiIndex++;
-
-            addDevice(struct, vmDevice, null);
-        }
-    }
-
-    @Override
-    protected void buildVmVirtioSerial() {
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
-                vm.getId(),
-                VmDeviceGeneralType.CONTROLLER,
-                VmDeviceType.VIRTIOSERIAL.getName());
-
-        for (VmDevice vmDevice : vmDevices) {
-            Map<String, Object> struct = new HashMap<>();
-            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
-            struct.put(VdsProperties.Device, VdsProperties.VirtioSerial);
-            addAddress(vmDevice, struct);
-
-            addDevice(struct, vmDevice, null);
-        }
-    }
-
-    protected void buildVmRngDevice() {
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
-                vm.getId(),
-                VmDeviceGeneralType.RNG,
-                VmDeviceType.VIRTIO.getName());
-
-        for (VmDevice vmDevice : vmDevices) {
-            Map<String, Object> struct = new HashMap<>();
-            struct.put(VdsProperties.Type, VmDeviceGeneralType.RNG.getValue());
-            struct.put(VdsProperties.Device, VmDeviceType.VIRTIO.getName());
-            struct.put(VdsProperties.Model, VdsProperties.Virtio);
-            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
-            addDevice(struct, vmDevice, null);
-        }
-    }
-
-    protected void buildVmNumaProperties() {
-        addNumaSetting();
-    }
-
     /**
-     * Numa will use the same compatibilityVersion as cpu pinning since
-     * numa may also add cpu pinning configuration and the two features
-     * have almost the same libvirt version support
+     * Numa will use the same compatibilityVersion as cpu pinning since numa may also add cpu pinning configuration and
+     * the two features have almost the same libvirt version support
      */
     private void addNumaSetting() {
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         List<VdsNumaNode> totalVdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
         if (totalVdsNumaNodes.isEmpty()) {
-            log.warn("No NUMA nodes found for host {} for vm {} {}",  vdsId, vm.getName(), vm.getId());
+            log.warn("No NUMA nodes found for host {} for vm {} {}", vdsId, vm.getName(), vm.getId());
             return;
         }
 
@@ -921,18 +1125,112 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    @Override
-    protected void buildVmHostDevices() {
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.HOSTDEV);
+    private void addVmGraphicsOptions(Map<GraphicsType, GraphicsInfo> infos, Map<String, Object> params) {
+        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
+            params.put(VdsProperties.spiceFileTransferEnable,
+                    Boolean.toString(vm.isSpiceFileTransferEnabled()));
+            params.put(VdsProperties.spiceCopyPasteEnable,
+                    Boolean.toString(vm.isSpiceCopyPasteEnabled()));
 
-        for (VmDevice vmDevice : vmDevices) {
-            Map<String, Object> struct = new HashMap<>();
-            struct.put(VdsProperties.Type, VmDeviceType.HOST_DEVICE.getName());
-            struct.put(VdsProperties.Device, vmDevice.getDevice());
-            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
-            struct.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
-            addAddress(vmDevice, struct);
-            devices.add(struct);
+            if (Config.<Boolean> getValue(ConfigValues.SSLEnabled)) {
+                params.put(VdsProperties.spiceSslCipherSuite,
+                        Config.<String> getValue(ConfigValues.CipherSuite));
+                params.put(VdsProperties.SpiceSecureChannels, Config.<String> getValue(
+                        ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString()));
+            }
+        }
+
+        if (infos != null && infos.containsKey(GraphicsType.VNC)) {
+            String keyboardLayout = vm.getDynamicData().getVncKeyboardLayout();
+            if (keyboardLayout == null) {
+                keyboardLayout = vm.getDefaultVncKeyboardLayout();
+                if (keyboardLayout == null) {
+                    keyboardLayout = Config.getValue(ConfigValues.VncKeyboardLayout);
+                }
+            }
+
+            params.put(VdsProperties.KeyboardMap, keyboardLayout);
+        }
+    }
+
+    private Integer calcMaxVCpu() {
+        return VmCpuCountHelper.calcMaxVCpu(vm.getStaticData(), vm.getClusterCompatibilityVersion());
+    }
+
+    private void addCpuPinning() {
+        final String cpuPinning = vm.getCpuPinning();
+        if (StringUtils.isNotEmpty(cpuPinning)) {
+            final Map<String, Object> pinDict = new HashMap<>();
+            for (String pin : cpuPinning.split("_")) {
+                final String[] split = pin.split("#");
+                pinDict.put(split[0], split[1]);
+            }
+            createInfo.put(VdsProperties.cpuPinning, pinDict);
+        }
+    }
+
+    private String getTimeZoneForVm(VM vm) {
+        if (!StringUtils.isEmpty(vm.getTimeZone())) {
+            return vm.getTimeZone();
+        }
+
+        // else fallback to engine config default for given OS type
+        if (osRepository.isWindows(vm.getOs())) {
+            return Config.getValue(ConfigValues.DefaultWindowsTimeZone);
+        } else {
+            return "Etc/GMT";
+        }
+    }
+
+    private List<Disk> getSortedDisks() {
+        // order first by drive numbers and then order by boot for the bootable
+        // drive to be first (important for IDE to be index 0) !
+        List<Disk> diskImages = new ArrayList<>(vm.getDiskMap()
+                .values());
+        Collections.sort(diskImages, new DiskByDiskAliasComparator());
+        Collections.sort(diskImages,
+                Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator(vm.getId())));
+        return diskImages;
+    }
+
+    private void logUnsupportedInterfaceType() {
+        log.error("Unsupported interface type, ISCSI interface type is not supported.");
+    }
+
+    private Cluster getCluster() {
+        if (cluster == null) {
+            cluster = clusterDao.get(vm.getClusterId());
+        }
+        return cluster;
+    }
+
+    /**
+     * Derives display type from vm configuration, used with legacy vdsm.
+     *
+     * @return either "vnc" or "qxl" string or null if the vm is headless
+     */
+    private String deriveDisplayTypeLegacy() {
+        List<VmDevice> vmDevices =
+                vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.GRAPHICS);
+
+        if (vmDevices.isEmpty()) {
+            return null;
+        } else if (vmDevices.size() == 2) { // we have spice & vnc together, we prioritize SPICE
+            return VdsProperties.QXL;
+        }
+
+        GraphicsType deviceType = GraphicsType.fromString(vmDevices.get(0).getDevice());
+        return graphicsTypeToLegacyDisplayType(deviceType);
+    }
+
+    private String graphicsTypeToLegacyDisplayType(GraphicsType graphicsType) {
+        switch (graphicsType) {
+        case SPICE:
+            return VdsProperties.QXL;
+        case VNC:
+            return VdsProperties.VNC;
+        default:
+            return null;
         }
     }
 }

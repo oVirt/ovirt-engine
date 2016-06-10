@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -17,11 +17,13 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmInfoBuildUtilsTest {
@@ -34,6 +36,8 @@ public class VmInfoBuildUtilsTest {
     private NetworkQoSDao networkQosDao;
     @Mock
     private StorageQosDao storageQosDao;
+    @Mock
+    private VmDeviceDao vmDeviceDao;
     @Mock
     private VnicProfileDao vnicProfileDao;
 

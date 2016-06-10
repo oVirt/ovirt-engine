@@ -434,8 +434,8 @@ public final class VdsProperties {
     public static final String STORAGE_DOMAIN_HOST_ID_MAP = "storageDomainHostIdMap";
 
     // legacy display types
-    protected static final String QXL = "qxl";
-    protected static final String VNC = "vnc";
+    public static final String QXL = "qxl";
+    public static final String VNC = "vnc";
 
     // Display info
     public static final String displayInfo = "displayInfo";
