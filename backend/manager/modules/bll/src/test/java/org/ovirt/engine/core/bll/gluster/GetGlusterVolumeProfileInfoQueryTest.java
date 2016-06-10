@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BlockStats;
@@ -48,7 +48,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private VdsDao vdsDao;
 
     @Mock
-    private ClusterUtils clusterUtils;
+    private GlusterUtil glusterUtils;
 
     @Mock
     private GlusterVolumeDao volumeDao;
@@ -86,9 +86,8 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
                 VDSStatus.Up);
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         doReturn(brickDao).when(getQuery()).getGlusterBrickDao();
-        doReturn(clusterUtils).when(getQuery()).getClusterUtils();
-        doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);
-        doReturn(vdsDao).when(clusterUtils).getVdsDao();
+        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
+        doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
         doReturn("test-vol").when(getQuery()).getGlusterVolumeName(VOLUME_ID);
         doReturn(getBrick()).when(brickDao).getById(any(Guid.class));
     }

@@ -353,7 +353,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (isGlusterSupportEnabled() && clusterHasNonInitializingServers()) {
             // allow simultaneous installation of hosts, but if a host has completed install, only
             // allow addition of another host if it can be peer probed to cluster.
-            VDS upServer = getClusterUtils().getUpServer(getClusterId());
+            VDS upServer = getGlusterUtil().getUpServer(getClusterId());
             if (upServer == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
             }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -64,7 +63,7 @@ public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCom
                     continue;
                 }
 
-                VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
+                VDS slaveUpServer = getGlusterUtils().getRandomUpServer(slaveVolume.getClusterId());
                 if (slaveUpServer == null) {
                     handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DELETE_FAILED,
                             EngineError.NoUpServerFoundInRemoteCluster.name());
@@ -79,14 +78,14 @@ public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCom
                         return;
                     }
                     // Check and remove soft limit alert for the volume
-                    getGlusterUtil().checkAndRemoveVolumeSnapshotLimitsAlert(slaveVolume);
+                    getGlusterUtils().checkAndRemoveVolumeSnapshotLimitsAlert(slaveVolume);
                 }
             }
         }
 
         deleteGlusterVolumeSnapshot(getUpServer().getId(), getGlusterVolumeName(), getSnapshot().getSnapshotName());
         // Check and remove soft limit alert for the volume
-        getGlusterUtil().checkAndRemoveVolumeSnapshotLimitsAlert(getGlusterVolume());
+        getGlusterUtils().checkAndRemoveVolumeSnapshotLimitsAlert(getGlusterVolume());
     }
 
     @Override

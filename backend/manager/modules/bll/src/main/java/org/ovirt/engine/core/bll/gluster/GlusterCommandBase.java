@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -90,11 +90,11 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
      * @return One of the servers in up status
      */
     protected VDS getUpServer() {
-        return getClusterUtils().getRandomUpServer(getClusterId());
+        return getGlusterUtils().getRandomUpServer(getClusterId());
     }
 
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
+    protected GlusterUtil getGlusterUtils() {
+        return GlusterUtil.getInstance();
     }
 
     @Override

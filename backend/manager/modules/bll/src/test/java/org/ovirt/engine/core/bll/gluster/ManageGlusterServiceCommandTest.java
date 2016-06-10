@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -58,7 +58,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
-    ClusterUtils clusterUtils;
+    GlusterUtil glusterUtils;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -74,9 +74,9 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     private void prepareMocks(ManageGlusterServiceCommand command) {
         doReturn(serverServiceDao).when(command).getGlusterServerServiceDao();
         doReturn(serviceDao).when(command).getGlusterServiceDao();
-        doReturn(clusterUtils).when(command).getClusterUtils();
+        doReturn(glusterUtils).when(command).getGlusterUtils();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
-        doReturn(getUpServers()).when(clusterUtils).getAllUpServers(any(Guid.class));
+        doReturn(getUpServers()).when(glusterUtils).getAllUpServers(any(Guid.class));
         doReturn(null).when(serverServiceDao).getByServerIdAndServiceType(null, null);
         doReturn(null).when(serviceDao).getByServiceType(null);
     }

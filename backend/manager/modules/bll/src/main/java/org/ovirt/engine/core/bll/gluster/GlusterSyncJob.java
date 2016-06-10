@@ -123,7 +123,7 @@ public class GlusterSyncJob extends GlusterJob {
         log.debug("Refreshing Gluster lightweight Data for cluster '{}'", cluster.getName());
 
         List<VDS> existingServers = getVdsDao().getAllForCluster(cluster.getId());
-        VDS upServer = getClusterUtils().getUpServer(cluster.getId());
+        VDS upServer = getGlusterUtil().getUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
             return;
@@ -278,7 +278,8 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private VDS getAlternateUpServerInCluster(Guid clusterId, Guid vdsId) {
-        List<VDS> vdsList = getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
+        List<VDS> vdsList =
+                getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
         // If the cluster already having Gluster servers, get an up server
         if (vdsList.isEmpty()) {
             return null;
@@ -935,7 +936,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void refreshClusterHeavyWeightData(Cluster cluster) {
-        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
             return;
@@ -1105,7 +1106,7 @@ public class GlusterSyncJob extends GlusterJob {
      */
     public void refreshSelfHealData(Cluster cluster) {
 
-        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh self heal data at this point.", cluster.getName());
             return;

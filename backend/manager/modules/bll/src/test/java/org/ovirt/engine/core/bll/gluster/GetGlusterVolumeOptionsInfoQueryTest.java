@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,8 +12,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<GlusterParameters, GetGlusterVolumeOptionsInfoQuery<GlusterParameters>> {
 
@@ -31,14 +30,8 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     GlusterParameters parameters;
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
-    VdsDao vdsDao;
-    ClusterUtils clusterUtils;
-
-    private List<VDS> mockGetAllVdsForwithStatus(VDSStatus status) {
-        List<VDS> vdsList = new ArrayList<>();
-        vdsList.add(getVds(status));
-        return vdsList;
-    }
+    @Mock
+    private GlusterUtil glusterUtils;
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
@@ -49,22 +42,10 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
         return vds;
     }
 
-    public void mockVdsDbFacadeAndDao() {
-        vdsDao = mock(VdsDao.class);
-        when(vdsDao.getAllForClusterWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
-
-        clusterUtils = mock(ClusterUtils.class);
-        doReturn(clusterUtils).when(getQuery()).getClusterUtils();
-
-        when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
-        doReturn(vdsDao).when(clusterUtils).getVdsDao();
-    }
-
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mockVdsDbFacadeAndDao();
         setupExpectedGlusterVolumeOptionInfo();
         setupMock();
     }
@@ -85,6 +66,8 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
         returnValue.setReturnValue(expected);
         doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeOptionsInfo),
                 any(VDSParametersBase.class));
+        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
+        when(glusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
     }
 
     @Test

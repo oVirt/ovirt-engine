@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
@@ -58,7 +58,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     private GlusterVolumeTaskStatusEntity expectedVolumeStatusDetails;
     private VdsDao vdsDao;
     private GlusterVolumeDao volumeDao;
-    private ClusterUtils clusterUtils;
+    private GlusterUtil glusterUtils;
 
     @Before
     @Override
@@ -200,7 +200,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     }
 
     private void setupMock() {
-        clusterUtils = mock(ClusterUtils.class);
+        glusterUtils = mock(GlusterUtil.class);
         vdsDao = mock(VdsDao.class);
         ClusterDao clusterDao = mock(ClusterDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
@@ -233,9 +233,9 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     @Test
     public void testQueryForStatusDetails() {
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
-        doReturn(clusterUtils).when(getQuery()).getClusterUtils();
+        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         when(vdsDao.get(SERVER_ID)).thenReturn(getVds(VDSStatus.Up));
-        when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
+        when(glusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
 
         getQuery().executeQueryCommand();
         GlusterVolumeTaskStatusEntity volumeStatusDetails = getQuery().getQueryReturnValue().getReturnValue();

@@ -12,11 +12,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
 
 import javax.naming.AuthenticationException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -24,10 +26,12 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -69,6 +73,41 @@ public class GlusterUtil {
     public static GlusterUtil getInstance() {
         return instance;
     }
+
+    /**
+     * Returns a server that is in {@link VDSStatus#Up} status.<br>
+     * This server is chosen randomly from all the Up servers.
+     *
+     * @return One of the servers in up status
+     */
+    public VDS getRandomUpServer(Guid clusterId) {
+        List<VDS> servers = getAllUpServers(clusterId);
+        if (CollectionUtils.isEmpty(servers)) {
+            return null;
+        }
+        return servers.get(new Random().nextInt(servers.size()));
+    }
+
+    /**
+     * Returns a server that is in {@link VDSStatus#Up} status.<br>
+     * This server is returned as first from list of the Up servers.
+     *
+     * @return One of the servers in up status
+     */
+    public VDS getUpServer(Guid clusterId) {
+        List<VDS> servers = getAllUpServers(clusterId);
+        if (CollectionUtils.isEmpty(servers)) {
+            return null;
+        }
+        return servers.get(0);
+    }
+
+    public List<VDS> getAllUpServers(Guid clusterId) {
+        return DbFacade.getInstance()
+                .getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
+    }
+
+
 
     /**
      * Fetches gluster peers of the given server

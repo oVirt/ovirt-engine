@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -48,9 +47,6 @@ public class GlusterGeoRepSyncJobTest {
 
     @Mock
     private GlusterGeoRepDao geoRepDao;
-
-    @Mock
-    private ClusterUtils clusterUtils;
 
     @Mock
     private GlusterUtil glusterUtil;
@@ -85,11 +81,10 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(vdsDao).when(syncJob).getVdsDao();
         doReturn(geoRepDao).when(syncJob).getGeoRepDao();
         doReturn(volumeDao).when(syncJob).getVolumeDao();
-        doReturn(clusterUtils).when(syncJob).getClusterUtils();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), any(String.class));
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
-        doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
+        doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(getMockLock()).when(syncJob).acquireGeoRepSessionLock(any(Guid.class));
         doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUID);

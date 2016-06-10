@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,6 +21,10 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
 
     public GlusterHookCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
+    }
+
+    protected ClusterUtils getClusterUtils() {
+        return ClusterUtils.getInstance();
     }
 
     @Override
@@ -57,7 +62,7 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     }
 
     protected List<VDS> getAllUpServers(Guid clusterId) {
-        return getClusterUtils().getAllUpServers(clusterId);
+        return getGlusterUtils().getAllUpServers(clusterId);
     }
 
     protected void updateServerHookStatusInDb(Guid hookId, Guid serverId, GlusterHookStatus status) {

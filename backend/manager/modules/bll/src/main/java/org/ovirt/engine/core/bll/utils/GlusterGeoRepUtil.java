@@ -89,7 +89,7 @@ public class GlusterGeoRepUtil {
     }
 
     public Guid getUpServerId(Guid clusterId) {
-        VDS randomUpServer = ClusterUtils.getInstance().getRandomUpServer(clusterId);
+        VDS randomUpServer = GlusterUtil.getInstance().getRandomUpServer(clusterId);
         return randomUpServer == null ? null : randomUpServer.getId();
     }
 

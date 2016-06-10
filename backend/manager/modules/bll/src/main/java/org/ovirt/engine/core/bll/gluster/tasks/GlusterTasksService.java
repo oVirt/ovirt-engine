@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -24,7 +24,7 @@ public class GlusterTasksService {
     private static final Logger log = LoggerFactory.getLogger(GlusterTasksService.class);
 
     public Map<Guid, GlusterAsyncTask> getTaskListForCluster(Guid id) {
-        VDS upServer = ClusterUtils.getInstance().getRandomUpServer(id);
+        VDS upServer = GlusterUtil.getInstance().getRandomUpServer(id);
         if (upServer == null) {
             log.info("No up server in cluster");
             return null;

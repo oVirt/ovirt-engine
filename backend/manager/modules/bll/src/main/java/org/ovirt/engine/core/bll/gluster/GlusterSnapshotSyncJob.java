@@ -69,7 +69,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             return;
         }
 
-        final VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        final VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.info("No UP server found in cluster '{}' for snapshot monitoring", cluster.getName());
             return;
@@ -101,7 +101,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             return;
         }
 
-        final VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        final VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.info("No UP server found in cluster '{}' for snapshot configurations monitoring", cluster.getName());
             return;

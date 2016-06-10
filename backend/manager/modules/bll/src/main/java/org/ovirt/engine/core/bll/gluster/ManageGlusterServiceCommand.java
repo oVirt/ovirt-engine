@@ -101,7 +101,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
         }
 
-        if (!Guid.isNullOrEmpty(clusterId) && getClusterUtils().getAllUpServers(clusterId).size() == 0) {
+        if (!Guid.isNullOrEmpty(clusterId) && getGlusterUtils().getAllUpServers(clusterId).size() == 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
         }
 
@@ -137,7 +137,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     }
 
     private List<Callable<Pair<VDS, VDSReturnValue>>> getCallableVdsCmdList() {
-        List<VDS> servers = getClusterUtils().getAllUpServers(clusterId);
+        List<VDS> servers = getGlusterUtils().getAllUpServers(clusterId);
         final List<String> serviceList = getServiceList();
         List<Callable<Pair<VDS, VDSReturnValue>>> commandList = new ArrayList<>();
         for (final VDS upServer : servers) {

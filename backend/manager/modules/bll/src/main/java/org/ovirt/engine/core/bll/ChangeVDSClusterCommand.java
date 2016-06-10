@@ -123,7 +123,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         if (getCluster().supportsGlusterService()) {
-            if (getGlusterUtils().hasBricks(getVdsId())) {
+            if (getGlusterDbUtils().hasBricks(getVdsId())) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 return false;
             }
@@ -191,7 +191,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private boolean hasUpServer(Cluster cluster) {
         if (getClusterUtils().hasMultipleServers(cluster.getId())
-                && getClusterUtils().getUpServer(cluster.getId()) == null) {
+                && getGlusterUtil().getUpServer(cluster.getId()) == null) {
             addNoUpServerMessage(cluster);
             return false;
         }
@@ -205,7 +205,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private boolean hasUpServerInTarget(Cluster cluster) {
         if (getClusterUtils().hasServers(cluster.getId())
-                && getClusterUtils().getUpServer(cluster.getId()) == null) {
+                && getGlusterUtil().getUpServer(cluster.getId()) == null) {
             addNoUpServerMessage(cluster);
             return false;
         }
@@ -340,7 +340,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
         // condition.
         try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(sourceClusterId)) {
-            VDS runningHostInSourceCluster = getClusterUtils().getUpServer(sourceClusterId);
+            VDS runningHostInSourceCluster = getGlusterUtil().getUpServer(sourceClusterId);
             if (runningHostInSourceCluster == null) {
                 log.error("Cannot remove host from source cluster, no host in Up status found in source cluster");
                 handleError(-1, "No host in Up status found in source cluster");
@@ -367,7 +367,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
         // condition.
         try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(targetClusterId)) {
-            VDS runningHostInTargetCluster = getClusterUtils().getUpServer(targetClusterId);
+            VDS runningHostInTargetCluster = getGlusterUtil().getUpServer(targetClusterId);
             if (runningHostInTargetCluster == null) {
                 log.error("Cannot add host to target cluster, no host in Up status found in target cluster");
                 handleError(-1, "No host in Up status found in target cluster");
@@ -398,7 +398,11 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         return ClusterUtils.getInstance();
     }
 
-    private GlusterDBUtils getGlusterUtils() {
+    private GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
+    }
+
+    private GlusterDBUtils getGlusterDbUtils() {
         return GlusterDBUtils.getInstance();
     }
 

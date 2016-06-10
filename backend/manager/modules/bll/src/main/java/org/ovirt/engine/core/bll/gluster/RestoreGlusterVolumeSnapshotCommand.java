@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -120,7 +119,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 getGlusterVolumeSnapshotDao().removeByName(volume.getId(), snapshotName);
 
                 // Sync the new bricks of the volume immediately
-                VDS upServer = getClusterUtils().getRandomUpServer(volume.getClusterId());
+                VDS upServer = getGlusterUtils().getRandomUpServer(volume.getClusterId());
                 VDSReturnValue volDetailsRetVal =
                         runVdsCommand(VDSCommandType.GetGlusterVolumeInfo,
                                 new GlusterVolumeInfoVDSParameters(upServer.getId(),
@@ -155,7 +154,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 continue;
             }
 
-            VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
+            VDS slaveUpServer = getGlusterUtils().getRandomUpServer(slaveVolume.getClusterId());
             if (slaveUpServer == null) {
                 handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESTORE_FAILED,
                         EngineError.NoUpServerFoundInRemoteCluster.name());

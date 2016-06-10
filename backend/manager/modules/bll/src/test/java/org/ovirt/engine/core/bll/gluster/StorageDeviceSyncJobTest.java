@@ -86,11 +86,10 @@ public class StorageDeviceSyncJobTest {
         syncJob.setLogUtil(logUtil);
         doReturn(storageDeviceDao).when(syncJob).getStorageDeviceDao();
         doReturn(clusterDao).when(syncJob).getClusterDao();
-        doReturn(clusterUtils).when(syncJob).getClusterUtils();
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(vdsDao).when(syncJob).getVdsDao();
-        doReturn(getAllUpServers()).when(clusterUtils).getAllUpServers(CLUSTER_GUID_3_6);
+        doReturn(getAllUpServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUID_3_6);
         doReturn(getStorageDevices(HOST_ID_WITH_NEW_DEVICES)).when(storageDeviceDao)
                 .getStorageDevicesInHost(HOST_ID_WITH_NEW_DEVICES);
         doReturn(getStorageDevices(HOST_ID_WITH_DEVICES_CHANGED)).when(storageDeviceDao)
