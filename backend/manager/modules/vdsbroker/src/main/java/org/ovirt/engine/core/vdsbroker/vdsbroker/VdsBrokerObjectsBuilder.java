@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -2156,13 +2157,13 @@ public class VdsBrokerObjectsBuilder {
      */
     private static SwitchType getSwitchType(Version clusterVersion, Map<String, Object> networkProperties) {
         Object switchType = networkProperties.get(VdsProperties.SWITCH_KEY);
-        boolean switchTypeShouldBeReportedByOvs = FeatureSupported.ovsSupported(clusterVersion);
+        boolean switchTypeShouldBeReportedByVdsm = FeatureSupported.ovsSupported(clusterVersion);
 
-        if (switchTypeShouldBeReportedByOvs && switchType == null) {
+        if (switchTypeShouldBeReportedByVdsm && switchType == null) {
             throw new IllegalStateException("Required SwitchType is not reported.");
         }
 
-        return SwitchType.parse(switchType.toString());
+        return SwitchType.parse(Objects.toString(switchType, null));
     }
 
     // we check for old bonding options,
