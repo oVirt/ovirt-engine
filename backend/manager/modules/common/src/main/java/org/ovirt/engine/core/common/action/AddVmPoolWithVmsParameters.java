@@ -19,7 +19,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
     private static final long serialVersionUID = 4826143612049185740L;
 
     @Valid
-    private VM vm;
+    private VmStatic vmStaticData;
     private int vmsCount;
     private int diskSize;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
@@ -37,14 +37,17 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
     public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int vmsCount, int diskSize) {
         super(vmPool);
         graphicsDevices = new HashMap<>();
-        this.vm = vm;
+        this.vmStaticData = vm.getStaticData();
         this.vmsCount = vmsCount;
         this.diskSize = diskSize;
     }
 
-    @Valid
     public VmStatic getVmStaticData() {
-        return vm.getStaticData();
+        return vmStaticData;
+    }
+
+    public void setVmStaticData(VmStatic vmStaticData) {
+        this.vmStaticData = vmStaticData;
     }
 
     public int getVmsCount() {
