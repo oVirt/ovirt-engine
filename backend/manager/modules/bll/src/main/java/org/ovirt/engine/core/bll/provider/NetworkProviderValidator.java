@@ -14,6 +14,46 @@ public class NetworkProviderValidator extends ProviderValidator {
         super(provider);
     }
 
+    @Override
+    public ValidationResult validateAddProvider() {
+
+        ValidationResult result = validatePluginType();
+        if (!result.isValid()) {
+            return result;
+        }
+        result = validateAuthentication();
+        if (!result.isValid()) {
+            return result;
+        }
+        return super.validateAddProvider();
+    }
+
+    public ValidationResult validatePluginType() {
+        OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+        String pluginType = properties.getPluginType();
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_PLUGIN_TYPE)
+                .when(StringUtils.isEmpty(pluginType));
+    }
+
+    public ValidationResult validateAuthentication() {
+        if (provider.isRequiringAuthentication()) {
+            if (StringUtils.isEmpty(provider.getUsername())) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_USER);
+            }
+            if (StringUtils.isEmpty(provider.getPassword())) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_PASSWORD);
+            }
+            if (StringUtils.isEmpty(provider.getAuthUrl())) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_AUTH_URL);
+            }
+            OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+            if (StringUtils.isEmpty(properties.getTenantName())) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_TENANT_NAME);
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult providerTypeValid() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH)
                 .when(provider.getType() != ProviderType.OPENSTACK_NETWORK);
