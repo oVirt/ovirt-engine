@@ -2,97 +2,122 @@ package org.ovirt.engine.api.restapi.resource.validation;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import org.ovirt.engine.api.model.DetailedLink;
-import org.ovirt.engine.api.model.Rsdl;
-import org.ovirt.engine.api.model.UsageMessage;
-import org.ovirt.engine.api.restapi.invocation.Current;
-import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
-import org.ovirt.engine.api.restapi.resource.BackendApiResource;
+import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.rsdl.ServiceTree;
+import org.ovirt.engine.api.rsdl.ServiceTreeNode;
 
 public class UsageFinder {
 
     private static final String RESPONSE =
-            "Request syntactically incorrect. See the description below for the correct usage:";
-    private static final String UUID_REGEX =
-            "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}";
+            "Request syntactically incorrect.";
+    private static final String CAMEL_CASE_REGEX =
+            "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])";
 
-    public UsageMessage getUsageMessage(Application application, UriInfo uriInfo, Request request)
+    public Fault getUsageMessage(UriInfo uriInfo, Request request)
             throws ClassNotFoundException, IOException {
-        UsageMessage usage = new UsageMessage();
-        usage.setMessage(RESPONSE);
-        usage.setDetailedLink(findUsage(getRSDL(application), uriInfo, request.getMethod()));
-        return usage;
+        Fault fault = new Fault();
+        fault.setReason(RESPONSE);
+        fault.setDetail("For correct usage, see: " + getUsageLink(uriInfo, request.getMethod()));
+        return fault;
     }
 
-    private DetailedLink findUsage(Rsdl rsdl, UriInfo uriInfo, String httpMethod) {
-        DetailedLink link = null;
-        for (DetailedLink currentLink : rsdl.getLinks().getLinks()) {
-            if (isMatch(currentLink, uriInfo, httpMethod)) {
-                link = currentLink;
-                break;
-            }
+    private String getUsageLink(UriInfo uriInfo, String httpMethod) {
+        List<PathSegment> pathSegments = uriInfo.getPathSegments();
+        ServiceTreeNode node = ServiceTree.getTree();
+        //step into the Service tree according to the URL.
+        for (PathSegment pathSegment : pathSegments) {
+            node = step(node, pathSegment);
         }
-        assert link != null : "Corresponding link not found (this should not happen)";
+        //check whether the last step in the URL represent an 'action'.
+        PathSegment lastPathSegment = pathSegments.get(pathSegments.size()-1);
+        //Get the prefix of the link, with or without 's' appended to the
+        //entity name, according to whether this action is on a single entity
+        //or on the collection context, e.g:
+        // .../api/model.html#services/vm/methods/start    //action on *vm*
+        // .../api/model.html#services/vms/methods/add     //action on *vms*
+        // .../api/model.html#services/vm/methods/update   //action on *vm*
+        // .../api/model.html#services/vm/methods/remove   //action on *vm*
+        String link = getLinkPrefix(uriInfo, node, lastPathSegment.getPath(), httpMethod);
+        if (isAction(node, lastPathSegment.getPath())) {
+            link += camelCaseToDash(getAction(node, lastPathSegment.getPath()));
+        } else {
+            link += getMethodName(httpMethod);
+        }
         return link;
     }
 
-    private Rsdl getRSDL(Application application) throws ClassNotFoundException, IOException {
-        Rsdl rsdl = null;
-        for (Object obj : application.getSingletons()) {
-            if (obj instanceof BackendApiResource) {
-                BackendApiResource resource = (BackendApiResource) obj;
-                rsdl = resource.getRSDL();
-                break;
+    private String camelCaseToDash(String path) {
+        return path.replaceAll("(.)(\\p{Upper})", "$1-$2").toLowerCase();
+    }
+
+    private boolean isAction(ServiceTreeNode node, String path) {
+        return node.containsAction(path);
+    }
+
+    /**
+     * Gets all-lowercase action name, and if this action exists
+     * in the node, returns it properly CamelCased, e.g:
+     * For ClusterService node:
+     * provide: "resetemulatedmachine"
+     * receive: "resetEmulatedMachine"
+     */
+    private String getAction(ServiceTreeNode node, String path) {
+        return node.getActions().stream()
+                .filter(action -> action.toLowerCase().equals(path))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String getLinkPrefix(UriInfo uriInfo, ServiceTreeNode node, String lastPathSegment, String httpMethod) {
+        String linkPrefix = uriInfo.getBaseUri().toString() + "model#services/" + processNodeName(node) + "/methods/";
+        return linkPrefix;
+    }
+
+    private String processNodeName(ServiceTreeNode node) {
+        String[] parts = node.getName().replaceAll("Resource$", "").split(CAMEL_CASE_REGEX);
+        StringBuilder builder = new StringBuilder("");
+        for (String part : parts) {
+            builder.append(part.toLowerCase()).append("-");
+        }
+        String name = builder.toString();
+        return name.substring(0, name.length() -1);
+    }
+
+    private String getMethodName(String httpMethod) {
+        switch (httpMethod) {
+        case "POST":
+            return "add";
+        case "PUT":
+            return "update";
+        case "GET":
+            return "get";
+        case "DELETE":
+            return "remove";
+        default:
+            return ""; //shouldn't reach here.
+        }
+    }
+
+    private ServiceTreeNode step(ServiceTreeNode node, PathSegment pathSegment) {
+        if (isID(pathSegment.getPath(), node)) {
+            return node.getSubService("{id}");
+        } else {
+            if (node.containsSubService(pathSegment.getPath())) {
+                return node.getSubService(pathSegment.getPath());
+            } else {
+                return node;
             }
         }
-        assert rsdl != null : "Resource that generates RSDL, BackendApiResource, not found (this should never happen)";
-        return rsdl;
     }
 
-    private boolean isMatch(DetailedLink link, UriInfo uriInfo, String httpMethod) {
-        int baseUriLength = uriInfo.getBaseUri().getPath().length();
-        // e.g: [vms, {vm:id}, start]
-        Current current = CurrentManager.get();
-        int charsToTruncate = current.getVersionSource() == VersionSource.URL ? 0 : current.getVersion().length() + 2;
-        String[] linkPathSegments = link.getHref().substring(baseUriLength-charsToTruncate).split("/");
-        // e.g: [vms, f26b0918-8e16-4915-b1c2-7f39e568de23, start]
-        List<PathSegment> uriPathSegments = uriInfo.getPathSegments();
-        return isMatchLength(linkPathSegments, uriPathSegments) &&
-                isMatchPath(linkPathSegments, uriPathSegments) &&
-                isMatchRel(link.getRel(), httpMethod);
+    private boolean isID(String segment, ServiceTreeNode node) {
+        //the provided string is assumed to be an ID if the
+        //node has no action or sub-service by this name.
+        return getAction(node, segment) == null && !node.containsSubService(segment);
     }
-
-    private boolean isMatchLength(String[] linkPathSegments, List<PathSegment> uriPathSegments) {
-        return linkPathSegments.length == uriPathSegments.size();
-    }
-
-    private boolean isMatchPath(String[] linkPathSegments, List<PathSegment> uriPathSegments) {
-        for (int i = 0; i < linkPathSegments.length; i++) {
-            String uriPathSegment = uriPathSegments.get(i).getPath();
-            if (!isUUID(uriPathSegment) && !uriPathSegment.equals(linkPathSegments[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isMatchRel(String rel, String httpMethod) {
-        return (rel.equals("get") && httpMethod.equals("GET"))
-                || (rel.equals("add") && httpMethod.equals("POST"))
-                || (rel.equals("update") && httpMethod.equals("PUT"))
-                || httpMethod.equals("POST") ? true : false;
-    }
-
-    private boolean isUUID(String uriPathSegment) {
-        return Pattern.matches(UUID_REGEX, uriPathSegment);
-    }
-
 }
