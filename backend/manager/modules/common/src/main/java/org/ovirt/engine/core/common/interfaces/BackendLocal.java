@@ -28,8 +28,6 @@ public interface BackendLocal {
             ArrayList<VdcActionParametersBase> parameters,
             boolean isRunOnlyIfAllValidationPass);
 
-    void initialize();
-
     VdcQueryReturnValue runPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 
     VdcReturnValueBase logoff(VdcActionParametersBase parameters);

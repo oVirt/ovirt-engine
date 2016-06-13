@@ -223,8 +223,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     /**
      * Initializes internal data
      */
-    @Override
-    public void initialize() {
+    private void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
 
         // save host that HE VM was running on prior to engine startup
