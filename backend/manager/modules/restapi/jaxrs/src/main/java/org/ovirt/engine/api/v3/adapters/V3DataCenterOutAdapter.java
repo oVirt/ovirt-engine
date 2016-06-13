@@ -49,6 +49,9 @@ public class V3DataCenterOutAdapter implements V3Adapter<DataCenter, V3DataCente
         if (from.isSetLocal()) {
             to.setLocal(from.isLocal());
         }
+        if (from.isSetMacPool()) {
+            to.setMacPool(adaptOut(from.getMacPool()));
+        }
         if (from.isSetName()) {
             to.setName(from.getName());
         }
