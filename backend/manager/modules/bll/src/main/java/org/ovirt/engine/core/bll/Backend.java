@@ -74,6 +74,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dal.utils.CacheManager;
+import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -140,6 +141,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private VdcOptionDao vdcOptionDao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private BusinessEntitySnapshotDao businessEntitySnapshotDao;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -399,10 +402,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     /**
      * Handles compensation in case of uncompleted compensation-aware commands resulted from server failure.
      */
-    private static void compensate() {
+    private void compensate() {
         // get all command snapshot entries
-        List<KeyValue> commandSnapshots =
-                DbFacade.getInstance().getBusinessEntitySnapshotDao().getAllCommands();
+        List<KeyValue> commandSnapshots = businessEntitySnapshotDao.getAllCommands();
         for (KeyValue commandSnapshot : commandSnapshots) {
             // create an instance of the related command by its class name and command id
             CommandBase<?> cmd =
