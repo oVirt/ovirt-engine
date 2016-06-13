@@ -324,9 +324,9 @@ public class DbFacade {
         throw new IllegalArgumentException("There is no Dao registered for dao type " + daoType.getName());
     }
 
-    /**
-     * just convenience so we don't refactor old code
-     */
+    @Deprecated
+    // To obtain an instance please inject it through CDI.
+    // Static access to the instance is bug prone and couldn't be mocked.
     public static DbFacade getInstance() {
         return instance;
     }
