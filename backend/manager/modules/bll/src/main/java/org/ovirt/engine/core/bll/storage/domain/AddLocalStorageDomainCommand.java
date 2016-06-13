@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParameter> extends AddStorageDomainCommon<T> {
 
@@ -35,7 +34,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             return false;
         }
 
-        StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
+        StoragePool storagePool = getStoragePoolDao().getForVds(getParameters().getVdsId());
 
         if (storagePool == null) {
             return failValidation(EngineMessage.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
@@ -57,8 +56,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
         if (getVds().isOvirtVintageNode()) {
 
             StorageServerConnections conn =
-                    DbFacade.getInstance().getStorageServerConnectionDao().get(getParameters().getStorageDomain()
-                            .getStorage());
+                    getStorageServerConnectionDao().get(getParameters().getStorageDomain().getStorage());
 
             String rhevhLocalFSPath = Config.getValue(ConfigValues.RhevhLocalFSPath);
             if (!conn.getConnection().equals(rhevhLocalFSPath)) {
