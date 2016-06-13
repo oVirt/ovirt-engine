@@ -86,13 +86,13 @@ public class NetworkCommonUtils {
         return ipConfiguration;
     }
 
-    private static IPv4Address createDefaultIpv4Address() {
+    public static IPv4Address createDefaultIpv4Address() {
         IPv4Address ipv4Address = new IPv4Address();
         ipv4Address.setBootProtocol(Ipv4BootProtocol.NONE);
         return ipv4Address;
     }
 
-    private static IpV6Address createDefaultIpv6Address() {
+    public static IpV6Address createDefaultIpv6Address() {
         IpV6Address ipv6Address = new IpV6Address();
         ipv6Address.setBootProtocol(Ipv6BootProtocol.NONE);
         return ipv6Address;
