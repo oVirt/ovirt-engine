@@ -94,7 +94,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<>();
         for (VmTemplate template : getSelectedItems()) {
-            items.add(template.getName());
+            items.add(template.getName() + getTemplateVersionNameAndNumber(template));
         }
         model.setItems(items);
 
@@ -621,4 +621,17 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             return result;
         }
     }
+
+    /**
+     * In case the template is not base, return template's version name and version number in the format:
+     * " (Version: version-name (version-number))"
+     */
+    private String getTemplateVersionNameAndNumber(VmTemplate template) {
+        if (template.isBaseTemplate()) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return messages.templateVersionNameAndNumber(template.getTemplateVersionName() != null ? template.getTemplateVersionName() : "", //$NON-NLS-1$
+                template.getTemplateVersionNumber());
+    };
 }

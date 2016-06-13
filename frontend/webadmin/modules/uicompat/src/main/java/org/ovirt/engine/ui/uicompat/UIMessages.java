@@ -113,6 +113,8 @@ public interface UIMessages extends Messages {
 
     String noExportableDisksFoundForTheTemplate();
 
+    String templateVersionNameAndNumber(String versionName, int versionNumber);
+
     String diskAlignment(String alignment, String lastScanDate);
 
     String errConnectingVmUsingSpiceMsg(Object errCode);

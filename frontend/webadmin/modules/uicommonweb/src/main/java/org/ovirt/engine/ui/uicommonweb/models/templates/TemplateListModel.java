@@ -511,7 +511,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
         for (VmTemplate template : templates) {
             if (!template.getId().equals(Guid.Empty)) {
-                items.add(template.getName());
+                items.add(template.getName() + getTemplateVersionNameAndNumber(template));
             }
         }
 
@@ -550,6 +550,19 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                     }
                 }, model);
     }
+
+    /**
+     * In case the template is not base, return template's version name and version number in the format:
+     * " (Version: version-name (version-number))"
+     */
+    private String getTemplateVersionNameAndNumber(VmTemplate template) {
+        if (template.isBaseTemplate()) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return ConstantsManager.getInstance().getMessages().templateVersionNameAndNumber(template.getTemplateVersionName() != null ? template.getTemplateVersionName() : "", //$NON-NLS-1$
+                template.getTemplateVersionNumber());
+    };
 
     private void onSave() {
         final UnitVmModel model = (UnitVmModel) getWindow();
