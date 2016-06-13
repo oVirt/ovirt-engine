@@ -553,7 +553,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             case EXECUTE:
                 if (!hasTaskHandlers() && !getParameters().isUseCinderCommandCallback()) {
                     return getParameters().getTaskGroupSuccess() ?
-                            AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_SUCCESS :
+                            AuditLogType.USER_REMOVE_DISK_SNAPSHOT :
                             AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_FAILURE;
                 }
                 if (isFirstTaskHandler() && getSucceeded()) {
