@@ -31,45 +31,44 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
     @Override
     protected boolean validate() {
-        boolean retVal = super.validate();
+        if (!super.validate()) {
+            return false;
+        }
 
-        if (retVal) {
-            StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
+        StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
 
-            if (storagePool == null) {
-                addValidationMessage(EngineMessage.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
-                retVal = false;
-            } else {
-                setStoragePool(storagePool);
-            }
+        if (storagePool == null) {
+            return failValidation(EngineMessage.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
+        }
 
-            if (retVal &&
-                    getStorageDomain().getStorageType() == StorageType.LOCALFS &&
-                    !storagePool.isLocal()) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
-                retVal = false;
-            }
+        setStoragePool(storagePool);
 
-            if (retVal && storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
-                retVal = checkMasterDomainIsUp();
-            }
+        if (getStorageDomain().getStorageType() == StorageType.LOCALFS && !storagePool.isLocal()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
+        }
 
-            // we limit RHEV-H local storage to its persistence mount - /data/images/rhev/
-            if (retVal && this.getVds().isOvirtVintageNode()) {
-
-                StorageServerConnections conn =
-                        DbFacade.getInstance().getStorageServerConnectionDao().get(getParameters().getStorageDomain()
-                                .getStorage());
-
-                String rhevhLocalFSPath = Config.getValue(ConfigValues.RhevhLocalFSPath);
-                if (!conn.getConnection().equals(rhevhLocalFSPath)) {
-                    addValidationMessage(EngineMessage.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
-                    addValidationMessageVariable("path", rhevhLocalFSPath);
-                    retVal = false;
-                }
+        if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
+            if (!checkMasterDomainIsUp()) {
+                return false;
             }
         }
-        return retVal;
+
+        // we limit RHEV-H local storage to its persistence mount - /data/images/rhev/
+        if (getVds().isOvirtVintageNode()) {
+
+            StorageServerConnections conn =
+                    DbFacade.getInstance().getStorageServerConnectionDao().get(getParameters().getStorageDomain()
+                            .getStorage());
+
+            String rhevhLocalFSPath = Config.getValue(ConfigValues.RhevhLocalFSPath);
+            if (!conn.getConnection().equals(rhevhLocalFSPath)) {
+                addValidationMessage(EngineMessage.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
+                addValidationMessageVariable("path", rhevhLocalFSPath);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
