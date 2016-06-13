@@ -419,6 +419,6 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
      */
     public static final Comparator<StorageDomainOvfInfo> OVF_INFO_COMPARATOR =
             Comparator.comparing(StorageDomainOvfInfo::getLastUpdated,
-                    Comparator.nullsFirst(Comparator.<Date> naturalOrder())).
+                    Comparator.nullsFirst(Comparator.naturalOrder())).
                     thenComparing(StorageDomainOvfInfo::getOvfDiskId);
 }
