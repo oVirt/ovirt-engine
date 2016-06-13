@@ -8,7 +8,9 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.MessagingConfiguration;
@@ -22,6 +24,8 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
     private static final ProviderType NON_NETWORK_PROVIDER_TYPE = ProviderType.FOREMAN;
 
     private NetworkProviderValidator validator = new NetworkProviderValidator(provider);
+    @Mock
+    private OpenstackNetworkProviderProperties properties;
 
     @Test
     public void validProviderType() {
@@ -95,5 +99,71 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
 
     private AgentConfiguration getProviderAgentConfiguration() {
         return ((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).getAgentConfiguration();
+    }
+
+    @Test
+    public void validPluginType() {
+        when(provider.getAdditionalProperties()).thenReturn(properties);
+        when(properties.getPluginType()).thenReturn(OpenstackNetworkPluginType.OPEN_VSWITCH.name());
+        assertThat(validator.validateAddProvider(), isValid());
+    }
+
+    @Test
+    public void invalidPluginType() {
+        when(provider.getAdditionalProperties()).thenReturn(properties);
+        assertThat(validator.validatePluginType(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_PLUGIN_TYPE));
+    }
+
+    @Test
+    public void validAuthentication() {
+        when(provider.isRequiringAuthentication()).thenReturn(true);
+        when(provider.getUsername()).thenReturn("user");
+        when(provider.getPassword()).thenReturn("pass");
+        when(provider.getAuthUrl()).thenReturn("url");
+        when(provider.getAdditionalProperties()).thenReturn(properties);
+        when(properties.getTenantName()).thenReturn("tenant");
+        assertThat(validator.validateAuthentication(), isValid());
+    }
+
+    @Test
+    public void validAuthenticationNotRequired() {
+        when(provider.isRequiringAuthentication()).thenReturn(false);
+        assertThat(validator.validateAuthentication(), isValid());
+    }
+
+    @Test
+    public void invalidAuthenticationUserName() {
+        when(provider.isRequiringAuthentication()).thenReturn(true);
+        assertThat(validator.validateAuthentication(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_USER));
+    }
+
+    @Test
+    public void invalidAuthenticationPassword() {
+        when(provider.isRequiringAuthentication()).thenReturn(true);
+        when(provider.getUsername()).thenReturn("user");
+        assertThat(validator.validateAuthentication(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_PASSWORD));
+    }
+
+    @Test
+    public void invalidAuthenticationUrl() {
+        when(provider.isRequiringAuthentication()).thenReturn(true);
+        when(provider.getUsername()).thenReturn("user");
+        when(provider.getPassword()).thenReturn("pass");
+        assertThat(validator.validateAuthentication(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_AUTH_URL));
+    }
+
+    @Test
+    public void invalidAuthenticationTenant() {
+        when(provider.isRequiringAuthentication()).thenReturn(true);
+        when(provider.getUsername()).thenReturn("user");
+        when(provider.getPassword()).thenReturn("pass");
+        when(provider.getAuthUrl()).thenReturn("url");
+        when(provider.getAdditionalProperties()).thenReturn(properties);
+        assertThat(validator.validateAuthentication(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_TENANT_NAME));
     }
 }

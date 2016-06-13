@@ -59,8 +59,6 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     private Quantum client;
 
-    private ProviderValidator providerValidator;
-
     private static Logger log = LoggerFactory.getLogger(BaseNetworkProviderProxy.class);
 
     public BaseNetworkProviderProxy(Provider<P> provider) {
@@ -393,9 +391,6 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public ProviderValidator getProviderValidator() {
-        if (providerValidator == null) {
-            providerValidator = new ProviderValidator(provider);
-        }
-        return providerValidator;
+        return new ProviderValidator(provider);
     }
 }
