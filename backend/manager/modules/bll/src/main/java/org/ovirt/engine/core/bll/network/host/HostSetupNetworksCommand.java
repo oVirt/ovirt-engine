@@ -145,6 +145,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private InterfaceDao interfaceDao;
 
     @Inject
+    private IpConfigurationCompleter ipConfigurationCompleter;
+
+    @Inject
     private NetworkIdNetworkNameCompleter networkIdNetworkNameCompleter;
 
     @Inject
@@ -236,6 +239,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         nicNameNicIdCompleter.completeNetworkAttachments(getExistingAttachments());
         nicNameNicIdCompleter.completeLabels(getParameters().getLabels());
 
+        ipConfigurationCompleter.fillInUnsetIpConfigs(getParameters().getNetworkAttachments());
+
         networkIdNetworkNameCompleter.completeNetworkAttachments(
                 getParameters().getNetworkAttachments(),
                 getNetworkBusinessEntityMap());
@@ -249,8 +254,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getClusterNetworks(),
                 getExistingNicsBusinessEntityMap());
         labelsCompleter.completeNetworkAttachments();
-
-        fillInUnsetIpConfigs();
     }
 
     private boolean validateEntitiesFromRequest(List<? extends BusinessEntity<?>> newOrUpdateBusinessEntities) {
