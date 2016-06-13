@@ -115,11 +115,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     protected void init() {
-        // skipped if participating in compensation flow
-        if (getParameters() == null) {
-            return;
-        }
-
         if (getCluster() == null) {
             return;
         }
