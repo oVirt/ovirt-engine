@@ -98,7 +98,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     public CommonVmPoolWithVmsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmPool(parameters.getVmPool());
-        setClusterId(parameters.getVmPool().getClusterId());
+        setClusterId(getVmPool().getClusterId());
     }
 
     /*
@@ -117,6 +117,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected void init() {
         // skipped if participating in compensation flow
         if (getParameters() == null) {
+            return;
+        }
+
+        if (getCluster() == null) {
             return;
         }
 
