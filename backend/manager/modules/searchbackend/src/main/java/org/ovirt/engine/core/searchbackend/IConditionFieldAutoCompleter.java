@@ -24,7 +24,8 @@ public interface IConditionFieldAutoCompleter extends IAutoCompleter {
 
     String getWildcard(String fieldName);
 
-    String buildConditionSql(String fieldName,
+    String buildConditionSql(String objName,
+            String fieldName,
             String customizedValue,
             String customizedRelation,
             String tableName,

@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.compat.StringFormat;
@@ -250,7 +252,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         joinDictionary.put(secondObj + "." + firstObj, new String[] { secondColumnName, firstColumnName });
     }
 
-    private static final class EntitySearchInfo {
+    public static final class EntitySearchInfo {
+
         public EntitySearchInfo(IAutoCompleter crossRefAutoCompleter,
                 IConditionFieldAutoCompleter conditionFieldAutoCompleter,
                 String relatedTableNameWithOutTags,
@@ -265,12 +268,24 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             this.defaultSort = defaultSort;
         }
 
+        public EntitySearchInfo(IAutoCompleter crossRefAutoCompleter,
+                IConditionFieldAutoCompleter conditionFieldAutoCompleter,
+                String relatedTableNameWithOutTags,
+                String relatedTableName,
+                String primeryKeyName,
+                String defaultSort,
+                List<String> commaDelimitedListColumns) {
+            this(crossRefAutoCompleter, conditionFieldAutoCompleter, relatedTableNameWithOutTags, relatedTableName, primeryKeyName, defaultSort);
+            this.commaDelimitedListColumns = commaDelimitedListColumns;
+        }
+
         final IAutoCompleter crossRefAutoCompleter;
         final IConditionFieldAutoCompleter conditionFieldAutoCompleter;
         final String relatedTableNameWithOutTags;
         final String relatedTableName;
         final String primeryKeyName;
         final String defaultSort;
+        List<String> commaDelimitedListColumns;
     }
 
     @SuppressWarnings("serial")
@@ -350,14 +365,16 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "all_disks",
                             "all_disks",
                             "disk_id",
-                            "disk_alias ASC, disk_id ASC "));
+                            "disk_alias ASC, disk_id ASC ",
+                            Arrays.asList("vm_names")));
                     put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
                             new EntitySearchInfo(new StorageDomainCrossRefAutoCompleter(),
                                     new StorageDomainFieldAutoCompleter(),
                                     "storage_domains_for_search",
                                     "storage_domains_with_hosts_view",
                                     "id",
-                                    "storage_name ASC "));
+                                    "storage_name ASC ",
+                                    Arrays.asList("datacenter")));
                     put(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
                             new EntitySearchInfo(null,
                                     null,
@@ -572,5 +589,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             return getEntitySearchInfo(obj).defaultSort;
         }
         return "";
+    }
+
+    public List<String> getCommaDelimitedListColumns(String obj) {
+        return getEntitySearchInfo(obj).commaDelimitedListColumns;
     }
 }

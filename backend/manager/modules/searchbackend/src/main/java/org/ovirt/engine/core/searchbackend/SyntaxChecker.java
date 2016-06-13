@@ -1171,7 +1171,8 @@ public class SyntaxChecker implements ISyntaxChecker {
             break;
         case ConditionWithDefaultObj:
         case ConditionwithSpesificObj:
-            conditionData.setConditionText(conditionFieldAC.buildConditionSql(fieldName,
+            conditionData.setConditionText(conditionFieldAC.buildConditionSql(objName,
+                    fieldName,
                     customizedValue,
                     customizedRelation,
                     tableName,

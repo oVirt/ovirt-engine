@@ -64,6 +64,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     @Override
     public String buildConditionSql(
+        String objName,
         String fieldName,
         String customizedValue,
         String customizedRelation,
@@ -77,14 +78,16 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
             String loginValue = customizedValue.substring(0, index) + "'";
             String directoryValue = "'" + customizedValue.substring(index + 1);
             String loginSql = buildConditionSql(
-                    LOGIN,
+                objName,
+                LOGIN,
                 loginValue,
                 customizedRelation,
                 tableName,
                 caseSensitive
             );
             String directorySql = buildConditionSql(
-                    DIRECTORY,
+                objName,
+                DIRECTORY,
                 directoryValue,
                 customizedRelation,
                 tableName,
@@ -94,6 +97,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         }
         else {
             return super.buildConditionSql(
+                objName,
                 fieldName,
                 customizedValue,
                 customizedRelation,
