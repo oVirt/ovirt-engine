@@ -53,7 +53,7 @@ public class DbFacadeLocator {
         return loadDbEngineDialect();
     }
 
-    public DbFacadeLocator() {
+    DbFacadeLocator() {
     }
 
     /**
