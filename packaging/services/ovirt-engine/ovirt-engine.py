@@ -79,47 +79,6 @@ class Daemon(service.Daemon):
             )
         return out
 
-    def _linkModules(self, directory, modulePath):
-        """
-        Link all the JBoss modules into a temporary directory.
-        This required because jboss tries to automatically update
-        indexes based on timestamp even if there is no permission to do so.
-        """
-
-        modifiedModulePath = []
-        for index, element in enumerate(modulePath.split(':')):
-            modulesTmpDir = os.path.join(
-                directory,
-                '%02d-%s' % (
-                    index,
-                    '-'.join(element.split(os.sep)[-2:]),
-                ),
-            )
-            modifiedModulePath.append(modulesTmpDir)
-
-            # For each directory in the modules directory create the
-            # same in the temporary directory and populate with symlinks
-            # pointing to the original files (excluding indexes):
-            for parentDir, childrenDirs, childrenFiles in os.walk(element):
-                parentTmpDir = os.path.join(
-                    modulesTmpDir,
-                    os.path.relpath(
-                        parentDir,
-                        element
-                    ),
-                )
-                if not os.path.exists(parentTmpDir):
-                    os.makedirs(parentTmpDir)
-                for childFile in childrenFiles:
-                    if childFile.endswith('.index'):
-                        continue
-                    os.symlink(
-                        os.path.join(parentDir, childFile),
-                        os.path.join(parentTmpDir, childFile)
-                    )
-
-        return ':'.join(modifiedModulePath)
-
     def _checkInstallation(
         self,
         pidfile,
@@ -313,17 +272,11 @@ class Daemon(service.Daemon):
             'config',
         )
 
-        javaModulePath = self._linkModules(
+        javaModulePath = '%s:%s' % (
+            self._config.get('ENGINE_JAVA_MODULEPATH'),
             os.path.join(
-                self._jbossRuntime.directory,
+                self._config.get('JBOSS_HOME'),
                 'modules',
-            ),
-            '%s:%s' % (
-                self._config.get('ENGINE_JAVA_MODULEPATH'),
-                os.path.join(
-                    self._config.get('JBOSS_HOME'),
-                    'modules',
-                ),
             ),
         )
 
@@ -385,7 +338,6 @@ class Daemon(service.Daemon):
             '-Dlogging.configuration=file://%s' % jbossBootLoggingFile,
             '-Dorg.jboss.resolver.warning=true',
             '-Djboss.modules.system.pkgs=org.jboss.byteman',
-            '-Djboss.modules.write-indexes=false',
             '-Djboss.server.default.config=ovirt-engine',
             '-Djboss.home.dir=%s' % self._config.get(
                 'JBOSS_HOME'

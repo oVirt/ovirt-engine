@@ -133,7 +133,6 @@ class Daemon(service.Daemon):
         self._engineArgs = [
             # The name of the process, as displayed by ps:
             'ovirt-engine-notifier',
-            '-Djboss.modules.write-indexes=false',
         ]
 
         # Add extra system properties provided in the configuration:
