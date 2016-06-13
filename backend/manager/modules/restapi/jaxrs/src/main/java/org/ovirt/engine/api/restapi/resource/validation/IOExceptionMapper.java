@@ -19,7 +19,6 @@ package org.ovirt.engine.api.restapi.resource.validation;
 import java.io.IOException;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
@@ -29,7 +28,6 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.ovirt.engine.api.model.Fault;
-import org.ovirt.engine.api.model.UsageMessage;
 import org.ovirt.engine.api.utils.InvalidValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +43,6 @@ public class IOExceptionMapper implements ExceptionMapper<IOException> {
     protected UriInfo uriInfo;
     @Context
     protected Request request;
-    @Context
-    protected Application application;
 
     @Override
     public Response toResponse(IOException exception) {
@@ -69,8 +65,7 @@ public class IOExceptionMapper implements ExceptionMapper<IOException> {
             );
             log.error("Exception", exception);
             UsageFinder finder = new UsageFinder();
-            UsageMessage usage = finder.getUsageMessage(application, uriInfo, request);
-            return Response.status(Status.BAD_REQUEST).entity(usage).build();
+            return Response.status(Status.BAD_REQUEST).entity(finder.getUsageMessage(uriInfo, request)).build();
         }
         catch (Exception error) {
             throw new WebApplicationException(error, Response.status(Status.INTERNAL_SERVER_ERROR).build());

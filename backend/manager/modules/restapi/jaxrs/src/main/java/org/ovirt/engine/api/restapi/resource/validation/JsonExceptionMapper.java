@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
@@ -40,9 +39,6 @@ public class JsonExceptionMapper implements ExceptionMapper<JsonProcessingExcept
     @Context
     protected Request request;
 
-    @Context
-    protected Application application;
-
     @Override
     public Response toResponse(JsonProcessingException exception) {
         try {
@@ -53,7 +49,7 @@ public class JsonExceptionMapper implements ExceptionMapper<JsonProcessingExcept
             );
             log.error("Exception", exception);
             return Response.status(Status.BAD_REQUEST)
-                    .entity(new UsageFinder().getUsageMessage(application, uriInfo, request))
+                    .entity(new UsageFinder().getUsageMessage(uriInfo, request))
                     .build();
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
