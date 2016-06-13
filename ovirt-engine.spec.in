@@ -213,7 +213,6 @@ Requires:	%{name}-dashboard >= 1.0.0
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
-Requires:	fop
 Requires:	jakarta-commons-httpclient
 Requires:	java-openjdk >= 1:1.8.0
 Requires:	jpackage-utils
@@ -227,6 +226,12 @@ Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
 Requires:	yum-plugin-versionlock
+
+%if 0%{?rhel}
+# FOP 1.1 is available only on EL7, Fedora >= 23 contains FOP 2.0, which is not
+# backward compatible with 1.1
+Requires:	fop
+%endif
 
 %if 0%{?fedora}
 Requires:	apache-sshd
@@ -717,13 +722,27 @@ while read dst src; do
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
 common/org/aopalliance/main/aopalliance.jar
-common/org/apache/avalon/framework/main/avalon-framework-api.jar
-common/org/apache/avalon/framework/main/avalon-framework-impl.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar
 common/org/apache/commons/httpclient/main/commons-httpclient.jar
 common/org/apache/commons/jxpath/main/commons-jxpath.jar
 common/org/apache/ws/commons/main/ws-commons-util.jar
+common/org/apache/xmlrpc/main/xmlrpc-client.jar
+common/org/apache/xmlrpc/main/xmlrpc-common.jar
+common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-filter.jar
+common/org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
+common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
+common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
+common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
+tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
+tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
+
+%if 0%{?rhel}
+# FOP 1.1 is available only on EL7, Fedora >= 23 contains FOP 2.0, which is not
+# backward compatible with 1.1
+common/org/apache/avalon/framework/main/avalon-framework-api.jar
+common/org/apache/avalon/framework/main/avalon-framework-impl.jar
+common/org/apache/xmlgraphics/fop/main/fop.jar
 common/org/apache/xmlgraphics/batik/main/batik-awt-util.jar batik/batik-awt-util.jar
 common/org/apache/xmlgraphics/batik/main/batik-bridge.jar batik/batik-bridge.jar
 common/org/apache/xmlgraphics/batik/main/batik-css.jar batik/batik-css.jar
@@ -734,16 +753,7 @@ common/org/apache/xmlgraphics/batik/main/batik-svg-dom.jar batik/batik-svg-dom.j
 common/org/apache/xmlgraphics/batik/main/batik-transcoder.jar batik/batik-transcoder.jar
 common/org/apache/xmlgraphics/batik/main/batik-util.jar batik/batik-util.jar
 common/org/apache/xmlgraphics/commons/main/xmlgraphics-commons.jar
-common/org/apache/xmlgraphics/fop/main/fop.jar
-common/org/apache/xmlrpc/main/xmlrpc-client.jar
-common/org/apache/xmlrpc/main/xmlrpc-common.jar
-common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-filter.jar
-common/org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
-common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
-common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
-common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
-tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
-tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
+%endif
 
 %if 0%{?fedora}
 common/com/mchange/c3p0/main/c3p0.jar c3p0/c3p0.jar
