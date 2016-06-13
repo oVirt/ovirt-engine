@@ -70,6 +70,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbConnectionUtil;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -112,14 +113,17 @@ import org.slf4j.LoggerFactory;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private static final Logger log = LoggerFactory.getLogger(Backend.class);
-
     private ITagsHandler tagsHandler;
+
     private ErrorTranslator errorsTranslator;
     private ErrorTranslator vdsErrorsTranslator;
     private DateTime _startedAt;
     private static boolean firstInitialization = true;
+
     @Inject
-    Injector injector;
+    // TODO: YZ consider removing injector from here - every dependency should be obtained through CDI.
+    // If that is here in order to declare the dependency on BeanManager - that should be re-considered.
+    private Injector injector;
     @Inject
     private DbFacade dbFacade;
     @Inject @Any
@@ -130,7 +134,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private SessionDataContainer sessionDataContainer;
     @Inject
     private VDSBrokerFrontend resourceManger;
-
+    @Inject
+    private DbConnectionUtil dbConnectionUtil;
     @Inject
     private ClusterDao clusterDao;
     @Inject
@@ -189,13 +194,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     private void checkDBConnectivity() {
         boolean dbUp = false;
-        long expectedTimeout =
-                System.currentTimeMillis()
-                        + dbFacade.getOnStartConnectionTimeout();
-        long waitBetweenInterval = dbFacade.getConnectionCheckInterval();
+        long expectedTimeout = System.currentTimeMillis() + dbConnectionUtil.getOnStartConnectionTimeout();
+        long waitBetweenInterval = dbConnectionUtil.getConnectionCheckInterval();
         while (!dbUp && System.currentTimeMillis() < expectedTimeout) {
             try {
-                dbUp = dbFacade.checkDBConnection();
+                dbUp = dbConnectionUtil.checkDBConnection();
             } catch (RuntimeException ex) {
                 log.error("Error in getting DB connection, database is inaccessible: {}",
                         ex.getMessage());

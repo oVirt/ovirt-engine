@@ -155,6 +155,7 @@
             <exclude>**/*D??Test*.java</exclude>
             <exclude>**/*D??ImplTest*.java</exclude>
             <exclude>**/DBConfigUtilsTest.java</exclude>
+            <exclude>**/DbConnectionUtilTest.java</exclude>
             <exclude>**/BatchProcedureCallTest.java</exclude>
           </excludes>
           <systemPropertyVariables>

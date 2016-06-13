@@ -286,7 +286,6 @@ public class DbFacade {
 
     private void init() {
         log.info("Initializing the DbFacade");
-        dbFacadeLocator.configure(this);
 
         instance = this;
     }
@@ -352,15 +351,6 @@ public class DbFacade {
 
         String resultKey = dbEngineDialect.getFunctionReturnKey();
         return dbResults.get(resultKey) != null ? dbResults.get(resultKey).toString() : null;
-    }
-
-    /***
-     * CheckDBConnection calls a simple "select 1" SP to verify DB is up & running.
-     *
-     * @return True if DB is up & running.
-     */
-    public boolean checkDBConnection() {
-        return new SimpleJdbcCall(jdbcTemplate).withProcedureName("CheckDBConnection").execute() != null;
     }
 
     /**
@@ -1068,22 +1058,6 @@ public class DbFacade {
      */
     public GlusterServerDao getGlusterServerDao() {
         return getDao(GlusterServerDao.class);
-    }
-
-    public void setOnStartConnectionTimeout(int onStartConnectionTimeout) {
-        this.onStartConnectionTimeout = onStartConnectionTimeout;
-    }
-
-    public int getOnStartConnectionTimeout() {
-        return onStartConnectionTimeout;
-    }
-
-    public void setConnectionCheckInterval(int connectionCheckInterval) {
-        this.connectionCheckInterval = connectionCheckInterval;
-    }
-
-    public int getConnectionCheckInterval() {
-        return connectionCheckInterval;
     }
 
     /**

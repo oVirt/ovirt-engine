@@ -3,13 +3,6 @@ package org.ovirt.engine.core.dal.dbbroker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -30,15 +23,9 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.annotation.DirtiesContext;
 
 public class DbFacadeDaoTest extends BaseDaoTestCase {
 
@@ -59,68 +46,6 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
     private static final Guid NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
 
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
-
-    /**
-     * Ensures that the checkDBConnection method returns true when the connection is up
-     */
-    @Test
-    public void testDBConnectionWithConnection() {
-        assertTrue(dbFacade.checkDBConnection());
-    }
-
-    /**
-     * Ensures that the checkDBConnection method throws an Exception when connection is not valid
-     */
-    @Test
-    @DirtiesContext
-    public void testDBConnectionWithoutConnection() {
-
-        InputStream is = null;
-        try {
-            // setup
-            Config.setConfigUtils(new DBConfigUtils(false));
-            is = super.getClass().getResourceAsStream("/test-database.properties");
-            Properties properties = new Properties();
-            properties.load(is);
-            ClassLoader.getSystemClassLoader().loadClass(
-                    properties.getProperty("database.driver"));
-            DataSource dataSource = new SingleConnectionDataSource(
-                    properties.getProperty("database.url"),
-                    // Deliberately puts a none existing user name, so an
-                    // exception will be thrown when trying to check the
-                    // connection
-                    "no-such-username",
-                    properties.getProperty("database.password"),
-                    true
-                    );
-            final DbEngineDialect dbEngineDialect = DbFacadeLocator.loadDbEngineDialect();
-            final JdbcTemplate jdbcTemplate = dbEngineDialect.createJdbcTemplate(dataSource);
-            final SimpleJdbcCallsHandler callsHandler = new SimpleJdbcCallsHandler(dbEngineDialect, jdbcTemplate);
-            final DbFacadeLocator dbFacadeLocator = new DbFacadeLocator() {};
-            final DbFacade localDbFacade = new DbFacade(jdbcTemplate, dbEngineDialect, callsHandler, dbFacadeLocator);
-
-            localDbFacade.checkDBConnection();
-
-            fail("Connection should be down since the DataSource has an invalid username");
-            // If DataAccessException is thrown - the test has succeeded. Was unable to do
-            // with "expected" annotation, presumably since we are using DbUnit
-        } catch (DataAccessException desiredException) {
-            assertTrue(true);
-            // If this exception is thrown we fail the test
-        } catch (Exception undesiredException) {
-            undesiredException.printStackTrace();
-            fail();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-    }
-
 
     @Test
     public void testGetEntityNameByIdAndTypeForVM() {

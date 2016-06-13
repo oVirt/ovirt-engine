@@ -53,19 +53,14 @@ public class DbFacadeLocator {
         return loadDbEngineDialect();
     }
 
-    DbFacadeLocator() {
+    @Produces
+    @Singleton
+    public DbConnectionUtil produceDbConnectionUtil(JdbcTemplate jdbcTemplate) {
+        loadDbFacadeConfig();
+        return new DbConnectionUtil(jdbcTemplate, connectionTimeout, checkInterval);
     }
 
-    /**
-     * configure the dbFacade.
-     */
-    protected void configure(DbFacade dbFacade) {
-        // Load the configuration:
-        loadDbFacadeConfig();
-
-        // configure the dbFacade:
-        dbFacade.setOnStartConnectionTimeout(connectionTimeout);
-        dbFacade.setConnectionCheckInterval(checkInterval);
+    DbFacadeLocator() {
     }
 
     /**
