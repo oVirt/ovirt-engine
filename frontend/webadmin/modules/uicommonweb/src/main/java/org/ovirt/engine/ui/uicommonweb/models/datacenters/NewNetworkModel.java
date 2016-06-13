@@ -123,20 +123,6 @@ public class NewNetworkModel extends NetworkModel {
 
     @Override
     protected void executeSave() {
-        IFrontendActionAsyncCallback addNetworkCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result1) {
-                VdcReturnValueBase retVal = result1.getReturnValue();
-                boolean succeeded = false;
-                if (retVal != null && retVal.getSucceeded()) {
-                    succeeded = true;
-                }
-                postSaveAction(succeeded ? (Network) retVal.getActionReturnValue()
-                        : null,
-                        succeeded);
-            }
-        };
-
         final AddNetworkStoragePoolParameters parameters =
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
         parameters.setVnicProfileRequired(false);
@@ -149,25 +135,60 @@ public class NewNetworkModel extends NetworkModel {
             getNetwork().setProvidedBy(providerNetwork);
 
             Frontend.getInstance().runAction(VdcActionType.AddNetworkOnProvider,
-                    parameters, addNetworkCallback, null);
+                    parameters, addNetworkOnProviderCallback(), null);
         } else {
             Frontend.getInstance().runAction(VdcActionType.AddNetwork,
-                    parameters,
-                    addNetworkCallback,
-                    null);
+                    parameters, addNetworkCallback(), null);
         }
     }
 
-    protected void postSaveAction(Network network, boolean succeeded) {
-        super.postSaveAction(network.getId(), succeeded);
+    private IFrontendActionAsyncCallback addNetworkCallback() {
+        return new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result1) {
+                postAddNetwork(result1.getReturnValue());
+            }
+        };
+    }
 
-        if (!succeeded) {
-            return;
+    private IFrontendActionAsyncCallback addNetworkOnProviderCallback() {
+        return new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result1) {
+                postAddNetworkOnProvider(result1.getReturnValue());
+            }
+        };
+    }
+
+    private void postAddNetwork(VdcReturnValueBase retVal) {
+        if (isActionSucceeded(retVal)) {
+            postSaveAction((Guid) retVal.getActionReturnValue(), null);
+        } else {
+            failedPostSaveAction();
         }
+    }
 
-        attachNetworkToClusters(network.getId());
+    private void postAddNetworkOnProvider(VdcReturnValueBase retVal) {
+        if (isActionSucceeded(retVal)) {
+            Network network = (Network) retVal.getActionReturnValue();
+            postSaveAction(network.getId(), network.getProvidedBy());
+        } else {
+            failedPostSaveAction();
+        }
+    }
 
-        ProviderNetwork providedBy = network.getProvidedBy();
+    private boolean isActionSucceeded(VdcReturnValueBase retVal) {
+        return retVal != null && retVal.getSucceeded();
+    }
+
+    private void failedPostSaveAction() {
+        super.postSaveAction(null, false);
+    }
+
+    private void postSaveAction(Guid id, ProviderNetwork providedBy) {
+        super.postSaveAction(id, true);
+        attachNetworkToClusters(id);
+
         if (getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null) {
             getSubnetModel().setExternalNetwork(providedBy);
             getSubnetModel().flush();
