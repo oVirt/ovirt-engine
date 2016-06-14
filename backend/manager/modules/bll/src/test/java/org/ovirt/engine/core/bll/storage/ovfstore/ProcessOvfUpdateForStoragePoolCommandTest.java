@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
@@ -182,20 +184,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         doAnswer((Answer<List<VM>>) invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
-            List<VM> toReturn = new LinkedList<>();
-            for (Guid id : neededIds) {
-                toReturn.add(vms.get(id));
-            }
-            return toReturn;
+            return neededIds.stream().map(id -> vms.get(id)).collect(Collectors.toList());
         }).when(vmDao).getVmsByIds(anyListOf(Guid.class));
 
         doAnswer((Answer<List<VmTemplate>>) invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
-            List<VmTemplate> toReturn = new LinkedList<>();
-            for (Guid id : neededIds) {
-                toReturn.add(templates.get(id));
-            }
-            return toReturn;
+            return neededIds.stream().map(id -> templates.get(id)).collect(Collectors.toList());
         }).when(vmTemplateDao).getVmTemplatesByIds(anyListOf(Guid.class));
 
         doAnswer((Answer<Boolean>) invocation -> {
@@ -228,24 +222,13 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         doAnswer((Answer<Object>) invocation -> {
             StoragePoolStatus desiredStatus = (StoragePoolStatus) invocation.getArguments()[0];
-            List<StoragePool> toReturn = new LinkedList<>();
-            for (StoragePool pool : buildStoragePoolsList()) {
-                if (desiredStatus.equals(pool.getStatus())) {
-                    toReturn.add(pool);
-                }
-            }
-
-            return toReturn;
+            return buildStoragePoolsList().stream()
+                    .filter(p -> desiredStatus.equals(p.getStatus()))
+                    .collect(Collectors.toList());
         }).when(storagePoolDao).getAllByStatus(any(StoragePoolStatus.class));
 
-        doAnswer((Answer<Object>) invocation -> {
-            List<StorageDomain> toReturn = new LinkedList<>();
-            for (Pair<List<StorageDomainOvfInfo>, StorageDomain> pair : poolDomainsOvfInfo.values()) {
-                toReturn.add(pair.getSecond());
-            }
-
-            return toReturn;
-        }).when(storageDomainDao).getAllForStoragePool(any(Guid.class));
+        doReturn(poolDomainsOvfInfo.values().stream().map(Pair::getSecond).collect(Collectors.toList()))
+                .when(storageDomainDao).getAllForStoragePool(any(Guid.class));
 
         doAnswer((Answer<Object>) invocation -> {
             Guid domainId = (Guid) invocation.getArguments()[0];
@@ -284,11 +267,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private List<Guid> generateGuidList(int size) {
-        List<Guid> toReturn = new LinkedList<>();
-        for (int i = 0; i < size; i++) {
-            toReturn.add(Guid.newGuid());
-        }
-        return toReturn;
+        return IntStream.range(0, size).mapToObj(x -> Guid.newGuid()).collect(Collectors.toList());
     }
 
     private Map<Guid, VM> generateVmsMapByGuids(List<Guid> ids,
