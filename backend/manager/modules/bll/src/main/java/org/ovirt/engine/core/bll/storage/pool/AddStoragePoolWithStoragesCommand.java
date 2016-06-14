@@ -130,9 +130,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     // command
                     throw new EngineException(EngineError.ENGINE_ERROR_CREATING_STORAGE_POOL);
                 }
-            } else {
-                registerOvfStoreDisks();
             }
+            registerOvfStoreDisks();
         }
 
         // Create pool phase completed, no rollback is needed here, so compensation information needs to be cleared!
