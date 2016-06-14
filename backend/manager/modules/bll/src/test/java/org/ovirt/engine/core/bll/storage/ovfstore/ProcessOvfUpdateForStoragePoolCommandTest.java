@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -178,7 +178,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 return vm.getId().toString();
             }
 
-        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyList());
+        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyListOf(DiskImage.class));
 
         doAnswer(new Answer<String>() {
             @Override
@@ -187,7 +187,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 return template.getId().toString();
             }
 
-        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(VmTemplate.class), anyList());
+        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(VmTemplate.class), anyListOf(DiskImage.class));
 
         doAnswer(new Answer<List<VM>>() {
             @Override
@@ -200,7 +200,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 return toReturn;
             }
 
-        }).when(vmDao).getVmsByIds(anyList());
+        }).when(vmDao).getVmsByIds(anyListOf(Guid.class));
 
         doAnswer(new Answer<List<VmTemplate>>() {
             @Override
@@ -213,7 +213,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 return toReturn;
             }
 
-        }).when(vmTemplateDao).getVmTemplatesByIds(anyList());
+        }).when(vmTemplateDao).getVmTemplatesByIds(anyListOf(Guid.class));
 
         doAnswer(new Answer<Boolean>() {
             @Override
@@ -248,7 +248,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 return null;
             }
 
-        }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations(anyList(), anyList(), anyList());
+        }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations
+                (anyListOf(Guid.class), anyListOf(Long.class), anyListOf(String.class));
 
         doAnswer(new Answer<Object>() {
             @Override
