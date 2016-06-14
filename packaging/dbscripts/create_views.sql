@@ -3603,8 +3603,7 @@ INNER JOIN
 CREATE OR REPLACE VIEW numa_node_assignment_view AS
 
 SELECT vm_vds_numa_node_map.vm_numa_node_id AS assigned_vm_numa_node_id,
-    vm_vds_numa_node_map.is_pinned AS is_pinned,
-    vm_vds_numa_node_map.vds_numa_node_index AS last_run_in_vds_numa_node_index,
+    vm_vds_numa_node_map.vds_numa_node_index AS run_in_vds_numa_node_index,
     vm_numa_node.vm_id AS vm_numa_node_vm_id,
     vm_numa_node.numa_node_index AS vm_numa_node_index,
     vm_numa_node.mem_total AS vm_numa_node_mem_total,
@@ -3615,24 +3614,10 @@ SELECT vm_vds_numa_node_map.vm_numa_node_id AS assigned_vm_numa_node_id,
     vm_numa_node.cpu_user AS vm_numa_node_cpu_user,
     vm_numa_node.cpu_idle AS vm_numa_node_cpu_idle,
     vm_numa_node.usage_cpu_percent AS vm_numa_node_usage_cpu_percent,
-    vm_numa_node.distance AS vm_numa_node_distance,
-    run_in_vds_numa_node.numa_node_id AS run_in_vds_numa_node_id,
-    run_in_vds_numa_node.vds_id AS run_in_vds_id,
-    run_in_vds_numa_node.numa_node_index AS run_in_vds_numa_node_index,
-    run_in_vds_numa_node.mem_total AS run_in_vds_numa_node_mem_total,
-    run_in_vds_numa_node.cpu_count AS run_in_vds_numa_node_cpu_count,
-    run_in_vds_numa_node.mem_free AS run_in_vds_numa_node_mem_free,
-    run_in_vds_numa_node.usage_mem_percent AS run_in_vds_numa_node_usage_mem_percent,
-    run_in_vds_numa_node.cpu_sys AS run_in_vds_numa_node_cpu_sys,
-    run_in_vds_numa_node.cpu_user AS run_in_vds_numa_node_cpu_user,
-    run_in_vds_numa_node.cpu_idle AS run_in_vds_numa_node_cpu_idle,
-    run_in_vds_numa_node.usage_cpu_percent AS run_in_vds_numa_node_usage_cpu_percent,
-    run_in_vds_numa_node.distance AS run_in_vds_numa_node_distance
+    vm_numa_node.distance AS vm_numa_node_distance
 FROM vm_vds_numa_node_map
 LEFT JOIN numa_node AS vm_numa_node
-    ON vm_vds_numa_node_map.vm_numa_node_id = vm_numa_node.numa_node_id
-LEFT JOIN numa_node AS run_in_vds_numa_node
-    ON vm_vds_numa_node_map.vds_numa_node_id = run_in_vds_numa_node.numa_node_id;
+    ON vm_vds_numa_node_map.vm_numa_node_id = vm_numa_node.numa_node_id;
 
 -- Numa node with vds group view
 CREATE OR REPLACE VIEW numa_node_with_cluster_view AS

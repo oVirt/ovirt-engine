@@ -23,8 +23,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,13 +109,11 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         }
         Map<Integer, VdsNumaNode> indexMap = toMap(pNodes);
         for (VmNumaNode vNode : nodes) {
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : vNode.getVdsNumaNodeList()) {
-                if (pair.getSecond() != null && pair.getSecond().getFirst()) {
-                    if (vNode.getMemTotal() > indexMap.get(pair.getSecond().getSecond())
-                            .getNumaNodeStatistics()
-                            .getMemFree()) {
-                        return false;
-                    }
+            for (Integer pinnedIndex : vNode.getVdsNumaNodeList()) {
+                if (vNode.getMemTotal() > indexMap.get(pinnedIndex)
+                        .getNumaNodeStatistics()
+                        .getMemFree()) {
+                    return false;
                 }
             }
         }
@@ -138,10 +134,8 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         }
         // iterate through the nodes, and see if there's at least one pinned node.
         for (VmNumaNode vmNumaNode : nodes) {
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                if (pair.getSecond() != null && pair.getSecond().getFirst()) {
-                    return true;
-                }
+            if (!vmNumaNode.getVdsNumaNodeList().isEmpty()) {
+                return true;
             }
         }
         return false;

@@ -23,8 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 
 @Singleton
@@ -49,11 +47,9 @@ public class NumaValidator {
 
         // check single node pinned
         if (vmNumaNodes.size() == 1) {
-            List<Pair<Guid, Pair<Boolean, Integer>>> vdsNumaNodeList = vmNumaNodes.get(0).getVdsNumaNodeList();
+            List<Integer> vdsNumaNodeList = vmNumaNodes.get(0).getVdsNumaNodeList();
             boolean pinnedToSingleNode = vdsNumaNodeList != null
-                    && vdsNumaNodeList.size() == 1
-                    && vdsNumaNodeList.get(0).getSecond() != null
-                    && vdsNumaNodeList.get(0).getSecond().getFirst();
+                    && vdsNumaNodeList.size() == 1;
             if (pinnedToSingleNode) {
                 return ValidationResult.VALID;
             }
@@ -185,18 +181,16 @@ public class NumaValidator {
         }
         boolean memStrict = vm.getNumaTuneMode() == NumaTuneMode.STRICT;
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
-            // Pair<vdsNumaNode#id, Pair<pinned, vdsNumaNode#index>>
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                if (pair.getSecond() == null || pair.getSecond().getSecond() == null) {
+            for (Integer pinnedIndex : vmNumaNode.getVdsNumaNodeList()) {
+                if (pinnedIndex == null) {
                     return new ValidationResult(EngineMessage.VM_NUMA_NODE_PINNED_INDEX_ERROR);
                 }
-                Integer hostNodeIndex = pair.getSecond().getSecond();
-                if (pair.getSecond().getFirst() && !hostNodeMap.containsKey(hostNodeIndex)) {
+                if (!hostNodeMap.containsKey(pinnedIndex)) {
                     return new ValidationResult(EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX,
-                            String.format("$vdsNodeIndex %d", hostNodeIndex));
+                            String.format("$vdsNodeIndex %d", pinnedIndex));
                 }
                 if (memStrict) {
-                    final VdsNumaNode hostNumaNode = hostNodeMap.get(hostNodeIndex);
+                    final VdsNumaNode hostNumaNode = hostNodeMap.get(pinnedIndex);
                     if (vmNumaNode.getMemTotal() > hostNumaNode.getMemTotal()) {
                         return new ValidationResult(EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
                     }

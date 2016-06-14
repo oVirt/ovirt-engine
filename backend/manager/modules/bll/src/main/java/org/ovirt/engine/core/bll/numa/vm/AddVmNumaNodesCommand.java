@@ -8,9 +8,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
@@ -28,31 +26,13 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
     @Override
     protected void executeCommand() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        List<VdsNumaNode> vdsNumaNodes = getVdsNumaNodes();
+        vmNumaNodes.stream()
+                .forEach(node -> node.setId(Guid.newGuid()));
 
-        List<VmNumaNode> nodes = new ArrayList<>();
-        for (VmNumaNode vmNumaNode : vmNumaNodes) {
-            vmNumaNode.setId(Guid.newGuid());
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                if (pair.getSecond() != null && pair.getSecond().getSecond() != null) {
-                    int index = pair.getSecond().getSecond();
-                    // if pinned set pNode
-                    if (pair.getSecond().getFirst()) {
-                        for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
-                            if (vdsNumaNode.getIndex() == index) {
-                                pair.setFirst(vdsNumaNode.getId());
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            nodes.add(vmNumaNode);
-        }
-        vmNumaNodeDao.massSaveNumaNode(nodes, null, getVm().getId());
+        vmNumaNodeDao.massSaveNumaNode(vmNumaNodes, null, getVm().getId());
 
         // Used for restful API for reture first NUMA node GUID
-        setActionReturnValue(nodes.get(0).getId());
+        setActionReturnValue(vmNumaNodes.get(0).getId());
 
         setSucceeded(true);
     }

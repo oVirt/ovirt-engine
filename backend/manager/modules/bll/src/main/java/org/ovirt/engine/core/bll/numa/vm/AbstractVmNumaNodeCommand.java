@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,10 +7,8 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 
 public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationParameters> extends VmCommand<T> {
@@ -62,16 +59,6 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
 
     protected void setVmNumaNodesForValidation(List<VmNumaNode> vmNumaNodesForValidation) {
         this.vmNumaNodesForValidation = vmNumaNodesForValidation;
-    }
-
-    protected List<VdsNumaNode> getVdsNumaNodes() {
-        if (!getVm().getDedicatedVmForVdsList().isEmpty()) {
-            Guid vdsId = getVm().getDedicatedVmForVdsList().get(0);
-            if (vdsId != null) {
-                return vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
-            }
-        }
-        return Arrays.asList();
     }
 
     protected NumaValidator getNumaValidator() {

@@ -11,9 +11,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
@@ -40,25 +38,7 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
     @Override
     protected void executeCommand() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        List<VdsNumaNode> vdsNumaNodes = getVdsNumaNodes();
-
-        List<VmNumaNode> nodes = new ArrayList<>();
-        for (VmNumaNode vmNumaNode : vmNumaNodes) {
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                if (pair.getSecond() != null && pair.getSecond().getFirst()) {
-                    int index = pair.getSecond().getSecond();
-                    for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
-                        if (vdsNumaNode.getIndex() == index) {
-                            pair.setFirst(vdsNumaNode.getId());
-                            break;
-                        }
-                    }
-                }
-            }
-            nodes.add(vmNumaNode);
-        }
-        vmNumaNodeDao.massUpdateNumaNode(nodes);
-
+        vmNumaNodeDao.massUpdateNumaNode(vmNumaNodes);
         setSucceeded(true);
     }
 

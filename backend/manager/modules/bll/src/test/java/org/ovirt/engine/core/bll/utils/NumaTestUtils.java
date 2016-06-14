@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -46,16 +45,12 @@ public class NumaTestUtils {
 
     public static VmNumaNode createVmNumaNode(int index, List<VdsNumaNode> vdsNumaNodes) {
         VmNumaNode numaNode = createVmNumaNode(index);
-        final List<Pair<Guid, Pair<Boolean, Integer>>> numaPinning = new ArrayList<>();
+        final List<Integer> numaPinning = new ArrayList<>();
         for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
-            numaPinning.add(toWeirdPair(vdsNumaNode));
+            numaPinning.add(vdsNumaNode.getIndex());
         }
         numaNode.setVdsNumaNodeList(numaPinning);
         return numaNode;
-    }
-
-    public static Pair<Guid, Pair<Boolean, Integer>> toWeirdPair(final VdsNumaNode vdsNumaNode) {
-        return new Pair<>(vdsNumaNode.getId(), new Pair<>(true, vdsNumaNode.getIndex()));
     }
 
     public static void mockVdsNumaNodeDao(final VdsNumaNodeDao vdsNumaNodeDao, VdsNumaNode... vdsNumaNodes) {

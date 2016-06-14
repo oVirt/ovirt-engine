@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Core;
@@ -14,7 +15,6 @@ import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NumaMapper {
@@ -65,14 +65,9 @@ public class NumaMapper {
         }
         if (entity.getVdsNumaNodeList() != null && entity.getVdsNumaNodeList().size() > 0) {
             NumaNodePins pins = new NumaNodePins();
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : entity.getVdsNumaNodeList()) {
+            for (Integer pinnedIndex : entity.getVdsNumaNodeList()) {
                 NumaNodePin pin = new NumaNodePin();
-                pin.setHostNumaNode(new NumaNode());
-                if (pair.getFirst() != null) {
-                    pin.getHostNumaNode().setId(pair.getFirst().toString());
-                }
-                pin.setPinned(pair.getSecond().getFirst());
-                pin.setIndex(pair.getSecond().getSecond());
+                pin.setIndex(pinnedIndex);
                 pins.getNumaNodePins().add(pin);
             }
             model.setNumaNodePins(pins);
@@ -110,18 +105,9 @@ public class NumaMapper {
             entity.setMemTotal(model.getMemory());
         }
         if (model.isSetNumaNodePins()) {
-            List<Pair<Guid, Pair<Boolean, Integer>>> pairs = new ArrayList<>();
-            for (NumaNodePin pin : model.getNumaNodePins().getNumaNodePins()) {
-                Pair<Boolean, Integer> first = new Pair<>(pin.isPinned(), pin.getIndex());
-                Guid guid = null;
-                NumaNode node = pin.getHostNumaNode();
-                if (node != null && node.getId() != null) {
-                    guid = GuidUtils.asGuid(pin.getHostNumaNode().getId());
-                }
-                Pair<Guid, Pair<Boolean, Integer>> second = new Pair<>(guid, first);
-                pairs.add(second);
-            }
-            entity.setVdsNumaNodeList(pairs);
+            entity.setVdsNumaNodeList(model.getNumaNodePins().getNumaNodePins().stream()
+                    .map(NumaNodePin::getIndex)
+                    .collect(Collectors.toList()));
         }
         return entity;
     }

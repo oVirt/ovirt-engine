@@ -28,7 +28,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
                 getCallsHandler().executeReadList("GetNumaNodeByVmId",
                         vmNumaNodeCpuRowMapper, parameterSource);
 
-        Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
+        Map<Guid, List<Integer>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
 
         vmNumaNodes.stream().filter(node -> vmNumaNodesPinMap.containsKey(node.getId())).forEach(
                 node -> node.setVdsNumaNodeList(vmNumaNodesPinMap.get(node.getId())));
@@ -53,14 +53,14 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
         return numaNodesCpusMap;
     }
 
-    private Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> getAllVmNumaNodePinInfo() {
-        List<Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>>> numaNodesAssign =
+    private Map<Guid, List<Integer>> getAllVmNumaNodePinInfo() {
+        List<Pair<Guid, Integer>> numaNodesAssign =
                 getCallsHandler().executeReadList("GetAllAssignedNumaNodeInfomation",
                         vmNumaNodeAssignmentRowMapper, null);
 
-        Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodesPinMap = new HashMap<>();
+        Map<Guid, List<Integer>> vmNumaNodesPinMap = new HashMap<>();
 
-        for (Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>> pair : numaNodesAssign) {
+        for (Pair<Guid, Integer> pair : numaNodesAssign) {
             if (!vmNumaNodesPinMap.containsKey(pair.getFirst())) {
                 vmNumaNodesPinMap.put(pair.getFirst(), new ArrayList<>());
             }
@@ -98,11 +98,9 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
     private static final RowMapper<Pair<Guid, Integer>> vmNumaNodeCpusRowMapper =
             (rs, rowNum) -> new Pair<>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
 
-    private static final RowMapper<Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodeAssignmentRowMapper =
+    private static final RowMapper<Pair<Guid, Integer>> vmNumaNodeAssignmentRowMapper =
             (rs, rowNum) -> new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"),
-                    new Pair<>(getGuid(rs, "run_in_vds_numa_node_id"),
-                            new Pair<>(rs.getBoolean("is_pinned"),
-                            rs.getInt("run_in_vds_numa_node_index"))));
+                    rs.getInt("run_in_vds_numa_node_index"));
 
     @Override
     public List<Pair<Guid, VmNumaNode>> getVmNumaNodeInfoByClusterId(Guid cluster) {
@@ -115,7 +113,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
 
         Map<Guid, List<Integer>> numaNodesCpusMap = getAllNumaNodeCpuMap();
 
-        Map<Guid, List<Pair<Guid, Pair<Boolean, Integer>>>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
+        Map<Guid, List<Integer>> vmNumaNodesPinMap = getAllVmNumaNodePinInfo();
 
         for (Pair<Guid, VmNumaNode> pair : vmNumaNodes) {
             if (numaNodesCpusMap.containsKey(pair.getSecond().getId())) {

@@ -6,8 +6,6 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 /**
@@ -26,10 +24,8 @@ public class VNodeModel extends Model {
         this.vm = vm;
         this.vmNumaNode = vmNumaNode;
         if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()){
-            pinned = vmNumaNode.getVdsNumaNodeList().get(0).getSecond().getFirst();
-        }
-        if (pinned){
-            hostNodeIndex = vmNumaNode.getVdsNumaNodeList().get(0).getSecond().getSecond();
+            hostNodeIndex = vmNumaNode.getVdsNumaNodeList().get(0);
+            pinned = true;
         }
     }
 
@@ -75,9 +71,7 @@ public class VNodeModel extends Model {
         newNode.setMemTotal(vmNumaNode.getMemTotal());
         newNode.setCpuIds(vmNumaNode.getCpuIds());
         if (isPinned()) {
-            newNode.setVdsNumaNodeList(Arrays.asList(
-                    new Pair<Guid, Pair<Boolean, Integer>>(null, new Pair(pinned, hostNodeIndex)))
-            );
+            newNode.setVdsNumaNodeList(Arrays.asList(hostNodeIndex));
         }
         return newNode;
     }

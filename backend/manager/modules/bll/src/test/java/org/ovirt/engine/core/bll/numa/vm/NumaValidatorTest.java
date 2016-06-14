@@ -144,7 +144,7 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectMissingPinningEntry() {
-        vm.getvNumaNodeList().get(0).getVdsNumaNodeList().get(0).getSecond().setSecond(null);
+        vm.getvNumaNodeList().get(0).getVdsNumaNodeList().set(0, null);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_PINNED_INDEX_ERROR);
     }

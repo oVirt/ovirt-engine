@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -41,7 +39,6 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
                         updateCpus(vmNumaNode,
                                 Integer.parseInt(model.getTotalCPUCores().getEntity()) / nodeCount,
                                 cpuCount);
-                updateNumaPinning(vmNumaNode, i);
             }
             vm.setvNumaNodeList(nodeList);
         }
@@ -58,15 +55,5 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
         }
         vmNumaNode.setCpuIds(coreList);
         return cpuCount;
-    }
-
-    private void updateNumaPinning(VmNumaNode vmNumaNode, int index) {
-        if (vmNumaNode.getVdsNumaNodeList() == null) {
-            ArrayList<Pair<Guid, Pair<Boolean, Integer>>> list = new ArrayList<>();
-            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<>();
-            pair.setSecond(new Pair<>(false, index));
-            list.add(pair);
-            vmNumaNode.setVdsNumaNodeList(list);
-        }
     }
 }

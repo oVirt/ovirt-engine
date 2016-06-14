@@ -208,9 +208,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION InsertNumaNodeMap (
     v_id UUID,
     v_vm_numa_node_id UUID,
-    v_vds_numa_node_id UUID,
-    v_vds_numa_node_index SMALLINT,
-    v_is_pinned BOOLEAN
+    v_vds_numa_node_index SMALLINT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -218,16 +216,12 @@ BEGIN
         INSERT INTO vm_vds_numa_node_map (
             id,
             vm_numa_node_id,
-            vds_numa_node_id,
-            vds_numa_node_index,
-            is_pinned
+            vds_numa_node_index
             )
         VALUES (
             v_id,
             v_vm_numa_node_id,
-            v_vds_numa_node_id,
-            v_vds_numa_node_index,
-            v_is_pinned
+            v_vds_numa_node_index
             );
     END;
 

@@ -8916,29 +8916,16 @@
     <table name="vm_vds_numa_node_map">
         <column>id</column>
         <column>vm_numa_node_id</column>
-        <column>vds_numa_node_id</column>
         <column>vds_numa_node_index</column>
-        <column>is_pinned</column>
         <row>
             <value>3c2b81e6-5080-4ad1-86a1-cf513b15b525</value>
             <value>3c2b81e6-5080-4ad1-86a1-cf513b15b517</value>
-            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b515</value>
             <value>0</value>
-            <value>true</value>
         </row>
         <row>
             <value>3c2b81e6-5080-4ad1-86a1-cf513b15b526</value>
             <value>3c2b81e6-5080-4ad1-86a1-cf513b15b517</value>
-            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b516</value>
             <value>1</value>
-            <value>true</value>
-        </row>
-        <row>
-            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b527</value>
-            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b518</value>
-            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b515</value>
-            <value>0</value>
-            <value>false</value>
         </row>
     </table>
 

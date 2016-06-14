@@ -34,7 +34,7 @@ public class NumaSettingFactory {
             vdsNumaNodeCpus.put(node.getIndex(), node.getCpuIds());
         }
         for (VmNumaNode node : vmNodes) {
-            List<Integer> pinnedNodeIndexes = NumaUtils.getPinnedNodeIndexList(node.getVdsNumaNodeList());
+            List<Integer> pinnedNodeIndexes = node.getVdsNumaNodeList();
             if (!pinnedNodeIndexes.isEmpty()) {
                 Set <Integer> totalPinnedVdsCpus = new LinkedHashSet<>();
                 for (Integer vCpu : node.getCpuIds()) {
@@ -56,7 +56,7 @@ public class NumaSettingFactory {
         Set<Integer> vmNumaNodePinInfo = new HashSet<>();
         for (VmNumaNode node : vmNumaNodes) {
             if (!node.getVdsNumaNodeList().isEmpty()) {
-                vmNumaNodePinInfo.addAll(NumaUtils.getPinnedNodeIndexList(node.getVdsNumaNodeList()));
+                vmNumaNodePinInfo.addAll(node.getVdsNumaNodeList());
             }
         }
         if (!vmNumaNodePinInfo.isEmpty()) {

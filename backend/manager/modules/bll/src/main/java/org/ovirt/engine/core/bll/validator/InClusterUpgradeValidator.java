@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.OS;
 
 @Singleton
@@ -74,7 +73,7 @@ public class InClusterUpgradeValidator {
             errors.addAll(toVmEngineMessage(vm, EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_CPUS_PINNED));
         }
         for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
-            if (!NumaUtils.getPinnedNodeIndexList(vmNumaNode.getVdsNumaNodeList()).isEmpty()) {
+            if (!vmNumaNode.getVdsNumaNodeList().isEmpty()) {
                 errors.addAll(toVmEngineMessage(vm, EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_NUMA_PINNED));
                 break;
             }

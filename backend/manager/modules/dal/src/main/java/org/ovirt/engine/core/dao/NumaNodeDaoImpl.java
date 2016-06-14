@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -31,7 +30,7 @@ public abstract class NumaNodeDaoImpl<T extends VdsNumaNode> extends BaseDao imp
             if (node instanceof VmNumaNode) {
                 vNodeToPnodeExecutions.addAll(((VmNumaNode) node).getVdsNumaNodeList()
                         .stream()
-                        .map(pair -> createVnodeToPnodeParametersMapper(pair, node.getId()))
+                        .map(index -> createVnodeToPnodeParametersMapper(index, node.getId()))
                         .collect(Collectors.toList()));
             }
         }
@@ -69,7 +68,7 @@ public abstract class NumaNodeDaoImpl<T extends VdsNumaNode> extends BaseDao imp
                 vNodeToPnodeDeletions.add(getCustomMapSqlParameterSource().addValue("vm_numa_node_id", node.getId()));
                 vNodeToPnodeInsertions.addAll(((VmNumaNode) node).getVdsNumaNodeList()
                         .stream()
-                        .map(pair -> createVnodeToPnodeParametersMapper(pair, node.getId()))
+                        .map(index -> createVnodeToPnodeParametersMapper(index, node.getId()))
                         .collect(Collectors.toList()));
             }
         }
@@ -122,13 +121,11 @@ public abstract class NumaNodeDaoImpl<T extends VdsNumaNode> extends BaseDao imp
     }
 
     protected MapSqlParameterSource createVnodeToPnodeParametersMapper(
-            Pair<Guid, Pair<Boolean, Integer>> pNode, Guid vNodeId) {
+            Integer pinnedIndex, Guid vNodeId) {
         return getCustomMapSqlParameterSource()
                 .addValue("id", Guid.newGuid())
                 .addValue("vm_numa_node_id", vNodeId)
-                .addValue("vds_numa_node_id", pNode.getFirst())
-                .addValue("vds_numa_node_index", pNode.getSecond().getSecond())
-                .addValue("is_pinned", pNode.getSecond().getFirst());
+                .addValue("vds_numa_node_index", pinnedIndex);
     }
 
 
