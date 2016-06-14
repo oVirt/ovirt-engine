@@ -16,7 +16,6 @@ import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.common.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -167,7 +166,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             StorageDomain domain = new StorageDomain();
             domain.setId(domainId);
             domain.setStoragePoolIsoMapData(new StoragePoolIsoMap(domainId, pool.getId(), StorageDomainStatus.Active));
-            poolDomainsOvfInfo.put(domainId, new Pair<>(Arrays.asList(ovfInfo), domain));
+            poolDomainsOvfInfo.put(domainId, new Pair<>(Collections.singletonList(ovfInfo), domain));
         }
     }
 
@@ -295,7 +294,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private List<StoragePool> buildStoragePoolsList() {
-        return Arrays.asList(pool1);
+        return Collections.singletonList(pool1);
     }
 
     private VM createVm(Guid id, VMStatus status) {
@@ -450,7 +449,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
         verifyCorrectOvfDataUpdaterRun(idsThatNeededToBeUpdated);
-        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.emptyMap());
+        verifyOvfUpdatedForSupportedPools(Collections.singletonList(pool1.getId()), Collections.emptyMap());
     }
 
     private void executeCommand() {
@@ -477,7 +476,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         needToBeUpdated.addAll(templatesGuids);
         verifyCorrectOvfDataUpdaterRun(needToBeUpdated);
 
-        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.emptyMap());
+        verifyOvfUpdatedForSupportedPools(Collections.singletonList(pool1.getId()), Collections.emptyMap());
     }
 
     @Test
@@ -619,7 +618,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         executeCommand();
         verify(command, never()).performOvfUpdate(anyMap());
         Map<Guid, List<Guid>> domainsRequiredUpdateForPool =
-                Collections.singletonMap(poolId, Arrays.asList(ovfInfo.getStorageDomainId()));
-        verifyOvfUpdatedForSupportedPools(Arrays.asList(poolId), domainsRequiredUpdateForPool);
+                Collections.singletonMap(poolId, Collections.singletonList(ovfInfo.getStorageDomainId()));
+        verifyOvfUpdatedForSupportedPools(Collections.singletonList(poolId), domainsRequiredUpdateForPool);
     }
 }
