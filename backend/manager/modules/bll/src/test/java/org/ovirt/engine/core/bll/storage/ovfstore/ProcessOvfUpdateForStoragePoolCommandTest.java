@@ -466,7 +466,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
         verifyCorrectOvfDataUpdaterRun(idsThatNeededToBeUpdated);
-        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.<Guid, List<Guid>> emptyMap());
+        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.emptyMap());
     }
 
     private void executeCommand() {
@@ -493,7 +493,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         needToBeUpdated.addAll(templatesGuids);
         verifyCorrectOvfDataUpdaterRun(needToBeUpdated);
 
-        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.<Guid, List<Guid>> emptyMap());
+        verifyOvfUpdatedForSupportedPools(Arrays.asList(pool1.getId()), Collections.emptyMap());
     }
 
     @Test
@@ -511,7 +511,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         executeCommand();
         verify(command, never()).performOvfUpdate(anyMap());
-        verifyCorrectOvfDataUpdaterRun(Collections.<Guid> emptyList());
+        verifyCorrectOvfDataUpdaterRun(Collections.emptyList());
     }
 
     @Test
@@ -539,7 +539,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         List<Guid> needToBeUpdated = new LinkedList<>(vmGuids);
         needToBeUpdated.addAll(templatesGuids);
         verifyCorrectOvfDataUpdaterRun(needToBeUpdated);
-        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
+        verifyOvfUpdatedForSupportedPools(Collections.emptyList(), Collections.emptyMap());
     }
 
     private int numberOfTimesToBeCalled(int size, boolean isBothVmAndTemplates) {
@@ -567,8 +567,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         command.executeCommand();
         verify(command, never()).performOvfUpdate(anyMap());
-        verifyCorrectOvfDataUpdaterRun(Collections.<Guid> emptyList());
-        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
+        verifyCorrectOvfDataUpdaterRun(Collections.emptyList());
+        verifyOvfUpdatedForSupportedPools(Collections.emptyList(), Collections.emptyMap());
     }
 
     @Test
@@ -597,7 +597,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         neededToBeUpdated.addAll(templatesGuidsUnlocked);
         verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
         verifyCorrectOvfDataUpdaterRun(neededToBeUpdated);
-        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
+        verifyOvfUpdatedForSupportedPools(Collections.emptyList(), Collections.emptyMap());
     }
 
     @Test
@@ -619,8 +619,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
-        verifyCorrectOvfDataUpdaterRun(Collections.<Guid> emptyList());
-        verifyOvfUpdatedForSupportedPools(Collections.<Guid> emptyList(), Collections.<Guid, List<Guid>> emptyMap());
+        verifyCorrectOvfDataUpdaterRun(Collections.emptyList());
+        verifyOvfUpdatedForSupportedPools(Collections.emptyList(), Collections.emptyMap());
     }
 
     @Test
@@ -629,9 +629,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         StorageDomainOvfInfo ovfInfo = poolDomainsOvfInfo.entrySet().iterator().next().getValue().getFirst().get(0);
         ovfInfo.setStatus(StorageDomainOvfInfoStatus.OUTDATED);
         initTestForPool(pool1,
-                Collections.<Guid> emptyList(),
-                Collections.<Guid> emptyList(),
-                Collections.<Guid> emptyList());
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList());
         executeCommand();
         verify(command, never()).performOvfUpdate(anyMap());
         Map<Guid, List<Guid>> domainsRequiredUpdateForPool =
