@@ -3390,11 +3390,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         }
 
-        getOverrideMigrationDowntime().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithNoMigrationPolicy());
+        getOverrideMigrationDowntime().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
         boolean overrideDowntime = Boolean.TRUE.equals(getOverrideMigrationDowntime().getEntity());
-        getMigrationDowntime().setIsChangeable(!hasMigrationPolicy && overrideDowntime, constants.availableOnlyWithNoMigrationPolicy());
-        getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithNoMigrationPolicy());
-        getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithNoMigrationPolicy());
+        getMigrationDowntime().setIsChangeable(!hasMigrationPolicy && overrideDowntime, constants.availableOnlyWithLegacyPolicy());
+        getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+        getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
     }
 
 }

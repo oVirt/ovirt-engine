@@ -203,6 +203,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             + "<p><b>Custom</b> User defined.</p>")
     SafeHtml migrationBandwidthLimit();
 
+    @Template("Defines under which conditions the virtual machines will be migrated.")
+    SafeHtml clusterPopupResiliencePolicyInfo();
+
     @Template("{0} {1} {2}")
     SafeHtml hostOutOfSyncPreviewSentence(SafeHtml host, SafeHtml outOfsyncSentence, SafeHtml dc);
 }

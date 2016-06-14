@@ -1378,14 +1378,33 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     public void initMigrationPolicies(boolean isEdit) {
         List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies();
         getMigrationPolicies().setItems(policies);
-        if (isEdit) {
-            for (MigrationPolicy policy : policies) {
-                if (Objects.equals(policy.getId(), getEntity().getMigrationPolicyId())) {
-                    getMigrationPolicies().setSelectedItem(policy);
-                    break;
-                }
+
+        MigrationPolicy migrationPolicy = isEdit ?
+                findMigrationPolicyById(getEntity().getMigrationPolicyId(), policies) :
+                findFirstNonEmptyMigrationPolicy(policies);
+
+        getMigrationPolicies().setSelectedItem(migrationPolicy != null ? migrationPolicy :
+                findMigrationPolicyById(NoMigrationPolicy.ID, policies));
+    }
+
+    private MigrationPolicy findFirstNonEmptyMigrationPolicy(List<MigrationPolicy> policies) {
+        for (MigrationPolicy policy : policies) {
+            if (!Objects.equals(policy.getId(), NoMigrationPolicy.ID)) {
+                return policy;
             }
         }
+
+        return null;
+    }
+
+    private MigrationPolicy findMigrationPolicyById(Guid id, List<MigrationPolicy> policies) {
+        for (MigrationPolicy policy : policies) {
+            if (Objects.equals(policy.getId(), id)) {
+                return policy;
+            }
+        }
+
+        return null;
     }
 
     private void initSwitchType() {
@@ -1690,8 +1709,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 && !NoMigrationPolicy.ID.equals(getMigrationPolicies().getSelectedItem().getId());
 
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithNoMigrationPolicy());
-        getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithNoMigrationPolicy());
+        getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+        getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
     }
 
     private void architectureSelectedItemChanged(EventArgs args) {

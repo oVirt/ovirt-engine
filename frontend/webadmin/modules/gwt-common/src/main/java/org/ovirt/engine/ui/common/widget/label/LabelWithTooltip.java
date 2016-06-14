@@ -61,4 +61,8 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
     public Widget asWidget() {
         return tooltip.asWidget();
     }
+
+    public void setAddStyleNames(String style) {
+        getLabel().addStyleName(style);
+    }
 }
