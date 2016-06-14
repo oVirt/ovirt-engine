@@ -117,12 +117,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     log.warn("Error creating storage pool on vds '{}' - continuing",
                             vds.getName());
                     continue;
-                } else {
-                    // storage pool creation succeeded or failed
-                    // but didn't throw exception
-                    result = retVal.getSucceeded();
-                    break;
                 }
+                // storage pool creation succeeded or failed
+                // but didn't throw exception
+                result = retVal.getSucceeded();
+                break;
             }
 
             setSucceeded(result);
