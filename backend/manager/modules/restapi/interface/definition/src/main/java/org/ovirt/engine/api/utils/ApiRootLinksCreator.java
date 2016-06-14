@@ -66,6 +66,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("openstacknetworkproviders", baseUri));
         links.add(createLink("katelloerrata", baseUri));
         links.add(createLink("affinitylabels", baseUri));
+        links.add(createLink("clusterlevels", baseUri));
         return links;
     }
 
