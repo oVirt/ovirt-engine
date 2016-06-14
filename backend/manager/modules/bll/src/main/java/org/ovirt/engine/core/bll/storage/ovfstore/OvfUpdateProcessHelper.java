@@ -44,7 +44,7 @@ public class OvfUpdateProcessHelper {
      */
     public String buildMetadataDictionaryForVm(VM vm,
                                                   Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary,
-                                                  ArrayList<DiskImage> allVmImages) {
+                                                  List<DiskImage> allVmImages) {
         String vmMeta = generateVmMetadata(vm, allVmImages);
         metaDictionary.put(
                 vm.getId(),
@@ -119,7 +119,7 @@ public class OvfUpdateProcessHelper {
         }
     }
 
-    protected String generateVmMetadata(VM vm, ArrayList<DiskImage> AllVmImages) {
+    protected String generateVmMetadata(VM vm, List<DiskImage> AllVmImages) {
         return ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
     }
 

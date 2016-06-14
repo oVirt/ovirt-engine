@@ -178,7 +178,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 return vm.getId().toString();
             }
 
-        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), any(ArrayList.class));
+        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyList());
 
         doAnswer(new Answer<String>() {
             @Override
