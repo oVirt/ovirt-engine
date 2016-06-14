@@ -37,6 +37,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.ClusterLevel;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
@@ -138,6 +139,8 @@ import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
+import org.ovirt.engine.api.resource.ClusterLevelResource;
+import org.ovirt.engine.api.resource.ClusterLevelsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.CpuProfileResource;
@@ -736,6 +739,10 @@ public class LinkHelper {
         map = new LocationByParentMap();
         map.add(SshPublicKeyResource.class, SshPublicKeysResource.class, User.class);
         TYPES.put(SshPublicKey.class, map);
+
+        map = new LocationByParentMap();
+        map.add(ClusterLevelResource.class, ClusterLevelsResource.class, NO_PARENT);
+        TYPES.put(ClusterLevel.class, map);
     }
 
     /**

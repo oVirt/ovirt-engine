@@ -39,6 +39,7 @@ public class V3ApiOutAdapter implements V3Adapter<Api, V3API> {
 
     static {
         RELS_TO_REMOVE.add("affinitylabels");
+        RELS_TO_REMOVE.add("clusterlevels");
     }
 
     @Override

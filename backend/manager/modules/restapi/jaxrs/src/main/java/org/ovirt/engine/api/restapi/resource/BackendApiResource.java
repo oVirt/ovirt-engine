@@ -638,7 +638,6 @@ public class BackendApiResource
 
     @Override
     public ClusterLevelsResource getClusterLevelsResource() {
-        // TODO: Implement this method.
-        return null;
+        return inject(new BackendClusterLevelsResource());
     }
 }

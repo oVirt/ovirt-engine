@@ -1569,7 +1569,7 @@ added to snapshot entity: `snapshot.snapshot_type`.
 ----
 <snapshot>
   ...
-  <snapshot_type>regualr|active|stateless|preview</snapshot_type>
+  <snapshot_type>regular|active|stateless|preview</snapshot_type>
   ...
 </snapshot>
 ----
@@ -1613,4 +1613,60 @@ moved to the enclosing `network_attachment`:
     ...
   </reported_configurations>
 </network_attachment>
+
+=== Replaced `capabilities` with `clusterlevels`
+
+The top level `capabilities` collection has been replaced by the new
+`clusterlevels` collection. This new collection will contain the
+information that isn't available in the model, like the list of CPU
+types available for each cluster level:
+
+[source]
+----
+GET /clusterlevels
+----
+
+This will return a list of `ClusterLevel` objects containing the details
+for all the cluster levels supported by the system:
+
+[source,xml]
+----
+<cluster_levels>
+  <cluster_level id="3.6" href="/clusterlevels/3.6">
+    <cpu_types>
+      <cpu_type>
+        <name>Intel Conroe Family</name>
+        <level>2</level>
+        <architecture>x86_64</architecture>
+      </cpu_type>
+      ...
+    </cpu_types>
+    ...
+  </cluster_level>
+</cluster_levels>
+----
+
+Each specific cluster level has it's own subresource, identified by the
+version itself:
+
+[source]
+----
+GET /clusterlevels/3.6
+----
+
+This will return the details of that version:
+
+[source,xml]
+----
+<cluster_level id="3.6" href="/clusterlevels/3.6">
+  <cpu_types>
+    <cpu_type>
+      <name>Intel Conroe Family</name>
+      <level>2</level>
+      <architecture>x86_64</architecture>
+    </cpu_type>
+    ...
+  </cpu_types>
+  ...
+</cluster_level>
 ----
