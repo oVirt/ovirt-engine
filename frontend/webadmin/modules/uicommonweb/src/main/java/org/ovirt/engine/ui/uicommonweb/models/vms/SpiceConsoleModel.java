@@ -324,6 +324,7 @@ public class SpiceConsoleModel extends ConsoleModel {
                         configuredOptions.setRemapCtrlAltDelete(options.isRemapCtrlAltDelete());
                         configuredOptions.setTitle(getClientTitle());
                         configuredOptions.setVmName(getEntity().getName());
+                        configuredOptions.setFullScreen(options.isFullScreen());
                         configuredOptions.setAdminConsole(getConfigurator().getSpiceAdminConsole()
                                                           ? true
                                                           : !getEntity().getHasSpiceDriver());
