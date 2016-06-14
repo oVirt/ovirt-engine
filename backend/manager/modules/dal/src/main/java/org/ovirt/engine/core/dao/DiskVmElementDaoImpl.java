@@ -24,18 +24,22 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
         super("DiskVmElement");
     }
 
-    @Override protected MapSqlParameterSource createFullParametersMapper(DiskVmElement entity) {
-        return createIdParameterMapper(entity.getId()).addValue("is_boot", entity.isBoot())
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(DiskVmElement entity) {
+        return createIdParameterMapper(entity.getId())
+                .addValue("is_boot", entity.isBoot())
                 .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()));
     }
 
-    @Override protected MapSqlParameterSource createIdParameterMapper(VmDeviceId id) {
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(VmDeviceId id) {
         return getCustomMapSqlParameterSource()
                 .addValue("disk_id", id.getDeviceId())
                 .addValue("vm_id", id.getVmId());
     }
 
-    @Override protected RowMapper<DiskVmElement> createEntityRowMapper() {
+    @Override
+    protected RowMapper<DiskVmElement> createEntityRowMapper() {
         return DiskVmElementRowMapper.INSTANCE;
     }
 
@@ -61,12 +65,15 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
 
     public List<DiskVmElement> getAllForVm(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmId);
-        return getCallsHandler().executeReadList("GetDiskVmElementsForVm", DiskVmElementRowMapper.INSTANCE, parameterSource);
+        return getCallsHandler().executeReadList("GetDiskVmElementsForVm",
+                DiskVmElementRowMapper.INSTANCE,
+                parameterSource);
     }
 
     public List<DiskVmElement> getAllPluggedToVm(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmId);
-        return getCallsHandler().executeReadList("GetDiskVmElementsPluggedToVm", DiskVmElementRowMapper.INSTANCE, parameterSource);
+        return getCallsHandler().executeReadList("GetDiskVmElementsPluggedToVm",
+                DiskVmElementRowMapper.INSTANCE,
+                parameterSource);
     }
-
 }
