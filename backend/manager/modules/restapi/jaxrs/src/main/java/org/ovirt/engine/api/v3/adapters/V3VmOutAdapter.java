@@ -16,13 +16,17 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
+import static java.util.stream.Collectors.toList;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Ips;
+import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.ReportedDevice;
@@ -58,12 +62,26 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
     // We will use this string in order to find and fix links to snapshot related actions:
     private static final String SNAPSHOT = "snapshot";
 
+    // The list of "rels" that should be removed from the set of links created by version 4 of the API, as they are
+    // new and shouldn't appear in version 3 of the API:
+    private static final Set<String> RELS_TO_REMOVE = new HashSet<>();
+
+    static {
+        RELS_TO_REMOVE.add("affinitylabels");
+    }
+
     @Override
     public V3VM adapt(Vm from) {
         V3VM to = new V3VM();
+
+        // Remove the links for "rels" that are new in version 4 of the API:
         if (from.isSetLinks()) {
-            to.getLinks().addAll(adaptOut(from.getLinks()));
+            List<Link> links = from.getLinks().stream()
+                .filter(link -> !RELS_TO_REMOVE.contains(link.getRel()))
+                .collect(toList());
+            to.getLinks().addAll(adaptOut(links));
         }
+
         if (from.isSetActions()) {
             to.setActions(adaptOut(from.getActions()));
 
