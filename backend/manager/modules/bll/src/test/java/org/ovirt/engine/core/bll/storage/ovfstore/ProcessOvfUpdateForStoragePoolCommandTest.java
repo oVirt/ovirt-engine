@@ -270,7 +270,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                Guid poolId = (Guid) invocation.getArguments()[0];
                 List<StorageDomain> toReturn = new LinkedList<>();
                 for (Pair<List<StorageDomainOvfInfo>, StorageDomain> pair : poolDomainsOvfInfo.values()) {
                     toReturn.add(pair.getSecond());
