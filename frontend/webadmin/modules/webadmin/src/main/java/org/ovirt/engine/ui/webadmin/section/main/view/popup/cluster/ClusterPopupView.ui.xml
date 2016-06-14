@@ -137,6 +137,11 @@
             padding-bottom: 5px;
         }
 
+        /* patternfly defines it as !important and it needs to be bold so overridding it */
+        .labelTitle {
+            font-weight: bold !important;
+        }
+
         .firstRow {
             padding-top: 15px;
         }
@@ -340,7 +345,8 @@
                                 </b:Row>
                                 <b:Row addStyleNames="{style.groupTitle}">
                                     <b:Column size="LG_12">
-                                        <g:Label text="{constants.clusterPopupResiliencePolicyLabel}" />
+                                        <l:LabelWithTooltip text="{constants.clusterPopupResiliencePolicyLabel}" addStyleNames="{style.labelTitle}"/>
+                                        <d:InfoIcon text="{templates.clusterPopupResiliencePolicyInfo}" addStyleNames="{style.panelInfo}" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>

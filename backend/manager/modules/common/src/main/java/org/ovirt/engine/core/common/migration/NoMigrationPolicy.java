@@ -9,8 +9,8 @@ public class NoMigrationPolicy extends MigrationPolicy {
     public NoMigrationPolicy() {
         // no need to externalize it - all the others are inside the vdc_options untranslatable
         // so it would look strange to have only one translated
-        setName("No Migration Policy"); //$NON-NLS-1$
-        setDescription("The behavior defined on host will be applied."); //$NON-NLS-1$
+        setName("Legacy"); //$NON-NLS-1$
+        setDescription("Legacy behavior of 3.6 version, vdsm.conf overrides are still applied. The guest agent hook mechanism is disabled."); //$NON-NLS-1$
         setConfig(new NoConvergenceConfig());
         // the ultimate default
         setMaxMigrations(2);

@@ -1987,7 +1987,7 @@ public interface UIConstants extends Constants {
 
     String sameArchitectureRequired();
 
-    String availableOnlyWithNoMigrationPolicy();
+    String availableOnlyWithLegacyPolicy();
 
     String xenUriExample();
 
