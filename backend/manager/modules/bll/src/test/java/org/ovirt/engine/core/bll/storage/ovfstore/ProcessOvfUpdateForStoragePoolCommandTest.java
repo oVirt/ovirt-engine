@@ -30,7 +30,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
@@ -171,126 +170,90 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void mockAnswers() {
-        doAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                VM vm = (VM) invocation.getArguments()[0];
-                return vm.getId().toString();
-            }
-
+        doAnswer((Answer<String>) invocation -> {
+            VM vm = (VM) invocation.getArguments()[0];
+            return vm.getId().toString();
         }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyListOf(DiskImage.class));
 
-        doAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                VmTemplate template = (VmTemplate) invocation.getArguments()[0];
-                return template.getId().toString();
-            }
-
+        doAnswer((Answer<String>) invocation -> {
+            VmTemplate template = (VmTemplate) invocation.getArguments()[0];
+            return template.getId().toString();
         }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(VmTemplate.class), anyListOf(DiskImage.class));
 
-        doAnswer(new Answer<List<VM>>() {
-            @Override
-            public List<VM> answer(InvocationOnMock invocation) throws Throwable {
-                List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
-                List<VM> toReturn = new LinkedList<>();
-                for (Guid id : neededIds) {
-                    toReturn.add(vms.get(id));
-                }
-                return toReturn;
+        doAnswer((Answer<List<VM>>) invocation -> {
+            List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
+            List<VM> toReturn = new LinkedList<>();
+            for (Guid id : neededIds) {
+                toReturn.add(vms.get(id));
             }
-
+            return toReturn;
         }).when(vmDao).getVmsByIds(anyListOf(Guid.class));
 
-        doAnswer(new Answer<List<VmTemplate>>() {
-            @Override
-            public List<VmTemplate> answer(InvocationOnMock invocation) throws Throwable {
-                List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
-                List<VmTemplate> toReturn = new LinkedList<>();
-                for (Guid id : neededIds) {
-                    toReturn.add(templates.get(id));
-                }
-                return toReturn;
+        doAnswer((Answer<List<VmTemplate>>) invocation -> {
+            List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
+            List<VmTemplate> toReturn = new LinkedList<>();
+            for (Guid id : neededIds) {
+                toReturn.add(templates.get(id));
             }
-
+            return toReturn;
         }).when(vmTemplateDao).getVmTemplatesByIds(anyListOf(Guid.class));
 
-        doAnswer(new Answer<Boolean>() {
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                Map<Guid, KeyValuePairCompat<String, List<Guid>>> updateMap =
-                        (Map<Guid, KeyValuePairCompat<String, List<Guid>>>) invocation.getArguments()[1];
-                assertTrue("too many ovfs were sent in one vdsm call", updateMap.size() <= ITEMS_COUNT_PER_UPDATE);
-                return true;
-            }
-
+        doAnswer((Answer<Boolean>) invocation -> {
+            Map<Guid, KeyValuePairCompat<String, List<Guid>>> updateMap =
+                    (Map<Guid, KeyValuePairCompat<String, List<Guid>>>) invocation.getArguments()[1];
+            assertTrue("too many ovfs were sent in one vdsm call", updateMap.size() <= ITEMS_COUNT_PER_UPDATE);
+            return true;
         }).when(ovfUpdateProcessHelper).executeUpdateVmInSpmCommand(any(Guid.class), anyMap(), any(Guid.class));
 
         doReturn(true).when(ovfUpdateProcessHelper).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
 
-        doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                List<Guid> ids = (List<Guid>) invocation.getArguments()[0];
-                List<Long> values = (List<Long>) invocation.getArguments()[1];
-                assertFalse("update of ovf version in db shouldn't be called with an empty value list",
-                        values.isEmpty());
-                assertTrue("update of ovf version in db shouldn't be called with more items then MAX_ITEMS_PER_SQL_STATEMENT",
-                        values.size() <= StorageConstants.OVF_MAX_ITEMS_PER_SQL_STATEMENT);
-                assertEquals("the size of the list of ids for update is not the same as the size of the " +
-                        "list with the new ovf values", values.size(), ids.size());
-                Guid[] ids_array = ids.toArray(new Guid[ids.size()]);
-                Long[] values_array = values.toArray(new Long[values.size()]);
-                for (int i = 0; i < ids_array.length; i++) {
-                    executedUpdatedOvfGenerationIdsInDb.put(ids_array[i],
-                            values_array[i]);
-                }
-                return null;
+        doAnswer((Answer<Object>) invocation -> {
+            List<Guid> ids = (List<Guid>) invocation.getArguments()[0];
+            List<Long> values = (List<Long>) invocation.getArguments()[1];
+            assertFalse("update of ovf version in db shouldn't be called with an empty value list",
+                    values.isEmpty());
+            assertTrue("update of ovf version in db shouldn't be called with more items then MAX_ITEMS_PER_SQL_STATEMENT",
+                    values.size() <= StorageConstants.OVF_MAX_ITEMS_PER_SQL_STATEMENT);
+            assertEquals("the size of the list of ids for update is not the same as the size of the " +
+                    "list with the new ovf values", values.size(), ids.size());
+            Guid[] ids_array = ids.toArray(new Guid[ids.size()]);
+            Long[] values_array = values.toArray(new Long[values.size()]);
+            for (int i = 0; i < ids_array.length; i++) {
+                executedUpdatedOvfGenerationIdsInDb.put(ids_array[i],
+                        values_array[i]);
             }
-
+            return null;
         }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations
                 (anyListOf(Guid.class), anyListOf(Long.class), anyListOf(String.class));
 
-        doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                StoragePoolStatus desiredStatus = (StoragePoolStatus) invocation.getArguments()[0];
-                List<StoragePool> toReturn = new LinkedList<>();
-                for (StoragePool pool : buildStoragePoolsList()) {
-                    if (desiredStatus.equals(pool.getStatus())) {
-                        toReturn.add(pool);
-                    }
+        doAnswer((Answer<Object>) invocation -> {
+            StoragePoolStatus desiredStatus = (StoragePoolStatus) invocation.getArguments()[0];
+            List<StoragePool> toReturn = new LinkedList<>();
+            for (StoragePool pool : buildStoragePoolsList()) {
+                if (desiredStatus.equals(pool.getStatus())) {
+                    toReturn.add(pool);
                 }
-
-                return toReturn;
             }
 
+            return toReturn;
         }).when(storagePoolDao).getAllByStatus(any(StoragePoolStatus.class));
 
-        doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                List<StorageDomain> toReturn = new LinkedList<>();
-                for (Pair<List<StorageDomainOvfInfo>, StorageDomain> pair : poolDomainsOvfInfo.values()) {
-                    toReturn.add(pair.getSecond());
-                }
-
-                return toReturn;
+        doAnswer((Answer<Object>) invocation -> {
+            List<StorageDomain> toReturn = new LinkedList<>();
+            for (Pair<List<StorageDomainOvfInfo>, StorageDomain> pair : poolDomainsOvfInfo.values()) {
+                toReturn.add(pair.getSecond());
             }
 
+            return toReturn;
         }).when(storageDomainDao).getAllForStoragePool(any(Guid.class));
 
-        doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Guid domainId = (Guid) invocation.getArguments()[0];
-                Pair<List<StorageDomainOvfInfo>, StorageDomain> pair = poolDomainsOvfInfo.get(domainId);
-                if (pair != null) {
-                    return pair.getFirst();
-                }
-                return null;
+        doAnswer((Answer<Object>) invocation -> {
+            Guid domainId = (Guid) invocation.getArguments()[0];
+            Pair<List<StorageDomainOvfInfo>, StorageDomain> pair = poolDomainsOvfInfo.get(domainId);
+            if (pair != null) {
+                return pair.getFirst();
             }
-
+            return null;
         }).when(storageDomainOvfInfoDao).getAllForDomain(any(Guid.class));
     }
 
