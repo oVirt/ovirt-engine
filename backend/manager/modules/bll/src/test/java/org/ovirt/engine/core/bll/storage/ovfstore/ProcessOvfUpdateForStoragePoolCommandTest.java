@@ -99,7 +99,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private StoragePool pool1;
     private Map<Guid, VM> vms;
     private Map<Guid, VmTemplate> templates;
-    private Map<Guid, KeyValuePairCompat<String, List<Guid>>> executedUpdatedMetadataForStoragePool;
     private Map<Guid, Long> executedUpdatedOvfGenerationIdsInDb;
     private Set<Guid> executedRemovedIds;
     private Set<Guid> executedOvfUpdatedDomains;
@@ -150,7 +149,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void initMembers() {
-        executedUpdatedMetadataForStoragePool = new HashMap<>();
         executedRemovedIds = new HashSet<>();
         executedUpdatedOvfGenerationIdsInDb = new HashMap<>();
         poolDomainsOvfInfo = new HashMap<>();
@@ -164,7 +162,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void performStoragePoolInitOps(StoragePool pool) {
-        executedUpdatedMetadataForStoragePool = new HashMap<>();
         executedRemovedIds = new HashSet<>();
         executedUpdatedOvfGenerationIdsInDb = new HashMap<>();
 
@@ -228,7 +225,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 Map<Guid, KeyValuePairCompat<String, List<Guid>>> updateMap =
                         (Map<Guid, KeyValuePairCompat<String, List<Guid>>>) invocation.getArguments()[1];
-                executedUpdatedMetadataForStoragePool.putAll(updateMap);
                 assertTrue("too many ovfs were sent in one vdsm call", updateMap.size() <= ITEMS_COUNT_PER_UPDATE);
                 return true;
             }
