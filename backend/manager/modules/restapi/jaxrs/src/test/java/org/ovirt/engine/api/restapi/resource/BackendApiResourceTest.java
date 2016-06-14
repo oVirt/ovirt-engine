@@ -126,7 +126,8 @@ public class BackendApiResourceTest extends EasyMockSupport {
         "openstackimageproviders",
         "openstackvolumeproviders",
         "openstacknetworkproviders",
-        "katelloerrata"
+        "katelloerrata",
+        "affinitylabels",
     };
 
     private static final String[] relationshipsGlusterOnly = {
@@ -194,7 +195,8 @@ public class BackendApiResourceTest extends EasyMockSupport {
         BASE_PATH + "/openstackimageproviders",
         BASE_PATH + "/openstackvolumeproviders",
         BASE_PATH + "/openstacknetworkproviders",
-        BASE_PATH + "/katelloerrata"
+        BASE_PATH + "/katelloerrata",
+        BASE_PATH + "/affinitylabels",
     };
 
     private static final String[] hrefsGlusterOnly = {

@@ -26,16 +26,29 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BackendHostsResource extends AbstractBackendCollectionResource<Host, VDS> implements
         HostsResource {
 
-    private static final Logger log = LoggerFactory.getLogger(BackendHostsResource.class);
     private static final String DEFAULT_NAME = "Default";
-    static final String[] SUB_COLLECTIONS = { "storage", "nics", "numanodes", "tags", "permissions", "statistics",
-        "hooks", "fenceagents", "katelloerrata", "devices", "networkattachments", "unmanagednetworks", "storageconnectionextensions" };
+
+    static final String[] SUB_COLLECTIONS = {
+        "affinitylabels",
+        "devices",
+        "fenceagents",
+        "hooks",
+        "katelloerrata",
+        "networkattachments",
+        "nics",
+        "numanodes",
+        "permissions",
+        "statistics",
+        "storage",
+        "storageconnectionextensions",
+        "tags",
+        "unmanagednetworks",
+    };
+
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {

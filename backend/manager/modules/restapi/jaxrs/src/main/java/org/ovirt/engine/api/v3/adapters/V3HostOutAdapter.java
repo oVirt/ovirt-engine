@@ -16,10 +16,16 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.adapters;
 
+import static java.util.stream.Collectors.toList;
 import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostType;
+import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Spm;
 import org.ovirt.engine.api.model.SpmStatus;
 import org.ovirt.engine.api.v3.V3Adapter;
@@ -32,12 +38,26 @@ import org.ovirt.engine.api.v3.types.V3StorageConnectionExtensions;
 import org.ovirt.engine.api.v3.types.V3StorageManager;
 
 public class V3HostOutAdapter implements V3Adapter<Host, V3Host> {
+    // The list of "rels" that should be removed from the set of links created by version 4 of the API, as they are
+    // new and shouldn't appear in version 3 of the API:
+    private static final Set<String> RELS_TO_REMOVE = new HashSet<>();
+
+    static {
+        RELS_TO_REMOVE.add("affinitylabels");
+    }
+
     @Override
     public V3Host adapt(Host from) {
         V3Host to = new V3Host();
+
+        // Remove the links for "rels" that are new in version 4 of the API:
         if (from.isSetLinks()) {
-            to.getLinks().addAll(adaptOut(from.getLinks()));
+            List<Link> links = from.getLinks().stream()
+                .filter(link -> !RELS_TO_REMOVE.contains(link.getRel()))
+                .collect(toList());
+            to.getLinks().addAll(adaptOut(links));
         }
+
         if (from.isSetActions()) {
             to.setActions(adaptOut(from.getActions()));
         }
