@@ -473,7 +473,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         }
         toReturn += size / ITEMS_COUNT_PER_UPDATE;
         if (isBothVmAndTemplates) {
-            toReturn = toReturn * 2;
+            toReturn *= 2;
         }
         return toReturn;
     }
