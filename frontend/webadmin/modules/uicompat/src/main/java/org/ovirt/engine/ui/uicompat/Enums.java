@@ -188,6 +188,10 @@ public interface Enums extends LocalizedEnums {
 
     String OriginType___EXTERNAL();
 
+    String OriginType___PHYSICAL_MACHINE();
+
+    String OriginType___HYPERV();
+
     @Deprecated
     String VmInterfaceType___rtl8139_pv();
 

@@ -14,7 +14,9 @@ public enum OriginType {
     HOSTED_ENGINE(5),
     // managed means we allow limited provisioning on this VM by the engine
     MANAGED_HOSTED_ENGINE(6),
-    KVM(7);
+    KVM(7),
+    PHYSICAL_MACHINE(8),
+    HYPERV(9);
 
     private int intValue;
     private static Map<Integer, OriginType> mappings;
