@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +99,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private Map<Guid, VM> vms;
     private Map<Guid, VmTemplate> templates;
     private Map<Guid, Long> executedUpdatedOvfGenerationIdsInDb;
-    private Set<Guid> executedRemovedIds;
     private Set<Guid> executedOvfUpdatedDomains;
     private Map<Guid, Pair<List<StorageDomainOvfInfo>, StorageDomain>> poolDomainsOvfInfo;
 
@@ -149,7 +147,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void initMembers() {
-        executedRemovedIds = new HashSet<>();
         executedUpdatedOvfGenerationIdsInDb = new HashMap<>();
         poolDomainsOvfInfo = new HashMap<>();
         vms = new HashMap<>();
@@ -162,7 +159,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void performStoragePoolInitOps(StoragePool pool) {
-        executedRemovedIds = new HashSet<>();
         executedUpdatedOvfGenerationIdsInDb = new HashMap<>();
 
         for (int i = 0; i < 2; i++) {
@@ -231,14 +227,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         }).when(ovfUpdateProcessHelper).executeUpdateVmInSpmCommand(any(Guid.class), anyMap(), any(Guid.class));
 
-        doAnswer(new Answer<Boolean>() {
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                executedRemovedIds.add((Guid) invocation.getArguments()[1]);
-                return true;
-            }
-
-        }).when(ovfUpdateProcessHelper).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
+        doReturn(true).when(ovfUpdateProcessHelper).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
 
         doAnswer(new Answer<Object>() {
             @Override
