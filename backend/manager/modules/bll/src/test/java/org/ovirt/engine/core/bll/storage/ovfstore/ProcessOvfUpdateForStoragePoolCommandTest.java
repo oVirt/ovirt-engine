@@ -294,13 +294,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private Map<Guid, VM> generateVmsMapByGuids(List<Guid> ids,
             int diskCount,
             VMStatus vmStatus,
-            ImageStatus diskStatus,
-            Guid poolId) {
+            ImageStatus diskStatus) {
         Map<Guid, VM> toReturn = new HashMap<>();
         for (Guid id : ids) {
             VM vm = createVm(id, vmStatus);
             for (int i = 0; i < diskCount; i++) {
-                DiskImage image = createDiskImage(diskStatus, poolId);
+                DiskImage image = createDiskImage(diskStatus);
                 vm.getDiskMap().put(image.getId(), image);
                 vm.getDiskList().add(image);
             }
@@ -312,12 +311,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private Map<Guid, VmTemplate> generateVmTemplatesMapByGuids(List<Guid> ids,
             int diskCount,
             VmTemplateStatus templateStatus,
-            ImageStatus diskStatus, Guid poolId) {
+            ImageStatus diskStatus) {
         Map<Guid, VmTemplate> toReturn = new HashMap<>();
         for (Guid id : ids) {
             VmTemplate template = createVmTemplate(id, templateStatus);
             for (int i = 0; i < diskCount; i++) {
-                DiskImage image = createDiskImage(diskStatus, poolId);
+                DiskImage image = createDiskImage(diskStatus);
                 template.getDiskTemplateMap().put(image.getId(), image);
                 template.getDiskList().add(image);
             }
@@ -326,7 +325,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         return toReturn;
     }
 
-    private DiskImage createDiskImage(ImageStatus status, Guid poolId) {
+    private DiskImage createDiskImage(ImageStatus status) {
         DiskImage disk = new DiskImage();
         disk.setId(Guid.newGuid());
         disk.setImageStatus(status);
@@ -365,8 +364,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         }
     }
 
-    private void addVms(List<Guid> vmGuids, int diskCount, VMStatus vmStatus, ImageStatus vmImageStatus, Guid poolId) {
-        vms.putAll(generateVmsMapByGuids(vmGuids, diskCount, vmStatus, vmImageStatus, poolId));
+    private void addVms(List<Guid> vmGuids, int diskCount, VMStatus vmStatus, ImageStatus vmImageStatus) {
+        vms.putAll(generateVmsMapByGuids(vmGuids, diskCount, vmStatus, vmImageStatus));
 
     }
 
@@ -387,12 +386,11 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private void addTemplates(List<Guid> templatesGuids,
             int diskCount,
             VmTemplateStatus templateStatus,
-            ImageStatus templateImageStatus, Guid poolId) {
+            ImageStatus templateImageStatus) {
         templates.putAll(generateVmTemplatesMapByGuids(templatesGuids,
                 diskCount,
                 templateStatus,
-                templateImageStatus,
-                poolId));
+                templateImageStatus));
     }
 
     @Test
@@ -402,8 +400,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         List<Guid> vmGuids = generateGuidList(size);
         List<Guid> templatesGuids = generateGuidList(size);
         List<Guid> removedGuids = generateGuidList(size);
-        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK, pool1.getId());
-        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK, pool1.getId());
+        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK);
+        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK);
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
         executeCommand();
@@ -426,9 +424,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         int size = ITEMS_COUNT_PER_UPDATE - 1;
 
         List<Guid> vmGuids = generateGuidList(size);
-        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK, pool1.getId());
+        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK);
         List<Guid> templatesGuids = generateGuidList(size);
-        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK, pool1.getId());
+        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK);
         List<Guid> removedGuids = generateGuidList(size);
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
@@ -451,8 +449,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         List<Guid> removedGuids = Collections.emptyList();
         List<Guid> templatesGuids = generateGuidList(size);
 
-        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.LOCKED, pool1.getId());
-        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.LOCKED, pool1.getId());
+        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.LOCKED);
+        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.LOCKED);
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
@@ -467,14 +465,14 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         // unlocked vms/templates
         List<Guid> vmGuids = generateGuidList(size);
         List<Guid> templatesGuids = generateGuidList(size);
-        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK, pool1.getId());
-        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK, pool1.getId());
+        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK);
+        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK);
 
         // locked vms/templates
         List<Guid> lockedVmGuids = generateGuidList(size);
         List<Guid> lockedTemplatesGuids = generateGuidList(size);
-        addVms(lockedVmGuids, 2, VMStatus.Down, ImageStatus.LOCKED, pool1.getId());
-        addTemplates(lockedTemplatesGuids, 2, VmTemplateStatus.OK, ImageStatus.LOCKED, pool1.getId());
+        addVms(lockedVmGuids, 2, VMStatus.Down, ImageStatus.LOCKED);
+        addTemplates(lockedTemplatesGuids, 2, VmTemplateStatus.OK, ImageStatus.LOCKED);
         // ids for removal
         List<Guid> removedGuids = generateGuidList(size);
 
@@ -505,10 +503,10 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     public void testOvfDataUpdaterAllVmsAndTemplatesAreLocked() {
         int size = ITEMS_COUNT_PER_UPDATE - 1;
         List<Guid> vmGuids = generateGuidList(size);
-        addVms(vmGuids, 2, VMStatus.ImageLocked, ImageStatus.OK, pool1.getId());
+        addVms(vmGuids, 2, VMStatus.ImageLocked, ImageStatus.OK);
         List<Guid> removedGuids = generateGuidList(size);
         List<Guid> templatesGuids = generateGuidList(size);
-        addTemplates(templatesGuids, 2, VmTemplateStatus.Locked, ImageStatus.OK, pool1.getId());
+        addTemplates(templatesGuids, 2, VmTemplateStatus.Locked, ImageStatus.OK);
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
@@ -525,14 +523,14 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         List<Guid> removedGuids = generateGuidList(size);
         List<Guid> templatesGuids = generateGuidList(size);
 
-        addVms(vmGuids, 2, VMStatus.ImageLocked, ImageStatus.OK, pool1.getId());
-        addTemplates(templatesGuids, 2, VmTemplateStatus.Locked, ImageStatus.OK, pool1.getId());
+        addVms(vmGuids, 2, VMStatus.ImageLocked, ImageStatus.OK);
+        addTemplates(templatesGuids, 2, VmTemplateStatus.Locked, ImageStatus.OK);
 
         List<Guid> vmGuidsUnlocked = generateGuidList(size);
         List<Guid> templatesGuidsUnlocked = generateGuidList(size);
 
-        addVms(vmGuidsUnlocked, 2, VMStatus.Down, ImageStatus.OK, pool1.getId());
-        addTemplates(templatesGuidsUnlocked, 2, VmTemplateStatus.OK, ImageStatus.OK, pool1.getId());
+        addVms(vmGuidsUnlocked, 2, VMStatus.Down, ImageStatus.OK);
+        addTemplates(templatesGuidsUnlocked, 2, VmTemplateStatus.OK, ImageStatus.OK);
 
         vmGuids.addAll(vmGuidsUnlocked);
         templatesGuids.addAll(templatesGuidsUnlocked);
@@ -553,8 +551,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         List<Guid> vmGuids = generateGuidList(size);
         List<Guid> templatesGuids = generateGuidList(size);
         List<Guid> removedGuids = Collections.emptyList();
-        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK, pool1.getId());
-        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK, pool1.getId());
+        addVms(vmGuids, 2, VMStatus.Down, ImageStatus.OK);
+        addTemplates(templatesGuids, 2, VmTemplateStatus.OK, ImageStatus.OK);
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
