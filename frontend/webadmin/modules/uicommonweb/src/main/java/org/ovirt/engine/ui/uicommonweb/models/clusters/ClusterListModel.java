@@ -745,6 +745,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         cluster.getFencingPolicy().setSkipFencingIfSDActive(model.getSkipFencingIfSDActiveEnabled().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfConnectivityBroken(model.getSkipFencingIfConnectivityBrokenEnabled().getEntity());
         cluster.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(model.getHostsWithBrokenConnectivityThreshold().getSelectedItem().intValue());
+        cluster.getFencingPolicy().setSkipFencingIfGlusterBricksUp(model.getSkipFencingIfGlusterBricksUp().getEntity());
+        cluster.getFencingPolicy().setSkipFencingIfGlusterQuorumNotMet(model.getSkipFencingIfGlusterQuorumNotMet().getEntity());
 
         cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         cluster.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());

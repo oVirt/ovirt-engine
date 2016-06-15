@@ -796,6 +796,26 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.skipFencingIfSDActiveEnabled = skipFencingIfSDActiveEnabled;
     }
 
+    private EntityModel<Boolean> skipFencingIfGlusterBricksUp;
+
+    public EntityModel<Boolean> getSkipFencingIfGlusterBricksUp() {
+        return skipFencingIfGlusterBricksUp;
+    }
+
+    public void setSkipFencingIfGlusterBricksUp(EntityModel<Boolean> skipFencingIfGlusterBricksUp) {
+        this.skipFencingIfGlusterBricksUp = skipFencingIfGlusterBricksUp;
+    }
+
+    private EntityModel<Boolean> skipFencingIfGlusterQuorumNotMet;
+
+    public EntityModel<Boolean> getSkipFencingIfGlusterQuorumNotMet() {
+        return skipFencingIfGlusterQuorumNotMet;
+    }
+
+    public void setSkipFencingIfGlusterQuorumNotMet(EntityModel<Boolean> skipFencingIfGlusterQuorumNotMet) {
+        this.skipFencingIfGlusterQuorumNotMet = skipFencingIfGlusterQuorumNotMet;
+    }
+
     private EntityModel<Boolean> skipFencingIfConnectivityBrokenEnabled;
 
     public EntityModel<Boolean> getSkipFencingIfConnectivityBrokenEnabled() {
@@ -996,6 +1016,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setSkipFencingIfSDActiveEnabled(new EntityModel<Boolean>());
         getSkipFencingIfSDActiveEnabled().setEntity(true);
 
+        setSkipFencingIfGlusterBricksUp(new EntityModel<Boolean>());
+        getSkipFencingIfGlusterBricksUp().setEntity(false);
+        getSkipFencingIfGlusterBricksUp().setIsAvailable(false);
+        setSkipFencingIfGlusterQuorumNotMet(new EntityModel<Boolean>());
+        getSkipFencingIfGlusterQuorumNotMet().setEntity(false);
+        getSkipFencingIfGlusterQuorumNotMet().setIsAvailable(false);
+
         setSkipFencingIfConnectivityBrokenEnabled(new EntityModel<Boolean>());
         getSkipFencingIfConnectivityBrokenEnabled().setEntity(true);
 
@@ -1016,6 +1043,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 if (!getAllowClusterWithVirtGlusterEnabled() && getEnableOvirtService().getEntity()) {
                     getEnableGlusterService().setEntity(Boolean.FALSE);
                 }
+                updateGlusterFencingPolicyAvailability();
                 getEnableGlusterService().setIsChangeable(true);
                 getEnableTrustedService().setEntity(false);
                 if (getEnableOvirtService().getEntity() != null
@@ -1086,6 +1114,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }
 
                 getGlusterTunedProfile().setIsAvailable(getEnableGlusterService().getEntity());
+                updateGlusterFencingPolicyAvailability();
                 if (getEnableGlusterService().getEntity()) {
                     initTunedProfiles();
                 }
@@ -1345,6 +1374,17 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setMigrationBandwidthLimitType(new ListModel<MigrationBandwidthLimitType>());
     }
 
+    private void updateGlusterFencingPolicyAvailability() {
+        boolean fencingAvailable = getEnableGlusterService().getEntity() != null && getEnableGlusterService().getEntity()
+                && getEnableOvirtService().getEntity() != null && getEnableOvirtService().getEntity();
+        getSkipFencingIfGlusterBricksUp().setIsAvailable(fencingAvailable);
+        getSkipFencingIfGlusterQuorumNotMet().setIsAvailable(fencingAvailable);
+        if (!fencingAvailable) {
+            getSkipFencingIfGlusterBricksUp().setEntity(false);
+            getSkipFencingIfGlusterQuorumNotMet().setEntity(false);
+        }
+    }
+
     public void initMigrationPolicies(boolean isEdit) {
         List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies();
         getMigrationPolicies().setItems(policies);
@@ -1490,6 +1530,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 .isSkipFencingIfConnectivityBroken());
         getHostsWithBrokenConnectivityThreshold().setSelectedItem(getEntity().getFencingPolicy()
                 .getHostsWithBrokenConnectivityThreshold());
+        getSkipFencingIfGlusterBricksUp().setEntity(getEntity().getFencingPolicy().isSkipFencingIfGlusterBricksUp());
+        getSkipFencingIfGlusterQuorumNotMet().setEntity(getEntity().getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet());
 
         setMemoryOverCommit(getEntity().getMaxVdsMemoryOverCommit());
 
@@ -1871,6 +1913,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         // skipFencingIfConnectivityBroken option is enabled when fencing is enabled for all cluster versions
         getSkipFencingIfConnectivityBrokenEnabled().setIsChangeable(getFencingEnabledModel().getEntity());
         getHostsWithBrokenConnectivityThreshold().setIsChangeable(getFencingEnabledModel().getEntity());
+        getSkipFencingIfGlusterBricksUp().setIsChangeable(getFencingEnabledModel().getEntity());
+        getSkipFencingIfGlusterQuorumNotMet().setIsChangeable(getFencingEnabledModel().getEntity());
 
         if (ver == null) {
             if (!getFencingEnabledModel().getEntity()) {

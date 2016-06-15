@@ -451,6 +451,18 @@
                                 <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" addStyleNames="{style.floatLeft}" label="{constants.hostsWithBrokenConnectivityThresholdLabel}" />
                               </b:Column>
                             </b:Row>
+                            <b:Row>
+                               <b:Column size="LG_12">
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfGlusterBricksUpCheckBox" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}" label="{constants.skipFencingIfGlusterBricksUp}" />
+                                <d:InfoIcon ui:field="skipFencingIfGlusterBricksUpInfo" addStyleNames="{style.panelInfo}" />
+                              </b:Column>
+                            </b:Row>
+                            <b:Row>
+                               <b:Column size="LG_12">
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfGlusterQuorumNotMetCheckBox" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}" label="{constants.skipFencingIfGlusterQuorumNotMet}" />
+                                <d:InfoIcon ui:field="skipFencingIfGlusterQuorumNotMetInfo" addStyleNames="{style.panelInfo}" />
+                              </b:Column>
+                            </b:Row>
                           </b:Container>
                         </t:content>
                     </t:DialogTab>

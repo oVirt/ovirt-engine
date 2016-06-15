@@ -462,6 +462,22 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     ListModelListBoxEditor<Integer> hostsWithBrokenConnectivityThresholdEditor;
 
+    @UiField(provided = true)
+    InfoIcon skipFencingIfGlusterBricksUpInfo;
+
+    @UiField(provided = true)
+    @Path(value = "skipFencingIfGlusterBricksUp.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor skipFencingIfGlusterBricksUpCheckBox;
+
+    @UiField(provided = true)
+    InfoIcon skipFencingIfGlusterQuorumNotMetInfo;
+
+    @UiField(provided = true)
+    @Path(value = "skipFencingIfGlusterQuorumNotMet.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor skipFencingIfGlusterQuorumNotMetCheckBox;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @UiField
@@ -650,6 +666,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         skipFencingIfConnectivityBrokenCheckBox.hideLabel();
 
+        skipFencingIfGlusterBricksUpCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+        skipFencingIfGlusterQuorumNotMetCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+
         spiceProxyOverrideEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         spiceProxyOverrideEnabled.hideLabel();
 
@@ -676,6 +695,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         skipFencingIfConnectivityBrokenInfo = new InfoIcon(
                 templates.italicText(constants.skipFencingWhenConnectivityBrokenInfo()));
+
+        skipFencingIfGlusterBricksUpInfo = new InfoIcon(
+                templates.italicText(constants.skipFencingIfGlusterBricksUpInfo()));
+        skipFencingIfGlusterBricksUpInfo.setVisible(false);
+        skipFencingIfGlusterQuorumNotMetInfo = new InfoIcon(
+                templates.italicText(constants.skipFencingIfGlusterQuorumNotMetInfo()));
+        skipFencingIfGlusterQuorumNotMetInfo.setVisible(false);
 
         isVirtioScsiEnabledInfoIcon = new InfoIcon(templates.italicText("")); //$NON-NLS-1$
     }
@@ -751,13 +777,23 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
+        object.getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updateGlusterFencingPolicyVisibility(object);
+            }
+        });
+
         object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                         && object.getIsNew());
+                updateGlusterFencingPolicyVisibility(object);
             }
+
         });
+        updateGlusterFencingPolicyVisibility(object);
         importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
 
@@ -810,6 +846,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                 }
             }
         });
+    }
+
+    private void updateGlusterFencingPolicyVisibility(ClusterModel object) {
+        skipFencingIfGlusterBricksUpInfo
+                .setVisible(object.getEnableGlusterService().getEntity() && object.getEnableOvirtService().getEntity());
+        skipFencingIfGlusterQuorumNotMetInfo
+                .setVisible(object.getEnableGlusterService().getEntity() && object.getEnableOvirtService().getEntity());
     }
 
     @Override

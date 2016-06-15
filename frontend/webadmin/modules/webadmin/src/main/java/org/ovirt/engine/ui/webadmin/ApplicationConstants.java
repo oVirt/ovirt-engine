@@ -2874,6 +2874,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String skipFencingWhenConnectivityBrokenInfo();
 
+    String skipFencingIfGlusterBricksUp();
+
+    String skipFencingIfGlusterBricksUpInfo();
+
+    String skipFencingIfGlusterQuorumNotMet();
+
+    String skipFencingIfGlusterQuorumNotMetInfo();
+
     String newVolumeOptimiseForVirtStoreWarning();
 
     String storageQosThroughputTotal();
