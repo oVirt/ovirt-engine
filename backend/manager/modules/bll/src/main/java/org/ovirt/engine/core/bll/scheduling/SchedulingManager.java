@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
@@ -111,6 +112,8 @@ public class SchedulingManager implements BackendService {
 
     private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
 
+    private final Guid defaultSelectorGuid = InternalPolicyUnits.getGuid(BasicWeightSelectorPolicyUnit.class);
+
     private PendingResourceManager getPendingResourceManager() {
         return pendingResourceManager;
     }
@@ -205,16 +208,8 @@ public class SchedulingManager implements BackendService {
         // Get all user provided cluster policies
         List<ClusterPolicy> allClusterPolicies = getClusterPolicyDao().getAll(
                 Collections.unmodifiableMap(internalTypes));
-        final Guid defaultSelectorGuid = InternalPolicyUnits.getGuid(BasicWeightSelectorPolicyUnit.class);
 
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
-            // Make sure the selector field is filled, this can be
-            // removed once we add proper support to DB, UI and REST.
-            if (clusterPolicy.getSelector() == null) {
-                // Use the Basic selector as default
-                clusterPolicy.setSelector(defaultSelectorGuid);
-            }
-
             policyMap.put(clusterPolicy.getId(), clusterPolicy);
         }
     }
@@ -430,7 +425,7 @@ public class SchedulingManager implements BackendService {
         default:
             // select best runnable host with scoring functions (from policy)
             List<Pair<Guid, Integer>> functions = policy.getFunctions();
-            Guid selector = policy.getSelector();
+            Guid selector = Optional.of(policy).map(ClusterPolicy::getSelector).orElse(defaultSelectorGuid);
             PolicyUnitImpl selectorUnit = policyUnits.get(selector);
             SelectorInstance selectorInstance = selectorUnit.selector(parameters);
 

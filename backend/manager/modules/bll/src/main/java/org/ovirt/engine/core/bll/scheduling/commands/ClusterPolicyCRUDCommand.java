@@ -112,6 +112,16 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_BALANCE_NOT_IMPLEMENTED);
             }
         }
+        // check selector policy unit
+        if (getClusterPolicy().getSelector() != null) {
+            PolicyUnitImpl policyUnitImpl = map.get(getClusterPolicy().getSelector());
+            if (policyUnitImpl == null) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
+            }
+            if (policyUnitImpl.getPolicyUnit().getPolicyUnitType() != PolicyUnitType.SELECTOR) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_SELECTOR_NOT_IMPLEMENTED);
+            }
+        }
 
         List<ValidationError> validationErrors =
                 SimpleCustomPropertiesUtil.getInstance().validateProperties(schedulingManager
