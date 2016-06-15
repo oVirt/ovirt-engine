@@ -108,7 +108,6 @@ import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.UnmanagedNetwork;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
@@ -137,8 +136,6 @@ import org.ovirt.engine.api.resource.BalanceResource;
 import org.ovirt.engine.api.resource.BalancesResource;
 import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
-import org.ovirt.engine.api.resource.CapabilitiesResource;
-import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.resource.ClusterLevelResource;
 import org.ovirt.engine.api.resource.ClusterLevelsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
@@ -596,9 +593,6 @@ public class LinkHelper {
 
         map = new LocationByParentMap(GlusterHookResource.class, GlusterHooksResource.class, Cluster.class);
         TYPES.put(GlusterHook.class, map);
-
-        map = new LocationByParentMap(CapabiliyResource.class, CapabilitiesResource.class);
-        TYPES.put(VersionCaps.class, map);
 
         map = new LocationByParentMap();
         map.add(InstanceTypeWatchdogResource.class, InstanceTypeWatchdogsResource.class, InstanceType.class);

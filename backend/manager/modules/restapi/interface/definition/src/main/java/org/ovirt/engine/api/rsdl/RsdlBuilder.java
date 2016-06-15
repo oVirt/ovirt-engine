@@ -37,7 +37,6 @@ import javax.ws.rs.PathParam;
 
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.BaseResources;
-import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.DetailedLinks;
 import org.ovirt.engine.api.model.GeneralMetadata;
@@ -366,7 +365,7 @@ public class RsdlBuilder {
     private void handleGet(String prefix, Collection<DetailedLink> results, Class<?> returnType) {
         String returnTypeStr = getReturnTypeStr(returnType);
         DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnTypeStr).httpMethod(HttpMethod.GET).build();
-        if (BaseResources.class.isAssignableFrom(returnType) && returnType != Capabilities.class && returnType != Statistics.class) {
+        if (BaseResources.class.isAssignableFrom(returnType) && returnType != Statistics.class) {
             addMaxMatrixParameter(link);
         }
         results.add(link);
