@@ -1014,11 +1014,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateMigrationAvailability() {
-        Boolean haHost = getModel().getIsHighlyAvailable().getEntity();
+        if (getModel().getIsHighlyAvailable().getEntity() == null
+                || getModel().getDefaultHost().getItems() == null
+                || getModel().getIsAutoAssign().getEntity() == null) {
+            return;
+        }
+        final boolean haHost = getModel().getIsHighlyAvailable().getEntity();
         final Collection<VDS> allowedHosts = getModel().getDefaultHost().getSelectedItems();
         Collection<VDS> presentHosts = getModel().getDefaultHost().getItems();
         int pinToHostSize = allowedHosts == null ? 0 : allowedHosts.size();
-        Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
+        final boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
 
         // This is needed for the unittests to not crash..
         if (presentHosts == null) {
