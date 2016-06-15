@@ -65,8 +65,21 @@ public class BackendVmDisksResource
     @Override
     public Response add(Disk disk) {
         DiskAttachment diskAttachment = new DiskAttachment();
-        diskAttachment.setInterface(DiskInterface.VIRTIO);
-        diskAttachment.setBootable(false);
+
+        if (disk.isSetBootable()) {
+            diskAttachment.setBootable(disk.isBootable());
+        }
+        else {
+            diskAttachment.setBootable(false);
+        }
+
+        if (disk.isSetInterface()) {
+            diskAttachment.setInterface(disk.getInterface());
+        }
+        else {
+            diskAttachment.setInterface(DiskInterface.VIRTIO);
+        }
+
         diskAttachment.setDisk(disk);
         if (disk.isSetId()) {
             Guid diskId = Guid.createGuidFromStringDefaultEmpty(disk.getId());
