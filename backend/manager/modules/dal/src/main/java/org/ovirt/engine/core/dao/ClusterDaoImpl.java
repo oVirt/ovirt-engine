@@ -252,7 +252,9 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("custom_migration_bandwidth_limit", cluster.getCustomMigrationNetworkBandwidth())
                 .addValue("migration_policy_id", cluster.getMigrationPolicyId())
                 .addValue("mac_pool_id", cluster.getMacPoolId())
-                .addValue("switch_type", cluster.getRequiredSwitchTypeForCluster().getOptionValue());
+                .addValue("switch_type", cluster.getRequiredSwitchTypeForCluster().getOptionValue())
+                .addValue("skip_fencing_if_gluster_bricks_up", cluster.getFencingPolicy().isSkipFencingIfGlusterBricksUp())
+                .addValue("skip_fencing_if_gluster_quorum_not_met", cluster.getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet());
 
         return parameterSource;
     }
@@ -317,6 +319,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
             entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
             entity.getFencingPolicy().setSkipFencingIfSDActive(rs.getBoolean("skip_fencing_if_sd_active"));
             entity.getFencingPolicy().setSkipFencingIfConnectivityBroken(rs.getBoolean("skip_fencing_if_connectivity_broken"));
+            entity.getFencingPolicy().setSkipFencingIfGlusterBricksUp(rs.getBoolean("skip_fencing_if_gluster_bricks_up"));
+            entity.getFencingPolicy().setSkipFencingIfGlusterQuorumNotMet(rs.getBoolean("skip_fencing_if_gluster_quorum_not_met"));
             entity.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(rs.getInt("hosts_with_broken_connectivity_threshold"));
             entity.getFencingPolicy().setFencingEnabled(rs.getBoolean("fencing_enabled"));
             entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));

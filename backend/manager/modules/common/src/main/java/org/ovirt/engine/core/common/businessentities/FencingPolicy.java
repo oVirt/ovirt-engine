@@ -22,6 +22,9 @@ public class FencingPolicy implements Serializable {
     private boolean skipFencingIfConnectivityBroken;
     private int hostsWithBrokenConnectivityThreshold;
 
+    private boolean skipFencingIfGlusterBricksUp;
+    private boolean skipFencingIfGlusterQuorumNotMet;
+
     public FencingPolicy() {
         this(null);
     }
@@ -32,11 +35,15 @@ public class FencingPolicy implements Serializable {
             skipFencingIfSDActive = false;
             skipFencingIfConnectivityBroken = false;
             hostsWithBrokenConnectivityThreshold = 50;
+            skipFencingIfGlusterBricksUp = false;
+            skipFencingIfGlusterQuorumNotMet = false;
         } else {
             fencingEnabled = fencingPolicy.fencingEnabled;
             skipFencingIfSDActive = fencingPolicy.skipFencingIfSDActive;
             skipFencingIfConnectivityBroken = fencingPolicy.skipFencingIfConnectivityBroken;
             hostsWithBrokenConnectivityThreshold = fencingPolicy.hostsWithBrokenConnectivityThreshold;
+            skipFencingIfGlusterBricksUp = fencingPolicy.skipFencingIfGlusterBricksUp;
+            skipFencingIfGlusterQuorumNotMet = fencingPolicy.skipFencingIfGlusterQuorumNotMet;
         }
     }
 
@@ -71,6 +78,23 @@ public class FencingPolicy implements Serializable {
     public void setHostsWithBrokenConnectivityThreshold(int hostsWithBrokenConnectivityThreshold) {
         this.hostsWithBrokenConnectivityThreshold = hostsWithBrokenConnectivityThreshold;
     }
+
+    public boolean isSkipFencingIfGlusterBricksUp() {
+        return skipFencingIfGlusterBricksUp;
+    }
+
+    public void setSkipFencingIfGlusterBricksUp(boolean skipFencingIfGlusterBricksUp) {
+        this.skipFencingIfGlusterBricksUp = skipFencingIfGlusterBricksUp;
+    }
+
+    public boolean isSkipFencingIfGlusterQuorumNotMet() {
+        return skipFencingIfGlusterQuorumNotMet;
+    }
+
+    public void setSkipFencingIfGlusterQuorumNotMet(boolean skipFencingIfGlusterQuorumNotMet) {
+        this.skipFencingIfGlusterQuorumNotMet = skipFencingIfGlusterQuorumNotMet;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -84,7 +108,9 @@ public class FencingPolicy implements Serializable {
         return fencingEnabled == other.fencingEnabled
                 && skipFencingIfSDActive == other.skipFencingIfSDActive
                 && skipFencingIfConnectivityBroken == other.skipFencingIfConnectivityBroken
-                && hostsWithBrokenConnectivityThreshold == other.hostsWithBrokenConnectivityThreshold;
+                && hostsWithBrokenConnectivityThreshold == other.hostsWithBrokenConnectivityThreshold
+                && skipFencingIfGlusterBricksUp == other.skipFencingIfGlusterBricksUp
+                && skipFencingIfGlusterQuorumNotMet == other.skipFencingIfGlusterQuorumNotMet;
     }
 
     @Override
@@ -93,7 +119,9 @@ public class FencingPolicy implements Serializable {
                 fencingEnabled,
                 skipFencingIfSDActive,
                 skipFencingIfConnectivityBroken,
-                hostsWithBrokenConnectivityThreshold
+                hostsWithBrokenConnectivityThreshold,
+                skipFencingIfGlusterBricksUp,
+                skipFencingIfGlusterQuorumNotMet
         );
     }
 
@@ -104,6 +132,8 @@ public class FencingPolicy implements Serializable {
                 .append("skipFencingIfSDActive", skipFencingIfSDActive)
                 .append("skipFencingIfConnectivityBroken", skipFencingIfConnectivityBroken)
                 .append("hostsWithBrokenConnectivityThreshold", hostsWithBrokenConnectivityThreshold)
+                .append("skipFencingIfGlusterBricksUp", skipFencingIfGlusterBricksUp)
+                .append("skipFencingIfGlusterQuorumNotMet", skipFencingIfGlusterQuorumNotMet)
                 .build();
     }
 }

@@ -46,7 +46,9 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_custom_migration_bandwidth_limit INT,
     v_migration_policy_id UUID,
     v_mac_pool_id UUID,
-    v_switch_type VARCHAR(6)
+    v_switch_type VARCHAR(6),
+    v_skip_fencing_if_gluster_bricks_up BOOLEAN,
+    v_skip_fencing_if_gluster_quorum_not_met BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -93,7 +95,9 @@ BEGIN
         custom_migration_bandwidth_limit,
         migration_policy_id,
         mac_pool_id,
-        switch_type
+        switch_type,
+        skip_fencing_if_gluster_bricks_up,
+        skip_fencing_if_gluster_quorum_not_met
         )
     VALUES (
         v_cluster_id,
@@ -138,7 +142,9 @@ BEGIN
         v_custom_migration_bandwidth_limit,
         v_migration_policy_id,
         v_mac_pool_id,
-        v_switch_type
+        v_switch_type,
+        v_skip_fencing_if_gluster_bricks_up,
+        v_skip_fencing_if_gluster_quorum_not_met
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -187,7 +193,9 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_custom_migration_bandwidth_limit INT,
     v_migration_policy_id UUID,
     v_mac_pool_id UUID,
-    v_switch_type VARCHAR(6)
+    v_switch_type VARCHAR(6),
+    v_skip_fencing_if_gluster_bricks_up BOOLEAN,
+    v_skip_fencing_if_gluster_quorum_not_met BOOLEAN
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -237,7 +245,9 @@ BEGIN
         custom_migration_bandwidth_limit = v_custom_migration_bandwidth_limit,
         migration_policy_id = v_migration_policy_id,
         mac_pool_id = v_mac_pool_id,
-        switch_type = v_switch_type
+        switch_type = v_switch_type,
+        skip_fencing_if_gluster_bricks_up = v_skip_fencing_if_gluster_bricks_up,
+        skip_fencing_if_gluster_quorum_not_met = v_skip_fencing_if_gluster_quorum_not_met
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
