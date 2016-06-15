@@ -46,10 +46,13 @@ import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDiskResource
@@ -226,7 +229,24 @@ public class BackendVmDiskResource
     protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
         @Override
         public VdcActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-            return new VmDiskOperationParameterBase(new DiskVmElement(entity.getId(), vmId), map(incoming, entity));
+            DiskVmElement dveFromDb = runQuery(VdcQueryType.GetDiskVmElementById,
+                    new VmDeviceIdQueryParameters(new VmDeviceId(entity.getId(), vmId))).getReturnValue();
+
+            DiskVmElement updatedDve = updateDiskVmElementFromDisk(incoming, dveFromDb);
+
+            return new VmDiskOperationParameterBase(updatedDve, map(incoming, entity));
         }
+    }
+
+    private DiskVmElement updateDiskVmElementFromDisk(Disk disk, DiskVmElement diskVmElement) {
+        if (disk.isSetInterface()) {
+            diskVmElement.setDiskInterface(DiskInterface.forValue(disk.getInterface().name().toLowerCase()));
+        }
+
+        if(disk.isSetBootable()) {
+            diskVmElement.setBoot(disk.isBootable());
+        }
+
+        return diskVmElement;
     }
 }

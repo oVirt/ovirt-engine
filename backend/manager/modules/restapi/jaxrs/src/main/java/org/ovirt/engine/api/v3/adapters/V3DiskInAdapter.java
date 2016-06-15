@@ -20,6 +20,7 @@ import static org.ovirt.engine.api.v3.adapters.V3InAdapters.adaptIn;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
+import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
@@ -140,6 +141,14 @@ public class V3DiskInAdapter implements V3Adapter<V3Disk, Disk> {
         }
         if (from.isSetWipeAfterDelete()) {
             to.setWipeAfterDelete(from.isWipeAfterDelete());
+        }
+
+        if (from.isSetBootable()) {
+            to.setBootable(from.isBootable());
+        }
+
+        if (from.isSetInterface()) {
+            to.setInterface(DiskInterface.fromValue(from.getInterface()));
         }
 
         // In V3 "size" used to be a synonym of "provisioned_size":
