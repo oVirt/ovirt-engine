@@ -13,6 +13,7 @@ import javax.validation.Validator;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class ValidationUtils {
 
@@ -108,6 +109,12 @@ public class ValidationUtils {
 
             for (ConstraintViolation<T> constraintViolation : violations) {
                 messages.add(constraintViolation.getMessage());
+                if (constraintViolation.getPropertyPath() != null) {
+                    messages.add(EngineMessage.ACTION_TYPE_FAILED_ATTRIBUTE_PATH.name());
+                    messages.add(
+                        String.format("$path %s", constraintViolation.getPropertyPath())
+                    );
+                }
             }
         }
         return messages;
