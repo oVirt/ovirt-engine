@@ -47,7 +47,10 @@ public class DynamicUrlContentTabPresenter extends WebAdminDynamicTabPresenter<D
     @Override
     protected void onReveal() {
         super.onReveal();
-        commonModelProvider.get().setPluginTabSelected(getProxy().getTargetHistoryToken());
+
+        if (isMainTab) {
+            commonModelProvider.get().setPluginTabSelected(getProxy().getTargetHistoryToken());
+        }
     }
 
     @Override
