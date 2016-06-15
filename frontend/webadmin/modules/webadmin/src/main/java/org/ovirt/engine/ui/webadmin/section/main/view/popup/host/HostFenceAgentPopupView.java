@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -76,7 +77,7 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
     @WithElementId("pmOptions")
     StringEntityModelTextBoxEditor pmOptionsEditor;
 
-    @UiField
+    @UiField(provided=true)
     @Path(value = "pmEncryptOptions.entity")
     @WithElementId("pmEncryptOptions")
     EntityModelCheckBoxEditor pmEncryptOptionsEditor;
@@ -89,7 +90,7 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
     @Ignore
     Label testMessage;
 
-    @UiField
+    @UiField(provided=true)
     @Path(value = "pmSecure.entity")
     @WithElementId("pmSecure")
     EntityModelCheckBoxEditor pmSecureEditor;
@@ -108,6 +109,10 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
 
     private void initEditors() {
         pmTypeEditor = new ListModelListBoxEditor<>(new StringRenderer<String>());
+        pmEncryptOptionsEditor= new EntityModelCheckBoxEditor(Align.RIGHT);
+        pmEncryptOptionsEditor.setUsePatternFly(true);
+        pmSecureEditor= new EntityModelCheckBoxEditor(Align.RIGHT);
+        pmSecureEditor.setUsePatternFly(true);
     }
 
     private void localize() {

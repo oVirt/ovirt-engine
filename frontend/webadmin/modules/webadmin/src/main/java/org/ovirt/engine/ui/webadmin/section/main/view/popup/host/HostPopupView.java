@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.TextEntityModelEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -279,7 +280,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     DialogTab hostedEngineTab;
 
-    @UiField
+    @UiField(provided=true)
     @Path(value = "hostedEngineHostModel.actions.selectedItem")
     ListModelRadioGroupEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
 
@@ -567,6 +568,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineKvmNested = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        hostedEngineDeployActionsEditor = new ListModelRadioGroupEditor<>(new EnumRenderer<HostedEngineDeployConfiguration.Action>());
     }
 
     private ListModelTypeAheadListBoxEditor<ExternalEntityBase> getListModelTypeAheadListBoxEditor() {
@@ -875,8 +878,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     private void createSpmControls(final HostModel object) {
 
+        Row labelRow = (Row) spmContainer.getWidget(0);
         spmContainer.clear();
-
+        spmContainer.add(labelRow);
         Iterable<?> items = object.getSpmPriority().getItems();
         if (items == null) {
             return;
@@ -902,9 +906,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             });
 
             Row row = new Row();
-            if (i == 0) {
-                row.addStyleName(style.topElement());
-            }
             Column column = new Column(ColumnSize.LG_12, rb);
             row.add(column);
             spmContainer.add(row);
