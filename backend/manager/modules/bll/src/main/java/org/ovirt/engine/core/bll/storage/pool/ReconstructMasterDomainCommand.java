@@ -179,7 +179,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         if (getStoragePool().getSpmVdsId() != null) {
             // if spm host id is different from selected host get the spm
             // in order to try and perform stop spm
-            VDS spm = null;
+            VDS spm;
             if (getStoragePool().getSpmVdsId().equals(getVds().getId())) {
                 spm = getVds();
             } else {
