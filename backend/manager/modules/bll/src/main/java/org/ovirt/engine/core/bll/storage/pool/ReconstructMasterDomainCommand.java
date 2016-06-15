@@ -129,8 +129,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         boolean commandSucceeded = stopSpm();
 
-        final List<String> disconnectPoolFormats = Config.<List<String>> getValue(
-                ConfigValues.DisconnectPoolOnReconstruct);
+        final List<String> disconnectPoolFormats = Config.getValue(ConfigValues.DisconnectPoolOnReconstruct);
 
         if (commandSucceeded && disconnectPoolFormats.contains(getNewMasterStorageDomain().getStorageFormat().getValue())) {
             commandSucceeded = runVdsCommand(
