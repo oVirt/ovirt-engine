@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -183,9 +182,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             if (getStoragePool().getSpmVdsId().equals(getVds().getId())) {
                 spm = getVds();
             } else {
-                spm = DbFacade.getInstance()
-                        .getVdsDao()
-                        .get(getStoragePool().getSpmVdsId());
+                spm = getVdsDao().get(getStoragePool().getSpmVdsId());
             }
             if (spm != null) {
                 ResetIrsVDSCommandParameters tempVar2 = new ResetIrsVDSCommandParameters(
