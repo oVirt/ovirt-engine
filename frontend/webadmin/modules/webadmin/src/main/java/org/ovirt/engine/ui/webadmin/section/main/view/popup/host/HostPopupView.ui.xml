@@ -341,7 +341,6 @@
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="LG_12">
                                       <g:Label text="{commonConstants.spmPriority}" />
-                                      <g:VerticalPanel ui:field="spmPanel" addStyleNames="hpv_spmPanel_pfly_fix"/>
                                     </b:Column>
                                </b:Row>
                            </b:Container>
@@ -436,8 +435,8 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="LG_12">
-                                        <g:InlineLabel text="{constants.kernelCmdlineLabel}" />
-                                        <d:InfoIcon text="{templates.kernelCmdlineInfoIcon}" addStyleNames="{style.inline}"/>
+                                        <g:Label text="{constants.kernelCmdlineLabel}" addStyleNames="form-group {style.floatLeft}" />
+                                        <d:InfoIcon text="{templates.kernelCmdlineInfoIcon}" addStyleNames="{style.patternFlyRadio} {style.inline}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
@@ -459,10 +458,12 @@
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
                                 <b:Row addStyleNames="{style.topElement}">
-                                    <e:ListModelRadioGroupEditor ui:field="hostedEngineDeployActionsEditor"
-                                                                 usePatternFly="true"
-                                                                 label="{constants.hostedEngineDeploymentAction}"
-                                                                 labelColSize="LG_6" widgetColSize="LG_12"/>
+                                    <b:Column size="LG_12">
+                                        <g:Label text="{constants.hostedEngineDeploymentAction}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <e:ListModelRadioGroupEditor ui:field="hostedEngineDeployActionsEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>
