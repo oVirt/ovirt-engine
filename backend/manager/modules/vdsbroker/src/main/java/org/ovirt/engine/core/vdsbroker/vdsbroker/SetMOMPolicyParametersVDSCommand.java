@@ -28,7 +28,11 @@ public class SetMOMPolicyParametersVDSCommand extends VdsBrokerCommand<MomPolicy
         Map<String, Object> deviceStruct = new HashMap<>();
         deviceStruct.put(VdsProperties.balloonEnabled, getParameters().isEnableBalloon());
         deviceStruct.put(VdsProperties.ksmEnabled, getParameters().isEnableKsm());
-        deviceStruct.put(VdsProperties.ksmMergeAcrossNodes, getParameters().isKsmMergeAcrossNumaNodes());
+
+        if (getVds().getVdsGroupCompatibilityVersion().compareTo(Version.v3_6) >= 0) {
+            deviceStruct.put(VdsProperties.ksmMergeAcrossNodes, getParameters().isKsmMergeAcrossNumaNodes());
+        }
+
         return deviceStruct;
     }
 }
