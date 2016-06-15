@@ -81,4 +81,12 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
         return super.getValidationGroups();
     }
 
+    public String getSubnetName() {
+        return getParameters().getSubnet().getName();
+    }
+
+    public String getProviderName() {
+        return getProvider().getName();
+    }
+
 }
