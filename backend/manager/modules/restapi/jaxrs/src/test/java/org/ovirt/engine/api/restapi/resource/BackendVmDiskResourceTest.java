@@ -41,7 +41,9 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -52,6 +54,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDiskResourceTest
@@ -139,6 +142,9 @@ public class BackendVmDiskResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
+
+        setUpDiskVmElementExpectations();
+
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.UpdateVmDisk,
@@ -156,6 +162,7 @@ public class BackendVmDiskResourceTest
     @Test
     public void testUpdateReadOnly() throws Exception {
         setUpGetEntityExpectations(2);
+        setUpDiskVmElementExpectations();
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.UpdateVmDisk,
@@ -374,6 +381,20 @@ public class BackendVmDiskResourceTest
                 getEntity(1)
             );
         }
+    }
+
+    private void setUpDiskVmElementExpectations() throws Exception {
+        DiskVmElement dve = new DiskVmElement(DISK_ID, VM_ID);
+        dve.setDiskInterface(DiskInterface.VirtIO);
+        dve.setBoot(false);
+
+        setUpGetEntityExpectations(
+                VdcQueryType.GetDiskVmElementById,
+                VmDeviceIdQueryParameters.class,
+                new String[] { "Id"},
+                new Object[] { new VmDeviceId(DISK_ID, VM_ID)},
+                dve
+        );
     }
 
     protected void setUpGetEntityExpectations(int times) throws Exception {
