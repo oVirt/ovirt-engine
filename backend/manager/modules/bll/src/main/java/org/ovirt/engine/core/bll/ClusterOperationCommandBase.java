@@ -109,13 +109,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         }
     }
 
-    protected void checkMaxMemoryOverCommitValue() {
-        if (getCluster().getMaxVdsMemoryOverCommit() <= 0) {
-            getCluster().setMaxVdsMemoryOverCommit(
-                    Config.<Integer>getValue(ConfigValues.MaxVdsMemOverCommit));
-        }
-    }
-
     protected boolean isAllowClusterWithVirtGluster() {
         Boolean allowVirGluster = Config.<Boolean> getValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
         return allowVirGluster;

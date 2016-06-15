@@ -891,6 +891,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String CLUSTER_HOSTS_MUST_BE_DOWN();
 
+    String CLUSTER_OVER_COMMIT_VALUE_INVALID();
+
     String ACTION_TYPE_FAILED_NAME_ALREADY_USED();
 
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();

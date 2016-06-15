@@ -80,7 +80,6 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         cluster.setArchitecture(getArchitecture());
         setDefaultSwitchTypeIfNeeded();
 
-        checkMaxMemoryOverCommitValue();
         cluster.setDetectEmulatedMachine(true);
         cluster.setMacPoolId(calculateMacPoolIdToUse());
         getClusterDao().save(cluster);

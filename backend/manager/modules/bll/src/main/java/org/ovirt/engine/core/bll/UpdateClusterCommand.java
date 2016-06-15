@@ -127,7 +127,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         setDefaultSwitchTypeIfNeeded();
 
         // TODO: This code should be revisited and proper compensation logic should be introduced here
-        checkMaxMemoryOverCommitValue();
         if (!Objects.equals(oldCluster.getCompatibilityVersion(), getParameters().getCluster().getCompatibilityVersion())) {
             String emulatedMachine = null;
             // pick an UP host randomly - all should have latest compat version already if we passed validate.
