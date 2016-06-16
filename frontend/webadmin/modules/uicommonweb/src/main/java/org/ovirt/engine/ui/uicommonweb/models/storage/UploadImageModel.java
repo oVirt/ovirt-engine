@@ -373,6 +373,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         } else {
             setDiskModel(new ReadOnlyDiskModel());
             getDiskModel().setDisk(resumeUploadDisk);
+            getDiskModel().getDiskInterface().setIsAvailable(false);
             setIsResumeUpload(true);
         }
 
