@@ -1578,3 +1578,39 @@ added to snapshot entity: `snapshot.snapshot_type`.
 
 The deprecated `move` action of the `VM` entity has been removed.
 Instead, you can move inidividual disks.
+
+=== Moved `reported_configurations.in_sync` to `network_attachment`
+
+In version 3 of the API the XML schema type `ReportedConfigurations` had
+a `in_sync` property:
+
+[source,xml]
+----
+<network_attachment>
+  <reported_configurations>
+    <in_sync>true</in_sync>
+    <reported_configuration>
+      ...
+    </reported_configuration>
+    ...
+  </reported_configurations>
+</network_attachment>
+----
+
+In the specification mechanism used by version 4 of the API this can't
+be expressed, because list types (the list of reported configurations)
+can't have attributes. To be able to represent it the attribute has been
+moved to the enclosing `network_attachment`:
+
+[source,xml]
+----
+<network_attachment>
+  <in_sync>true</in_sync>
+  <reported_configurations>
+    <reported_configuration>
+      ...
+    </reported_configuration>
+    ...
+  </reported_configurations>
+</network_attachment>
+----
