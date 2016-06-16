@@ -80,7 +80,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<StorageDomainStatic>emptyList());
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
         spyCommand(new StoragePoolManagementParameter(createNewStoragePool()));
