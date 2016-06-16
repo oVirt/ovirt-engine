@@ -27,7 +27,6 @@ import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -47,8 +46,6 @@ public class SchedulingManagerTest extends TransactionalTestBase {
 
     @Inject @Spy
     private Instance<SchedulingManager> schedulingManager;
-    @Inject
-    private DbFacade dbFacade;
 
     @Deployment(name = "SchedulingManagerTest")
     public static JavaArchive deploy() {

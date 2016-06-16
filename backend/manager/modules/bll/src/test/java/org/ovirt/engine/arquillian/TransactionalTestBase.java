@@ -23,7 +23,10 @@ import org.ovirt.engine.core.builder.VmBuilder;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dao.Dao;
 import org.ovirt.engine.core.di.Injector;
 
@@ -41,6 +44,9 @@ public abstract class TransactionalTestBase {
 
     @Inject
     private Injector injector;
+
+    @Inject
+    private DbFacade dbFacade;
 
     protected Cluster defaultCluster;
 
@@ -81,7 +87,13 @@ public abstract class TransactionalTestBase {
     }
 
     @Before
-    public void setUpDefaultEntities() {
+    public void setUpDefaultEnvironment() {
+        // Set the right location of a minimal oVirt configuration
+        System.setProperty("ovirt-engine.config.defaults", "src/test/resources/engine.conf.defaults");
+        // Load config values from the database
+        Config.setConfigUtils(new DBConfigUtils());
+        Config.getConfigUtils().setStringValue(ConfigValues.EnableVdsLoadBalancing.name(), "false");
+
         defaultCluster = clusterBuilder.persist();
         defaultHost = vdsBuilder.cluster(defaultCluster).persist();
         defaultVM = vmBuilder.host(defaultHost).up().persist();
