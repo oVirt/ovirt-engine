@@ -74,8 +74,7 @@ public class SSHClient implements Closeable {
     private void remoteFileName(String file) {
         if (file.indexOf('\'') != -1 ||
                 file.indexOf('\n') != -1 ||
-                file.indexOf('\r') != -1 ||
-                false) {
+                file.indexOf('\r') != -1) {
             throw new IllegalArgumentException("File name should not contain \"'\"");
         }
     }
