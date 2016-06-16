@@ -95,6 +95,7 @@ import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -2141,7 +2142,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @param varValue the variable value
      */
     protected void addValidationMessageVariable(String varName, Object varValue) {
-        getReturnValue().getValidationMessages().add(String.format("$%s %s", varName, varValue));
+        getReturnValue().getValidationMessages().add(ReplacementUtils.createSetVariableString(varName, varValue));
     }
 
     /**

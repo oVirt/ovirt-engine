@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +14,6 @@ public class ReplacementUtils {
     protected static final int DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS = 5;
     protected static final String DEFAULT_SEPARATOR = "," + System.lineSeparator();
     private static final String COUNTER_SUFFIX = "_COUNTER";
-    private static final String SET_VARIABLE_VALUE_FORMAT = "${0} {1}";
     private static final String LIST_SUFFIX = "_LIST";
     private static final String ENTITY_SUFFIX  = "_ENTITY";
 
@@ -72,7 +70,8 @@ public class ReplacementUtils {
     }
 
     public static String createSetVariableString(String propertyName, Object value) {
-        return MessageFormat.format(SET_VARIABLE_VALUE_FORMAT, propertyName, value);
+        final String setVariableValueFormat = "$%s %s";
+        return String.format(setVariableValueFormat, propertyName, value);
     }
 
     /**
