@@ -251,8 +251,8 @@ public class OpenSSHUtils {
      * which works on byte[], but it treats whitespace as valid. So, we roll out our own version.
      */
     private static boolean isBase64(byte[] octects) {
-        for (int i = 0; i < octects.length; i++) {
-            if (!Base64.isBase64(octects[i])) {
+        for (byte octect : octects) {
+            if (!Base64.isBase64(octect)) {
                 return false;
             }
         }
