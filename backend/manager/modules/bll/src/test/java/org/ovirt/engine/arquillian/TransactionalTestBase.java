@@ -6,8 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.aerogear.arquillian.junit.ArquillianRule;
-import org.jboss.aerogear.arquillian.junit.ArquillianRules;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -15,7 +14,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.arquillian.database.DataSourceFactory;
-import org.ovirt.engine.arquillian.database.TransactionRollbackRule;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.scheduling.CommonTestMocks;
 import org.ovirt.engine.core.builder.AbstractBuilder;
@@ -28,13 +26,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.Dao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
-@RunWith(ArquillianRules.class)
+@RunWith(Arquillian.class)
 public abstract class TransactionalTestBase {
-
-    @ArquillianRule
-    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @Inject
     protected VmBuilder vmBuilder;
@@ -54,9 +48,6 @@ public abstract class TransactionalTestBase {
 
     protected VM defaultVM;
 
-    @ArquillianRule
-    public TransactionRollbackRule rollbackRule = new TransactionRollbackRule();
-
     public static JavaArchive createDeployment(){
         return createDeployment(new ArrayList<>());
     }
@@ -68,7 +59,6 @@ public abstract class TransactionalTestBase {
     public static JavaArchive createDeployment(Class<?>[] classes) {
         final Class<?>[] defaultClasses = {
                 DataSourceFactory.class,
-                TransactionRollbackRule.class,
                 CommonTestMocks.class,
                 Injector.class,
                 SessionDataContainer.class,
@@ -82,7 +72,6 @@ public abstract class TransactionalTestBase {
         return ShrinkWrap.create(JavaArchive.class)
                 .addPackages(true, Dao.class.getPackage()) // add all DAOs
                 .addPackage(AbstractBuilder.class.getPackage()) // add all builder
-                .addPackage(TransactionRollbackRule.class.getPackage()) // database related stuff
                 .addClasses(
                         classList.toArray(new Class<?>[classList.size()])
                 ).addAsManifestResource(
