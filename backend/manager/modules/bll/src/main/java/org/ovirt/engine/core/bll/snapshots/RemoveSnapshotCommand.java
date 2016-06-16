@@ -334,7 +334,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
                 !validateSnapshotType() ||
-                !validate(vmValidator.vmQualifiedForSnapshotMerge())) {
+                !validate(vmValidator.vmQualifiedForSnapshotMerge()) ||
+                !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
             return false;
         }
 
