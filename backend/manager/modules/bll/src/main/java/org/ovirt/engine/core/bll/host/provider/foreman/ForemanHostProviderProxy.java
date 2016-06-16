@@ -5,25 +5,17 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
-import org.ovirt.engine.core.common.businessentities.ErrataCount;
-import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
-import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
-import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
@@ -43,7 +35,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private static final String HOSTS_ENTRY_POINT = API_ENTRY_POINT + "/hosts";
     private static final String ALL_HOSTS_QUERY = HOSTS_ENTRY_POINT + "?" + JSON_FORMAT;
     private static final String SEARCH_SECTION_FORMAT = "search=%1$s";
-    private static final String SEARCH_QUERY_FORMAT = "?" + SEARCH_SECTION_FORMAT + "&" + JSON_FORMAT;
+    static final String SEARCH_QUERY_FORMAT = "?" + SEARCH_SECTION_FORMAT + "&" + JSON_FORMAT;
 
     private static final String HOST_GROUPS_ENTRY_POINT = API_ENTRY_POINT + "/hostgroups";
     private static final String HOST_GROUPS_QUERY = HOST_GROUPS_ENTRY_POINT + "?" + JSON_FORMAT;
@@ -54,18 +46,13 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private static final String DISCOVERED_HOSTS = "/discovered_hosts";
     private static final String DISCOVERED_HOSTS_ENTRY_POINT = API_ENTRY_POINT + DISCOVERED_HOSTS;
 
-    private static final String KATELLO_API_ENTRY_POINT = "/katello/api/v2";
-    private static final String CONTENT_HOSTS_ENTRY_POINT = KATELLO_API_ENTRY_POINT + "/systems";
-    static final String CONTENT_HOST_ERRATA_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata";
-    private static final String CONTENT_HOST_ERRATUM_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata/%2$s";
-    private static final Integer UNLIMITED_PAGE_SIZE = 999999;
 
     public ForemanHostProviderProxy(Provider<?> hostProvider) {
         super(hostProvider);
         objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    private byte[] runHttpGetMethod(String relativeUrl) {
+    byte[] runHttpGetMethod(String relativeUrl) {
         return runHttpMethod(
                 HttpMethodType.GET,
                 "application/json; charset=utf-8",
@@ -391,144 +378,17 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
-    public ContentHost findContentHost(String hostName) {
-        final String hostNameFact = "facts.network.hostname:" + hostName;
-        final List<ContentHost> contentHosts =
-                runContentHostListMethod(CONTENT_HOSTS_ENTRY_POINT + String.format(SEARCH_QUERY_FORMAT, hostNameFact));
-
-        if (contentHosts.isEmpty()) {
-            return null;
-        }
-
-        ContentHost latestRegisteredHost = contentHosts.get(0);
-        for (int i = 1; i < contentHosts.size(); i++) {
-            ContentHost candidateHost = contentHosts.get(i);
-            if (candidateHost.getCreated().after(latestRegisteredHost.getCreated())) {
-                latestRegisteredHost = candidateHost;
-            }
-        }
-
-        return latestRegisteredHost;
-    }
-
-    private List<ContentHost> runContentHostListMethod(String relativeUrl) {
-        try {
-            ContentHostsWrapper wrapper =
-                    objectMapper.readValue(runHttpGetMethod(relativeUrl), ContentHostsWrapper.class);
-            return Arrays.asList(wrapper.getResults());
-        } catch (IOException e) {
-            return Collections.emptyList();
-        }
-    }
-
-    private ErrataData runErrataListMethod(String relativeUrl, String hostName) {
-        ErrataData errataData = new ErrataData();
-
-        try {
-            ErrataWrapper wrapper = objectMapper.readValue(runHttpGetMethod(relativeUrl), ErrataWrapper.class);
-            errataData.setErrata(mapErrata(Arrays.asList(wrapper.getResults())));
-            errataData.setErrataCounts(mapErrataCounts(wrapper));
-            Stream.of(ErrataType.values()).forEach(errataType -> addErrataCountForType(errataData, errataType));
-        } catch (Exception e) {
-            log.error("Failed to retrieve errata for content host '{}' via url '{}': {}",
-                    hostName,
-                    relativeUrl,
-                    e.getMessage());
-            log.debug("Exception", e);
-            return ErrataData.emptyData();
-        }
-
-        return errataData;
-    }
-
-    private void addErrataCountForType(ErrataData errataData, ErrataType errataType) {
-        Stream<Erratum> typedErrata =
-                errataData.getErrata().stream().filter(erratum -> erratum.getType() == errataType);
-        long totalCount = typedErrata.count();
-        if (totalCount > 0) {
-            Map<ErrataSeverity, Long> errataBySeverity =
-                    errataData.getErrata().stream().collect(
-                            Collectors.groupingBy(Erratum::getSeverityOrDefault, Collectors.counting()));
-
-            ErrataCount errataCount = new ErrataCount();
-            errataCount.setTotalCount((int) totalCount);
-            errataBySeverity.entrySet()
-                    .stream()
-                    .forEach(entry -> errataCount.getCountBySeverity().put(entry.getKey(),
-                            entry.getValue().intValue()));
-
-            errataData.getErrataCounts().getErrataCountByType().put(errataType, errataCount);
-        }
-    }
-
-    private ErrataCounts mapErrataCounts(ErrataWrapper wrapper) {
-        ErrataCounts errataCounts = new ErrataCounts();
-        errataCounts.setTotalErrata(wrapper.getTotalCount());
-        errataCounts.setSubTotalErrata(wrapper.getSubTotalCount());
-        return errataCounts;
-    }
-
-    private List<Erratum> mapErrata(List<ExternalErratum> externalErrata) {
-        ArrayList<Erratum> errata = new ArrayList<>(externalErrata.size());
-        for (ExternalErratum externalErratum : externalErrata) {
-            Erratum erratum = mapErratum(externalErratum);
-            errata.add(erratum);
-        }
-
-        return errata;
-    }
-
-    private Erratum mapErratum(ExternalErratum externalErratum) {
-        Erratum erratum = new Erratum();
-        erratum.setId(externalErratum.getId());
-        erratum.setIssued(externalErratum.getIssued());
-        erratum.setTitle(externalErratum.getTitle());
-        erratum.setSummary(externalErratum.getSummary());
-        erratum.setSolution(externalErratum.getSolution());
-        erratum.setDescription(externalErratum.getDescription());
-        erratum.setSeverity(ErrataSeverity.byDescription(externalErratum.getSeverity()));
-        erratum.setType(ErrataType.byDescription(externalErratum.getType()));
-        erratum.setPackages(Arrays.asList(externalErratum.getPackages()));
-        return erratum;
+    public ErrataData getErrataForHost(String hostName, ErrataFilter errataFilter) {
+        return new KatelloV21Provider(this).getErrataForHost(hostName, errataFilter);
     }
 
     @Override
     public Erratum getErratumForHost(String hostName, String erratumId) {
-        ContentHost contentHost = findContentHost(hostName);
-        if (contentHost == null) {
-            log.error("Failed to find host on provider '{}' by host name '{}' ", getProvider().getName(), hostName);
-            return null;
-        }
-
-        return runErratumMethod(String.format(CONTENT_HOST_ERRATUM_ENTRY_POINT, contentHost.getUuid(), erratumId));
+        return new KatelloV21Provider(this).getErratumForHost(hostName, erratumId);
     }
 
     @Override
-    public ErrataData getErrataForHost(String hostName, ErrataFilter errataFilter) {
-        ContentHost contentHost = findContentHost(hostName);
-        if (contentHost == null) {
-            log.error("Failed to find host on provider '{}' by host name '{}' ", getProvider().getName(), hostName);
-            return ErrataData.emptyData();
-        }
-
-        if (errataFilter == null) {
-            errataFilter = new ErrataFilter();
-            errataFilter.setErrataTypes(EnumSet.allOf(ErrataType.class));
-        }
-
-        // For calculating the errata counts there is a need to fetch all of the errata information
-        errataFilter.setPageSize(UNLIMITED_PAGE_SIZE);
-        String relativeUrl = FilteredErrataRelativeUrlBuilder.create(contentHost.getUuid(), errataFilter).build();
-        return runErrataListMethod(relativeUrl, hostName);
+    public ContentHost findContentHost(String hostName) {
+        return new KatelloV21Provider(this).findContentHost(hostName);
     }
-
-    private Erratum runErratumMethod(String relativeUrl) {
-        try {
-            ExternalErratum erratum = objectMapper.readValue(runHttpGetMethod(relativeUrl), ExternalErratum.class);
-            return mapErratum(erratum);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
 }

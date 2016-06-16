@@ -18,7 +18,7 @@ class FilteredErrataRelativeUrlBuilder {
     public FilteredErrataRelativeUrlBuilder(String contentHostId, ErrataFilter errataFilter) {
         this.errataFilter = errataFilter;
         url = new URLBuilder(DUMMY_ADDRESS_PREFIX,
-                String.format(ForemanHostProviderProxy.CONTENT_HOST_ERRATA_ENTRY_POINT, contentHostId));
+                String.format(KatelloV21Provider.CONTENT_HOST_ERRATA_ENTRY_POINT, contentHostId));
     }
 
     public String build() {
