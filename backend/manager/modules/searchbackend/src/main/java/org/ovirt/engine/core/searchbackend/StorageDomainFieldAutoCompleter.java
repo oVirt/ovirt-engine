@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String NAME = "NAME";
     public static final String STATUS = "STATUS";
+    public static final String SHARED_STATUS = "SHARED_STATUS";
     public static final String EXTERNAL_STATUS = "EXTERNAL_STATUS";
     public static final String DATACENTER = "DATACENTER";
     public static final String TYPE = "TYPE";
@@ -24,6 +25,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         // Building the basic vervs Dict
         verbs.add(NAME);
         verbs.add(STATUS);
+        verbs.add(SHARED_STATUS);
         verbs.add(EXTERNAL_STATUS);
         verbs.add(DATACENTER);
         verbs.add(TYPE);
@@ -41,6 +43,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         // Building the types dict
         getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put(STATUS, StorageDomainStatus.class);
+        getTypeDictionary().put(SHARED_STATUS, StorageDomainSharedStatus.class);
         getTypeDictionary().put(EXTERNAL_STATUS, ExternalStatus.class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put(TYPE, StorageType.class);
@@ -55,7 +58,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "storage_name");
-        columnNameDict.put(STATUS, "storage_domain_shared_status");
+        columnNameDict.put(STATUS, "status");
+        columnNameDict.put(SHARED_STATUS, "storage_domain_shared_status");
         columnNameDict.put(EXTERNAL_STATUS, "external_status");
         columnNameDict.put(DATACENTER, "storage_pool_name::text");
         columnNameDict.put(TYPE, "storage_type");
@@ -89,6 +93,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
             retval = new EnumValueAutoCompleter(StorageType.class);
         }
         else if (STATUS.equals(fieldName)) {
+            retval = new EnumValueAutoCompleter(StorageDomainStatus.class);
+        }
+        else if (SHARED_STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageDomainSharedStatus.class);
         }
         else if (EXTERNAL_STATUS.equals(fieldName)) {

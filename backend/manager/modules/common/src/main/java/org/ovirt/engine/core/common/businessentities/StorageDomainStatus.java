@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-public enum StorageDomainStatus {
+public enum StorageDomainStatus implements Identifiable{
     Unknown,
     Uninitialized,
     Unattached,
