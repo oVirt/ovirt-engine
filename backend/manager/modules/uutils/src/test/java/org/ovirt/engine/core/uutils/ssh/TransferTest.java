@@ -28,7 +28,7 @@ public class TransferTest {
     File local2;
     SSHClient client;
 
-    byte[] digestFile(File file) throws FileNotFoundException, IOException {
+    byte[] digestFile(File file) throws IOException {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("MD5");
