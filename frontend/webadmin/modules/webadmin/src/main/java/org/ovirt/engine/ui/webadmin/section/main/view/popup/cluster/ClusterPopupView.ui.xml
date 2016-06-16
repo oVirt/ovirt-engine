@@ -146,10 +146,6 @@
             margin-left: 5px;
         }
 
-        .keyValueWidget {
-            padding: 0 5px;
-        }
-
         .infoIcon {
             float: left;
             padding-left: 2px;
@@ -375,7 +371,7 @@
                                 <b:Row>
                                     <b:Column size="LG_12">
                                         <g:Label addStyleNames="{style.groupTitle}" text="{constants.clusterPolicyPropertiesLabel}" />
-                                        <k:KeyValueWidget ui:field="customPropertiesSheetEditor" addStyleNames="{style.keyValueWidget}" usePatternFly="true"/>
+                                        <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>

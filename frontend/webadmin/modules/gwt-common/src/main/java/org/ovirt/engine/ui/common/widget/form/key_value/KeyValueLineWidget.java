@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.form.key_value;
 
+import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -20,7 +20,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class KeyValueLineWidget extends Composite implements HasValueChangeHandlers<KeyValueLineModel>, HasEditorDriver<KeyValueLineModel>, HasEnabled {
@@ -36,7 +35,7 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
 
     @UiField
     @Ignore
-    HorizontalPanel panel;
+    Row panel;
 
     @UiField
     @Path(value = "keys.selectedItem")
@@ -52,29 +51,9 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private String rowWidth = "400px"; //$NON-NLS-1$
-    private String fieldWidth = "180px"; //$NON-NLS-1$
-
-    KeyValueLineWidget(String rowWidth, String fieldWidth) {
-        if (rowWidth != null) {
-            this.rowWidth = rowWidth;
-        }
-        if (fieldWidth != null) {
-            this.fieldWidth = fieldWidth;
-        }
+    KeyValueLineWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
-        addStyles();
-    }
-
-    private void addStyles() {
-        keyField.setWidth(fieldWidth);
-        valueField.setWidth(fieldWidth);
-        valuesField.setWidth(fieldWidth);
-        keyField.getContentWidgetContainer().setWidth(fieldWidth);
-        valueField.getContentWidgetContainer().setWidth(fieldWidth);
-        valuesField.getContentWidgetContainer().setWidth(fieldWidth);
-        panel.setWidth(rowWidth);
         hideLabels();
     }
 
@@ -88,11 +67,6 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
         keyField.setUsePatternFly(use);
         valueField.setUsePatternFly(use);
         valuesField.setUsePatternFly(use);
-        if (use) {
-            keyField.getElement().getStyle().setPaddingRight(5, Unit.PX);
-            valueField.getElement().getStyle().setPaddingRight(5, Unit.PX);
-            valuesField.getElement().getStyle().setPaddingRight(5, Unit.PX);
-        }
     }
 
     @Override

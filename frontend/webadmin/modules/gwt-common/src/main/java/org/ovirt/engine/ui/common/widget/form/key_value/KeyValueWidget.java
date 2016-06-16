@@ -17,21 +17,9 @@ public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveR
 
     private T model;
     private final LinkedList<KeyValueLineWidget> widgets = new LinkedList<>();
-    String rowWidth = null;
-    String fieldWidth = null;
 
     KeyValueWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-    }
-
-    public KeyValueWidget(String rowWidth) {
-        this();
-        this.rowWidth = rowWidth;
-    }
-
-    public KeyValueWidget(String rowWidth, String fieldWidth) {
-        this(rowWidth);
-        this.fieldWidth = fieldWidth;
     }
 
     @Override
@@ -60,7 +48,7 @@ public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveR
 
     @Override
     protected KeyValueLineWidget createWidget(KeyValueLineModel value) {
-        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget(rowWidth, fieldWidth);
+        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget();
         keyValueLineWidget.edit(value);
         keyValueLineWidget.setUsePatternFly(usePatternFly);
         widgets.add(keyValueLineWidget);

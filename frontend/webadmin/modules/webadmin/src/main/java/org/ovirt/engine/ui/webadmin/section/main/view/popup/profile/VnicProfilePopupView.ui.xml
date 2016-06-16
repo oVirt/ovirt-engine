@@ -1,51 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value" >
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfilePopupView.Style">
+    <ui:style>
+        .container {
+            width: 100%;
+        }
 
-		.checkboxEditor {
-			width: 235px;
-		}
+        .firstRow {
+            padding-top: 15px;
+        }
+    </ui:style>
 
-		.publicUseEditor {
-			padding: 0px;
-			width: 100%;
-		}
-
-		.checkBox {
-			padding: 0px !important;
-			width: 230px !important;
-		}
-
-
-	</ui:style>
-
-	<d:SimpleDialogPanel width="470px" height="325px">
-		<d:content>
-			<g:FlowPanel>
-				<e:ListModelListBoxEditor ui:field="networkEditor" />
-				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-				<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-				<e:ListModelListBoxEditor ui:field="networkQoSEditor"/>
-				<e:ListModelListBoxEditor ui:field="networkFilterEditor"/>
-				<g:FlowPanel width="100%">
-					<ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" />
-					<ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
-				</g:FlowPanel>
-				<g:FlowPanel>
-					<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
-				</g:FlowPanel>
-				<ge:EntityModelCheckBoxEditor ui:field="publicUseEditor"/>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="575px" height="500px">
+        <d:content>
+            <g:ScrollPanel>
+                <b:Container addStyleNames="{style.container}">
+                    <b:Row addStyleNames="{style.firstRow}">
+                        <e:ListModelListBoxEditor ui:field="networkEditor" label="{constants.networkVnicProfile}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    </b:Row>
+                    <b:Row>
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameVnicProfile}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    </b:Row>
+                    <b:Row>
+                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionVnicProfile}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    </b:Row>
+                    <b:Row>
+                        <e:ListModelListBoxEditor ui:field="networkQoSEditor" label="{constants.profileQoSInstanceTypeLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    </b:Row>
+                    <b:Row>
+                        <e:ListModelListBoxEditor ui:field="networkFilterEditor" label="{constants.profileNetworkFilterLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="LG_12">
+                            <ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" label="{constants.passthorughVnicProfile}" usePatternFly="true" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="LG_12">
+                            <ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" label="{constants.portMirroringVnicProfile}" usePatternFly="true" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="LG_12">
+                            <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="LG_12">
+                            <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" label="{constants.publicUseVnicProfile}" usePatternFly="true" />
+                        </b:Column>
+                    </b:Row>
+                </b:Container>
+            </g:ScrollPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>
 

@@ -3,24 +3,17 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQosParametersModel> {
-
-    interface Style extends CssResource {
-        String valueBox();
-    }
 
     interface Driver extends SimpleBeanEditorDriver<HostNetworkQosParametersModel, HostNetworkQosWidget> {
     }
@@ -35,7 +28,7 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
 
     @UiField
     @Ignore
-    StringEntityModelLabelEditor qosOutLabel;
+    EnableableFormLabel qosOutLabel;
 
     @UiField
     @Path(value="outAverageLinkshare.entity")
@@ -52,24 +45,9 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
     @WithElementId
     StringEntityModelTextBoxEditor outAverageRealtime;
 
-    @UiField
-    Style style;
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     public HostNetworkQosWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
-
-        qosOutLabel.asValueBox().setVisible(false);
-        outAverageLinkshare.addContentWidgetContainerStyleName(style.valueBox());
-        outAverageUpperlimit.addContentWidgetContainerStyleName(style.valueBox());
-        outAverageRealtime.addContentWidgetContainerStyleName(style.valueBox());
-
-        qosOutLabel.setLabel(constants.hostNetworkQosOutLabel());
-        outAverageLinkshare.setLabel(constants.hostNetworkQosPopupOutAverageLinkshare());
-        outAverageUpperlimit.setLabel(constants.hostNetworkQosPopupOutAverageUpperlimit());
-        outAverageRealtime.setLabel(constants.hostNetworkQosPopupOutAverageRealtime());
 
         driver = GWT.create(Driver.class);
         driver.initialize(this);

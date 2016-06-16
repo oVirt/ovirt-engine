@@ -348,7 +348,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         public void appendButton(PushButton button) {
             buttons.add(button);
             remove(div);
-            append(button);
+            append(button, !usePatternFly);
             add(div);
         }
 

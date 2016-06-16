@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicPro
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -40,17 +39,6 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     interface ViewIdHandler extends ElementIdHandler<VnicProfilePopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    protected interface Style extends CssResource {
-        String checkboxEditor();
-
-        String checkBox();
-
-        String publicUseEditor();
-    }
-
-    @UiField
-    protected Style style;
 
     @UiField
     @Path("name.entity")
@@ -72,17 +60,17 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @WithElementId("networkFilter")
     public ListModelListBoxEditor<NetworkFilter> networkFilterEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("passthrough.entity")
     @WithElementId("passthrough")
     protected EntityModelCheckBoxEditor passthroughEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("portMirroring.entity")
     @WithElementId("portMirroring")
     protected EntityModelCheckBoxEditor portMirroringEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Ignore
     public KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
@@ -102,26 +90,14 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     public VnicProfilePopupView(EventBus eventBus) {
         super(eventBus);
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        customPropertiesSheetEditor = new KeyValueWidget<>("380px"); //$NON-NLS-1$
+        passthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        portMirroringEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         networkFilterEditor = new ListModelListBoxEditor<>(new NetworkFilterRenderer(constants));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
-        applyStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-    }
-
-    private void localize() {
-        networkEditor.setLabel(constants.networkVnicProfile());
-        nameEditor.setLabel(constants.nameVnicProfile());
-        descriptionEditor.setLabel(constants.descriptionVnicProfile());
-        passthroughEditor.setLabel(constants.passthorughVnicProfile());
-        portMirroringEditor.setLabel(constants.portMirroringVnicProfile());
-        publicUseEditor.setLabel(constants.publicUseVnicProfile());
-        networkQoSEditor.setLabel(constants.profileQoSInstanceTypeLabel());
-        networkFilterEditor.setLabel(constants.profileNetworkFilterLabel());
     }
 
     @Override
@@ -138,12 +114,5 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @Override
     public VnicProfileModel flush() {
         return driver.flush();
-    }
-
-    private void applyStyles() {
-        portMirroringEditor.addContentWidgetContainerStyleName(style.checkboxEditor());
-        passthroughEditor.addContentWidgetContainerStyleName(style.checkboxEditor());
-        publicUseEditor.addContentWidgetContainerStyleName(style.publicUseEditor());
-        publicUseEditor.asCheckBox().addStyleName(style.checkBox());
     }
 }

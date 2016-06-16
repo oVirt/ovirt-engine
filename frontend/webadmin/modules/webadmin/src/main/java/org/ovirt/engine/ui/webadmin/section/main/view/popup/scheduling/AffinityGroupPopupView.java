@@ -4,9 +4,10 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
@@ -48,21 +49,29 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
 
     @Path(value = "positive.entity")
     @WithElementId("positive")
-    EntityModelCheckBoxOnlyEditor positiveEditor;
+    @UiField(provided=true)
+    EntityModelCheckBoxEditor positiveEditor;
 
-    @UiField(provided = true)
+    @UiField(provided=true)
+    InfoIcon positiveEditorInfoIcon;
+
+    @UiField
     @Ignore
-    EntityModelWidgetWithInfo positiveEditorWithInfo;
+    EnableableFormLabel positiveEditorLabel;
 
     @Path(value = "enforcing.entity")
     @WithElementId("enforcing")
-    EntityModelCheckBoxOnlyEditor enforcingEditor;
+    @UiField(provided=true)
+    EntityModelCheckBoxEditor enforcingEditor;
 
-    @UiField(provided = true)
+    @UiField(provided=true)
+    InfoIcon enforcingEditorInfoIcon;
+
+    @UiField
     @Ignore
-    EntityModelWidgetWithInfo enforcingEditorWithInfo;
+    EnableableFormLabel enforcingEditorLabel;
 
-    @UiField(provided = true)
+    @UiField
     @Ignore
     protected KeyValueWidget<VmsSelectionModel> addRemoveVmWidget;
 
@@ -73,38 +82,19 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     public AffinityGroupPopupView(EventBus eventBus) {
         super(eventBus);
         initCheckBoxEditors();
-        initAddRemoveWidget();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
         driver.initialize(this);
     }
 
-    private void initAddRemoveWidget() {
-        addRemoveVmWidget = new KeyValueWidget<>("120px"); //$NON-NLS-1$
-    }
-
     private void initCheckBoxEditors() {
-        positiveEditor = new EntityModelCheckBoxOnlyEditor();
+        positiveEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        positiveEditor.hideLabel();
+        positiveEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupPolarityInfo()));
 
-        EnableableFormLabel posLabel = new EnableableFormLabel();
-        posLabel.setText(constants.affinityGroupPolarityLabel());
-
-        positiveEditorWithInfo = new EntityModelWidgetWithInfo(posLabel, positiveEditor);
-        positiveEditorWithInfo.setExplanation(templates.italicText(constants.affinityGroupPolarityInfo()));
-
-        enforcingEditor = new EntityModelCheckBoxOnlyEditor();
-
-        EnableableFormLabel enfLabel = new EnableableFormLabel();
-        enfLabel.setText(constants.affinityGroupEnforceTypeLabel());
-
-        enforcingEditorWithInfo = new EntityModelWidgetWithInfo(enfLabel, enforcingEditor);
-        enforcingEditorWithInfo.setExplanation(templates.italicText(constants.affinityGroupEnforcInfo()));
-    }
-
-    private void localize() {
-        nameEditor.setLabel(constants.affinityGroupNameLabel());
-        descriptionEditor.setLabel(constants.affinityDescriptionLabel());
+        enforcingEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        enforcingEditor.hideLabel();
+        enforcingEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupEnforcInfo()));
     }
 
     public void edit(AffinityGroupModel model) {

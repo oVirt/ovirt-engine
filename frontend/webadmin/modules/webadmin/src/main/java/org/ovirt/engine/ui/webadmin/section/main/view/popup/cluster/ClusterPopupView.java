@@ -339,7 +339,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     ListModelListBoxEditor<ClusterPolicy> clusterPolicyEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Ignore
     protected KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
@@ -611,7 +611,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         migrateCompressedEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromGlobal()));
 
-        customPropertiesSheetEditor = new KeyValueWidget<>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
         migrationBandwidthLimitTypeEditor = new BootstrapListBoxListModelEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer());
         migrationPolicyEditor.hideLabel();
