@@ -85,6 +85,6 @@ public class ClusterBuilder extends AbstractBuilder<Cluster, ClusterBuilder> {
     @Override
     protected Cluster doPersist() {
         clusterDao.save(object);
-        return object;
+        return clusterDao.get(object.getId());
     }
 }

@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
@@ -25,6 +26,9 @@ public class VdsBuilder extends AbstractBuilder<VDS, VdsBuilder> {
 
     @Inject
     private VdsStatisticsDao vdsStatisticsDao;
+
+    @Inject
+    private VdsDao vdsDao;
 
     public VdsBuilder id(final Guid hostId) {
         object.setId(hostId);
@@ -97,6 +101,6 @@ public class VdsBuilder extends AbstractBuilder<VDS, VdsBuilder> {
         vdsStaticDao.save(object.getStaticData());
         vdsDynamicDao.save(object.getDynamicData());
         vdsStatisticsDao.save(object.getStatisticsData());
-        return object;
+        return vdsDao.get(object.getId());
     }
 }

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -34,6 +35,9 @@ public class VmBuilder extends AbstractBuilder<VM, VmBuilder> {
 
     @Inject
     private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmDao vmDao;
 
     public VmBuilder id(final Guid vmId) {
         object.setId(vmId);
@@ -122,6 +126,6 @@ public class VmBuilder extends AbstractBuilder<VM, VmBuilder> {
         vmStaticDao.save(object.getStaticData());
         vmDynamicDao.save(object.getDynamicData());
         vmStatisticsDao.save(object.getStatisticsData());
-        return object;
+        return vmDao.get(object.getId());
     }
 }
