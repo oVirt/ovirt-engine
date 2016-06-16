@@ -435,6 +435,7 @@
         <include name="common/businessentities/gluster/GlusterVolumeSnapshotConfig.java"/>
         <include name="common/businessentities/gluster/GlusterVolumeSnapshotSchedule.java"/>
         <include name="common/businessentities/gluster/GlusterVolumeSnapshotScheduleRecurrence.java"/>
+        <include name="common/businessentities/gluster/PeerStatus.java" />
         <!-- Scheduling -->
         <include name="common/scheduling/*.java"/>
         <include name="common/scheduling/parameters/*.java"/>

@@ -20,6 +20,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String hostHasNoPowerManagementAlert();
 
+    String hostGlusterDisconnectedAlert();
+
     String migrateHostDisabledVMsInServerClusters();
 
     String migrateSomeVmsAlreadyRunningOnHost();

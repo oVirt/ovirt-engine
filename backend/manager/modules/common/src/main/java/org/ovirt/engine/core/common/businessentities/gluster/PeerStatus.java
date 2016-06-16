@@ -20,4 +20,12 @@ public enum PeerStatus {
      * Peer status is unknown
      */
     UNKNOWN;
+
+    public static PeerStatus fromValue(String value) {
+        PeerStatus result = null;
+        if (value != null) {
+            result = PeerStatus.valueOf(value.toUpperCase());
+        }
+        return result;
+    }
 }

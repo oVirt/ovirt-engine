@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget.AlertType;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -150,6 +151,9 @@ public class SubTabHostGeneralInfoPresenter
         }
         if (model.getNonOperationalReasonEntity() != null) {
             addTextAlert(view, EnumTranslator.getInstance().translate(model.getNonOperationalReasonEntity()));
+        }
+        if (model.getHasGlusterDisconnectedAlert()) {
+            addTextAndLinkAlert(view, messages.hostGlusterDisconnectedAlert(), model.getRestartGlusterCommand());
         }
     }
 
