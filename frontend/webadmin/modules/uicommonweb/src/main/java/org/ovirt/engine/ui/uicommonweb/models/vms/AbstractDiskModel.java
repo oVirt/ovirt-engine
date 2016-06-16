@@ -322,7 +322,14 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     protected abstract CinderDisk getCinderDisk();
 
-    protected abstract void setDefaultInterface();
+    public void setDefaultInterface() {
+        Guid vmId = getVmId();
+        if (Guid.isNullOrEmpty(vmId)) {
+            getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
+        } else {
+            getDiskInterface().setSelectedItem(getDisk().getDiskVmElementForVm(vmId).getDiskInterface());
+        }
+    }
 
     protected abstract void updateVolumeType(StorageType storageType);
 
