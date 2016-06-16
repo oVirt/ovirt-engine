@@ -114,7 +114,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     private Clusters mapVirtOnlyCollection(List<VDSGroup> entities) {
         Clusters collection = new Clusters();
         for (org.ovirt.engine.core.common.businessentities.VDSGroup entity : entities) {
-            collection.getClusters().add(addLinks(map(entity), VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE));
+            collection.getClusters().add(addLinks(populate(map(entity), entity), VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE));
         }
         return collection;
     }
