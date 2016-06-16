@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.uutils.ssh;
 
 import java.io.ByteArrayOutputStream;
+import javax.validation.constraints.NotNull;
 
 /**
  * Soft constraint byte array output stream.
@@ -39,7 +40,7 @@ public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
     }
 
     @Override
-    public void write(byte[] b) {
+    public void write(@NotNull byte[] b) {
         write(b, 0, b.length);
     }
 

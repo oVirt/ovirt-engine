@@ -3,6 +3,7 @@ package org.ovirt.engine.core.uutils.ssh;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import javax.validation.constraints.NotNull;
 
 /**
  * Monitor progress of input stream.
@@ -18,7 +19,7 @@ class ProgressOutputStream extends FilterOutputStream {
     }
 
     @Override
-    public void write(byte[] b, int off, int len) throws IOException {
+    public void write(@NotNull byte[] b, int off, int len) throws IOException {
         out.write(b, off, len);
         index += len;
     }
