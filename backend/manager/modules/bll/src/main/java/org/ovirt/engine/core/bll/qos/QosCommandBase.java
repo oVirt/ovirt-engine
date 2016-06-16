@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.bll.qos;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -90,4 +94,11 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
 
     protected abstract M getQosValidator(T qosBase);
 
+
+    protected void refreshNetworks(ArrayList<VdcActionParametersBase> parameters) {
+        if (!parameters.isEmpty()) {
+            HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
+            runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, parameters);
+        }
+    }
 }

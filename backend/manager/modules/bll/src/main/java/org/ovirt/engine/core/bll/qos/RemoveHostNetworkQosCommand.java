@@ -1,12 +1,24 @@
 package org.ovirt.engine.core.bll.qos;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class RemoveHostNetworkQosCommand extends RemoveQosCommandBase<HostNetworkQos, HostNetworkQosValidator> {
+
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private RefreshNetworksParametersFactory refreshNetworksParametersFactory;
 
     public RemoveHostNetworkQosCommand(QosParametersBase<HostNetworkQos> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -14,6 +26,7 @@ public class RemoveHostNetworkQosCommand extends RemoveQosCommandBase<HostNetwor
 
     @Override
     protected HostNetworkQosDao getQosDao() {
+        //might NOT be replaced with injection; superclass constructor accesses this and thus this dao would be null.
         return getDbFacade().getHostNetworkQosDao();
     }
 
@@ -22,4 +35,13 @@ public class RemoveHostNetworkQosCommand extends RemoveQosCommandBase<HostNetwor
         return new HostNetworkQosValidator(qos);
     }
 
+    @Override
+    protected void executeCommand() {
+        List<Network> networksHavingQos = networkDao.getAllForQos(getQosId());
+
+        //remove qos.
+        super.executeCommand();
+
+        refreshNetworks(refreshNetworksParametersFactory.create(networksHavingQos));
+    }
 }
