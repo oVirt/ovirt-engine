@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.ovirt.engine.core.bll.host.provider.ContentHostProvider;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.ErrataFilter;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.uutils.crypto.CryptMD5;
 
 public class ForemanHostProviderProxy extends BaseProviderProxy implements HostProviderProxy {
@@ -31,20 +33,22 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private ObjectMapper objectMapper = new ObjectMapper();
     private static final String API_ENTRY_POINT = "/api/v2";
     private static final String JSON_FORMAT = "format=json";
-
+    private static final String API_VERSION_ENTRY_POINT = API_ENTRY_POINT + "/status";
     private static final String HOSTS_ENTRY_POINT = API_ENTRY_POINT + "/hosts";
+
     private static final String ALL_HOSTS_QUERY = HOSTS_ENTRY_POINT + "?" + JSON_FORMAT;
     private static final String SEARCH_SECTION_FORMAT = "search=%1$s";
     static final String SEARCH_QUERY_FORMAT = "?" + SEARCH_SECTION_FORMAT + "&" + JSON_FORMAT;
-
     private static final String HOST_GROUPS_ENTRY_POINT = API_ENTRY_POINT + "/hostgroups";
-    private static final String HOST_GROUPS_QUERY = HOST_GROUPS_ENTRY_POINT + "?" + JSON_FORMAT;
 
+    private static final String HOST_GROUPS_QUERY = HOST_GROUPS_ENTRY_POINT + "?" + JSON_FORMAT;
     private static final String COMPUTE_RESOURCES_HOSTS_ENTRY_POINT = API_ENTRY_POINT
             + "/compute_resources?search=" + URLEncoder.encode("oVirt|RHEV");
 
     private static final String DISCOVERED_HOSTS = "/discovered_hosts";
+
     private static final String DISCOVERED_HOSTS_ENTRY_POINT = API_ENTRY_POINT + DISCOVERED_HOSTS;
+    private static final Version KATELLO_V3_VERSION = new Version("1.11");
 
 
     public ForemanHostProviderProxy(Provider<?> hostProvider) {
@@ -379,16 +383,38 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     @Override
     public ErrataData getErrataForHost(String hostName, ErrataFilter errataFilter) {
-        return new KatelloV21Provider(this).getErrataForHost(hostName, errataFilter);
+        return getContentHostProvider().getErrataForHost(hostName, errataFilter);
     }
 
     @Override
     public Erratum getErratumForHost(String hostName, String erratumId) {
-        return new KatelloV21Provider(this).getErratumForHost(hostName, erratumId);
+        return getContentHostProvider().getErratumForHost(hostName, erratumId);
     }
 
     @Override
-    public ContentHost findContentHost(String hostName) {
-        return new KatelloV21Provider(this).findContentHost(hostName);
+    public boolean isContentHostExist(String hostName) {
+        return getContentHostProvider().isContentHostExist(hostName);
+    }
+
+    private ContentHostProvider getContentHostProvider() {
+        Version foremanVersion = getForemanVersion();
+        if (foremanVersion != null && foremanVersion.greaterOrEquals(KATELLO_V3_VERSION)) {
+            return new KatelloV30Provider(this);
+        } else {
+            return new KatelloV21Provider(this);
+        }
+    }
+
+    private Version getForemanVersion() {
+        try {
+            ReportedForemanStatus status =
+                    objectMapper.readValue(runHttpGetMethod(API_VERSION_ENTRY_POINT), ReportedForemanStatus.class);
+            return new Version(status.getVersion());
+        } catch (IOException e) {
+            log.warn(
+                    "Unable to detect Foreman version for provider {}. Using older version to connect to the provider",
+                    getProvider().getName());
+            return null;
+        }
     }
 }
