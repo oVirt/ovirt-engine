@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -135,11 +134,6 @@ public class NewDiskModel extends AbstractDiskModel {
         }
 
         return isStatusUp && isInTreeContext;
-    }
-
-    @Override
-    public void setDefaultInterface() {
-        getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
     }
 
     @Override
