@@ -444,6 +444,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
             entity.setKernelArgs(rs.getString("kernel_args"));
             entity.setFencingEnabled(rs.getBoolean("fencing_enabled"));
+            entity.setGlusterPeerStatus(PeerStatus.fromValue(rs.getString("gluster_peer_status")));
             return entity;
         }
     }

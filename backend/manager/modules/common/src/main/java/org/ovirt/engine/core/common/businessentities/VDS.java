@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
@@ -46,6 +47,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     private String certificateSubject;
     private boolean hostedEngineHost;
     private boolean fencingEnabled;
+    private PeerStatus glusterPeerStatus;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -85,7 +87,8 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
                 clusterVirtService,
                 clusterGlusterService,
                 balloonEnabled,
-                countThreadsAsCores
+                countThreadsAsCores,
+                glusterPeerStatus
         );
     }
 
@@ -116,8 +119,10 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
                 && Objects.equals(clusterDescription, other.clusterDescription)
                 && Objects.equals(clusterName, other.clusterName)
                 && Objects.equals(clusterVirtService, other.clusterVirtService)
-                && Objects.equals(clusterGlusterService, other.clusterGlusterService);
+                && Objects.equals(clusterGlusterService, other.clusterGlusterService)
+                && glusterPeerStatus == other.glusterPeerStatus;
     }
+
 
     public VDS clone() {
         VDS vds = new VDS();
@@ -208,6 +213,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setKernelCmdlineKvmNested(isKernelCmdlineKvmNested());
         vds.setKernelCmdlinePciRealloc(isKernelCmdlinePciRealloc());
         vds.setKernelCmdlineUnsafeInterrupts(isKernelCmdlineUnsafeInterrupts());
+        vds.setGlusterPeerStatus(getGlusterPeerStatus());
         return vds;
     }
 
@@ -1520,5 +1526,13 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setFencingEnabled(boolean fencingEnabled) {
         this.fencingEnabled = fencingEnabled;
+    }
+
+    public PeerStatus getGlusterPeerStatus() {
+        return glusterPeerStatus;
+    }
+
+    public void setGlusterPeerStatus(PeerStatus glusterPeerStatus) {
+        this.glusterPeerStatus = glusterPeerStatus;
     }
 }

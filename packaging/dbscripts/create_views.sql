@@ -1737,7 +1737,8 @@ SELECT cluster.cluster_id AS cluster_id,
             AND vm_static.origin IN (5,6)) AS is_hosted_engine_host,
     vds_static.kernel_cmdline AS kernel_cmdline,
     vds_static.last_stored_kernel_cmdline AS last_stored_kernel_cmdline,
-    cluster.fencing_enabled AS fencing_enabled
+    cluster.fencing_enabled AS fencing_enabled,
+    gluster_server.peer_status AS gluster_peer_status
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -1750,7 +1751,9 @@ LEFT JOIN storage_pool
 LEFT JOIN fence_agents
     ON vds_static.vds_id = fence_agents.vds_id
 LEFT JOIN vds_spm_id_map
-    ON vds_static.vds_id = vds_spm_id_map.vds_id;
+    ON vds_static.vds_id = vds_spm_id_map.vds_id
+LEFT JOIN gluster_server
+    ON vds_static.vds_id = gluster_server.server_id;
 
 CREATE OR REPLACE VIEW vds_with_tags AS
 

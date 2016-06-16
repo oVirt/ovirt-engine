@@ -9,10 +9,13 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -97,6 +100,16 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
     private void setGoToEventsCommand(UICommand value) {
         privateGoToEventsCommand = value;
+    }
+
+    private UICommand restartGlusterCommand;
+
+    public UICommand getRestartGlusterCommand() {
+        return restartGlusterCommand;
+    }
+
+    private void setRestartGlusterCommand(UICommand value) {
+        restartGlusterCommand = value;
     }
 
     private boolean updateUpgradeAlert;
@@ -580,6 +593,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private boolean hasGlusterDisconnectedAlert;
+
+    public boolean getHasGlusterDisconnectedAlert() {
+        return hasGlusterDisconnectedAlert;
+    }
+
+    public void setHasGlusterDisconnectedAlert(boolean value) {
+        if (hasGlusterDisconnectedAlert != value) {
+            hasGlusterDisconnectedAlert = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasGlusterDisconnectedAlert")); //$NON-NLS-1$
+        }
+    }
+
     private boolean hasReinstallAlertNonResponsive;
 
     public boolean getHasReinstallAlertNonResponsive() {
@@ -756,6 +782,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setEditHostCommand(new UICommand("EditHost", this)); //$NON-NLS-1$
         setUpgradeHostCommand(new UICommand("Upgrade", this)); //$NON-NLS-1$
         setGoToEventsCommand(new UICommand("GoToEvents", this)); //$NON-NLS-1$
+        setRestartGlusterCommand(new UICommand("RestartGluster", this)); //$NON-NLS-1$
     }
 
     public void saveNICsConfig() {
@@ -773,6 +800,16 @@ public class HostGeneralModel extends EntityModel<VDS> {
     public void editHost() {
         // Let's the parent model know about request.
         getRequestEditEvent().raise(this, EventArgs.EMPTY);
+    }
+
+    public void restartGluster() {
+        // call restart gluster
+        GlusterServiceParameters parameters =
+                new GlusterServiceParameters(getEntity().getClusterId(),
+                        getEntity().getId(),
+                        ServiceType.GLUSTER,
+                        "restart"); //$NON-NLS-1$
+        Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters);
     }
 
     public void cancel() {
@@ -869,6 +906,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasReinstallAlertInstallFailed(false);
         setHasReinstallAlertMaintenance(false);
         setHasNICsAlert(false);
+        setHasGlusterDisconnectedAlert(false);
 
         // Check the network alert presense.
         setHasNICsAlert(getEntity().getNetConfigDirty() == null ? false : getEntity().getNetConfigDirty());
@@ -892,6 +930,9 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
         else if (getEntity().getStatus() == VDSStatus.Maintenance) {
             setHasReinstallAlertMaintenance(true);
+        }
+        if (getEntity().getClusterSupportsGlusterService() && getEntity().getGlusterPeerStatus() != PeerStatus.CONNECTED) {
+            setHasGlusterDisconnectedAlert(true);
         }
 
         setNonOperationalReasonEntity(getEntity().getNonOperationalReason() == NonOperationalReason.NONE ?
@@ -917,7 +958,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
     public void setHasAnyAlert() {
         setHasAnyAlert(getHasNICsAlert() || getHasUpgradeAlert() || getHasManualFenceAlert()
                 || getHasNoPowerManagementAlert() || getHasReinstallAlertNonResponsive()
-                || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance());
+                || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance()
+                || getHasGlusterDisconnectedAlert());
     }
 
     private void goToEvents() {
@@ -957,6 +999,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
             cancel();
         } else if (command == getUpgradeHostCommand()) {
             upgrade();
+        } else if (command == getRestartGlusterCommand()) {
+            restartGluster();
         }
     }
 
