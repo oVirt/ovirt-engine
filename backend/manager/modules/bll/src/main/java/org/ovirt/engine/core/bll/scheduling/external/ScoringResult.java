@@ -3,21 +3,20 @@ package org.ovirt.engine.core.bll.scheduling.external;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ScoringResult extends SchedulerResult {
-    private List<Pair<Guid, Integer>> hostsWithScores;
+    private List<WeightResultEntry> hostsWithScores;
 
-    public void addHost(Guid host, Integer score) {
+    public void addHost(String policyUnit, Guid host, Integer score) {
         if (hostsWithScores == null) {
             hostsWithScores = new ArrayList<>();
         }
 
-        hostsWithScores.add(new Pair<>(host, score));
+        hostsWithScores.add(new WeightResultEntry(host, score, policyUnit));
     }
 
-    public List<Pair<Guid, Integer>> getHosts() {
+    public List<WeightResultEntry> getHosts() {
         return hostsWithScores;
     }
 }

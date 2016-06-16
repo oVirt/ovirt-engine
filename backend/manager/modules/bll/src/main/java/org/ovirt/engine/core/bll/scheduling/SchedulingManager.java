@@ -29,8 +29,9 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
+import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerBroker;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
-import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
+import org.ovirt.engine.core.bll.scheduling.external.WeightResultEntry;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
@@ -95,6 +96,9 @@ public class SchedulingManager implements BackendService {
 
     private PendingResourceManager pendingResourceManager;
 
+    @Inject
+    private ExternalSchedulerBroker externalBroker;
+
     /**
      * [policy id, policy] map
      */
@@ -143,6 +147,12 @@ public class SchedulingManager implements BackendService {
     private void loadExternalScheduler() {
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)) {
             log.info("Starting external scheduler discovery thread");
+
+            /* Disable all external units, this is needed in case an external scheduler broker
+               implementation is missing, because nobody would then disable units that
+               were registered by the missing broker */
+            exSchedulerDiscovery.markAllExternalPoliciesAsDisabled();
+
             ThreadPoolUtil.execute(() -> {
                 if (exSchedulerDiscovery.discover()) {
                     reloadPolicyUnits();
@@ -654,19 +664,18 @@ public class SchedulingManager implements BackendService {
             Map<String, String> parameters,
             List<String> messages,
             String correlationId, SchedulingResult result) {
-        List<Guid> filteredIDs = null;
         if (filters != null) {
-            List<String> filterNames = new ArrayList<>();
-            for (PolicyUnitImpl filter : filters) {
-                filterNames.add(filter.getPolicyUnit().getName());
-            }
             List<Guid> hostIDs = new ArrayList<>();
             for (VDS host : hostList) {
                 hostIDs.add(host.getId());
             }
 
-            filteredIDs =
-                    ExternalSchedulerFactory.getInstance().runFilters(filterNames, hostIDs, vm.getId(), parameters);
+            List<String> filterNames = filters.stream()
+                    .map(f -> f.getPolicyUnit().getName())
+                    .collect(Collectors.toList());
+
+            List<Guid> filteredIDs =
+                    externalBroker.runFilters(filterNames, hostIDs, vm.getId(), parameters);
             if (filteredIDs != null) {
                 logFilterActions(hostList,
                         new HashSet<>(filteredIDs),
@@ -674,10 +683,11 @@ public class SchedulingManager implements BackendService {
                         Arrays.toString(filterNames.toArray()),
                         result,
                         correlationId);
+                hostList = intersectHosts(hostList, filteredIDs);
             }
         }
 
-        return intersectHosts(hostList, filteredIDs);
+        return hostList;
     }
 
     private List<VDS> intersectHosts(List<VDS> hosts, List<Guid> IDs) {
@@ -764,36 +774,40 @@ public class SchedulingManager implements BackendService {
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
-        List<Pair<String, Integer>> scoreNameAndWeight = new ArrayList<>();
-        for (Pair<PolicyUnitImpl, Integer> pair : functions) {
-            scoreNameAndWeight.add(new Pair<>(pair.getFirst().getPolicyUnit().getName(),
-                    pair.getSecond()));
-        }
-
         List<Guid> hostIDs = new ArrayList<>();
         for (VDS vds : hostList) {
             hostIDs.add(vds.getId());
         }
-        List<Pair<Guid, Integer>> externalScores =
-                ExternalSchedulerFactory.getInstance().runScores(scoreNameAndWeight,
+
+        List<Pair<String, Integer>> scoreNameAndWeight = functions.stream()
+                .map(pair -> new Pair<>(pair.getFirst().getName(), pair.getSecond()))
+                .collect(Collectors.toList());
+
+        Map<String, Guid> nameToGuidMap = functions.stream()
+                .collect(Collectors.toMap(pair -> pair.getFirst().getPolicyUnit().getName(),
+                        pair -> pair.getFirst().getPolicyUnit().getId()));
+
+        List<WeightResultEntry> externalScores =
+                externalBroker.runScores(scoreNameAndWeight,
                         hostIDs,
                         vm.getId(),
                         parameters);
+
         if (externalScores != null) {
-            sumScoreResults(selector, externalScores);
+            sumScoreResults(selector, nameToGuidMap, externalScores);
         }
     }
 
-    private void sumScoreResults(SelectorInstance selector, List<Pair<Guid, Integer>> externalScores) {
+    private void sumScoreResults(SelectorInstance selector, Map<String, Guid> nametoGuidMap,
+            List<WeightResultEntry> externalScores) {
         if (externalScores == null) {
             // the external scheduler proxy may return null if error happens, in this case the external scores will
             // remain empty
             log.warn("External scheduler proxy returned null score");
         } else {
-            for (Pair<Guid, Integer> pair : externalScores) {
-                // This is called only for results from the external scheduler. And the external scheduler sums
-                // the values on the remote side already (this needs to be changed) and does not report the UUIDs.
-                selector.record(null, pair.getFirst(), pair.getSecond());
+            for (WeightResultEntry resultEntry : externalScores) {
+                selector.record(nametoGuidMap.getOrDefault(resultEntry.getWeightUnit(), null),
+                        resultEntry.getHost(), resultEntry.getWeight());
             }
         }
     }
@@ -963,8 +977,15 @@ public class SchedulingManager implements BackendService {
         for (VDS vds : hosts) {
             hostIDs.add(vds.getId());
         }
-        return ExternalSchedulerFactory.getInstance()
-                .runBalance(policyUnit.getPolicyUnit().getName(), hostIDs, cluster.getClusterPolicyProperties());
+
+        Pair<List<Guid>, Guid> balanceResult = externalBroker.runBalance(policyUnit.getPolicyUnit().getName(),
+                hostIDs, cluster.getClusterPolicyProperties());
+        if (balanceResult != null) {
+            return balanceResult;
+        }
+
+        log.warn("External scheduler returned empty balancing result.");
+        return null;
     }
 
     /**

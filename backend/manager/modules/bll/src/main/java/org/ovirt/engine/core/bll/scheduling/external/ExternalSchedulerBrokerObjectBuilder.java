@@ -111,13 +111,20 @@ public class ExternalSchedulerBrokerObjectBuilder {
 
         // Its a list of (hostID,score) pairs
         for (Object hostsIDAndScore : (Object[]) rawResult) {
-            if (!(hostsIDAndScore instanceof Object[]) || ((Object[]) hostsIDAndScore).length != 2) {
+            if (!(hostsIDAndScore instanceof Object[])
+                    || ((Object[]) hostsIDAndScore).length < 2
+                    || ((Object[]) hostsIDAndScore).length > 3) {
                 // some kind of error
                 log.error("External scheduler error, malformed score results");
                 return result;
             }
             Object[] castedHostsIDAndScore = (Object[]) hostsIDAndScore;
-            result.addHost(new Guid(castedHostsIDAndScore[0].toString()), (Integer) castedHostsIDAndScore[1]);
+
+            // External scheduler either reports cumulative data (just two fields - host, weight)
+            // or per policy unit data (three fields - host, weight, policy unit name)
+            String policyUnitId = castedHostsIDAndScore.length > 2 ? castedHostsIDAndScore[2].toString() : null;
+            result.addHost(policyUnitId, Guid.createGuidFromString(castedHostsIDAndScore[0].toString()),
+                    (Integer) castedHostsIDAndScore[1]);
         }
         return result;
     }

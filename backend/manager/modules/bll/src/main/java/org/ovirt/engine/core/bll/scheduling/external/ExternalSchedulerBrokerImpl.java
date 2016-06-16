@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
     private static final String DISCOVER = "discover";
@@ -118,7 +121,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> runScores(List<Pair<String, Integer>> scoreNameAndWeight,
+    public List<WeightResultEntry> runScores(List<Pair<String, Integer>> scoreNameAndWeight,
             List<Guid> hostIDs,
             Guid vmID,
             Map<String, String> propertiesMap) {

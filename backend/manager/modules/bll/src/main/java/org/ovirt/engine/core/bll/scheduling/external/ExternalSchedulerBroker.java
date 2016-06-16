@@ -11,7 +11,7 @@ public interface ExternalSchedulerBroker {
 
     List<Guid> runFilters(List<String> filterNames, List<Guid> hostIDs, Guid vmID, Map<String, String> propertiesMap);
 
-    List<Pair<Guid, Integer>> runScores(List<Pair<String, Integer>> scoreNameAndWeight,
+    List<WeightResultEntry> runScores(List<Pair<String, Integer>> scoreNameAndWeight,
             List<Guid> hostIDs,
             Guid vmID,
             Map<String, String> propertiesMap);
