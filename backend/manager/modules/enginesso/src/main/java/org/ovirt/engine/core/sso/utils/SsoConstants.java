@@ -101,6 +101,7 @@ public class SsoConstants {
     public static final String FETCH_PRINCIPAL_RECORD_QUERY = "fetch-principal-record";
     public static final String FIND_PRINCIPAL_BY_ID_QUERY = "find-principal-by-id";
     public static final String FIND_PRINCIPALS_BY_IDS_QUERY = "find-principals-by-ids";
+    public static final String FIND_LOGIN_ON_BEHALF_PRINCIPAL_BY_ID_QUERY = "find-login-on-behalf-principal-by-id";
     public static final String PROFILE_LIST_QUERY = "profile-list";
     public static final String SEARCH_GROUPS_QUERY = "groups";
     public static final String SEARCH_USERS_QUERY = "users";

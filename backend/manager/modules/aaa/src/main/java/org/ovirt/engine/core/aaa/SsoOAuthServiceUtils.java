@@ -208,6 +208,7 @@ public class SsoOAuthServiceUtils {
         return search(token, params, "fetch-principal-record", authzSearchScope);
 
     }
+
     public static Map<String, Object> findPrincipalsByIds(
             String token,
             String domain,
@@ -222,6 +223,21 @@ public class SsoOAuthServiceUtils {
         params.put("groups_resolving", groupsResolving);
         params.put("groups_resolving_recursive", groupsResolvingRecursive);
         return search(token, params, "find-principals-by-ids", authzSearchScope);
+    }
+
+    public static Map<String, Object> findLoginOnBehalfPrincipalById(
+            String domain,
+            String namespace,
+            Collection<String> ids,
+            boolean groupsResolving,
+            boolean groupsResolvingRecursive) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("domain", domain);
+        params.put("namespace", namespace);
+        params.put("ids", ids);
+        params.put("groups_resolving", groupsResolving);
+        params.put("groups_resolving_recursive", groupsResolvingRecursive);
+        return search(null, params, "find-login-on-behalf-principal-by-id", publicAuthzSearchScope);
     }
 
     public static Map<String, Object> findDirectoryUserById(

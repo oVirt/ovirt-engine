@@ -110,8 +110,7 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     }
 
     private ExtMap loginOnBehalf(DbUser dbUser) {
-        Map<String, Object> response = SsoOAuthServiceUtils.findPrincipalsByIds(
-                getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
+        Map<String, Object> response = SsoOAuthServiceUtils.findLoginOnBehalfPrincipalById(
                 dbUser.getDomain(),
                 dbUser.getNamespace(),
                 Arrays.asList(dbUser.getExternalId()),

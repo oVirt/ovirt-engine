@@ -65,6 +65,12 @@ public enum DirectorySearch {
         }
     },
 
+    FindLoginOnBehalfPrincipalById(SsoConstants.FIND_LOGIN_ON_BEHALF_PRINCIPAL_BY_ID_QUERY, true) {
+        public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
+            return getPrincipalsByIds(ssoContext, readParams(request));
+        }
+    },
+
     FindDirectoryGroupById(SsoConstants.FIND_DIRECTORY_GROUP_BY_ID_QUERY, false) {
         public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return getDirectoryGroupById(ssoContext, readParams(request));
