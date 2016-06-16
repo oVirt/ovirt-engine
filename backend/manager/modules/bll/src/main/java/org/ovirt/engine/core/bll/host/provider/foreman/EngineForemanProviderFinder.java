@@ -32,7 +32,7 @@ public class EngineForemanProviderFinder {
         HostProviderProxy proxy;
         for (Provider<?> provider : hostProviders) {
             proxy = ProviderProxyFactory.getInstance().create(provider);
-            if (proxy.findContentHost(engineHostName) != null) {
+            if (proxy.isContentHostExist(engineHostName)) {
                 return proxy;
             }
         }

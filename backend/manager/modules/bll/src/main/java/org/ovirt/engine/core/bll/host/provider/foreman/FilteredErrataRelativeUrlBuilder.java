@@ -15,10 +15,11 @@ class FilteredErrataRelativeUrlBuilder {
     private URLBuilder url;
     private final ErrataFilter errataFilter;
 
-    public FilteredErrataRelativeUrlBuilder(String contentHostId, ErrataFilter errataFilter) {
+    public FilteredErrataRelativeUrlBuilder(String contentHostId,
+            ErrataFilter errataFilter,
+            String contentHostEndpoint) {
         this.errataFilter = errataFilter;
-        url = new URLBuilder(DUMMY_ADDRESS_PREFIX,
-                String.format(ForemanHostProviderProxy.CONTENT_HOST_ERRATA_ENTRY_POINT, contentHostId));
+        url = new URLBuilder(DUMMY_ADDRESS_PREFIX, String.format(contentHostEndpoint, contentHostId));
     }
 
     public String build() {
@@ -47,7 +48,9 @@ class FilteredErrataRelativeUrlBuilder {
         }
     }
 
-    public static FilteredErrataRelativeUrlBuilder create(String contentHostId, ErrataFilter errataFilter) {
-        return new FilteredErrataRelativeUrlBuilder(contentHostId, errataFilter);
+    public static FilteredErrataRelativeUrlBuilder create(String contentHostId,
+            ErrataFilter errataFilter,
+            String contentHostEndpoint) {
+        return new FilteredErrataRelativeUrlBuilder(contentHostId, errataFilter, contentHostEndpoint);
     }
 }
