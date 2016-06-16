@@ -420,18 +420,14 @@ public class SSHClient implements Closeable {
 
         log.debug("Executing: '{}'", command);
 
-        InputStream xin = null;
-        OutputStream xout = null;
-        OutputStream xerr = null;
-
         if (in == null) {
-            xin = in = new ByteArrayInputStream(new byte[0]);
+            in = new ByteArrayInputStream(new byte[0]);
         }
         if (out == null) {
-            xout = out = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+            out = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         }
         if (err == null) {
-            xerr = err = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+            err = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         }
 
         /*
@@ -439,9 +435,6 @@ public class SSHClient implements Closeable {
          */
         ClientChannel channel = null;
         try (
-                final InputStream xxin = xin;
-                final OutputStream xxout = xout;
-                final OutputStream xxerr = xerr;
                 final ProgressInputStream iin = new ProgressInputStream(in);
                 final ProgressOutputStream iout = new ProgressOutputStream(out);
                 final ProgressOutputStream ierr = new ProgressOutputStream(err)) {

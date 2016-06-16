@@ -76,9 +76,6 @@ public class SSHD {
     }
 
     KeyPair keyPair;
-    String user;
-    String userPassword;
-    PublicKey userKey;
     SshServer sshd;
 
     public SSHD() {
