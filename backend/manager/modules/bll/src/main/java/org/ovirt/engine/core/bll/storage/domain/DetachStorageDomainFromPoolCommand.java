@@ -72,8 +72,6 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                 new DetachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
                                 .getMasterDomainVersion()));
-        log.info(" Detach storage domain: after detach in vds");
-        disconnectAllHostsInPool();
 
         log.info(" Detach storage domain: after disconnect storage");
         TransactionSupport.executeInNewTransaction(() -> {
@@ -90,6 +88,10 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
             getCompensationContext().stateChanged();
             return null;
         });
+
+        log.info(" Detach storage domain: after detach in vds");
+        disconnectAllHostsInPool();
+
         if (returnValue.getSucceeded() && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             // reset iso for this pool in vdsBroker cache
             runVdsCommand(VDSCommandType.ResetISOPath,
