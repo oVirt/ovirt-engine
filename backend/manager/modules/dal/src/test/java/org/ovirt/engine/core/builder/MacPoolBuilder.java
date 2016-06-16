@@ -47,6 +47,6 @@ public class MacPoolBuilder extends AbstractBuilder<MacPool, MacPoolBuilder> {
     @Override
     protected MacPool doPersist() {
         macPoolDao.save(object);
-        return object;
+        return macPoolDao.get(object.getId());
     }
 }
