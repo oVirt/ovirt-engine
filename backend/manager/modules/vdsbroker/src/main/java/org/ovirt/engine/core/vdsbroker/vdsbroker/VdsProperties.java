@@ -432,6 +432,9 @@ public final class VdsProperties {
 
     // fencing policy parameters
     public static final String STORAGE_DOMAIN_HOST_ID_MAP = "storageDomainHostIdMap";
+    public static final String SKIP_FENCING_IF_GLUSTER_BRICKS_ARE_UP = "skipFencingIfGlusterBricksUp";
+    public static final String SKIP_FENCING_IF_GLUSTER_QUORUM_NOT_MET = "skipFencingIfGlusterQuorumNotMet";
+    public static final String GLUSTER_SERVER_UUID = "glusterServerUuid";
 
     // legacy display types
     public static final String QXL = "qxl";

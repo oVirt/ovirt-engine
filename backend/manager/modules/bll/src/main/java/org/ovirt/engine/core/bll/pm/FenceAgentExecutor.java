@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.pm;
 
 import static java.util.stream.Collectors.toMap;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
@@ -195,6 +197,19 @@ public class FenceAgentExecutor {
             if (fencingPolicy.isSkipFencingIfSDActive()) {
                 // create map STORAGE_DOMAIN_GUID -> HOST_SPM_ID to pass to fence proxy
                 map.put(VdsProperties.STORAGE_DOMAIN_HOST_ID_MAP, createStorageDomainHostIdMap());
+            }
+            if (fencedHost.getClusterSupportsGlusterService() && (fencingPolicy.isSkipFencingIfGlusterBricksUp()
+                    || fencingPolicy.isSkipFencingIfGlusterQuorumNotMet())) {
+                GlusterServer glusterServer = getDbFacade().getGlusterServerDao().getByServerId(fencedHost.getId());
+                if (glusterServer != null) {
+                    map.put(VdsProperties.GLUSTER_SERVER_UUID, glusterServer.getGlusterServerUuid().toString());
+                    if (fencingPolicy.isSkipFencingIfGlusterBricksUp()) {
+                        map.put(VdsProperties.SKIP_FENCING_IF_GLUSTER_BRICKS_ARE_UP, true);
+                    }
+                    if (fencingPolicy.isSkipFencingIfGlusterQuorumNotMet()) {
+                        map.put(VdsProperties.SKIP_FENCING_IF_GLUSTER_QUORUM_NOT_MET, true);
+                    }
+                }
             }
         }
         return map;
