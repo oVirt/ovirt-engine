@@ -362,7 +362,11 @@ Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 
 %if 0%{?fedora}
 Requires:	%{required_package_manager_versionlock}
-Requires:	apache-sshd
+
+%if 0%{?fedora} >= 29
+Requires	apache-sshd
+%endif
+
 Requires:	quartz
 # On Fedora slf4j package is split and we need also jdk14 and jcl-over-slf4j
 # parts
@@ -945,7 +949,11 @@ common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 %endif
 
 %if 0%{?fedora}
+
+%if 0%{?fedora} >= 29
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
+%endif
+
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar snmp4j.jar
 %endif

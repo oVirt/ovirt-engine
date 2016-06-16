@@ -5,13 +5,14 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.KeyPairProvider;
-import org.apache.sshd.server.PasswordAuthenticator;
-import org.apache.sshd.server.PublickeyAuthenticator;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.auth.password.PasswordAuthenticator;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.server.shell.ProcessShellFactory;
 
@@ -48,6 +49,8 @@ public class SSHD {
     }
 
     static class MyKeyPairProvider implements KeyPairProvider {
+        private static final Iterable<String> KEY_TYPES =
+                Collections.unmodifiableList(Collections.singletonList(SSH_RSA));
         KeyPair keyPair;
 
         public MyKeyPairProvider(KeyPair keyPair) {
@@ -68,8 +71,8 @@ public class SSHD {
         }
 
         @Override
-        public String getKeyTypes() {
-            return SSH_RSA;
+        public Iterable<String> getKeyTypes() {
+            return KEY_TYPES;
         }
     }
 
@@ -86,10 +89,8 @@ public class SSHD {
         sshd.setKeyPairProvider(new MyKeyPairProvider(keyPair));
         sshd.setShellFactory(
                 new ProcessShellFactory(
-                        new String[] {
-                                "/bin/sh",
-                                "-i"
-                        }));
+                        "/bin/sh",
+                        "-i"));
         sshd.setCommandFactory(
                 command -> new ProcessShellFactory(
                         new String[] {
@@ -121,7 +122,7 @@ public class SSHD {
             try {
                 sshd.stop(true);
                 sshd = null;
-            } catch (InterruptedException ignore) {
+            } catch (IOException ignore) {
             }
         }
     }

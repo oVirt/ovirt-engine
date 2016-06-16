@@ -11,10 +11,10 @@ import static org.mockito.Mockito.when;
 
 import javax.naming.TimeLimitExceededException;
 
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.SshClient;
+import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
+import org.apache.sshd.client.session.ClientSession;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ public class TimeoutTest extends TestCommon {
         ConnectFuture future = mock(ConnectFuture.class);
 
         doReturn(ssh).when(client).createSshClient();
-        doReturn(future).when(ssh).connect(any(), anyInt());
+        doReturn(future).when(ssh).connect(any(), any(), anyInt());
         when(future.await(anyLong())).thenReturn(false);
 
         assertThrows(TimeLimitExceededException.class, client::connect);
@@ -62,13 +62,13 @@ public class TimeoutTest extends TestCommon {
         ClientSession session = mock(ClientSession.class);
 
         doReturn(ssh).when(client).createSshClient();
-        doReturn(future).when(ssh).connect(any(), anyInt());
+        doReturn(future).when(ssh).connect(any(), any(), anyInt());
         when(future.await(anyLong())).thenReturn(true);
         when(future.getSession()).thenReturn(session);
 
         AuthFuture authFuture = mock(AuthFuture.class);
         when(authFuture.await(anyLong())).thenReturn(false);
-        when(session.authPassword(any(), any())).thenReturn(authFuture);
+        when(session.auth()).thenReturn(authFuture);
 
         assertThrows(TimeLimitExceededException.class, () -> {
             client.connect();

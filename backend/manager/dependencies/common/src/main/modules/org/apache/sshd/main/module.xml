@@ -3,6 +3,7 @@
 <module xmlns="urn:jboss:module:1.1" name="org.apache.sshd">
 
   <resources>
+    <resource-root path="sshd-common.jar"/>
     <resource-root path="sshd-core.jar"/>
   </resources>
 

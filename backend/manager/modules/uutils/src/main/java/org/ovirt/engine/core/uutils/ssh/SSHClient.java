@@ -17,6 +17,8 @@ import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -26,12 +28,16 @@ import javax.naming.TimeLimitExceededException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.sshd.ClientChannel;
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.SshClient;
+import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.channel.ClientChannel;
+import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
-import org.apache.sshd.common.signature.SignatureRSA;
+import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.client.session.ClientSession.ClientSessionEvent;
+import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.signature.BuiltinSignatures;
+import org.apache.sshd.common.signature.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,9 +76,8 @@ public class SSHClient implements Closeable {
          * public keys. This limitation can be removed when we will save all available host public keys into database
          * and perform host key verification by comparing received key with keys in our database.
          */
-        sshClient.setSignatureFactories(Arrays.asList(
-                new SignatureRSA.Factory()));
-
+        sshClient.setSignatureFactories(Arrays.<NamedFactory<Signature>> asList(
+                BuiltinSignatures.rsa));
         return sshClient;
     }
 
@@ -304,7 +309,7 @@ public class SSHClient implements Closeable {
 
             client.start();
 
-            ConnectFuture cfuture = client.connect(host, port);
+            ConnectFuture cfuture = client.connect(user, host, port);
             if (!cfuture.await(softTimeout)) {
                 throw new TimeLimitExceededException(
                         String.format(
@@ -317,18 +322,19 @@ public class SSHClient implements Closeable {
             /*
              * Wait for authentication phase so we have host key.
              */
-            int stat = session.waitFor(
-                    ClientSession.CLOSED |
-                            ClientSession.WAIT_AUTH |
-                            ClientSession.TIMEOUT,
+            Set<ClientSessionEvent> stat = session.waitFor(
+                    EnumSet.of(
+                            ClientSessionEvent.CLOSED,
+                            ClientSessionEvent.WAIT_AUTH,
+                            ClientSessionEvent.TIMEOUT),
                     softTimeout);
-            if ((stat & ClientSession.CLOSED) != 0) {
+            if (stat.contains(ClientSessionEvent.CLOSED)) {
                 throw new IOException(
                         String.format(
                                 "SSH session closed during connection '%1$s'",
                                 this.getDisplayHost()));
             }
-            if ((stat & ClientSession.TIMEOUT) != 0) {
+            if (stat.contains(ClientSessionEvent.TIMEOUT)) {
                 throw new TimeLimitExceededException(
                         String.format(
                                 "SSH timed out waiting for authentication request '%1$s'",
@@ -352,15 +358,16 @@ public class SSHClient implements Closeable {
         try {
             AuthFuture afuture;
             if (keyPair != null) {
-                afuture = session.authPublicKey(user, keyPair);
+                session.addPublicKeyIdentity(keyPair);
             } else if (password != null) {
-                afuture = session.authPassword(user, password);
+                session.addPasswordIdentity(password);
             } else {
                 throw new AuthenticationException(
                         String.format(
                                 "SSH authentication failure '%1$s', no password or key",
                                 this.getDisplayHost()));
             }
+            afuture = session.auth();
             if (!afuture.await(softTimeout)) {
                 throw new TimeLimitExceededException(
                         String.format(
@@ -455,13 +462,14 @@ public class SSHClient implements Closeable {
             }
 
             boolean hardTimeout = false;
-            int stat;
+            Set<ClientChannelEvent> stat;
             boolean activity;
             do {
                 stat = channel.waitFor(
-                        ClientChannel.CLOSED |
-                                ClientChannel.EOF |
-                                ClientChannel.TIMEOUT,
+                        EnumSet.of(
+                                ClientChannelEvent.CLOSED,
+                                ClientChannelEvent.EOF,
+                                ClientChannelEvent.TIMEOUT),
                         softTimeout);
 
                 hardTimeout = hardEnd != 0 && System.currentTimeMillis() >= hardEnd;
@@ -473,7 +481,7 @@ public class SSHClient implements Closeable {
                 activity = iout.wasProgress() || activity;
                 activity = ierr.wasProgress() || activity;
             } while (!hardTimeout &&
-                    (stat & ClientChannel.TIMEOUT) != 0 &&
+                    stat.contains(ClientChannelEvent.TIMEOUT) &&
                     activity);
 
             if (hardTimeout) {
@@ -483,7 +491,7 @@ public class SSHClient implements Closeable {
                                 this.getDisplayHost()));
             }
 
-            if ((stat & ClientChannel.TIMEOUT) != 0) {
+            if (stat.contains(ClientChannelEvent.TIMEOUT)) {
                 throw new TimeLimitExceededException(
                         String.format(
                                 "SSH session timeout host '%1$s'",
@@ -491,20 +499,21 @@ public class SSHClient implements Closeable {
             }
 
             stat = channel.waitFor(
-                    ClientChannel.CLOSED |
-                            ClientChannel.EXIT_STATUS |
-                            ClientChannel.EXIT_SIGNAL |
-                            ClientChannel.TIMEOUT,
+                    EnumSet.of(
+                            ClientChannelEvent.CLOSED,
+                            ClientChannelEvent.EXIT_STATUS,
+                            ClientChannelEvent.EXIT_SIGNAL,
+                            ClientChannelEvent.TIMEOUT),
                     softTimeout);
 
-            if ((stat & ClientChannel.EXIT_SIGNAL) != 0) {
+            if (stat.contains(ClientChannelEvent.EXIT_SIGNAL)) {
                 throw new IOException(
                         String.format(
                                 "Signal received during SSH session host '%1$s'",
                                 this.getDisplayHost()));
             }
 
-            if ((stat & ClientChannel.EXIT_STATUS) != 0 && channel.getExitStatus() != 0) {
+            if (stat.contains(ClientChannelEvent.EXIT_STATUS) && channel.getExitStatus() != 0) {
                 throw new IOException(
                         String.format(
                                 "Command returned failure code %2$d during SSH session '%1$s'",
@@ -512,7 +521,7 @@ public class SSHClient implements Closeable {
                                 channel.getExitStatus()));
             }
 
-            if ((stat & ClientChannel.TIMEOUT) != 0) {
+            if (stat.contains(ClientChannelEvent.TIMEOUT)) {
                 throw new TimeLimitExceededException(
                         String.format(
                                 "SSH session timeout waiting for status host '%1$s'",
@@ -534,11 +543,12 @@ public class SSHClient implements Closeable {
             throw e;
         } finally {
             if (channel != null) {
-                int stat = channel.waitFor(
-                        ClientChannel.CLOSED |
-                                ClientChannel.TIMEOUT,
+                Set<ClientChannelEvent> stat = channel.waitFor(
+                        EnumSet.of(
+                                ClientChannelEvent.CLOSED,
+                                ClientChannelEvent.TIMEOUT),
                         1);
-                if ((stat & ClientChannel.CLOSED) != 0) {
+                if (stat.contains(ClientChannelEvent.CLOSED)) {
                     channel.close(true);
                 }
             }

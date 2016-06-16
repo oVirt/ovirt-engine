@@ -64,7 +64,7 @@
     <javax.interceptor.api.version>1.0.0.Final</javax.interceptor.api.version>
     <dozer.version>5.2.0</dozer.version>
     <cxf.version>2.2.7</cxf.version>
-    <sshd-core.version>0.12.0</sshd-core.version>
+    <sshd-core.version>2.1.0</sshd-core.version>
     <otopi.version>1.7.8</otopi.version>
     <ovirt-host-deploy.version>1.7.3</ovirt-host-deploy.version>
     <vdsm-jsonrpc-java.version>1.4.15</vdsm-jsonrpc-java.version>
@@ -241,6 +241,11 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
         <version>${commons-compress.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-common</artifactId>
+        <version>${sshd-core.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.sshd</groupId>
