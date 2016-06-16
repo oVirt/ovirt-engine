@@ -112,7 +112,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     private Clusters mapVirtOnlyCollection(List<Cluster> entities) {
         Clusters collection = new Clusters();
         for (Cluster entity : entities) {
-            collection.getClusters().add(addLinks(map(entity), VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE));
+            collection.getClusters().add(addLinks(populate(map(entity), entity), VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE));
         }
         return collection;
     }
