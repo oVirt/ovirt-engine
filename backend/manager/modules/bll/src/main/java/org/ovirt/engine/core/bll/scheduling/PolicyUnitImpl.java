@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -75,11 +76,8 @@ public abstract class PolicyUnitImpl {
     @NotNull
     public List<Pair<Guid, Integer>> score(@NotNull  Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
-        List<Pair<Guid, Integer>> pairs = new ArrayList<>();
-        for (VDS vds : hosts) {
-            pairs.add(new Pair<>(vds.getId(), 1));
-        }
-        return pairs;
+
+        return hosts.stream().map(host -> new Pair<>(host.getId(), 1)).collect(Collectors.toList());
     }
 
     @NotNull
