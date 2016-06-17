@@ -6,11 +6,13 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -64,11 +66,13 @@ public abstract class PolicyUnitImpl {
         this.pendingResourceManager = pendingResourceManager;
     }
 
+    @NotNull
     public List<VDS> filter(@NotNull Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         log.error("Policy unit '{}' filter is not implemented", getPolicyUnit().getName());
         return hosts;
     }
 
+    @NotNull
     public List<Pair<Guid, Integer>> score(@NotNull  Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
         List<Pair<Guid, Integer>> pairs = new ArrayList<>();
@@ -78,12 +82,13 @@ public abstract class PolicyUnitImpl {
         return pairs;
     }
 
-    public Pair<List<Guid>, Guid> balance(@NotNull Cluster cluster,
+    @NotNull
+    public Optional<BalanceResult> balance(@NotNull Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
         log.error("Policy unit '{}' balance is not implemented", getPolicyUnit().getName());
-        return null;
+        return Optional.empty();
     }
 
     public SelectorInstance selector(Map<String, String> parameters) {

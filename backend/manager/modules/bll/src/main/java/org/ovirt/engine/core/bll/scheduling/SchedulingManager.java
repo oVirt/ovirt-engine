@@ -29,6 +29,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerBroker;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.bll.scheduling.external.WeightResultEntry;
@@ -949,7 +950,7 @@ public class SchedulingManager implements BackendService {
         for (Cluster cluster : clusters) {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
-            Pair<List<Guid>, Guid> balanceResult = null;
+            Optional<BalanceResult> balanceResult = Optional.empty();
             if (policyUnit.getPolicyUnit().isEnabled()) {
                 List<VDS> hosts = getVdsDao().getAllForClusterWithoutMigrating(cluster.getId());
                 if (policyUnit.getPolicyUnit().isInternal()) {
@@ -959,33 +960,35 @@ public class SchedulingManager implements BackendService {
                 }
             }
 
-            if (balanceResult != null && balanceResult.getSecond() != null) {
-                migrationHandler.migrateVM(balanceResult.getFirst(), balanceResult.getSecond());
+            if (balanceResult.isPresent() && balanceResult.get().isValid()) {
+                migrationHandler.migrateVM(balanceResult.get().getCandidateHosts(),
+                        balanceResult.get().getVmToMigrate());
             }
         }
     }
 
-    private Pair<List<Guid>, Guid> internalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
+    private Optional<BalanceResult> internalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
         return policyUnit.balance(cluster,
                 hosts,
                 cluster.getClusterPolicyProperties(),
                 new ArrayList<>());
     }
 
-    private Pair<List<Guid>, Guid> externalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
+    private Optional<BalanceResult> externalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
         List<Guid> hostIDs = new ArrayList<>();
         for (VDS vds : hosts) {
             hostIDs.add(vds.getId());
         }
 
-        Pair<List<Guid>, Guid> balanceResult = externalBroker.runBalance(policyUnit.getPolicyUnit().getName(),
+        Optional<BalanceResult> balanceResult = externalBroker.runBalance(policyUnit.getPolicyUnit().getName(),
                 hostIDs, cluster.getClusterPolicyProperties());
-        if (balanceResult != null) {
+
+        if (balanceResult.isPresent()) {
             return balanceResult;
         }
 
-        log.warn("External scheduler returned empty balancing result.");
-        return null;
+        log.warn("All external schedulers returned empty balancing result.");
+        return Optional.empty();
     }
 
     /**

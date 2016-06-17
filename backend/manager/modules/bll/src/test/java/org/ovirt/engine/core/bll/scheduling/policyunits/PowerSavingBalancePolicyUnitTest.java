@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyMap;
@@ -10,21 +11,21 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -61,11 +62,12 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
-        assertNotNull(result.getSecond());
-        assertEquals(result.getFirst().size(), 1);
-        assertEquals(result.getFirst().get(0), DESTINATION_HOST);
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isValid());
+        assertEquals(result.get().getCandidateHosts().size(), 1);
+        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
     }
 
     @Test
@@ -86,11 +88,13 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         doReturn(null).when(unit)
                 .evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
-        assertNotNull(result.getSecond());
-        assertEquals(result.getFirst().size(), 1);
-        assertEquals(result.getFirst().get(0), DESTINATION_HOST);
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isValid());
+        assertNotNull(result.get().getVmToMigrate());
+        assertEquals(result.get().getCandidateHosts().size(), 1);
+        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
     }
 
     @Test
@@ -111,11 +115,13 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         doReturn(null).when(unit)
                 .evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
-        assertNotNull(result.getSecond());
-        assertEquals(result.getFirst().size(), 1);
-        assertNotEquals(result.getFirst().get(0), DESTINATION_HOST);
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isValid());
+        assertNotNull(result.get().getVmToMigrate());
+        assertEquals(result.get().getCandidateHosts().size(), 1);
+        assertNotEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
     }
 
     @Test
@@ -136,11 +142,12 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
-        assertNotNull(result.getSecond());
-        assertEquals(result.getFirst().size(), 1);
-        assertEquals(result.getFirst().get(0), DESTINATION_HOST);
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isValid());
+        assertEquals(result.get().getCandidateHosts().size(), 1);
+        assertEquals(result.get().getCandidateHosts().get(0), DESTINATION_HOST);
     }
 
     @Test
@@ -161,8 +168,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
-        assert result == null;
+        Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        assert !result.isPresent();
     }
 
     @Test
@@ -183,8 +190,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
-        assert result == null;
+        Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        assert !result.isPresent();
     }
 
     @Test
@@ -205,7 +212,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
-        assert result == null;
+        Optional<BalanceResult> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        assert !result.isPresent();
     }
 }

@@ -129,7 +129,7 @@ public class ExternalSchedulerBrokerObjectBuilder {
         return result;
     }
 
-    public static BalanceResult getBalanceResults(Object xmlRpcStruct) {
+    public static BalanceResult getBalanceResult(Object xmlRpcStruct) {
         BalanceResult result = new BalanceResult();
         Object[] castedRawResult = (Object[]) populateCommonFields(xmlRpcStruct, result);
 

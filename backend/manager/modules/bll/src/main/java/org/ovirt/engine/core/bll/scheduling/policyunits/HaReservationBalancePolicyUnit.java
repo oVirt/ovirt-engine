@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.HaReservationHandling;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -19,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public Pair<List<Guid>, Guid> balance(Cluster cluster,
+    public Optional<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
@@ -53,11 +54,11 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
         log.debug("Started HA reservation balancing method for cluster '{}'", cluster.getName());
         if (!cluster.supportsHaReservation()) {
-            return null;
+            return Optional.empty();
         }
         if (hosts.size() < 2) {
             log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hosts.size());
-            return null;
+            return Optional.empty();
         }
 
         int haVmsInCluster = 0;
@@ -84,14 +85,14 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
                 getHostUtilizedByCondition(hosts, hostId2HaVmMapping, overUtilizationThreshold, Condition.MORE_THAN);
         if (overUtilizedHosts.isEmpty()) {
             log.debug("No over utilized hosts for cluster '{}'", cluster.getName());
-            return null;
+            return Optional.empty();
         }
 
         List<VDS> underUtilizedHosts =
                 getHostUtilizedByCondition(hosts, hostId2HaVmMapping, overUtilizationParam, Condition.LESS_THAN);
         if (underUtilizedHosts.size() == 0) {
             log.debug("No under utilized hosts for cluster '{}'", cluster.getName());
-            return null;
+            return Optional.empty();
         }
 
         // Get random host from the over utilized hosts
@@ -100,7 +101,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
         List<VM> migrableVmsOnRandomHost = getMigrableVmsRunningOnVds(randomHost.getId(), hostId2HaVmMapping);
         if (migrableVmsOnRandomHost.isEmpty()) {
             log.debug("No migratable hosts were found for cluster '{}'", cluster.getName());
-            return null;
+            return Optional.empty();
         }
 
         // Get random vm to migrate
@@ -112,7 +113,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
             underUtilizedHostsKeys.add(vds.getId());
         }
 
-        return new Pair<>(underUtilizedHostsKeys, vm.getId());
+        return Optional.of(new BalanceResult(vm.getId(), underUtilizedHostsKeys));
 
     }
 

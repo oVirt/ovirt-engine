@@ -3,33 +3,38 @@ package org.ovirt.engine.core.bll.scheduling.external;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 
 public class BalanceResult extends SchedulerResult {
-    private List<Guid> underUtilizedHosts;
+    private List<Guid> candidateHosts = new ArrayList<>();
     private Guid vmToMigrate = null;
-    private Pair<List<Guid>, Guid> balancingData;
+
+    public BalanceResult(Guid vmToMigrate, List<Guid> candidateHosts) {
+        this.vmToMigrate = vmToMigrate;
+        this.candidateHosts = candidateHosts;
+    }
+
+    public BalanceResult() {
+    }
 
     public void addHost(Guid host) {
-        if (underUtilizedHosts == null) {
-            underUtilizedHosts = new ArrayList<>();
-        }
-
-        underUtilizedHosts.add(host);
+        candidateHosts.add(host);
     }
 
     public void setVmToMigrate(Guid vm) {
         this.vmToMigrate = vm;
     }
 
+    public List<Guid> getCandidateHosts() {
+        return candidateHosts;
+    }
 
-    public Pair<List<Guid>, Guid> getResult() {
-        if (balancingData == null) {
-            balancingData = new Pair<>(underUtilizedHosts, vmToMigrate);
-        }
+    public Guid getVmToMigrate() {
+        return vmToMigrate;
+    }
 
-        return balancingData;
+    public boolean isValid() {
+        return vmToMigrate != null;
     }
 }

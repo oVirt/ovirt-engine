@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
@@ -57,11 +58,11 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     @Override
-    public Pair<List<Guid>, Guid> balance(Cluster cluster,
+    public Optional<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
-        final Pair<List<Guid>, Guid> migrationRule =  super.balance(cluster, hosts, parameters, messages);
+        final Optional<BalanceResult> migrationRule =  super.balance(cluster, hosts, parameters, messages);
 
         List<VDS> allHosts = getVdsDao().getAllForCluster(cluster.getId());
 

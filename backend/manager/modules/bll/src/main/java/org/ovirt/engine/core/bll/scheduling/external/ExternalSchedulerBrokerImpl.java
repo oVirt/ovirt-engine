@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Singleton;
 
@@ -49,7 +50,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
     }
 
     @Override
-    public ExternalSchedulerDiscoveryResult runDiscover() {
+    public Optional<ExternalSchedulerDiscoveryResult> runDiscover() {
         try {
             XmlRpcClient client = new XmlRpcClient();
             client.setConfig(config);
@@ -59,16 +60,16 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         } catch (XmlRpcException e) {
             log.error("Error communicating with the external scheduler while discovering: {}", e.getMessage());
             log.debug("Exception", e);
-            return null;
+            return Optional.empty();
         }
     }
 
-    private ExternalSchedulerDiscoveryResult parseDiscoverResults(Object result) {
+    private Optional<ExternalSchedulerDiscoveryResult> parseDiscoverResults(Object result) {
         ExternalSchedulerDiscoveryResult retValue = new ExternalSchedulerDiscoveryResult();
         if (!retValue.populate(result)) {
-            return null;
+            return Optional.empty();
         }
-        return retValue;
+        return Optional.of(retValue);
     }
 
     @Override
@@ -174,19 +175,19 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
 
     @Override
-    public Pair<List<Guid>, Guid> runBalance(String balanceName, List<Guid> hostIDs, Map<String, String> propertiesMap) {
+    public Optional<BalanceResult> runBalance(String balanceName, List<Guid> hostIDs, Map<String, String> propertiesMap) {
         try {
             XmlRpcClient client = new XmlRpcClient();
             client.setConfig(config);
             Object result =
                     client.execute(BALANCE, createBalanceArgs(balanceName, hostIDs, propertiesMap));
-            return ExternalSchedulerBrokerObjectBuilder.getBalanceResults(result).getResult();
+            return Optional.of(ExternalSchedulerBrokerObjectBuilder.getBalanceResult(result));
 
         } catch (XmlRpcException e) {
             log.error("Error communicating with the external scheduler while balancing: {}", e.getMessage());
             log.debug("Exception", e);
             auditLogFailedToConnect();
-            return null;
+            return Optional.empty();
         }
     }
 

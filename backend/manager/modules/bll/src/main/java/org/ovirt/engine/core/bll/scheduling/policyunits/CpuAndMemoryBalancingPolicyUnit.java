@@ -8,12 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUsageComparator;
@@ -24,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -50,7 +51,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public Pair<List<Guid>, Guid> balance(final Cluster cluster,
+    public Optional<BalanceResult> balance(final Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
@@ -60,7 +61,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         if (hosts.size() < 2) {
             log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hosts.size());
-            return null;
+            return Optional.empty();
         }
 
         final List<VDS> overUtilizedPrimaryHosts = getPrimarySources(cluster, hosts, parameters);
@@ -70,7 +71,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         if ((overUtilizedPrimaryHosts == null || overUtilizedPrimaryHosts.size() == 0)
                 && (overUtilizedSecondaryHosts == null || overUtilizedSecondaryHosts.size() == 0)) {
             log.debug("There is no over-utilized host in cluster '{}'", cluster.getName());
-            return null;
+            return Optional.empty();
         }
 
         List<VDS> destinationHosts = null;
@@ -110,7 +111,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                 log.warn("All candidate hosts have been filtered, can't balance the cluster '{}'"
                                 + " using memory based approach",
                         cluster.getName());
-                return null;
+                return Optional.empty();
             }
 
             FindVmAndDestinations.Result result = findVmAndDestinations.invoke(overUtilizedSecondaryHosts, underUtilizedHosts, getVmDao());
@@ -122,11 +123,12 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         if (destinationHosts == null || destinationHosts.size() == 0
                 || vmToMigrate == null) {
-            return null;
+            return Optional.empty();
         }
 
         List<Guid> destinationHostsKeys = destinationHosts.stream().map(VDS::getId).collect(Collectors.toList());
-        return new Pair<>(destinationHostsKeys, vmToMigrate.getId());
+
+        return Optional.of(new BalanceResult(vmToMigrate.getId(), destinationHostsKeys));
     }
 
     /**

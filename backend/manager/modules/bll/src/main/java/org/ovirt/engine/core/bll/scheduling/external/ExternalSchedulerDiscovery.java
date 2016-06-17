@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,9 +46,9 @@ public class ExternalSchedulerDiscovery {
     public boolean discover() {
         boolean dbUpdated = false;
 
-        ExternalSchedulerDiscoveryResult discoveryResult = broker.runDiscover();
-        if (discoveryResult != null) {
-            updateDB(discoveryResult);
+        Optional<ExternalSchedulerDiscoveryResult> discoveryResult = broker.runDiscover();
+        if (discoveryResult.isPresent()) {
+            updateDB(discoveryResult.get());
             log.debug("PolicyUnits updated for external broker.");
             dbUpdated = true;
         } else {
