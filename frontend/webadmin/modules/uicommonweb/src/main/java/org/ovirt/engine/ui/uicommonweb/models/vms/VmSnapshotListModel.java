@@ -569,12 +569,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             return;
         }
 
-        VM selectedVm = getEntity();
         final UnitVmModel model = new UnitVmModel(createNewTemplateBehavior(), this);
         setWindow(model);
         model.startProgress();
-        model.getVmType().setSelectedItem(selectedVm.getVmType());
-        model.getIsHighlyAvailable().setEntity(selectedVm.getStaticData().isAutoStartup());
 
         AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -589,6 +586,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 model.setIsNew(true);
                 model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
                 model.initialize(VmSnapshotListModel.this.getSystemTreeSelectedItem());
+                model.getVmType().setSelectedItem(vm.getVmType());
+                model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
                 model.getCommands().add(
                         new UICommand("OnNewTemplate", VmSnapshotListModel.this) //$NON-NLS-1$
                                 .setTitle(ConstantsManager.getInstance().getConstants().ok())
