@@ -1505,9 +1505,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getVmType().setIsChangeable(false);
         getVmType().getSelectedItemChangedEvent().addListener(this);
 
+        // element should only appear in webadmin add & edit VM dialogs
         setLabelList(new ListModel<Label>());
-        updateLabelList();
         getLabelList().getSelectedItemsChangedEvent().addListener(this);
+        getLabelList().setIsAvailable(false);
 
         setCdImage(new NotChangableForVmInPoolListModel<String>());
         getCdImage().setIsChangeable(false);
@@ -1842,11 +1843,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             @Override
             public void onSuccess(Object model, Object result) {
                 final List<Label> allLabels = (List<Label>) result;
+                boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
 
-                if (getIsNew()) {
-                    labelList.setItems(allLabels);
-                    labelList.setSelectedItems(new ArrayList<Label>());
-                } else {
+                if (isExistingVmBehavior) {
                     AsyncQuery getLabelsByVmIdQuery = new AsyncQuery();
 
                     getLabelsByVmIdQuery.asyncCallback = new INewAsyncCallback() {
@@ -1862,11 +1861,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
 
                     AsyncDataProvider.getInstance().getLabelListByEntityId(getLabelsByVmIdQuery, vmId);
+                } else {
+                    labelList.setItems(allLabels);
+                    labelList.setSelectedItems(new ArrayList<Label>());
                 }
 
                 labelList.setIsChangeable(false);
             }
         };
+
         AsyncDataProvider.getInstance().getLabelList(getLabelsQuery);
     }
 
