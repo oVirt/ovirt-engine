@@ -16,6 +16,7 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.GetSignedWebsocketProxyTicketParams;
@@ -51,8 +52,7 @@ public class BackendVmGraphicsConsoleResource
         VdcQueryReturnValue configuredOptionsReturnValue = runQuery(VdcQueryType.ConfigureConsoleOptions,
                 new ConfigureConsoleOptionsParams(consoleOptions, true));
         if (!configuredOptionsReturnValue.getSucceeded()) {
-            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, configuredOptionsReturnValue.getExceptionString()));
-            return Response.serverError().build();
+            return handleConfigureConsoleError(configuredOptionsReturnValue);
         }
 
         VdcQueryReturnValue consoleDescriptorReturnValue = runQuery(VdcQueryType.GetConsoleDescriptorFile,
@@ -67,6 +67,15 @@ public class BackendVmGraphicsConsoleResource
         }
 
         return builder.build();
+    }
+
+    private Response handleConfigureConsoleError(VdcQueryReturnValue configuredOptionsReturnValue) {
+        log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, configuredOptionsReturnValue.getExceptionString()));
+        if (EngineMessage.USER_CANNOT_FORCE_RECONNECT_TO_VM.name()
+                .equals(configuredOptionsReturnValue.getExceptionString())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.serverError().build();
     }
 
     @Override
