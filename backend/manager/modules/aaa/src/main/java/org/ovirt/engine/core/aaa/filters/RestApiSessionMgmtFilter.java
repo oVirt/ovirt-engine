@@ -26,6 +26,7 @@ public class RestApiSessionMgmtFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(RestApiSessionMgmtFilter.class);
 
     private static final int MINIMAL_SESSION_TTL = 1;
+    private static final String BEARER = "Bearer";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -77,7 +78,9 @@ public class RestApiSessionMgmtFilter implements Filter {
             chain.doFilter(request, response);
 
             if (FiltersHelper.isAuthenticated(req)) {
-                if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) == 0) {
+                String headerValue = req.getHeader(FiltersHelper.Constants.HEADER_AUTHORIZATION);
+                if ((headerValue == null || !headerValue.startsWith(BEARER)) &&
+                        (prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) == 0) {
                     InitialContext ctx = new InitialContext();
                     try {
                         FiltersHelper.getBackend(ctx).runAction(
