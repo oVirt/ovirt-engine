@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class ForemanError implements Serializable {
     private static final long serialVersionUID = 468697212133957494L;
     private Map<String, String[]> errors;
+    @JsonProperty("full_messages")
     private String[] fullMessages;
 
     public String[] getFullMessages() {

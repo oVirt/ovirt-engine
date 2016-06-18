@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
-
 import java.io.Serializable;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class ForemanDiscoveredHost implements Serializable {
     private static final long serialVersionUID = -6900772579678185173L;
     private String ip;
     private String name;
     private String mac;
+    @JsonProperty("last_report")
     private String lastReport;
+    @JsonProperty("subnet_name")
     private String subnetName;
 
     public String getSubnetName() {

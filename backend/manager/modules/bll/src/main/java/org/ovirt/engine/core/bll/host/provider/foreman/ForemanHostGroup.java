@@ -1,29 +1,44 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
-
 import java.io.Serializable;
 import java.util.Map;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class ForemanHostGroup implements Serializable {
     private static final long serialVersionUID = -3099054972843803212L;
 
     private String name;
     private int id;
+    @JsonProperty("subnet_id")
     private int subnetId;
+    @JsonProperty("operatingsystem_id")
     private int operatingSystemId;
+    @JsonProperty("domain_id")
     private int domainId;
+    @JsonProperty("environment_id")
     private int environmentId;
+    @JsonProperty("ptable_id")
     private int ptableId;
+    @JsonProperty("medium_id")
     private int mediumId;
+    @JsonProperty("architecture_id")
     private int architectureId;
+    @JsonProperty("puppet_class_ids")
     private int[] puppetClassIds;
     private Map<String, String> parameters;
     private String ancestry;
+    @JsonProperty("subnet_name")
     private String subnetName;
+    @JsonProperty("operatingsystem_name")
     private String operatingSystemName;
+    @JsonProperty("domain_name")
     private String domainName;
+    @JsonProperty("architecture_name")
     private String architectureName;
+    @JsonProperty("environment_name")
     private String environmentName;
+    @JsonProperty("ptable_name")
     private String ptableName;
+    @JsonProperty("medium_name")
     private String mediumName;
 
     public String getAncestry() {
