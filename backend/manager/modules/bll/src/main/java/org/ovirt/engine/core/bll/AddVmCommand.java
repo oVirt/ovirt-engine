@@ -1412,16 +1412,20 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void addPermissionSubjectForAdminLevelProperties(List<PermissionSubject> permissionList) {
         VmStatic vmFromParams = getParameters().getVmStaticData();
+        VmTemplate vmTemplate = getVmTemplate();
 
-        if (vmFromParams != null && getVmTemplate() != null) {
+        if (vmFromParams != null && vmTemplate != null) {
             // user needs specific permission to change custom properties
-            if (!Objects.equals(vmFromParams.getCustomProperties(), getVmTemplate().getCustomProperties())) {
+            if (!Objects.equals(vmFromParams.getCustomProperties(), vmTemplate.getCustomProperties())) {
                 permissionList.add(new PermissionSubject(getClusterId(),
                         VdcObjectType.Cluster, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
             }
-
+            //if the template is blank we ignore his pinned hosts
+            if(vmTemplate.isBlank()){
+                return;
+            }
             Set<Guid> dedicatedVmForVdsFromUser = new HashSet<>(vmFromParams.getDedicatedVmForVdsList());
-            Set<Guid> dedicatedVmForVdsFromTemplate = new HashSet<>(getVmTemplate().getDedicatedVmForVdsList());
+            Set<Guid> dedicatedVmForVdsFromTemplate = new HashSet<>(vmTemplate.getDedicatedVmForVdsList());
             // host-specific parameters can be changed by administration role only
             if (!dedicatedVmForVdsFromUser.equals(dedicatedVmForVdsFromTemplate)
                     || !StringUtils.isEmpty(vmFromParams.getCpuPinning())) {
