@@ -191,7 +191,9 @@ _dbfunc_common_schema_upgrade() {
 			before="$(_dbfunc_common_get_db_time)"
 			checksum="$(md5sum "${file}" | cut -d " " -f1)"
 			ver="$(_dbfunc_common_get_file_version "${file}")"
-			if [ "${ver}" -gt "${current}" ] ; then
+			if [ "${ver}" -le "${current}" ] ; then
+				echo "Skipping upgrade script ${file}, its version ${ver} is <= current version ${current}"
+			else
 				# we should remove leading zero in order not to treat number as octal
 				local xver="$(expr substr "${ver}" 2 7)"
 				# taking major revision , i.e 03010000=>301
