@@ -37,9 +37,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         VdcReturnValueBase result =
                 runInternalActionWithTasksContext(
                         VdcActionType.UpdateVmVersion,
-                        new UpdateVmVersionParameters(getVmId()),
-                        getLock()
-                );
+                        buildUpdateVmVersionParameters());
 
         // if it fail because of validate, its safe to restore the snapshot
         // and the vm will still be usable with previous version
@@ -53,6 +51,13 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         else {
             setSucceeded(result.getSucceeded());
         }
+    }
+
+    private UpdateVmVersionParameters buildUpdateVmVersionParameters() {
+        UpdateVmVersionParameters parameters = new UpdateVmVersionParameters(getVmId());
+        // the VM is already locked by this command during the execute phase of UpdateVmVersion
+        parameters.setLockVm(false);
+        return parameters;
     }
 
     private boolean restoreInitialState() {

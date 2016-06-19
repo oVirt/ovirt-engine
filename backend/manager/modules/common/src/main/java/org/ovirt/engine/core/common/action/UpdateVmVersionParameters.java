@@ -10,6 +10,8 @@ public class UpdateVmVersionParameters extends VmManagementParametersBase {
     private Guid newTemplateVersion;
     /** The new VM latest property. if null -> uses the original, source VM, latest property. */
     private Boolean useLatestVersion;
+    /** Whether or not to lock the VM during this operation */
+    private boolean lockVm = true;
 
     public UpdateVmVersionParameters() {
     }
@@ -56,5 +58,13 @@ public class UpdateVmVersionParameters extends VmManagementParametersBase {
 
     public void setUseLatestVersion(Boolean useLatestVersion) {
         this.useLatestVersion = useLatestVersion;
+    }
+
+    public boolean isLockVm() {
+        return lockVm;
+    }
+
+    public void setLockVm(boolean lockVm) {
+        this.lockVm = lockVm;
     }
 }
