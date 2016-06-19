@@ -252,7 +252,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (getVmId() != null) {
+        if (getParameters().isLockVm() && getVmId() != null) {
             return Collections.singletonMap(getVmId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
