@@ -438,34 +438,29 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     public void onUpload() {
-        flush();
-        if (getProgress() != null || !validate(true)) {
-            return;
-        }
+        if (flush()) {
+            if (getProgress() != null) {
+                return;
+            }
 
-        if (!isResumeUpload) {
-            initiateNewUpload();
-        } else {
-            initiateResumeUpload();
+            if (!isResumeUpload) {
+                initiateNewUpload();
+            } else {
+                initiateResumeUpload();
+            }
         }
     }
 
-    public void flush() {
-        // Ensure a file is selected before diskModel.flush() calls diskModel.validate()
-        if (validate(false)) {
+    public boolean flush() {
+        if (validate()) {
             diskModel.flush();
             ((DiskImage) getDiskModel().getDisk()).setVolumeFormat(getVolumeFormat().getSelectedItem());
+            return true;
         }
+        return false;
     }
 
-    /**
-     * Validate the model
-     * @param validateDiskModel Validate the child disk model.  Some NewDiskModel operations
-     *            (notably flush()) will call validate() on the child, so there is no need to
-     *            have this validate() call that one in these cases.
-     * @return True if valid, False if not
-     */
-    public boolean validate(boolean validateDiskModel) {
+    public boolean validate() {
         boolean uploadImageIsValid;
 
         if (getImageSourceLocalEnabled().getEntity()) {
@@ -476,9 +471,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             uploadImageIsValid = false;
         }
 
-        boolean diskIsValid = !validateDiskModel || diskModel.validate();
-
-        return uploadImageIsValid && diskIsValid;
+        return uploadImageIsValid && diskModel.validate();
     }
 
 
