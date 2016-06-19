@@ -731,6 +731,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         Guid hostId = sanStorageModel.getContainer().getHost().getSelectedItem().getId();
         Model target = getWidgetModel() != null ? getWidgetModel() : sanStorageModel.getContainer();
+        if (sanStorageModel.getAddedLuns().isEmpty()) {
+            onSaveSanStorage();
+            return;
+        }
         List<String> unkownStatusLuns = new ArrayList<>();
         for (LunModel lunModel : sanStorageModel.getAddedLuns()) {
             unkownStatusLuns.add(lunModel.getLunId());
