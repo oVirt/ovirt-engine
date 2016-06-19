@@ -76,8 +76,8 @@ AS $PROCEDURE$
 BEGIN
     DELETE
     FROM unregistered_disks
-    WHERE disk_id = v_disk_id
-        OR v_disk_id IS NULL
+    WHERE (disk_id = v_disk_id
+        OR v_disk_id IS NULL)
         AND (
             storage_domain_id = v_storage_domain_id
             OR v_storage_domain_id IS NULL
