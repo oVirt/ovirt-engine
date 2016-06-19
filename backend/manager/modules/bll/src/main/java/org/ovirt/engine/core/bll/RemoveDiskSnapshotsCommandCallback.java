@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
@@ -55,17 +56,21 @@ public class RemoveDiskSnapshotsCommandCallback extends CommandCallback {
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        endAction(cmdId, true);
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        endAction(cmdId, false);
     }
 
     private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> getCommand(Guid cmdId) {
         return CommandCoordinatorUtil.retrieveCommand(cmdId);
+    }
+
+    private void endAction(Guid cmdId, boolean exitStatus) {
+        getCommand(cmdId).endAction();
+        ExecutionHandler.endJob(getCommand(cmdId).getExecutionContext(), exitStatus);
+        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 }
