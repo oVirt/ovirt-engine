@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProviderQueryParameters> extends QueriesCommandBase<T> {
@@ -73,13 +76,23 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     }
 
     private Guid pickProxyHostFromDataCenter() {
-        List<VDS> vdss = getVdsDao().getAllForStoragePoolAndStatus(getParameters().getDataCenterId(), VDSStatus.Up);
+        Guid dataCenterId = (getParameters().getDataCenterId() == null) ? getRandomDataCenter() : getParameters().getDataCenterId();
+        List<VDS> vdss = getVdsDao().getAllForStoragePoolAndStatus(dataCenterId, VDSStatus.Up);
         if (vdss.isEmpty()) {
             logNoProxyAvailable(getParameters().getDataCenterId());
             throw new IllegalArgumentException();
         }
 
         return vdss.get(0).getId();
+    }
+
+    private Guid getRandomDataCenter() {
+        for (StoragePool sp: DbFacade.getInstance().getStoragePoolDao().getAll()) {
+            if (sp.getStatus() == StoragePoolStatus.Up) {
+                return sp.getId();
+            }
+        }
+        return null;
     }
 
     private void logHostCannotBeProxy(String hostName) {
@@ -90,7 +103,8 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
 
     private void logNoProxyAvailable(Guid dataCenterId) {
         AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("StoragePoolName", getDbFacade().getStoragePoolDao().get(dataCenterId).getName());
+        String dcName =  (dataCenterId == null) ? "None" : getDbFacade().getStoragePoolDao().get(dataCenterId).getName();
+        logable.addCustomValue("StoragePoolName", dcName);
         auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC);
     }
 }
