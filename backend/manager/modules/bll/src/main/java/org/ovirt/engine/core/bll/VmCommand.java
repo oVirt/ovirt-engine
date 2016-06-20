@@ -94,10 +94,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         super(commandId);
     }
 
-    public VmCommand() {
-    }
-
-
     @Override
     protected void executeCommand() {
         if (shouldSkipCommandExecutionCached()) {

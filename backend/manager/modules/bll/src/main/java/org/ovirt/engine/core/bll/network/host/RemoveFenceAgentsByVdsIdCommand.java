@@ -4,7 +4,6 @@ import org.ovirt.engine.core.bll.FenceAgentCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveFenceAgentsByVdsIdCommand<T extends FenceAgentCommandParameterBase> extends FenceAgentCommandBase {
@@ -23,15 +22,7 @@ public class RemoveFenceAgentsByVdsIdCommand<T extends FenceAgentCommandParamete
         setSucceeded(true);
     }
 
-    public RemoveFenceAgentsByVdsIdCommand() {
-        super();
-    }
-
     public RemoveFenceAgentsByVdsIdCommand(FenceAgentCommandParameterBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    public RemoveFenceAgentsByVdsIdCommand(Guid commandId) {
-        super(commandId);
     }
 }

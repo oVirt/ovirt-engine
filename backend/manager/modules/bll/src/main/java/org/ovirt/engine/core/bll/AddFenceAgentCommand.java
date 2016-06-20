@@ -9,10 +9,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> extends FenceAgentCommandBase {
 
-    public AddFenceAgentCommand() {
-        super();
-    }
-
     public AddFenceAgentCommand(FenceAgentCommandParameterBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

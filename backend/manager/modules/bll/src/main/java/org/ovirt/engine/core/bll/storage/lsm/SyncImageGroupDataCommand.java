@@ -24,10 +24,6 @@ public class SyncImageGroupDataCommand<T extends SyncImageGroupDataCommandParame
         super(parameters, cmdContext);
     }
 
-    public SyncImageGroupDataCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void executeCommand() {
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());

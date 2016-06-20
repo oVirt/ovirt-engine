@@ -48,9 +48,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         super(commandId);
     }
 
-    protected VmTemplateCommand() {
-    }
-
     protected VmTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmTemplateId(parameters.getVmTemplateId());
