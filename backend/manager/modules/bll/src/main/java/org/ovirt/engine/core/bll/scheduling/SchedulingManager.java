@@ -290,14 +290,14 @@ public class SchedulingManager implements BackendService {
 
     }
 
-    public Guid schedule(Cluster cluster,
-            VM vm,
-            List<Guid> hostBlackList,
-            List<Guid> hostWhiteList,
-            List<Guid> destHostIdList,
-            List<String> messages,
-            VdsFreeMemoryChecker memoryChecker,
-            String correlationId) {
+    public Guid schedule(@NotNull Cluster cluster,
+            @NotNull VM vm,
+            @NotNull List<Guid> hostBlackList,
+            @NotNull List<Guid> hostWhiteList,
+            @NotNull List<Guid> destHostIdList,
+            @NotNull List<String> messages,
+            @NotNull VdsFreeMemoryChecker memoryChecker,
+            @NotNull String correlationId) {
         prepareClusterLock(cluster.getId());
         try {
             log.debug("Scheduling started, correlation Id: {}", correlationId);
@@ -400,12 +400,12 @@ public class SchedulingManager implements BackendService {
      * @param destHostIdList - used for RunAt preselection, overrides the ordering in vdsList
      * @param availableVdsList - presorted list of hosts (better hosts first) that are available
      */
-    private Optional<Guid> selectBestHost(Cluster cluster,
-            VM vm,
-            List<Guid> destHostIdList,
-            List<VDS> availableVdsList,
-            ClusterPolicy policy,
-            Map<String, String> parameters) {
+    private Optional<Guid> selectBestHost(@NotNull Cluster cluster,
+            @NotNull VM vm,
+            @NotNull List<Guid> destHostIdList,
+            @NotNull List<VDS> availableVdsList,
+            @NotNull ClusterPolicy policy,
+            @NotNull Map<String, String> parameters) {
         // in case a default destination host was specified and
         // it passed filters, return the first found
         List<VDS> runnableHosts = new LinkedList<>();
@@ -499,12 +499,12 @@ public class SchedulingManager implements BackendService {
                 && !crossedThreshold;
     }
 
-    public boolean canSchedule(Cluster cluster,
-            VM vm,
-            List<Guid> vdsBlackList,
-            List<Guid> vdsWhiteList,
-            List<Guid> destVdsIdList,
-            List<String> messages) {
+    public boolean canSchedule(@NotNull Cluster cluster,
+            @NotNull VM vm,
+            @NotNull List<Guid> vdsBlackList,
+            @NotNull List<Guid> vdsWhiteList,
+            @NotNull List<Guid> destVdsIdList,
+            @NotNull List<String> messages) {
         List<VDS> vdsList = getVdsDao()
                 .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
         vdsList = removeBlacklistedHosts(vdsList, vdsBlackList);
@@ -660,6 +660,7 @@ public class SchedulingManager implements BackendService {
         return hostList;
     }
 
+    @NotNull
     private Set<Guid> toIdSet(@NotNull List<VDS> hostList) {
         return hostList.stream().map(VDS::getId).collect(Collectors.toSet());
     }
@@ -767,12 +768,12 @@ public class SchedulingManager implements BackendService {
         return selector.best();
     }
 
-    private void runInternalFunctions(SelectorInstance selector,
-            List<Pair<PolicyUnitImpl, Integer>> functions,
-            Cluster cluster,
-            List<VDS> hostList,
-            VM vm,
-            Map<String, String> parameters) {
+    private void runInternalFunctions(@NotNull SelectorInstance selector,
+            @NotNull List<Pair<PolicyUnitImpl, Integer>> functions,
+            @NotNull Cluster cluster,
+            @NotNull List<VDS> hostList,
+            @NotNull VM vm,
+            @NotNull Map<String, String> parameters) {
 
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
             List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(cluster, hostList, vm, parameters);
@@ -782,15 +783,12 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private void runExternalFunctions(SelectorInstance selector,
-            List<Pair<PolicyUnitImpl, Integer>> functions,
-            List<VDS> hostList,
-            VM vm,
-            Map<String, String> parameters) {
-        List<Guid> hostIDs = new ArrayList<>();
-        for (VDS vds : hostList) {
-            hostIDs.add(vds.getId());
-        }
+    private void runExternalFunctions(@NotNull SelectorInstance selector,
+            @NotNull List<Pair<PolicyUnitImpl, Integer>> functions,
+            @NotNull List<VDS> hostList,
+            @NotNull VM vm,
+            @NotNull Map<String, String> parameters) {
+        List<Guid> hostIDs = hostList.stream().map(VDS::getId).collect(Collectors.toList());
 
         List<Pair<String, Integer>> scoreNameAndWeight = functions.stream()
                 .filter(pair -> !pair.getFirst().getPolicyUnit().isInternal())
@@ -811,8 +809,9 @@ public class SchedulingManager implements BackendService {
         sumScoreResults(selector, nameToGuidMap, externalScores);
     }
 
-    private void sumScoreResults(SelectorInstance selector, Map<String, Guid> nametoGuidMap,
-            List<WeightResultEntry> externalScores) {
+    private void sumScoreResults(@NotNull SelectorInstance selector,
+            @NotNull Map<String, Guid> nametoGuidMap,
+            @NotNull List<WeightResultEntry> externalScores) {
         for (WeightResultEntry resultEntry : externalScores) {
             // The old external scheduler returns summed up data without policy unit identification, treat
             // it as a single policy unit with id null
@@ -841,17 +840,17 @@ public class SchedulingManager implements BackendService {
         return map;
     }
 
-    public void addClusterPolicy(ClusterPolicy clusterPolicy) {
+    public void addClusterPolicy(@NotNull ClusterPolicy clusterPolicy) {
         getClusterPolicyDao().save(clusterPolicy);
         policyMap.put(clusterPolicy.getId(), clusterPolicy);
     }
 
-    public void editClusterPolicy(ClusterPolicy clusterPolicy) {
+    public void editClusterPolicy(@NotNull ClusterPolicy clusterPolicy) {
         getClusterPolicyDao().update(clusterPolicy);
         policyMap.put(clusterPolicy.getId(), clusterPolicy);
     }
 
-    public void removeClusterPolicy(Guid clusterPolicyId) {
+    public void removeClusterPolicy(@NotNull Guid clusterPolicyId) {
         getClusterPolicyDao().remove(clusterPolicyId);
         policyMap.remove(clusterPolicyId);
     }
@@ -975,14 +974,20 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private Optional<BalanceResult> internalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
+    @NotNull
+    private Optional<BalanceResult> internalRunBalance(@NotNull PolicyUnitImpl policyUnit,
+            @NotNull Cluster cluster,
+            @NotNull List<VDS> hosts) {
         return policyUnit.balance(cluster,
                 hosts,
                 cluster.getClusterPolicyProperties(),
                 new ArrayList<>());
     }
 
-    private Optional<BalanceResult> externalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
+    @NotNull
+    private Optional<BalanceResult> externalRunBalance(@NotNull PolicyUnitImpl policyUnit,
+            @NotNull Cluster cluster,
+            @NotNull List<VDS> hosts) {
         List<Guid> hostIDs = new ArrayList<>();
         for (VDS vds : hosts) {
             hostIDs.add(vds.getId());
@@ -1078,7 +1083,7 @@ public class SchedulingManager implements BackendService {
      * Clear pending records for a VM.
      * This operation locks the cluster to make sure a possible scheduling operation is not under way.
      */
-    public void clearPendingVm(VmStatic vm) {
+    public void clearPendingVm(@NotNull VmStatic vm) {
         prepareClusterLock(vm.getClusterId());
         try {
             lockCluster(vm.getClusterId());
