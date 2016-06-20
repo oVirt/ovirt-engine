@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -328,31 +327,25 @@ public class SchedulingManager implements BackendService {
                 return null;
             }
 
-            Guid bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
+            Optional<Guid> bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
+            if (bestHost.isPresent()) {
+                getPendingResourceManager().addPending(new PendingCpuCores(bestHost.get(), vm, vm.getNumOfCpus()));
 
-            if (bestHost != null) {
-                getPendingResourceManager().addPending(new PendingCpuCores(bestHost, vm, vm.getNumOfCpus()));
+                VDS bestHostEntity = vdsList.stream().filter(vds -> vds.getId().equals(bestHost.get())).findFirst().get();
 
-                VDS bestHostEntity = vdsList.stream().filter(new Predicate<VDS>() {
-                    @Override
-                    public boolean test(VDS vds) {
-                        return vds.getId().equals(bestHost);
-                    }
-                }).findFirst().get();
-
-                getPendingResourceManager().addPending(new PendingMemory(bestHost, vm, bestHostEntity.getGuestOverhead()));
-                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHost, vm, vm.getMemSizeMb()));
-                getPendingResourceManager().addPending(new PendingVM(bestHost, vm));
-                getPendingResourceManager().notifyHostManagers(bestHost);
+                getPendingResourceManager().addPending(new PendingMemory(bestHost.get(), vm, bestHostEntity.getGuestOverhead()));
+                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHost.get(), vm, vm.getMemSizeMb()));
+                getPendingResourceManager().addPending(new PendingVM(bestHost.get(), vm));
+                getPendingResourceManager().notifyHostManagers(bestHost.get());
 
                 VfScheduler vfScheduler = Injector.get(VfScheduler.class);
-                Map<Guid, String> passthroughVnicToVfMap = vfScheduler.getVnicToVfMap(vm.getId(), bestHost);
+                Map<Guid, String> passthroughVnicToVfMap = vfScheduler.getVnicToVfMap(vm.getId(), bestHost.get());
                 if (passthroughVnicToVfMap != null && !passthroughVnicToVfMap.isEmpty()) {
-                    markVfsAsUsedByVm(bestHost, vm.getId(), passthroughVnicToVfMap);
+                    markVfsAsUsedByVm(bestHost.get(), vm.getId(), passthroughVnicToVfMap);
                 }
             }
 
-            return bestHost;
+            return bestHost.orElse(null);
         } catch (InterruptedException e) {
             log.error("interrupted", e);
             return null;
@@ -407,7 +400,7 @@ public class SchedulingManager implements BackendService {
      * @param destHostIdList - used for RunAt preselection, overrides the ordering in vdsList
      * @param availableVdsList - presorted list of hosts (better hosts first) that are available
      */
-    private Guid selectBestHost(Cluster cluster,
+    private Optional<Guid> selectBestHost(Cluster cluster,
             VM vm,
             List<Guid> destHostIdList,
             List<VDS> availableVdsList,
@@ -434,10 +427,10 @@ public class SchedulingManager implements BackendService {
         switch (runnableHosts.size()){
         case 0:
             // no runnable hosts found, nothing found
-            return null;
+            return Optional.empty();
         case 1:
             // found single available host, in available list return it
-            return runnableHosts.get(0).getId();
+            return Optional.of(runnableHosts.get(0).getId());
         default:
             // select best runnable host with scoring functions (from policy)
             List<Pair<Guid, Integer>> functions = policy.getFunctions();
@@ -448,16 +441,17 @@ public class SchedulingManager implements BackendService {
             List<Guid> runnableGuids = runnableHosts.stream().map(VDS::getId).collect(Collectors.toList());
             selectorInstance.init(functions, runnableGuids);
 
-            if (functions != null && !functions.isEmpty()
+            if (!functions.isEmpty()
                     && shouldWeighClusterHosts(cluster, runnableHosts)) {
-                Guid bestHostByFunctions = runFunctions(selectorInstance, functions, cluster, runnableHosts, vm, parameters);
-                if (bestHostByFunctions != null) {
+                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, functions, cluster,
+                        runnableHosts, vm, parameters);
+                if (bestHostByFunctions.isPresent()) {
                     return bestHostByFunctions;
                 }
             }
         }
         // failed select best runnable host using scoring functions, return the first
-        return runnableHosts.get(0).getId();
+        return Optional.of(runnableHosts.get(0).getId());
     }
 
     /**
@@ -713,12 +707,13 @@ public class SchedulingManager implements BackendService {
         });
     }
 
-    private Guid runFunctions(SelectorInstance selector,
-            List<Pair<Guid, Integer>> functions,
-            Cluster cluster,
-            List<VDS> hostList,
-            VM vm,
-            Map<String, String> parameters) {
+    @NotNull
+    private Optional<Guid> runFunctions(@NotNull SelectorInstance selector,
+            @NotNull List<Pair<Guid, Integer>> functions,
+            @NotNull Cluster cluster,
+            @NotNull List<VDS> hostList,
+            @NotNull VM vm,
+            @NotNull Map<String, String> parameters) {
         List<Pair<PolicyUnitImpl, Integer>> internalScoreFunctions = new ArrayList<>();
         List<Pair<PolicyUnitImpl, Integer>> externalScoreFunctions = new ArrayList<>();
 
@@ -769,10 +764,12 @@ public class SchedulingManager implements BackendService {
         }
 
         List<Pair<String, Integer>> scoreNameAndWeight = functions.stream()
+                .filter(pair -> !pair.getFirst().getPolicyUnit().isInternal())
                 .map(pair -> new Pair<>(pair.getFirst().getName(), pair.getSecond()))
                 .collect(Collectors.toList());
 
         Map<String, Guid> nameToGuidMap = functions.stream()
+                .filter(pair -> !pair.getFirst().getPolicyUnit().isInternal())
                 .collect(Collectors.toMap(pair -> pair.getFirst().getPolicyUnit().getName(),
                         pair -> pair.getFirst().getPolicyUnit().getId()));
 
@@ -782,22 +779,16 @@ public class SchedulingManager implements BackendService {
                         vm.getId(),
                         parameters);
 
-        if (externalScores != null) {
-            sumScoreResults(selector, nameToGuidMap, externalScores);
-        }
+        sumScoreResults(selector, nameToGuidMap, externalScores);
     }
 
     private void sumScoreResults(SelectorInstance selector, Map<String, Guid> nametoGuidMap,
             List<WeightResultEntry> externalScores) {
-        if (externalScores == null) {
-            // the external scheduler proxy may return null if error happens, in this case the external scores will
-            // remain empty
-            log.warn("External scheduler proxy returned null score");
-        } else {
-            for (WeightResultEntry resultEntry : externalScores) {
-                selector.record(nametoGuidMap.getOrDefault(resultEntry.getWeightUnit(), null),
-                        resultEntry.getHost(), resultEntry.getWeight());
-            }
+        for (WeightResultEntry resultEntry : externalScores) {
+            // The old external scheduler returns summed up data without policy unit identification, treat
+            // it as a single policy unit with id null
+            selector.record(nametoGuidMap.getOrDefault(resultEntry.getWeightUnit(), null),
+                    resultEntry.getHost(), resultEntry.getWeight());
         }
     }
 

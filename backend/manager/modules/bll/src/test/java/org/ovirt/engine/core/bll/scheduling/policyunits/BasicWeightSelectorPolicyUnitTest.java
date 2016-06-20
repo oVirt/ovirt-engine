@@ -58,7 +58,7 @@ public class BasicWeightSelectorPolicyUnitTest {
         selector.record(unit2, host3, 50);
         selector.record(unit2, host1, 100);
 
-        Guid best = selector.best();
+        Guid best = selector.best().get();
         assertEquals(host2, best);
     }
 
@@ -79,7 +79,7 @@ public class BasicWeightSelectorPolicyUnitTest {
         selector.record(unit2, host2, 5);
         selector.record(unit2, host1, 10);
 
-        Guid best = selector.best();
+        Guid best = selector.best().get();
         assertEquals(host3, best);
     }
 
@@ -101,7 +101,7 @@ public class BasicWeightSelectorPolicyUnitTest {
         selector.record(unit2, host2, 5);
         selector.record(unit2, host1, 10);
 
-        Guid best = selector.best();
+        Guid best = selector.best().get();
         assertEquals(host3, best);
     }
 }

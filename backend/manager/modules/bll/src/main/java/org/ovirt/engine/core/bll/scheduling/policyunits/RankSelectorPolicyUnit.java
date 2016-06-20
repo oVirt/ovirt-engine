@@ -61,7 +61,7 @@ public class RankSelectorPolicyUnit extends PolicyUnitImpl {
         }
 
         @Override
-        public Guid best() {
+        public Optional<Guid> best() {
             Map<Guid, Integer> scores = new HashMap<>();
 
             StringBuffer debug = new StringBuffer();
@@ -142,9 +142,9 @@ public class RankSelectorPolicyUnit extends PolicyUnitImpl {
 
             // Return the best host
             if (sortedScores.isEmpty()) {
-                return null;
+                return Optional.empty();
             } else {
-                return sortedScores.get(0).getKey();
+                return Optional.of(sortedScores.get(0).getKey());
             }
         }
     }

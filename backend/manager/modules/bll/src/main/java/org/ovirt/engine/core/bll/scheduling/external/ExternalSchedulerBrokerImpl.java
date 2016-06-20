@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.external;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -123,6 +124,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         return sentObject;
     }
 
+    @NotNull
     @Override
     public List<WeightResultEntry> runScores(List<Pair<String, Integer>> scoreNameAndWeight,
             List<Guid> hostIDs,
@@ -131,7 +133,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         try {
             // Do not call the scheduler when there is no operation requested from it
             if (scoreNameAndWeight.isEmpty()) {
-                return null;
+                return Collections.emptyList();
             }
 
             XmlRpcClient client = new XmlRpcClient();
@@ -144,7 +146,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
                     e.getMessage());
             log.debug("Exception", e);
             auditLogFailedToConnect();
-            return null;
+            return Collections.emptyList();
         }
     }
 

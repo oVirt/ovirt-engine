@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
@@ -52,7 +54,8 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
      * set of policy units, specifies which weight functions will be executed upon selection each function has a factor
      * attached.
      */
-    private ArrayList<Pair<Guid, Integer>> functions;
+    @NotNull
+    private ArrayList<Pair<Guid, Integer>> functions = new ArrayList<>();
     /**
      * policy unit id, that indicates which balance logic to execute
      */
@@ -134,11 +137,12 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
         this.filterPositionMap = filterPositionMap;
     }
 
+    @NotNull
     public ArrayList<Pair<Guid, Integer>> getFunctions() {
         return functions;
     }
 
-    public void setFunctions(ArrayList<Pair<Guid, Integer>> functions) {
+    public void setFunctions(@NotNull ArrayList<Pair<Guid, Integer>> functions) {
         this.functions = functions;
     }
 

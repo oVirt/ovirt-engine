@@ -16,10 +16,11 @@ public interface ExternalSchedulerBroker {
     List<Guid> runFilters(@NotNull List<String> filterNames,
             @NotNull List<Guid> hostIDs, @NotNull Guid vmID, @NotNull Map<String, String> propertiesMap);
 
-    List<WeightResultEntry> runScores(List<Pair<String, Integer>> scoreNameAndWeight,
-            List<Guid> hostIDs,
-            Guid vmID,
-            Map<String, String> propertiesMap);
+    @NotNull
+    List<WeightResultEntry> runScores(@NotNull List<Pair<String, Integer>> scoreNameAndWeight,
+            @NotNull List<Guid> hostIDs,
+            @NotNull Guid vmID,
+            @NotNull Map<String, String> propertiesMap);
 
     Optional<BalanceResult> runBalance(String balanceName, List<Guid> hostIDs, Map<String, String> propertiesMap);
 

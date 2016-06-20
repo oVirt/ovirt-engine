@@ -58,7 +58,7 @@ public class RankSelectorPolicyUnitTest {
         selector.record(unit2, host3, 50);
         selector.record(unit2, host1, 100);
 
-        Guid best = selector.best();
+        Guid best = selector.best().get();
         assertEquals(host2, best);
     }
 
@@ -78,7 +78,7 @@ public class RankSelectorPolicyUnitTest {
 
         selector.record(unit2, host3, 1);
 
-        Guid best = selector.best();
+        Guid best = selector.best().get();
         assertEquals(host1, best);
     }
 
@@ -103,7 +103,7 @@ public class RankSelectorPolicyUnitTest {
 
         selector.record(unit2, host3, 1);
 
-        Guid best = selector.best();
+        Guid best = selector.best().get();
         assertEquals(host1, best);
     }
 }
