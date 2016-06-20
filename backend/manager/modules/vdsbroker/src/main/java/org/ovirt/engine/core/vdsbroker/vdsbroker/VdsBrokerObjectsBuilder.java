@@ -986,8 +986,11 @@ public class VdsBrokerObjectsBuilder {
         vds.setSoftwareVersion(assignStringValue(xmlRpcStruct, VdsProperties.software_version));
         vds.setBuildName(assignStringValue(xmlRpcStruct, VdsProperties.build_name));
         if (xmlRpcStruct.containsKey(VdsProperties.host_os)) {
-            vds.setHostOs(getPackageVersionFormated((Map<String, Object>) xmlRpcStruct.get(VdsProperties.host_os),
-                    true));
+            Map<String, Object> hostOsMap = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.host_os);
+            vds.setHostOs(getPackageVersionFormated(hostOsMap, true));
+            if (hostOsMap.containsKey(VdsProperties.pretty_name)) {
+                vds.setPrettyName(assignStringValue(hostOsMap, VdsProperties.pretty_name));
+            }
         }
         if (xmlRpcStruct.containsKey(VdsProperties.packages)) {
             // packages is an array of xmlRpcStruct (that each is a name, ver,

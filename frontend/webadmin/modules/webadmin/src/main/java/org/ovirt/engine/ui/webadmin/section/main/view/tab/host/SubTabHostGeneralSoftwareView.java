@@ -47,6 +47,7 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
 
     @Path("OS")
     StringValueLabel oS = new StringValueLabel();
+    StringValueLabel osPrettyName = new StringValueLabel();
     StringValueLabel kvmVersion = new StringValueLabel();
     VersionValueLabel libvirtVersion = new VersionValueLabel();
     StringValueLabel spiceVersion = new StringValueLabel();
@@ -80,6 +81,7 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
         formBuilder = new FormBuilder(formPanel, 1, 8);
         formBuilder.setRelativeColumnWidth(0, 12);
         formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement(), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.osPrettyName(), osPrettyName, 0).withAutoPlacement(), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion,
                 0).withAutoPlacement(), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 0,

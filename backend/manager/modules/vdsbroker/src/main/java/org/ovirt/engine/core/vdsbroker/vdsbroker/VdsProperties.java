@@ -131,6 +131,7 @@ public final class VdsProperties {
     public static final String package_name = "name";
     public static final String package_version = "version";
     public static final String package_release = "release";
+    public static final String pretty_name = "pretty_name";
     public static final String version_name = "version_name";
     public static final String build_name = "build_name";
     public static final String software_version = "software_version";

@@ -1142,6 +1142,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String osVersionHostGeneral();
 
+    String osPrettyName();
+
     String hardwareManufacturerGeneral();
 
     String hardwareProductNameGeneral();
