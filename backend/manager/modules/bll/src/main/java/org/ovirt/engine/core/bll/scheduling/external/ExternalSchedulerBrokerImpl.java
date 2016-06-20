@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -72,6 +73,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         return Optional.of(retValue);
     }
 
+    @NotNull
     @Override
     public List<Guid> runFilters(List<String> filterNames,
             List<Guid> hostIDs,

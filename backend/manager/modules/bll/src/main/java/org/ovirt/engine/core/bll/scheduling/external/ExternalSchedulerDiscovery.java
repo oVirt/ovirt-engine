@@ -135,7 +135,7 @@ public class ExternalSchedulerDiscovery {
 
     @NotNull
     private PolicyUnit sendToDb(ExternalSchedulerDiscoveryUnit discovery,
-            PolicyUnit policyUnit, PolicyUnitType type) {
+            /* Nullable */PolicyUnit policyUnit, PolicyUnitType type) {
         PolicyUnit policy = createFromDiscoveryUnit(discovery, type);
 
         if (policyUnit != null) {

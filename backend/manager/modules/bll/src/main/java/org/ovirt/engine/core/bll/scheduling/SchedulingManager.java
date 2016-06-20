@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
@@ -319,7 +320,7 @@ public class SchedulingManager implements BackendService {
                             true,
                             correlationId);
 
-            if (vdsList == null || vdsList.isEmpty()) {
+            if (vdsList.isEmpty()) {
                 return null;
             }
 
@@ -550,20 +551,23 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private List<VDS> runFilters(ArrayList<Guid> filters,
-            Cluster cluster,
-            List<VDS> hostList,
-            VM vm,
-            Map<String, String> parameters,
-            Map<Guid, Integer> filterPositionMap,
-            List<String> messages,
-            VdsFreeMemoryChecker memoryChecker,
+    @NotNull
+    private List<VDS> runFilters(@NotNull ArrayList<Guid> filters,
+            @NotNull Cluster cluster,
+            @NotNull List<VDS> hostList,
+            @NotNull VM vm,
+            @NotNull Map<String, String> parameters,
+            @NotNull Map<Guid, Integer> filterPositionMap,
+            @NotNull List<String> messages,
+            @NotNull VdsFreeMemoryChecker memoryChecker,
             boolean shouldRunExternalFilters,
-            String correlationId) {
+            @NotNull String correlationId) {
         SchedulingResult result = new SchedulingResult();
         ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<>();
         ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<>();
-        filters = (filters != null) ? new ArrayList<>(filters) : new ArrayList<>();
+
+        // Create a local copy so we can manipulate it
+        filters = new ArrayList<>(filters);
 
         sortFilters(filters, filterPositionMap);
         for (Guid filter : filters) {
@@ -578,7 +582,7 @@ public class SchedulingManager implements BackendService {
         }
 
         /* Short circuit filters if there are no hosts at all */
-        if (hostList == null || hostList.isEmpty()) {
+        if (hostList.isEmpty()) {
             messages.add(EngineMessage.SCHEDULING_NO_HOSTS.name());
             messages.addAll(result.getReasonMessages());
             return hostList;
@@ -591,53 +595,46 @@ public class SchedulingManager implements BackendService {
         if (shouldRunExternalFilters
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
                 && !externalFilters.isEmpty()
-                && hostList != null
                 && !hostList.isEmpty()) {
             hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages, correlationId, result);
         }
 
-        if (hostList == null || hostList.isEmpty()) {
+        if (hostList.isEmpty()) {
             messages.add(EngineMessage.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name());
             messages.addAll(result.getReasonMessages());
         }
         return hostList;
     }
 
-    private List<VDS> runInternalFilters(ArrayList<PolicyUnitImpl> filters,
-            Cluster cluster,
-            List<VDS> hostList,
-            VM vm,
-            Map<String, String> parameters,
-            Map<Guid, Integer> filterPositionMap,
-            VdsFreeMemoryChecker memoryChecker,
-            String correlationId, SchedulingResult result) {
-        if (filters != null) {
-            for (PolicyUnitImpl filterPolicyUnit : filters) {
-                if (hostList == null || hostList.isEmpty()) {
-                    break;
-                }
-                filterPolicyUnit.setMemoryChecker(memoryChecker);
-                List<VDS> currentHostList = new ArrayList<>(hostList);
-                hostList = filterPolicyUnit.filter(cluster, hostList, vm, parameters, result.getDetails());
-                logFilterActions(currentHostList,
-                        toIdSet(hostList),
-                        EngineMessage.VAR__FILTERTYPE__INTERNAL,
-                        filterPolicyUnit.getPolicyUnit().getName(),
-                        result,
-                        correlationId);
+    @NotNull
+    private List<VDS> runInternalFilters(@NotNull ArrayList<PolicyUnitImpl> filters,
+            @NotNull Cluster cluster,
+            @NotNull List<VDS> hostList,
+            @NotNull VM vm,
+            @NotNull Map<String, String> parameters,
+            @NotNull Map<Guid, Integer> filterPositionMap,
+            @NotNull VdsFreeMemoryChecker memoryChecker,
+            @NotNull String correlationId,
+            @NotNull SchedulingResult result) {
+        for (PolicyUnitImpl filterPolicyUnit : filters) {
+            if (hostList.isEmpty()) {
+                break;
             }
+            filterPolicyUnit.setMemoryChecker(memoryChecker);
+            List<VDS> currentHostList = new ArrayList<>(hostList);
+            hostList = filterPolicyUnit.filter(cluster, hostList, vm, parameters, result.getDetails());
+            logFilterActions(currentHostList,
+                    toIdSet(hostList),
+                    EngineMessage.VAR__FILTERTYPE__INTERNAL,
+                    filterPolicyUnit.getPolicyUnit().getName(),
+                    result,
+                    correlationId);
         }
         return hostList;
     }
 
-    private Set<Guid> toIdSet(List<VDS> hostList) {
-        Set<Guid> set = new HashSet<>();
-        if (hostList != null) {
-            for (VDS vds : hostList) {
-                set.add(vds.getId());
-            }
-        }
-        return set;
+    private Set<Guid> toIdSet(@NotNull List<VDS> hostList) {
+        return hostList.stream().map(VDS::getId).collect(Collectors.toSet());
     }
 
     private void logFilterActions(List<VDS> oldList,
@@ -659,55 +656,42 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private List<VDS> runExternalFilters(ArrayList<PolicyUnitImpl> filters,
-            List<VDS> hostList,
-            VM vm,
-            Map<String, String> parameters,
-            List<String> messages,
-            String correlationId, SchedulingResult result) {
-        if (filters != null) {
-            List<Guid> hostIDs = new ArrayList<>();
-            for (VDS host : hostList) {
-                hostIDs.add(host.getId());
-            }
+    @NotNull
+    private List<VDS> runExternalFilters(@NotNull ArrayList<PolicyUnitImpl> filters,
+            @NotNull List<VDS> hostList,
+            @NotNull VM vm,
+            @NotNull Map<String, String> parameters,
+            @NotNull List<String> messages,
+            @NotNull String correlationId,
+            @NotNull SchedulingResult result) {
 
-            List<String> filterNames = filters.stream()
-                    .map(f -> f.getPolicyUnit().getName())
-                    .collect(Collectors.toList());
+        List<Guid> hostIDs = hostList.stream().map(VDS::getId).collect(Collectors.toList());
 
-            List<Guid> filteredIDs =
-                    externalBroker.runFilters(filterNames, hostIDs, vm.getId(), parameters);
-            if (filteredIDs != null) {
-                logFilterActions(hostList,
-                        new HashSet<>(filteredIDs),
-                        EngineMessage.VAR__FILTERTYPE__EXTERNAL,
-                        Arrays.toString(filterNames.toArray()),
-                        result,
-                        correlationId);
-                hostList = intersectHosts(hostList, filteredIDs);
-            }
-        }
+        List<String> filterNames = filters.stream()
+                .filter(f -> !f.getPolicyUnit().isInternal())
+                .map(f -> f.getPolicyUnit().getName())
+                .collect(Collectors.toList());
+
+        List<Guid> filteredIDs =
+                externalBroker.runFilters(filterNames, hostIDs, vm.getId(), parameters);
+        logFilterActions(hostList,
+                new HashSet<>(filteredIDs),
+                EngineMessage.VAR__FILTERTYPE__EXTERNAL,
+                Arrays.toString(filterNames.toArray()),
+                result,
+                correlationId);
+        hostList = intersectHosts(hostList, filteredIDs);
 
         return hostList;
     }
 
-    private List<VDS> intersectHosts(List<VDS> hosts, List<Guid> IDs) {
-        if (IDs == null) {
-            return hosts;
-        }
-        List<VDS> retList = new ArrayList<>();
-        for (VDS vds : hosts) {
-            if (IDs.contains(vds.getId())) {
-                retList.add(vds);
-            }
-        }
-        return retList;
+    @NotNull
+    private List<VDS> intersectHosts(@NotNull List<VDS> hosts, @NotNull List<Guid> IDs) {
+        Set<Guid> idSet = new HashSet<>(IDs);
+        return hosts.stream().filter(host -> idSet.contains(host.getId())).collect(Collectors.toList());
     }
 
-    private void sortFilters(ArrayList<Guid> filters, final Map<Guid, Integer> filterPositionMap) {
-        if (filterPositionMap == null) {
-            return;
-        }
+    private void sortFilters(@NotNull ArrayList<Guid> filters, @NotNull final Map<Guid, Integer> filterPositionMap) {
         Collections.sort(filters, new Comparator<Guid>() {
             @Override
             public int compare(Guid filter1, Guid filter2) {

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.scheduling.external;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -84,7 +86,7 @@ public class ExternalSchedulerBrokerObjectBuilder {
         return castedResult.get("result");
     }
 
-
+    @NotNull
     public static FilteringResult getFilteringResult(Object xmlRpcStruct) {
         FilteringResult result = new FilteringResult();
         Object rawResult = populateCommonFields(xmlRpcStruct, result);
