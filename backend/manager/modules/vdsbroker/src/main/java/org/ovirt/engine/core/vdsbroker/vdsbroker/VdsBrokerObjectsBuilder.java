@@ -1257,10 +1257,8 @@ public class VdsBrokerObjectsBuilder {
 
     private static void extractInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
         NetworkStatistics stats = iface.getStatistics();
-        stats.setReceiveRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_rate));
         stats.setReceiveDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_dropped));
         stats.setReceivedBytes(assignLongValue(dict, VdsProperties.rx_total));
-        stats.setTransmitRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_rate));
         stats.setTransmitDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_dropped));
         stats.setTransmittedBytes(assignLongValue(dict, VdsProperties.tx_total));
         stats.setSampleTime(assignDoubleValue(dict, VdsProperties.sample_time));
