@@ -233,11 +233,11 @@ public class SchedulingManager implements BackendService {
     private void loadPolicyUnits() {
         // Load internal policy units
         for (Class<? extends PolicyUnitImpl> unitType: InternalPolicyUnits.getList()) {
-            PolicyUnitImpl unit = InternalPolicyUnits.instantiate(unitType, getPendingResourceManager());
-            if (unit != null) {
+            try {
+                PolicyUnitImpl unit = InternalPolicyUnits.instantiate(unitType, getPendingResourceManager());
                 policyUnits.put(unit.getGuid(), Injector.injectMembers(unit));
-            } else {
-                log.error("Could not instantiate a policy unit {}.", unitType.getName());
+            } catch (Exception e){
+                log.error("Could not instantiate a policy unit {}.", unitType.getName(), e);
             }
         }
 

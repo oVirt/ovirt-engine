@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.policyunits.BasicWeightSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
@@ -41,12 +43,9 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUn
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InternalPolicyUnits {
 
-    private static final Logger log = LoggerFactory.getLogger(InternalPolicyUnits.class);
     private static final Set<Class<? extends PolicyUnitImpl>> enabledUnits = new HashSet<>();
 
     static {
@@ -89,28 +88,24 @@ public class InternalPolicyUnits {
         return Collections.unmodifiableSet(enabledUnits);
     }
 
-    public static PolicyUnitImpl instantiate(Class<? extends PolicyUnitImpl> unitType, PendingResourceManager pendingResourceManager) {
-        try {
-            // This check is only performed once during the static initializer run
-            // and serves as a sanity check
-            if (unitType.getAnnotation(SchedulingUnit.class) == null) {
-                throw new IllegalArgumentException(unitType.getName()
-                        + " is missing the required SchedulingUnit annotation metadata.");
-            }
-
-            if (!enabledUnits.contains(unitType)) {
-                throw new IllegalArgumentException("Policy unit " + unitType.getName() + " is not present"
-                        + " in the list of enabled internal policy units.");
-            }
-
-            PolicyUnitImpl unit = unitType
-                    .getConstructor(PolicyUnit.class, PendingResourceManager.class)
-                    .newInstance(null, pendingResourceManager);
-            return unit;
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            log.error("Failed during unit instantiation", e);
-            return null;
+    @NotNull
+    public static PolicyUnitImpl instantiate(Class<? extends PolicyUnitImpl> unitType, PendingResourceManager pendingResourceManager)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        // This check is only performed once during the static initializer run
+        // and serves as a sanity check
+        if (unitType.getAnnotation(SchedulingUnit.class) == null) {
+            throw new IllegalArgumentException(unitType.getName()
+                    + " is missing the required SchedulingUnit annotation metadata.");
         }
+
+        if (!enabledUnits.contains(unitType)) {
+            throw new IllegalArgumentException("Policy unit " + unitType.getName() + " is not present"
+                    + " in the list of enabled internal policy units.");
+        }
+
+        return unitType
+                .getConstructor(PolicyUnit.class, PendingResourceManager.class)
+                .newInstance(null, pendingResourceManager);
     }
 
     public static Guid getGuid(Class<? extends PolicyUnitImpl> unitType) {

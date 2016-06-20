@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -55,7 +54,9 @@ public class InternalPolicyUnitsTest {
     }
 
     @Test
-    public void instantiateProper() {
-        InternalPolicyUnits.instantiate(CpuLevelFilterPolicyUnit.class, null);
+    public void instantiateProper() throws Exception {
+        for (Class<? extends PolicyUnitImpl> unit: InternalPolicyUnits.getList()) {
+            InternalPolicyUnits.instantiate(unit, null);
+        }
     }
 }
