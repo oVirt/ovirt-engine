@@ -38,6 +38,10 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
             return failValidation(EngineMessage.VDS_NOT_EXIST);
         }
 
+        if(!getVds().getClusterSupportsVirtService()){
+            return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_HOST_DOES_NOT_SUPPORT_VIRT_SERVICES);
+        }
+
         if (getVds().getStatus() != VDSStatus.Up) {
             return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
         }

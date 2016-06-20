@@ -123,6 +123,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL();
 
+    String CANNOT_FORCE_SELECT_SPM_HOST_DOES_NOT_SUPPORT_VIRT_SERVICES();
+
     String VDS_STATUS_NOT_VALID_FOR_STOP();
 
     String VDS_STATUS_NOT_VALID_FOR_START();
