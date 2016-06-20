@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -235,6 +237,57 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
                 addValidationMessageVariable("brick", brick.getQualifiedName());
                 addValidationMessageVariable("volumeName",
                         getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean validateNotSameServer(List<GlusterBrickEntity> newBricks,
+            GlusterVolumeEntity glusterVolume,
+            int newReplicaCount) {
+        if (newReplicaCount <= 1) {
+            // no validation required for non-replicated volume types
+            return true;
+        }
+        if (glusterVolume.getReplicaCount() == newReplicaCount) {
+            return validateNotSameServer(newBricks, newReplicaCount);
+        }
+        List<Guid> existingServerList =
+                glusterVolume.getBricks().stream().map(GlusterBrickEntity::getServerId).collect(Collectors.toList());
+        Set<Guid> brickServers = new HashSet<>();
+        int incCount = newReplicaCount - glusterVolume.getReplicaCount();
+        for (int i = 0, j = 0; i <= existingServerList.size() - glusterVolume.getReplicaCount(); i +=
+                glusterVolume.getReplicaCount(), j += incCount) {
+            brickServers.addAll(existingServerList.subList(i, i + glusterVolume.getReplicaCount()));
+            List<Guid> subVolNewServers = newBricks.subList(j, j + incCount)
+                    .stream()
+                    .map(GlusterBrickEntity::getServerId)
+                    .collect(Collectors.toList());
+            for (Guid serverId : subVolNewServers) {
+                if (brickServers.contains(serverId)) {
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_REPLICASET_SAME_SERVER);
+                    return false;
+                }
+            }
+            brickServers.clear();
+        }
+        return true;
+    }
+
+    protected boolean validateNotSameServer(List<GlusterBrickEntity> newBricks,
+            int replicaCount) {
+        if (replicaCount <= 1) {
+            // no validation required for non-replicated volume types
+            return true;
+        }
+        for (int count = 0; count <= newBricks.size() - replicaCount; count += replicaCount) {
+            Set<Guid> brickServers = newBricks.subList(count, count + replicaCount)
+                    .stream()
+                    .map(GlusterBrickEntity::getServerId)
+                    .collect(Collectors.toSet());
+            if (brickServers.size() < replicaCount) {
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_REPLICASET_SAME_SERVER);
                 return false;
             }
         }

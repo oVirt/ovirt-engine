@@ -316,7 +316,12 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             break;
         }
 
-        return updateBrickServerAndInterfaceNames(bricks, true) && validateDuplicateBricks(bricks);
+        boolean ret = updateBrickServerAndInterfaceNames(bricks, true) && validateDuplicateBricks(bricks);
+        //only validate same server check for HC clusters.
+        if (getCluster().supportsGlusterService() && getCluster().supportsVirtService()) {
+            ret = ret && validateNotSameServer(bricks, replicaCount);
+        }
+        return ret;
     }
 
     private void setBrickOrder(List<GlusterBrickEntity> bricks) {

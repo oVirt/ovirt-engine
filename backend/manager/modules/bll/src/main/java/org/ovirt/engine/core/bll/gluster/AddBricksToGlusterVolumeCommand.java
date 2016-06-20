@@ -60,31 +60,37 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         }
 
         if (getParameters().getBricks() == null || getParameters().getBricks().size() == 0) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
         }
 
         if (getGlusterVolume().getVolumeType().isReplicatedType()) {
             if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getReplicaCount() < getGlusterVolume().getReplicaCount()) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
             }
         }
         if (getGlusterVolume().getVolumeType().isStripedType()) {
             if (getParameters().getStripeCount() > getGlusterVolume().getStripeCount() + 1) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getStripeCount() < getGlusterVolume().getStripeCount()) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
             }
         }
         if (getGlusterVolume().getVolumeType().isDispersedType()) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED);
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED);
         }
 
-        return updateBrickServerAndInterfaceNames(getParameters().getBricks(), true)
+        boolean ret = updateBrickServerAndInterfaceNames(getParameters().getBricks(), true)
                 && validateDuplicateBricks(getParameters().getBricks());
+        //only validate bricks are not from same server for HC clusters.
+        if (getCluster().supportsGlusterService() && getCluster().supportsVirtService() &&
+                getGlusterVolume().getVolumeType().isReplicatedType()) {
+            ret = ret && validateNotSameServer(getParameters().getBricks(),
+                                               getGlusterVolume(),
+                                               getParameters().getReplicaCount());
+        }
+        return ret;
     }
 
     @Override
