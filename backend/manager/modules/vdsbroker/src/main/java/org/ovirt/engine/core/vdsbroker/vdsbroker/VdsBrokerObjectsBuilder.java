@@ -143,10 +143,10 @@ public class VdsBrokerObjectsBuilder {
         try {
             vm.setClusterArch(parseArchitecture(xmlRpcStruct));
         } catch (IllegalArgumentException ex) {
-            log.error("Illegal architecture type: %s, replacing with x86_64", xmlRpcStruct.get(VdsProperties.vm_arch));
+            log.warn("Illegal architecture type: %s, replacing with x86_64", xmlRpcStruct.get(VdsProperties.vm_arch));
             vm.setClusterArch(ArchitectureType.x86_64);
         } catch (NullPointerException ex) {
-            log.error("null architecture type, replacing with x86_64, %s", vm);
+            log.warn("null architecture type, replacing with x86_64, %s", vm);
             vm.setClusterArch(ArchitectureType.x86_64);
         }
 
