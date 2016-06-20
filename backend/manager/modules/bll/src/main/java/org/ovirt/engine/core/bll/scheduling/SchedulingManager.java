@@ -305,8 +305,8 @@ public class SchedulingManager implements BackendService {
             lockCluster(cluster.getId());
             List<VDS> vdsList = getVdsDao()
                     .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
-            updateInitialHostList(vdsList, hostBlackList, true);
-            updateInitialHostList(vdsList, hostWhiteList, false);
+            vdsList = removeBlacklistedHosts(vdsList, hostBlackList);
+            vdsList = keepOnlyWhitelistedHosts(vdsList, hostWhiteList);
             refreshCachedPendingValues(vdsList);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             Map<String, String> parameters = createClusterPolicyParameters(cluster);
@@ -507,8 +507,8 @@ public class SchedulingManager implements BackendService {
             List<String> messages) {
         List<VDS> vdsList = getVdsDao()
                 .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
-        updateInitialHostList(vdsList, vdsBlackList, true);
-        updateInitialHostList(vdsList, vdsWhiteList, false);
+        vdsList = removeBlacklistedHosts(vdsList, vdsBlackList);
+        vdsList = keepOnlyWhitelistedHosts(vdsList, vdsWhiteList);
         refreshCachedPendingValues(vdsList);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         Map<String, String> parameters = createClusterPolicyParameters(cluster);
@@ -536,16 +536,45 @@ public class SchedulingManager implements BackendService {
         return parameters;
     }
 
-    private void updateInitialHostList(List<VDS> vdsList, List<Guid> list, boolean contains) {
-        if (list != null && !list.isEmpty()) {
-            List<VDS> toRemoveList = new ArrayList<>();
+    /**
+     * Remove hosts from vdsList that are not present on the whitelist
+     *
+     * Empty white list signalizes that nothing is to be done.
+     *
+     * @param vdsList List of hosts to filter
+     * @param list Whitelist
+     */
+    @NotNull
+    private List<VDS> keepOnlyWhitelistedHosts(@NotNull List<VDS> vdsList, @NotNull List<Guid> list) {
+        if (!list.isEmpty()) {
             Set<Guid> listSet = new HashSet<>(list);
-            for (VDS vds : vdsList) {
-                if (listSet.contains(vds.getId()) == contains) {
-                    toRemoveList.add(vds);
-                }
-            }
-            vdsList.removeAll(toRemoveList);
+
+            return vdsList.stream()
+                    .filter(host -> listSet.contains(host.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            return vdsList;
+        }
+    }
+
+    /**
+     * Remove hosts from vdsList that are present on the blacklist
+     *
+     * Empty black list signalizes that nothing is to be done.
+     *
+     * @param vdsList List of hosts to filter
+     * @param list Blacklist
+     */
+    @NotNull
+    private List<VDS> removeBlacklistedHosts(@NotNull List<VDS> vdsList, @NotNull List<Guid> list) {
+        if (!list.isEmpty()) {
+            Set<Guid> listSet = new HashSet<>(list);
+
+            return vdsList.stream()
+                    .filter(host -> !listSet.contains(host.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            return vdsList;
         }
     }
 
