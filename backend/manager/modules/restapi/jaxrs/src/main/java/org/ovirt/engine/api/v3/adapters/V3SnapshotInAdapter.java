@@ -30,11 +30,11 @@ import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.SnapshotStatus;
+import org.ovirt.engine.api.model.SnapshotType;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.VmStatus;
-import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3Snapshot;
@@ -263,7 +263,7 @@ public class V3SnapshotInAdapter implements V3Adapter<V3Snapshot, Snapshot> {
             to.setTunnelMigration(from.isTunnelMigration());
         }
         if (from.isSetType()) {
-            to.setType(VmType.fromValue(from.getType()));
+            to.setSnapshotType(SnapshotType.fromValue(from.getType()));
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptIn(from.getUsb()));

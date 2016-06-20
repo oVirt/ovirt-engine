@@ -261,8 +261,8 @@ public class V3SnapshotOutAdapter implements V3Adapter<Snapshot, V3Snapshot> {
         if (from.isSetTunnelMigration()) {
             to.setTunnelMigration(from.isTunnelMigration());
         }
-        if (from.isSetType()) {
-            to.setType(from.getType().value());
+        if (from.isSetSnapshotType()) {
+            to.setType(from.getSnapshotType().value());
         }
         if (from.isSetUsb()) {
             to.setUsb(adaptOut(from.getUsb()));
