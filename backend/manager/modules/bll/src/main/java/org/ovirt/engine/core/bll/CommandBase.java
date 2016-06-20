@@ -161,10 +161,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private CommandStatus commandStatus = CommandStatus.NOT_STARTED;
 
-    protected CommandBase() {
-        this(Guid.newGuid());
-    }
-
     protected CommandBase(T parameters, CommandContext cmdContext) {
         this.context = cmdContext;
         this.commandData = new HashMap<>();

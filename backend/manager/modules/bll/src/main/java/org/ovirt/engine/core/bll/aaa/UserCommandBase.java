@@ -14,8 +14,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDao;
 
 public abstract class UserCommandBase<T extends IdParameters> extends CommandBase<T> {
-    public UserCommandBase() {
-    }
 
     /**
      * Constructor for command creation when compensation is applied on startup

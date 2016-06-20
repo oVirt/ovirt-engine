@@ -13,16 +13,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class ExternalEventCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
 
-    public ExternalEventCommandBase() {
-        super();
-    }
-
     public ExternalEventCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    public ExternalEventCommandBase(Guid commandId) {
-        super(commandId);
     }
 
     protected List<PermissionSubject> getPermissionList(AuditLog event){

@@ -27,9 +27,6 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
         super(parameters, cmdContext);
     }
 
-    public BookmarkCommandBase() {
-    }
-
     protected Bookmark getBookmark() {
         if (bookmark == null) {
             bookmark = bookmarkDao.get(getBookmarkId());

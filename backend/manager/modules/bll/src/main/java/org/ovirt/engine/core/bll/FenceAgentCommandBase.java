@@ -11,10 +11,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class FenceAgentCommandBase extends CommandBase<FenceAgentCommandParameterBase> {
 
-    public FenceAgentCommandBase() {
-        super();
-    }
-
     public FenceAgentCommandBase(FenceAgentCommandParameterBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

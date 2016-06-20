@@ -69,8 +69,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
     }
 
-    public RemoveVmTemplateCommand(Guid vmTemplateId) {
-        super.setVmTemplateId(vmTemplateId);
+    public RemoveVmTemplateCommand(Guid commandId) {
+        super(commandId);
     }
 
     private void initStoragePoolInfo() {
