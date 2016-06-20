@@ -48,7 +48,8 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION InsertUnregisteredDisksToVms (
     v_disk_id UUID,
     v_entity_id UUID,
-    v_entity_name VARCHAR(255)
+    v_entity_name VARCHAR(255),
+    v_storage_domain_id UUID
     )
 RETURNS VOID
 AS $PROCEDURE$
@@ -56,12 +57,14 @@ BEGIN
     INSERT INTO unregistered_disks_to_vms (
         disk_id,
         entity_id,
-        entity_name
+        entity_name,
+        storage_domain_id
         )
     VALUES (
         v_disk_id,
         v_entity_id,
-        v_entity_name
+        v_entity_name,
+        v_storage_domain_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
