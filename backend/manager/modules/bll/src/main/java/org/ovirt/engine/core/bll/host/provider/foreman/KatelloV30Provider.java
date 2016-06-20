@@ -54,15 +54,7 @@ public class KatelloV30Provider extends KatelloProvider implements ContentHostPr
             return null;
         }
 
-        ContentHostV30 latestRegisteredHost = contentHosts.get(0);
-        for (int i = 1; i < contentHosts.size(); i++) {
-            ContentHostV30 candidateHost = contentHosts.get(i);
-            if (candidateHost.getCreatedAt().after(latestRegisteredHost.getCreatedAt())) {
-                latestRegisteredHost = candidateHost;
-            }
-        }
-
-        return latestRegisteredHost;
+        return  contentHosts.get(0);
     }
 
     private List<ContentHostV30> runContentHostListMethod(String relativeUrl) {
