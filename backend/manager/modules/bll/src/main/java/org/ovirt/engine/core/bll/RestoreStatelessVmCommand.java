@@ -74,23 +74,8 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
 
         List<DiskImage> statelessDiskSnapshots = getDiskSnapshotsForVmSnapshot(statelessVmSnapshotId);
 
-        Guid activeVmSnapshotId = getVmSnapshotIdForType(SnapshotType.ACTIVE);
-        List<DiskImage> activeDiskSnapshots = getDiskSnapshotsForVmSnapshot(activeVmSnapshotId);
-        Set<Guid> disksWithStatelessSnapshot =
-                statelessDiskSnapshots.stream().map(DiskImage::getId).collect(Collectors.toSet());
-        for (DiskImage activeDiskSnapshot : activeDiskSnapshots) {
-            if (!disksWithStatelessSnapshot.contains(activeDiskSnapshot.getId())) {
-                VdcReturnValueBase returnValue = runInternalAction (
-                        VdcActionType.DetachDiskFromVm,
-                        new AttachDetachVmDiskParameters(new DiskVmElement(activeDiskSnapshot.getId(), getVmId()),
-                                false, false));
-
-                if (!returnValue.getSucceeded()) {
-                    log.error("Could not restore stateless VM  {} due to a failure to detach Disk {}",
-                            getVmId(), activeDiskSnapshot.getId());
-                    return false;
-                }
-            }
+        if (!detachDisksNotPartOfStatelessSnapshot(statelessDiskSnapshots)) {
+            return false;
         }
 
         if (!statelessDiskSnapshots.isEmpty()) {
@@ -100,6 +85,35 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
                     getLock()).getSucceeded();
         }
         return true;
+    }
+
+    private boolean detachDisksNotPartOfStatelessSnapshot(List<DiskImage> statelessDiskSnapshots) {
+        Guid activeVmSnapshotId = getVmSnapshotIdForType(SnapshotType.ACTIVE);
+        List<DiskImage> activeDiskSnapshots = getDiskSnapshotsForVmSnapshot(activeVmSnapshotId);
+        Set<Guid> disksWithStatelessSnapshot =
+                statelessDiskSnapshots.stream().map(DiskImage::getId).collect(Collectors.toSet());
+        for (DiskImage activeDiskSnapshot : activeDiskSnapshots) {
+            if (!disksWithStatelessSnapshot.contains(activeDiskSnapshot.getId())) {
+                VdcReturnValueBase returnValue = runInternalAction (
+                        VdcActionType.DetachDiskFromVm,
+                        buildDetachDetachVmDiskParameters(activeDiskSnapshot));
+
+                if (!returnValue.getSucceeded()) {
+                    log.error("Could not restore stateless VM  {} due to a failure to detach Disk {}",
+                            getVmId(), activeDiskSnapshot.getId());
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private AttachDetachVmDiskParameters buildDetachDetachVmDiskParameters(DiskImage activeDiskSnapshot) {
+        return new AttachDetachVmDiskParameters(
+                new DiskVmElement(activeDiskSnapshot.getId(), getVmId()),
+                false,
+                false);
     }
 
     private Guid getVmSnapshotIdForType(SnapshotType type) {
