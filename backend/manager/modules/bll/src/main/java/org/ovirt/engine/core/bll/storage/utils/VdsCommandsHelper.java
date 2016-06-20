@@ -48,7 +48,7 @@ public class VdsCommandsHelper {
         Set<Guid> executedHosts = new HashSet<>();
         VDSReturnValue returnValue = null;
         if (params.getVdsId() == null) {
-            chooseHostForExecution(params, storagePoolId, cmd, Collections.<Guid>emptyList());
+            chooseHostForExecution(params, storagePoolId, cmd, Collections.emptyList());
             if (params.getVdsId() == null) {
                 throw new EngineException(EngineError.RESOURCE_MANAGER_VDS_NOT_FOUND,
                         "No host was found to perform the operation");
