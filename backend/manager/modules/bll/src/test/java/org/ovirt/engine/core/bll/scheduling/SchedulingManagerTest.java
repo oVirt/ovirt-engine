@@ -65,6 +65,7 @@ public class SchedulingManagerTest extends TransactionalTestBase {
     public void testSchedule() throws Exception {
         assertNotNull(schedulingManager.get());
         verify(schedulingManager.get()).init();
+        assertNotNull(schedulingManager.get().getDefaultClusterPolicy());
     }
 
     @Singleton

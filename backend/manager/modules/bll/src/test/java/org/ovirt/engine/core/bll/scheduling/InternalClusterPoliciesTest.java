@@ -42,6 +42,15 @@ public class InternalClusterPoliciesTest {
         assertNotEquals(0, (long)InternalClusterPolicies.getClusterPolicies().size());
     }
 
+    @Test
+    public void testDefaultPolicy() {
+        assertNotNull(InternalClusterPolicies.getClusterPolicies());
+        long defaultPolicies = InternalClusterPolicies.getClusterPolicies().values().stream()
+                .filter(ClusterPolicy::isDefaultPolicy)
+                .count();
+        assertEquals( "There can be only one default InternalClusterPolicy", 1, defaultPolicies);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testFailureToAddUnitBadType() {
         InternalClusterPolicies.createBuilder(UUID.randomUUID().toString())

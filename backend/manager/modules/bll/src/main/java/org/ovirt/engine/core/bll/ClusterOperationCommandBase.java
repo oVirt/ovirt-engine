@@ -161,7 +161,8 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             clusterPolicy = getSchedulingManager().getClusterPolicy(cluster.getClusterPolicyId());
         }
         if (clusterPolicy == null) {
-            clusterPolicy = getSchedulingManager().getClusterPolicy(cluster.getClusterPolicyName());
+            clusterPolicy = getSchedulingManager().getClusterPolicy(cluster.getClusterPolicyName())
+                    .orElseGet(() -> getSchedulingManager().getDefaultClusterPolicy());
         }
         return clusterPolicy;
     }

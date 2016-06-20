@@ -181,25 +181,29 @@ public class SchedulingManager implements BackendService {
         return policyMap.get(clusterPolicyId);
     }
 
-    public ClusterPolicy getClusterPolicy(String name) {
+    public Optional<ClusterPolicy> getClusterPolicy(String name) {
         if (name == null || name.isEmpty()) {
-            return getDefaultClusterPolicy();
+            return Optional.empty();
         }
         for (ClusterPolicy clusterPolicy : policyMap.values()) {
             if (clusterPolicy.getName().toLowerCase().equals(name.toLowerCase())) {
-                return clusterPolicy;
+                return Optional.of(clusterPolicy);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    private ClusterPolicy getDefaultClusterPolicy() {
+    public ClusterPolicy getDefaultClusterPolicy() {
         for (ClusterPolicy clusterPolicy : policyMap.values()) {
             if (clusterPolicy.isDefaultPolicy()) {
                 return clusterPolicy;
             }
         }
-        return null;
+
+        // This should never happen, there must be at least one InternalClusterPolicy
+        // that is marked as default. InternalClusterPoliciesTest.testDefaultPolicy()
+        // makes sure exactly one is defined
+        throw new RuntimeException("There is no system default cluster policy!");
     }
 
     public Map<Guid, PolicyUnitImpl> getPolicyUnitsMap() {
