@@ -5081,29 +5081,14 @@
             <value>FirstVM</value>
         </row>
         <row>
-            <value>10296e11-0cad-4e5a-9299-008a7b6f4310</value>
-            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
-            <value>SecondVM</value>
-        </row>
-        <row>
             <value>10296e11-0cad-4e5a-9299-008a7b6f4311</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>FirstVM</value>
         </row>
         <row>
-            <value>10296e11-0cad-4e5a-9299-008a7b6f4311</value>
-            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
-            <value>SecondVM</value>
-        </row>
-        <row>
             <value>10296e11-0cad-4e5a-9299-008a7b6f4312</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>FirstVM</value>
-        </row>
-        <row>
-            <value>10296e11-0cad-4e5a-9299-008a7b6f4312</value>
-            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
-            <value>SecondVM</value>
         </row>
     </table>
 
