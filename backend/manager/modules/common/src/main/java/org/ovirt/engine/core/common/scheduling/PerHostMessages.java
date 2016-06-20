@@ -2,9 +2,12 @@ package org.ovirt.engine.core.common.scheduling;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -35,12 +38,13 @@ public class PerHostMessages {
         return messages;
     }
 
+    @NotNull
     public List<String> getMessages(Guid hostId) {
         if (messages.containsKey(hostId)) {
             return messages.get(hostId);
         }
         else {
-            return null;
+            return Collections.emptyList();
         }
     }
 }

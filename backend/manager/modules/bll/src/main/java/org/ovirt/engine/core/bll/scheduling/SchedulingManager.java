@@ -273,7 +273,7 @@ public class SchedulingManager implements BackendService {
                 lines.add(String.format("$%1$s %2$s", "filterName", line.getValue().getSecond()));
 
                 final List<String> detailMessages = details.getMessages(line.getKey());
-                if (detailMessages == null || detailMessages.isEmpty()) {
+                if (detailMessages.isEmpty()) {
                     lines.add(EngineMessage.SCHEDULING_HOST_FILTERED_REASON.name());
                 }
                 else {
