@@ -58,6 +58,14 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testCDAVDSDoesNotSupportVirtServices() {
+        vds.setId(Guid.newGuid());
+        vds.setClusterSupportsVirtService(false);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on host without virt services",
+                command, EngineMessage.CANNOT_FORCE_SELECT_SPM_HOST_DOES_NOT_SUPPORT_VIRT_SERVICES);
+    }
+
+    @Test
     public void testCDAVdsNotUp() {
         vds.setStatus(VDSStatus.Down);
         ValidateTestUtils.runAndAssertValidateFailure
@@ -111,6 +119,7 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
         vds.setVdsName("TestVDS");
         vds.setStoragePoolId(storagePoolId);
         vds.setStatus(VDSStatus.Up);
+        vds.setClusterSupportsVirtService(true);
         vds.setSpmStatus(VdsSpmStatus.None);
         vds.setVdsSpmPriority(10);
 

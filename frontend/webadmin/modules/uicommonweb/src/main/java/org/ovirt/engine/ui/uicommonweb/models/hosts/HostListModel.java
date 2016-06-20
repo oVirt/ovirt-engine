@@ -2126,7 +2126,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
         VDS vds = selectedItems.get(0);
 
-        if (vds.getStatus() != VDSStatus.Up || vds.getSpmStatus() != VdsSpmStatus.None) {
+        if (vds.getStatus() != VDSStatus.Up || !vds.getClusterSupportsVirtService()
+                || vds.getSpmStatus() != VdsSpmStatus.None) {
             return false;
         }
 
