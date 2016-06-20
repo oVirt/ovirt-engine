@@ -74,7 +74,8 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
                     getCustomMapSqlParameterSource()
                             .addValue("disk_id", disk.getDiskImage().getId())
                             .addValue("entity_id", vmBase.getId())
-                            .addValue("entity_name", vmBase.getName()));
+                            .addValue("entity_name", vmBase.getName())
+                            .addValue("storage_domain_id", disk.getDiskImage().getStorageIds().get(0)));
         }
     }
 
