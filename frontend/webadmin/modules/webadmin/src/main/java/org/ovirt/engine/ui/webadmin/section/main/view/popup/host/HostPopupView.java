@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.TextEntityModelEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -361,7 +362,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     @Path(value = "providerSearchFilterLabel.entity")
-    StringEntityModelTextBoxEditor providerSearchFilterLabel;
+    EnableableFormLabel providerSearchFilterLabel;
 
     @UiField
     @Path(value = "consoleAddressEnabled.entity")
@@ -461,6 +462,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     private void addStyles() {
         providerSearchFilterEditor.addContentWidgetContainerStyleName(style.searchFilter());
+        providerSearchFilterEditor.hideLabel();
     }
 
     private void initEditors() {
@@ -602,7 +604,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         protocolEditor.setLabel(constants.hostPopupProtocolLabel());
         externalHostProviderEnabledEditor.setLabel(constants.hostPopupEnableExternalHostProvider());
         externalHostNameEditor.setLabel(constants.hostPopupExternalHostName());
-        providerSearchFilterLabel.setLabel(constants.hostPopupProviderSearchFilter());
         publicKeyEditor.setTitle(constants.publicKeyUsage());
 
         // Power Management tab
@@ -790,6 +791,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         addTextAndLinkAlert(fetchPanel, constants.fetchingHostFingerprint(), object.getSSHFingerPrint());
         // don't show the hosted engine deployment tab on edit. It's only meant for installation.
         hostedEngineTab.setVisible(object.getIsNew());
+        providerSearchFilterLabel.setText(constants.hostPopupProviderSearchFilter());
         nameEditor.setFocus(true);
     }
 
@@ -1005,7 +1007,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalDiscoveredHostsEditor.setTabIndex(nextTabIndex++);
         externalHostGroupsEditor.setTabIndex(nextTabIndex++);
         externalComputeResourceEditor.setTabIndex(nextTabIndex++);
-        providerSearchFilterLabel.setTabIndex(nextTabIndex++);
         nameEditor.setTabIndex(nextTabIndex++);
         commentEditor.setTabIndex(nextTabIndex++);
         hostAddressEditor.setTabIndex(nextTabIndex++);
