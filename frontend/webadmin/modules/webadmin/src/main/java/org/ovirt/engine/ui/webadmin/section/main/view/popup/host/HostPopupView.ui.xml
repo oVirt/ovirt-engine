@@ -10,6 +10,7 @@
              xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
              xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
              xmlns:h="urn:import:org.ovirt.engine.ui.webadmin.widget.host"
+             xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='commonConstants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
@@ -225,7 +226,7 @@
                                 <b:Row addStyleNames="{style.generalTabTopDecorator}" ui:field="searchProviderRow">
                                         <e:ListModelListBoxEditor ui:field="externalHostNameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6"/>
                                         <b:Column size="LG_6">
-                                            <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterLabel" addStyleNames="{style.floatLeft}" usePatternFly="true" />
+                                            <l:EnableableFormLabel ui:field="providerSearchFilterLabel" addStyleNames="{style.floatLeft}" />
                                             <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.infoIcon}" />
                                         </b:Column>
                                         <b:Column size="LG_6">
