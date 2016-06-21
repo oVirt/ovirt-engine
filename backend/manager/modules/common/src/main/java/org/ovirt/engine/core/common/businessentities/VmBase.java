@@ -708,8 +708,13 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.unmanagedDeviceList = list;
     }
 
+    public int getNumOfCpus(boolean countThreadsAsCPU) {
+        return this.getCpuPerSocket() * this.getNumOfSockets()
+                * (countThreadsAsCPU ? this.getThreadsPerCpu() : 1);
+    }
+
     public int getNumOfCpus() {
-        return this.getCpuPerSocket() * this.getNumOfSockets() * this.getThreadsPerCpu();
+        return getNumOfCpus(true);
     }
 
     @Override

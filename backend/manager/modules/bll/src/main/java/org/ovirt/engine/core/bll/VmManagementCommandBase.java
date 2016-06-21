@@ -123,6 +123,19 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 getUserId()));
     }
 
+    protected boolean validateCPUHotplug(VmStatic vmStaticData) {
+        if (getVm().isRunningOrPaused()) {
+            // Can't set more CPUs than available on the host where VM is running.
+            // Potential overcommit (interference with other running VMs) will be resolved by scheduler.
+            // In alignment with the CPUPolicyUnit, VM's hyperthreading is not considered.
+            if (getVds() != null && vmStaticData.getNumOfCpus(false) > getVds().getCpuThreads()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     protected boolean validateMemoryAlignment(VmStatic vmStaticData) {
         if (getCluster().getArchitecture().getFamily() == ArchitectureType.ppc && vmStaticData.getMemSizeMb() % 256 != 0) {
             return failValidation(EngineMessage.MEMORY_SIZE_NOT_MULTIPLE_OF_256_ON_PPC,

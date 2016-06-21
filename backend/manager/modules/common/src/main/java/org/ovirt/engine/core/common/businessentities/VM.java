@@ -308,7 +308,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     public int getNumOfCpus(boolean countThreadsAsCPU) {
-        return countThreadsAsCPU ? this.getNumOfCpus() : (getNumOfSockets() * getCpuPerSocket());
+        return this.vmStatic.getNumOfCpus(countThreadsAsCPU);
     }
     /**
      * This method is created for SOAP serialization of primitives that are readonly but sent by the client. The setter

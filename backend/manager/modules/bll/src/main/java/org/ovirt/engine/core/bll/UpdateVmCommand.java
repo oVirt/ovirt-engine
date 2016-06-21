@@ -798,6 +798,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
         }
 
+        if (!validateCPUHotplug(getParameters().getVmStaticData())) {
+            return failValidation(EngineMessage.CPU_HOTPLUG_TOPOLOGY_INVALID);
+        }
+
         if (!validateMemoryAlignment(getParameters().getVmStaticData())) {
             return false;
         }
