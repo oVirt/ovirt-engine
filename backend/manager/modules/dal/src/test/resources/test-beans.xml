@@ -37,7 +37,6 @@
         <constructor-arg ref="jdbcTemplate"/>
         <constructor-arg ref="dbEngineDialect"/>
         <constructor-arg ref="callsHandler"/>
-        <constructor-arg ref="dbFacadeLocator"/>
     </bean>
 
     <bean name="transactionManager"

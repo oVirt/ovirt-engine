@@ -252,7 +252,6 @@ public class DbFacade {
 
     private static DbFacade instance;
 
-    private final DbFacadeLocator dbFacadeLocator;
     private final JdbcTemplate jdbcTemplate;
     private final DbEngineDialect dbEngineDialect;
     private final SimpleJdbcCallsHandler callsHandler;
@@ -260,23 +259,15 @@ public class DbFacade {
     @Inject
     private Instance<Dao> daos;
 
-
-    private int onStartConnectionTimeout;
-
-    private int connectionCheckInterval;
-
     @Inject
-    public DbFacade(JdbcTemplate jdbcTemplate,
+    DbFacade(JdbcTemplate jdbcTemplate,
             DbEngineDialect dbEngineDialect,
-            SimpleJdbcCallsHandler callsHandler,
-            DbFacadeLocator dbFacadeLocator) {
+            SimpleJdbcCallsHandler callsHandler) {
 
         Objects.requireNonNull(jdbcTemplate, "jdbcTemplate cannot be null");
         Objects.requireNonNull(dbEngineDialect, "dbEngineDialect cannot be null");
         Objects.requireNonNull(callsHandler, "callsHandler cannot be null");
-        Objects.requireNonNull(dbFacadeLocator, "dbFacadeLocator cannot be null");
 
-        this.dbFacadeLocator = dbFacadeLocator;
         this.jdbcTemplate = jdbcTemplate;
         this.dbEngineDialect = dbEngineDialect;
         this.callsHandler = callsHandler;
