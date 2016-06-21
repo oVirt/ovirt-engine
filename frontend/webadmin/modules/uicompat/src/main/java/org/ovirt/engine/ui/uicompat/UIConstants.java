@@ -90,6 +90,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change Cluster Compatibility Version")
     String changeClusterCompatibilityVersionTitle();
 
+    @DefaultStringValue("There are running VMs in the cluster. All of them have to be rebooted if the Cluster Compatibility Version is changed.\n")
+    String thereAreActiveVMsRequiringRestart();
+
     @DefaultStringValue("Change Data Center Quota Enforcement Mode")
     String changeDCQuotaEnforcementModeTitle();
 
