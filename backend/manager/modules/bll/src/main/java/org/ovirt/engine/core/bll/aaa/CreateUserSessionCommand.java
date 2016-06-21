@@ -57,6 +57,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         if (user == null) {
             user = new DbUser();
             user.setId(DEFAULT_USER_ID);
+            user.setExternalId(params.getPrincipalId());
             user.setDomain(authzName);
         }
         user.setEmail(params.getEmail());
