@@ -16,6 +16,12 @@
     <engine.ejb3.connector.port>3873</engine.ejb3.connector.port>
     <engine.bisocket.connector.port>4457</engine.bisocket.connector.port>
     <engine.schema>engine</engine.schema>
+    <engine.db.schema>engine_dao_tests</engine.db.schema>
+    <engine.db.host>localhost</engine.db.host>
+    <engine.db.username>engine</engine.db.username>
+    <engine.db.password>engine</engine.db.password>
+    <engine.db.command>apply</engine.db.command>
+    <skipITs>true</skipITs>
   </properties>
 
   <dependencies>
@@ -58,6 +64,14 @@
       <groupId>${engine.groupId}</groupId>
       <artifactId>dal</artifactId>
       <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+     <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>dal</artifactId>
+      <version>${engine.version}</version>
+      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -159,7 +173,17 @@
       <type>test-jar</type>
        <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.dbunit</groupId>
+      <artifactId>dbunit</artifactId>
+      <version>2.4.8</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -187,6 +211,51 @@
       </plugin>
 
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Create database schema</id>
+            <phase>pre-integration-test</phase>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            <configuration>
+              <environmentVariables>
+                <PGPASSWORD>${engine.db.password}</PGPASSWORD>
+              </environmentVariables>
+              <executable>sh</executable>
+              <commandlineArgs>../../../../packaging/dbscripts/schema.sh -s ${engine.db.host} -d ${engine.db.schema} -u ${engine.db.username} -c ${engine.db.command}</commandlineArgs>
+              <skip>${skipITs}</skip>
+        </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven-failsafe-plugin.version}</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+          <groups>org.ovirt.engine.arquillian.IntegrationTest</groups>
+          <systemPropertyVariables>
+            <engine.db.url>jdbc:postgresql://${engine.db.host}/${engine.db.schema}</engine.db.url>
+            <engine.db.username>${engine.db.username}</engine.db.username>
+            <engine.db.password>${engine.db.password}</engine.db.password>
+          </systemPropertyVariables>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemPropertyVariables>
@@ -211,6 +280,7 @@
           <excludes>
 	    <exclude>**/TestHelper*.java</exclude>
           </excludes>
+          <excludedGroups>org.ovirt.engine.arquillian.IntegrationTest</excludedGroups>
         </configuration>
       </plugin>
         <plugin>
