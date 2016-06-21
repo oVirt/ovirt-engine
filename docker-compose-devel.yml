@@ -1,0 +1,27 @@
+ovirt-engine:
+  dockerfile: Dockerfile.devel
+  build: .
+  environment:
+    - OVIRT_PASSWORD=engine
+    - POSTGRES_DB=engine-devel
+    - POSTGRES_HOST=postgres-devel
+    - HOST_ENCRYPT=false
+    - HOST_INSTALL=false
+  links:
+    - vdsmfake
+    - postgres-devel
+  ports:
+    - 8443:8443
+    - 8787:8787
+
+vdsmfake:
+  image: virtkube/ovirt-vdsmfake
+
+postgres-devel:
+  image: rmohr/ovirt-postgres
+  environment:
+    - POSTGRES_PASSWORD=engine
+    - POSTGRES_USER=engine
+    - POSTGRES_DB=engine-devel
+  ports:
+    - 5433:5432
