@@ -187,12 +187,18 @@ public enum DirectorySearch {
     }
 
     private static List<ExtMap> getPrincipalsByIds(SsoContext ssoContext, Map<String, Object> params) {
-        return AuthzUtils.findPrincipalsByIds(
-                ssoContext.getSsoExtensionsManager().getExtensionByName((String) params.get(SsoConstants.HTTP_PARAM_DOMAIN)),
-                (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE),
-                (Collection<String>) params.get(SsoConstants.HTTP_PARAM_IDS),
-                (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
-                (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE));
+        final ExtensionProxy extension = ssoContext.getSsoExtensionsManager().getExtensionByName(
+                (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN));
+        List<ExtMap> results = new ArrayList<>();
+        getNamespaces(ssoContext, (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE),
+                (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN)).
+                forEach((namespace) -> results.addAll(AuthzUtils.findPrincipalsByIds(
+                        extension,
+                        namespace,
+                        (Collection<String>) params.get(SsoConstants.HTTP_PARAM_IDS),
+                        (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
+                        (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE))));
+        return results;
     }
 
     private static List<Map<String, Object>> getProfileList(SsoContext ssoContext) {

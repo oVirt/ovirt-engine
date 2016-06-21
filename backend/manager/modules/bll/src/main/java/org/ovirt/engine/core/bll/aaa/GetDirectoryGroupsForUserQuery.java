@@ -22,7 +22,8 @@ public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> ex
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDirectoryUser(getDbFacade().getDbUserDao().get(getUserID())));
+        getQueryReturnValue().setReturnValue(
+                getDirectoryUser(getSessionDataContainer().getUser(getParameters().getSessionId(), false)));
     }
 
     private Collection<DirectoryGroup> getDirectoryUser(DbUser dbUser) {
