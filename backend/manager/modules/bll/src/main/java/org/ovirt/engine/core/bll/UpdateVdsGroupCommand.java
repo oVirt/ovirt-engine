@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationPa
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -171,7 +172,39 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         if (isKsmPolicyChanged) {
             momPolicyUpdatedEvent.fire(getVdsGroup());
         }
+
+        // Call UpdateVmCommand on all VMs in the cluster to update defaults (i.e. DisplayType)
+        if (!updateVms()) {
+            setSucceeded(false);
+            return;
+        }
+
         setSucceeded(true);
+    }
+
+    private boolean updateVms() {
+        List<VM> vmList = getVmDao().getAllForVdsGroup(getParameters().getVdsGroup().getId());
+
+        for (VM vm : vmList) {
+            if (!vm.isExternalVm() && !vm.isHostedEngine()) {
+                VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+                if (!Objects.equals(oldGroup.getCompatibilityVersion(),
+                        getParameters().getVdsGroup().getCompatibilityVersion())) {
+                    updateParams.setClusterLevelChangeToVersion(getParameters().getVdsGroup().getCompatibilityVersion());
+                }
+
+                VdcReturnValueBase result = runInternalAction(
+                        VdcActionType.UpdateVm,
+                        updateParams,
+                        cloneContextAndDetachFromParent());
+
+                if (!result.getSucceeded()) {
+                    getReturnValue().setFault(result.getFault());
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void addOrUpdateAddtionalClusterFeatures() {
@@ -306,16 +339,6 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             hasVmOrHost = !vmList.isEmpty() || !allForVdsGroup.isEmpty();
         }
 
-        if (result && !getVdsGroup().getCompatibilityVersion().equals(oldGroup.getCompatibilityVersion())) {
-            // all VMs must be in Down state when major.minor cluster version change
-            for (VM vm : vmList) {
-                if (!vm.isDown()) {
-                    result = false;
-                    addCanDoActionMessage(EngineMessage.VDS_GROUP_VERSION_CANNOT_UPDATE_WHEN_ACTIVE_VM);
-                    break;
-                }
-            }
-        }
         // cannot change the the processor architecture while there are attached hosts or VMs to the cluster
         if (result  && getVdsGroup().supportsVirtService()
                 && !isArchitectureUpdatable()

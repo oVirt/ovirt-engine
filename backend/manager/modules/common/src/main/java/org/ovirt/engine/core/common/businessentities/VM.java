@@ -1766,6 +1766,10 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return getStatus().isRunningOrPaused();
     }
 
+    public boolean isSuspended() {
+        return getStatus().isSuspended();
+    }
+
     public boolean isQualifyToMigrate() {
         return getStatus().isQualifyToMigrate();
     }

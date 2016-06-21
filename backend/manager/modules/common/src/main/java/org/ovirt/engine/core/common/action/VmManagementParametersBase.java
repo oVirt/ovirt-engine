@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.annotation.HostedEngineUpdate;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 @HostedEngineUpdate(groups = { UpdateEntity.class })
 public class VmManagementParametersBase extends VmOperationParameterBase implements HasGraphicsDevices, HasVmIcon {
@@ -73,6 +74,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     private boolean applyChangesLater;
     private boolean updateNuma;
     private String vmLargeIcon;
+    private Version clusterLevelChangeToVersion;
 
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.BALLOON, type = VmDeviceType.MEMBALLOON)
     private Boolean balloonEnabled;
@@ -316,5 +318,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     @Override
     public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
         return graphicsDevices;
+    }
+
+    public Version getClusterLevelChangeToVersion() {
+        return clusterLevelChangeToVersion;
+    }
+
+    public void setClusterLevelChangeToVersion(Version clusterLevelChangeToVersion) {
+        this.clusterLevelChangeToVersion = clusterLevelChangeToVersion;
     }
 }

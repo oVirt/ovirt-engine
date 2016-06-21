@@ -67,6 +67,8 @@ import com.google.inject.Inject;
 
 public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGroup> implements ISupportSystemTreeContext {
 
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
     private UICommand privateNewCommand;
 
 
@@ -564,19 +566,32 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         if (!model.getVersion().getSelectedItem().equals(getSelectedItem().getCompatibilityVersion())) {
             final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
-            confirmModel.setTitle(ConstantsManager.getInstance()
-                    .getConstants()
-                    .changeClusterCompatibilityVersionTitle());
+            confirmModel.setTitle(constants.changeClusterCompatibilityVersionTitle());
             confirmModel.setHelpTag(HelpTag.change_cluster_compatibility_version);
             confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar2);
-            checkForNonResponsiveHosts(confirmModel);
+
+            checkForActiveVms(model, confirmModel);
         } else {
             onSaveConfirmCpuThreads();
         }
+    }
+
+    private void checkForActiveVms(ClusterModel model, final ConfirmationModel confirmModel) {
+        Guid clusterId = model.getEntity().getId();
+        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInVdsGroupByVdsGroupId,
+                new IdQueryParameters(clusterId), new AsyncQuery(new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            Integer numOfActiveVms = ((VdcQueryReturnValue)returnValue).getReturnValue();
+                            if (numOfActiveVms != 0) {
+                                confirmModel.setMessage(constants.thereAreActiveVMsRequiringRestart());
+                            }
+                            checkForNonResponsiveHosts(confirmModel);
+                }}));
     }
 
     private void onSaveConfirmCpuThreads() {
@@ -1125,14 +1140,13 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                             }
                         }
 
+                        String existingMsg = confirmModel.getMessage() == null ? "" : confirmModel.getMessage();
                         if (foundNRHosts) {
-                            confirmModel.setMessage(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg());
+                            confirmModel.setMessage(existingMsg +
+                                    constants.youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg());
                         } else {
-                            confirmModel.setMessage(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .youAreAboutChangeClusterCompatibilityVersionMsg());
+                            confirmModel.setMessage(existingMsg +
+                                    constants.youAreAboutChangeClusterCompatibilityVersionMsg());
                         }
 
                         model.stopProgress();
