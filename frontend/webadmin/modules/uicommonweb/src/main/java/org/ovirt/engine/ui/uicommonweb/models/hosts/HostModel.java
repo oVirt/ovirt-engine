@@ -1280,7 +1280,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                     providersListModel.setItems(providers, Linq.firstOrNull(providers));
                 }
                 providersListModel.setIsChangeable(true);
-                getIsDiscoveredHosts().setEntity(null);
+                if (!externalProvisionEnabled()) {
+                    getIsDiscoveredHosts().setEntity(null);
+                }
             }
         };
         AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
