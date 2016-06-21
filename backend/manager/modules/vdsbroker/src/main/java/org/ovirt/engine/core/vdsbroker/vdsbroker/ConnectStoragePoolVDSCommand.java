@@ -14,9 +14,8 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
     }
 
     public void connectStoragePool() {
-        Map<String, String> storageDomains = null;
-
-        storageDomains = StoragePoolDomainHelper.buildStoragePoolDomainsMap(getParameters().getStorageDomains());
+        Map<String, String> storageDomains = StoragePoolDomainHelper.buildStoragePoolDomainsMap
+                (getParameters().getStorageDomains());
         log.info("Executing with domain map: {}", storageDomains);
         status = getBroker().connectStoragePool(
                 getParameters().getStoragePoolId().toString(),
