@@ -45,6 +45,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.resource.AffinityLabelsResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
+import org.ovirt.engine.api.resource.ClusterLevelsResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
@@ -633,5 +634,11 @@ public class BackendApiResource
     @Override
     public AffinityLabelsResource getAffinityLabelsResource() {
         return inject(new BackendAffinityLabelsResource());
+    }
+
+    @Override
+    public ClusterLevelsResource getClusterLevelsResource() {
+        // TODO: Implement this method.
+        return null;
     }
 }

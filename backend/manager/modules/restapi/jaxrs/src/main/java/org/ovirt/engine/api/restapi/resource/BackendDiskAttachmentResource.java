@@ -60,4 +60,10 @@ public class BackendDiskAttachmentResource
             return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
         }
     }
+
+    @Override
+    public DiskAttachment update(DiskAttachment diskAttachment) {
+        // TODO: Implement this method.
+        return null;
+    }
 }
