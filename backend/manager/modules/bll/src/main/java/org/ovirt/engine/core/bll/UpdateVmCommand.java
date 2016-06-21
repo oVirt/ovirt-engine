@@ -935,7 +935,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         getParameters().getVmStaticData(),
                         getVm().getStatus(),
                         isHotSetEnabled())
-                || !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters());
+                || !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters())
+                || isClusterLevelChange();
+    }
+
+    private boolean isClusterLevelChange() {
+        Version newVersion = getParameters().getClusterLevelChangeToVersion();
+        return newVersion != null &&
+                (getVm().isRunningOrPaused() || getVm().isSuspended()) &&
+                getVm().getCustomCompatibilityVersion() == null;
     }
 
     private boolean isHotSetEnabled() {

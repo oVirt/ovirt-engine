@@ -59,6 +59,8 @@ public interface UIConstants extends Constants {
 
     String changeClusterCompatibilityVersionTitle();
 
+    String thereAreActiveVMsRequiringRestart();
+
     String changeDCQuotaEnforcementModeTitle();
 
     String setUnlimitedSpecificQuotaModeTitle();
