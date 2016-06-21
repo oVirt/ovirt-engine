@@ -2,10 +2,10 @@ package org.ovirt.engine.core.vdsbroker.storage;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -38,22 +38,14 @@ public class StoragePoolDomainHelper {
                     VDSStatus.Up,
                     VDSStatus.NonOperational));
 
+    private static final Set<StorageDomainStatus> domainAttachedStatuses =
+            Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Maintenance,
+                    StorageDomainStatus.Detaching, StorageDomainStatus.PreparingForMaintenance,
+                    StorageDomainStatus.Activating));
+
     public static Map<String, String> buildStoragePoolDomainsMap(List<StoragePoolIsoMap> storagePoolIsoMaps) {
-        Map<String, String> storageDomains = new HashMap<>();
-
-        for (StoragePoolIsoMap domain : storagePoolIsoMaps) {
-            if (domain.getStatus() == StorageDomainStatus.Maintenance ||
-                    domain.getStatus() == StorageDomainStatus.Detaching ||
-                    domain.getStatus() == StorageDomainStatus.PreparingForMaintenance ||
-                    domain.getStatus() == StorageDomainStatus.Activating) {
-                storageDomains.put(domain.getStorageId().toString(), "attached");
-            } else {
-                storageDomains.put(domain.getStorageId().toString(),
-                        StorageDomainStatus.Active.toString().toLowerCase());
-            }
-        }
-
-        return storageDomains;
+        return storagePoolIsoMaps.stream().collect(Collectors.toMap(x -> x.getStorageId().toString(),
+                x -> domainAttachedStatuses.contains(x.getStatus()) ? "attached" : "active"));
     }
 
     /**
