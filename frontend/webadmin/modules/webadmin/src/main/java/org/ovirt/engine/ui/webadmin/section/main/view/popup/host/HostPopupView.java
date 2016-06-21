@@ -684,7 +684,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                 discoveredHostSection.setVisible(showForemanProviders && doProvisioning);
 
                 // disabling ip and name textbox when using provisioned hosts
-                hostAddressEditor.setEnabled(!showForemanProviders && doProvisioning);
+                hostAddressEditor.setEnabled(!(showForemanProviders && doProvisioning));
 
                 if (showForemanProviders && doProvisioning) {
                     object.updateHosts();
@@ -811,7 +811,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         usualFormToDiscover(false);
         showExternalDiscoveredHost(false);
         setHostProviderVisibility(false);
-        object.getIsDiscoveredHosts().setEntity(null);
     }
 
     private void initExternalHostProviderWidgets(boolean isAvailable) {
