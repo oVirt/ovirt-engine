@@ -196,6 +196,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         for (VM vm : vmList) {
             if (!vm.isExternalVm() && !vm.isHostedEngine()) {
                 VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+                if (!Objects.equals(oldCluster.getCompatibilityVersion(), getParameters().getCluster().getCompatibilityVersion())) {
+                    updateParams.setClusterLevelChangeToVersion(getParameters().getCluster().getCompatibilityVersion());
+                }
 
                 VdcReturnValueBase result = runInternalAction(
                         VdcActionType.UpdateVm,
@@ -350,17 +353,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         if (result) {
             vmList = getVmDao().getAllForCluster(oldCluster.getId());
             hasVmOrHost = !vmList.isEmpty() || !allForCluster.isEmpty();
-        }
-
-        if (result && !getCluster().getCompatibilityVersion().equals(oldCluster.getCompatibilityVersion())) {
-            // all VMs must be in Down state when major.minor cluster version change
-            for (VM vm : vmList) {
-                if (!vm.isDown()) {
-                    result = false;
-                    addValidationMessage(EngineMessage.CLUSTER_VERSION_CANNOT_UPDATE_WHEN_ACTIVE_VM);
-                    break;
-                }
-            }
         }
 
         // cannot change the the processor architecture while there are attached hosts or VMs to the cluster
