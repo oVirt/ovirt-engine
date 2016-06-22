@@ -33,7 +33,7 @@ public class UpdateLabelCommand extends LabelCommandBase<LabelActionParameters> 
             return false;
         }
 
-        if (label.isReadOnly()) {
+        if (label.isReadOnly() && !isInternalExecution()) {
             addValidationMessage(EngineMessage.AFFINITY_LABEL_READ_ONLY);
             return false;
         }

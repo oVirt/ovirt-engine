@@ -45,6 +45,11 @@ public class AddLabelCommand<T extends LabelActionParameters> extends LabelComma
             return false;
         }
 
+        if (getParameters().getLabel().isReadOnly() && !isInternalExecution()) {
+            addValidationMessage(EngineMessage.AFFINITY_LABEL_READ_ONLY);
+            return false;
+        }
+
         return true;
     }
 
