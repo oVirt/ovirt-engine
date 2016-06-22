@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION InsertQuota (
     v_threshold_cluster_percentage INT,
     v_threshold_storage_percentage INT,
     v_grace_cluster_percentage INT,
-    v_grace_storage_percentage INT
+    v_grace_storage_percentage INT,
+    v_is_default BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -20,7 +21,8 @@ BEGIN
         threshold_cluster_percentage,
         threshold_storage_percentage,
         grace_cluster_percentage,
-        grace_storage_percentage
+        grace_storage_percentage,
+        is_default
         )
     VALUES (
         v_id,
@@ -30,7 +32,8 @@ BEGIN
         v_threshold_cluster_percentage,
         v_threshold_storage_percentage,
         v_grace_cluster_percentage,
-        v_grace_storage_percentage
+        v_grace_storage_percentage,
+        v_is_default
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -242,7 +245,8 @@ CREATE OR REPLACE FUNCTION UpdateQuotaMetaData (
     v_threshold_cluster_percentage INT,
     v_threshold_storage_percentage INT,
     v_grace_cluster_percentage INT,
-    v_grace_storage_percentage INT
+    v_grace_storage_percentage INT,
+    v_is_default BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -254,7 +258,8 @@ BEGIN
         threshold_cluster_percentage = v_threshold_cluster_percentage,
         threshold_storage_percentage = v_threshold_storage_percentage,
         grace_cluster_percentage = v_grace_cluster_percentage,
-        grace_storage_percentage = v_grace_storage_percentage
+        grace_storage_percentage = v_grace_storage_percentage,
+        is_default = v_is_default
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -274,6 +279,19 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetDefaultQuotaForStoragePool (v_storage_pool_id UUID)
+RETURNS SETOF quota_global_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM quota_global_view
+    WHERE is_default = TRUE
+          AND storage_pool_id = v_storage_pool_id;
+END;
+$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetQuotaByQuotaGuid (v_id UUID)
 RETURNS SETOF quota_global_view STABLE AS $PROCEDURE$
 BEGIN
@@ -285,14 +303,15 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetQuotaByQuotaName (v_quota_name VARCHAR)
+CREATE OR REPLACE FUNCTION GetQuotaByQuotaName (v_quota_name VARCHAR, v_storage_pool_id UUID)
 RETURNS SETOF quota_global_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM quota_global_view
-    WHERE quota_name = v_quota_name;
+    WHERE quota_name = v_quota_name
+        AND storage_pool_id = v_storage_pool_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -314,7 +333,8 @@ BEGIN
         threshold_storage_percentage,
         grace_cluster_percentage,
         grace_storage_percentage,
-        quota_enforcement_type
+        quota_enforcement_type,
+        is_default
     FROM quota_limitations_view
     WHERE (
             storage_id = v_storage_id
@@ -365,7 +385,8 @@ BEGIN
         threshold_storage_percentage,
         grace_cluster_percentage,
         grace_storage_percentage,
-        quota_enforcement_type
+        quota_enforcement_type,
+        is_default
     FROM quota_limitations_view
     WHERE (
             cluster_id = v_cluster_id

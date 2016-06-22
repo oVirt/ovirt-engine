@@ -17,6 +17,9 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
+import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -25,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
@@ -37,6 +41,9 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     @Inject
     private NetworkFilterDao networkFilterDao;
+
+    @Inject
+    private QuotaDao quotaDao;
 
     public AddEmptyStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -53,9 +60,30 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     protected void executeCommand() {
         setDataCenterDetails();
         addStoragePoolToDb();
+        addDefaultQuotaToDb();
         getReturnValue().setActionReturnValue(getStoragePool().getId());
         addDefaultNetworks();
         setSucceeded(true);
+    }
+
+    private void addDefaultQuotaToDb() {
+        Quota quota = new Quota();
+        quota.setId(Guid.newGuid());
+        quota.setQuotaName("Default");
+        quota.setDescription("Default unlimited quota");
+        quota.setStoragePoolId(getStoragePool().getId());
+        quota.setDefault(true);
+
+        QuotaCluster quotaCluster = new QuotaCluster();
+        quotaCluster.setMemSizeMB(QuotaCluster.UNLIMITED_MEM);
+        quotaCluster.setVirtualCpu(QuotaCluster.UNLIMITED_VCPU);
+        quota.setGlobalQuotaCluster(quotaCluster);
+
+        QuotaStorage quotaStorage = new QuotaStorage();
+        quotaStorage.setStorageSizeGB(QuotaStorage.UNLIMITED);
+        quota.setGlobalQuotaStorage(quotaStorage);
+
+        quotaDao.save(quota);
     }
 
     private void setDataCenterDetails() {

@@ -2448,7 +2448,8 @@ SELECT q.id AS quota_id,
     q.threshold_storage_percentage AS threshold_storage_percentage,
     q.grace_cluster_percentage AS grace_cluster_percentage,
     q.grace_storage_percentage AS grace_storage_percentage,
-    storage_pool.quota_enforcement_type AS quota_enforcement_type
+    storage_pool.quota_enforcement_type AS quota_enforcement_type,
+    q.is_default AS is_default
 FROM storage_pool,
     quota q
 WHERE storage_pool.id = q.storage_pool_id;
@@ -2470,7 +2471,8 @@ SELECT q_limit.quota_id AS quota_id,
     (CalculateClusterUsage(quota_id, NULL)).mem_size_mb_usage,
     storage_size_gb,
     CalculateStorageUsage(quota_id, NULL) AS storage_size_gb_usage,
-    storage_pool.quota_enforcement_type AS quota_enforcement_type
+    storage_pool.quota_enforcement_type AS quota_enforcement_type,
+    q.is_default AS is_default
 FROM storage_pool,
     quota q
 LEFT JOIN quota_limitation q_limit
@@ -2494,6 +2496,7 @@ SELECT q_limit.quota_id AS quota_id,
     mem_size_mb,
     storage_size_gb,
     storage_pool.quota_enforcement_type AS quota_enforcement_type,
+    q.is_default AS is_default,
     cluster_id,
     storage_id,
     (COALESCE(cluster_id, storage_id) IS NULL) AS is_global,

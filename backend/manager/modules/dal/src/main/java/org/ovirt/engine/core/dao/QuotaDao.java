@@ -124,7 +124,7 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
      *            - The storage pool id that the quota is being searched in.
      * @return The quota entity that was found.
      */
-    public Quota getQuotaByQuotaName(String quotaName);
+    public Quota getQuotaByQuotaName(String quotaName, Guid storagePoolId);
 
     /**
      * Get list of <code>Quotas</code> which are consumed by ad element id in storage pool (if not storage pool id not
@@ -175,6 +175,11 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
      * specific quota storage will be returned.
      */
     public List<Quota> getQuotaByStoragePoolGuid(Guid storagePoolId);
+
+    /**
+     * Returns the default quota for a storage pool.
+     */
+    public Quota getDefaultQuotaForStoragePool(Guid storagePoolId);
 
     /**
      * Returns a list of all the quotas that are relevant to the given {@link #storageId} -

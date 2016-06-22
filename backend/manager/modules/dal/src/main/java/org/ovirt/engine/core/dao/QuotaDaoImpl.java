@@ -42,12 +42,15 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      *
      * @param quotaName
      *            - The quota name to find.
+     * @param storagePoolId
+     *            - Id of the storage pool to which the quota belongs
      * @return The quota entity that was found.
      */
     @Override
-    public Quota getQuotaByQuotaName(String quotaName) {
+    public Quota getQuotaByQuotaName(String quotaName, Guid storagePoolId) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
         quotaParameterSource.addValue("quota_name", quotaName);
+        quotaParameterSource.addValue("storage_pool_id", storagePoolId);
         Quota quotaEntity =
                 getCallsHandler().executeRead("GetQuotaByQuotaName", getQuotaFromResultSet(), quotaParameterSource);
         return quotaEntity;
@@ -171,6 +174,16 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 getQuotaFromResultSet(),
                 parameterSource);
         return quotaList;
+    }
+
+    @Override
+    public Quota getDefaultQuotaForStoragePool(Guid storagePoolId) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId);
+        Quota quota = getCallsHandler().executeRead("GetDefaultQuotaForStoragePool",
+                getQuotaFromResultSet(),
+                parameterSource);
+        return quota;
     }
 
     /**
@@ -469,6 +482,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         entity.setGraceClusterPercentage((Integer) rs.getObject("grace_cluster_percentage"));
         entity.setGraceStoragePercentage((Integer) rs.getObject("grace_storage_percentage"));
         entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+        entity.setDefault(rs.getBoolean("is_default"));
         return entity;
     }
 
@@ -553,7 +567,8 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 .addValue("threshold_cluster_percentage", quota.getThresholdClusterPercentage())
                 .addValue("threshold_storage_percentage", quota.getThresholdStoragePercentage())
                 .addValue("grace_cluster_percentage", quota.getGraceClusterPercentage())
-                .addValue("grace_storage_percentage", quota.getGraceStoragePercentage());
+                .addValue("grace_storage_percentage", quota.getGraceStoragePercentage())
+                .addValue("is_default", quota.isDefault());
     }
 
     private void saveGlobalQuota(Quota quota) {

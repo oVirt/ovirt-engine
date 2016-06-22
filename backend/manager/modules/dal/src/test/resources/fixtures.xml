@@ -2158,6 +2158,7 @@
         <column>threshold_storage_percentage</column>
         <column>grace_cluster_percentage</column>
         <column>grace_storage_percentage</column>
+        <column>is_default</column>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
@@ -2169,6 +2170,7 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4404</value>
@@ -2181,6 +2183,7 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
@@ -2193,6 +2196,7 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
@@ -2205,6 +2209,7 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4405</value>
@@ -2217,6 +2222,113 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
+        </row>
+
+        <!-- Default quotas for storage pools -->
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4410</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4411</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105c</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4412</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4413</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4414</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4415</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4416</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a2</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4417</value>
+            <value>d9220003-8ad8-41d2-8c9e-5ea30b2e88e7</value>
+            <value>Default</value>
+            <value>Default unlimited quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
         </row>
     </table>
 
@@ -6778,6 +6890,80 @@
             <null />
             <null />
             <null />
+        </row>
+
+        <!-- Default quotas for storage pools -->
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4410</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4410</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4411</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4411</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4412</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4412</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4413</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4413</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4414</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4414</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4415</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4415</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4416</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4416</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4417</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4417</value>
+            <null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
         </row>
     </table>
 

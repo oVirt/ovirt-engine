@@ -49,6 +49,11 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     private String storagePoolName;
 
     /**
+     * Flag if this quota is default for storage pool
+     */
+    private boolean isDefault;
+
+    /**
      * The quota name.
      */
     @Size(min = 1, max = BusinessEntitiesDefinitions.QUOTA_NAME_SIZE)
@@ -261,6 +266,14 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
      */
     public void setStoragePoolName(String storagePoolName) {
         this.storagePoolName = storagePoolName;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean value) {
+        this.isDefault = value;
     }
 
     /**

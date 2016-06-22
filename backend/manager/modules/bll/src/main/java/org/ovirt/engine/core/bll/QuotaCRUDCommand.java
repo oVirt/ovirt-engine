@@ -50,7 +50,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     }
 
     public boolean checkQuotaNameExisting(Quota quota, List<String> messages) {
-        Quota quotaByName = getQuotaDao().getQuotaByQuotaName(quota.getQuotaName());
+        Quota quotaByName = getQuotaDao().getQuotaByQuotaName(quota.getQuotaName(), quota.getStoragePoolId());
 
         // Check if there is no quota with the same name that already exists.
         if ((quotaByName != null) && !quotaByName.getId().equals(quota.getId())) {
