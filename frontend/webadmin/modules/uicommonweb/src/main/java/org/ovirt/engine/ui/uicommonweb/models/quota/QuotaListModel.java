@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -589,11 +590,9 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         }
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
-        QuotaCRUDParameters crudParameters;
         for (Quota a : Linq.<Quota> cast(getSelectedItems())) {
-            crudParameters = new QuotaCRUDParameters();
-            crudParameters.setQuotaId(a.getId());
-            prms.add(crudParameters);
+            IdParameters idParameters = new IdParameters(a.getId());
+            prms.add(idParameters);
         }
 
         model.startProgress();

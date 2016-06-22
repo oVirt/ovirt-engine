@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
@@ -14,10 +16,14 @@ import org.ovirt.engine.core.dao.QuotaDao;
 
 public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> {
 
+    @Inject
+    private QuotaDao quotaDao;
+
     private Quota quota;
 
     public QuotaCRUDCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+        setStoragePoolId(getParameters().getQuota().getStoragePoolId());
     }
 
     public Quota getQuota() {
@@ -31,30 +37,30 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         this.quota = quota;
     }
 
-    protected boolean checkQuotaValidationCommon(Quota quota, List<String> messages) {
-        if (quota == null) {
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+    @Override
+    protected boolean validate() {
+        Quota quota = getParameters().getQuota();
+
+        // Cannot add or update a quota to be default using this command
+        if (quota.isDefault()) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         }
 
         // Check if quota name exists or
         // If specific Quota for storage is specified or
         // If specific Quota for cluster is specific
-        if (!checkQuotaNameExisting(quota, messages) ||
-                !validateQuotaStorageLimitation(quota, messages) ||
-                !validateQuotaClusterLimitation(quota, messages)) {
-            return false;
-        }
-
-        return true;
+        return validateQuotaNameIsUnique(quota) &&
+                validateQuotaStorageLimitation(quota) &&
+                validateQuotaClusterLimitation(quota);
     }
 
-    public boolean checkQuotaNameExisting(Quota quota, List<String> messages) {
+    public boolean validateQuotaNameIsUnique(Quota quota) {
         Quota quotaByName = getQuotaDao().getQuotaByQuotaName(quota.getQuotaName(), quota.getStoragePoolId());
 
         // Check if there is no quota with the same name that already exists.
         if ((quotaByName != null) && !quotaByName.getId().equals(quota.getId())) {
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED.toString());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
         return true;
@@ -63,11 +69,11 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     /**
      * Validate Quota storage restrictions.
      */
-    private static boolean validateQuotaStorageLimitation(Quota quota, List<String> messages) {
+    private boolean validateQuotaStorageLimitation(Quota quota) {
         boolean isValid = true;
         List<QuotaStorage> quotaStorageList = quota.getQuotaStorages();
         if (quota.isGlobalStorageQuota() && (quotaStorageList != null && !quotaStorageList.isEmpty())) {
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL);
             isValid = false;
         }
         return isValid;
@@ -78,11 +84,9 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
      *
      * @param quota
      *            - Quota we validate
-     * @param messages
-     *            - Messages of can do action.
      * @return Boolean value if the quota is valid or not.
      */
-    private static boolean validateQuotaClusterLimitation(Quota quota, List<String> messages) {
+    private boolean validateQuotaClusterLimitation(Quota quota) {
         boolean isValid = true;
         List<QuotaCluster> quotaClusterList = quota.getQuotaClusters();
         if (quotaClusterList != null && !quotaClusterList.isEmpty()) {
@@ -96,7 +100,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
             // if the global vds group limit was not specified, then specific limitation must be specified.
             if (quota.isGlobalClusterQuota() && (isSpecificVirtualRam || isSpecificVirtualCpu)) {
-                messages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL);
                 isValid = false;
             }
         }
@@ -112,7 +116,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     }
 
     protected QuotaDao getQuotaDao() {
-        return getDbFacade().getQuotaDao();
+        return quotaDao;
     }
 
     public String getQuotaName() {

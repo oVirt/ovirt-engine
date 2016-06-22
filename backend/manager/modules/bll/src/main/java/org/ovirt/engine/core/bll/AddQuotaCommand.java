@@ -24,21 +24,6 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
 
     public AddQuotaCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        setStoragePoolId(getParameters().getQuota() != null ? getParameters().getQuota().getStoragePoolId() : null);
-    }
-
-    @Override
-    protected boolean validate() {
-        return checkQuotaValidationForAdd(getParameters().getQuota(),
-                getReturnValue().getValidationMessages());
-    }
-
-    public boolean checkQuotaValidationForAdd(Quota quota, List<String> messages) {
-        if (!checkQuotaValidationCommon(quota, messages)) {
-            return false;
-        }
-
-        return true;
     }
 
     @Override
@@ -87,7 +72,6 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
         quotaParameter.setId(Guid.newGuid());
-        setStoragePoolId(quotaParameter.getStoragePoolId());
         if (quotaParameter.getQuotaStorages() != null) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
                 quotaStorage.setQuotaId(quotaParameter.getId());

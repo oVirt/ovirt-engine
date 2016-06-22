@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,8 +13,11 @@ public class QuotaCRUDParameters extends StoragePoolParametersBase implements Se
 
     @Valid
     private Guid quotaId;
+
     @Valid
+    @NotNull
     private Quota quota;
+
     private boolean copyPermissions;
 
     public QuotaCRUDParameters() {

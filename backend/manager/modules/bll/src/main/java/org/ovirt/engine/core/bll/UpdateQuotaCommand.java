@@ -21,22 +21,24 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
     public UpdateQuotaCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        setStoragePoolId(getParameters().getQuota() != null ? getParameters().getQuota().getStoragePoolId() : null);
-        setQuota(getParameters().getQuota());
     }
 
     @Override
     protected boolean validate() {
-        if (!checkQuotaValidationCommon(getParameters().getQuota(),
-                getReturnValue().getValidationMessages())) {
+        if (!super.validate()) {
             return false;
-        } else if (getParameters().getQuota().getId() == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
-            return false;
-        } else if (getQuotaDao().getById(getParameters().getQuota().getId()) == null) {
+        }
+
+        if (getQuota() == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
+
+        if (getQuota().isDefault()) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_DEFAULT_CANNOT_BE_CHANGED);
+            return false;
+        }
+
         return true;
     }
 
@@ -77,7 +79,6 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
      */
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
-        setStoragePoolId(quotaParameter.getStoragePoolId());
         if (!quotaParameter.isEmptyStorageQuota()) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
                 quotaStorage.setQuotaId(getQuotaId());

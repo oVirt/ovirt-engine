@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -44,8 +45,8 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 VdcActionType.RemoveQuota,
-                QuotaCRUDParameters.class,
-                new String[] { "QuotaId" },
+                IdParameters.class,
+                new String[] { "Id" },
                 new Object[] { QUOTA_ID },
                 true,
                 true));

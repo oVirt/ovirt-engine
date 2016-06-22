@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
@@ -38,10 +39,6 @@ public class AddQuotaCommandTest extends BaseCommandTest {
 
     @Before
     public void testSetup() {
-        mockQuotaDao();
-    }
-
-    private void mockQuotaDao() {
         when(quotaDao.getById(any(Guid.class))).thenReturn(mockGeneralStorageQuota());
     }
 
@@ -54,13 +51,22 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     @Test
     public void testValidateCommand() throws Exception {
         AddQuotaCommand addQuotaCommand = createCommand();
-        addQuotaCommand.validate();
+        ValidateTestUtils.runAndAssertValidateSuccess(addQuotaCommand);
+    }
+
+    @Test
+    public void testAddDefaultQuota() {
+        AddQuotaCommand command = createCommand();
+        command.getParameters().getQuota().setDefault(true);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
     }
 
     private AddQuotaCommand createCommand() {
         QuotaCRUDParameters param = new QuotaCRUDParameters(mockGeneralStorageQuota());
         command = spy(new AddQuotaCommand(param, null));
         doReturn(quotaDao).when(command).getQuotaDao();
+
+        doReturn(null).when(quotaDao).getQuotaByQuotaName(any(String.class), any(Guid.class));
 
         return command;
     }

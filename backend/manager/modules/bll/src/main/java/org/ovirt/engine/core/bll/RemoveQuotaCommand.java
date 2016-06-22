@@ -3,24 +3,32 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.QuotaDao;
 
-public class RemoveQuotaCommand extends QuotaCRUDCommand {
+public class RemoveQuotaCommand extends CommandBase<IdParameters> {
 
-    public RemoveQuotaCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
+    @Inject
+    private QuotaDao quotaDao;
+
+    private Quota quota;
+
+    public RemoveQuotaCommand(IdParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
     @Override
     protected boolean validate() {
-        if (getParameters() == null || (getParameters().getQuotaId() == null)) {
+        if (getParameters() == null || (getParameters().getId() == null)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
@@ -31,6 +39,11 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
+
+       if (quota.isDefault()) {
+           addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_DEFAULT_CANNOT_BE_CHANGED);
+           return false;
+       }
 
         // If the quota is in use by ether VM or image - return false
         if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && getQuotaDao().isQuotaInUse(quota)) {
@@ -44,14 +57,14 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void executeCommand() {
-        getQuotaDao().remove(getParameters().getQuotaId());
-        getQuotaManager().removeQuotaFromCache(getQuota().getStoragePoolId(), getParameters().getQuotaId());
+        getQuotaDao().remove(getParameters().getId());
+        getQuotaManager().removeQuotaFromCache(getQuota().getStoragePoolId(), getParameters().getId());
         getReturnValue().setSucceeded(true);
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getParameters().getQuotaId(),
+        return Collections.singletonList(new PermissionSubject(getParameters().getId(),
                 VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 
@@ -64,5 +77,20 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_DELETE_QUOTA : AuditLogType.USER_FAILED_DELETE_QUOTA;
+    }
+
+    public Quota getQuota() {
+        if (quota == null) {
+            setQuota(getQuotaDao().getById(getParameters().getId()));
+        }
+        return quota;
+    }
+
+    public void setQuota(Quota quota) {
+        this.quota = quota;
+    }
+
+    public QuotaDao getQuotaDao() {
+        return quotaDao;
     }
 }

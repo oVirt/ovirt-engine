@@ -3,10 +3,12 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -39,17 +42,19 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        setUpQuota();
-        params = new QuotaCRUDParameters(quota);
+        quota = setUpQuota(Guid.newGuid());
+        when(quotaDao.getById(any(Guid.class))).thenReturn(quota);
+
+        params = new QuotaCRUDParameters(setUpQuota(quota.getId()));
         command = spy(new UpdateQuotaCommand(params, null));
         doReturn(quotaDao).when(command).getQuotaDao();
         doNothing().when(command).removeQuotaFromCache();
         doNothing().when(command).afterUpdate();
     }
 
-    private void setUpQuota() {
-        quota = new Quota();
-        quota.setId(Guid.newGuid());
+    private Quota setUpQuota(Guid guid) {
+        Quota quota = new Quota();
+        quota.setId(guid);
 
         int numQutoaClusters = RandomUtils.instance().nextInt(10);
         List<QuotaCluster> quotaClusters = new ArrayList<>(numQutoaClusters);
@@ -66,6 +71,7 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
         }
 
         quota.setQuotaStorages(quotaStorages);
+        return quota;
     }
 
     @Test
@@ -73,21 +79,39 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
         // Execute the command
         command.executeCommand();
 
-        Guid quotaId = quota.getId();
-        for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
+        Quota parameterQuota = command.getParameters().getQuota();
+        Guid quotaId = parameterQuota.getId();
+        for (QuotaStorage quotaStorage : parameterQuota.getQuotaStorages()) {
             assertNotNull("Quota Storage should have been assigned an ID", quotaStorage.getQuotaStorageId());
             assertEquals("Wrong Qutoa ID on Quota Storage", quotaId, quotaStorage.getQuotaId());
         }
 
-        for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
+        for (QuotaCluster quotaCluster : parameterQuota.getQuotaClusters()) {
             assertNotNull("Quota Cluster should have been assigned an ID", quotaCluster.getQuotaClusterId());
             assertEquals("Wrong Qutoa ID on Quota Cluster", quotaId, quotaCluster.getQuotaId());
         }
 
         // Verify the quota was updated in the database
-        verify(quotaDao).update(quota);
+        verify(quotaDao).update(parameterQuota);
 
         // Assert the return value
         assertTrue("Execution should be successful", command.getReturnValue().getSucceeded());
     }
+
+    @Test
+    public void testFailToUpdateDefaultQuota() {
+        quota.setDefault(true);
+
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_QUOTA_DEFAULT_CANNOT_BE_CHANGED);
+    }
+
+    @Test
+    public void testChangeToDefaultQuota() {
+        params.getQuota().setDefault(true);
+
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+    }
+
 }
