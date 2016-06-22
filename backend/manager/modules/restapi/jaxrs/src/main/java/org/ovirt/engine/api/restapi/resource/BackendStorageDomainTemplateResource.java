@@ -29,12 +29,25 @@ public class BackendStorageDomainTemplateResource
     }
 
     @Override
-    protected Template getFromDataDomain() {
+    public Template get() {
+        switch (parent.getStorageDomainType()) {
+        case Data:
+        case Master:
+            return getFromDataDomain();
+        case ImportExport:
+            return getFromExportDomain();
+        case ISO:
+        case Unknown:
+        default:
+            return null;
+        }
+    }
+
+    private Template getFromDataDomain() {
         return performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
     }
 
-    @Override
-    protected Template getFromExportDomain() {
+    private Template getFromExportDomain() {
         org.ovirt.engine.core.common.businessentities.VmTemplate entity = getEntity();
         return addLinks(populate(map(entity, null), entity), null, new String[0]);
     }
