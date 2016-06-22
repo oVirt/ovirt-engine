@@ -36,8 +36,6 @@ public class BackendStorageDomainTemplateResource
             return getFromDataDomain();
         case ImportExport:
             return getFromExportDomain();
-        case ISO:
-        case Unknown:
         default:
             return null;
         }
