@@ -34,7 +34,7 @@ public class RemoveLabelCommand<T extends LabelActionParametersBase> extends Lab
             return false;
         }
 
-        if (label.isReadOnly()) {
+        if (label.isReadOnly() && !isInternalExecution()) {
             addValidationMessage(EngineMessage.AFFINITY_LABEL_READ_ONLY);
             return false;
         }
