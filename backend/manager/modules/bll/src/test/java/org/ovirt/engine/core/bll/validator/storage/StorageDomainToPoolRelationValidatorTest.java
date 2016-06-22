@@ -55,7 +55,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         storagePool.setId(Guid.newGuid());
         storagePool.setCompatibilityVersion(Version.ALL.get(0));
 
-        when(storagePoolIsoMapDao.getAllForStorage(storageDomain.getId())).thenReturn(Collections.<StoragePoolIsoMap>emptyList());
+        when(storagePoolIsoMapDao.getAllForStorage(storageDomain.getId())).thenReturn(Collections.emptyList());
         spyValidator();
     }
 
