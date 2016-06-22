@@ -351,35 +351,37 @@ public class V3VmOutAdapter implements V3Adapter<Vm, V3VM> {
         }
 
         // If the V4 virtual machine has IP addresses reported, then add them to the V3 "guest_info" element:
-        SystemResource systemResource = BackendApiResource.getInstance();
-        VmsResource vmsResource = systemResource.getVmsResource();
-        VmResource vmResource = vmsResource.getVmResource(from.getId());
-        VmNicsResource nicsResource = vmResource.getNicsResource();
-        Nics fromNics = nicsResource.list();
-        List<Ip> fromIps = new ArrayList<>();
-        for (Nic fromNic : fromNics.getNics()) {
-            ReportedDevices fromDevices = fromNic.getReportedDevices();
-            if (fromDevices != null) {
-                for (ReportedDevice fromDevice : fromDevices.getReportedDevices()) {
-                    Ips deviceIps = fromDevice.getIps();
-                    if (deviceIps != null) {
-                        fromIps.addAll(deviceIps.getIps());
+        if (from.isSetId()) {
+            SystemResource systemResource = BackendApiResource.getInstance();
+            VmsResource vmsResource = systemResource.getVmsResource();
+            VmResource vmResource = vmsResource.getVmResource(from.getId());
+            VmNicsResource nicsResource = vmResource.getNicsResource();
+            Nics fromNics = nicsResource.list();
+            List<Ip> fromIps = new ArrayList<>();
+            for (Nic fromNic : fromNics.getNics()) {
+                ReportedDevices fromDevices = fromNic.getReportedDevices();
+                if (fromDevices != null) {
+                    for (ReportedDevice fromDevice : fromDevices.getReportedDevices()) {
+                        Ips deviceIps = fromDevice.getIps();
+                        if (deviceIps != null) {
+                            fromIps.addAll(deviceIps.getIps());
+                        }
                     }
                 }
             }
-        }
-        if (!fromIps.isEmpty()) {
-            V3GuestInfo guestInfo = to.getGuestInfo();
-            if (guestInfo == null) {
-                guestInfo = new V3GuestInfo();
-                to.setGuestInfo(guestInfo);
+            if (!fromIps.isEmpty()) {
+                V3GuestInfo guestInfo = to.getGuestInfo();
+                if (guestInfo == null) {
+                    guestInfo = new V3GuestInfo();
+                    to.setGuestInfo(guestInfo);
+                }
+                V3IPs toIps = guestInfo.getIps();
+                if (toIps == null) {
+                    toIps = new V3IPs();
+                    guestInfo.setIps(toIps);
+                }
+                toIps.getIPs().addAll(adaptOut(fromIps));
             }
-            V3IPs toIps = guestInfo.getIps();
-            if (toIps == null) {
-                toIps = new V3IPs();
-                guestInfo.setIps(toIps);
-            }
-            toIps.getIPs().addAll(adaptOut(fromIps));
         }
 
         return to;

@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Map;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.ParametersHelper;
@@ -36,12 +35,25 @@ public class BackendStorageDomainVmResource
     }
 
     @Override
-    protected Vm getFromDataDomain() {
+    public Vm get() {
+        switch (parent.getStorageDomainType()) {
+        case Data:
+        case Master:
+            return getFromDataDomain();
+        case ImportExport:
+            return getFromExportDomain();
+        case ISO:
+        case Unknown:
+        default:
+            return null;
+        }
+    }
+
+    private Vm getFromDataDomain() {
         return performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
     }
 
-    @Override
-    protected Vm getFromExportDomain() {
+    private Vm getFromExportDomain() {
         org.ovirt.engine.core.common.businessentities.VM entity = getEntity();
         return addLinks(populate(map(entity, null), entity), null, new String[0]);
     }

@@ -8,8 +8,6 @@ import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,32 +32,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
         return parent;
     }
 
-    public R get() {
-        switch (parent.getStorageDomainType()) {
-        case Data:
-        case Master:
-            return getFromDataDomain();
-        case ImportExport:
-            return getFromExportDomain();
-        case ISO:
-        case Unknown:
-        default:
-            return null;
-        }
-    }
-
-    protected abstract R getFromDataDomain();
-
     protected abstract java.util.Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> getDiskMap();
-
-    protected R getFromExportDomain() {
-        for (R model : parent.getCollection(StorageDomainType.ImportExport)) {
-            if (model.getId().equals(id)) {
-                return model;
-            }
-        }
-        return notFound();
-    }
 
     protected Guid getDestStorageDomainId(Action action) {
         if (action.getStorageDomain().isSetId()) {
@@ -86,13 +59,6 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
                 VdcQueryType.GetClusterByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name);
-    }
-
-    protected Cluster lookupClusterById(String id) {
-        return getEntity(Cluster.class,
-                         VdcQueryType.GetClusterById,
-                         new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(id)),
-                         id);
     }
 
     protected HashMap<Guid, Guid> getDiskToDestinationMap(Action action) {
