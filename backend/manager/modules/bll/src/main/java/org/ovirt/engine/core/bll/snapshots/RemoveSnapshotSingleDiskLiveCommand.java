@@ -229,7 +229,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     }
 
     public void onSucceeded() {
-        syncDbRecords(getTargetImageInfoFromVdsm(), true);
+        syncDbRecords(getParameters().getMergeStatusReturnValue().getBlockJobType(),
+                getTargetImageInfoFromVdsm(),
+                getParameters().getMergeStatusReturnValue().getImagesToRemove(),
+                true);
         log.info("Successfully merged snapshot '{}' images '{}'..'{}'",
                 getDiskImage().getImage().getSnapshotId(),
                 getDiskImage().getImageId(),
@@ -258,7 +261,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
      * @param removeImages Remove the images from the database, or if false, only
      *                     mark them illegal
      */
-    private void syncDbRecords(DiskImage imageFromVdsm, boolean removeImages) {
+    private void syncDbRecords(VmBlockJobType jobType, DiskImage imageFromVdsm, Set<Guid> imagesToUpdate, boolean removeImages) {
         TransactionSupport.executeInNewTransaction(() -> {
             // If deletion failed after a backwards merge, the snapshots' images need to be swapped
             // as they would upon success.  Instead of removing them, mark them illegal.
@@ -268,13 +271,12 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             // The vdsm merge verb may decide to perform a forward or backward merge.
             if (topImage == null) {
                 log.info("No merge destination image, not updating image/snapshot association");
-            } else if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
+            } else if (jobType == VmBlockJobType.PULL) {
                 handleForwardLiveMerge(topImage, baseImage, imageFromVdsm);
             } else {
                 handleBackwardLiveMerge(topImage, baseImage, imageFromVdsm);
             }
 
-            Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
             if (imagesToUpdate == null) {
                 log.error("Failed to update orphaned images in db: image list could not be retrieved");
                 return null;
@@ -416,7 +418,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             );
 
         } else {
-            syncDbRecords(getTargetImageInfoFromVdsm(), false);
+            syncDbRecords(getParameters().getMergeStatusReturnValue().getBlockJobType(),
+                    getTargetImageInfoFromVdsm(),
+                    getParameters().getMergeStatusReturnValue().getImagesToRemove(),
+                    false);
             log.error("Snapshot '{}' images '{}'..'{}' merged, but volume removal failed." +
                             " Some or all of the following volumes may be orphaned: {}." +
                             " Please retry Live Merge on the snapshot to complete the operation.",
