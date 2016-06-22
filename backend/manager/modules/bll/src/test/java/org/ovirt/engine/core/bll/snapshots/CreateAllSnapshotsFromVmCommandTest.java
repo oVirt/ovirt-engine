@@ -344,11 +344,11 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         cmd.getParameters().setSaveMemory(true);
-        doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
+        doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.emptyList()));
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
-                .allDomainsHaveSpaceForAllDisks(eq(Collections.<DiskImage>emptyList()), anyList());
+                .allDomainsHaveSpaceForAllDisks(eq(Collections.emptyList()), anyList());
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
-        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(eq(Collections.<DiskImage>emptyList()), anyList());
+        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(eq(Collections.emptyList()), anyList());
     }
 
     @Test
@@ -357,9 +357,9 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         cmd.getParameters().setSaveMemory(true);
-        doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
+        doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.emptyList()));
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
-        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(eq(Collections.<DiskImage>emptyList()), anyList());
+        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(eq(Collections.emptyList()), anyList());
     }
 
     private void setUpDiskValidations() {
