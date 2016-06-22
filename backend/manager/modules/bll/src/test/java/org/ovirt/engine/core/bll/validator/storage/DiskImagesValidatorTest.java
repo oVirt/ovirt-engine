@@ -242,7 +242,7 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesHasDerivedDisksNoStorageDomainSpecifiedFailure() {
         disk1.setVmEntityType(VmEntityType.TEMPLATE);
-        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Arrays.asList(disk2));
+        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Collections.singletonList(disk2));
         assertThat(validator.diskImagesHaveNoDerivedDisks(null),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS));
     }
@@ -254,7 +254,7 @@ public class DiskImagesValidatorTest {
         ArrayList<Guid> storageDomainIds = new ArrayList<>();
         storageDomainIds.add(storageDomainId);
         disk2.setStorageIds(storageDomainIds);
-        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Arrays.asList(disk2));
+        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Collections.singletonList(disk2));
         assertThat(validator.diskImagesHaveNoDerivedDisks(storageDomainId),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS));
     }
@@ -265,7 +265,7 @@ public class DiskImagesValidatorTest {
         ArrayList<Guid> storageDomainIds = new ArrayList<>();
         storageDomainIds.add(Guid.newGuid());
         disk2.setStorageIds(storageDomainIds);
-        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Arrays.asList(disk2));
+        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Collections.singletonList(disk2));
         assertThat(validator.diskImagesHaveNoDerivedDisks(Guid.Empty), isValid());
     }
 
