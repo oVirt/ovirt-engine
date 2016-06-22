@@ -122,7 +122,6 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         topImage.setParentId(baseImage.getParentId());
         getDestinationDiskImage().setSize(baseImage.getSize());
         getDestinationDiskImage().setActualSizeInBytes(getImageInfoFromVdsm(getDestinationDiskImage()).getActualSizeInBytes());
-        topImage.setImageStatus(ImageStatus.OK);
 
         getBaseDiskDao().update(topImage);
         getImageDao().update(topImage.getImage());

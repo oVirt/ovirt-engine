@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -7,6 +10,7 @@ import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -71,17 +75,16 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         // tasks failures) in which we will want to preserve the
         // original state (before the merge-attempt).
         if (getDestinationDiskImage() != null) {
+            Set<Guid> imagesToUpdate = new HashSet<>();
             DiskImage curr = getDestinationDiskImage();
             while (!curr.getParentId().equals(getDiskImage().getParentId())) {
                 curr = getDiskImageDao().getSnapshotById(curr.getParentId());
-                getImageDao().remove(curr.getImageId());
+                imagesToUpdate.add(curr.getImageId());
             }
-            getDestinationDiskImage().setVolumeFormat(curr.getVolumeFormat());
-            getDestinationDiskImage().setVolumeType(curr.getVolumeType());
-            getDestinationDiskImage().setParentId(getDiskImage().getParentId());
-            getBaseDiskDao().update(curr);
-            getImageDao().update(getDestinationDiskImage().getImage());
-            updateDiskImageDynamic(getImageInfoFromVdsm(getDestinationDiskImage()), getDestinationDiskImage());
+            syncDbRecords(VmBlockJobType.PULL,
+                    getImageInfoFromVdsm(getDestinationDiskImage()),
+                    imagesToUpdate,
+                    true);
         }
 
         setSucceeded(true);
