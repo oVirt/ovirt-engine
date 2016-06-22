@@ -234,7 +234,7 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesHasDerivedDisksNoStorageDomainSpecifiedSuccess() {
         disk1.setVmEntityType(VmEntityType.TEMPLATE);
-        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Collections.<DiskImage>emptyList());
+        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Collections.emptyList());
         assertThat(validator.diskImagesHaveNoDerivedDisks(null),
                 isValid());
     }
@@ -322,8 +322,8 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesOnAnyApplicableDomainsNoValidDomainsForAllDisks() {
         Map<Guid, Set<Guid>> validDomainsForDisk = new HashMap<>();
-        validDomainsForDisk.put(disk1.getId(), Collections.<Guid>emptySet());
-        validDomainsForDisk.put(disk2.getId(), Collections.<Guid>emptySet());
+        validDomainsForDisk.put(disk1.getId(), Collections.emptySet());
+        validDomainsForDisk.put(disk2.getId(), Collections.emptySet());
         Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
         assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
                 storageDomainMap,
@@ -334,7 +334,7 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesOnAnyApplicableDomainsNoValidDomainsForOneDisk() {
         Map<Guid, Set<Guid>> validDomainsForDisk = createDiskValidDomainsMap(disk1);
-        validDomainsForDisk.put(disk2.getId(), Collections.<Guid>emptySet());
+        validDomainsForDisk.put(disk2.getId(), Collections.emptySet());
         Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
         assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
                 storageDomainMap,
