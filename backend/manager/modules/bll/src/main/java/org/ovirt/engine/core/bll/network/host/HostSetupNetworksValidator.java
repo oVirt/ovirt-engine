@@ -648,7 +648,6 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.nicExists();
             vr = skipValidation(vr) ? vr : nicActuallyExistsOrReferencesNewBond(attachment);
 
-            vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(existingInterfacesMap);
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(attachmentsById.get(attachment.getId()));
             vr = skipValidation(vr) ? vr : validator.validateGateway();
             vr = skipValidation(vr) ? vr : networkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(params.getNetworkAttachments());

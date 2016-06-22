@@ -370,7 +370,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             networkDialogModel.getAddress().setEntity(nic.getAddress());
             networkDialogModel.getSubnet().setEntity(nic.getSubnet());
             networkDialogModel.getGateway().setEntity(nic.getGateway());
-            networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getAddress()));
             networkDialogModel.getBondingOptions().setIsAvailable(false);
             networkDialogModel.setBootProtocol(nic.getBootProtocol());
 

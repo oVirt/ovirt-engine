@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -205,13 +204,6 @@ public class HostInterfaceModel extends EntityModel {
         this.originalNetParams = originalNetParams;
     }
 
-    private boolean staticIpChangeAllowed = true;
-
-    public void setStaticIpChangeAllowed(boolean staticIpChangeAllowed) {
-        this.staticIpChangeAllowed = staticIpChangeAllowed;
-        updateCanSpecify();
-    }
-
     private EntityModel<Boolean> qosOverridden;
 
     public EntityModel<Boolean> getQosOverridden() {
@@ -355,9 +347,7 @@ public class HostInterfaceModel extends EntityModel {
 
     private void updateCanSpecify() {
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
-        getAddress().setChangeProhibitionReason(isChangable && !staticIpChangeAllowed
-                ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
-        getAddress().setIsChangeable(isChangable && staticIpChangeAllowed);
+        getAddress().setIsChangeable(isChangable);
         getSubnet().setIsChangeable(isChangable);
         getGateway().setIsChangeable(isChangable);
     }

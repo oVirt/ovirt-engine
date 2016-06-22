@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -142,34 +140,6 @@ public class NetworkAttachmentValidator {
         return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST)
 
                 .when(attachment.getNicName() == null);
-    }
-
-    /**
-     * Checks if a network is configured incorrectly:
-     * <ul>
-     * <li>If the host was added to the system using its IP address as the computer name for the certification creation,
-     * it is forbidden to modify the IP address without reinstalling the host.</li>
-     * </ul>
-     */
-    public ValidationResult networkIpAddressWasSameAsHostnameAndChanged(BusinessEntityMap<VdsNetworkInterface> existingInterfaces) {
-        IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        if (ipConfiguration != null
-                && ipConfiguration.hasPrimaryAddressSet()
-                && ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
-            VdsNetworkInterface existingIface = existingInterfaces.get(attachment.getNicName());
-            if (existingIface != null) {
-                String oldAddress = existingIface.getAddress();
-                return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED,
-                    ReplacementUtils.createSetVariableString(
-                        VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
-                        getNetwork().getName()))
-                    .when(StringUtils.equals(oldAddress, host.getHostName())
-                            && !StringUtils.equals(oldAddress, ipConfiguration.getPrimaryAddress().getAddress()));
-
-            }
-        }
-
-        return ValidationResult.VALID;
     }
 
     public ValidationResult networkNotChanged(NetworkAttachment oldAttachment) {

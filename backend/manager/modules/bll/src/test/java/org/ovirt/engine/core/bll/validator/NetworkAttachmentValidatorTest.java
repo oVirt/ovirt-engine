@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -379,77 +377,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNicName("whatever");
 
         assertThat(createNetworkAttachmentValidator(attachment).nicExists(), isValid());
-    }
-
-    @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsNull() {
-
-        NetworkAttachment attachment = new NetworkAttachment();
-        attachment.setIpConfiguration(null);
-
-        assertThat(createNetworkAttachmentValidator(attachment).networkIpAddressWasSameAsHostnameAndChanged(null),
-                isValid());
-    }
-
-    @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsDhcp() {
-        doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol.DHCP);
-    }
-
-    @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIpConfigurationIsNone() {
-        doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol.NONE);
-    }
-
-    private void doTestNetworkIpAddressWasSameAsHostnameAndChangedForBootProtocol(NetworkBootProtocol bootProtocol) {
-        NetworkAttachment attachment = createNetworkAttachmentWithIpConfiguration(bootProtocol, null, null);
-
-        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
-        ValidationResult actual = validator.networkIpAddressWasSameAsHostnameAndChanged(null);
-        assertThat(actual, isValid());
-    }
-
-    @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChangedWhenIfaceDoesNotExist() {
-
-        NetworkAttachment attachment =
-                createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.STATIC_IP, null, null);
-        attachment.setNicName("nicName");
-
-        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
-        BusinessEntityMap<VdsNetworkInterface> nics =
-            new BusinessEntityMap<>(Collections.<VdsNetworkInterface> emptyList());
-        assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(nics), isValid());
-    }
-
-    @Test
-    public void testNetworkIpAddressWasSameAsHostnameAndChanged() {
-        Network network = new Network();
-        network.setName("networkName");
-        network.setId(Guid.newGuid());
-
-
-        VdsNetworkInterface existingInterface = new VdsNetworkInterface();
-        existingInterface.setName("nicName");
-        existingInterface.setAddress("anyAddress");
-        existingInterface.setNetworkName(network.getName());
-
-        NetworkAttachment attachment =
-            createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.STATIC_IP, null, null);
-        attachment.setNicName(existingInterface.getName());
-        attachment.setNetworkId(network.getId());
-
-        host.setHostName(existingInterface.getAddress());
-
-        when(networkDaoMock.get(attachment.getNetworkId())).thenReturn(network);
-
-        NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
-        BusinessEntityMap<VdsNetworkInterface> nics =
-            new BusinessEntityMap<>(Collections.singletonList(existingInterface));
-        assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(nics),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED,
-                    ReplacementUtils.createSetVariableString(NetworkAttachmentValidator.VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
-                            existingInterface.getNetworkName())));
     }
 
     @Test

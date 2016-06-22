@@ -533,9 +533,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Edit Management Network")
     String editManagementNetworkTitle();
 
-    @DefaultStringValue("The network's IP address cannot be statically modified if it's the same address supplied as the hostname.")
-    String staticIpAddressSameAsHostname();
-
     @DefaultStringValue("InterfaceList")
     String interfaceListTitle();
 
