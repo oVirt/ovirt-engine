@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -145,6 +146,7 @@ public class HostedEngineImporter {
             image.setDiskProfileId(sdProfileId);
             image.setStorageIds(new ArrayList(Arrays.asList(sd.getId())));
             image.setVmSnapshotId(Guid.newGuid());
+            image.setImageStatus(ImageStatus.OK);
         }
         // disks are there already(the vm is running)
         parameters.setImagesExistOnTargetStorageDomain(true);
