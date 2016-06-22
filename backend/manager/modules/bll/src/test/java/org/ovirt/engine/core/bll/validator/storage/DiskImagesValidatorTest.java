@@ -176,7 +176,7 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesAlreadyExistBothDoesntExist() {
         doReturn(null).when(validator).getExistingDisk(any(Guid.class));
-        assertEquals(validator.diskImagesAlreadyExist(), ValidationResult.VALID);
+        assertEquals(ValidationResult.VALID, validator.diskImagesAlreadyExist());
     }
 
     @Test
@@ -190,7 +190,7 @@ public class DiskImagesValidatorTest {
     public void diskImagesExist() {
         doReturn(true).when(validator).isDiskExists(disk1.getId());
         doReturn(true).when(validator).isDiskExists(disk2.getId());
-        assertEquals(validator.diskImagesNotExist(), ValidationResult.VALID);
+        assertEquals(ValidationResult.VALID, validator.diskImagesNotExist());
     }
 
     @Test
