@@ -105,6 +105,7 @@ public class Snmp extends Transport {
                 String managers = props.getProperty(SNMP_MANAGERS, profile, false);
                 if (!StringUtils.isBlank(managers)) {
                     int snmpVersion = getSnmpVersion(props.getProperty(SNMP_VERSION, false));
+                    int securityLevel = Integer.parseInt(props.getProperty(SNMP_SECURITY_LEVEL, profile, false));
                     if (snmpVersion == SnmpConstants.version3) {
                         profiles.put(
                                 profile,
@@ -112,11 +113,15 @@ public class Snmp extends Transport {
                                         managers,
                                         props.getProperty(SNMP_ENGINE_ID, profile, false),
                                         props.getProperty(SNMP_USERNAME, profile, false),
-                                        getAuthProtocol(props.getProperty(SNMP_AUTH_PROTOCOL, profile, false)),
-                                        props.getProperty(SNMP_AUTH_PASSPHRASE, profile, false),
-                                        getPrivProtocol(props.getProperty(SNMP_PRIVACY_PROTOCOL, profile, false)),
-                                        props.getProperty(SNMP_PRIVACY_PASSPHRASE, profile, false),
-                                        Integer.parseInt(props.getProperty(SNMP_SECURITY_LEVEL, profile, false)),
+                                        securityLevel == 1 ?
+                                                null :
+                                                getAuthProtocol(props.getProperty(SNMP_AUTH_PROTOCOL, profile, false)),
+                                        props.getProperty(SNMP_AUTH_PASSPHRASE, profile, securityLevel == 1),
+                                        securityLevel != 3 ?
+                                                null :
+                                                getPrivProtocol(props.getProperty(SNMP_PRIVACY_PROTOCOL, profile, false)),
+                                        props.getProperty(SNMP_PRIVACY_PASSPHRASE, profile, securityLevel != 3),
+                                        securityLevel,
                                         props.getProperty(SNMP_OID, profile, false),
                                         snmpVersion
                                 )
