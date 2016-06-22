@@ -1,19 +1,28 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
 
@@ -59,6 +68,148 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         } else {
             log.warn("Could not update DiskImage's size with ID '{}'",
                     targetImage.getImageId());
+        }
+    }
+
+    /**
+     * After merging the snapshots, update the image and snapshot records in the
+     * database to reflect the changes.  This handles either forward or backwards
+     * merge (detected).  It will either then remove the images, or mark them
+     * illegal (to handle the case where image deletion failed).
+     *
+     * @param removeImages Remove the images from the database, or if false, only
+     *                     mark them illegal
+     */
+    protected void syncDbRecords(VmBlockJobType blockJobType, DiskImage imageFromVdsm, Set<Guid> imagesToUpdate, boolean removeImages) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            // If deletion failed after a backwards merge, the snapshots' images need to be swapped
+            // as they would upon success.  Instead of removing them, mark them illegal.
+            DiskImage baseImage = getDiskImage();
+            DiskImage topImage = getDestinationDiskImage();
+
+            // The vdsm merge verb may decide to perform a forward or backward merge.
+            if (topImage == null) {
+                log.info("No merge destination image, not updating image/snapshot association");
+            } else if (blockJobType == VmBlockJobType.PULL) {
+                handleForwardMerge(topImage, baseImage, imageFromVdsm);
+            } else {
+                handleBackwardMerge(topImage, baseImage, imageFromVdsm);
+            }
+
+            if (imagesToUpdate == null) {
+                log.error("Failed to update orphaned images in db: image list could not be retrieved");
+                return null;
+            }
+            for (Guid imageId : imagesToUpdate) {
+                if (removeImages) {
+                    getImageDao().remove(imageId);
+                } else {
+                    // The (illegal && no-parent && no-children) status indicates an orphaned image.
+                    Image image = getImageDao().get(imageId);
+                    image.setStatus(ImageStatus.ILLEGAL);
+                    image.setParentId(Guid.Empty);
+                    getImageDao().update(image);
+                }
+            }
+            return null;
+        });
+    }
+
+    private void handleForwardMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {
+        // For forward merge, the volume format and type may change.
+        topImage.setVolumeFormat(baseImage.getVolumeFormat());
+        topImage.setVolumeType(baseImage.getVolumeType());
+        topImage.setParentId(baseImage.getParentId());
+        getDestinationDiskImage().setSize(baseImage.getSize());
+        getDestinationDiskImage().setActualSizeInBytes(getImageInfoFromVdsm(getDestinationDiskImage()).getActualSizeInBytes());
+        topImage.setImageStatus(ImageStatus.OK);
+
+        getBaseDiskDao().update(topImage);
+        getImageDao().update(topImage.getImage());
+        updateDiskImageDynamic(imageFromVdsm, topImage);
+
+        updateVmConfigurationForImageChange(getDestinationDiskImage().getImage().getSnapshotId(),
+                getDestinationDiskImage().getImageId(), getDestinationDiskImage());
+    }
+
+    private void handleBackwardMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {
+        // For backwards merge, the prior base image now has the data associated with the newer
+        // snapshot we want to keep.  Re-associate this older image with the newer snapshot.
+        // The base snapshot is deleted if everything went well.  In case it's not deleted, we
+        // hijack it to preserve a link to the broken image.  This makes the image discoverable
+        // so that we can retry the deletion later, yet doesn't corrupt the VM image chain.
+        List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
+                .getAllSnapshotsForParent(topImage.getImageId());
+        if (!children.isEmpty()) {
+            DiskImage childImage = children.get(0);
+            childImage.setParentId(baseImage.getImageId());
+            getImageDao().update(childImage.getImage());
+        }
+
+        Image oldTopImage = topImage.getImage();
+        topImage.setImage(baseImage.getImage());
+        baseImage.setImage(oldTopImage);
+
+        Guid oldTopSnapshotId = topImage.getImage().getSnapshotId();
+        topImage.getImage().setSnapshotId(baseImage.getImage().getSnapshotId());
+        baseImage.getImage().setSnapshotId(oldTopSnapshotId);
+
+        boolean oldTopIsActive = topImage.getImage().isActive();
+        topImage.getImage().setActive(baseImage.getImage().isActive());
+        VolumeClassification baseImageVolumeClassification =
+                VolumeClassification.getVolumeClassificationByActiveFlag(baseImage.getImage().isActive());
+        topImage.getImage().setVolumeClassification(baseImageVolumeClassification);
+        baseImage.getImage().setActive(oldTopIsActive);
+        VolumeClassification oldTopVolumeClassification =
+                VolumeClassification.getVolumeClassificationByActiveFlag(oldTopIsActive);
+        topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
+
+        topImage.setActualSizeInBytes(imageFromVdsm.getActualSizeInBytes());
+        topImage.setImageStatus(ImageStatus.OK);
+        getBaseDiskDao().update(topImage);
+        getImageDao().update(topImage.getImage());
+        updateDiskImageDynamic(imageFromVdsm, topImage);
+
+        getBaseDiskDao().update(baseImage);
+        getImageDao().update(baseImage.getImage());
+
+        updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),
+                baseImage.getImageId(), topImage);
+        updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
+                topImage.getImageId());
+    }
+
+    private void updateVmConfigurationForImageChange(final Guid snapshotId, final Guid oldImageId, final DiskImage newImage) {
+        try {
+            lockVmSnapshotsWithWait(getVm());
+
+            TransactionSupport.executeInNewTransaction(() -> {
+                Snapshot s = getSnapshotDao().get(snapshotId);
+                s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage);
+                getSnapshotDao().update(s);
+                return null;
+            });
+        } finally {
+            if (getSnapshotsEngineLock() != null) {
+                getLockManager().releaseLock(getSnapshotsEngineLock());
+            }
+        }
+    }
+
+    private void updateVmConfigurationForImageRemoval(final Guid snapshotId, final Guid imageId) {
+        try {
+            lockVmSnapshotsWithWait(getVm());
+
+            TransactionSupport.executeInNewTransaction(() -> {
+                Snapshot s = getSnapshotDao().get(snapshotId);
+                s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId);
+                getSnapshotDao().update(s);
+                return null;
+            });
+        } finally {
+            if (getSnapshotsEngineLock() != null) {
+                getLockManager().releaseLock(getSnapshotsEngineLock());
+            }
         }
     }
 
