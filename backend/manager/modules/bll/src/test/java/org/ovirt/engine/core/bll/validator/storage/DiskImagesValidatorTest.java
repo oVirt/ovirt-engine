@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -94,15 +95,7 @@ public class DiskImagesValidatorTest {
     }
 
     private static String createAliasReplacements(DiskImage... disks) {
-        // Take the first alias
-        StringBuilder msg = new StringBuilder("$diskAliases ").append(disks[0].getDiskAlias());
-
-        // And and the rest
-        for (int i = 1; i < disks.length; ++i) {
-            msg.append(", ").append(disks[i].getDiskAlias());
-        }
-
-        return msg.toString();
+        return Arrays.stream(disks).map(DiskImage::getDiskAlias).collect(Collectors.joining(", ", "$diskAliases ", ""));
     }
 
     @Test
