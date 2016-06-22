@@ -83,6 +83,7 @@ import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmIconDao;
+import org.ovirt.engine.core.dao.dwh.OsInfoDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
@@ -150,6 +151,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private VdsDynamicDao vdsDynamicDao;
     @Inject
     private BusinessEntitySnapshotDao businessEntitySnapshotDao;
+    @Inject
+    private OsInfoDao osInfoDao;
 
     @Inject
     private Instance<BackendActionExecutor> actionExecutor;
@@ -729,7 +732,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        dbFacade.populateDwhOsInfo(osRepository.getOsNames());
+        osInfoDao.populateDwhOsInfo(osRepository.getOsNames());
     }
 
     private void logExecution(String sessionId, String details) {

@@ -4,6 +4,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,10 +15,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 /**
  * Automatically translates incoming complex values as needed
  */
+@Named
+@Dependent
 public class CustomMapSqlParameterSource extends MapSqlParameterSource {
 
     private final DbEngineDialect dialect;
 
+    @Inject
     public CustomMapSqlParameterSource(DbEngineDialect dialect) {
         this.dialect = dialect;
     }

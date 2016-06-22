@@ -36,7 +36,6 @@
     <bean id="dbFacade" class="org.ovirt.engine.core.dal.dbbroker.DbFacade" depends-on="daos">
         <constructor-arg ref="jdbcTemplate"/>
         <constructor-arg ref="dbEngineDialect"/>
-        <constructor-arg ref="callsHandler"/>
     </bean>
 
     <bean name="transactionManager"
@@ -46,4 +45,5 @@
 
     <bean id="engineDataSource" class="org.ovirt.engine.core.dao.BaseDaoTestCase"
           factory-method="getDataSource"/>
+
 </beans>

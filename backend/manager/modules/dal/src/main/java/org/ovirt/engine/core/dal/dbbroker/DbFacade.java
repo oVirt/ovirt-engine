@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -254,23 +252,18 @@ public class DbFacade {
 
     private final JdbcTemplate jdbcTemplate;
     private final DbEngineDialect dbEngineDialect;
-    private final SimpleJdbcCallsHandler callsHandler;
 
     @Inject
     private Instance<Dao> daos;
 
     @Inject
-    DbFacade(JdbcTemplate jdbcTemplate,
-            DbEngineDialect dbEngineDialect,
-            SimpleJdbcCallsHandler callsHandler) {
+    DbFacade(JdbcTemplate jdbcTemplate, DbEngineDialect dbEngineDialect) {
 
         Objects.requireNonNull(jdbcTemplate, "jdbcTemplate cannot be null");
         Objects.requireNonNull(dbEngineDialect, "dbEngineDialect cannot be null");
-        Objects.requireNonNull(callsHandler, "callsHandler cannot be null");
 
         this.jdbcTemplate = jdbcTemplate;
         this.dbEngineDialect = dbEngineDialect;
-        this.callsHandler = callsHandler;
 
         init();
     }
@@ -1163,26 +1156,6 @@ public class DbFacade {
      */
     public VdsKdumpStatusDao getVdsKdumpStatusDao() {
         return getDao(VdsKdumpStatusDao.class);
-    }
-
-    /**
-     * This call will populate a translation table of OS Ids to they're name
-     * The translation table shall be in use by DWH
-     *
-     * @param osIdToName
-     *            OS id to OS Name map
-     */
-    public void populateDwhOsInfo(Map<Integer, String> osIdToName) {
-        // first clear the table
-        new SimpleJdbcCall(jdbcTemplate).withProcedureName("clear_osinfo").execute();
-        // batch populate
-        List<MapSqlParameterSource> executions = new ArrayList<>();
-        for (Map.Entry<Integer, String> e : osIdToName.entrySet()) {
-            executions.add(getCustomMapSqlParameterSource()
-                    .addValue("os_id", e.getKey())
-                    .addValue("os_name", e.getValue()));
-        }
-        callsHandler.executeStoredProcAsBatch("insert_osinfo", executions);
     }
 
     public IscsiBondDao getIscsiBondDao() {
