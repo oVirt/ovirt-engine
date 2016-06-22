@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -30,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -176,7 +174,7 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesAlreadyExistBothDoesntExist() {
         doReturn(null).when(validator).getExistingDisk(any(Guid.class));
-        assertEquals(ValidationResult.VALID, validator.diskImagesAlreadyExist());
+        assertThat(validator.diskImagesAlreadyExist(), isValid());
     }
 
     @Test
@@ -190,7 +188,7 @@ public class DiskImagesValidatorTest {
     public void diskImagesExist() {
         doReturn(true).when(validator).isDiskExists(disk1.getId());
         doReturn(true).when(validator).isDiskExists(disk2.getId());
-        assertEquals(ValidationResult.VALID, validator.diskImagesNotExist());
+        assertThat(validator.diskImagesNotExist(), isValid());
     }
 
     @Test
