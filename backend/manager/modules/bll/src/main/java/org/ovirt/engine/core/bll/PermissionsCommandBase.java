@@ -15,12 +15,16 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.EntityDao;
 
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParameters> extends CommandBase<T> {
 
     @Named
     @Inject
     private Predicate<Guid> isSystemSuperUserPredicate;
+
+    @Inject
+    private EntityDao entityDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -40,7 +44,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
      * Get the object translated type (e.g Host , VM), on which the MLA operation has been executed on.
      *
      * @return Translated object type.
-     * @see VdcObjectType
+     * @see org.ovirt.engine.core.common.VdcObjectType
      */
     public String getVdcObjectType() {
         return getParameters().getPermission().getObjectType().getVdcObjectTranslation();
@@ -53,7 +57,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
      */
     public String getVdcObjectName() {
         Permission perms = getParameters().getPermission();
-        return getDbFacade().getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
+        return entityDao.getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
     }
 
     public String getRoleName() {

@@ -2,14 +2,12 @@ package org.ovirt.engine.core.dal.dbbroker;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.ExternalVariable;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
@@ -63,7 +61,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ActionGroupDao;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.AuditLogDao;
@@ -180,9 +177,6 @@ import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 @Singleton
 public class DbFacade {
@@ -250,21 +244,10 @@ public class DbFacade {
 
     private static DbFacade instance;
 
-    private final JdbcTemplate jdbcTemplate;
-    private final DbEngineDialect dbEngineDialect;
-
     @Inject
     private Instance<Dao> daos;
 
-    @Inject
-    DbFacade(JdbcTemplate jdbcTemplate, DbEngineDialect dbEngineDialect) {
-
-        Objects.requireNonNull(jdbcTemplate, "jdbcTemplate cannot be null");
-        Objects.requireNonNull(dbEngineDialect, "dbEngineDialect cannot be null");
-
-        this.jdbcTemplate = jdbcTemplate;
-        this.dbEngineDialect = dbEngineDialect;
-
+    DbFacade() {
         init();
     }
 
@@ -311,22 +294,6 @@ public class DbFacade {
      */
     public static void setInstance(DbFacade dbFacade){
         instance = dbFacade;
-    }
-
-    private CustomMapSqlParameterSource getCustomMapSqlParameterSource() {
-        return new CustomMapSqlParameterSource(dbEngineDialect);
-    }
-
-    public String getEntityNameByIdAndType(Guid objectId, VdcObjectType vdcObjectType) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("entity_id", objectId)
-                .addValue("object_type", vdcObjectType.getValue());
-
-        Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withFunctionName("fn_get_entity_name").execute(
-                        parameterSource);
-
-        String resultKey = dbEngineDialect.getFunctionReturnKey();
-        return dbResults.get(resultKey) != null ? dbResults.get(resultKey).toString() : null;
     }
 
     /**

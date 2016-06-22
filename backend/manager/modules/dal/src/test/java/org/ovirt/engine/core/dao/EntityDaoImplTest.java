@@ -1,8 +1,10 @@
-package org.ovirt.engine.core.dal.dbbroker;
+package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import javax.inject.Inject;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -24,10 +26,12 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoTestCase;
-import org.ovirt.engine.core.dao.FixturesTool;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 
-public class DbFacadeDaoTest extends BaseDaoTestCase {
+public class EntityDaoImplTest extends BaseDaoTestCase {
 
     // entity IDs for testing retrieving an entity by id and type
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
@@ -44,142 +48,179 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
     private static final Guid NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
-
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+
+    @Inject
+    private EntityDao underTest;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private TagDao tagDao;
+    @Inject
+    private BookmarkDao bookmarkDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private RoleDao roleDao;
+    @Inject
+    private QuotaDao quotaDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VnicProfileDao vnicProfileDao;
+    @Inject
+    private DiskProfileDao diskProfileDao;
+    @Inject
+    private CpuProfileDao cpuProfileDao;
 
     @Test
     public void testGetEntityNameByIdAndTypeForVM() {
-        VmStatic vmStatic = dbFacade.getVmStaticDao().get(VM_ID);
+        VmStatic vmStatic = vmStaticDao.get(VM_ID);
         assertNotNull(vmStatic);
         String name = vmStatic.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForVmTemplate() {
-        VmTemplate vmTemplate = dbFacade.getVmTemplateDao().get(VM_TEMPLATE_ID);
+        VmTemplate vmTemplate = vmTemplateDao.get(VM_TEMPLATE_ID);
         assertNotNull(vmTemplate);
         String name = vmTemplate.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForHost() {
-        VdsStatic vds = dbFacade.getVdsStaticDao().get(VDS_ID);
+        VdsStatic vds = vdsStaticDao.get(VDS_ID);
         assertNotNull(vds);
         String name = vds.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForVmPool() {
-        VmPool vmPool = dbFacade.getVmPoolDao().get(VM_POOL_ID);
+        VmPool vmPool = vmPoolDao.get(VM_POOL_ID);
         assertNotNull(vmPool);
         String name = vmPool.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForTag() {
-        Tags tag = dbFacade.getTagDao().get(TAG_ID);
+        Tags tag = tagDao.get(TAG_ID);
         assertNotNull(tag);
         String name = tag.getTagName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForBookmark() {
-        Bookmark bookmark = dbFacade.getBookmarkDao().get(BOOKMARK_ID);
+        Bookmark bookmark = bookmarkDao.get(BOOKMARK_ID);
         assertNotNull(bookmark);
         String name = bookmark.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForCluster() {
-        Cluster cluster = dbFacade.getClusterDao().get(CLUSTER_ID);
+        Cluster cluster = clusterDao.get(CLUSTER_ID);
         assertNotNull(cluster);
         String name = cluster.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.Cluster)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.Cluster)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForStorageDomain() {
-        StorageDomain storageDomain = dbFacade.getStorageDomainDao().get(STORAGE_DOMAIN_ID);
+        StorageDomain storageDomain = storageDomainDao.get(STORAGE_DOMAIN_ID);
         assertNotNull(storageDomain);
         String name = storageDomain.getStorageName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_DOMAIN_ID, VdcObjectType.Storage)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(STORAGE_DOMAIN_ID, VdcObjectType.Storage)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForDataCenter() {
-        StoragePool storagePool = dbFacade.getStoragePoolDao().get(STORAGE_POOL_ID);
+        StoragePool storagePool = storagePoolDao.get(STORAGE_POOL_ID);
         assertNotNull(storagePool);
         String name = storagePool.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForUser() {
-        DbUser dbUser = dbFacade.getDbUserDao().get(USER_ID);
+        DbUser dbUser = dbUserDao.get(USER_ID);
         assertNotNull(dbUser);
         String name = dbUser.getLoginName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(USER_ID, VdcObjectType.User)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(USER_ID, VdcObjectType.User)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForRole() {
-        Role role = dbFacade.getRoleDao().get(ROLE_ID);
+        Role role = roleDao.get(ROLE_ID);
         assertNotNull(role);
         String name = role.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForQuota() {
-        Quota quota = dbFacade.getQuotaDao().getById(QUOTA_ID);
+        Quota quota = quotaDao.getById(QUOTA_ID);
         assertNotNull(quota);
         String name = quota.getQuotaName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(QUOTA_ID, VdcObjectType.Quota)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(QUOTA_ID, VdcObjectType.Quota)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForDisk() {
-        BaseDisk disk = dbFacade.getBaseDiskDao().get(DISK_ID);
+        BaseDisk disk = baseDiskDao.get(DISK_ID);
         assertNotNull(disk);
         String name = disk.getDiskAlias();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForNetwork() {
-        Network network = dbFacade.getNetworkDao().get(NETWORK_ID);
+        Network network = networkDao.get(NETWORK_ID);
         assertNotNull(network);
         String name = network.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForVNICProfile() {
-        VnicProfile vnicProfile = dbFacade.getVnicProfileDao().get(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
+        VnicProfile vnicProfile = vnicProfileDao.get(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
         assertNotNull(vnicProfile);
         String name = vnicProfile.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForDiskProfile() {
-        DiskProfile diskProfile = dbFacade.getDiskProfileDao().get(FixturesTool.DISK_PROFILE_1);
+        DiskProfile diskProfile = diskProfileDao.get(FixturesTool.DISK_PROFILE_1);
         assertNotNull(diskProfile);
         String name = diskProfile.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile)));
+        assertTrue(name.equals(underTest.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile)));
     }
 
     @Test
     public void testGetEntityNameByIdAndTypeForCpuProfile() {
-        CpuProfile cpuProfile = dbFacade.getCpuProfileDao().get(FixturesTool.CPU_PROFILE_1);
+        CpuProfile cpuProfile = cpuProfileDao.get(FixturesTool.CPU_PROFILE_1);
         assertNotNull(cpuProfile);
         String name = cpuProfile.getName();
-        assertEquals(name, dbFacade.getEntityNameByIdAndType(FixturesTool.CPU_PROFILE_1, VdcObjectType.CpuProfile));
+        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.CPU_PROFILE_1, VdcObjectType.CpuProfile));
     }
 }

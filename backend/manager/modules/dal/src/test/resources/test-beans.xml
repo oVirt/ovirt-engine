@@ -33,10 +33,7 @@
         <constructor-arg ref="jdbcTemplate"/>
     </bean>
 
-    <bean id="dbFacade" class="org.ovirt.engine.core.dal.dbbroker.DbFacade" depends-on="daos">
-        <constructor-arg ref="jdbcTemplate"/>
-        <constructor-arg ref="dbEngineDialect"/>
-    </bean>
+    <bean id="dbFacade" class="org.ovirt.engine.core.dal.dbbroker.DbFacade" depends-on="daos"/>
 
     <bean name="transactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

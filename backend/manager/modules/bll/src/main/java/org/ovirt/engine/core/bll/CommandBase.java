@@ -89,6 +89,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
+import org.ovirt.engine.core.dao.EntityDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
@@ -144,6 +145,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     @Inject
     private ObjectCompensation objectCompensation;
 
+    @Inject
+    private EntityDao entityDao;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
@@ -2195,7 +2198,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 entityType = permSubject.getObjectType();
                 entityId = permSubject.getObjectId();
                 if (entityType != null && entityId != null) {
-                    value = DbFacade.getInstance().getEntityNameByIdAndType(entityId, entityType);
+
+                    value = entityDao.getEntityNameByIdAndType(entityId, entityType);
                     if (value == null) {
                         value = entityId.toString();
                     }
