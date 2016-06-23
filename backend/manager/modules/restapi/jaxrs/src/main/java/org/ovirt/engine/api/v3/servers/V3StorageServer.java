@@ -21,7 +21,7 @@ import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.api.v3.V3Server;
-import org.ovirt.engine.api.v3.types.V3HostStorage;
+import org.ovirt.engine.api.v3.types.V3Storage;
 
 @Produces({"application/xml", "application/json"})
 public class V3StorageServer extends V3Server<StorageResource> {
@@ -30,7 +30,7 @@ public class V3StorageServer extends V3Server<StorageResource> {
     }
 
     @GET
-    public V3HostStorage get() {
+    public V3Storage get() {
         return adaptGet(getDelegate()::get);
     }
 }
