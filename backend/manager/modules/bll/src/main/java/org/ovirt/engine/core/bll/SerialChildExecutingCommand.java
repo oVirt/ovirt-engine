@@ -12,7 +12,7 @@ public interface SerialChildExecutingCommand {
      *            - indicating how many commands were already executed.
      * @return true if there are more operations to be performed, otherwise false.
      */
-    public boolean performNextOperation(int completedChildCount);
+    boolean performNextOperation(int completedChildCount);
 
     /**
      * method to handle immediately (before endWithFailure() is called) a failure.
