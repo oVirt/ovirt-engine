@@ -325,6 +325,7 @@ public class SpiceConsoleModel extends ConsoleModel {
                         configuredOptions.setTitle(getClientTitle());
                         configuredOptions.setVmName(getEntity().getName());
                         configuredOptions.setFullScreen(options.isFullScreen());
+                        configuredOptions.setSmartcardEnabledOverridden(options.isSmartcardEnabledOverridden());
                         configuredOptions.setAdminConsole(getConfigurator().getSpiceAdminConsole()
                                                           ? true
                                                           : !getEntity().getHasSpiceDriver());
