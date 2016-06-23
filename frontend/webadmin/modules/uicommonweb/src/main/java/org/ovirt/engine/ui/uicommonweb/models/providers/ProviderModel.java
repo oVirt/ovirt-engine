@@ -73,6 +73,7 @@ public class ProviderModel extends Model {
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
     private VmwarePropertiesModel vmwarePropertiesModel = new VmwarePropertiesModel();
     private KVMPropertiesModel kvmPropertiesModel = new KVMPropertiesModel();
+    private XENPropertiesModel xenPropertiesModel = new XENPropertiesModel();
     private String certificate;
     private EntityModel<Boolean> readOnly = new EntityModel<>();
 
@@ -145,6 +146,9 @@ public class ProviderModel extends Model {
         return kvmPropertiesModel;
     }
 
+    public XENPropertiesModel getXenPropertiesModel() {
+        return xenPropertiesModel;
+    }
 
     protected boolean isExternalNetwork() {
         return getType().getSelectedItem() == ProviderType.EXTERNAL_NETWORK;
@@ -168,6 +172,10 @@ public class ProviderModel extends Model {
 
     protected boolean isTypeKVM() {
         return getType().getSelectedItem() == ProviderType.KVM;
+    }
+
+    protected boolean isTypeXEN() {
+        return getType().getSelectedItem() == ProviderType.XEN;
     }
 
     public ListModel<StoragePool> getDataCenter() {
@@ -201,6 +209,8 @@ public class ProviderModel extends Model {
             case VMWARE:
                 return ""; //$NON-NLS-1$
             case KVM:
+                return ""; //$NON-NLS-1$
+            case XEN:
                 return ""; //$NON-NLS-1$
             case FOREMAN:
             default:
@@ -262,21 +272,26 @@ public class ProviderModel extends Model {
 
                 boolean isVmware = isTypeVmware();
                 boolean isKvm = isTypeKVM();
+                boolean isXen = isTypeXEN();
                 boolean requiresAuth = isTypeRequiresAuthentication();
                 getRequiresAuthentication().setEntity(isVmware || Boolean.valueOf(requiresAuth));
                 getRequiresAuthentication().setIsChangeable(!requiresAuth);
 
                 boolean isCinder = isTypeOpenStackVolume();
-                getDataCenter().setIsAvailable(isCinder || isVmware || isKvm);
+                getDataCenter().setIsAvailable(isCinder || isVmware || isKvm || isXen);
                 if (isCinder) {
                     updateDatacentersForVolumeProvider();
                 }
 
                 getVmwarePropertiesModel().setIsAvailable(isVmware);
                 getKvmPropertiesModel().setIsAvailable(isKvm);
-                getRequiresAuthentication().setIsAvailable(!isVmware);
-                getUrl().setIsAvailable(!isVmware && !isKvm);
-                if (isVmware || isKvm) {
+                getXenPropertiesModel().setIsAvailable(isXen);
+
+                getRequiresAuthentication().setIsAvailable(!isVmware && !isXen);
+                getUsername().setIsAvailable(!isXen);
+                getPassword().setIsAvailable(!isXen);
+                getUrl().setIsAvailable(!isVmware && !isKvm && !isXen);
+                if (isVmware || isKvm || isXen) {
                     updateDatacentersForExternalProvider();
                 }
             }
@@ -299,7 +314,7 @@ public class ProviderModel extends Model {
         getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!isTypeVmware() && !isTypeKVM()) {
+                if (!isTypeVmware() && !isTypeKVM() && !isTypeXEN()) {
                     return;
                 }
 
@@ -337,7 +352,9 @@ public class ProviderModel extends Model {
     }
 
     public ProxyHostPropertiesModel getProxyHostPropertiesModel() {
-        if (isTypeKVM()) {
+        if (isTypeXEN()) {
+            return getXenPropertiesModel();
+        } else if (isTypeKVM()) {
             return getKvmPropertiesModel();
         } else if (isTypeVmware()) {
             return getVmwarePropertiesModel();
@@ -385,6 +402,7 @@ public class ProviderModel extends Model {
         getNeutronAgentModel().validate();
         getVmwarePropertiesModel().validate();
         getKvmPropertiesModel().validate();
+        getXenPropertiesModel().validate();
         boolean connectionSettingsValid = validateConnectionSettings();
 
         return connectionSettingsValid &&
@@ -392,6 +410,7 @@ public class ProviderModel extends Model {
                 getType().getIsValid() &&
                 getNeutronAgentModel().getIsValid() &&
                 getKvmPropertiesModel().getIsValid() &&
+                getXenPropertiesModel().getIsValid() &&
                 getVmwarePropertiesModel().getIsValid();
     }
 
@@ -438,6 +457,10 @@ public class ProviderModel extends Model {
         } else if (isTypeKVM()) {
             provider.setUrl(getKvmPropertiesModel().getUrl().getEntity());
             provider.setAdditionalProperties(getKvmPropertiesModel().getKVMVmProviderProperties(
+                    dataCenter.getSelectedItem() != null ? dataCenter.getSelectedItem().getId() : null));
+        } else if (isTypeXEN()) {
+            provider.setUrl(getXenPropertiesModel().getUrl().getEntity());
+            provider.setAdditionalProperties(getXenPropertiesModel().getXENVmProviderProperties(
                     dataCenter.getSelectedItem() != null ? dataCenter.getSelectedItem().getId() : null));
         }
 

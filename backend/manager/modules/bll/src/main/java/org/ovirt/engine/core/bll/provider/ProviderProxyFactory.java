@@ -7,12 +7,15 @@ import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.bll.provider.vms.KVMVmProviderProxy;
 import org.ovirt.engine.core.bll.provider.vms.VmwareVmProviderProxy;
+import org.ovirt.engine.core.bll.provider.vms.XENVmProviderProxy;
 import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
+import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
+
 
 /**
  * The provider proxy factory can create a provider proxy according to the provider definition.
@@ -55,6 +58,9 @@ public class ProviderProxyFactory {
 
         case KVM:
             return (P) new KVMVmProviderProxy((Provider<KVMVmProviderProperties>) provider);
+
+        case XEN:
+            return (P) new XENVmProviderProxy((Provider<XENVmProviderProperties>) provider);
 
         default:
             return null;

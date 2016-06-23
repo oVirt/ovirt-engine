@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
+import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -72,6 +73,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private SortedListModel<EntityModel<VM>> importedVmModels;
     private ListModel<Provider<VmwareVmProviderProperties>> vmwareProviders;
     private ListModel<Provider<KVMVmProviderProperties>> kvmProviders;
+    private ListModel<Provider<XENVmProviderProperties>> xenProviders;
 
     private EntityModel<String> vCenter;
     private EntityModel<String> esx;
@@ -138,6 +140,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
         setVmwareProviders(new ListModel<Provider<VmwareVmProviderProperties>>());
         setKvmProviders(new ListModel<Provider<KVMVmProviderProperties>>());
+        setXenProviders(new ListModel<Provider<XENVmProviderProperties>>());
 
         setExportDomain(new EntityModel<StorageDomain>());
 
@@ -169,6 +172,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setInfoMessage(new EntityModel<String>());
 
         getKvmProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                providerChanged();
+            }
+        });
+
+        getXenProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 providerChanged();
@@ -341,8 +351,23 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         case KVM:
             kvmProviderChanged();
             break;
+        case XEN:
+            xenProviderChanged();
+            break;
         default:
         }
+    }
+
+    private void xenProviderChanged() {
+        Provider<XENVmProviderProperties> provider = getXenProviders().getSelectedItem();
+        if (provider == null) {
+            provider = new Provider<>();
+            provider.setAdditionalProperties(new XENVmProviderProperties());
+        }
+
+        XENVmProviderProperties properties = provider.getAdditionalProperties();
+        getXenUri().setEntity(properties.getUrl());
+        setupProxyHost(getXenProxyHosts(), properties.getProxyHostId());
     }
 
     private void kvmProviderChanged() {
@@ -534,6 +559,23 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }), ProviderType.KVM);
     }
 
+    private void loadXenProviders() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<Provider<XENVmProviderProperties>> providers = new ArrayList<>();
+                for (Provider<XENVmProviderProperties> provider : (List<Provider<XENVmProviderProperties>>) returnValue) {
+                    if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
+                            || provider.getAdditionalProperties().getStoragePoolId() == null) {
+                        providers.add(provider);
+                    }
+                }
+                providers.add(0, null);
+                getXenProviders().setItems(providers);
+            }
+        }), ProviderType.XEN);
+    }
+
     private void loadProviders() {
         switch(importSources.getSelectedItem()) {
         case VMWARE:
@@ -541,6 +583,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             break;
         case KVM:
             loadKvmProviders();
+            break;
+        case XEN:
+            loadXenProviders();
             break;
         default:
         }
@@ -1040,6 +1085,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void setKvmProviders(ListModel<Provider<KVMVmProviderProperties>> kvmProviders) {
         this.kvmProviders = kvmProviders;
+    }
+
+    public ListModel<Provider<XENVmProviderProperties>> getXenProviders() {
+        return xenProviders;
+    }
+
+    public void setXenProviders(ListModel<Provider<XENVmProviderProperties>> xenProviders) {
+        this.xenProviders = xenProviders;
     }
 
     public ListModel<VDS> getHosts() {

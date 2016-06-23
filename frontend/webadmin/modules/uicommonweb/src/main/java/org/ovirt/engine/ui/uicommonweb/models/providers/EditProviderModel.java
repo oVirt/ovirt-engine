@@ -66,6 +66,10 @@ public class EditProviderModel extends ProviderModel {
             getKvmPropertiesModel().init(provider);
         }
 
+        if (isTypeXEN()) {
+            getXenPropertiesModel().init(provider);
+        }
+
         oldUrl = provider.getUrl();
     }
 

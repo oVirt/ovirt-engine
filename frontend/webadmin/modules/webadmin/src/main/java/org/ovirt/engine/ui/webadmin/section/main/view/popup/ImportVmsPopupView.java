@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
+import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -117,6 +118,11 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @Path("kvmProviders.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Provider<KVMVmProviderProperties>> kvmProvidersEditor;
+
+    @UiField(provided = true)
+    @Path("xenProviders.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Provider<XENVmProviderProperties>> xenProvidersEditor;
 
     @UiField(provided = true)
     @Path("vmwareProviders.selectedItem")
@@ -303,6 +309,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
             }
         });
 
+        xenProvidersEditor = new ListModelListBoxEditor<>(new AbstractRenderer<Provider<XENVmProviderProperties>>() {
+            @Override
+            public String render(Provider<XENVmProviderProperties> provider) {
+                return provider == null ? constants.customExternalProvider() : provider.getName();
+            }
+        });
+
         vCenterEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel label = new EnableableFormLabel();
         label.setPaddingLeft(5);
@@ -350,6 +363,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         xenUriEditor.setLabel(constants.xenUri());
         xenUriEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
         xenProxyHostsEditor.setLabel(constants.proxyHost());
+        xenProvidersEditor.setLabel(constants.externalProviderLabel());
 
         kvmUriEditor.setLabel(constants.kvmUri());
         kvmUsernameEditor.setLabel(constants.usernameProvider());
@@ -466,6 +480,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         vmwareProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
         ovaPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.OVA);
         xenPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.XEN);
+        xenProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.XEN);
         kvmPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.KVM);
         kvmProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.KVM);
     }

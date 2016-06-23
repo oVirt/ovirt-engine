@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
+import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -67,6 +68,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 break;
             case VMWARE:
             case KVM:
+            case XEN:
                 additionalProperties = entity.getAdditionalProperties();
                 break;
             default:
@@ -164,6 +166,8 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), VmwareVmProviderProperties.class);
             case KVM:
                 return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KVMVmProviderProperties.class);
+            case XEN:
+                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), XENVmProviderProperties.class);
             default:
                 return null;
             }

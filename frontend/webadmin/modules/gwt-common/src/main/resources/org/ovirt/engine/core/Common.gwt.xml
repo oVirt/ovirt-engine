@@ -21,6 +21,7 @@
         <include name="common/businessentities/V2VJobInfo.java" />
         <include name="common/businessentities/VmwareVmProviderProperties.java" />
         <include name="common/businessentities/KVMVmProviderProperties.java" />
+        <include name="common/businessentities/XENVmProviderProperties.java" />
         <include name="aaa/AuthType.java" />
         <include name="aaa/DirectoryEntry.java" />
         <include name="aaa/ProfileEntry.java" />

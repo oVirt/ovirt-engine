@@ -25,6 +25,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.Provid
 import org.ovirt.engine.ui.webadmin.widget.provider.KVMPropertiesWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.VmwarePropertiesWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.XENPropertiesWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
@@ -135,6 +137,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Ignore
     KVMPropertiesWidget kvmPropertiesWidget;
 
+    @UiField
+    @Ignore
+    XENPropertiesWidget xenPropertiesWidget;
+
     @UiField(provided = true)
     @Path(value = "readOnly.entity")
     @WithElementId
@@ -197,6 +203,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         neutronAgentWidget.edit(model.getNeutronAgentModel());
         vmwarePropertiesWidget.edit(model.getVmwarePropertiesModel());
         kvmPropertiesWidget.edit(model.getKvmPropertiesModel());
+        xenPropertiesWidget.edit(model.getXenPropertiesModel());
     }
 
     @Override
@@ -204,6 +211,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         neutronAgentWidget.flush();
         vmwarePropertiesWidget.flush();
         kvmPropertiesWidget.flush();
+        xenPropertiesWidget.flush();
         return driver.flush();
     }
 
@@ -249,6 +257,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         readOnlyEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = vmwarePropertiesWidget.setTabIndexes(nextTabIndex);
         kvmPropertiesWidget.setTabIndexes(nextTabIndex++);
+        xenPropertiesWidget.setTabIndexes(nextTabIndex++);
         requiresAuthenticationEditor.setTabIndex(nextTabIndex++);
         usernameEditor.setTabIndex(nextTabIndex++);
         passwordEditor.setTabIndex(nextTabIndex++);
