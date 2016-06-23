@@ -10,6 +10,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public abstract class AbstractUserportalMaskedDataurlImageColumn extends AbstractDataurlImageColumn<UserPortalItemModel> {
 
@@ -35,8 +36,15 @@ public abstract class AbstractUserportalMaskedDataurlImageColumn extends Abstrac
     @Override
     public void render(Cell.Context context, UserPortalItemModel itemModel, SafeHtmlBuilder sb) {
         if (!itemModel.isVmUp()) {
-            AbstractMaskedVmImageColumn.renderMask(mask, sb);
+            renderMask(mask, sb);
         }
         super.render(context, itemModel, sb);
+    }
+
+    private static void renderMask(ImageResource mask, SafeHtmlBuilder sb) {
+        // TODO why hardcode to 19px left here?
+        sb.appendHtmlConstant("<div style=\"position: absolute; left: 19px\" >"); //$NON-NLS-1$
+        sb.append(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(mask).getHTML()));
+        sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
     }
 }
