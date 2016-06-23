@@ -51,7 +51,7 @@ public class ConsoleDescriptorGenerator {
         StringBuilder configBuilder = new StringBuilder();
 
         configBuilder.append("\ntls-port=").append(options.getSecurePort())
-            .append("\nenable-smartcard=").append(boolToInt(options.isSmartcardEnabled()))
+            .append("\nenable-smartcard=").append(boolToInt(options.passSmartcardOption()))
             .append("\nenable-usb-autoshare=").append(boolToInt(options.isUsbAutoShare()))
             .append("\nusb-filter=").append(options.getUsbFilter());
 
