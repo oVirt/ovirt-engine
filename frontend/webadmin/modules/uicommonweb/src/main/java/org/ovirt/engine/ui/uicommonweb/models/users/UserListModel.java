@@ -334,6 +334,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
 
         UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
         closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        closeCommand.setIsCancel(true);
         model.getCommands().add(closeCommand);
     }
 
