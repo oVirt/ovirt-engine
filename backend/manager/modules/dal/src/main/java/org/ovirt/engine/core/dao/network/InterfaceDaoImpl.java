@@ -157,6 +157,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("bridged", nic.isBridged())
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
                 .addValue("ad_partner_mac", nic.getAdPartnerMac())
+                .addValue("ad_aggregator_id", nic.getAdAggregatorId())
                 .addValue("reported_switch_type", nic.getReportedSwitchType() == null ? null : nic.getReportedSwitchType().getOptionValue());
     }
 
@@ -345,6 +346,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                         HashSet.class));
                     entity.setAdPartnerMac(rs.getString("ad_partner_mac"));
+                    entity.setAdAggregatorId(getInteger(rs, "ad_aggregator_id"));
 
                     return entity;
                 }

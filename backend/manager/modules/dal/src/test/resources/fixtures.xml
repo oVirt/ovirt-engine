@@ -6420,6 +6420,8 @@
         <column>ipv6_address</column>
         <column>ipv6_prefix</column>
         <column>ipv6_gateway</column>
+        <column>ad_aggregator_id</column>
+
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
             <value>eth0</value>
@@ -6445,6 +6447,7 @@
             <value>1::2</value>
             <value>666</value>
             <value>1:2:3:4:5:6:7:8</value>
+            <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9df</value>
@@ -6465,6 +6468,7 @@
             <value>2</value>
             <value>2010-11-12 10:12:41</value>
             <value>2010-11-12 15:57:01</value>
+            <null />
             <null />
             <null />
             <null />
@@ -6497,6 +6501,7 @@
             <null />
             <null />
             <null />
+            <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9de</value>
@@ -6517,6 +6522,7 @@
             <value>2</value>
             <value>2012-11-12 10:12:41</value>
             <value>2012-11-12 15:57:01</value>
+            <null />
             <null />
             <null />
             <null />

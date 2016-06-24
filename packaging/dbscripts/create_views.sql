@@ -2146,7 +2146,8 @@ SELECT vds_interface_statistics.rx_rate,
     vds_interface.qos_overridden AS qos_overridden,
     vds_interface.labels AS labels,
     vds_static.cluster_id AS cluster_id,
-    vds_interface.ad_partner_mac
+    vds_interface.ad_partner_mac,
+    vds_interface.ad_aggregator_id
 FROM vds_interface_statistics
 INNER JOIN vds_interface
     ON vds_interface_statistics.id = vds_interface.id

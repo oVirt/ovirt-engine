@@ -71,6 +71,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private NetworkImplementationDetails networkImplementationDetails;
     private HostNetworkQos qos;
     private String adPartnerMac;
+    private Integer adAggregatorId;
 
 
     @ValidNetworkLabelFormat(message = "NETWORK_LABEL_FORMAT_INVALID")
@@ -491,7 +492,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append("type", getType())
                 .append("networkImplementationDetails", getNetworkImplementationDetails())
                 .append("qos", getQos())
-                .append("adPartnerMac", getAdPartnerMac());
+                .append("adPartnerMac", getAdPartnerMac())
+                .append("adAggregatorId", adAggregatorId);
     }
 
     @Override
@@ -505,6 +507,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     public void setAdPartnerMac(String adPartnerMac) {
         this.adPartnerMac = adPartnerMac;
+    }
+
+    public Integer getAdAggregatorId() {
+        return adAggregatorId;
+    }
+
+    public void setAdAggregatorId(Integer adAggregationId) {
+        this.adAggregatorId = adAggregationId;
     }
 
     @Override
@@ -532,7 +542,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 vlanId,
                 qos,
                 labels,
-                adPartnerMac
+                adPartnerMac,
+                adAggregatorId
         );
     }
 
@@ -567,7 +578,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 && Objects.equals(vlanId, other.vlanId)
                 && Objects.equals(qos, other.qos)
                 && Objects.equals(labels, other.labels)
-                && Objects.equals(adPartnerMac, other.adPartnerMac);
+                && Objects.equals(adPartnerMac, other.adPartnerMac)
+                && Objects.equals(adAggregatorId, other.adAggregatorId);
     }
 
     /**

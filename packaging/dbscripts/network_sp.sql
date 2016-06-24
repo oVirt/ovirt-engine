@@ -419,7 +419,8 @@ CREATE OR REPLACE FUNCTION Insertvds_interface (
     v_ipv6_address VARCHAR(50),
     v_ipv6_prefix INT,
     v_ipv6_gateway VARCHAR(50),
-    v_ad_partner_mac VARCHAR(50)
+    v_ad_partner_mac VARCHAR(50),
+    v_ad_aggregator_id INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -449,7 +450,8 @@ BEGIN
         ipv6_gateway,
         ipv6_prefix,
         ipv6_boot_protocol,
-        ad_partner_mac
+        ad_partner_mac,
+        ad_aggregator_id
         )
     VALUES (
         v_addr,
@@ -477,7 +479,8 @@ BEGIN
         v_ipv6_gateway,
         v_ipv6_prefix,
         v_ipv6_boot_protocol,
-        v_ad_partner_mac
+        v_ad_partner_mac,
+        v_ad_aggregator_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -508,7 +511,8 @@ CREATE OR REPLACE FUNCTION Updatevds_interface (
     v_ipv6_gateway VARCHAR(50),
     v_ipv6_prefix INT,
     v_ipv6_boot_protocol INT,
-    v_ad_partner_mac VARCHAR(50)
+    v_ad_partner_mac VARCHAR(50),
+    v_ad_aggregator_id INT
     )
 RETURNS VOID
     --The [vds_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -540,7 +544,8 @@ BEGIN
         ipv6_gateway = v_ipv6_gateway,
         ipv6_prefix = v_ipv6_prefix,
         ipv6_boot_protocol = v_ipv6_boot_protocol,
-        ad_partner_mac = v_ad_partner_mac
+        ad_partner_mac = v_ad_partner_mac,
+        ad_aggregator_id = v_ad_aggregator_id
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
