@@ -27,7 +27,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
@@ -73,12 +72,7 @@ public class V3VmDiskServer extends V3Server<VmDiskResource> {
 
     @GET
     public V3Disk get() {
-        V3Disk disk = adaptGet(getDelegate()::get);
-        DiskAttachment diskAttachment = BackendApiResource.getInstance().getVmsResource().getVmResource(vmId).
-                getDiskAttachmentsResource().getAttachmentResource(diskId).get();
-        disk.setBootable(diskAttachment.isBootable());
-        disk.setInterface(diskAttachment.getInterface().toString().toLowerCase());
-        return disk;
+        return adaptGet(getDelegate()::get);
     }
 
     @POST
