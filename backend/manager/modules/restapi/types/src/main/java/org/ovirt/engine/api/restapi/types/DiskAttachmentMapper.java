@@ -17,7 +17,6 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.DiskAttachment;
-import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -36,7 +35,7 @@ public class DiskAttachmentMapper {
             entity.setBoot(model.isBootable());
         }
         if (model.isSetInterface()) {
-            entity.setDiskInterface(map(model.getInterface(), null));
+            entity.setDiskInterface(DiskMapper.mapInterface(model.getInterface()));
         }
         return entity;
     }
@@ -46,41 +45,7 @@ public class DiskAttachmentMapper {
         DiskAttachment model = template != null ? template : new DiskAttachment();
         model.setId(entity.getDiskId().toString());
         model.setBootable(entity.isBoot());
-        model.setInterface(map(entity.getDiskInterface(), null));
+        model.setInterface(DiskMapper.mapInterface(entity.getDiskInterface()));
         return model;
-    }
-
-    @Mapping(from = DiskInterface.class, to = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class)
-    public static org.ovirt.engine.core.common.businessentities.storage.DiskInterface map(
-            DiskInterface diskInterface,
-            org.ovirt.engine.core.common.businessentities.storage.DiskInterface template) {
-        switch (diskInterface) {
-        case IDE:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.IDE;
-        case VIRTIO:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO;
-        case VIRTIO_SCSI:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO_SCSI;
-        case SPAPR_VSCSI:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SPAPR_VSCSI;
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class, to = DiskInterface.class)
-    public static DiskInterface map(org.ovirt.engine.core.common.businessentities.storage.DiskInterface diskInterface, DiskInterface template) {
-        switch (diskInterface) {
-        case IDE:
-            return DiskInterface.IDE;
-        case VirtIO:
-            return DiskInterface.VIRTIO;
-        case VirtIO_SCSI:
-            return DiskInterface.VIRTIO_SCSI;
-        case SPAPR_VSCSI:
-            return DiskInterface.SPAPR_VSCSI;
-        default:
-            return null;
-        }
     }
 }
