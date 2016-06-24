@@ -2082,8 +2082,16 @@ public class VdsBrokerObjectsBuilder {
             if (mtu != null) {
                 iface.setMtu(mtu);
             }
-
             addBootProtocol(nicProperties, iface);
+            addAdAggregatorId(nicProperties, iface);
+        }
+    }
+
+    private static void addAdAggregatorId(Map<String, Object> nicProperties,
+            VdsNetworkInterface iface) {
+        Object adAggregatorId = nicProperties.get("ad_aggregator_id");
+        if (adAggregatorId != null) {
+            iface.setAdAggregatorId(Integer.parseInt((String) adAggregatorId));
         }
     }
 
