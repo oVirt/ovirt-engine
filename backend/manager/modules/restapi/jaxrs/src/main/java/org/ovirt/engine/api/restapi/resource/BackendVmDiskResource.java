@@ -21,7 +21,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendVmDisksResource.SUB_C
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
@@ -37,6 +36,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -47,7 +47,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -240,7 +239,7 @@ public class BackendVmDiskResource
 
     private DiskVmElement updateDiskVmElementFromDisk(Disk disk, DiskVmElement diskVmElement) {
         if (disk.isSetInterface()) {
-            diskVmElement.setDiskInterface(DiskInterface.forValue(disk.getInterface().name().toLowerCase()));
+            diskVmElement.setDiskInterface(DiskMapper.mapInterface(disk.getInterface()));
         }
 
         if(disk.isSetBootable()) {

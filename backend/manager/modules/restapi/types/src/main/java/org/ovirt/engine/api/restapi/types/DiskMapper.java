@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
+import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
@@ -316,6 +317,42 @@ public class DiskMapper {
                 return DiskStorageType.CINDER;
             default:
                 return DiskStorageType.IMAGE;
+        }
+    }
+
+    public static org.ovirt.engine.core.common.businessentities.storage.DiskInterface mapInterface(DiskInterface diskInterface) {
+        if (diskInterface == null) {
+            return null;
+        }
+        switch (diskInterface) {
+        case IDE:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.IDE;
+        case VIRTIO:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO;
+        case VIRTIO_SCSI:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO_SCSI;
+        case SPAPR_VSCSI:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SPAPR_VSCSI;
+        default:
+            throw new IllegalArgumentException("Unknown disk interface \"" + diskInterface + "\"");
+        }
+    }
+
+    public static DiskInterface mapInterface(org.ovirt.engine.core.common.businessentities.storage.DiskInterface diskInterface) {
+        if (diskInterface == null) {
+            return null;
+        }
+        switch (diskInterface) {
+        case IDE:
+            return DiskInterface.IDE;
+        case VirtIO:
+            return DiskInterface.VIRTIO;
+        case VirtIO_SCSI:
+            return DiskInterface.VIRTIO_SCSI;
+        case SPAPR_VSCSI:
+            return DiskInterface.SPAPR_VSCSI;
+        default:
+            throw new IllegalArgumentException("Unknown disk interface \"" + diskInterface + "\"");
         }
     }
 }
