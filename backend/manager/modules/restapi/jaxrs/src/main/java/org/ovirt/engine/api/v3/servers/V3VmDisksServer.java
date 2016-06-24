@@ -55,7 +55,7 @@ public class V3VmDisksServer extends V3Server<VmDisksResource> {
 
     @Path("{id}")
     public V3VmDiskServer getDiskResource(@PathParam("id") String id) {
-        return new V3VmDiskServer(vmId, id, getDelegate().getDiskResource(id));
+        return new V3VmDiskServer(id, getDelegate().getDiskResource(id));
     }
 
     private void loadAttachmentDataToDisks(V3Disks disks) {
