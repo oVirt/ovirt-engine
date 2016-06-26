@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -36,17 +34,17 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
         return getSucceeded() ? AuditLogType.USER_PAUSE_VM : AuditLogType.USER_FAILED_PAUSE_VM;
     }
 
-    public boolean canPauseVm(Guid vmId, ArrayList<String> message) {
+    private boolean canPauseVm(Guid vmId) {
         boolean retValue = true;
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm == null) {
             retValue = false;
-            message.add(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         } else {
 
             ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
             if (!nonManagedVmValidationResult.isValid()) {
-                message.add(nonManagedVmValidationResult.getMessage().toString());
+                addValidationMessage(nonManagedVmValidationResult.getMessage());
                 retValue = false;
             }
 
@@ -55,19 +53,19 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
                 retValue = failVmStatusIllegal();
             } else if (!vm.isRunning()) {
                 retValue = false;
-                message.add(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
             }
         }
 
         if (!retValue) {
-            message.add(EngineMessage.VAR__ACTION__PAUSE.toString());
-            message.add(EngineMessage.VAR__TYPE__VM.toString());
+            addValidationMessage(EngineMessage.VAR__ACTION__PAUSE);
+            addValidationMessage(EngineMessage.VAR__TYPE__VM);
         }
         return retValue;
     }
 
     @Override
     protected boolean validate() {
-        return canPauseVm(getParameters().getVmId(), getReturnValue().getValidationMessages());
+        return canPauseVm(getParameters().getVmId());
     }
 }
