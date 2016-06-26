@@ -33,7 +33,7 @@ public class SystemProviderFinder {
         HostProviderProxy proxy;
         for (Provider<?> provider : hostProviders) {
             proxy = ProviderProxyFactory.getInstance().create(provider);
-            if (proxy.findContentHost(systemHostName) != null) {
+            if (proxy.isContentHostExist(systemHostName)) {
                 return proxy;
             }
         }
