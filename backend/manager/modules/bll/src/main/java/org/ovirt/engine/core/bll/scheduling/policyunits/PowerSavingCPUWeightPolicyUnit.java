@@ -11,16 +11,16 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NoneWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
 
-    public NoneWeightPolicyUnit(PolicyUnit policyUnit,
+public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPolicyUnit {
+
+    public PowerSavingCPUWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
     }
 
     @Override
     public List<Pair<Guid, Integer>> score(VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        return super.score(cluster, hosts, vm, parameters);
+        return reverseEvenDistributionScore(cluster, hosts, vm, parameters);
     }
-
 }

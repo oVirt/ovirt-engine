@@ -12,23 +12,31 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-public class PowerSavingWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
+public class EvenDistributionMemoryWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
 
-    public PowerSavingWeightPolicyUnit(PolicyUnit policyUnit,
+    public EvenDistributionMemoryWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
     }
 
     @Override
     public List<Pair<Guid, Integer>> score(VDSGroup cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
+        float maxMemoryOfVdsInCluster = getMaxMemoryOfVdsInCluster(hosts);
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
-            int score = MaxSchedulerWeight - 1;
-            if (vds.getVmCount() > 0) {
-                score -= calcEvenDistributionScore(vds, vm, cluster.getCountThreadsAsCores());
-            }
-            scores.add(new Pair<>(vds.getId(), score));
+            scores.add(new Pair<>(vds.getId(), calcEvenDistributionScore(maxMemoryOfVdsInCluster, vds, vm, false)));
         }
         return scores;
     }
+
+    @Override
+    protected int calcEvenDistributionScore(float maxMemoryOfVdsInCluster,
+            VDS vds,
+            VM vm,
+            boolean countThreadsAsCores) {
+        int score = Math.round(((vds.getMaxSchedulingMemory() - 1) * (MaxSchedulerWeight - 1))
+                / (maxMemoryOfVdsInCluster - 1));
+        return MaxSchedulerWeight - score;
+    }
+
 }

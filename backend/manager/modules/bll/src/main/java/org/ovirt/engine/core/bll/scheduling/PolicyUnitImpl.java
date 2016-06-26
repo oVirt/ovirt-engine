@@ -13,7 +13,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionCPUWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionMemoryWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationBalancePolicyUnit;
@@ -27,10 +28,10 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingCPUWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingMemoryWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -87,29 +88,19 @@ public class PolicyUnitImpl {
         case "CPU-Level":
             return new CpuLevelFilterPolicyUnit(policyUnit, pendingResourceManager);
         case "None":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new NoneWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                return new NoneBalancePolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
+            return new NoneBalancePolicyUnit(policyUnit, pendingResourceManager);
         case "OptimalForPowerSaving":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new PowerSavingWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                return new PowerSavingBalancePolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
+            return new PowerSavingBalancePolicyUnit(policyUnit, pendingResourceManager);
         case "OptimalForEvenDistribution":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
-                return new EvenDistributionWeightPolicyUnit(policyUnit, pendingResourceManager);
-            }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
-                return new EvenDistributionBalancePolicyUnit(policyUnit, pendingResourceManager);
-            }
-            break;
+            return new EvenDistributionBalancePolicyUnit(policyUnit, pendingResourceManager);
+        case "OptimalForPowerSavingCPU":
+            return new PowerSavingCPUWeightPolicyUnit(policyUnit, pendingResourceManager);
+        case "OptimalForEvenDistributionCPU":
+            return new EvenDistributionCPUWeightPolicyUnit(policyUnit, pendingResourceManager);
+        case "OptimalForPowerSavingMemory":
+            return new PowerSavingMemoryWeightPolicyUnit(policyUnit, pendingResourceManager);
+        case "OptimalForEvenDistributionMemory":
+            return new EvenDistributionMemoryWeightPolicyUnit(policyUnit, pendingResourceManager);
         case "OptimalForEvenGuestDistribution":
                 if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                     return new EvenGuestDistributionWeightPolicyUnit(policyUnit, pendingResourceManager);
