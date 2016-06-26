@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,6 +191,9 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         DiskVmElement diskVmElement = getDiskVmElement();
         diskVmElement.getId().setDeviceId(disk.getId());
         getDiskVmElementDao().save(diskVmElement);
+
+        // When performing hot plug for VirtIO-SCSI or SPAPR_VSCSI the address map calculation needs this info to be populated
+        disk.setDiskVmElements(Collections.singletonList(diskVmElement));
 
         // update cached image
         List<Disk> imageList = new ArrayList<>();
