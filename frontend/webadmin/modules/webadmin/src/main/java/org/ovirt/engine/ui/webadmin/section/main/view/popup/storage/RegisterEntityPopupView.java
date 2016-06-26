@@ -108,7 +108,9 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ListModel<ImportEntityData<E>> entities = (ListModel<ImportEntityData<E>>) sender;
                 ImportEntityData<E> importEntityData = entities.getSelectedItem();
-                registerEntityInfoPanel.updateTabsData(importEntityData);
+                if (importEntityData != null) {
+                    registerEntityInfoPanel.updateTabsData(importEntityData);
+                }
             }
         });
 
