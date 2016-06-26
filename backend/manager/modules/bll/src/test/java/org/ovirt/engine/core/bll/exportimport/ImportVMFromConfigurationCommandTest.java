@@ -4,6 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -89,6 +92,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Mock
     private MacPoolPerDc macPoolPerDc;
+
+    @Mock
+    private ExternalVmMacsFinder externalVmMacsFinder;
 
     @Before
     public void setUp() throws IOException {
@@ -144,8 +150,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(anyMap());
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(anyMap());
-
-        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(ValidationResult.VALID);
+        final VM expectedVm = cmd.getVm();
+        when(externalVmMacsFinder.findExternalMacAddresses(eq(expectedVm), any(CommandContext.class)))
+                .thenReturn(Collections.emptySet());
+        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList()))
+                .thenReturn(ValidationResult.VALID);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
@@ -217,6 +226,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         initUnregisteredOVFData(resultOvfEntityData);
         cmd = spy(new ImportVmFromConfigurationCommand<ImportVmParameters>(
                 parameters, CommandContext.createContext(parameters.getSessionId())) {
+
+            {
+                this.externalVmMacsFinder = ImportVMFromConfigurationCommandTest.this.externalVmMacsFinder;
+            }
+
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override
