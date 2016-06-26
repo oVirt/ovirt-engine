@@ -324,7 +324,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public void setDefaultInterface() {
         Guid vmId = getVmId();
-        if (Guid.isNullOrEmpty(vmId)) {
+        if (Guid.isNullOrEmpty(vmId) || getDisk() == null) {
             getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
         } else {
             getDiskInterface().setSelectedItem(getDisk().getDiskVmElementForVm(vmId).getDiskInterface());
