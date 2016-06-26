@@ -21,11 +21,16 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.ParametersHelper;
 import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.resource.DiskAttachmentResource;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -62,8 +67,36 @@ public class BackendDiskAttachmentResource
     }
 
     @Override
-    public DiskAttachment update(DiskAttachment diskAttachment) {
-        // TODO: Implement this method.
-        return null;
+    public DiskAttachment update(DiskAttachment attachment) {
+        return performUpdate(attachment, new AddDiskResolver(), VdcActionType.UpdateVmDisk, new UpdateParametersProvider());
+    }
+
+    private class AddDiskResolver extends EntityIdResolver<Guid> {
+        @Override
+        public DiskVmElement lookupEntity(Guid id) throws BackendFailureException {
+            return getEntity(
+                    DiskVmElement.class,
+                    VdcQueryType.GetDiskVmElementById,
+                    new VmDeviceIdQueryParameters(new VmDeviceId(id, vmId)),
+                    id.toString(),
+                    false);
+        }
+    }
+
+    protected class UpdateParametersProvider implements ParametersProvider<DiskAttachment, org.ovirt.engine.core.common.businessentities.storage.DiskVmElement> {
+        @Override
+        public VdcActionParametersBase getParameters(DiskAttachment incoming, org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity) {
+            // Disk has to be sent along with the attachment data to the update command
+            Disk disk = runQuery(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(Guid.createGuidFromString(diskId))).getReturnValue();
+
+            // If a <disk> was specified inside the attachment data we can update its properties too
+            if (incoming.isSetDisk()) {
+                disk = DiskMapper.map(incoming.getDisk(), disk);
+            }
+
+            DiskVmElement dve = map(incoming, entity);
+            dve.getId().setVmId(vmId);
+            return new VmDiskOperationParameterBase(dve, disk);
+        }
     }
 }
