@@ -699,6 +699,7 @@ public enum AuditLogType {
     USER_REMOVE_CLUSTER(813),
     USER_REMOVE_CLUSTER_FAILED(814, AuditLogSeverity.ERROR),
     MAC_POOL_EMPTY(816, AuditLogSeverity.WARNING),
+    MAC_ADDRESS_IS_EXTERNAL(925, AuditLogSeverity.WARNING),
     MAC_ADDRESS_IS_IN_USE(833, AuditLogSeverity.WARNING),
     MAC_ADDRESS_IS_IN_USE_UNPLUG(838, AuditLogSeverity.WARNING),
     HOST_AVAILABLE_UPDATES_FAILED(839, AuditLogSeverity.ERROR, AuditLogTimeInterval.HOUR.getValue() * 12),

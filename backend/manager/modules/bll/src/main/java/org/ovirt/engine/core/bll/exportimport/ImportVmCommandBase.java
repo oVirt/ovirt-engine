@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -18,6 +21,7 @@ import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -58,12 +62,17 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends VmCommand<T> {
 
+    private static final String COMMA_SEPARATOR = ", ";
+
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
     private Guid sourceDomainId = Guid.Empty;
     private StorageDomain sourceDomain;
     private ImportValidator importValidator;
     private Version effectiveCompatibilityVersion;
+
+    @Inject
+    ExternalVmMacsFinder externalVmMacsFinder;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -413,6 +422,21 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         setSucceeded(true);
     }
 
+    private void reportExternalMacs() {
+        final VM vm = getVm();
+        final Set<String> externalMacAddresses = externalVmMacsFinder.findExternalMacAddresses(vm, getContext());
+        if (CollectionUtils.isNotEmpty(externalMacAddresses)) {
+            auditLog(createExternalMacsAuditLog(vm, externalMacAddresses), AuditLogType.MAC_ADDRESS_IS_EXTERNAL);
+        }
+    }
+
+    private AuditLogableBase createExternalMacsAuditLog(VM vm, Set<String> externalMacs) {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setVmId(vm.getId());
+        externalMacs.stream().forEach(mac -> logable.appendCustomValue("MACAddr", mac, COMMA_SEPARATOR));
+        return logable;
+    }
+
     protected abstract void processImages();
 
     protected void addVmToDb() {
@@ -504,6 +528,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             for (int i = 0; i < nics.size(); ++i) {
                 nics.get(i).setMacAddress(macAddresses.get(i));
             }
+        } else {
+            reportExternalMacs();
         }
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {

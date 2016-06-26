@@ -4,6 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
+import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -46,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -91,6 +94,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Mock
     private MacPoolPerCluster macPoolPerCluster;
+
+    @Mock
+    private ExternalVmMacsFinder externalVmMacsFinder;
 
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
@@ -148,8 +154,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(anyMap());
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(anyMap());
-
-        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(ValidationResult.VALID);
+        final VM expectedVm = cmd.getVm();
+        when(externalVmMacsFinder.findExternalMacAddresses(eq(expectedVm), any(CommandContext.class)))
+                .thenReturn(Collections.emptySet());
+        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList()))
+                .thenReturn(ValidationResult.VALID);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
@@ -220,7 +229,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         ImportVmParameters parameters = createParametersWhenImagesExistOnTargetStorageDomain();
         initUnregisteredOVFData(resultOvfEntityData);
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-        cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters));
+        cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters,
+                macPoolPerCluster,
+                externalVmMacsFinder));
         cmd.init();
         doReturn(mock(MacPool.class)).when(cmd).getMacPool();
         validator = spy(new ImportValidator(parameters));
@@ -269,9 +280,13 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     private class ImportVmParametersImportVmFromConfigurationCommandStub extends ImportVmFromConfigurationCommand<ImportVmParameters> {
 
-        public ImportVmParametersImportVmFromConfigurationCommandStub(ImportVmParameters parameters) {
+        public ImportVmParametersImportVmFromConfigurationCommandStub(ImportVmParameters parameters,
+                MacPoolPerCluster macPoolPerCluster,
+                ExternalVmMacsFinder externalVmMacsFinder) {
+
             super(parameters, CommandContext.createContext(parameters.getSessionId()));
-            macPoolPerCluster = ImportVMFromConfigurationCommandTest.this.macPoolPerCluster;
+            this.macPoolPerCluster = macPoolPerCluster;
+            this.externalVmMacsFinder = externalVmMacsFinder;
         }
 
         // Overridden here and not during spying, since it's called in the constructor
