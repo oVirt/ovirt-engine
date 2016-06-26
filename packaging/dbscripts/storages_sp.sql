@@ -1268,8 +1268,9 @@ BEGIN
                 AND storage_domain_static.storage_type IN (
                     1,
                     4,
-                    6
-                    ) -- file storage domains - nfs,posix,local
+                    6,
+                    7
+                    ) -- file storage domains - nfs,posix,local,gluster
                 AND storage_server_connections.id = storage_domain_static.storage
 
             UNION ALL
