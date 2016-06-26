@@ -2,8 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -38,9 +42,16 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
 
 public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
         extends VmPoolUserCommandBase<T> implements QuotaVdsDependent {
+
+    @Inject
+    private LockManager lockManager;
+
+    private Set<Guid> lockedVms = new HashSet<>();
 
     private Guid vmToAttach;
 
@@ -119,9 +130,10 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
         List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(getVmPoolId(), VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachPrestartedVmToUser(map.getVmId(),
-                        getVmPool().isStateful(),
-                        getReturnValue().getValidationMessages())) {
+                if (!lockedVms.contains(map.getVmId())
+                        && canAttachPrestartedVmToUser(map.getVmId(),
+                                getVmPool().isStateful(),
+                                getReturnValue().getValidationMessages())) {
                     return map.getVmId();
                 }
             }
@@ -133,7 +145,8 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
         List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(getVmPoolId(), VMStatus.Down);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachNonPrestartedVmToUser(map.getVmId(), getReturnValue().getValidationMessages())) {
+                if (!lockedVms.contains(map.getVmId())
+                        && canAttachNonPrestartedVmToUser(map.getVmId(), getReturnValue().getValidationMessages())) {
                     return map.getVmId();
                 }
             }
@@ -166,65 +179,80 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
     @Override
     protected void executeCommand() {
         initPoolUser();
+
         boolean isPrestartedVm = false;
         Guid vmToAttach;
+        EngineLock vmLock;
+
         synchronized (_lockObject) {
-            vmToAttach = getPrestartedVmToAttach();
-            if (!Guid.Empty.equals(vmToAttach)) {
-                isPrestartedVm = true;
-            } else {
-                vmToAttach = getNonPrestartedVmToAttach();
+            while (true) {
+                // Find a VM to use
+                vmToAttach = getPrestartedVmToAttach();
+                if (!Guid.Empty.equals(vmToAttach)) {
+                    isPrestartedVm = true;
+                } else {
+                    vmToAttach = getNonPrestartedVmToAttach();
+                }
+
+                // No VM available
+                if (Guid.Empty.equals(vmToAttach)) {
+                    log.info("No free Vms in pool '{}'. Cannot allocate for user '{}'", getVmPoolId(), getAdUserId());
+                    throw new EngineException(EngineError.NO_FREE_VM_IN_POOL);
+                }
+
+                // Lock the VM
+                vmLock = createEngineLockForRunVm(vmToAttach);
+                if (acquireLock(vmLock)) {
+                    break;
+                } else {
+                    lockedVms.add(vmToAttach); // VM is locked by another command, ignore it
+                }
             }
 
-            if (!Guid.Empty.equals(vmToAttach)) {
-                getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
-                setVmId(vmToAttach);
-                Permission perm = new Permission(getAdUserId(), PredefinedRoles.ENGINE_USER.getId(), vmToAttach,
-                        VdcObjectType.VM);
-                PermissionsOperationsParameters permParams = new PermissionsOperationsParameters(perm);
-                permParams.setShouldBeLogged(false);
-                permParams.setParentCommand(getActionType());
-                permParams.setParentParameters(getParameters());
-                VdcReturnValueBase vdcReturnValueFromAddPerm = runInternalAction(VdcActionType.AddPermission,
-                        permParams,
-                        cloneContext().withoutExecutionContext().withoutLock());
-                if (!vdcReturnValueFromAddPerm.getSucceeded()) {
-                    log.info("Failed to give user '{}' permission to Vm '{}'", getAdUserId(), vmToAttach);
-                    setActionReturnValue(vdcReturnValueFromAddPerm);
-                    return;
-                } else {
-                    log.info("Succeeded giving user '{}' permission to Vm '{}'", getAdUserId(), vmToAttach);
-                }
+            getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
+            setVmId(vmToAttach);
+
+            VdcReturnValueBase vdcReturnValue = attachUserToVm(vmToAttach);
+
+            if (!vdcReturnValue.getSucceeded()) {
+                log.info("Failed to give user '{}' permission to Vm '{}'", getAdUserId(), vmToAttach);
+                setActionReturnValue(vdcReturnValue);
+                releaseLock(vmLock);
+                return;
             } else {
-                log.info("No free Vms in pool '{}'. Cannot allocate for user '{}'", getVmPoolId(), getAdUserId());
-                throw new EngineException(EngineError.NO_FREE_VM_IN_POOL);
+                log.info("Succeeded giving user '{}' permission to Vm '{}'", getAdUserId(), vmToAttach);
             }
         }
 
-        // Only when using a Vm that is not prestarted do we need to run the vm
         if (!isPrestartedVm) {
+            // Only when using a VM that is not prestarted we need to run the VM
             setVm(getVmDao().get(vmToAttach));
-            RunVmParams runVmParams = new RunVmParams(vmToAttach);
-            runVmParams.setSessionId(getParameters().getSessionId());
-            runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
-            runVmParams.setParentCommand(getActionType());
-            runVmParams.setParentParameters(getParameters());
-            runVmParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-            runVmParams.setRunAsStateless(!getVmPool().isStateful());
-            ExecutionContext runVmContext = createRunVmContext();
-            VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
-                    runVmParams,
-                    cloneContext().withExecutionContext(runVmContext).withoutLock().withCompensationContext(null));
 
-            getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+            VdcReturnValueBase vdcReturnValue = runVm(vmToAttach, vmLock);
+
             setSucceeded(vdcReturnValue.getSucceeded());
             setActionReturnValue(vmToAttach);
             getReturnValue().getVdsmTaskIdList().addAll(getReturnValue().getInternalVdsmTaskIdList());
         } else {
-            // no need to start, just return it
+            // No need to start, just return it
             setActionReturnValue(vmToAttach);
             setSucceeded(true);
+            releaseLock(vmLock);
         }
+    }
+
+    private VdcReturnValueBase attachUserToVm(Guid vmId) {
+        Permission perm = new Permission(getAdUserId(),
+                PredefinedRoles.ENGINE_USER.getId(),
+                vmId,
+                VdcObjectType.VM);
+        PermissionsOperationsParameters permParams = new PermissionsOperationsParameters(perm);
+        permParams.setShouldBeLogged(false);
+        permParams.setParentCommand(getActionType());
+        permParams.setParentParameters(getParameters());
+        return runInternalAction(VdcActionType.AddPermission,
+                permParams,
+                cloneContext().withoutExecutionContext().withoutLock());
     }
 
     private ExecutionContext createRunVmContext() {
@@ -242,6 +270,23 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
             log.error("Error when creating executing context for running stateless VM", e);
         }
         return ctx;
+    }
+
+    private VdcReturnValueBase runVm(Guid vmToAttach, EngineLock vmLock) {
+        RunVmParams runVmParams = new RunVmParams(vmToAttach);
+        runVmParams.setSessionId(getParameters().getSessionId());
+        runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
+        runVmParams.setParentCommand(getActionType());
+        runVmParams.setParentParameters(getParameters());
+        runVmParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        runVmParams.setRunAsStateless(!getVmPool().isStateful());
+        ExecutionContext runVmContext = createRunVmContext();
+        VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
+                runVmParams,
+                cloneContext().withExecutionContext(runVmContext).withLock(vmLock).withCompensationContext(null));
+
+        getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+        return vdcReturnValue;
     }
 
     private RunVmParams getChildRunVmParameters() {
@@ -305,6 +350,24 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
         default:
             return AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_FAILURE;
         }
+    }
+
+    private EngineLock createEngineLockForRunVm(Guid vmId) {
+        return new EngineLock(
+                RunVmCommandBase.getExclusiveLocksForRunVm(vmId, getLockMessage()),
+                RunVmCommandBase.getSharedLocksForRunVm());
+    }
+
+    private String getLockMessage() {
+        return EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
+    }
+
+    private boolean acquireLock(EngineLock lock) {
+        return lockManager.acquireLock(lock).getFirst();
+    }
+
+    private void releaseLock(EngineLock lock) {
+        lockManager.releaseLock(lock);
     }
 
     protected void detachUserFromVmFromPool() {
