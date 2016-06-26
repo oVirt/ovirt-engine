@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
+
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
@@ -55,8 +56,8 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
 
         disksTable.setRowData((List) Arrays.asList(vm.getDiskMap().values().toArray()));
         nicsTable.setRowData((List) Arrays.asList(vm.getInterfaces().toArray()));
-        appsTable.setRowData((List) Arrays.asList(vm.getAppList() != null ?
-                vm.getAppList().split("[,]", -1) : new ArrayList<String>())); //$NON-NLS-1$
+        appsTable.setRowData(vm.getAppList() == null ? Collections.emptyList() :
+                (List) Arrays.asList(vm.getAppList().split("[,]", -1))); //$NON-NLS-1$
     }
 
     private void initGeneralForm() {
