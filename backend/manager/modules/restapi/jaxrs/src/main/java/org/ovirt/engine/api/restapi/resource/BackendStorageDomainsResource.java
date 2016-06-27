@@ -378,14 +378,17 @@ public class BackendStorageDomainsResource
     protected void mapVolumeGroupIscsi(StorageDomain model,
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
-        for (LUNs lun : getLunsByVgId(vg.getId())) {
-            List<StorageServerConnections> lunConnections = lun.getLunConnections();
-            if (lunConnections != null) {
-                vg.setLogicalUnits(new LogicalUnits());
-                for (StorageServerConnections cnx : lunConnections) {
-                    LogicalUnit unit = map(lun);
-                    unit = map(cnx, unit);
-                    vg.getLogicalUnits().getLogicalUnits().add(unit);
+        List<LUNs> luns = getLunsByVgId(vg.getId());
+        if (luns != null && !luns.isEmpty()) {
+            vg.setLogicalUnits(new LogicalUnits());
+            for (LUNs lun : luns) {
+                List<StorageServerConnections> lunConnections = lun.getLunConnections();
+                if (lunConnections != null) {
+                    for (StorageServerConnections cnx : lunConnections) {
+                        LogicalUnit unit = map(lun);
+                        unit = map(cnx, unit);
+                        vg.getLogicalUnits().getLogicalUnits().add(unit);
+                    }
                 }
             }
         }
