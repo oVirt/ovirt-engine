@@ -31,24 +31,19 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.ParametersHelper;
-import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
-import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
-import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Payload;
-import org.ovirt.engine.api.model.Payloads;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.Vms;
@@ -623,33 +618,6 @@ public class BackendVmsResource extends
         return collection;
     }
 
-    protected void setPayload(Vm vm) {
-        try {
-            VmPayload payload = getEntity(VmPayload.class,
-                    VdcQueryType.GetVmPayload,
-                    new IdQueryParameters(new Guid(vm.getId())),
-                    null,
-                    true);
-
-            if (payload != null) {
-                Payload p = getMapper(VmPayload.class, Payload.class).map(payload, null);
-                Payloads payloads = new Payloads();
-                payloads.getPayloads().add(p);
-                vm.setPayloads(payloads);
-            }
-        }
-        catch (WebApplicationException ex) {
-            if (ex.getResponse().getStatus()==Response.Status.NOT_FOUND.getStatusCode()) {
-                //It's legal to not receive a payload for this VM, so the exception is caught and ignored.
-                //(TODO: 'getEntity()' should be refactored to make it the programmer's decision,
-                //whether to throw an exception or not in case the entity is not found.) Then
-                //this try-catch won't be necessary.
-            } else{
-                throw ex;
-            }
-        }
-    }
-
     protected boolean templated(Vm vm) {
         return vm.isSetTemplate() && (vm.getTemplate().isSetId() || vm.getTemplate().isSetName());
     }
@@ -717,38 +685,6 @@ public class BackendVmsResource extends
         return model;
     }
 
-    protected void setConsoleDevice(Vm model) {
-        if (!model.isSetConsole()) {
-            model.setConsole(new Console());
-        }
-        model.getConsole().setEnabled(!getConsoleDevicesForEntity(new Guid(model.getId())).isEmpty());
-    }
-
-    protected void setVirtioScsiController(Vm model) {
-        if (!model.isSetVirtioScsi()) {
-            model.setVirtioScsi(new VirtioScsi());
-        }
-        model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, new Guid(model.getId())).isEmpty());
-    }
-
-    protected void setSoundcard(Vm model) {
-        model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, new Guid(model.getId())).isEmpty());
-    }
-
-    public void setCertificateInfo(Vm model) {
-        VdcQueryReturnValue result =
-                runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
-                        new IdQueryParameters(asGuid(model.getId())));
-
-        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
-            if (!model.isSetDisplay()) {
-                model.setDisplay(new Display());
-            }
-            model.getDisplay().setCertificate(new Certificate());
-            model.getDisplay().getCertificate().setSubject(result.getReturnValue().toString());
-        }
-    }
-
     @Override
     protected Vm deprecatedPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
@@ -761,26 +697,15 @@ public class BackendVmsResource extends
 
     @Override
     protected Vm doPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        setPayload(model);
+        BackendVmDeviceHelper.setPayload(this, model);
         MemoryPolicyHelper.setupMemoryBalloon(model, this);
-        setConsoleDevice(model);
-        setVirtioScsiController(model);
-        setSoundcard(model);
-        setCertificateInfo(model);
+        BackendVmDeviceHelper.setConsoleDevice(this, model);
+        BackendVmDeviceHelper.setVirtioScsiController(this, model);
+        BackendVmDeviceHelper.setSoundcard(this, model);
+        BackendVmDeviceHelper.setCertificateInfo(this, model);
+        BackendVmDeviceHelper.setRngDevice(this, model);
         setVmOvfConfiguration(model, entity);
-        setRngDevice(model);
         return model;
-    }
-
-    protected void setRngDevice(Vm model) {
-        List<VmRngDevice> rngDevices = getEntity(List.class,
-                VdcQueryType.GetRngDevice,
-                new IdQueryParameters(Guid.createGuidFromString(model.getId())),
-                "GetRngDevice", true);
-
-        if (rngDevices != null && !rngDevices.isEmpty()) {
-            model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
-        }
     }
 
     private List<String> getConsoleDevicesForEntity(Guid id) {
