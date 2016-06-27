@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -15,12 +16,15 @@ import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVmPoolsResourceTest extends
@@ -57,6 +61,14 @@ public class BackendVmPoolsResourceTest extends
         expect(entity.getDefaultDisplayType()).andReturn(DisplayType.vga).anyTimes();
         expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
         expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
+        return entity;
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.VM getVmEntity() {
+        org.ovirt.engine.core.common.businessentities.VM entity = control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
+        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
+        expect(entity.getStaticData()).andReturn(new VmStatic());
+        expect(entity.getDedicatedVmForVdsList()).andReturn(Collections.emptyList()).anyTimes();
         return entity;
     }
 
@@ -111,6 +123,7 @@ public class BackendVmPoolsResourceTest extends
                 new ArrayList<>());
 
         setUpGetRngDeviceExpectations(0);
+        addCommonAddExpectations();
 
         setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
              VmPoolParametersBase.class,
@@ -161,6 +174,8 @@ public class BackendVmPoolsResourceTest extends
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 new ArrayList<>());
+
+        addCommonAddExpectations();
 
         setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
                 VmPoolParametersBase.class,
@@ -213,5 +228,49 @@ public class BackendVmPoolsResourceTest extends
     static void verifyModelSpecific(VmPool model) {
         assertNotNull(model.getCluster());
         assertEquals(GUIDS[2].toString(), model.getCluster().getId());
+    }
+
+    private void addCommonAddExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVmDataByPoolName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[0] },
+                getVmEntity());
+
+        setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new VmPayload());
+
+        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                Boolean.FALSE);
+
+        setUpGetEntityExpectations(VdcQueryType.GetConsoleDevices,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new ArrayList<>());
+
+        setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new ArrayList<>());
+
+        setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new ArrayList<>());
+
+        setUpGetEntityExpectations(VdcQueryType.GetRngDevice,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new ArrayList<>());
     }
 }

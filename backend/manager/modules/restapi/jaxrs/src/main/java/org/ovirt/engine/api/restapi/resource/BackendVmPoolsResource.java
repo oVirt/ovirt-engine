@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmPools;
 import org.ovirt.engine.api.resource.VmPoolResource;
@@ -87,6 +88,19 @@ public class BackendVmPoolsResource
 
     @Override
     public VmPool doPopulate(VmPool pool, org.ovirt.engine.core.common.businessentities.VmPool entity) {
+        VM vmModel = getVM(pool);
+        if (vmModel != null) {
+            Vm vm = VmMapper.map(vmModel, new Vm());
+            BackendVmDeviceHelper.setPayload(this, vm);
+            MemoryPolicyHelper.setupMemoryBalloon(vm, this);
+            BackendVmDeviceHelper.setConsoleDevice(this, vm);
+            BackendVmDeviceHelper.setVirtioScsiController(this, vm);
+            BackendVmDeviceHelper.setSoundcard(this, vm);
+            BackendVmDeviceHelper.setCertificateInfo(this, vm);
+            BackendVmDeviceHelper.setRngDevice(this, vm);
+            pool.setVm(vm);
+        }
+        // Legacy code
         setRngDevice(pool);
         return pool;
     }

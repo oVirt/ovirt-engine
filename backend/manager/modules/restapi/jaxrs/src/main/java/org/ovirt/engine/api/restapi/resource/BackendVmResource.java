@@ -567,11 +567,11 @@ public class BackendVmResource
 
     @Override
     protected Vm doPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        parent.setConsoleDevice(model);
-        parent.setVirtioScsiController(model);
-        parent.setSoundcard(model);
+        BackendVmDeviceHelper.setConsoleDevice(this, model);
+        BackendVmDeviceHelper.setVirtioScsiController(this, model);
+        BackendVmDeviceHelper.setSoundcard(this, model);
+        BackendVmDeviceHelper.setRngDevice(this, model);
         parent.setVmOvfConfiguration(model, entity);
-        parent.setRngDevice(model);
         return model;
     }
 
@@ -582,8 +582,8 @@ public class BackendVmResource
         if (details.contains("statistics")) {
             addStatistics(model, entity);
         }
-        parent.setPayload(model);
-        parent.setCertificateInfo(model);
+        BackendVmDeviceHelper.setPayload(this, model);
+        BackendVmDeviceHelper.setCertificateInfo(this, model);
         MemoryPolicyHelper.setupMemoryBalloon(model, this);
         return model;
     }
