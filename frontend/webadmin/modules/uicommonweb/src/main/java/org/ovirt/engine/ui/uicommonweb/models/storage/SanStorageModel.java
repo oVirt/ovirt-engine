@@ -34,6 +34,8 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public abstract class SanStorageModel extends SanStorageModelBase {
     private boolean isGrouppedByTarget;
+    private VDS previousGetDeviceListHost;
+    private VDS previousGetLunsByVGIdHost;
 
     /**
      * Gets or sets the value determining whether the items containing target/LUNs or LUN/targets.
@@ -125,6 +127,11 @@ public abstract class SanStorageModel extends SanStorageModelBase {
             proposeDiscover();
             return;
         }
+
+        if (Objects.equals(previousGetDeviceListHost, host)) {
+            return;
+        }
+        previousGetDeviceListHost = host;
 
         final Collection<EntityModel<?>> prevSelected = Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem());
         clearItems();
@@ -659,6 +666,11 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         model.setStorageDomain(storage);
 
         VDS host = getContainer().getHost().getSelectedItem();
+        if (Objects.equals(previousGetLunsByVGIdHost, host) && isStorageActive) {
+            return;
+        }
+        previousGetLunsByVGIdHost = host;
+
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
         AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(new AsyncCallback<List<LUNs>>() {
