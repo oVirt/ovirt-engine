@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class VmOperationCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> {
 
-    // The log:
     private static final Logger log = LoggerFactory.getLogger(VmOperationCommandBase.class);
 
     /**
