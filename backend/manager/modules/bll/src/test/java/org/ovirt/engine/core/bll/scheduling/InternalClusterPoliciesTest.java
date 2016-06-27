@@ -14,8 +14,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -69,7 +69,7 @@ public class InternalClusterPoliciesTest {
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(MemoryPolicyUnit.class)
                 .addFilters(PinToHostPolicyUnit.class)
-                .addFunction(1, NoneWeightPolicyUnit.class)
+                .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(2, VmAffinityWeightPolicyUnit.class)
                 .getPolicy();
 
@@ -101,7 +101,7 @@ public class InternalClusterPoliciesTest {
             funcMap.put(pair.getFirst(), pair.getSecond());
         }
 
-        assertEquals(1, (long)funcMap.get(getUnitId(NoneWeightPolicyUnit.class)));
+        assertEquals(1, (long)funcMap.get(getUnitId(HaReservationWeightPolicyUnit.class)));
         assertEquals(2, (long)funcMap.get(getUnitId(VmAffinityWeightPolicyUnit.class)));
     }
 

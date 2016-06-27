@@ -11,7 +11,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionCPUWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionMemoryWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
@@ -25,10 +26,10 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingCPUWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingMemoryWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -59,7 +60,8 @@ public class InternalClusterPolicies {
                 .addFilters(CpuPinningPolicyUnit.class)
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
 
-                .addFunction(1, NoneWeightPolicyUnit.class)
+                .addFunction(1, EvenDistributionCPUWeightPolicyUnit.class)
+                .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
@@ -83,7 +85,8 @@ public class InternalClusterPolicies {
                 .addFilters(CpuPinningPolicyUnit.class)
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
 
-                .addFunction(1, EvenDistributionWeightPolicyUnit.class)
+                .addFunction(1, EvenDistributionCPUWeightPolicyUnit.class)
+                .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
@@ -110,7 +113,8 @@ public class InternalClusterPolicies {
                 .addFilters(CpuPinningPolicyUnit.class)
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
 
-                .addFunction(1, PowerSavingWeightPolicyUnit.class)
+                .addFunction(1, PowerSavingCPUWeightPolicyUnit.class)
+                .addFunction(1, PowerSavingMemoryWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
@@ -165,7 +169,6 @@ public class InternalClusterPolicies {
     public static Map<Guid, ClusterPolicy> getClusterPolicies() {
         return Collections.unmodifiableMap(clusterPolicies);
     }
-
 
     protected static PolicyBuilder createBuilder(String guid) {
         final Guid realGuid = Guid.createGuidFromString(guid);
