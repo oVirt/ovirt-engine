@@ -38,11 +38,9 @@ import org.ovirt.engine.api.v3.types.V3Disk;
 @Produces({"application/xml", "application/json"})
 public class V3VmDiskServer extends V3Server<VmDiskResource> {
     private String diskId;
-    private String vmId;
 
-    public V3VmDiskServer(String vmId, String diskId, VmDiskResource delegate) {
+    public V3VmDiskServer(String diskId, VmDiskResource delegate) {
         super(delegate);
-        this.vmId = vmId;
         this.diskId = diskId;
     }
 
