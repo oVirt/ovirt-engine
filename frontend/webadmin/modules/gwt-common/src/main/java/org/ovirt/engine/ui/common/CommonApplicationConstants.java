@@ -1125,8 +1125,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String enableSpiceProxy();
 
-    String spicePluginNotSupportedByBrowser();
-
     String rdpPluginNotSupportedByBrowser();
 
     String spiceProxyCanBeEnabledOnlyWhenDefined();
@@ -1152,9 +1150,6 @@ public interface CommonApplicationConstants extends Constants {
     String spiceInvokeAuto();
 
     String consoleInvokeNative();
-
-    @Deprecated
-    String spiceInvokePlugin();
 
     String spiceInvokeHtml5();
 

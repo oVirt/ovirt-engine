@@ -51,7 +51,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class SpiceConsoleModel extends ConsoleModel {
 
-    public enum ClientConsoleMode { Native, Plugin, Auto, Html5 }// The 'Plugin' is unsupported since 4.0 and will be removed in 4.1
+    public enum ClientConsoleMode { Native, Auto, Html5 }
 
     public static EventDefinition spiceDisconnectedEventDefinition;
     public static EventDefinition spiceConnectedEventDefinition;
@@ -85,12 +85,8 @@ public class SpiceConsoleModel extends ConsoleModel {
         setConsoleClientMode(getDefaultConsoleMode());
     }
 
-    public ClientConsoleMode getDefaultConsoleMode() {
+    protected ClientConsoleMode getDefaultConsoleMode() {
         return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault));
-    }
-
-    public boolean isEnableDeprecatedClientModeSpicePlugin() {
-        return AsyncDataProvider.getInstance().isEnableDeprecatedClientModeSpicePlugin();
     }
 
     public ISpice getspice() {
@@ -117,9 +113,6 @@ public class SpiceConsoleModel extends ConsoleModel {
         switch (consoleMode) {
             case Native:
                 setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
-                break;
-            case Plugin:// Unsupported since 4.0
-                setspice((ISpice) TypeResolver.getInstance().resolve(ISpicePlugin.class));
                 break;
             case Html5:
                 if (consoleUtils.webBasedClientsSupported()) {
@@ -351,7 +344,6 @@ public class SpiceConsoleModel extends ConsoleModel {
                 }));
     }
 
-    // todo move to spicepluginimpl
     private void createAndSetMenu(ConsoleOptions options, List<RepoImage> repoImages) {
         int id = 1;
         menu = new SpiceMenu();

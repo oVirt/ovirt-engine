@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import com.google.gwt.core.client.GWT;
@@ -208,11 +207,6 @@ public abstract class Configurator {
     }
 
     public void configure(ISpice spice) {
-        if (spice instanceof ISpicePlugin) {// Unsupported since 4.0
-            ((ISpicePlugin) spice).setPluginVersion(getSpiceVersion());
-            ((ISpicePlugin) spice).setSpiceBaseURL(getSpiceBaseURL());
-        }
-
         spice.getOptions().setAdminConsole(getSpiceAdminConsole());
         spice.getOptions().setUsbFilter(getUsbFilter());
         updateSpiceUsbAutoShare(spice);

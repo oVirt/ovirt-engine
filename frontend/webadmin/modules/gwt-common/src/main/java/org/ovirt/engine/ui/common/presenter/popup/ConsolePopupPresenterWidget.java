@@ -52,7 +52,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         HasValueChangeHandlers<Boolean> getSpiceAutoImplRadioButton();
         HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton();
-        HasValueChangeHandlers<Boolean> getSpicePluginImplRadioButton();
         HasValueChangeHandlers<Boolean> getSpiceHtml5ImplRadioButton();
 
         HasValueChangeHandlers<Boolean> getNoVncImplRadioButton();
@@ -85,10 +84,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void setSpiceConsoleAvailable(boolean available);
 
         void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode consoleMode);
-
-        void setSpicePluginImplVisible(boolean visible);
-
-        void setSpicePluginImplEnabled(boolean enabled, String reason);
 
         void setSpiceHtml5ImplEnabled(boolean enabled, String reason);
 
@@ -213,17 +208,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().getOptions().isSpiceProxyEnabled();
         }
 
-        // Allow Spice Plugin after explicit manual configuration (set vdc_option EnableDeprecatedClientModeSpicePlugin to 'true').
-        // TODO: The plugin is unsupported in 4.0 and all related code will be removed in 4.1
-        if (model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).isEnableDeprecatedClientModeSpicePlugin()) {
-            getView().setSpicePluginImplVisible(true);
-            if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.SPICE)) {
-                getView().setSpicePluginImplEnabled(false, constants.spicePluginNotSupportedByBrowser());
-            }
-        } else {
-            getView().setSpicePluginImplVisible(false);
-        }
-
         getView().setSpiceHtml5ImplEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());
         getView().setNoVncEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());
 
@@ -320,13 +304,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
                         selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native);
-                    }
-                }));
-        registerHandler(getView().getSpicePluginImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
                     }
                 }));
         registerHandler(getView().getSpiceHtml5ImplRadioButton()

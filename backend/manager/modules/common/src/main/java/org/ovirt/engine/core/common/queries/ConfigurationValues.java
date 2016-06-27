@@ -12,7 +12,6 @@ public enum ConfigurationValues {
     ValidNumOfMonitors(ConfigAuthType.User),
     SpiceProxyDefault(ConfigAuthType.User),
     RemapCtrlAltDelDefault(ConfigAuthType.User),
-    EnableDeprecatedClientModeSpicePlugin(ConfigAuthType.User),
     ClientModeSpiceDefault(ConfigAuthType.User),
     ClientModeVncDefault(ConfigAuthType.User),
     ClientModeRdpDefault(ConfigAuthType.User),

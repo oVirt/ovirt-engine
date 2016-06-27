@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
 import org.ovirt.engine.ui.uicommonweb.restapi.HasForeignMenuData;
 
@@ -36,7 +35,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
     // we inject providers for the console impls since they
     // contain state unique for each connect operation and thus
     // new instance is required each time
-    private final Provider<ISpicePlugin> spicePluginProvider;
     private final Provider<ISpiceNative> spiceNativeProvider;
     private final Provider<ISpiceHtml5> spiceHtml5Provider;
     private final Provider<IRdpPlugin> rdpPluginProvider;
@@ -50,7 +48,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             ConsoleUtils consoleUtils,  ErrorPopupManager errorPopupManager,
             ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister,
             CurrentUser currentUser, CurrentUserRole currentUserRole,
-            Provider<ISpicePlugin> spicePluginProvider, // deprecated in 4.0
             Provider<ISpiceNative> spiceNativeProvider,
             Provider<ISpiceHtml5> spiceHtml5Provider,
             Provider<IRdpPlugin> rdpPluginProvider,
@@ -66,7 +63,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
         this.currentUser = currentUser;
         this.currentUserRole = currentUserRole;
 
-        this.spicePluginProvider = spicePluginProvider;
         this.spiceNativeProvider = spiceNativeProvider;
         this.spiceHtml5Provider = spiceHtml5Provider;
         this.rdpPluginProvider = rdpPluginProvider;
@@ -85,8 +81,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             return logger;
         } else if (type == ITimer.class) {
             return new TimerImpl();
-        } else if (type == ISpicePlugin.class) {// deprecated in 4.0
-            return spicePluginProvider.get();
         } else if (type == ISpiceNative.class) {
             return withSsoToken(spiceNativeProvider.get());
         } else if (type == ISpiceHtml5.class) {

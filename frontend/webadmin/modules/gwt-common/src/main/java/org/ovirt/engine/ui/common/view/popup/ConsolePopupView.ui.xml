@@ -74,9 +74,6 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
                     <t:WidgetTooltip ui:field="spiceNativeImplRadioButtonTooltip">
                         <ge:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
                     </t:WidgetTooltip>
-                    <t:WidgetTooltip ui:field="spicePluginImplRadioButtonTooltip"><!-- Unsupported since 4.0 -->
-                        <ge:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
-                    </t:WidgetTooltip>
                     <t:WidgetTooltip ui:field="spiceHtml5ImplRadioButtonTooltip">
                         <ge:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
                     </t:WidgetTooltip>

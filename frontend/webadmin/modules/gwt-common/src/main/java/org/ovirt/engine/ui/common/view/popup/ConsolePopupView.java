@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
@@ -78,10 +77,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @UiField(provided = true)
     @WithElementId
     EntityModelRadioButtonEditor spiceNativeImplRadioButton;
-
-    @UiField(provided = true)
-    @WithElementId
-    EntityModelRadioButtonEditor spicePluginImplRadioButton;
 
     @UiField(provided = true)
     @WithElementId
@@ -182,9 +177,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     WidgetTooltip spiceNativeImplRadioButtonTooltip;
 
     @UiField
-    WidgetTooltip spicePluginImplRadioButtonTooltip;
-
-    @UiField
     WidgetTooltip spiceHtml5ImplRadioButtonTooltip;
 
     @UiField
@@ -213,8 +205,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         spiceAutoImplRadioButton.setLabel(constants.auto());
         spiceNativeImplRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         spiceNativeImplRadioButton.setLabel(constants.nativeClient());
-        spicePluginImplRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
-        spicePluginImplRadioButton.setLabel(constants.browserPlugin());
         spiceHtml5ImplRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         spiceHtml5ImplRadioButton.setLabel(constants.spiceHtml5());
 
@@ -392,11 +382,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     private String createSpiceInvocationInfo() {
         KeyValueHtmlRowMaker rowMaker = new KeyValueHtmlRowMaker(constants.auto(), constants.spiceInvokeAuto());
         rowMaker.append(constants.nativeClient(), constants.consoleInvokeNative());
-
-        if (AsyncDataProvider.getInstance().isEnableDeprecatedClientModeSpicePlugin()) {
-            rowMaker.append(constants.browserPlugin(), constants.spiceInvokePlugin());
-        }
-
         rowMaker.append(constants.spiceHtml5(), constants.spiceInvokeHtml5());
         return rowMaker.toString();
     }
@@ -498,8 +483,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Auto);
         } else if (spiceNativeImplRadioButton.asRadioButton().getValue()) {
             spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Native);
-        } else if (spicePluginImplRadioButton.asRadioButton().getValue()) {
-            spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Plugin);
         } else if (spiceHtml5ImplRadioButton.asRadioButton().getValue()) {
             spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Html5);
         }
@@ -730,19 +713,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     @Override
-    public void setSpicePluginImplVisible(boolean visible) {
-        spicePluginImplRadioButton.setVisible(visible);// Unsupported since 4.0
-    }
-
-    @Override
-    public void setSpicePluginImplEnabled(boolean enabled, String reason) {
-        spicePluginImplRadioButton.setEnabled(enabled);
-        if (!enabled) {
-            spicePluginImplRadioButtonTooltip.setText(reason);
-        }
-    }
-
-    @Override
     public void setSpiceHtml5ImplEnabled(boolean enabled, String reason) {
         spiceHtml5ImplRadioButton.setEnabled(enabled);
         if (!enabled) {
@@ -763,25 +733,16 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         switch (consoleMode) {
         case Native:
             spiceAutoImplRadioButton.asRadioButton().setValue(false);
-            spicePluginImplRadioButton.asRadioButton().setValue(false);
             spiceNativeImplRadioButton.asRadioButton().setValue(true);
-            spiceHtml5ImplRadioButton.asRadioButton().setValue(false);
-            break;
-        case Plugin:
-            spiceAutoImplRadioButton.asRadioButton().setValue(false);
-            spicePluginImplRadioButton.asRadioButton().setValue(true);
-            spiceNativeImplRadioButton.asRadioButton().setValue(false);
             spiceHtml5ImplRadioButton.asRadioButton().setValue(false);
             break;
         case Html5:
             spiceAutoImplRadioButton.asRadioButton().setValue(false);
-            spicePluginImplRadioButton.asRadioButton().setValue(false);
             spiceNativeImplRadioButton.asRadioButton().setValue(false);
             spiceHtml5ImplRadioButton.asRadioButton().setValue(true);
             break;
         default:
             spiceAutoImplRadioButton.asRadioButton().setValue(true);
-            spicePluginImplRadioButton.asRadioButton().setValue(false);
             spiceNativeImplRadioButton.asRadioButton().setValue(false);
             spiceHtml5ImplRadioButton.asRadioButton().setValue(false);
             break;
@@ -831,11 +792,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton() {
         return spiceNativeImplRadioButton.asRadioButton();
-    }
-
-    @Override
-    public HasValueChangeHandlers<Boolean> getSpicePluginImplRadioButton() {
-        return spicePluginImplRadioButton.asRadioButton();
     }
 
     @Override

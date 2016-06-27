@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.uicommon.RdpNativeImpl;
 import org.ovirt.engine.ui.common.uicommon.RdpPluginImpl;
 import org.ovirt.engine.ui.common.uicommon.SpiceHtml5Impl;
 import org.ovirt.engine.ui.common.uicommon.SpiceNativeImpl;
-import org.ovirt.engine.ui.common.uicommon.SpicePluginImpl;
 import org.ovirt.engine.ui.common.uicommon.UiCommonDefaultTypeResolver;
 import org.ovirt.engine.ui.common.uicommon.VncNativeImpl;
 import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
@@ -21,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
@@ -58,7 +56,6 @@ public abstract class BaseUiCommonModule extends AbstractGinModule {
 
         bind(ISpiceHtml5.class).to(SpiceHtml5Impl.class);
         bind(ISpiceNative.class).to(SpiceNativeImpl.class);
-        bind(ISpicePlugin.class).to(SpicePluginImpl.class);// Deprecated in 4.0
 
         bind(IRdpNative.class).to(RdpNativeImpl.class);
         bind(IRdpPlugin.class).to(RdpPluginImpl.class);
