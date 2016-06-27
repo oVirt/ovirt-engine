@@ -14,6 +14,7 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -54,8 +55,20 @@ public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollec
                 .entity(parent)
                 .build();
 
+        // Add the affinity label using the backend "update" operation. As the backend will return the added label as
+        // the result of the operation, we can fetch it using a simple "identity" resolver, that just returns the same
+        // value it is passed.
         LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
-        return performAction(VdcActionType.UpdateLabel, updateParams);
+        return performCreate(
+            VdcActionType.UpdateLabel,
+            updateParams,
+            new IResolver<Label, Label>() {
+                @Override
+                public Label resolve(Label result) throws BackendFailureException {
+                    return result;
+                }
+            }
+        );
     }
 
     @Override
