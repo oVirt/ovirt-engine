@@ -17,6 +17,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang.StringUtils;
+
 public class HttpURLConnectionBuilder {
 
     private Boolean verifyHost = true;
@@ -129,7 +131,7 @@ public class HttpURLConnectionBuilder {
                 if (trustStore != null) {
                     try (InputStream is = new FileInputStream(trustStore)) {
                         KeyStore ks = KeyStore.getInstance(trustStoreType);
-                        ks.load(is, trustStorePassword.toCharArray());
+                        ks.load(is, StringUtils.isEmpty(trustStorePassword) ? null : trustStorePassword.toCharArray());
                         TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustManagerAlgorithm);
                         tmf.init(ks);
                         tm = tmf.getTrustManagers();
