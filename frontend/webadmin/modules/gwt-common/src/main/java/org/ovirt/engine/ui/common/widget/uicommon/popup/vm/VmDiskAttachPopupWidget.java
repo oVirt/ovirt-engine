@@ -198,7 +198,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "100px"); //$NON-NLS-1$
 
-        imageDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "115px"); //$NON-NLS-1$
 
         imageDiskTable.addColumn(getReadOnlyCheckBoxColumn(),
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
@@ -314,7 +314,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(serialColumn, constants.serialSanStorage(), "70px"); //$NON-NLS-1$
 
-        lunDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
+        lunDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "115px"); //$NON-NLS-1$
 
         lunDiskTable.addColumn(getReadOnlyCheckBoxColumn(),
                 new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
@@ -377,7 +377,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         cinderDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "100px"); //$NON-NLS-1$
 
-        cinderDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "110px"); //$NON-NLS-1$
+        cinderDiskTable.addColumn(getDiskInterfaceSelectionColumn(), constants.interfaceVmDiskPopup(), "115px"); //$NON-NLS-1$
 
         AbstractTextColumn<EntityModel> cinderVolumeTypeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
