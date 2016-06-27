@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -26,11 +28,13 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -60,6 +64,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -109,6 +114,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private DiskValidator diskValidator;
+
+    @Mock
+    private QuotaManager quotaManager;
 
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
@@ -378,6 +386,13 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isSoundDeviceEnabled(any(Guid.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
+        doReturn(true).when(command).validateQuota();
+        doReturn(quotaManager).when(command).getQuotaManager();
+
+        doAnswer(invocation -> invocation.getArguments()[0] != null ?
+                    invocation.getArguments()[0] : Guid.newGuid())
+                .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
+
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
@@ -993,6 +1008,60 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void testExistingQuota() {
+        Quota quota = new Quota();
+        quota.setId(Guid.newGuid());
+
+        DiskImage img = createDiskImage(10);
+        img.setQuotaId(quota.getId());
+
+        AddDiskParameters params = createParameters();
+        params.setDiskInfo(img);
+
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId, params);
+
+        StoragePool pool = mockStoragePool();
+        command.setStoragePoolId(pool.getId());
+        quota.setStoragePoolId(pool.getId());
+
+        mockVm();
+        mockEntities(storageId);
+
+        QuotaDao quotaDaoMock = mock(QuotaDao.class);
+        when(quotaDaoMock.getById(any(Guid.class))).thenReturn(null);
+        when(quotaDaoMock.getById(quota.getId())).thenReturn(quota);
+        doReturn(quotaDaoMock).when(command).getQuotaDao();
+
+        doCallRealMethod().when(command).validateQuota();
+
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void testNonExistingQuota() {
+        DiskImage img = createDiskImage(10);
+        img.setQuotaId(Guid.newGuid());
+
+        AddDiskParameters params = createParameters();
+        params.setDiskInfo(img);
+
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId, params);
+
+        mockVm();
+        mockEntities(storageId);
+
+        QuotaDao quotaDaoMock = mock(QuotaDao.class);
+        when(quotaDaoMock.getById(any(Guid.class))).thenReturn(null);
+        doReturn(quotaDaoMock).when(command).getQuotaDao();
+
+        doCallRealMethod().when(command).validateQuota();
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
     }
 
     private boolean verifyValidationMessagesContainMessage(EngineMessage message) {

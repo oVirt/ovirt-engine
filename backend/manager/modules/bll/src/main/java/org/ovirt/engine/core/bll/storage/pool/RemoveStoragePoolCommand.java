@@ -78,6 +78,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
+        getQuotaManager().removeStoragePoolFromCache(getStoragePool().getId());
+
         removeDataCenter();
 
         setSucceeded(true);

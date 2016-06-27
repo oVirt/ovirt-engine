@@ -1064,14 +1064,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 .collect(Collectors.toList());
     }
 
-    private Guid getQuotaId() {
-        return getParameters().getMasterVm().getQuotaId();
-    }
-
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        Guid quotaId = getQuotaManager().getDefaultQuotaIfNull(
+                getParameters().getMasterVm().getQuotaId(),
+                getStoragePoolId());
+
         List<QuotaConsumptionParameter> list = new ArrayList<>();
-        list.add(new QuotaSanityParameter(getQuotaId(), null));
+        list.add(new QuotaSanityParameter(quotaId, null));
         return list;
     }
 

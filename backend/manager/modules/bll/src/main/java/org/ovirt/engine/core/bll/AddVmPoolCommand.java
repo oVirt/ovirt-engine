@@ -128,13 +128,13 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
         return jobProperties;
     }
 
-    private Guid getQuotaId() {
-        return getParameters().getVmStaticData().getQuotaId();
-    }
-
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        return Collections.singletonList(new QuotaSanityParameter(getQuotaId(), null));
+        Guid quotaId = getQuotaManager().getDefaultQuotaIfNull(
+                getParameters().getVmStaticData().getQuotaId(),
+                getStoragePoolId());
+
+        return Collections.singletonList(new QuotaSanityParameter(quotaId, null));
     }
 
     @Override

@@ -141,6 +141,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
+        if (!validateQuota()) {
+            return false;
+        }
+
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             if (!checkIfImageDiskCanBeAdded(vm, diskValidator)) {
                 return false;
@@ -705,9 +709,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private Guid getQuotaId() {
         if (getParameters().getDiskInfo() != null && getParameters().getDiskInfo().getDiskStorageType().isInternal()) {
             Guid quotaId = ((DiskImage) getParameters().getDiskInfo()).getQuotaId();
-            if (!Guid.Empty.equals(quotaId)) {
-                return quotaId;
-            }
+            return getQuotaManager().getDefaultQuotaIfNull(quotaId, getStoragePoolId());
         }
         return null;
     }

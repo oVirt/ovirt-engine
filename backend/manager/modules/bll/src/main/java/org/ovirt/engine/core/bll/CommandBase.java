@@ -2323,7 +2323,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return addSubStep(parentStep, newStep, ExecutionMessageDirector.resolveStepMessage(newStep, valuesMap));
     }
 
-    protected QuotaManager getQuotaManager() {
+    public QuotaManager getQuotaManager() {
         return quotaManager;
     }
 

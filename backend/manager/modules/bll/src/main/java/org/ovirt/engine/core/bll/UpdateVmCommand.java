@@ -177,6 +177,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         getVmStaticDao().incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
+        newVmStatic.setQuotaId(getQuotaId());
 
         // Trigger OVF update for hosted engine VM only
         if (getVm().isHostedEngine()) {
@@ -904,6 +905,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
+        if (!validateQuota(getParameters().getVmStaticData().getQuotaId())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -1066,29 +1071,33 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // The cases must be persistent with the create_functions_sp
         if (!getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {
-            list.add(new QuotaSanityParameter(getParameters().getVmStaticData().getQuotaId(), null));
+            list.add(new QuotaSanityParameter(getQuotaId(), null));
             quotaSanityOnly = true;
         } else {
-            if (getParameters().getVmStaticData().getQuotaId() == null
-                    || getParameters().getVmStaticData().getQuotaId().equals(Guid.Empty)
-                    || !getParameters().getVmStaticData().getQuotaId().equals(getVm().getQuotaId())) {
+            if (!getQuotaId().equals(getVm().getQuotaId())) {
                 list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getClusterId(),
                         getVm().getNumOfCpus(),
                         getVm().getMemSizeMb()));
-                list.add(new QuotaClusterConsumptionParameter(getParameters().getVmStaticData().getQuotaId(),
+                list.add(new QuotaClusterConsumptionParameter(getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         getParameters().getVmStaticData().getClusterId(),
                         getParameters().getVmStaticData().getNumOfCpus(),
                         getParameters().getVmStaticData().getMemSizeMb()));
             }
-
         }
         return list;
     }
+
+    private Guid getQuotaId() {
+        return getQuotaManager().getDefaultQuotaIfNull(
+                getParameters().getVmStaticData().getQuotaId(),
+                getStoragePoolId());
+    }
+
     @Override
     public String getEntityType() {
         return VdcObjectType.VM.getVdcObjectTranslation();

@@ -220,7 +220,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
         DiskValidator diskValidator = getDiskValidator(getNewDisk());
         return validateCanUpdateShareable() && validateCanUpdateReadOnly(diskValidator) &&
-                validateVmPoolProperties() &&
+                validateVmPoolProperties() && validateQuota() &&
                 validate(diskValidator.isVirtIoScsiValid(getVm(), getDiskVmElement())) &&
                 (!isDiskInterfaceUpdated || validate(diskValidator.isDiskInterfaceSupported(getVm(), getDiskVmElement()))) &&
                 setAndValidateDiskProfiles();
@@ -662,7 +662,8 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     protected Guid getQuotaId() {
         if (getNewDisk() != null && isInternalManagedDisk()) {
-            return ((DiskImage) getNewDisk()).getQuotaId();
+            Guid quotaId = ((DiskImage) getNewDisk()).getQuotaId();
+            return getQuotaManager().getDefaultQuotaIfNull(quotaId, getStoragePoolId());
         }
         return null;
     }

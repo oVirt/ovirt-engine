@@ -67,6 +67,8 @@ public class QuotaManagerTest {
     private static final int UNLIMITED_VCPU = QuotaCluster.UNLIMITED_VCPU;
     private static final long UNLIMITED_MEM = QuotaCluster.UNLIMITED_MEM;
 
+    private static final Guid DEFAULT_QUOTA_FOR_STORAGE_POOL = new Guid("00000000-0000-0000-0000-123456789000");
+
     private static final String EXPECTED_EMPTY_CAN_DO_MESSAGE = "Can-Do-Action message was expected to be empty";
     private static final String EXPECTED_CAN_DO_MESSAGE = "Can-Do-Action message was expected (result: empty)";
     private static final String EXPECTED_NO_AUDIT_LOG_MESSAGE = "No AuditLog massage was expected";
@@ -163,6 +165,9 @@ public class QuotaManagerTest {
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_OVER_THRESHOLD)).thenReturn(mockMemQuotaSpecificOverThreshold());
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockMemQuotaSpecificInGrace());
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockMemQuotaSpecificOverGrace());
+        when(quotaDao.getById(DEFAULT_QUOTA_FOR_STORAGE_POOL)).thenReturn(mockDefaultQuota());
+
+        when(quotaDao.getDefaultQuotaForStoragePool(any(Guid.class))).thenReturn(mockDefaultQuota());
     }
 
     private void setStoragePool() {
@@ -473,6 +478,20 @@ public class QuotaManagerTest {
         // call same quotas again and make sure db was called for every one of them
         quotaManager.consume(parameters);
         assertDbWasCalled(4);
+    }
+
+    @Test
+    public void testUseDefaultQuotaStorage() {
+        assertTrue(consumeForStorageQuota(null));
+        assertEmptyValidateMessage();
+        assertAuditLogNotWritten();
+    }
+
+    @Test
+    public void testUseDefaultQuotaVds() {
+        assertTrue(consumeForVdsQuota(null));
+        assertEmptyValidateMessage();
+        assertAuditLogNotWritten();
     }
 
     /**
@@ -791,4 +810,14 @@ public class QuotaManagerTest {
         return quota;
     }
 
+    /**
+     * Call by Guid: {@literal DEFAULT_QUOTA_FOR_STORAGE_POOL}
+     */
+    private Quota mockDefaultQuota() {
+        Quota quota = mockBasicQuota();
+        quota.setId(DEFAULT_QUOTA_FOR_STORAGE_POOL);
+        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, UNLIMITED_MEM, 0));
+        quota.setGlobalQuotaStorage(getQuotaStorage(UNLIMITED_STORAGE, 0));
+        return quota;
+    }
 }

@@ -517,6 +517,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
+        if (!validateQuota(getParameters().getVmStaticData().getQuotaId())) {
+            return false;
+        }
+
         // otherwise..
         storageToDisksMap =
                 ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
@@ -1511,7 +1515,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private Guid getQuotaId() {
-        return getParameters().getVmStaticData().getQuotaId();
+        return getQuotaManager().getDefaultQuotaIfNull(
+                getParameters().getVmStaticData().getQuotaId(),
+                getStoragePoolId());
     }
 
     @Override

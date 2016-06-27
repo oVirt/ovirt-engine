@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
@@ -37,6 +39,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 
@@ -55,6 +58,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Inject
     protected VmStaticDao vmStaticDao;
+
+    @Inject
+    private QuotaDao quotaDao;
 
     @Inject
     private SnapshotsManager snapshotsManager;
@@ -401,5 +407,27 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected SnapshotsManager getSnapshotsManager() {
         return snapshotsManager;
+    }
+
+    public QuotaDao getQuotaDao() {
+        return quotaDao;
+    }
+
+    protected boolean validateQuota(Guid quotaId) {
+        if (quotaId == null || Guid.Empty.equals(quotaId)) {
+            // QuotaManager will use default quota if the id is null or empty
+            return true;
+        }
+
+        Quota quota = getQuotaDao().getById(quotaId);
+        if (quota == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+        }
+
+        if (!Objects.equals(quota.getStoragePoolId(), getStoragePoolId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+        }
+
+        return true;
     }
 }

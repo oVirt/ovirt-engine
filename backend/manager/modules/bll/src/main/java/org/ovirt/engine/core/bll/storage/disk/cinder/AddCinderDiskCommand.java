@@ -119,6 +119,10 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
     @Override
     public boolean validate() {
+        if (!validateQuota()){
+            return false;
+        }
+
         if (getVm() != null) {
             return validateDiskVmData();
         }

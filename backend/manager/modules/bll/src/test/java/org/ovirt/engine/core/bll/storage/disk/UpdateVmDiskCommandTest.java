@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -31,11 +33,13 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -67,6 +71,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -121,6 +126,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private OsRepository osRepository;
+
+    @Mock
+    private QuotaManager quotaManager;
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -526,6 +534,11 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doNothing().when(command).reloadDisks();
         doNothing().when(command).updateBootOrder();
         doNothing().when(vmStaticDao).incrementDbGeneration(any(Guid.class));
+        doReturn(quotaManager).when(command).getQuotaManager();
+
+        doAnswer(invocation -> invocation.getArguments()[0] != null ?
+                    invocation.getArguments()[0] : Guid.newGuid())
+                .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
 
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
@@ -539,6 +552,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface(any(DiskVmElement.class));
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
+
+        doReturn(true).when(command).validateQuota();
 
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
@@ -642,6 +657,48 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         QuotaStorageConsumptionParameter consumptionParameter =
                 (QuotaStorageConsumptionParameter) command.getQuotaStorageConsumptionParameters().get(0);
         assertEquals(consumptionParameter.getRequestedStorageGB().longValue(), diskExtendingDiffInGB);
+    }
+
+    @Test
+    public void testExistingQuota() {
+        Quota quota = new Quota();
+        quota.setId(Guid.newGuid());
+
+        QuotaDao quotaDao = mock(QuotaDao.class);
+        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
+        when(quotaDao.getById(quota.getId())).thenReturn(quota);
+
+        when(diskDao.get(any(Guid.class))).thenReturn(createDiskImage());
+
+        VmDiskOperationParameterBase params = createParameters();
+        ((DiskImage) params.getDiskInfo()).setQuotaId(quota.getId());
+        initializeCommand(params);
+
+        StoragePool pool = mockStoragePool();
+        command.setStoragePoolId(pool.getId());
+        quota.setStoragePoolId(pool.getId());
+
+        doReturn(quotaDao).when(command).getQuotaDao();
+        doCallRealMethod().when(command).validateQuota();
+
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void testNonExistingQuota() {
+        QuotaDao quotaDao = mock(QuotaDao.class);
+        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
+
+        when(diskDao.get(any(Guid.class))).thenReturn(createDiskImage());
+
+        VmDiskOperationParameterBase params = createParameters();
+        ((DiskImage) params.getDiskInfo()).setQuotaId(Guid.newGuid());
+        initializeCommand(params);
+
+        doReturn(quotaDao).when(command).getQuotaDao();
+        doCallRealMethod().when(command).validateQuota();
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
     }
 
     private void mockToUpdateDiskVm(List<VM> vms) {

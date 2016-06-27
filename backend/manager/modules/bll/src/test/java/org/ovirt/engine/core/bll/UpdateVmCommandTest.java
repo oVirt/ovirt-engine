@@ -45,7 +45,9 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.OsType;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -72,6 +74,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -114,6 +117,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private VmTemplateDao vmTemplateDao;
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    @Mock
+    private QuotaDao quotaDao;
     @Mock
     private DiskVmElementDao diskVmElementDao;
     @Mock
@@ -641,6 +646,41 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         // then
         assertTrue(validInput);
+    }
+
+    @Test
+    public void testValidQuota() {
+        Guid quotaId = Guid.newGuid();
+
+        Quota quota = new Quota();
+        quota.setId(quotaId);
+
+        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
+        when(quotaDao.getById(quotaId)).thenReturn(quota);
+        doReturn(quotaDao).when(command).getQuotaDao();
+
+        StoragePool storagePool = new StoragePool();
+        storagePool.setId(Guid.newGuid());
+
+        quota.setStoragePoolId(storagePool.getId());
+        command.setStoragePool(storagePool);
+
+        command.getParameters().getVm().setQuotaId(quotaId);
+
+        assertTrue(command.validateQuota(quotaId));
+        assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
+    }
+
+    @Test
+    public void testNonExistingQuota() {
+        prepareVmToPassValidate();
+        vmStatic.setQuotaId(Guid.newGuid());
+
+        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
+        doReturn(quotaDao).when(command).getQuotaDao();
+
+        assertFalse(command.validateQuota(vmStatic.getQuotaId()));
+        ValidateTestUtils.assertValidationMessages("", command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
     }
 
     private void mockVmValidator() {

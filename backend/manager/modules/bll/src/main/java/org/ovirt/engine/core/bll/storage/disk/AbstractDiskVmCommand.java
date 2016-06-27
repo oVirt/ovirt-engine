@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -191,6 +192,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_VM_DATA_MISSING);
         }
         return true;
+    }
+
+    protected boolean validateQuota() {
+        if (!getParameters().getDiskInfo().getDiskStorageType().isInternal()) {
+            return true;
+        }
+
+        return validateQuota(((DiskImage) getParameters().getDiskInfo()).getQuotaId());
     }
 
     protected DiskVmElement getDiskVmElement() {
