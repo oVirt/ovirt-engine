@@ -36,22 +36,28 @@ public class NetworkIdNetworkNameCompleter {
         Guid networkId = networkAttachment.getNetworkId();
         String networkName = networkAttachment.getNetworkName();
 
-        if (networkId == null && networkName == null) {
+        boolean networkNameSpecified = networkName != null;
+        boolean networkIdSpecified = networkId != null;
+
+        if (!networkIdSpecified && !networkNameSpecified ||
+                networkIdSpecified && networkNameSpecified) {
             return;
         }
 
-        if (networkName != null) {
+        if (networkNameSpecified) {
             Network network = getNetworkByName(networkName, clusterNetworks);
-            if (network != null) {
-                if (networkId == null) {
-                    networkAttachment.setNetworkId(network.getId());
-                } else {
-                    //both id and name were supplied. Their coherence is not guaranteed here.
-                }
+            boolean networkByNameExists = network != null;
+            if (networkByNameExists) {
+                networkAttachment.setNetworkId(network.getId());
             }
-        } else {
+        }
+
+        if (networkIdSpecified) {
             Network network = getNetworkById(networkId, clusterNetworks);
-            networkAttachment.setNetworkName(network.getName());
+            boolean networkByIdExists = network != null;
+            if (networkByIdExists) {
+                networkAttachment.setNetworkName(network.getName());
+            }
         }
     }
 
