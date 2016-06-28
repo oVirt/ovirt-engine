@@ -322,6 +322,8 @@ USAGE:
  --restore-permissions              Affects only the custom dump format. Will not
                                     pass to pg_restore '--no-owner --no-privileges'.
                                     Might not work as expected with the --*db-user options.
+ --provision-all-databases          on restore, create a PostgreSQL database for all the
+                                    databases that were included in the backup
 
  --fast-restore                     the default for backup, equivalent to:
          --archive-compressor=gzip \\
@@ -460,6 +462,7 @@ MY_REPORTS_DB_SECURED=False
 MY_REPORTS_DB_SECURED_VALIDATION=False
 MY_REPORTS_DB_CREDS=
 RESTORE_PERMISSIONS=
+PROVISION_ALL_DBS=
 VALID_BACKUP_RESTORE_PAIRS="3.6 4.0"
 # A newline-separated list of pair. E.g. if we want to allow 4.0->4.1,
 #VALID_BACKUP_RESTORE_PAIRS="3.6 4.0
@@ -733,6 +736,10 @@ parseArgs() {
 			--no-restore-permissions)
 				RESTORE_PERMISSIONS=0
 			;;
+			--provision-all-databases)
+				PROVISION_ALL_DBS=1
+				PROVISIONING=1
+			;;
 			--fast-restore)
 				ARCHIVE_COMPRESS_OPTION=z
 				FILES_COMPRESS_OPTION=J
@@ -787,7 +794,7 @@ verifyArgs() {
 	fi
 
 	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
-		[ -n "${PROVISION_DB}" ] && die "Cannot change credentials if provisioning a database"
+		[ -n "${PROVISION_DB}" -o -n "${PROVISION_ALL_DBS}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_DB_HOST}" ] || die "--db-host is missing"
 		[ -n "${MY_DB_USER}" ] || die "--db-user is missing"
 		[ -n "${MY_DB_PASSWORD}" ] || \
@@ -803,7 +810,7 @@ verifyArgs() {
 		\) \
 	] && die "Please use --change-db-credentials to change engine db credentials"
 	if [ -n "${CHANGE_DWH_DB_CREDENTIALS}" ]; then
-		[ -n "${PROVISION_DWH_DB}" ] && die "Cannot change credentials if provisioning a database"
+		[ -n "${PROVISION_DWH_DB}" -o -n "${PROVISION_ALL_DBS}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_DWH_DB_HOST}" ] || die "--dwh-db-host is missing"
 		[ -n "${MY_DWH_DB_USER}" ] || die "--dwh-db-user is missing"
 		[ -n "${MY_DWH_DB_PASSWORD}" ] || \
@@ -819,7 +826,7 @@ verifyArgs() {
 		\) \
 	] && die "Please use --change-dwh-db-credentials to change dwh db credentials"
 	if [ -n "${CHANGE_REPORTS_DB_CREDENTIALS}" ]; then
-		[ -n "${PROVISION_REPORTS_DB}" ] && die "Cannot change credentials if provisioning a database"
+		[ -n "${PROVISION_REPORTS_DB}" -o -n "${PROVISION_ALL_DBS}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_REPORTS_DB_HOST}" ] || die "--reports-db-host is missing"
 		[ -n "${MY_REPORTS_DB_USER}" ] || die "--reports-db-user is missing"
 		[ -n "${MY_REPORTS_DB_PASSWORD}" ] || \
@@ -1055,6 +1062,12 @@ dorestore() {
 	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
 	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
 	[ -s "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" ] || SCOPE_REPORTS_DB=
+
+	if [ -n "${PROVISION_ALL_DBS}" ]; then
+		[ -n "${SCOPE_ENGINE_DB}" ] && PROVISION_DB=1
+		[ -n "${SCOPE_DWH_DB}" ] && PROVISION_DWH_DB=1
+		[ -n "${SCOPE_REPORTS_DB}" ] && PROVISION_REPORTS_DB=1
+	fi
 
 	output "Restoring:"
 	if [ -n "${SCOPE_FILES}" ] ; then
