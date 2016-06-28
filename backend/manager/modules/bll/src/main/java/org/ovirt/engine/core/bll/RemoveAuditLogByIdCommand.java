@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogSeverity;
@@ -13,11 +15,14 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> extends ExternalEventCommandBase<T> {
 
     private static final String OVIRT="oVirt";
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public RemoveAuditLogByIdCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -36,9 +41,21 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getAuditLogDao()
-                .remove(getParameters().getAuditLogId());
+        AuditLog auditLog = getAuditLogDao().get(getParameters().getAuditLogId());
+        getAuditLogDao().remove(getParameters().getAuditLogId());
+        setAuditLogDetails(auditLog);
+        // clean cache manager entry (if exists)
+        evict(auditLogDirector.composeSystemObjectId(this, auditLog.getLogType()));
         setSucceeded(true);
+    }
+
+    private void setAuditLogDetails(AuditLog auditLog) {
+        this.setStorageDomainId(auditLog.getStorageDomainId());
+        this.setStoragePoolId(auditLog.getStoragePoolId());
+        this.setClusterId(auditLog.getClusterId());
+        this.setVdsId(auditLog.getVdsId());
+        this.setVmId(auditLog.getVmId());
+        this.setVmTemplateId(auditLog.getVmTemplateId());
     }
 
     @Override
