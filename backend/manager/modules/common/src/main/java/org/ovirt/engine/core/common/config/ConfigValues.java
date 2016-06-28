@@ -1781,7 +1781,7 @@ public enum ConfigValues {
      * A comma delimited list of package names for checking if updates are available for the host
      */
     @TypeConverterAttribute(List.class)
-    @DefaultValueAttribute("vdsm,vdsm-cli")
+    @DefaultValueAttribute("ioprocess,mom,libvirt,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     PackageNamesForCheckUpdate,
 
