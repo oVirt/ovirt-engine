@@ -30,7 +30,7 @@ public abstract class TimeoutBase {
     protected abstract String getKey();
 
     private String getkeyForCheck() {
-        return "".equals(getTimeoutObjectId()) ? getKey() : String.format("%1$s_%2$s", getKey(), getTimeoutObjectId());
+        return "".equals(getTimeoutObjectId()) ? getKey() :  getTimeoutObjectId();
     }
 
     public String getTimeoutObjectId() {
@@ -63,5 +63,13 @@ public abstract class TimeoutBase {
         }
 
         return true;
+    }
+
+    public void evict(String keyForCheck) {
+        synchronized (keyForCheck.intern()) {
+            if (CacheManager.getTimeoutBaseCache().containsKey(keyForCheck)) {
+                CacheManager.getTimeoutBaseCache().evict(keyForCheck);
+            }
+        }
     }
 }

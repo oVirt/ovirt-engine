@@ -200,18 +200,20 @@ public class AuditLogDirector {
     /**
      * Composes an object id from all log id's to identify uniquely each instance.
      * @param logable
-     *            the object to log
+     *                the object to log
      * @param logType
-     *            the log type associated with the object
-     * @return a unique object id
+     *                the log type associated with the object
+     * @param userId
+     *                the userid to be composed
+     * @return unique object id
      */
-    private String composeObjectId(AuditLogableBase logable, AuditLogType logType) {
+    private String composeObjectId(AuditLogableBase logable, AuditLogType logType, Guid userId) {
         final StringBuilder builder = new StringBuilder();
 
         compose(builder, "type", logType.toString());
         compose(builder, "sd", nullToEmptyString(logable.getStorageDomainId()));
         compose(builder, "dc", nullToEmptyString(logable.getStoragePoolId()));
-        compose(builder, "user", nullToEmptyString(logable.getUserId()));
+        compose(builder, "user", nullToEmptyString(userId));
         compose(builder, "cluster", logable.getClusterId().toString());
         compose(builder, "vds", logable.getVdsId().toString());
         compose(builder, "vm", emptyGuidToEmptyString(logable.getVmId()));
@@ -219,6 +221,29 @@ public class AuditLogDirector {
         compose(builder, "customId", StringUtils.defaultString(logable.getCustomId()));
 
         return builder.toString();
+    }
+    /**
+     * Composes an object id from all log id's to identify uniquely each instance.
+     * @param logable
+     *            the object to log
+     * @param logType
+     *            the log type associated with the object
+     * @return a unique object id
+     */
+    private String composeObjectId(AuditLogableBase logable, AuditLogType logType) {
+        return composeObjectId(logable, logType, logable.getUserId());
+    }
+
+    /**
+     * Composes an system object id from all log id's to identify uniquely each instance.
+     * @param logable
+     *            the object to log
+     * @param logType
+     *            the log type associated with the object
+     * @return a unique object id
+     */
+    public String composeSystemObjectId(AuditLogableBase logable, AuditLogType logType) {
+        return composeObjectId(logable, logType, Guid.Empty);
     }
 
     private void compose(StringBuilder builder, String key, String value) {
