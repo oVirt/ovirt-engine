@@ -443,7 +443,7 @@ public class SsoUtils {
                 List<String> allowedPrefixes = scopeAsList(clientInfo.getCallbackPrefix());
                 boolean isValidUri = false;
                 for (String allowedPrefix : allowedPrefixes) {
-                    if (redirectUri.startsWith(allowedPrefix)) {
+                    if (redirectUri.toLowerCase().startsWith(allowedPrefix.toLowerCase())) {
                         isValidUri = true;
                         break;
                     }
