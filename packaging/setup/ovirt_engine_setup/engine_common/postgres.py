@@ -128,7 +128,7 @@ class Provisioning(base.Base):
 
         if hasDatabase and hasUser:
             dbovirtutils = database.OvirtUtils(
-                plugin=self,
+                plugin=self._plugin,
                 dbenvkeys=self._dbenvkeys,
                 environment=environment,
             )
@@ -251,7 +251,7 @@ class Provisioning(base.Base):
             content = f.read().splitlines()
 
         dbovirtutils = database.OvirtUtils(
-            plugin=self,
+            plugin=self._plugin,
             dbenvkeys=self._dbenvkeys,
         )
         needUpdate, content = dbovirtutils.getUpdatedPGConf(content)
@@ -372,7 +372,7 @@ class Provisioning(base.Base):
 
     def _waitForDatabase(self, environment=None):
         dbovirtutils = database.OvirtUtils(
-            plugin=self,
+            plugin=self._plugin,
             dbenvkeys=self._dbenvkeys,
         )
         for i in range(60):
@@ -407,6 +407,7 @@ class Provisioning(base.Base):
 
     def detectCommands(self):
         self.command.detect('postgresql-setup')
+        self.command.detect('psql')
 
     def supported(self):
         return platform.linux_distribution(
