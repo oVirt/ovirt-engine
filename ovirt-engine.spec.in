@@ -185,6 +185,8 @@ Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@
 BuildArch:	noarch
 
 BuildRequires:	assertj-core >= 2.2.0
+BuildRequires:	hystrix-core
+BuildRequires:	hystrix-metrics-event-stream
 BuildRequires:	java-1.8.0-openjdk-devel >= 1:1.8.0
 BuildRequires:	jpackage-utils
 BuildRequires:	make
@@ -196,8 +198,6 @@ BuildRequires:	python3-devel
 %endif
 BuildRequires:	systemd
 BuildRequires:	unzip
-BuildRequires:	hystrix-core
-BuildRequires:	hystrix-metrics-event-stream
 
 Requires(pre):	shadow-utils
 
@@ -221,6 +221,8 @@ Requires:	%{name}-dashboard >= 1.0.0
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
+Requires:	hystrix-core
+Requires:	hystrix-metrics-event-stream
 Requires:	jakarta-commons-httpclient
 Requires:	java-openjdk >= 1:1.8.0
 Requires:	jpackage-utils
@@ -234,8 +236,6 @@ Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
 Requires:	yum-plugin-versionlock
-Requires:	hystrix-core
-Requires:	hystrix-metrics-event-stream
 
 %if 0%{?rhel}
 # FOP 1.1 is available only on EL7, Fedora >= 23 contains FOP 2.0, which is not
