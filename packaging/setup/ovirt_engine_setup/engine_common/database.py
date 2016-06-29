@@ -885,6 +885,31 @@ class OvirtUtils(base.Base):
                     pg_conf_msg=self._PG_CONF_MSG,
                 ),
             },
+            {
+                'key': 'server_version',
+                'expected': self._plugin.execute(
+                    args=(
+                        self.command.get('psql'),
+                        '-V',
+                    ),
+                )[
+                    1  # stdout
+                ][
+                    0  # first line. E.g. on Fedora 23: psql (PostgreSQL) 9.4.8
+                ].split(
+                    ' '
+                )[
+                    -1
+                ],
+                'ok': self._lower_equal,
+                'check_on_use': True,
+                'needed_on_create': False,
+                'error_msg': _(
+                    "Postgresql client version is '{expected}', whereas "
+                    "the version on {pg_host} is '{current}'. "
+                    "Please use a Postgresql server of version '{expected}'."
+                ),
+            },
         )
 
     _RE_KEY_VALUE = re.compile(
@@ -929,7 +954,7 @@ class OvirtUtils(base.Base):
                         expected=expected,
                         format_str=item['error_msg'],
                         name=name,
-                        pg_host=_ind_env(self, DEK.HOST),
+                        pg_host=environment[self._dbenvkeys[DEK.HOST]]
                     )
                 )
 
