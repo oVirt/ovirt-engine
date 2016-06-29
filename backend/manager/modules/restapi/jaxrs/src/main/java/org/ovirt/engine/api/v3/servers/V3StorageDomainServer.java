@@ -81,7 +81,7 @@ public class V3StorageDomainServer extends V3Server<StorageDomainResource> {
                 parameters.putSingle("format", storageDomain.isFormat().toString());
             }
             if (storageDomain.isSetDestroy()) {
-                parameters.putSingle("destroy", storageDomain.isFormat().toString());
+                parameters.putSingle("destroy", storageDomain.isDestroy().toString());
             }
             V3Host host = storageDomain.getHost();
             if (host != null) {
