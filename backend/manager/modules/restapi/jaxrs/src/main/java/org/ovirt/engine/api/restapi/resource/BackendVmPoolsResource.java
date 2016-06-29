@@ -70,7 +70,7 @@ public class BackendVmPoolsResource
 
         int size = pool.isSetSize() ? pool.getSize() : 1;
 
-        AddVmPoolWithVmsParameters params = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
+        AddVmPoolWithVmsParameters params = new AddVmPoolWithVmsParameters(entity, vm, size);
         params.setConsoleEnabled(!getConsoleDevicesForEntity(template.getId()).isEmpty());
         params.setVirtioScsiEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, template.getId()).isEmpty());
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());

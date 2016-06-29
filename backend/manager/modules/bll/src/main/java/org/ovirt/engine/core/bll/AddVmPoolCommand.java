@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -87,22 +86,18 @@ public class AddVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends Comm
     }
 
     @Override
-    protected Guid getPoolId() {
-        VmPool vmPool = getVmPool();
-
-        getVmPoolDao().save(vmPool);
-
-        return vmPool.getVmPoolId();
+    protected void createOrUpdateVmPool() {
+        getVmPoolDao().save(getVmPool());
     }
 
     @Override
-    protected void onNoVmsAdded(Guid poolId) {
-        getVmPoolDao().remove(poolId);
+    protected void onNoVmsAdded() {
+        getVmPoolDao().remove(getVmPool().getVmPoolId());
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (isAddVmsSucceded()) {
+        if (isAllAddVmsSucceeded()) {
             return AuditLogType.USER_ADD_VM_POOL_WITH_VMS;
         }
 
@@ -145,7 +140,7 @@ public class AddVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends Comm
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        return Arrays.<QuotaConsumptionParameter>asList(new QuotaSanityParameter(getQuotaId(), null));
+        return Collections.<QuotaConsumptionParameter> singletonList(new QuotaSanityParameter(getQuotaId(), null));
     }
 
     @Override

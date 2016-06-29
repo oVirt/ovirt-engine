@@ -29,7 +29,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>  implements RenamedEntityInfoProvider {
+public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>
+        implements RenamedEntityInfoProvider {
 
     private VmPool oldPool;
     @Inject
@@ -47,9 +48,8 @@ public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends C
     }
 
     @Override
-    protected Guid getPoolId() {
+    protected void createOrUpdateVmPool() {
         getVmPoolDao().update(getVmPool());
-        return getVmPool().getVmPoolId();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends C
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return isAddVmsSucceded() ? AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS
+        return isAllAddVmsSucceeded() ? AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS
                 : AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS_FAILED;
     }
 
@@ -113,12 +113,14 @@ public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends C
     protected void executeCommand() {
         VdcQueryReturnValue currentVmsInPoolQuery =
                 runInternalQuery(VdcQueryType.GetAllPoolVms, new IdQueryParameters(getVmPool().getVmPoolId()));
-        List<VM> poolVmsBeforeAdd = currentVmsInPoolQuery.getSucceeded() ? currentVmsInPoolQuery.<List<VM>>getReturnValue() : null;
+        List<VM> poolVmsBeforeAdd =
+                currentVmsInPoolQuery.getSucceeded() ? currentVmsInPoolQuery.<List<VM>> getReturnValue() : null;
 
         super.executeCommand();
         getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
 
-        if (getSucceeded()) {
+        if (getSucceeded() && isUpdateVmRequired(poolVmsBeforeAdd)) {
+            // if a change in template version was detected --> update all pool vms
             updatePoolVms(poolVmsBeforeAdd);
         }
         vmPoolMonitor.triggerPoolMonitoringJob();
@@ -127,38 +129,35 @@ public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends C
     private void updatePoolVms(List<VM> vmsInPool) {
         boolean isUpdatedPoolLatest = getParameters().getVmStaticData().isUseLatestVersion(); // new latest value
 
-        if (vmsInPool != null && !vmsInPool.isEmpty()) {
-
-            // Check one VM in order to decide if template version was changed
-            boolean isUpdateNeeded = isUpdateVmRequired(vmsInPool.get(0));
-
-            // if a change in template version was detected --> update all pool vms
-            if (isUpdateNeeded) {
-                VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
-                        getCompensationContext());
-                for (VM vm : vmsInPool) {
-                    VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
-                    updateParams.getVmStaticData().setUseLatestVersion(isUpdatedPoolLatest);
-                    if (!isUpdatedPoolLatest) {
-                        updateParams.getVmStaticData().setVmtGuid(getParameters().getVmStaticData().getVmtGuid());
-                    }
-
-                    VdcReturnValueBase result =
-                            runInternalActionWithTasksContext(
-                                    VdcActionType.UpdateVm,
-                                    updateParams,
-                                    getLock()
-                            );
-                    getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-                    setSucceeded(getSucceeded() && result.getSucceeded());
-                }
-                VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
+        VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
+                getCompensationContext());
+        for (VM vm : vmsInPool) {
+            VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
+            updateParams.getVmStaticData().setUseLatestVersion(isUpdatedPoolLatest);
+            if (!isUpdatedPoolLatest) {
+                updateParams.getVmStaticData().setVmtGuid(getParameters().getVmStaticData().getVmtGuid());
             }
+
+            VdcReturnValueBase result =
+                    runInternalActionWithTasksContext(
+                            VdcActionType.UpdateVm,
+                            updateParams,
+                            getLock());
+            getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
+            setSucceeded(getSucceeded() && result.getSucceeded());
         }
+        VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
     }
 
-    private boolean isUpdateVmRequired(VM poolVm) {
-        Guid currentTempVersion = null; // old template version (based on current vm data)
+    private boolean isUpdateVmRequired(List<VM> vmsInPool) {
+        if (vmsInPool == null || vmsInPool.isEmpty()) {
+            return false;
+        }
+
+        // Check one VM in order to decide if template version was changed
+        VM poolVm = vmsInPool.get(0);
+
+        Guid currentTemplateVersion = null; // old template version (based on current vm data)
         boolean isCurrentLatest = false; // old latest status
         if (poolVm.isNextRunConfigurationExists()) {
             VdcQueryReturnValue qRetNextRun =
@@ -168,12 +167,12 @@ public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends C
                 final VM nextRunVm =
                         qRetNextRun.getReturnValue();
                 if (nextRunVm != null) { // template version was changed, the cause still needs to be checked
-                    currentTempVersion = nextRunVm.getVmtGuid();
+                    currentTemplateVersion = nextRunVm.getVmtGuid();
                     isCurrentLatest = nextRunVm.isUseLatestVersion();
                 }
             }
         } else {
-            currentTempVersion = poolVm.getVmtGuid();
+            currentTemplateVersion = poolVm.getVmtGuid();
             isCurrentLatest = poolVm.isUseLatestVersion();
         }
 
@@ -183,7 +182,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends C
         boolean isTemplateIdChanged = false;
         Guid newPoolTemplateVersion = getParameters().getVmStaticData().getVmtGuid();
         if (newPoolTemplateVersion != null) {
-            isTemplateIdChanged = !newPoolTemplateVersion.equals(currentTempVersion) && !isCurrentLatest;
+            isTemplateIdChanged = !newPoolTemplateVersion.equals(currentTemplateVersion) && !isCurrentLatest;
         }
 
         return isLatestPropertyChanged || isTemplateIdChanged;
@@ -214,4 +213,5 @@ public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends C
         addValidationGroup(UpdateEntity.class);
         return super.getValidationGroups();
     }
+
 }

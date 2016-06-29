@@ -82,7 +82,6 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     protected VM testVm;
     protected VmPool vmPools;
     protected static int VM_COUNT = 5;
-    protected static int DISK_SIZE = 100000;
     protected VmTemplate vmTemplate;
     protected StoragePool storagePool;
     protected List<StorageDomain> storageDomainsList;
@@ -174,7 +173,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     protected void setUpCommand() {
         command = createCommand();
         doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
-        doReturn(true).when(command).verifyAddVM();
+        doReturn(true).when(command).verifyAddVm();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).setAndValidateCpuProfile();
     }

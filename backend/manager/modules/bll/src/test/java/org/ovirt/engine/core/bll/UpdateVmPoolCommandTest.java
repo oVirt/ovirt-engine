@@ -13,7 +13,7 @@ public class UpdateVmPoolCommandTest extends CommonVmPoolWithVmsCommandTestAbstr
     @Override
     protected UpdateVmPoolCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
-                VM_COUNT, DISK_SIZE);
+                VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
         UpdateVmPoolCommand<AddVmPoolWithVmsParameters> command =
                 spy(new UpdateVmPoolCommand<AddVmPoolWithVmsParameters>(

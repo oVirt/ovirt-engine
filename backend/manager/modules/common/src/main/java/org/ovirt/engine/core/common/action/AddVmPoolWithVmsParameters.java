@@ -21,7 +21,6 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
     @Valid
     private VmStatic vmStaticData;
     private int vmsCount;
-    private int diskSize;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Boolean soundDeviceEnabled;
     private Boolean consoleEnabled;
@@ -34,12 +33,11 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
     public AddVmPoolWithVmsParameters() {
     }
 
-    public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int vmsCount, int diskSize) {
+    public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int vmsCount) {
         super(vmPool);
         graphicsDevices = new HashMap<>();
         this.vmStaticData = vm.getStaticData();
         this.vmsCount = vmsCount;
-        this.diskSize = diskSize;
     }
 
     public VmStatic getVmStaticData() {
@@ -52,10 +50,6 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
 
     public int getVmsCount() {
         return vmsCount;
-    }
-
-    public int getDiskSize() {
-        return diskSize;
     }
 
     public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {

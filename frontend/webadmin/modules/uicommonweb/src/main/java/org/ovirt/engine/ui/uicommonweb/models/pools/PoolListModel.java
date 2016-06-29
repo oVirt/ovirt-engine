@@ -458,7 +458,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
 
         AddVmPoolWithVmsParameters param =
-                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);
+                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity());
 
         param.setStorageDomainId(Guid.Empty);
         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()

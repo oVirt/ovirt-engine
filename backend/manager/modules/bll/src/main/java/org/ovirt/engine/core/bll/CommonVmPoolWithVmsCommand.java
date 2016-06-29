@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -70,7 +71,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         implements QuotaStorageDependent {
 
     @Inject
-    MacPoolPerCluster poolPerCluster;
+    private MacPoolPerCluster macPoolPerCluster;
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
@@ -81,11 +82,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     /**
      * This flag is set to true if all of the VMs were added successfully, false otherwise.
      */
-    private boolean addVmsSucceeded = true;
+    private boolean allAddVmsSucceeded = true;
     /**
      * This flag is set to true if any of the VMs was added successfully, false otherwise.
      */
-    private boolean vmsAdded = false;
+    private boolean anyAddVmSucceeded = false;
     private NameForVmInPoolGenerator nameForVmInPoolGenerator;
     private Version effectiveCompatibilityVersion;
     private MacPool macPool;
@@ -106,11 +107,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     /*
        this method exist not to do caching, but to deal with init being called from constructor in class hierarchy.
        init method is not called via Postconstruct, but from constructor, meaning, that in tests
-       we're unable pro inject 'poolPerCluster' soon enough.
-    * */
+       we're unable pro inject 'macPoolPerCluster' soon enough.
+    */
     protected MacPool getMacPool() {
         if (macPool == null) {
-            macPool = poolPerCluster.getMacPoolForCluster(getClusterId(), getContext());
+            macPool = macPoolPerCluster.getMacPoolForCluster(getClusterId(), getContext());
         }
         return macPool;
     }
@@ -155,7 +156,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
     }
 
-    protected abstract Guid getPoolId();
+    protected abstract void createOrUpdateVmPool();
 
     protected Version getEffectiveCompatibilityVersion() {
         return effectiveCompatibilityVersion;
@@ -178,30 +179,30 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         // require shared VM_POOL locks only.
         freeLock();
 
-        Guid poolId = getPoolId();
-        setActionReturnValue(poolId);
+        createOrUpdateVmPool();
+        setActionReturnValue(getVmPool().getVmPoolId());
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
 
-        addVmsToPool(poolId);
+        addVmsToPool();
 
-        getReturnValue().setValid(isAddVmsSucceded());
-        setSucceeded(isAddVmsSucceded());
+        getReturnValue().setValid(isAllAddVmsSucceeded());
+        setSucceeded(isAllAddVmsSucceeded());
         VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
-        if (!isVmsAdded()) {
-            onNoVmsAdded(poolId);
+        if (!isAnyAddVmSucceeded()) {
+            onNoVmsAdded();
         }
     }
 
-    private void addVmsToPool(Guid poolId) {
+    private void addVmsToPool() {
         int subsequentFailedAttempts = 0;
         int vmPoolMaxSubsequentFailures = Config.<Integer> getValue(ConfigValues.VmPoolMaxSubsequentFailures);
 
-        for (int i=0; i<getParameters().getVmsCount(); i++) {
+        for (int i = 0; i < getParameters().getVmsCount(); i++) {
             String currentVmName = generateUniqueVmName();
             VdcReturnValueBase returnValue =
                     runInternalAction(VdcActionType.AddVm,
-                            buildAddVmParameters(poolId, currentVmName),
+                            buildAddVmParameters(currentVmName),
                             createAddVmStepContext(currentVmName));
 
             if (returnValue != null && !returnValue.getSucceeded() && !returnValue.getValidationMessages().isEmpty()) {
@@ -210,12 +211,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                         getReturnValue().getValidationMessages().add(msg);
                     }
                 }
-                addVmsSucceeded = false;
+                allAddVmsSucceeded = false;
                 subsequentFailedAttempts++;
-            }
-            else { // Succeed on that , reset subsequentFailedAttempts.
+            } else { // Succeed on that, reset subsequentFailedAttempts.
                 subsequentFailedAttempts = 0;
-                vmsAdded = true;
+                anyAddVmSucceeded = true;
             }
             // if subsequent attempts failure exceeds configuration value , abort the loop.
             if (subsequentFailedAttempts == vmPoolMaxSubsequentFailures) {
@@ -226,7 +226,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
     }
 
-    protected void onNoVmsAdded(Guid poolId) {
+    protected void onNoVmsAdded() {
     }
 
     private String generateUniqueVmName() {
@@ -238,7 +238,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return currentVmName;
     }
 
-    private AddVmParameters buildAddVmParameters(Guid poolId, String vmName) {
+    private AddVmParameters buildAddVmParameters(String vmName) {
         VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
         currVm.setName(vmName);
         currVm.setStateless(!getVmPool().isStateful());
@@ -250,7 +250,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         AddVmParameters parameters = new AddVmParameters(currVm);
-        parameters.setPoolId(poolId);
+        parameters.setPoolId(getVmPool().getVmPoolId());
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         if (StringUtils.isEmpty(getParameters().getSessionId())) {
             parameters.setParametersCurrentUser(getCurrentUser());
@@ -351,7 +351,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 
-        if (!verifyAddVM()) {
+        if (!verifyAddVm()) {
             return false;
         }
 
@@ -383,20 +383,20 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (!setAndValidateDiskProfiles()) {
             return false;
         }
+
         if (!setAndValidateCpuProfile()) {
             return false;
         }
+
         return checkDestDomains();
     }
 
-    protected boolean verifyAddVM() {
+    protected boolean verifyAddVm() {
         final List<String> reasons = getReturnValue().getValidationMessages();
-        final int nicsCount = getParameters().getVmsCount()
-                * getVmNicDao().getAllForTemplate(getVmTemplateId()).size();
+        final int nicsCount = getParameters().getVmsCount() * getVmNicDao().getAllForTemplate(getVmTemplateId()).size();
         final int priority = getParameters().getVmStaticData().getPriority();
 
         return VmHandler.verifyAddVm(reasons, nicsCount, priority, getMacPool());
-
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {
@@ -440,7 +440,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                         diskInfoDestinationMap);
     }
 
-    public boolean checkDestDomains() {
+    protected boolean checkDestDomains() {
         List<Guid> validDomains = new ArrayList<>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             Guid domainId = diskImage.getStorageIds().get(0);
@@ -465,7 +465,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return validateSpaceRequirements();
     }
 
-    protected boolean validateSpaceRequirements() {
+    private boolean validateSpaceRequirements() {
         int numOfVms = getParameters().getVmsCount();
         Collection<DiskImage> diskDummies = ImagesHandler.getDisksDummiesForStorageAllocations(diskInfoDestinationMap.values());
         Collection<DiskImage> disks = new ArrayList<>(numOfVms * diskDummies.size());
@@ -481,12 +481,12 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 && validate(storageDomainsValidator.allDomainsHaveSpaceForNewDisks(disks));
     }
 
-    protected boolean isAddVmsSucceded() {
-        return addVmsSucceeded;
+    protected boolean isAllAddVmsSucceeded() {
+        return allAddVmsSucceeded;
     }
 
-    public boolean isVmsAdded() {
-        return vmsAdded;
+    private boolean isAnyAddVmSucceeded() {
+        return anyAddVmSucceeded;
     }
 
     protected boolean setAndValidateDiskProfiles() {
@@ -506,17 +506,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<>();
-        for (DiskImage disk : diskInfoDestinationMap.values()) {
-            list.add(new QuotaStorageConsumptionParameter(
-                    disk.getQuotaId(),
-                    null,
-                    QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    disk.getStorageIds().get(0),
-                    (double)(disk.getSizeInGigabytes() * getParameters().getVmsCount())));
-        }
-
-        return list;
+        return diskInfoDestinationMap.values().stream()
+                .map(disk -> new QuotaStorageConsumptionParameter(
+                        disk.getQuotaId(),
+                        null,
+                        QuotaConsumptionParameter.QuotaAction.CONSUME,
+                        disk.getStorageIds().get(0),
+                        (double)(disk.getSizeInGigabytes() * getParameters().getVmsCount())))
+                .collect(Collectors.toList());
     }
 
     protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Set<Guid> sdIds) {

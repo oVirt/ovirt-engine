@@ -140,7 +140,7 @@ public class BackendVmPoolResource
                 vm.setUseLatestVersion(incoming.isUseLatestTemplateVersion());
             }
 
-            final AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
+            final AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size);
             parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));
             return parameters;
         }
