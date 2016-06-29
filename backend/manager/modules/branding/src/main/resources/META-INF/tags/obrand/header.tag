@@ -2,6 +2,7 @@
 <%@ tag body-content="empty" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="messages" var="pageheader" />
 
 <div style="height: 40px; background-image: -webkit-gradient(linear, left 0%, left 100%, from(#474c50), to(#383f43));
