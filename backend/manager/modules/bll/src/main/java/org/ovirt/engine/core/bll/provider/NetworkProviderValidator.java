@@ -17,13 +17,13 @@ public class NetworkProviderValidator extends ProviderValidator {
     @Override
     public ValidationResult validateAddProvider() {
 
-        ValidationResult result = validatePluginType();
-        if (!result.isValid()) {
-            return result;
+        ValidationResult pluginTypeValidation = validatePluginType();
+        if (!pluginTypeValidation.isValid()) {
+            return pluginTypeValidation;
         }
-        result = validateAuthentication();
-        if (!result.isValid()) {
-            return result;
+        ValidationResult authValidation = validateAuthentication();
+        if (!authValidation.isValid()) {
+            return authValidation;
         }
         return super.validateAddProvider();
     }
