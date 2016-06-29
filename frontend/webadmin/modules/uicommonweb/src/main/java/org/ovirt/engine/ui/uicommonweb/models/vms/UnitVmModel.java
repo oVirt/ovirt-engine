@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
@@ -1449,16 +1448,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.migrateCompressed = migrateCompressed;
     }
 
-    private ListModel<Label> labelList;
-
-    public void setLabelList(ListModel<Label> labelList) {
-        this.labelList = labelList;
-    }
-
-    public ListModel<Label> getLabelList() {
-        return labelList;
-    }
-
     public UnitVmModel(VmModelBehaviorBase behavior, ListModel<?> parentModel) {
         this.behavior = behavior;
         this.behavior.setModel(this);
@@ -1504,10 +1493,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getVmType().setSelectedItem(VmType.Server);
         getVmType().setIsChangeable(false);
         getVmType().getSelectedItemChangedEvent().addListener(this);
-
-        // element should only appear in webadmin add & edit VM dialogs
-        setLabelList(new ListModel<Label>());
-        getLabelList().getSelectedItemsChangedEvent().addListener(this);
 
         setCdImage(new NotChangableForVmInPoolListModel<String>());
         getCdImage().setIsChangeable(false);
@@ -1835,43 +1820,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
     }
 
-    private void updateLabelList() {
-        AsyncQuery getLabelsQuery = new AsyncQuery();
-        getLabelsQuery.asyncCallback = new INewAsyncCallback() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(Object model, Object result) {
-                final List<Label> allLabels = (List<Label>) result;
-                boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
-
-                if (isExistingVmBehavior) {
-                    AsyncQuery getLabelsByVmIdQuery = new AsyncQuery();
-
-                    getLabelsByVmIdQuery.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model, Object returnValue) {
-                            List<Label> vmLabelsList = (List<Label>) returnValue;
-
-                            labelList.setItems(allLabels);
-                            labelList.setSelectedItems(vmLabelsList);
-                        }
-                    };
-
-                    Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
-
-                    AsyncDataProvider.getInstance().getLabelListByEntityId(getLabelsByVmIdQuery, vmId);
-                } else {
-                    labelList.setItems(allLabels);
-                    labelList.setSelectedItems(new ArrayList<Label>());
-                }
-
-                labelList.setIsChangeable(false);
-            }
-        };
-
-        AsyncDataProvider.getInstance().getLabelList(getLabelsQuery);
-    }
-
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem) {
         super.initialize();
 
@@ -1901,7 +1849,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initMigrationMode();
         initVncKeyboardLayout();
         initConsoleDisconnectAction();
-        updateLabelList();
 
         behavior.initialize(SystemTreeSelectedItem);
     }
@@ -1913,8 +1860,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
             if (sender == getVmType()) {
                 vmTypeChanged();
-            }
-            else if (sender == getDataCenterWithClustersList()) {
+            } else if (sender == getDataCenterWithClustersList()) {
                 behavior.updateCompatibilityVersion(); // needs to be first because it affects compatibility version
                 compatibilityVersionChanged(sender, args);
                 behavior.updateEmulatedMachines();

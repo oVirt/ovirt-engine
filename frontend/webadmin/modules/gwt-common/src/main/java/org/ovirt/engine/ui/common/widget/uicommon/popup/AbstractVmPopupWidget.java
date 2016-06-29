@@ -909,11 +909,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("providers")
     public ListModelListBoxEditor<Provider<OpenstackNetworkProviderProperties>> providersEditor;
 
-    @UiField(provided = true)
-    @Path(value = "labelList.selectedItems")
-    @WithElementId("labelList")
-    public ListModelMultipleSelectListBoxEditor<org.ovirt.engine.core.common.businessentities.Label> labelEditor;
-
     private UnitVmModel unitVmModel;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -1311,8 +1306,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         vmTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<VmType>(), new ModeSwitchingVisibilityRenderer());
-
-        labelEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<org.ovirt.engine.core.common.businessentities.Label>(), new ModeSwitchingVisibilityRenderer());
 
         instanceTypesEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<InstanceType>() {
@@ -1903,7 +1896,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vmIdEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         commentEditor.setTabIndex(nextTabIndex++);
-        labelEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
         isRunAndPauseEditor.setTabIndex(nextTabIndex++);
         isDeleteProtectedEditor.setTabIndex(nextTabIndex++);

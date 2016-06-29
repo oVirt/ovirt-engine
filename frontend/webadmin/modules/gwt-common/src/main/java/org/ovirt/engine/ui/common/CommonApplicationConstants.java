@@ -1194,8 +1194,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String optimizedFor();
 
-    String affinityLabels();
-
     String copyVmPermissions();
 
     String server();

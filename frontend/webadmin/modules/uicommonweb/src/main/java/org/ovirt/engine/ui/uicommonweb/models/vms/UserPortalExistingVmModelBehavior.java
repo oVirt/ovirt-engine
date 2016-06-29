@@ -30,9 +30,6 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
 
         // The custom properties tab should be hidden on the User Portal
         getModel().setIsCustomPropertiesTabAvailable(false);
-
-        // Affinity labels are only available in WebAdmin at this time
-        getModel().getLabelList().setIsAvailable(false);
     }
 
     @Override

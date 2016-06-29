@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -35,7 +34,6 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -417,19 +415,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     Button kernelCmdlineResetButton;
 
-    @UiField(provided = true)
-    @Path(value = "labelList.selectedItems")
-    @WithElementId("labelList")
-    public ListModelMultipleSelectListBoxEditor<org.ovirt.engine.core.common.businessentities.Label> labelEditor;
-
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
-
-    private static final int VISIBLE_ITEM_COUNT = 3;
 
     @Inject
     public HostPopupView(EventBus eventBus, FenceAgentsEditor fenceAgentEditor,
@@ -546,10 +537,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalHostGroupsEditor = getListModelTypeAheadListBoxEditor();
         externalComputeResourceEditor = getListModelTypeAheadListBoxEditor();
 
-        labelEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<org.ovirt.engine.core.common.businessentities.Label>(),
-                new VisibilityRenderer.SimpleVisibilityRenderer());
-        labelEditor.asListBox().setVisibleItemCount(VISIBLE_ITEM_COUNT);
-
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         pmEnabledEditor.setUsePatternFly(true);
@@ -606,7 +593,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         nameEditor.setLabel(constants.hostPopupNameLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         commentEditor.setLabel(constants.commentLabel());
-        labelEditor.setLabel(constants.affinityLabels());
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
@@ -1050,7 +1036,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     public DialogTabPanel getTabPanel() {
         return tabPanel;
     }
-
 
     @Override
     public HasClickHandlers getKernelCmdlineResetButton() {
