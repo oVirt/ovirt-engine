@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
@@ -23,6 +24,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
     private Disk disk;
     private VmDevice vmDevice;
+    private DiskVmElement dveFromDb;
 
     public DetachDiskFromVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -111,5 +113,16 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     @Override
     public String getDiskAlias() {
         return disk.getDiskAlias();
+    }
+
+
+    @Override
+    protected DiskVmElement getDiskVmElement() {
+        // When detaching a disk from running VMs a hot unplug is needed, in that case we need the interface info from
+        // the DB, since the parameters pass only the VM and disk ID we need to load the rest of the data from the DB
+        if (dveFromDb == null) {
+            dveFromDb = getDiskVmElementDao().get(super.getDiskVmElement().getId());
+        }
+        return dveFromDb;
     }
 }
