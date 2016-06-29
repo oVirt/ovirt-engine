@@ -49,19 +49,25 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
 
-    protected boolean skippedDueToFencingPolicy;
-
     /**
      * Constructor for command creation when compensation is applied on startup
      */
     public RestartVdsCommand(Guid commandId) {
         super(commandId);
-        skippedDueToFencingPolicy = false;
     }
 
     public RestartVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        skippedDueToFencingPolicy = false;
+    }
+
+    @Override
+    protected RestartVdsReturnValue createReturnValue() {
+        return new RestartVdsReturnValue();
+    }
+
+    @Override
+    public RestartVdsReturnValue getReturnValue() {
+        return (RestartVdsReturnValue) super.getReturnValue();
     }
 
     @Override
@@ -120,7 +126,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         }
         if (wasSkippedDueToPolicy(returnValue)) {
             // fence execution was skipped due to fencing policy, host should be alive
-            skippedDueToFencingPolicy = true;
+            getReturnValue().setSkippedDueToFencingPolicy(true);
             setSucceeded(false);
             setVdsStatus(VDSStatus.NonResponsive);
             return;

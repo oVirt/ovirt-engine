@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.pm;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -30,6 +32,10 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
@@ -40,7 +46,7 @@ import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
  * @see RestartVdsCommand on why this command is requiring a lock
  */
 @NonTransactiveCommandAttribute
-public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters> extends RestartVdsCommand<T> {
+public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     /**
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
@@ -96,8 +102,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
-        if (!previousHostedEngineHost.isPreviousHostId(getVds().getId()) && !new FenceValidator().isStartupTimeoutPassed() ||
-                !isQuietTimeFromLastActionPassed()) {
+        if (!previousHostedEngineHost.isPreviousHostId(getVds().getId())
+                && !new FenceValidator().isStartupTimeoutPassed()) {
             log.error("Failed to run Fence script on vds '{}'.", getVdsName());
             alertIfPowerManagementOperationSkipped(RESTART, null);
             // If fencing can't be done and the host is the SPM, set storage-pool to non-operational
@@ -121,6 +127,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
 
         boolean shouldBeFenced = getVds().shouldVdsBeFenced();
+        RestartVdsReturnValue restartVdsResult = null;
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
             VdcReturnValueBase retVal;
@@ -158,27 +165,14 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             getParameters().setFencingPolicy(fencingPolicy);
 
             waitUntilSkipFencingIfSDActiveAllowed(fencingPolicy.isSkipFencingIfSDActive());
-
-            // Make sure that the StopVdsCommand that runs by the RestartVds
-            // don't write over our job, and disrupt marking the job status correctly
-            ExecutionContext ec = (ExecutionContext) ObjectUtils.clone(this.getExecutionContext());
-            if (ec != null) {
-                ec.setJob(this.getExecutionContext().getJob());
-                super.executeCommand();
-                this.setExecutionContext(ec);
-            } else {
-                super.executeCommand();
-                // Since the parent class run the command, we need to reinitialize the execution context
-                if (this.getExecutionContext() != null) {
-                    this.getExecutionContext().setJob(getDbFacade().getJobDao().get(this.getJobId()));
-                }
-            }
+            restartVdsResult = (RestartVdsReturnValue) runInternalAction(VdcActionType.RestartVds,
+                    getParameters(), cloneContext().withoutExecutionContext());
         } else {
             setCommandShouldBeLogged(false);
             log.info("Host '{}' ({}) not fenced since it's status is ok, or it doesn't exist anymore.",
                     getVdsName(), getVdsId());
         }
-        if (skippedDueToFencingPolicy) {
+        if (restartVdsResult != null && restartVdsResult.isSkippedDueToFencingPolicy()) {
             // fencing was skipped, fire an alert and suppress standard command logging
             AuditLogableBase alb = new AuditLogableBase(getVds().getId());
             alb.setRepeatable(true);
@@ -264,5 +258,16 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 ThreadUtils.sleep(sleepMs);
             }
         }
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return createFenceExclusiveLocksMap(getVdsId());
+    }
+
+    public static Map<String, Pair<String, String>> createFenceExclusiveLocksMap(Guid vdsId) {
+        return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
+                LockingGroup.VDS_FENCE,
+                EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
     }
 }
