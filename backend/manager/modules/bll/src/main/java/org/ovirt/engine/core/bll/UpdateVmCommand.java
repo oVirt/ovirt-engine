@@ -100,6 +100,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Inject
     private ProviderDao providerDao;
+    @Inject
+    private VmSlaPolicyUtils vmSlaPolicyUtils;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -212,7 +214,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
         checkTrustedService();
+        liveUpdateCpuProfile();
         setSucceeded(true);
+    }
+
+    private void liveUpdateCpuProfile(){
+        if (getVm().getStatus().isQualifiedForQosChange() && !oldVm.getCpuProfileId().equals(newVmStatic.getCpuProfileId())) {
+            vmSlaPolicyUtils.refreshCpuQosOfRunningVm(getVm());
+        }
     }
 
     private void updateVmHostDevices() {
