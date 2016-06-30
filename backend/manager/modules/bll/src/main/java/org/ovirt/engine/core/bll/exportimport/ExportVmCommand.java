@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -286,7 +285,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.setParentId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
                 diskImage.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-                diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
+                diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
                 DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
                 diskImage.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());
                 diskImage.setVolumeType(diskForVolumeInfo.getVolumeType());
@@ -542,7 +541,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         vm.setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         vm.setVmtName(null);
         Snapshot activeSnapshot = getSnapshotDao().get(getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
-        vm.setSnapshots(Arrays.asList(activeSnapshot));
+        vm.setSnapshots(Collections.singletonList(activeSnapshot));
 
         try {
             updateCopyVmInSpm(getVm().getStoragePoolId(),
