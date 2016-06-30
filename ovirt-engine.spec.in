@@ -1087,6 +1087,9 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
+* Thu Jun 30 2016 Lev Veyde <lveyde@redhat.com> - 4.0.1-1
+- Rebase on version 4.0.1
+
 * Wed Jun 15 2016 Rafael Martins <rmartins@redhat.com> - 4.0.0.5-1
 - Rebase on version 4.0.0.5
 
