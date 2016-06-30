@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +20,7 @@ import javax.validation.groups.Default;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -56,7 +55,6 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -163,6 +161,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private UnmanagedNetworkValidator unmanagedNetworkValidator;
 
+    @Inject
+    private HostLocking hostLocking;
+
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
     }
@@ -185,9 +186,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getVdsId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.HOST_NETWORK,
-                        EngineMessage.ACTION_TYPE_FAILED_SETUP_NETWORKS_IN_PROGRESS));
+        return hostLocking.getSetupNetworksLock(getParameters().getVdsId());
     }
 
     @Override
@@ -297,32 +296,33 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             return;
         }
 
-        int timeout = getSetupNetworksTimeout();
-        FutureVDSCall<VDSReturnValue> setupNetworksTask = invokeSetupNetworksCommand(timeout);
+        try (EngineLock monitoringLock = acquireMonitorLock("Host setup networks")) {
+            int timeout = getSetupNetworksTimeout();
+            FutureVDSCall<VDSReturnValue> setupNetworksTask = invokeSetupNetworksCommand(timeout);
 
-        try {
-            VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
-            if (retVal != null) {
-                if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().rollbackOnFailure()) {
-                    throw new EngineException(EngineError.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
-                }
+            try {
+                VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
+                if (retVal != null) {
+                    if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().rollbackOnFailure()) {
+                        throw new EngineException(EngineError.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
+                    }
 
-                VdsHandler.handleVdsResult(retVal);
+                    VdsHandler.handleVdsResult(retVal);
 
-                if (retVal.getSucceeded()) {
-                    try (EngineLock monitoringLock = acquireMonitorLock("Host setup networks")) {
+                    if (retVal.getSucceeded()) {
+
                         VDSReturnValue returnValue =
-                            runVdsCommand(VDSCommandType.GetCapabilities,
-                                new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+                                runVdsCommand(VDSCommandType.GetCapabilities,
+                                        new VdsIdAndVdsVDSCommandParametersBase(getVds()));
                         VDS updatedHost = (VDS) returnValue.getReturnValue();
                         persistNetworkChanges(updatedHost);
                     }
 
                     setSucceeded(true);
                 }
+            } catch (TimeoutException e) {
+                log.debug("Host Setup networks command timed out for {} seconds", timeout);
             }
-        } catch (TimeoutException e) {
-            log.debug("Host Setup networks command timed out for {} seconds", timeout);
         }
     }
 

@@ -549,6 +549,11 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
+    public void refreshHostCapabilities(Guid hostId) {
+        backend.runInternalAction(VdcActionType.RefreshHostCapabilities, new VdsActionParameters(hostId));
+    }
+
+    @Override
     public boolean isUpdateAvailable(VDS host) {
         return availableUpdatesFinder.isUpdateAvailable(host);
     }

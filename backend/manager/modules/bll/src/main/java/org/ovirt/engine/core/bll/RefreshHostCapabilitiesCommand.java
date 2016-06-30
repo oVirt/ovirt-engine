@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -21,6 +22,9 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
 
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    private HostLocking hostLocking;
 
     public RefreshHostCapabilitiesCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -41,8 +45,15 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getVdsId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        Guid hostId = getParameters().getVdsId();
+
+        Map<String, Pair<String, String>> exclusiveLocks = new HashMap<>();
+
+        exclusiveLocks.put(hostId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        exclusiveLocks.putAll(hostLocking.getSetupNetworksLock(hostId));
+        return exclusiveLocks;
     }
 
     @Override

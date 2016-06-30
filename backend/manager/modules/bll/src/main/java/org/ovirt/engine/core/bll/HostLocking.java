@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,6 +42,12 @@ public class HostLocking {
                 commandName,
                 host.getName(),
                 host.getStoragePoolName());
+    }
+
+    public Map<String, Pair<String, String>> getSetupNetworksLock(Guid hostId) {
+        return Collections.singletonMap(LockingGroup.HOST_NETWORK.name() + hostId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.HOST_NETWORK,
+                        EngineMessage.ACTION_TYPE_FAILED_SETUP_NETWORKS_OR_REFRESH_IN_PROGRESS));
     }
 
     private static class HostEngineLock extends EngineLock implements AutoCloseable {

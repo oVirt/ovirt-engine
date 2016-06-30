@@ -44,7 +44,7 @@ public class HostConnectionRefresher {
         @Override
         public void onNext(Map<String, Object> map) {
             try {
-                vdsManager.refreshHost();
+                resourceManager.getEventListener().refreshHostCapabilities(vdsManager.getVdsId());
             } finally {
                 subscription.request(1);
             }
