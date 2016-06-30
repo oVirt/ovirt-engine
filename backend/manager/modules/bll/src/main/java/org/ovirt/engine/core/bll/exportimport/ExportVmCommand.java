@@ -224,7 +224,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         if (getParameters().getCopyCollapse()) {
             Snapshot activeSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
             return !activeSnapshot.getMemoryVolume().isEmpty() ?
-                    Collections.<Snapshot>singleton(activeSnapshot) : Collections.<Snapshot>emptyList();
+                    Collections.singleton(activeSnapshot) : Collections.emptyList();
         }
         else {
             Map<String, Snapshot> memory2snapshot = new HashMap<>();
