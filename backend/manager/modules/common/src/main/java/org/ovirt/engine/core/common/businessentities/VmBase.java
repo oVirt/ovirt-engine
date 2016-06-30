@@ -441,7 +441,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private boolean spiceCopyPasteEnabled;
 
     @CopyOnNewVersion
-    @EditableOnVmStatusField
+    @EditableField
     @EditableOnTemplate
     private Guid cpuProfileId;
 

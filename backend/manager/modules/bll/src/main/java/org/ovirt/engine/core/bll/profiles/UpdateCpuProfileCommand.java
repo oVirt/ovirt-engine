@@ -81,6 +81,8 @@ public class UpdateCpuProfileCommand extends UpdateProfileCommandBase<CpuProfile
         }
 
         // Update policies of all running vms
-        vmSlaPolicyUtils.refreshRunningVmsWithCpuProfile(getProfileId(), qos);
+        if (getSucceeded()) {
+            vmSlaPolicyUtils.refreshRunningVmsWithCpuProfile(getProfileId(), qos);
+        }
     }
 }

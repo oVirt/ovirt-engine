@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
+import org.ovirt.engine.core.dao.qos.CpuQosDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
@@ -42,6 +44,9 @@ public class VmSlaPolicyUtils {
 
     @Inject
     private DiskImageDao diskImageDao;
+
+    @Inject
+    private CpuQosDao cpuQosDao;
 
     @Inject
     private DiskDao diskDao;
@@ -128,6 +133,26 @@ public class VmSlaPolicyUtils {
         refreshVmsCpuQos(
                 getRunningVmsWithCpuProfiles(Collections.singleton(profileId)),
                 newQos);
+    }
+
+    /**
+     * Refresh CPU QoS of a running VM.
+     */
+    public void refreshCpuQosOfRunningVm(VM vm) {
+        if (!vm.getStatus().isQualifiedForQosChange()) {
+            // It only makes sense to try a QoS live change on a running VM.
+            throw new IllegalArgumentException(
+                    String.format("VM %s is not running. Can't perform a live QoS upgrade", vm.getId())
+            );
+        }
+        Guid vmId = vm.getId();
+        List<Guid> vmIds = Arrays.asList(vmId);
+        CpuQos cpuQos = cpuQosDao.getCpuQosByVmIds(vmIds).get(vmId);
+        if (cpuQos == null) {
+            refreshVmsCpuQos(Arrays.asList(vmId), new CpuQos());
+        } else {
+            refreshVmsCpuQos(Arrays.asList(vmId), cpuQos);
+        }
     }
 
     public void refreshVmsStorageQos(Map<Guid, List<DiskImage>> vmDiskMap, StorageQos newQos) {

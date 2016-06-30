@@ -102,6 +102,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Inject
     private ProviderDao providerDao;
     @Inject
+    private VmSlaPolicyUtils vmSlaPolicyUtils;
+    @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
     @Inject
     private StoragePoolDao storagePoolDao;
@@ -223,7 +225,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
         checkTrustedService();
+        liveUpdateCpuProfile();
         setSucceeded(true);
+    }
+
+    private void liveUpdateCpuProfile(){
+        if (getVm().getStatus().isQualifiedForQosChange() && !oldVm.getCpuProfileId().equals(newVmStatic.getCpuProfileId())) {
+            vmSlaPolicyUtils.refreshCpuQosOfRunningVm(getVm());
+        }
     }
 
     private void updateVmHostDevices() {
