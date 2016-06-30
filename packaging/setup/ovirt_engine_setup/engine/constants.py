@@ -632,6 +632,9 @@ class DWHDBEnv(object):
 
     @osetupattrs(
         answerfile=True,
+        answerfile_condition=lambda env: not env.get(
+            DWHProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+        )
     )
     def PASSWORD(self):
         return 'OVESETUP_DWH_DB/password'
@@ -658,6 +661,21 @@ class DWHDBEnv(object):
     STATEMENT = 'OVESETUP_DWH_DB/statement'
     PGPASS_FILE = 'OVESETUP_DWH_DB/pgPassFile'
     NEW_DATABASE = 'OVESETUP_DWH_DB/newDatabase'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class DWHProvisioningEnv(object):
+    """Sync with ovirt-dwh"""
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Configure local DWH database'),
+    )
+    def POSTGRES_PROVISIONING_ENABLED(self):
+        return 'OVESETUP_DWH_PROVISIONING/postgresProvisioningEnabled'
 
 
 @util.export
