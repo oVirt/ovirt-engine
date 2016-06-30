@@ -991,6 +991,9 @@ select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep
 -- Increase connection timeout from 2 to 20 seconds
 select fn_db_update_default_config_value('vdsConnectionTimeout','2','20','general',false);
 
+-- Increase number of attempts during protocol detection
+select fn_db_update_default_config_value('ProtocolFallbackRetries','3','25','general',false);
+
 ------------------------------------------------------------------------------------
 --                  SCALE
 ------------------------------------------------------------------------------------

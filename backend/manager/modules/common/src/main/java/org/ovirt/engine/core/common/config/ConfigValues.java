@@ -89,7 +89,7 @@ public enum ConfigValues {
      * The number of time to retry connection during protocol fallback.
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("3")
+    @DefaultValueAttribute("25")
     ProtocolFallbackRetries,
 
     /**
