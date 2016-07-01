@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -254,10 +256,16 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
     private Boolean isSameNetworkAddress(Guid hostId, String glusterNetworkName, String networkAddress) {
         final List<VdsNetworkInterface> nics = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(hostId);
+        String brickAddress = null;
+        try {
+            brickAddress = InetAddress.getByName(networkAddress).getHostAddress();
+        } catch (UnknownHostException e) {
+            return false;
+        }
 
         for (VdsNetworkInterface nic : nics) {
             if (glusterNetworkName.equals(nic.getNetworkName())) {
-                return networkAddress.equals(nic.getIpv4Address());
+                return brickAddress.equals(nic.getIpv4Address());
             }
         }
         return false;
