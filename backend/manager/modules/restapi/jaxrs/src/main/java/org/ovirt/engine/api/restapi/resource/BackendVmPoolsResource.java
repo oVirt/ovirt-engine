@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
@@ -17,7 +18,6 @@ import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -124,6 +124,10 @@ public class BackendVmPoolsResource
             model.getTemplate().setId(vm.getVmtGuid().toString());
             model = getMapper(VM.class, VmPool.class).map(vm, model);
             DisplayHelper.adjustDisplayData(this, model.getVm());
+            if (vm.getInstanceTypeId() != null) {
+                model.setInstanceType(new InstanceType());
+                model.getInstanceType().setId(vm.getInstanceTypeId().toString());
+            }
         }
         return model;
     }
@@ -147,7 +151,7 @@ public class BackendVmPoolsResource
 
         VmStatic fromInstanceType = null;
         if (model.isSetInstanceType()) {
-            InstanceType instanceType = loadInstanceType(model);
+            org.ovirt.engine.core.common.businessentities.InstanceType instanceType = loadInstanceType(model);
             fromTemplate.setInstanceTypeId(instanceType.getId());
             fromInstanceType = VmMapper.map(instanceType, fromTemplate, cluster.getCompatibilityVersion());
             fromInstanceType.setInstanceTypeId(instanceType.getId());
@@ -213,13 +217,13 @@ public class BackendVmPoolsResource
                 "GetConsoleDevices", true);
     }
 
-    private InstanceType loadInstanceType(VmPool pool) {
+    private org.ovirt.engine.core.common.businessentities.InstanceType loadInstanceType(VmPool pool) {
         validateParameters(pool.getInstanceType(), "id|name");
 
         GetVmTemplateParameters params;
         String identifier;
 
-        org.ovirt.engine.api.model.InstanceType instanceType = pool.getInstanceType();
+        InstanceType instanceType = pool.getInstanceType();
         if (instanceType.isSetId()) {
             params = new GetVmTemplateParameters(asGuid(instanceType.getId()));
             identifier = "InstanceType: id=" + instanceType.getId();
