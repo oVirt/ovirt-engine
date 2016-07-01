@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBox;
@@ -8,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
@@ -53,6 +55,8 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     StringValueLabel monitorCount = new StringValueLabel();
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+
     private final Driver driver = GWT.create(Driver.class);
 
     public VmImportGeneralModelForm(ModelProvider<VmImportGeneralModel> modelProvider) {
@@ -101,7 +105,9 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
                 return getModel().getGuestFreeCachedBufferedMemInfo() == null;
             }
         }));
-        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 2, 1));
+        WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
+        cpuInfoWithTooltip.setHtml(templates.numOfCpuCoresTooltip());
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 2, 1));
         formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 4, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 5, 1));
