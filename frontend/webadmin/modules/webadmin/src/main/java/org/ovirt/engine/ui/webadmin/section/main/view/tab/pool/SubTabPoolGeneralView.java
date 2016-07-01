@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.pool;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
@@ -69,6 +71,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationTemplates templates = org.ovirt.engine.ui.common.gin.AssetProvider.getTemplates();
 
     @Inject
     public SubTabPoolGeneralView(DetailModelProvider<PoolListModel, PoolGeneralModel> modelProvider) {
@@ -98,7 +101,10 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
 
         formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresPoolGeneral(), cpuInfo, 2, 1));
+
+        WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
+        cpuInfoWithTooltip.setHtml(templates.numOfCpuCoresTooltip());
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresPoolGeneral(), cpuInfoWithTooltip, 2, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsPoolGeneral(), monitorCount, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyPoolGeneral(), usbPolicy, 4, 1));
 
