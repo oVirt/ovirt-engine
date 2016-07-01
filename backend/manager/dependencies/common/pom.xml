@@ -102,12 +102,6 @@
 
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
-      <artifactId>ovirt-engine-extensions-api</artifactId>
-      <version>${org.ovirt.engine.api.ovirt-engine-extensions-api.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.api</groupId>
       <artifactId>metamodel-server</artifactId>
       <version>${metamodel.version}</version>
     </dependency>
@@ -425,12 +419,6 @@
                 <groupId>org.ovirt.otopi</groupId>
                 <artifactId>otopi</artifactId>
                 <moduleName>org.ovirt.otopi</moduleName>
-              </module>
-
-              <module>
-                <groupId>org.ovirt.engine.api</groupId>
-                <artifactId>ovirt-engine-extensions-api</artifactId>
-                <moduleName>org.ovirt.engine.api.ovirt-engine-extensions-api</moduleName>
               </module>
 
               <module>

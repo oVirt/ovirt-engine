@@ -90,6 +90,24 @@
 
     <plugins>
 
+      <!-- Create and attach JBoss modules, for all child projects: -->
+      <plugin>
+        <groupId>org.ovirt.maven.plugins</groupId>
+        <artifactId>ovirt-jboss-modules-maven-plugin</artifactId>
+        <version>2.0.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-modules</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <category>common</category>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
