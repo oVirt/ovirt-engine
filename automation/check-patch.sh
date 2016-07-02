@@ -2,6 +2,14 @@
 
 BUILD_UT=0
 RUN_DAO_TESTS=0
+BUILD_GWT=0
+
+common_modules_paths=("backend/manager/modules/searchbackend/" \
+                      "backend/manager/modules/common/" \
+                      "backend/manager/modules/compat/" )
+
+#create a search string with OR on all paths
+common_modules_search_string=$(IFS='|'; echo "${common_modules_paths[*]}")
 
 dao_tests_path1=backend/manager/modules/dal
 dao_tests_path2=("dao_tests_path2=backend/manager/modules/common/src/main/"
@@ -9,6 +17,11 @@ dao_tests_path2=("dao_tests_path2=backend/manager/modules/common/src/main/"
 
 if git show --pretty="format:" --name-only | egrep -q "\.(xml|java)$"; then
     BUILD_UT=1
+fi
+
+if git show --pretty="format:" --name-only | egrep -q \
+    "\.(frontend|userportal|webadmin|${common_modules_search_string})$"; then
+    BUILD_GWT=1
 fi
 
 if git show --pretty="format:" --name-only | egrep \
@@ -87,13 +100,20 @@ rpmbuild \
 yum-builddep output/*src.rpm
 
 # create the rpms
+# default runs without GWT
+RPM_BUILD_MODE="ovirt_build_quick"
+
+if [[ $BUILD_GWT -eq 1 ]]; then
+    RPM_BUILD_MODE="ovirt_build_draft"
+fi
+
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
     -D "release_suffix ${SUFFIX}" \
     -D "ovirt_build_ut $BUILD_UT" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
-    -D "ovirt_build_quick 1" \
+    -D "${RPM_BUILD_MODE} 1" \
     --rebuild output/*.src.rpm
 
 # Store any relevant artifacts in exported-artifacts for the ci system to
