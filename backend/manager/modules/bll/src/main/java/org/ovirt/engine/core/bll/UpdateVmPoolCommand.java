@@ -29,7 +29,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>  implements RenamedEntityInfoProvider{
+public class UpdateVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>  implements RenamedEntityInfoProvider {
 
     private VmPool oldPool;
     @Inject
@@ -38,11 +38,11 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected UpdateVmPoolWithVmsCommand(Guid commandId) {
+    protected UpdateVmPoolCommand(Guid commandId) {
         super(commandId);
     }
 
-    public UpdateVmPoolWithVmsCommand(T parameters, CommandContext commandContext) {
+    public UpdateVmPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 

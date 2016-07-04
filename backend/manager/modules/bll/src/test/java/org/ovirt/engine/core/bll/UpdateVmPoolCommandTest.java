@@ -8,15 +8,15 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 
-public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
+public class UpdateVmPoolCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
 
     @Override
-    protected UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand() {
+    protected UpdateVmPoolCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
                 VM_COUNT, DISK_SIZE);
         param.setStorageDomainId(firstStorageDomainId);
-        UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command =
-                spy(new UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(
+        UpdateVmPoolCommand<AddVmPoolWithVmsParameters> command =
+                spy(new UpdateVmPoolCommand<AddVmPoolWithVmsParameters>(
                         param, CommandContext.createContext(param.getSessionId())) {
 
                     @Override

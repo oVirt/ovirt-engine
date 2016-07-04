@@ -496,7 +496,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                     this);
         }
         else {
-            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPoolWithVms,
+            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPool,
                     new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{param})),
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
