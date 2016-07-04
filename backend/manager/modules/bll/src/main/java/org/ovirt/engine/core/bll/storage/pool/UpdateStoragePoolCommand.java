@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -207,8 +208,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
 
         List<StorageDomainStatic> poolDomains = getStorageDomainStaticDao().getAllForStoragePool(getStoragePool().getId());
-        if ( getOldStoragePool().isLocal() != getStoragePool().isLocal() && !poolDomains.isEmpty() ) {
-            return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+        if (getOldStoragePool().isLocal() && !getStoragePool().isLocal()
+                && poolDomains.stream().anyMatch(sdc -> sdc.getStorageType() == StorageType.LOCALFS)) {
+            return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_LOCAL);
         }
         if ( !getOldStoragePool().getCompatibilityVersion().equals(getStoragePool()
                 .getCompatibilityVersion())) {

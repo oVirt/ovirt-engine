@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
@@ -118,10 +119,32 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void hasDomains() {
+    public void hasLocalDomain() {
+        StorageDomainStatic sdc = new StorageDomainStatic();
+        sdc.setStorageType(StorageType.LOCALFS);
+        when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
-                (Collections.singletonList(new StorageDomainStatic()));
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+                (Collections.singletonList(sdc));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_LOCAL);
+    }
+
+    @Test
+    public void hasSharedDomain() {
+        StorageDomainStatic sdc = new StorageDomainStatic();
+        sdc.setStorageType(StorageType.NFS);
+        when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
+                (Collections.singletonList(sdc));
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
+    }
+
+    @Test
+    public void hasNoStorageDomains() {
+        when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
+        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
+                (Collections.emptyList());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
