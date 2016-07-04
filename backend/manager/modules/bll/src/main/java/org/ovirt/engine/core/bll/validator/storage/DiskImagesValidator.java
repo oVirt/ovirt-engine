@@ -193,8 +193,8 @@ public class DiskImagesValidator {
 
     /**
      * checks that the given disks do not exist on the target storage domains
-     * @param disksList list of the disks for check
      * @param imageToDestinationDomainMap map containing the destination domain for each of the disks
+     * @param storagePoolId the storage pool ID to check whether the disks are residing on
      * @return validation result indicating whether the disks don't exist on the target storage domains
      */
     public ValidationResult diskImagesOnStorage(Map<Guid, Guid> imageToDestinationDomainMap, Guid storagePoolId) {
