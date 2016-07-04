@@ -658,10 +658,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         ArrayList<StorageDomain> selectedItems =
                 getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
-
-        if (getEntity() != null) {
-            getAttachStorageCommand().setIsExecutionAllowed(!getEntity().isLocal());
-        }
+        getAttachStorageCommand().setIsExecutionAllowed(true);
 
         boolean isMasterPresent = false;
         boolean isISOPresent = false;

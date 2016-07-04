@@ -225,7 +225,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                                                                                              addDatacenter =
                                                                                                      (dataCenter.getStatus() == StoragePoolStatus.Uninitialized || dataCenter.getStatus() == StoragePoolStatus.Up)
                                                                                                              && (dataCenter.getStoragePoolFormatType() == null || dataCenter.getStoragePoolFormatType() == getEntity().getStorageStaticData()
-                                                                                                             .getStorageFormat() && dataCenter.isLocal() == (getEntity().getStorageType() == StorageType.LOCALFS));
+                                                                                                             .getStorageFormat() && (dataCenter.isLocal() || !getEntity().getStorageType().isLocal()));
                                                                                              addToAttachCandidateDatacenters(dataCenter, addDatacenter);
                                                                                              break;
                                                                                          case Volume:
