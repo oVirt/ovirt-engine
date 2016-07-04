@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -107,7 +109,7 @@ public class VmPoolMonitor implements BackendService {
         int failedAttempts = 0;
         int prestartedVmsCounter = 0;
         final int maxFailedAttempts = Config.<Integer> getValue(ConfigValues.VmPoolMonitorMaxAttempts);
-        Map<String, Integer> failureReasons = new HashMap<>();
+        Map<String, Set<Guid>> failureReasonsForVms = new HashMap<>();
         if (vmPoolMaps != null && vmPoolMaps.size() > 0) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (failedAttempts < maxFailedAttempts && prestartedVmsCounter < numOfVmsToPrestart) {
@@ -117,30 +119,27 @@ public class VmPoolMonitor implements BackendService {
                         failedAttempts = 0;
                     } else {
                         failedAttempts++;
-                        collectVmPrestartFailureReasons(failureReasons, messages);
+                        collectVmPrestartFailureReasons(map.getVmId(), failureReasonsForVms, messages);
                     }
                 } else {
                     // If we reached the required amount or we exceeded the number of allowed failures, stop
-                    logResultOfPrestartVms(prestartedVmsCounter,
-                            numOfVmsToPrestart,
-                            vmPool.getVmPoolId(),
-                            failureReasons);
                     break;
                 }
             }
+            logResultOfPrestartVms(prestartedVmsCounter,
+                    numOfVmsToPrestart,
+                    vmPool.getVmPoolId(),
+                    failureReasonsForVms);
         } else {
             log.info("No VMs available for prestarting");
         }
     }
 
-    private void collectVmPrestartFailureReasons(Map<String, Integer> failureReasons, List<String> messages) {
-        if (log.isInfoEnabled()) {
-            String reason = messages.stream()
-                    .filter(EngineMessage::contains)
-                    .collect(Collectors.joining(", "));
-            Integer count = failureReasons.get(reason);
-            failureReasons.put(reason, count == null ? 1 : count + 1);
-        }
+    private void collectVmPrestartFailureReasons(Guid vmId, Map<String, Set<Guid>> failureReasons, List<String> messages) {
+        String reason = messages.stream()
+                .filter(EngineMessage::contains)
+                .collect(Collectors.joining(", "));
+        failureReasons.computeIfAbsent(reason, key -> new HashSet<>()).add(vmId);
     }
 
     /**
@@ -149,20 +148,20 @@ public class VmPoolMonitor implements BackendService {
     private void logResultOfPrestartVms(int prestartedVmsCounter,
             int numOfVmsToPrestart,
             Guid vmPoolId,
-            Map<String, Integer> failureReasons) {
+            Map<String, Set<Guid>> failureReasonsForVms) {
         if (prestartedVmsCounter > 0) {
             log.info("Prestarted {} VMs out of the {} required, in VmPool '{}'",
                     prestartedVmsCounter,
                     numOfVmsToPrestart,
                     vmPoolId);
         } else {
-            log.info("Failed to prestart any VMs for VmPool '{}'",
+            log.warn("Failed to prestart any VMs for VmPool '{}'",
                     vmPoolId);
         }
 
         if (prestartedVmsCounter < numOfVmsToPrestart) {
-            for (Map.Entry<String, Integer> entry : failureReasons.entrySet()) {
-                log.info("Failed to prestart {} VMs with reason {}",
+            for (Map.Entry<String, Set<Guid>> entry : failureReasonsForVms.entrySet()) {
+                log.warn("Failed to prestart VMs {} with reason {}",
                         entry.getValue(),
                         entry.getKey());
             }
