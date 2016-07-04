@@ -607,7 +607,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___AddVmInterface();
 
-    String VdcActionType___AddVmPoolWithVms();
+    String VdcActionType___AddVmPool();
 
     String VdcActionType___AddVmTemplate();
 

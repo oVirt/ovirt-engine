@@ -125,7 +125,7 @@ public class BackendVmPoolsResourceTest extends
         setUpGetRngDeviceExpectations(0);
         addCommonAddExpectations();
 
-        setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
+        setUpCreationExpectations(VdcActionType.AddVmPool,
              VmPoolParametersBase.class,
              new String[] { "StorageDomainId" },
              new Object[] { GUIDS[0] },
@@ -177,7 +177,7 @@ public class BackendVmPoolsResourceTest extends
 
         addCommonAddExpectations();
 
-        setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
+        setUpCreationExpectations(VdcActionType.AddVmPool,
                 VmPoolParametersBase.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },

@@ -743,7 +743,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean checkTemplateImages(List<String> reasons) {
-        if (getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms) {
+        if (getParameters().getParentCommand() == VdcActionType.AddVmPool) {
             return true;
         }
 

@@ -28,17 +28,17 @@ import org.ovirt.engine.core.compat.Guid;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>
+public class AddVmPoolCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>
         implements QuotaVdsDependent {
 
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected AddVmPoolWithVmsCommand(Guid commandId) {
+    protected AddVmPoolCommand(Guid commandId) {
         super(commandId);
     }
 
-    public AddVmPoolWithVmsCommand(T parameters, CommandContext commandContext) {
+    public AddVmPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 

@@ -177,7 +177,7 @@ public enum VdcActionType {
     CreateVolume(243, QuotaDependency.STORAGE),
 
     // VmPoolCommands
-    AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
+    AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
     UpdateVmPool(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION, QuotaDependency.STORAGE),
     RemoveVmPool(307, ActionGroup.DELETE_VM_POOL, QuotaDependency.NONE),
     DetachUserFromVmFromPool(312, QuotaDependency.NONE),

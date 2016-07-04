@@ -75,7 +75,7 @@ public class BackendVmPoolsResource
         params.setVirtioScsiEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, template.getId()).isEmpty());
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());
 
-        return performCreate(VdcActionType.AddVmPoolWithVms,
+        return performCreate(VdcActionType.AddVmPool,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
                                                    IdQueryParameters.class));

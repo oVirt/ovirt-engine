@@ -12,18 +12,18 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
+public class AddVmPoolCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
 
     @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
 
     @Override
-    protected AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand() {
+    protected AddVmPoolCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param =
                 new AddVmPoolWithVmsParameters(vmPools, testVm, VM_COUNT, DISK_SIZE);
         param.setStorageDomainId(firstStorageDomainId);
-        AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command =
-                spy(new AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(
+        AddVmPoolCommand<AddVmPoolWithVmsParameters> command =
+                spy(new AddVmPoolCommand<AddVmPoolWithVmsParameters>(
                         param, CommandContext.createContext(param.getSessionId())) {
                     @Override
                     protected void initUser() {

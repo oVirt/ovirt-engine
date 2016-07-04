@@ -335,7 +335,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
         VmPool pool = getVmPoolDao().getByName(getParameters().getVmPool().getName());
         if (pool != null
-                && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
+                && (getActionType() == VdcActionType.AddVmPool || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
         }
@@ -371,7 +371,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             storageIds.add(storageId);
         }
 
-        if (getActionType() == VdcActionType.AddVmPoolWithVms && getParameters().getVmsCount() < 1) {
+        if (getActionType() == VdcActionType.AddVmPool && getParameters().getVmsCount() < 1) {
             return failValidation(EngineMessage.VM_POOL_CANNOT_CREATE_WITH_NO_VMS);
         }
 
