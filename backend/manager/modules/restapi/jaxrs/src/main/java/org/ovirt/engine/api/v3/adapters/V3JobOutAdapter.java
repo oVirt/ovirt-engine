@@ -68,7 +68,7 @@ public class V3JobOutAdapter implements V3Adapter<Job, V3Job> {
         }
         if (from.isSetStatus()) {
             V3Status status = new V3Status();
-            status.setState(from.getStatus().value());
+            status.setState(from.getStatus().value().toUpperCase());
             to.setStatus(status);
         }
         return to;

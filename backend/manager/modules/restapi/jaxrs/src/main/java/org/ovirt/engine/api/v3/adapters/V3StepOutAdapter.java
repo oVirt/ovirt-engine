@@ -71,7 +71,7 @@ public class V3StepOutAdapter implements V3Adapter<Step, V3Step> {
         }
         if (from.isSetStatus()) {
             V3Status status = new V3Status();
-            status.setState(from.getStatus().value());
+            status.setState(from.getStatus().value().toUpperCase());
             to.setStatus(status);
         }
         if (from.isSetType()) {
