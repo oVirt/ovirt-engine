@@ -84,7 +84,7 @@ public class StorageDomainToPoolRelationValidator {
     }
 
     public ValidationResult isStorageDomainLocalityFitsDC() {
-        if (!isStorageDomainOfTypeIsoOrExport() && storageDomainStatic.getStorageType().isLocal() != storagePool.isLocal()) {
+        if (storageDomainStatic.getStorageType().isLocal() && !storagePool.isLocal()) {
             return new ValidationResult(EngineMessage.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
         }
         return ValidationResult.VALID;
