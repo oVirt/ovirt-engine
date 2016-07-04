@@ -41,6 +41,7 @@ import org.ovirt.engine.api.model.ClusterLevel;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.Domain;
@@ -144,6 +145,8 @@ import org.ovirt.engine.api.resource.CpuProfileResource;
 import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
+import org.ovirt.engine.api.resource.DiskAttachmentResource;
+import org.ovirt.engine.api.resource.DiskAttachmentsResource;
 import org.ovirt.engine.api.resource.DiskProfileResource;
 import org.ovirt.engine.api.resource.DiskProfilesResource;
 import org.ovirt.engine.api.resource.DiskResource;
@@ -737,6 +740,10 @@ public class LinkHelper {
         map = new LocationByParentMap();
         map.add(ClusterLevelResource.class, ClusterLevelsResource.class, NO_PARENT);
         TYPES.put(ClusterLevel.class, map);
+
+        map = new LocationByParentMap();
+        map.add(DiskAttachmentResource.class, DiskAttachmentsResource.class, Vm.class);
+        TYPES.put(DiskAttachment.class, map);
     }
 
     /**
