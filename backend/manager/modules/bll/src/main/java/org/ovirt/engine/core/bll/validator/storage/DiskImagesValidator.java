@@ -197,7 +197,7 @@ public class DiskImagesValidator {
      * @param imageToDestinationDomainMap map containing the destination domain for each of the disks
      * @return validation result indicating whether the disks don't exist on the target storage domains
      */
-    public ValidationResult diskImagesOnStorage(Map<Guid, Guid> imageToDestinationDomainMap) {
+    public ValidationResult diskImagesOnStorage(Map<Guid, Guid> imageToDestinationDomainMap, Guid storagePoolId) {
         Map<Guid, List<Guid>> domainImages = new HashMap<>();
         for (DiskImage diskImage : diskImages) {
             Guid targetStorageDomainId = imageToDestinationDomainMap.get(diskImage.getId());
@@ -206,7 +206,7 @@ public class DiskImagesValidator {
             if (imagesOnStorageDomain == null) {
                 VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
                         VDSCommandType.GetImagesList,
-                        new GetImagesListVDSCommandParameters(targetStorageDomainId, diskImage.getStoragePoolId())
+                        new GetImagesListVDSCommandParameters(targetStorageDomainId, storagePoolId)
                 );
 
                 if (returnValue.getSucceeded()) {

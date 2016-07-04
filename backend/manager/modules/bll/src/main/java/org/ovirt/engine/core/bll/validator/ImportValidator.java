@@ -106,7 +106,7 @@ public class ImportValidator {
 
     public ValidationResult verifyDisks(Iterable<DiskImage> imageList, Map<Guid, Guid> imageToDestinationDomainMap) {
         if (!params.isImportAsNewEntity() && !params.isImagesExistOnTargetStorageDomain()) {
-            return new DiskImagesValidator(imageList).diskImagesOnStorage(imageToDestinationDomainMap);
+            return new DiskImagesValidator(imageList).diskImagesOnStorage(imageToDestinationDomainMap, params.getStoragePoolId());
         }
 
         return ValidationResult.VALID;
