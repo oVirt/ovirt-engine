@@ -76,9 +76,8 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
         boolean isExportDomain = item.getRole() == StorageDomainType.ImportExport;
         boolean isIsoDomain = item.getRole() == StorageDomainType.ISO;
 
-        // Local types should not be selectable for shared data centers and vice versa, only exception is an
-        // export/import and ISO domains which can be added as NFS
-        if (!(isExportDomain || isIsoDomain) && isLocalStorage(item) != dataCenter.isLocal()) {
+        // Local types should not be selectable for shared data centers
+        if (isLocalStorage(item) && !dataCenter.isLocal()) {
             updateItemSelectability(item, false);
             return;
         }
