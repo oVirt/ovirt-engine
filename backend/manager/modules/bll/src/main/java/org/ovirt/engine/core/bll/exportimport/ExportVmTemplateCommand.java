@@ -196,7 +196,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     }
 
     private boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
-        return validate(new DiskImagesValidator(disksList).diskImagesOnStorage(imageToDestinationDomainMap));
+        return validate(new DiskImagesValidator(disksList).diskImagesOnStorage(imageToDestinationDomainMap, getStoragePoolId()));
     }
 
     @Override
