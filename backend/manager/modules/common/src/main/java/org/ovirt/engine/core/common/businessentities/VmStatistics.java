@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
     private static final long serialVersionUID = -7480866662740734452L;
 
-    private List<VmJob> vmJobs;
     // NOT PERSISTED
     private VmBalloonInfo vmBalloonInfo;
     // NOT PERSISTED
@@ -217,14 +216,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     @Override
     public int compareTo(VmStatistics o) {
         return BusinessEntityComparator.<VmStatistics, Guid>newInstance().compare(this, o);
-    }
-
-    public List<VmJob> getVmJobs() {
-        return vmJobs;
-    }
-
-    public void setVmJobs(List<VmJob> vmJobs) {
-        this.vmJobs = vmJobs;
     }
 
     public VmBalloonInfo getVmBalloonInfo() {

@@ -890,7 +890,7 @@ public class VmAnalyzer {
     }
 
     private void updateVmJobs() {
-        vmJobs = vdsmVm.getVmStatistics().getVmJobs();
+        vmJobs = vdsmVm.getVmJobs();
     }
 
     private void updateVmNumaNodeRuntimeInfo() {

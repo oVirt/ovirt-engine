@@ -806,9 +806,6 @@ public class VdsBrokerObjectsBuilder {
         Integer migrationProgress = assignIntValue(xmlRpcStruct, VdsProperties.vm_migration_progress_percent);
         vm.setMigrationProgressPercent(migrationProgress != null ? migrationProgress : 0);
 
-        // ------------- vm jobs -------------
-        vm.setVmJobs(getVmJobs(vm.getId(), xmlRpcStruct));
-
         // ------------- vm numa nodes runtime info -------------------------
         if (xmlRpcStruct.containsKey(VdsProperties.VM_NUMA_NODES_RUNTIME_INFO)) {
             updateVmNumaNodesRuntimeInfo(vm, xmlRpcStruct);
@@ -829,16 +826,14 @@ public class VdsBrokerObjectsBuilder {
         return vmBalloonInfo;
     }
 
-    private static List<VmJob> getVmJobs(Guid vmId, Map<String, Object> xmlRpcStruct) {
+    public static List<VmJob> buildVmJobsData(Map<String, Object> xmlRpcStruct) {
         if (!xmlRpcStruct.containsKey(VdsProperties.vmJobs)) {
             return null;
         }
-        List<VmJob> vmJobs = new ArrayList<>();
-        for (Object jobMap : ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.vmJobs)).values()) {
-            VmJob job = buildVmJobData(vmId, (Map<String, Object>) jobMap);
-            vmJobs.add(job);
-        }
-        return vmJobs;
+        Guid vmId = new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid));
+        return ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.vmJobs)).values().stream()
+                .map(jobMap -> buildVmJobData(vmId, (Map<String, Object>) jobMap))
+                .collect(Collectors.toList());
     }
 
     private static VmJob buildVmJobData(Guid vmId, Map<String, Object> xmlRpcStruct) {

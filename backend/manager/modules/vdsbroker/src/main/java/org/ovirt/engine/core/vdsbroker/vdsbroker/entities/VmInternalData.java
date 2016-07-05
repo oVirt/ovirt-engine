@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
+import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
@@ -24,17 +25,19 @@ public class VmInternalData {
 
     // A map represents VM's LUN disks (LUN ID -> LUNs object)
     private Map<String, LUNs> lunsMap;
+    private List<VmJob> vmJobs;
 
     public VmInternalData(VmDynamic vmDynamic, Double timestamp) {
         this(vmDynamic, null, timestamp);
     }
 
     public VmInternalData(VmDynamic vmDynamic, VmStatistics vmStatistics, Double timestamp) {
-        this(vmDynamic, vmStatistics, null, Collections.<String, LUNs>emptyMap(), timestamp);
+        this(vmDynamic, vmStatistics, null, null, Collections.<String, LUNs>emptyMap(), timestamp);
     }
 
     public VmInternalData(VmDynamic vmDynamic,
             VmStatistics vmStatistics,
+            List<VmJob> vmJobs,
             List<VmGuestAgentInterface> vmGuestAgentInterfaces,
             Map<String, LUNs> lunsMap,
             Double timestamp) {
@@ -43,6 +46,7 @@ public class VmInternalData {
         this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
         this.lunsMap = lunsMap;
         this.timestamp = timestamp;
+        this.vmJobs = vmJobs;
     }
 
     public VmDynamic getVmDynamic() {
@@ -75,6 +79,14 @@ public class VmInternalData {
 
     public void setLunsMap(Map<String, LUNs> lunsMap) {
         this.lunsMap = lunsMap;
+    }
+
+    public List<VmJob> getVmJobs() {
+        return vmJobs;
+    }
+
+    public void setVmJobs(List<VmJob> vmJobs) {
+        this.vmJobs = vmJobs;
     }
 
     @Override
