@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.v3.servers;
 
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -35,6 +36,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmResource;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3VmHelper;
 import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3Disks;
 import org.ovirt.engine.api.v3.types.V3VM;
@@ -98,7 +100,7 @@ public class V3VmServer extends V3Server<VmResource> {
 
     @GET
     public V3VM get() {
-        return adaptGet(getDelegate()::get);
+        return V3VmHelper.addDisksLink(adaptGet(getDelegate()::get));
     }
 
     @POST
@@ -136,7 +138,7 @@ public class V3VmServer extends V3Server<VmResource> {
     @PUT
     @Consumes({"application/xml", "application/json"})
     public V3VM update(V3VM vm) {
-        return adaptUpdate(getDelegate()::update, vm);
+        return V3VmHelper.addDisksLink(adaptUpdate(getDelegate()::update, vm));
     }
 
     @POST

@@ -97,7 +97,6 @@ public class BackendVmsResource extends
         "applications",
         "cdroms",
         "diskattachments",
-        "disks",
         "graphicsconsoles",
         "hostdevices",
         "katelloerrata",
