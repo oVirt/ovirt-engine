@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
-import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Group;
@@ -54,7 +53,6 @@ public class LinkHelperTest extends Assert {
     private static final String TAG_ID = "outstanding";
     private static final String FILE_ID = "faroutdude";
     private static final String CDROM_ID = "wonderful";
-    private static final String DISK_ID = "fantastic";
     private static final String NIC_ID = "super";
     private static final String STORAGE_ID = "sensational";
     private static final String USER_ID = "doublerainbowalltheway";
@@ -84,7 +82,6 @@ public class LinkHelperTest extends Assert {
     private static final String CLUSTER_NETWORK_HREF = BASE_PATH + "/clusters/" + CLUSTER_ID + "/networks/" + NETWORK_ID;
     private static final String FILE_HREF = BASE_PATH + "/storagedomains/" + STORAGE_DOMAIN_ID + "/files/" + FILE_ID;
     private static final String CDROM_HREF = VM_HREF + "/cdroms/" + CDROM_ID;
-    private static final String DISK_HREF = VM_HREF + "/disks/" + DISK_ID;
     private static final String NIC_HREF = VM_HREF + "/nics/" + NIC_ID;
     private static final String STORAGE_HREF = HOST_HREF + "/storage/" + STORAGE_ID;
     private static final String GROUP_HREF = BASE_PATH + "/groups/" + GROUP_ID;
@@ -339,19 +336,6 @@ public class LinkHelperTest extends Assert {
         LinkHelper.addLinks(cdrom);
 
         assertEquals(CDROM_HREF, cdrom.getHref());
-    }
-
-    @Test
-    public void testDiskLinks() throws Exception {
-        Disk disk = new Disk();
-        disk.setId(DISK_ID);
-
-        disk.setVm(new Vm());
-        disk.getVm().setId(VM_ID);
-
-        LinkHelper.addLinks(disk);
-
-        assertEquals(DISK_HREF, disk.getHref());
     }
 
     @Test
