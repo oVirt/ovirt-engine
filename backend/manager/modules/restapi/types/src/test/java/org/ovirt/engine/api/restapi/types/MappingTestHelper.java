@@ -11,7 +11,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -99,24 +98,39 @@ public class MappingTestHelper {
     }
 
     private static boolean takesPrimitive(Method m) {
-        return m.getParameterTypes().length == 1
-                && (takesString(m) || takesBoolean(m) || takesShort(m) || takesInteger(m) || takesLong(m));
+        return m.getParameterTypes().length == 1 && (
+            takesString(m) ||
+            takesBoolean(m) ||
+            takesShort(m) ||
+            takesInteger(m) ||
+            takesLong(m) ||
+            takesDouble(m)
+        );
     }
 
     private static void random(Method m, Object model) throws Exception {
-        m.invoke(
-                model,
-                takesString(m)
-                        ? garble(m)
-                        : takesShort(m)
-                                ? Short.valueOf((short) rand(100))
-                                : takesInteger(m)
-                                        ? Integer.valueOf(rand(100))
-                                        : takesLong(m)
-                                                ? Long.valueOf(rand(1000000000))
-                                                : takesBoolean(m)
-                                                        ? Boolean.valueOf(Math.random() < 0.5D)
-                                                        : null);
+        Object value = null;
+        if (takesString(m)) {
+            value = garble(m);
+        }
+        else if (takesShort(m)) {
+            value = (short) rand(100);
+        }
+        else if (takesInteger(m)) {
+            value = rand(100);
+        }
+        else if (takesLong(m)) {
+            value = (long) rand(1000000000);
+        }
+        else if (takesBoolean(m)) {
+            value = Math.random() < 0.5D;
+        }
+        else if (takesDouble(m)) {
+            value = Math.random();
+        }
+        if (value != null) {
+            m.invoke(model, value);
+        }
     }
 
     @SafeVarargs
@@ -193,6 +207,11 @@ public class MappingTestHelper {
     private static boolean takesBoolean(Method m) {
         return Boolean.TYPE.equals(m.getParameterTypes()[0])
                 || Boolean.class.equals(m.getParameterTypes()[0]);
+    }
+
+    private static boolean takesDouble(Method m) {
+        return Double.TYPE.equals(m.getParameterTypes()[0])
+            || Double.class.equals(m.getParameterTypes()[0]);
     }
 
     private static boolean takesBigDecimal(Method m) {
