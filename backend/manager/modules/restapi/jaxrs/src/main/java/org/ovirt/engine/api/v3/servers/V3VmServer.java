@@ -33,6 +33,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.restapi.resource.BackendVmResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3Disks;
@@ -272,7 +273,7 @@ public class V3VmServer extends V3Server<VmResource> {
 
     @Path("disks")
     public V3VmDisksServer getDisksResource() {
-        return new V3VmDisksServer(id, getDelegate().getDisksResource());
+        return new V3VmDisksServer(id, ((BackendVmResource) getDelegate()).getDisksResource());
     }
 
     @Path("hostdevices")

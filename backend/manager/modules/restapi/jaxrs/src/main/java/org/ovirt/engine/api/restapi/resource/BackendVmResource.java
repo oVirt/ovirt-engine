@@ -229,7 +229,6 @@ public class BackendVmResource
         return inject(new BackendVmWatchdogsResource(guid));
     }
 
-    @Override
     public VmDisksResource getDisksResource() {
         return inject(new BackendVmDisksResource(guid));
     }
