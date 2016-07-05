@@ -123,7 +123,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
-        if (localFs && isDomainAttached(dom) && !canDetachDomain(getParameters().getDestroyingPool(), false, true)) {
+        if (localFs && isDomainAttached(dom) && !canDetachDomain(getParameters().getDestroyingPool(), false)) {
             return false;
         }
 

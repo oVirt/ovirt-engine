@@ -117,8 +117,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     protected boolean validate() {
         return canDetachStorageDomainWithVmsAndDisks(getStorageDomain()) &&
                 canDetachDomain(getParameters().getDestroyingPool(),
-                        getParameters().getRemoveLast(),
-                        isInternalExecution());
+                        getParameters().getRemoveLast());
     }
 
     @Override

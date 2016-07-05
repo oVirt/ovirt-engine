@@ -97,9 +97,8 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         setStorageDomainStatus(StorageDomainStatus.Inactive);
         storagePoolExists();
         masterDomainIsUp();
-        isNotLocalData();
         canDetachDomain();
-        assertTrue(cmd.canDetachDomain(false, false, false));
+        assertTrue(cmd.canDetachDomain(false, false));
     }
 
     @Test
@@ -107,9 +106,8 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         setStorageDomainStatus(StorageDomainStatus.Inactive);
         storagePoolExists();
         masterDomainIsUp();
-        isNotLocalData();
         canDetachDomain();
-        assertTrue(cmd.canDetachDomain(false, false, false));
+        assertTrue(cmd.canDetachDomain(false, false));
     }
 
     @Test
@@ -118,9 +116,8 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         storagePoolExists();
         cinderStorageDomainContainsDisks(false);
         masterDomainIsUp();
-        isNotLocalData();
         canDetachDomain();
-        assertFalse(cmd.canDetachDomain(false, false, false));
+        assertFalse(cmd.canDetachDomain(false, false));
     }
 
     @Test
@@ -214,10 +211,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
 
     private void cinderStorageDomainContainsDisks(boolean isCinderContainsDisks) {
         doReturn(isCinderContainsDisks).when(cmd).isCinderStorageHasNoDisks();
-    }
-
-    private void isNotLocalData() {
-        doReturn(true).when(cmd).isNotLocalData(anyBoolean());
     }
 
     private void canDetachDomain() {

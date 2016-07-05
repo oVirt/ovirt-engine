@@ -92,12 +92,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 .getStorageDomainId() : super.getStorageDomainId() : super.getStorageDomainId();
     }
 
-    protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast, boolean isInternal) {
+    protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast) {
         return checkStoragePool()
                 && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Inactive, StorageDomainStatus.Maintenance)
                 && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())
-                && isNotLocalData(isInternal)
                 && isDetachAllowed(isRemoveLast)
                 && isCinderStorageHasNoDisks();
     }
@@ -109,15 +108,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
         if (!isRemoveLast && isMaster()) {
             return failValidation(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
-        }
-        return true;
-    }
-
-    protected boolean isNotLocalData(final boolean isInternal) {
-        if (this.getStoragePool().isLocal()
-                && getStorageDomain().getStorageDomainType() == StorageDomainType.Data
-                && !isInternal) {
-            return failValidation(EngineMessage.CLUSTER_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
         }
         return true;
     }
