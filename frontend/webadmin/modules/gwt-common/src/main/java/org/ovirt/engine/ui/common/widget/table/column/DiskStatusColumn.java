@@ -34,7 +34,7 @@ public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
 
     @Override
     public SafeHtml getTooltip(Disk disk) {
-        String tooltipContent = null;
+        String tooltipContent;
         if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE) ||
                 disk.getDiskStorageType().equals(DiskStorageType.CINDER)) {
             DiskImage diskImage = (DiskImage) disk;
