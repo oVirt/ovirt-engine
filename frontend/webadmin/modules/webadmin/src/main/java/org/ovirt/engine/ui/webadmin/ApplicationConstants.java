@@ -2421,7 +2421,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String vCenter();
 
-    String vCenterInfo();
+    String dataCenterInfo();
 
     String esxi();
 
