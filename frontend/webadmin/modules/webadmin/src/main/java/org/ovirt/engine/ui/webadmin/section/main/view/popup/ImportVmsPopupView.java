@@ -129,13 +129,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @WithElementId
     ListModelListBoxEditor<Provider<VmwareVmProviderProperties>> vmwareProvidersEditor;
 
-    @Path("vCenter.entity")
-    @WithElementId("vCenter")
-    StringEntityModelTextBoxOnlyEditor vCenterEditor;
+    @Path("vmwareDatacenter.entity")
+    @WithElementId("vmwareDatacenter")
+    StringEntityModelTextBoxOnlyEditor vmwareDatacenterEditor;
 
     @UiField(provided = true)
     @Ignore
-    public EntityModelWidgetWithInfo vCenterEditorWithInfo;
+    public EntityModelWidgetWithInfo vmwareDatacenterEditorWithInfo;
 
     @UiField
     @Path("esx.entity")
@@ -143,9 +143,9 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     StringEntityModelTextBoxEditor esxEditor;
 
     @UiField
-    @Path("vmwareDatacenter.entity")
-    @WithElementId("vmwareDatacenter")
-    StringEntityModelTextBoxEditor vmwareDatacenterEditor;
+    @Path("vCenter.entity")
+    @WithElementId("vCenter")
+    StringEntityModelTextBoxEditor vCenterEditor;
 
     @UiField
     @Path("vmwareCluster.entity")
@@ -316,12 +316,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
             }
         });
 
-        vCenterEditor = new StringEntityModelTextBoxOnlyEditor();
+        vmwareDatacenterEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel label = new EnableableFormLabel();
         label.setPaddingLeft(5);
-        label.setText(constants.vCenter());
-        vCenterEditorWithInfo = new EntityModelWidgetWithInfo(label, vCenterEditor);
-        vCenterEditorWithInfo.setExplanation(templates.italicText(constants.vCenterInfo()));
+        label.setText(constants.vmwareDataCenter());
+        vmwareDatacenterEditorWithInfo = new EntityModelWidgetWithInfo(label, vmwareDatacenterEditor);
+        vmwareDatacenterEditorWithInfo.setExplanation(templates.italicText(constants.dataCenterInfo()));
 
         xenUriEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel xenUriLabel = new EnableableFormLabel();
@@ -343,14 +343,14 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         dataCentersEditor.setLabel(constants.dataCenter());
         importSourcesEditor.setLabel(constants.importSource());
         vmwareProvidersEditor.setLabel(constants.externalProviderLabel());
-        vCenterEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
+        vmwareDatacenterEditor.setWrapperStyleName(style.contentWithQuestionMarkLabel());
 
         exportDomainName.setLabel(constants.nameLabel());
         exportDomainPath.setLabel(constants.pathStorageGeneral());
         exportDomainDescription.setLabel(constants.descriptionLabel());
 
         esxEditor.setLabel(constants.esxi());
-        vmwareDatacenterEditor.setLabel(constants.vmwareDataCenter());
+        vCenterEditor.setLabel(constants.vCenter());
         vmwareClusterEditor.setLabel(constants.vmwareCluster());
         verifyEditor.setLabel(constants.vmwareSslVerification());
         usernameEditor.setLabel(constants.usernameProvider());

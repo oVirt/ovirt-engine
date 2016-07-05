@@ -88,11 +88,11 @@
 
 				<g:FlowPanel ui:field="vmwarePanel" visible="false" addStyleNames="{style.vmwareSectionStyle}">
 					<g:HorizontalPanel>
-					    <w:EntityModelWidgetWithInfo ui:field="vCenterEditorWithInfo" addStyleNames="{style.sourcePropertyStyle}" />
+					    <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" addStyleNames="{style.sourcePropertyStyle}" />
 					    <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" addStyleNames="{style.sourcePropertyStyle}" />
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
-					    <ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					    <w:EntityModelWidgetWithInfo ui:field="vmwareDatacenterEditorWithInfo" addStyleNames="{style.sourcePropertyStyle}"/>
 					    <ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 				    </g:HorizontalPanel>
 				    <g:HorizontalPanel>
