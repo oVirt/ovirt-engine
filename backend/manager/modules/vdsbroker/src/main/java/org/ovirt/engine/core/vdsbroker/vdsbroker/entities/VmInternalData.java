@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
@@ -28,13 +29,14 @@ public class VmInternalData {
     private Map<String, LUNs> lunsMap;
     private List<VmJob> vmJobs;
     private List<VmNetworkInterface> interfaceStatistics;
+    private VmBalloonInfo vmBalloonInfo;
 
     public VmInternalData(VmDynamic vmDynamic, Double timestamp) {
         this(vmDynamic, null, timestamp);
     }
 
     public VmInternalData(VmDynamic vmDynamic, VmStatistics vmStatistics, Double timestamp) {
-        this(vmDynamic, vmStatistics, null, null, null,
+        this(vmDynamic, vmStatistics, null, null, null, null,
                 Collections.<String, LUNs>emptyMap(), timestamp);
     }
 
@@ -42,6 +44,7 @@ public class VmInternalData {
             VmStatistics vmStatistics,
             List<VmJob> vmJobs,
             List<VmNetworkInterface> interfaceStatistics,
+            VmBalloonInfo vmBalloonInfo,
             List<VmGuestAgentInterface> vmGuestAgentInterfaces,
             Map<String, LUNs> lunsMap,
             Double timestamp) {
@@ -52,6 +55,7 @@ public class VmInternalData {
         this.timestamp = timestamp;
         this.vmJobs = vmJobs;
         this.interfaceStatistics = interfaceStatistics;
+        this.vmBalloonInfo = vmBalloonInfo;
     }
 
     public VmDynamic getVmDynamic() {
@@ -100,6 +104,14 @@ public class VmInternalData {
 
     public void setInterfaceStatistics(List<VmNetworkInterface> interfaceStatistics) {
         this.interfaceStatistics = interfaceStatistics;
+    }
+
+    public VmBalloonInfo getVmBalloonInfo() {
+        return vmBalloonInfo;
+    }
+
+    public void setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
+        this.vmBalloonInfo = vmBalloonInfo;
     }
 
     @Override

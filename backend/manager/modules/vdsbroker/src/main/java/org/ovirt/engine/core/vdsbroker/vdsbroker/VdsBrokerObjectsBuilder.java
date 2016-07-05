@@ -792,7 +792,6 @@ public class VdsBrokerObjectsBuilder {
 
         // ------------- vm memory statistics -----------------------
         vm.setUsageMemPercent(assignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
-        vm.setVmBalloonInfo(getBalloonInfo(xmlRpcStruct));
 
         if (xmlRpcStruct.containsKey(VdsProperties.vm_guest_mem_stats)) {
             Map<String, Object> sub = (Map<String, Object>)xmlRpcStruct.get(VdsProperties.vm_guest_mem_stats);
@@ -817,7 +816,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static VmBalloonInfo getBalloonInfo(Map<String, Object> xmlRpcStruct) {
+    public static VmBalloonInfo buildVmBalloonInfo(Map<String, Object> xmlRpcStruct) {
         VmBalloonInfo vmBalloonInfo = new VmBalloonInfo();
         Map<String, Object> balloonInfo = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_balloonInfo);
         if (balloonInfo != null && !balloonInfo.isEmpty()) {

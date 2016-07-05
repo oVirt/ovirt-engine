@@ -15,8 +15,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private static final long serialVersionUID = -7480866662740734452L;
 
     // NOT PERSISTED
-    private VmBalloonInfo vmBalloonInfo;
-    // NOT PERSISTED
     private List<VmNumaNode> vNumaNodeStatisticsList;
 
     private List<Integer> memoryUsageHistory;
@@ -204,14 +202,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     @Override
     public int compareTo(VmStatistics o) {
         return BusinessEntityComparator.<VmStatistics, Guid>newInstance().compare(this, o);
-    }
-
-    public VmBalloonInfo getVmBalloonInfo() {
-        return vmBalloonInfo;
-    }
-
-    public void setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
-        this.vmBalloonInfo = vmBalloonInfo;
     }
 
     public List<Integer> getMemoryUsageHistory() {

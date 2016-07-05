@@ -30,6 +30,7 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
                 VdsBrokerObjectsBuilder.buildVMStatisticsData(xmlRpcStruct),
                 VdsBrokerObjectsBuilder.buildVmJobsData(xmlRpcStruct),
                 VdsBrokerObjectsBuilder.buildInterfaceStatisticsData(xmlRpcStruct),
+                VdsBrokerObjectsBuilder.buildVmBalloonInfo(xmlRpcStruct),
                 VdsBrokerObjectsBuilder.buildVmGuestAgentInterfacesData(vmDynamic.getId(), xmlRpcStruct),
                 VdsBrokerObjectsBuilder.buildVmLunDisksData(xmlRpcStruct),
                 VdsBrokerObjectsBuilder.getVdsmCallTimestamp(xmlRpcStruct));

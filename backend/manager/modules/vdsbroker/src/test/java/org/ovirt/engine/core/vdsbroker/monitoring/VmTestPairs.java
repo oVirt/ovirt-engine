@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -212,11 +211,10 @@ public enum VmTestPairs {
         vmDynamic.setId(id);
         vmDynamic.setRunOnVds(SRC_HOST_ID);
         VmStatistics vmStatistics = new VmStatistics();
-        vmStatistics.setVmBalloonInfo(new VmBalloonInfo());
         ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = null;
         HashMap<String, LUNs> lunsMap = new HashMap<>();
         VmInternalData vmInternalData =
-                new VmInternalData(vmDynamic, vmStatistics, null, new ArrayList<>(),
+                new VmInternalData(vmDynamic, vmStatistics, null, new ArrayList<>(), null,
                         vmGuestAgentInterfaces, lunsMap, -1d);
         return vmInternalData;
     }

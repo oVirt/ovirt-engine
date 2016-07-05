@@ -437,7 +437,7 @@ public class VmAnalyzer {
 
     private void proceedBalloonCheck() {
         if (vdsManager.getCopyVds().isBalloonEnabled()) {
-            VmBalloonInfo balloonInfo = vdsmVm.getVmStatistics().getVmBalloonInfo();
+            VmBalloonInfo balloonInfo = vdsmVm.getVmBalloonInfo();
             if (balloonInfo == null) {
                 return;
             }
@@ -449,7 +449,7 @@ public class VmAnalyzer {
                 return;
             }
 
-            if (isBalloonDeviceActiveOnVm(vdsmVm)
+            if (isBalloonDeviceActiveOnVm()
                     && (Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())
                     || !isBalloonWorking(balloonInfo))) {
                 vmBalloonDriverRequestedAndUnavailable = true;
@@ -471,25 +471,24 @@ public class VmAnalyzer {
         }
     }
 
-    private boolean isBalloonDeviceActiveOnVm(VmInternalData vmInternalData) {
-        VmBalloonInfo balloonInfo = vmInternalData.getVmStatistics().getVmBalloonInfo();
+    private boolean isBalloonDeviceActiveOnVm() {
+        VmBalloonInfo balloonInfo = vdsmVm.getVmBalloonInfo();
         return dbVm.getMinAllocatedMem() < dbVm.getMemSizeMb() // minimum allocated mem of VM == total mem, ballooning is impossible
                 && balloonInfo.isBalloonDeviceEnabled()
                 && balloonInfo.getBalloonTargetMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue(); // ballooning was not requested/enabled on this VM
     }
 
     private void proceedGuaranteedMemoryCheck() {
-        VmStatistics vmStatistics = vdsmVm.getVmStatistics();
-        if (vmStatistics != null && vmStatistics.getVmBalloonInfo() != null &&
-                vmStatistics.getVmBalloonInfo().getCurrentMemory() != null &&
-                vmStatistics.getVmBalloonInfo().getCurrentMemory() > 0 &&
-                dbVm.getMinAllocatedMem() > vmStatistics.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES) {
+        if (vdsmVm.getVmBalloonInfo() != null &&
+                vdsmVm.getVmBalloonInfo().getCurrentMemory() != null &&
+                vdsmVm.getVmBalloonInfo().getCurrentMemory() > 0 &&
+                dbVm.getMinAllocatedMem() > vdsmVm.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES) {
             AuditLogableBase auditLogable = new AuditLogableBase();
             auditLogable.addCustomValue("VmName", dbVm.getName());
             auditLogable.addCustomValue("VdsName", vdsManager.getVdsName());
             auditLogable.addCustomValue("MemGuaranteed", String.valueOf(dbVm.getMinAllocatedMem()));
             auditLogable.addCustomValue("MemActual",
-                    Long.toString(vmStatistics.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES));
+                    Long.toString(vdsmVm.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES));
             auditLog(auditLogable, AuditLogType.VM_MEMORY_UNDER_GUARANTEED_VALUE);
         }
     }
