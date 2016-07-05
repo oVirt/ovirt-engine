@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +67,7 @@ public class GlusterBrickValidatorTest {
     public void canRebalanceOnDistributedVolume() {
         GlusterVolumeEntity volumeEntity = getDistributedVolume(volumeId1, 5);
         ValidationResult validationResult = brickValidator.canRebalance(volumeEntity);
-        assertTrue(validationResult.isValid());
+        assertThat(validationResult, isValid());
     }
 
     @Test
@@ -75,24 +77,24 @@ public class GlusterBrickValidatorTest {
         // One Brick Down
         volumeEntity.getBricks().get(3).setStatus(GlusterStatus.DOWN);
         ValidationResult validationResult = brickValidator.canRebalance(volumeEntity);
-        assertFalse(validationResult.isValid());
+        assertThat(validationResult, not(isValid()));
 
         // Two Bricks Down
         volumeEntity.getBricks().get(4).setStatus(GlusterStatus.DOWN);
         validationResult = brickValidator.canRebalance(volumeEntity);
-        assertFalse(validationResult.isValid());
+        assertThat(validationResult, not(isValid()));
 
         // One Brick Down
         volumeEntity.getBricks().get(3).setStatus(GlusterStatus.UP);
         validationResult = brickValidator.canRebalance(volumeEntity);
-        assertFalse(validationResult.isValid());
+        assertThat(validationResult, not(isValid()));
     }
 
     @Test
     public void canRebalanceOnDistributeReplicateVolume() {
         GlusterVolumeEntity volumeEntity = getDistributedReplicatedVolume(volumeId1, 12, 4);
         ValidationResult validationResult = brickValidator.canRebalance(volumeEntity);
-        assertTrue(validationResult.isValid());
+        assertThat(validationResult, isValid());
     }
 
     @Test
@@ -102,13 +104,13 @@ public class GlusterBrickValidatorTest {
         volumeEntity.getBricks().get(1).setStatus(GlusterStatus.DOWN);
         volumeEntity.getBricks().get(2).setStatus(GlusterStatus.DOWN);
         ValidationResult validationResult = brickValidator.canRebalance(volumeEntity);
-        assertTrue(validationResult.isValid());
+        assertThat(validationResult, isValid());
 
         volumeEntity.getBricks().get(4).setStatus(GlusterStatus.DOWN);
         volumeEntity.getBricks().get(5).setStatus(GlusterStatus.DOWN);
         volumeEntity.getBricks().get(6).setStatus(GlusterStatus.DOWN);
         validationResult = brickValidator.canRebalance(volumeEntity);
-        assertTrue(validationResult.isValid());
+        assertThat(validationResult, isValid());
     }
 
     @Test
@@ -119,7 +121,7 @@ public class GlusterBrickValidatorTest {
         volumeEntity.getBricks().get(2).setStatus(GlusterStatus.DOWN);
         volumeEntity.getBricks().get(3).setStatus(GlusterStatus.DOWN);
         ValidationResult validationResult = brickValidator.canRebalance(volumeEntity);
-        assertFalse(validationResult.isValid());
+        assertThat(validationResult, not(isValid()));
     }
 
     @Test
@@ -134,7 +136,7 @@ public class GlusterBrickValidatorTest {
         volumeEntity.getBricks().get(7).setStatus(GlusterStatus.DOWN);
         volumeEntity.getBricks().get(8).setStatus(GlusterStatus.DOWN);
         ValidationResult validationResult = brickValidator.canRebalance(volumeEntity);
-        assertFalse(validationResult.isValid());
+        assertThat(validationResult, not(isValid()));
     }
 
     @Test
@@ -144,8 +146,7 @@ public class GlusterBrickValidatorTest {
                         getDistributedVolume(volumeId1, 1),
                         3,
                         false);
-        assertFalse(validationResult.isValid());
-        assertTrue(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED == validationResult.getMessage());
+        assertThat(validationResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED));
     }
 
     @Test
@@ -153,8 +154,7 @@ public class GlusterBrickValidatorTest {
         GlusterVolumeEntity volumeEntity = getDistributedVolume(volumeId1, 1);
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(volumeEntity.getBricks(), volumeEntity, 1, false);
-        assertFalse(validationResult.isValid());
-        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME == validationResult.getMessage());
+        assertThat(validationResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class GlusterBrickValidatorTest {
 
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 3, false);
-        assertTrue(validationResult.isValid());
+        assertThat(validationResult, isValid());
 
     }
 
@@ -179,8 +179,7 @@ public class GlusterBrickValidatorTest {
         volumeEntity.getBricks().get(0).setStatus(GlusterStatus.DOWN);
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 1, false);
-        assertFalse(validationResult.isValid());
-        assertTrue(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN == validationResult.getMessage());
+        assertThat(validationResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN));
 
     }
 
@@ -194,8 +193,8 @@ public class GlusterBrickValidatorTest {
 
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 3, false);
-        assertFalse(validationResult.isValid());
-        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION == validationResult.getMessage());
+        assertThat(validationResult,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION));
 
     }
 
@@ -212,8 +211,8 @@ public class GlusterBrickValidatorTest {
 
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 2, false);
-        assertFalse(validationResult.isValid());
-        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE == validationResult.getMessage());
+        assertThat(validationResult,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE));
     }
 
     @Test
@@ -224,8 +223,7 @@ public class GlusterBrickValidatorTest {
 
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 5, false);
-        assertFalse(validationResult.isValid());
-        assertTrue(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT == validationResult.getMessage());
+        assertThat(validationResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT));
     }
 
     @Test
@@ -236,8 +234,7 @@ public class GlusterBrickValidatorTest {
         bricksToRemove.get(0).setBrickDirectory("NewServer:/NewExport");
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 1, false);
-        assertFalse(validationResult.isValid());
-        assertTrue(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID == validationResult.getMessage());
+        assertThat(validationResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID));
     }
 
     @Test
@@ -251,9 +248,9 @@ public class GlusterBrickValidatorTest {
 
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 1, false);
-        assertTrue(validationResult.isValid());
-        assertNotNull(bricksToRemove.get(0).getServerName());
-        assertNotNull(bricksToRemove.get(0).getBrickDirectory());
+        assertThat(validationResult, isValid());
+        assertThat(bricksToRemove.get(0).getServerName(), notNullValue());
+        assertThat(bricksToRemove.get(0).getBrickDirectory(), notNullValue());
 
     }
 }
