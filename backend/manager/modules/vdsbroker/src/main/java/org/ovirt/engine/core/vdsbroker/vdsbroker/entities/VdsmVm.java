@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
  * This class represents the internal data of a VM, including {@link VmDynamic}, {@link VmStatistics} and
  * {@link VmGuestAgentInterface}, to manage data received from the VM's host.
  */
-public class VmInternalData {
+public class VdsmVm {
 
     private VmDynamic vmDynamic;
     private VmStatistics vmStatistics;
@@ -31,7 +31,7 @@ public class VmInternalData {
     private List<VmNetworkInterface> interfaceStatistics;
     private VmBalloonInfo vmBalloonInfo;
 
-    public VmInternalData(Double timestamp) {
+    public VdsmVm(Double timestamp) {
         this.lunsMap = Collections.<String, LUNs>emptyMap();
         this.timestamp = timestamp;
     }
@@ -40,7 +40,7 @@ public class VmInternalData {
         return vmDynamic;
     }
 
-    public VmInternalData setVmDynamic(VmDynamic vmDynamic) {
+    public VdsmVm setVmDynamic(VmDynamic vmDynamic) {
         this.vmDynamic = vmDynamic;
         return this;
     }
@@ -49,7 +49,7 @@ public class VmInternalData {
         return vmStatistics;
     }
 
-    public VmInternalData setVmStatistics(VmStatistics vmStatistics) {
+    public VdsmVm setVmStatistics(VmStatistics vmStatistics) {
         this.vmStatistics = vmStatistics;
         return this;
     }
@@ -58,7 +58,7 @@ public class VmInternalData {
         return vmGuestAgentInterfaces;
     }
 
-    public VmInternalData setVmGuestAgentInterfaces(List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
+    public VdsmVm setVmGuestAgentInterfaces(List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
         this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
         return this;
     }
@@ -67,7 +67,7 @@ public class VmInternalData {
         return lunsMap;
     }
 
-    public VmInternalData setLunsMap(Map<String, LUNs> lunsMap) {
+    public VdsmVm setLunsMap(Map<String, LUNs> lunsMap) {
         this.lunsMap = lunsMap;
         return this;
     }
@@ -76,7 +76,7 @@ public class VmInternalData {
         return vmJobs;
     }
 
-    public VmInternalData setVmJobs(List<VmJob> vmJobs) {
+    public VdsmVm setVmJobs(List<VmJob> vmJobs) {
         this.vmJobs = vmJobs;
         return this;
     }
@@ -85,7 +85,7 @@ public class VmInternalData {
         return this.interfaceStatistics;
     }
 
-    public VmInternalData setInterfaceStatistics(List<VmNetworkInterface> interfaceStatistics) {
+    public VdsmVm setInterfaceStatistics(List<VmNetworkInterface> interfaceStatistics) {
         this.interfaceStatistics = interfaceStatistics;
         return this;
     }
@@ -94,7 +94,7 @@ public class VmInternalData {
         return vmBalloonInfo;
     }
 
-    public VmInternalData setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
+    public VdsmVm setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
         this.vmBalloonInfo = vmBalloonInfo;
         return this;
     }
@@ -115,10 +115,10 @@ public class VmInternalData {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof VmInternalData)) {
+        if (!(obj instanceof VdsmVm)) {
             return false;
         }
-        VmInternalData other = (VmInternalData) obj;
+        VdsmVm other = (VdsmVm) obj;
         return Objects.equals(vmDynamic, other.vmDynamic)
                 && Objects.equals(vmGuestAgentInterfaces, other.vmGuestAgentInterfaces)
                 && Objects.equals(vmStatistics, other.vmStatistics)

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class VmsStatisticsFetcher extends VmsListFetcher {
     }
 
     @Override
-    protected void gatherChangedVms(VM dbVm, VmInternalData vdsmVm) {
+    protected void gatherChangedVms(VM dbVm, VdsmVm vdsmVm) {
         changedVms.add(new Pair<>(dbVm, vdsmVm));
         if (log.isDebugEnabled()) {
             logBuilder.append(String.format("%s:%s ",

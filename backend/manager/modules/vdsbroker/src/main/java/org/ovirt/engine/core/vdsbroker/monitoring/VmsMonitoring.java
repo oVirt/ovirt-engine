@@ -35,7 +35,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +108,7 @@ public class VmsMonitoring implements BackendService {
      * @param updateStatistics Whether or not this monitoring should include VM statistics
      */
     public void perform(
-            List<Pair<VM, VmInternalData>> monitoredVms,
+            List<Pair<VM, VdsmVm>> monitoredVms,
             long fetchTime,
             VdsManager vdsManager,
             boolean updateStatistics) {
@@ -149,7 +149,7 @@ public class VmsMonitoring implements BackendService {
      * @return The analyzers which hold all the data per VM
      */
     private List<VmAnalyzer> analyzeVms(
-            List<Pair<VM, VmInternalData>> monitoredVms,
+            List<Pair<VM, VdsmVm>> monitoredVms,
             long fetchTime,
             VdsManager vdsManager,
             boolean updateStatistics) {
@@ -179,7 +179,7 @@ public class VmsMonitoring implements BackendService {
                 vmNumaNodeDao);
     }
 
-    private boolean shouldAnalyzeVm(Pair<VM, VmInternalData> pair, long fetchTime, Guid vdsId) {
+    private boolean shouldAnalyzeVm(Pair<VM, VdsmVm> pair, long fetchTime, Guid vdsId) {
         Guid vmId = getVmId(pair.getFirst(), pair.getSecond());
         VmManager vmManager = resourceManager.getVmManager(vmId);
 
@@ -371,7 +371,7 @@ public class VmsMonitoring implements BackendService {
 
     // ***** Helpers and sub-methods *****
 
-    static Guid getVmId(VM dbVm, VmInternalData vdsmVm) {
+    static Guid getVmId(VM dbVm, VdsmVm vdsmVm) {
         return dbVm != null ? dbVm.getId() : vdsmVm.getVmDynamic().getId();
     }
 

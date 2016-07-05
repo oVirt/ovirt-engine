@@ -29,7 +29,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 
 @RunWith(Theories.class)
 public class VmsListFetcherTest {
@@ -145,7 +145,7 @@ public class VmsListFetcherTest {
         }
     }
 
-    private VDSReturnValue getVdsReturnValue(VmInternalData vdsmVm) {
+    private VDSReturnValue getVdsReturnValue(VdsmVm vdsmVm) {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(true);
         if (vdsmVm != null) {
@@ -158,7 +158,7 @@ public class VmsListFetcherTest {
         return value;
     }
 
-    private VDSReturnValue getStatsReturnValue(VmInternalData vdsmVm) {
+    private VDSReturnValue getStatsReturnValue(VdsmVm vdsmVm) {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(true);
         if (vdsmVm != null) {

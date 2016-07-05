@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public abstract class PollVmStatsRefresher extends VmStatsRefresher {
             long fetchTime = System.nanoTime();
             if (fetcher.fetch()) {
                 getVmsMonitoring().perform(fetcher.getChangedVms(), fetchTime, vdsManager, isTimeToRefreshStatistics());
-                processDevices(fetcher.getVdsmVms().stream().map(VmInternalData::getVmDynamic), fetchTime);
+                processDevices(fetcher.getVdsmVms().stream().map(VdsmVm::getVmDynamic), fetchTime);
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
             }

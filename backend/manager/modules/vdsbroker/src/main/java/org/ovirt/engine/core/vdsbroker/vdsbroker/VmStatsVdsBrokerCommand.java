@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 
 public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
     protected VMInfoListReturnForXmlRpc vmListReturn;
@@ -33,11 +33,11 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
         return vmListReturn;
     }
 
-    protected VmInternalData createVmInternalData(Map<String, Object> xmlRpcStruct) {
+    protected VdsmVm createVdsmVm(Map<String, Object> xmlRpcStruct) {
         VmDynamic vmDynamic = new VmDynamic();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xmlRpcStruct, getVds());
         Guid vmId = vmDynamic.getId();
-        return new VmInternalData(getVdsmCallTimestamp(xmlRpcStruct))
+        return new VdsmVm(getVdsmCallTimestamp(xmlRpcStruct))
                 .setVmDynamic(vmDynamic)
                 .setVmStatistics(buildVMStatisticsData(xmlRpcStruct))
                 .setVmJobs(buildVmJobsData(xmlRpcStruct))

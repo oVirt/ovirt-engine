@@ -20,7 +20,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 
 public class VmAnalyzerFactory {
 
@@ -70,9 +70,9 @@ public class VmAnalyzerFactory {
         }
     }
 
-    protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> monitoredVm) {
+    protected VmAnalyzer getVmAnalyzer(Pair<VM, VdsmVm> monitoredVm) {
         // the VM that was reported by vdsm
-        VmInternalData vdsmVm = monitoredVm.getSecond();
+        VdsmVm vdsmVm = monitoredVm.getSecond();
 
         // VM from the database running on the monitored host, might be null
         VM dbVmOnMonitoredHost = monitoredVm.getFirst();

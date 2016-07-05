@@ -55,7 +55,7 @@ import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 public class VmAnalyzer {
 
     private final VM dbVm;
-    private final VmInternalData vdsmVm;
+    private final VdsmVm vdsmVm;
 
     private VmDynamic vmDynamicToSave;
     private boolean saveStatistics;
@@ -114,7 +114,7 @@ public class VmAnalyzer {
 
     public VmAnalyzer(
             VM dbVm,
-            VmInternalData vdsmVm,
+            VdsmVm vdsmVm,
             boolean updateStatistics,
             VdsManager vdsManager,
             AuditLogDirector auditLogDirector,
@@ -994,7 +994,7 @@ public class VmAnalyzer {
         return autoVmToRun;
     }
 
-    public VmInternalData getVdsmVm() {
+    public VdsmVm getVdsmVm() {
         return vdsmVm;
     }
 

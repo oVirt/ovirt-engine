@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
 
 @Logged(executionLevel = LogLevel.DEBUG)
 public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VmStatsVdsBrokerCommand<P> {
@@ -19,9 +19,9 @@ public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
     protected void executeVdsBrokerCommand() {
         vmListReturn = getBroker().getAllVmStats();
         proceedProxyReturnValue();
-        Map<Guid, VmInternalData> returnVMs = new HashMap<>();
+        Map<Guid, VdsmVm> returnVMs = new HashMap<>();
         for (int idx = 0; idx < vmListReturn.infoList.length; ++idx) {
-            VmInternalData vmInternalData = createVmInternalData(vmListReturn.infoList[idx]);
+            VdsmVm vmInternalData = createVdsmVm(vmListReturn.infoList[idx]);
             returnVMs.put(vmInternalData.getVmDynamic().getId(), vmInternalData);
         }
         setReturnValue(returnVMs);
