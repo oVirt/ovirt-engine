@@ -271,6 +271,9 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
                 setImageStatus(ImageStatus.ILLEGAL);
                 updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
             }
+
+            // Finished using the image, tear it down.
+            tearDownImage(context.entity.getVdsId());
         }
     }
 
@@ -509,8 +512,6 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         ImageTransferUpdates updates = new ImageTransferUpdates();
         updates.setClearResourceId(true);
         updateEntity(updates);
-
-        tearDownImage(entity.getVdsId());
         return true;
     }
 
