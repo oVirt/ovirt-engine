@@ -3,7 +3,6 @@
 --
 
 
-
 --
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -36,6 +35,7 @@ INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000013', 'TagManager', 'Tag Manager', true, 1, false, 255);
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000014', 'BookmarkManager', 'Bookmark Manager', true, 1, false, 255);
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000015', 'EventNotificationManager', 'Event Notification Manager', true, 1, false, 255);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000016', 'AuditLogManager', 'Audit Log Manager', true, 1, false, 255);
 
 
 --

@@ -3,7 +3,6 @@
 --
 
 
-
 --
 -- Data for Name: event_map; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -12,7 +11,6 @@ INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDC_STOP', 'VDC_
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('IRS_FAILURE', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('IRS_DISK_SPACE_LOW', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('IRS_DISK_SPACE_LOW_ERROR', 'UNASSIGNED');
-INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_FAILURE', 'VDS_ACTIVATE');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('USER_VDS_MAINTENANCE', 'VDS_ACTIVATE');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('USER_VDS_MAINTENANCE_MIGRATION_FAILED', 'USER_VDS_MAINTENANCE');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_ACTIVATE_FAILED', 'VDS_ACTIVATE');
@@ -66,7 +64,6 @@ INSERT INTO event_map (event_up_name, event_down_name) VALUES ('SYSTEM_CHANGE_ST
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_STARTED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_STOPPED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_HIGH_MEM_USE', '');
-INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_HIGH_NETWORK_USE', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_HIGH_CPU_USE', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_HIGH_SWAP_USE', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_LOW_SWAP', '');
@@ -119,6 +116,7 @@ INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_R
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_MIGRATE_BRICK_DATA_FINISHED', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_SET_NONOPERATIONAL_DOMAIN', 'VDS_DETECTED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_REMOVE_BRICKS_STOP', 'UNASSIGNED');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('HOST_INTERFACE_HIGH_NETWORK_USE', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_REMOVE_BRICKS_STOP_FAILED', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_REBALANCE_START_DETECTED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('START_REMOVING_GLUSTER_VOLUME_BRICKS_DETECTED_FROM_CLI', 'UNASSIGNED');
@@ -126,13 +124,20 @@ INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VM_CONSOLE_CONNE
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VM_CONSOLE_DISCONNECTED', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VM_SET_TICKET', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VM_DOWN_ERROR', '');
-INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_INITIATED_RUN_VM_FAIL', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_REBALANCE_NOT_FOUND_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('REMOVE_GLUSTER_VOLUME_BRICKS_NOT_FOUND_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('CLUSTER_ALERT_HA_RESERVATION', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_INITIATED_RUN_VM_FAILED', '');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_SET_NONOPERATIONAL', 'VDS_DETECTED');
 INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_SET_NONOPERATIONAL_IFACE_DOWN', 'VDS_DETECTED');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_DETAILS_REFRESH', 'UNASSIGNED');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('GLUSTER_VOLUME_DETAILS_REFRESH_FAILED', 'UNASSIGNED');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('USER_VDS_MAINTENANCE_MANUAL_HA', 'VDS_ACTIVATE');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('VDS_FAILURE', 'VDS_DETECTED');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('HOST_INTERFACE_STATE_DOWN', 'HOST_INTERFACE_STATE_UP');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('HOST_BOND_SLAVE_STATE_DOWN', 'HOST_BOND_SLAVE_STATE_UP');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM', 'UNASSIGNED');
+INSERT INTO event_map (event_up_name, event_down_name) VALUES ('NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM', 'UNASSIGNED');
 
 
 --

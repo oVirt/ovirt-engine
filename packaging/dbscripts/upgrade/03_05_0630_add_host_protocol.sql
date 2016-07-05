@@ -1,1 +1,0 @@
-SELECT fn_db_add_column('vds_static', 'protocol', 'SMALLINT NOT NULL DEFAULT 0');

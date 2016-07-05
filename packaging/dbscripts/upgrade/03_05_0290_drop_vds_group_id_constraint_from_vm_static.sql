@@ -1,1 +1,0 @@
-ALTER TABLE vm_static ALTER COLUMN vds_group_id DROP NOT NULL;

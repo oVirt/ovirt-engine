@@ -3,7 +3,6 @@
 --
 
 
-
 --
 -- Data for Name: roles_groups; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -276,7 +275,6 @@ INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 4);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 5);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 7);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 8);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 10);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 12);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 1100);
@@ -329,23 +327,38 @@ INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000014', 1300);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000015', 1303);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000015', 1300);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 163);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 164);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 165);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 166);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 163);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 164);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 165);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 166);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00005-0000-0000-0000-def000000005', 163);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00005-0000-0000-0000-def000000005', 164);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00005-0000-0000-0000-def000000005', 165);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00005-0000-0000-0000-def000000005', 166);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00004-0000-0000-0000-def000000004', 165);
-INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00004-0000-0000-0000-def000000004', 166);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 1550);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 1550);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00001-0000-0000-0000-def000000001', 1550);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 503);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00001-0000-0000-0000-def000000001', 503);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 503);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def0000a-0000-0000-0000-def00000000f', 503);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def0000a-0000-0000-0000-def00000000b', 503);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00006-0000-0000-0000-def000000006', 503);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00012-0000-0000-0000-def000000012', 503);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 130);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 131);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 130);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 131);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00001-0000-0000-0000-def000000001', 130);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00001-0000-0000-0000-def000000001', 131);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00002-0000-0000-0000-def000000002', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000013', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00008-0000-0000-0000-def000000008', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('00000000-0000-0000-0000-000000000001', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00003-0000-0000-0000-def000000003', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000014', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00001-0000-0000-0000-def000000001', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00004-0000-0000-0000-def000000004', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00007-0000-0000-0000-def000000007', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000015', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00005-0000-0000-0000-def000000005', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def0000b-0000-0000-0000-def00000000b', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000016', 1304);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00011-0000-0000-0000-def000000016', 1300);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00008-0000-0000-0000-def000000008', 502);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES ('def00008-0000-0000-0000-def000000008', 503);
 
 
 --
