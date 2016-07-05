@@ -168,7 +168,6 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 3, false);
         assertThat(validationResult, isValid());
-
     }
 
     @Test
@@ -180,7 +179,6 @@ public class GlusterBrickValidatorTest {
         ValidationResult validationResult =
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 1, false);
         assertThat(validationResult, failsWith(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN));
-
     }
 
     @Test
@@ -195,7 +193,6 @@ public class GlusterBrickValidatorTest {
                 brickValidator.canRemoveBrick(bricksToRemove, volumeEntity, 3, false);
         assertThat(validationResult,
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION));
-
     }
 
     @Test
@@ -251,6 +248,5 @@ public class GlusterBrickValidatorTest {
         assertThat(validationResult, isValid());
         assertThat(bricksToRemove.get(0).getServerName(), notNullValue());
         assertThat(bricksToRemove.get(0).getBrickDirectory(), notNullValue());
-
     }
 }
