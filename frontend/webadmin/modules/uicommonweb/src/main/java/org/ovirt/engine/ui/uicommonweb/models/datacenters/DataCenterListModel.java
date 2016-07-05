@@ -317,22 +317,6 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.getDescription().setEntity(dataCenter.getdescription());
         model.getComment().setEntity(dataCenter.getComment());
         model.setOriginalName(dataCenter.getName());
-
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
-
-                        if (storageDomainList.size() != 0) {
-                            model.getStoragePoolType().setChangeProhibitionReason(
-                                    constants.cannotChangeRepositoryTypeWithSDAttached());
-                            model.getStoragePoolType().setIsChangeable(false);
-                        }
-
-                    }
-                }), dataCenter.getId());
-
         model.getStoragePoolType().setSelectedItem(dataCenter.isLocal());
 
         model.getQuotaEnforceTypeListModel().setSelectedItem(dataCenter.getQuotaEnforcementType());

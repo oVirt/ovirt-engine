@@ -1671,8 +1671,6 @@ public interface UIConstants extends Constants {
 
     String cannotEditNameInTreeContext();
 
-    String cannotChangeRepositoryTypeWithSDAttached();
-
     String cannotChangeDCInTreeContext();
 
     String cannotChangeClusterInTreeContext();
