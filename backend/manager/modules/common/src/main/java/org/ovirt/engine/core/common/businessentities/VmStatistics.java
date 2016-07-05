@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,7 +32,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private String disksUsage;
     private Integer usageNetworkPercent;
     private Guid vmId;
-    private ArrayList<VmNetworkInterface> interfaceStatistics;
     private Integer usageCpuPercent;
     private Long guestMemoryCached;
     private Long guestMemoryBuffered;
@@ -54,7 +52,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 cpuSys,
                 cpuUser,
                 elapsedTime,
-                interfaceStatistics,
                 roundedElapsedTime,
                 usageCpuPercent,
                 usageMemPercent,
@@ -84,7 +81,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         return Objects.equals(cpuSys, other.cpuSys)
                 && Objects.equals(cpuUser, other.cpuUser)
                 && Objects.equals(elapsedTime, other.elapsedTime)
-                && Objects.equals(interfaceStatistics, other.interfaceStatistics)
                 && Objects.equals(roundedElapsedTime, other.roundedElapsedTime)
                 && Objects.equals(usageCpuPercent, other.usageCpuPercent)
                 && Objects.equals(usageMemPercent, other.usageMemPercent)
@@ -193,14 +189,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     public void setUsageNetworkPercent(Integer usageNetworkPercent) {
         this.usageNetworkPercent = usageNetworkPercent;
-    }
-
-    public ArrayList<VmNetworkInterface> getInterfaceStatistics() {
-        return this.interfaceStatistics;
-    }
-
-    public void setInterfaceStatistics(ArrayList<VmNetworkInterface> interfaceStatistics) {
-        this.interfaceStatistics = interfaceStatistics;
     }
 
     @Override

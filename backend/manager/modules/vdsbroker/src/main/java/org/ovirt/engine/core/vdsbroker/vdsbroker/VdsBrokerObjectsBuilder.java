@@ -751,31 +751,36 @@ public class VdsBrokerObjectsBuilder {
         return ArchitectureType.valueOf((String) xmlRpcStruct.get(VdsProperties.vm_arch));
     }
 
+    public static List<VmNetworkInterface> buildInterfaceStatisticsData(Map<String, Object> xmlRpcStruct) {
+        // ------------- vm network statistics -----------------------
+        if (!xmlRpcStruct.containsKey(VdsProperties.VM_NETWORK)) {
+            return null;
+        }
+
+        Map networkStruct = (Map) xmlRpcStruct.get(VdsProperties.VM_NETWORK);
+        List<VmNetworkInterface> interfaceStatistics = new ArrayList<>();
+        for (Object tempNic : networkStruct.values()) {
+            Map nic = (Map) tempNic;
+            VmNetworkInterface stats = new VmNetworkInterface();
+
+            if (nic.containsKey(VdsProperties.VM_INTERFACE_NAME)) {
+                stats.setName((String) ((nic.get(VdsProperties.VM_INTERFACE_NAME) instanceof String) ? nic
+                        .get(VdsProperties.VM_INTERFACE_NAME) : null));
+            }
+            extractInterfaceStatistics(nic, stats);
+            stats.setMacAddress((String) ((nic.get(VdsProperties.MAC_ADDR) instanceof String) ? nic
+                    .get(VdsProperties.MAC_ADDR) : null));
+            interfaceStatistics.add(stats);
+        }
+        return interfaceStatistics;
+    }
+
     public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> xmlRpcStruct) {
         if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
             vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
         }
 
         vm.setElapsedTime(assignDoubleValue(xmlRpcStruct, VdsProperties.elapsed_time));
-
-        // ------------- vm network statistics -----------------------
-        if (xmlRpcStruct.containsKey(VdsProperties.VM_NETWORK)) {
-            Map networkStruct = (Map) xmlRpcStruct.get(VdsProperties.VM_NETWORK);
-            vm.setInterfaceStatistics(new ArrayList<>());
-            for (Object tempNic : networkStruct.values()) {
-                Map nic = (Map) tempNic;
-                VmNetworkInterface stats = new VmNetworkInterface();
-                vm.getInterfaceStatistics().add(stats);
-
-                if (nic.containsKey(VdsProperties.VM_INTERFACE_NAME)) {
-                    stats.setName((String) ((nic.get(VdsProperties.VM_INTERFACE_NAME) instanceof String) ? nic
-                            .get(VdsProperties.VM_INTERFACE_NAME) : null));
-                }
-                extractInterfaceStatistics(nic, stats);
-                stats.setMacAddress((String) ((nic.get(VdsProperties.MAC_ADDR) instanceof String) ? nic
-                        .get(VdsProperties.MAC_ADDR) : null));
-            }
-        }
 
         if (xmlRpcStruct.containsKey(VdsProperties.VM_DISKS_USAGE)) {
             initDisksUsage(xmlRpcStruct, vm);

@@ -213,11 +213,10 @@ public enum VmTestPairs {
         vmDynamic.setRunOnVds(SRC_HOST_ID);
         VmStatistics vmStatistics = new VmStatistics();
         vmStatistics.setVmBalloonInfo(new VmBalloonInfo());
-        vmStatistics.setInterfaceStatistics(new ArrayList<>());
         ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = null;
         HashMap<String, LUNs> lunsMap = new HashMap<>();
         VmInternalData vmInternalData =
-                new VmInternalData(vmDynamic, vmStatistics, null,
+                new VmInternalData(vmDynamic, vmStatistics, null, new ArrayList<>(),
                         vmGuestAgentInterfaces, lunsMap, -1d);
         return vmInternalData;
     }

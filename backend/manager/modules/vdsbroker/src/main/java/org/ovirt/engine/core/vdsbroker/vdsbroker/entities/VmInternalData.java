@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 /**
@@ -26,18 +27,21 @@ public class VmInternalData {
     // A map represents VM's LUN disks (LUN ID -> LUNs object)
     private Map<String, LUNs> lunsMap;
     private List<VmJob> vmJobs;
+    private List<VmNetworkInterface> interfaceStatistics;
 
     public VmInternalData(VmDynamic vmDynamic, Double timestamp) {
         this(vmDynamic, null, timestamp);
     }
 
     public VmInternalData(VmDynamic vmDynamic, VmStatistics vmStatistics, Double timestamp) {
-        this(vmDynamic, vmStatistics, null, null, Collections.<String, LUNs>emptyMap(), timestamp);
+        this(vmDynamic, vmStatistics, null, null, null,
+                Collections.<String, LUNs>emptyMap(), timestamp);
     }
 
     public VmInternalData(VmDynamic vmDynamic,
             VmStatistics vmStatistics,
             List<VmJob> vmJobs,
+            List<VmNetworkInterface> interfaceStatistics,
             List<VmGuestAgentInterface> vmGuestAgentInterfaces,
             Map<String, LUNs> lunsMap,
             Double timestamp) {
@@ -47,6 +51,7 @@ public class VmInternalData {
         this.lunsMap = lunsMap;
         this.timestamp = timestamp;
         this.vmJobs = vmJobs;
+        this.interfaceStatistics = interfaceStatistics;
     }
 
     public VmDynamic getVmDynamic() {
@@ -89,13 +94,22 @@ public class VmInternalData {
         this.vmJobs = vmJobs;
     }
 
+    public List<VmNetworkInterface> getInterfaceStatistics() {
+        return this.interfaceStatistics;
+    }
+
+    public void setInterfaceStatistics(List<VmNetworkInterface> interfaceStatistics) {
+        this.interfaceStatistics = interfaceStatistics;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
                 vmDynamic,
                 vmGuestAgentInterfaces,
                 vmStatistics,
-                lunsMap
+                lunsMap,
+                interfaceStatistics
         );
     }
 
@@ -111,7 +125,8 @@ public class VmInternalData {
         return Objects.equals(vmDynamic, other.vmDynamic)
                 && Objects.equals(vmGuestAgentInterfaces, other.vmGuestAgentInterfaces)
                 && Objects.equals(vmStatistics, other.vmStatistics)
-                && Objects.equals(lunsMap, other.lunsMap);
+                && Objects.equals(lunsMap, other.lunsMap)
+                && Objects.equals(interfaceStatistics, other.interfaceStatistics);
     }
 
     public Double getTimestamp() {

@@ -804,7 +804,7 @@ public class VmAnalyzer {
     }
 
     private void updateInterfaceStatistics() {
-        List<VmNetworkInterface> ifsStats = vdsmVm.getVmStatistics().getInterfaceStatistics();
+        List<VmNetworkInterface> ifsStats = vdsmVm.getInterfaceStatistics();
         if (ifsStats == null || ifsStats.isEmpty()) {
             return;
         }
