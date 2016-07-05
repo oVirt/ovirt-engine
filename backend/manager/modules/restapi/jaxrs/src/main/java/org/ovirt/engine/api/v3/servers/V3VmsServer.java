@@ -31,6 +31,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3VmHelper;
 import org.ovirt.engine.api.v3.types.V3Disks;
 import org.ovirt.engine.api.v3.types.V3Permissions;
 import org.ovirt.engine.api.v3.types.V3VM;
@@ -67,12 +68,14 @@ public class V3VmsServer extends V3Server<VmsResource> {
             }
         }
 
-        return adaptAdd(getDelegate()::add, vm);
+        return V3VmHelper.addDisksLinkToResponse(adaptAdd(getDelegate()::add, vm));
     }
 
     @GET
     public V3VMs list() {
-        return adaptList(getDelegate()::list);
+        V3VMs vms = adaptList(getDelegate()::list);
+        vms.getVMs().stream().forEach(V3VmHelper::addDisksLink);
+        return vms;
     }
 
     @Path("{id}")
