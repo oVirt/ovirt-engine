@@ -1276,6 +1276,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String vmId();
 
+    String templateId();
+
     String cpuShares();
 
     String networkProfilePopup();

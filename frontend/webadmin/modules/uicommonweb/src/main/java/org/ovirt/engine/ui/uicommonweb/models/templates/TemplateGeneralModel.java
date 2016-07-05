@@ -27,6 +27,19 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         }
     }
 
+    private String templateId;
+
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(String value) {
+        if (!Objects.equals(templateId, value)) {
+            templateId = value;
+            onPropertyChanged(new PropertyChangedEventArgs("TemplateId")); //$NON-NLS-1$
+        }
+    }
+
     private String description;
 
     public String getDescription() {
@@ -322,6 +335,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         super.updateProperties(template.getId());
 
         setName(template.getName());
+        setTemplateId(template.getId().toString());
         setDescription(template.getDescription());
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(template.getQuotaEnforcementType() != null

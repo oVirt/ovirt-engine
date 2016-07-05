@@ -34,6 +34,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     StringValueLabel domain = new StringValueLabel();
     StringValueLabel timeZone = new StringValueLabel();
     StringValueLabel quotaName = new StringValueLabel();
+    StringValueLabel templateId = new StringValueLabel();
 
     BooleanLabel isHighlyAvailable;
 
@@ -85,19 +86,20 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
 
         formBuilder.addFormItem(new FormItem(constants.originTemplateGeneral(), origin, 0, 2));
         formBuilder.addFormItem(new FormItem(constants.isStatelessTemplateGeneral(), isStateless, 1, 2));
-        formBuilder.addFormItem(new FormItem(constants.domainTemplateGeneral(), domain, 2, 2) {
+        formBuilder.addFormItem(new FormItem(constants.templateId(), templateId, 2, 2));
+        formBuilder.addFormItem(new FormItem(constants.domainTemplateGeneral(), domain, 3, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasDomain();
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.tzTemplateGeneral(), timeZone, 3, 2) {
+        formBuilder.addFormItem(new FormItem(constants.tzTemplateGeneral(), timeZone, 4, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasTimeZone();
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.quotaTemplateGeneral(), quotaName, 4, 2) {
+        formBuilder.addFormItem(new FormItem(constants.quotaTemplateGeneral(), quotaName, 5, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
