@@ -140,7 +140,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveBrickEmptyList() {
         ValidationResult validationResult =
-                brickValidator.canRemoveBrick(Collections.<GlusterBrickEntity> emptyList(),
+                brickValidator.canRemoveBrick(Collections.emptyList(),
                         getDistributedVolume(volumeId1, 1),
                         3,
                         false);
