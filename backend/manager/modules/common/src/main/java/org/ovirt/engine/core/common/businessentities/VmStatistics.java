@@ -14,9 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
     private static final long serialVersionUID = -7480866662740734452L;
 
-    // NOT PERSISTED
-    private List<VmNumaNode> vNumaNodeStatisticsList;
-
     private List<Integer> memoryUsageHistory;
     private List<Integer> cpuUsageHistory;
     private List<Integer> networkUsageHistory;
@@ -41,7 +38,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         elapsedTime = 0.0;
         roundedElapsedTime = 0.0;
         vmId = Guid.Empty;
-        vNumaNodeStatisticsList = new ArrayList<>();
     }
 
     @Override
@@ -60,7 +56,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 cpuUsageHistory,
                 networkUsageHistory,
                 memoryUsageHistory,
-                vNumaNodeStatisticsList,
                 guestMemoryFree,
                 guestMemoryBuffered,
                 guestMemoryCached
@@ -89,7 +84,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && Objects.equals(cpuUsageHistory, other.cpuUsageHistory)
                 && Objects.equals(networkUsageHistory, other.networkUsageHistory)
                 && Objects.equals(memoryUsageHistory, other.memoryUsageHistory)
-                && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList)
                 && Objects.equals(guestMemoryBuffered, other.guestMemoryBuffered)
                 && Objects.equals(guestMemoryCached, other.guestMemoryCached)
                 && Objects.equals(guestMemoryFree, other.guestMemoryFree);
@@ -260,14 +254,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         }
 
         return res.subList(res.size() - limit, res.size());
-    }
-
-    public List<VmNumaNode> getvNumaNodeStatisticsList() {
-        return vNumaNodeStatisticsList;
-    }
-
-    public void setvNumaNodeStatisticsList(List<VmNumaNode> vNumaNodeStatisticsList) {
-        this.vNumaNodeStatisticsList = vNumaNodeStatisticsList;
     }
 
     public Long getGuestMemoryCached() {

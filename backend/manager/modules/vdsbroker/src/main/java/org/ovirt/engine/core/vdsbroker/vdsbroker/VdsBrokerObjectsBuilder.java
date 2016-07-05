@@ -809,11 +809,6 @@ public class VdsBrokerObjectsBuilder {
         // ------------- vm migration statistics -----------------------
         Integer migrationProgress = assignIntValue(xmlRpcStruct, VdsProperties.vm_migration_progress_percent);
         vm.setMigrationProgressPercent(migrationProgress != null ? migrationProgress : 0);
-
-        // ------------- vm numa nodes runtime info -------------------------
-        if (xmlRpcStruct.containsKey(VdsProperties.VM_NUMA_NODES_RUNTIME_INFO)) {
-            updateVmNumaNodesRuntimeInfo(vm, xmlRpcStruct);
-        }
     }
 
     public static VmBalloonInfo buildVmBalloonInfo(Map<String, Object> xmlRpcStruct) {
@@ -2342,7 +2337,11 @@ public class VdsBrokerObjectsBuilder {
     /**
      * Build through the received vm NUMA nodes runtime information
      */
-    private static void updateVmNumaNodesRuntimeInfo(VmStatistics vm, Map<String, Object> xmlRpcStruct) {
+    public static List<VmNumaNode> buildVmNumaNodesRuntimeInfo(Map<String, Object> xmlRpcStruct) {
+        if (!xmlRpcStruct.containsKey(VdsProperties.VM_NUMA_NODES_RUNTIME_INFO)) {
+            return null;
+        }
+        List<VmNumaNode> vmNumaNodes = new ArrayList<>();
         Map<String, Object[]> vNodesRunInfo = (Map<String, Object[]>)xmlRpcStruct.get(
                 VdsProperties.VM_NUMA_NODES_RUNTIME_INFO);
         for (Map.Entry<String, Object[]> item : vNodesRunInfo.entrySet()) {
@@ -2352,8 +2351,9 @@ public class VdsBrokerObjectsBuilder {
                 vNode.getVdsNumaNodeList().add(new Pair<>(
                         Guid.Empty, new Pair<>(false, (Integer)pNodeIndex)));
             }
-            vm.getvNumaNodeStatisticsList().add(vNode);
+            vmNumaNodes.add(vNode);
         }
+        return vmNumaNodes;
     }
 
     private static <T> List<T> extractList(Map<String, Object> xmlRpcStruct, String propertyName, boolean returnNullOnEmpty) {

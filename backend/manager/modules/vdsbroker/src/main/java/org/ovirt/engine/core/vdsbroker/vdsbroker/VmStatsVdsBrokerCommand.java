@@ -6,6 +6,7 @@ import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmGuestAgentInterfacesData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmJobsData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmLunDisksData;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmNumaNodesRuntimeInfo;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.getVdsmCallTimestamp;
 
 import java.util.Map;
@@ -44,7 +45,8 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
                 .setInterfaceStatistics(buildInterfaceStatisticsData(xmlRpcStruct))
                 .setVmBalloonInfo(buildVmBalloonInfo(xmlRpcStruct))
                 .setVmGuestAgentInterfaces(buildVmGuestAgentInterfacesData(vmId, xmlRpcStruct))
-                .setLunsMap(buildVmLunDisksData(xmlRpcStruct));
+                .setLunsMap(buildVmLunDisksData(xmlRpcStruct))
+                .setvNumaNodeStatisticsList(buildVmNumaNodesRuntimeInfo(xmlRpcStruct));
     }
 
     @Override

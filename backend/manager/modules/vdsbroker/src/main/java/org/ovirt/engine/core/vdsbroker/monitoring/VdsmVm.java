@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -30,6 +31,7 @@ public class VdsmVm {
     private List<VmJob> vmJobs;
     private List<VmNetworkInterface> interfaceStatistics;
     private VmBalloonInfo vmBalloonInfo;
+    private List<VmNumaNode> vNumaNodeStatisticsList;
 
     public VdsmVm(Double timestamp) {
         this.lunsMap = Collections.<String, LUNs>emptyMap();
@@ -99,6 +101,15 @@ public class VdsmVm {
         return this;
     }
 
+    public List<VmNumaNode> getvNumaNodeStatisticsList() {
+        return vNumaNodeStatisticsList;
+    }
+
+    public VdsmVm setvNumaNodeStatisticsList(List<VmNumaNode> vNumaNodeStatisticsList) {
+        this.vNumaNodeStatisticsList = vNumaNodeStatisticsList;
+        return this;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -106,7 +117,8 @@ public class VdsmVm {
                 vmGuestAgentInterfaces,
                 vmStatistics,
                 lunsMap,
-                interfaceStatistics
+                interfaceStatistics,
+                vNumaNodeStatisticsList
         );
     }
 
@@ -122,6 +134,7 @@ public class VdsmVm {
         return Objects.equals(vmDynamic, other.vmDynamic)
                 && Objects.equals(vmGuestAgentInterfaces, other.vmGuestAgentInterfaces)
                 && Objects.equals(vmStatistics, other.vmStatistics)
+                && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList)
                 && Objects.equals(lunsMap, other.lunsMap)
                 && Objects.equals(interfaceStatistics, other.interfaceStatistics);
     }

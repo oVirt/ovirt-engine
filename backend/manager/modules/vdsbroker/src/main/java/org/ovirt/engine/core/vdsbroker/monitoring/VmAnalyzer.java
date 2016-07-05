@@ -85,6 +85,7 @@ public class VmAnalyzer {
     private boolean guestAgentDownAndBalloonInfalted;
     private boolean guestAgentUpOrBalloonDeflated;
     private List<VmJob> vmJobs;
+    private List<VmNumaNode> vmNumaNodesNeedUpdate;
 
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
@@ -892,9 +893,8 @@ public class VmAnalyzer {
     }
 
     private void updateVmNumaNodeRuntimeInfo() {
-        VmStatistics statistics = vdsmVm.getVmStatistics();
-        if (!dbVm.getStatus().isRunning()) {
-            dbVm.getStatisticsData().getvNumaNodeStatisticsList().clear();
+        List<VmNumaNode> reportedNumaNodes = vdsmVm.getvNumaNodeStatisticsList();
+        if (reportedNumaNodes == null || reportedNumaNodes.isEmpty() || !dbVm.getStatus().isRunning()) {
             return;
         }
 
@@ -907,8 +907,7 @@ public class VmAnalyzer {
                 .collect(Collectors.toMap(VmNumaNode::getIndex, Function.identity()));
 
         //Initialize the unpinned dbVm numa nodes list with the runtime pinning information
-        List<VmNumaNode> vmNumaNodesNeedUpdate = new ArrayList<>();
-        for (VmNumaNode vNode : statistics.getvNumaNodeStatisticsList()) {
+        for (VmNumaNode vNode : reportedNumaNodes) {
             VmNumaNode dbVmNumaNode = vmAllNumaNodesMap.get(vNode.getIndex());
             if (dbVmNumaNode != null) {
                 vNode.setId(dbVmNumaNode.getId());
@@ -928,7 +927,6 @@ public class VmAnalyzer {
                 }
             }
         }
-        dbVm.getStatisticsData().getvNumaNodeStatisticsList().addAll(vmNumaNodesNeedUpdate);
     }
 
     /**** Helpers and sub-methods ****/
@@ -1051,6 +1049,10 @@ public class VmAnalyzer {
 
     public List<VmJob> getVmJobs() {
         return vmJobs;
+    }
+
+    public List<VmNumaNode> getVmNumaNodesNeedUpdate() {
+        return vmNumaNodesNeedUpdate;
     }
 
     public Guid getVmId() {
