@@ -75,7 +75,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private static final long BYTES_IN_GB = 1024 * 1024 * 1024;
 
     private List<PermissionSubject> listPermissionSubjects;
-    private final Map<Guid, List<Disk>> otherVmDisks = new HashMap<>();
     private final List<VM> vmsDiskSnapshotPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
