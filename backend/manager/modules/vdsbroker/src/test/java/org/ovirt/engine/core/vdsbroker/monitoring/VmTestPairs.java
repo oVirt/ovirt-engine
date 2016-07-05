@@ -7,9 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
-import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
@@ -210,13 +208,11 @@ public enum VmTestPairs {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(id);
         vmDynamic.setRunOnVds(SRC_HOST_ID);
-        VmStatistics vmStatistics = new VmStatistics();
-        ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = null;
-        HashMap<String, LUNs> lunsMap = new HashMap<>();
-        VmInternalData vmInternalData =
-                new VmInternalData(vmDynamic, vmStatistics, null, new ArrayList<>(), null,
-                        vmGuestAgentInterfaces, lunsMap, -1d);
-        return vmInternalData;
+        return new VmInternalData(-1d)
+                .setVmDynamic(vmDynamic)
+                .setVmStatistics(new VmStatistics())
+                .setInterfaceStatistics(new ArrayList<>())
+                .setLunsMap(new HashMap<>());
     }
 
     private void addWatchDogEvents(Pair<VM, VmInternalData> pair) {

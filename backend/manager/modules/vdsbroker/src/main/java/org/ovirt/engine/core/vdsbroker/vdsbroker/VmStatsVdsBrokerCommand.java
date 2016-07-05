@@ -1,9 +1,19 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildInterfaceStatisticsData;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVMStatisticsData;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmBalloonInfo;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmGuestAgentInterfacesData;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmJobsData;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmLunDisksData;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.getVdsmCallTimestamp;
+
 import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
@@ -26,14 +36,15 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
     protected VmInternalData createVmInternalData(Map<String, Object> xmlRpcStruct) {
         VmDynamic vmDynamic = new VmDynamic();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xmlRpcStruct, getVds());
-        return new VmInternalData(vmDynamic,
-                VdsBrokerObjectsBuilder.buildVMStatisticsData(xmlRpcStruct),
-                VdsBrokerObjectsBuilder.buildVmJobsData(xmlRpcStruct),
-                VdsBrokerObjectsBuilder.buildInterfaceStatisticsData(xmlRpcStruct),
-                VdsBrokerObjectsBuilder.buildVmBalloonInfo(xmlRpcStruct),
-                VdsBrokerObjectsBuilder.buildVmGuestAgentInterfacesData(vmDynamic.getId(), xmlRpcStruct),
-                VdsBrokerObjectsBuilder.buildVmLunDisksData(xmlRpcStruct),
-                VdsBrokerObjectsBuilder.getVdsmCallTimestamp(xmlRpcStruct));
+        Guid vmId = vmDynamic.getId();
+        return new VmInternalData(getVdsmCallTimestamp(xmlRpcStruct))
+                .setVmDynamic(vmDynamic)
+                .setVmStatistics(buildVMStatisticsData(xmlRpcStruct))
+                .setVmJobs(buildVmJobsData(xmlRpcStruct))
+                .setInterfaceStatistics(buildInterfaceStatisticsData(xmlRpcStruct))
+                .setVmBalloonInfo(buildVmBalloonInfo(xmlRpcStruct))
+                .setVmGuestAgentInterfaces(buildVmGuestAgentInterfacesData(vmId, xmlRpcStruct))
+                .setLunsMap(buildVmLunDisksData(xmlRpcStruct));
     }
 
     @Override

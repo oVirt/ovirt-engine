@@ -31,87 +31,72 @@ public class VmInternalData {
     private List<VmNetworkInterface> interfaceStatistics;
     private VmBalloonInfo vmBalloonInfo;
 
-    public VmInternalData(VmDynamic vmDynamic, Double timestamp) {
-        this(vmDynamic, null, timestamp);
-    }
-
-    public VmInternalData(VmDynamic vmDynamic, VmStatistics vmStatistics, Double timestamp) {
-        this(vmDynamic, vmStatistics, null, null, null, null,
-                Collections.<String, LUNs>emptyMap(), timestamp);
-    }
-
-    public VmInternalData(VmDynamic vmDynamic,
-            VmStatistics vmStatistics,
-            List<VmJob> vmJobs,
-            List<VmNetworkInterface> interfaceStatistics,
-            VmBalloonInfo vmBalloonInfo,
-            List<VmGuestAgentInterface> vmGuestAgentInterfaces,
-            Map<String, LUNs> lunsMap,
-            Double timestamp) {
-        this.vmDynamic = vmDynamic;
-        this.vmStatistics = vmStatistics;
-        this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
-        this.lunsMap = lunsMap;
+    public VmInternalData(Double timestamp) {
+        this.lunsMap = Collections.<String, LUNs>emptyMap();
         this.timestamp = timestamp;
-        this.vmJobs = vmJobs;
-        this.interfaceStatistics = interfaceStatistics;
-        this.vmBalloonInfo = vmBalloonInfo;
     }
 
     public VmDynamic getVmDynamic() {
         return vmDynamic;
     }
 
-    public void setVmDynamic(VmDynamic vmDynamic) {
+    public VmInternalData setVmDynamic(VmDynamic vmDynamic) {
         this.vmDynamic = vmDynamic;
+        return this;
     }
 
     public VmStatistics getVmStatistics() {
         return vmStatistics;
     }
 
-    public void setVmStatistics(VmStatistics vmStatistics) {
+    public VmInternalData setVmStatistics(VmStatistics vmStatistics) {
         this.vmStatistics = vmStatistics;
+        return this;
     }
 
     public List<VmGuestAgentInterface> getVmGuestAgentInterfaces() {
         return vmGuestAgentInterfaces;
     }
 
-    public void setVmGuestAgentInterfaces(List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
+    public VmInternalData setVmGuestAgentInterfaces(List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
         this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
+        return this;
     }
 
     public Map<String, LUNs> getLunsMap() {
         return lunsMap;
     }
 
-    public void setLunsMap(Map<String, LUNs> lunsMap) {
+    public VmInternalData setLunsMap(Map<String, LUNs> lunsMap) {
         this.lunsMap = lunsMap;
+        return this;
     }
 
     public List<VmJob> getVmJobs() {
         return vmJobs;
     }
 
-    public void setVmJobs(List<VmJob> vmJobs) {
+    public VmInternalData setVmJobs(List<VmJob> vmJobs) {
         this.vmJobs = vmJobs;
+        return this;
     }
 
     public List<VmNetworkInterface> getInterfaceStatistics() {
         return this.interfaceStatistics;
     }
 
-    public void setInterfaceStatistics(List<VmNetworkInterface> interfaceStatistics) {
+    public VmInternalData setInterfaceStatistics(List<VmNetworkInterface> interfaceStatistics) {
         this.interfaceStatistics = interfaceStatistics;
+        return this;
     }
 
     public VmBalloonInfo getVmBalloonInfo() {
         return vmBalloonInfo;
     }
 
-    public void setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
+    public VmInternalData setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
         this.vmBalloonInfo = vmBalloonInfo;
+        return this;
     }
 
     @Override

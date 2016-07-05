@@ -106,7 +106,9 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 // send a clone of vm dynamic to be overridden with new data
                 VmDynamic clonedVmDynamic = new VmDynamic(dbVm.getDynamicData());
                 VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, xmlRpcStruct, vdsManager.getCopyVds());
-                return new VmInternalData(clonedVmDynamic, dbVm.getStatisticsData(), notifyTime);
+                return new VmInternalData(notifyTime)
+                        .setVmDynamic(clonedVmDynamic)
+                        .setVmStatistics(dbVm.getStatisticsData());
             }
 
             @Override
