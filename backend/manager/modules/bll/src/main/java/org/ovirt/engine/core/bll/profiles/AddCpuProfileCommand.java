@@ -64,6 +64,10 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
 
     private PermissionsOperationsParameters createPermissionParameters(Guid userId, Guid roleId) {
         Permission permission = new Permission(userId, roleId, getProfileId(), VdcObjectType.CpuProfile);
+        permission.setObjectName(getParameters().getProfile().getName());
+        if (MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID.equals(userId)) {
+            permission.setAuthz("N/A");
+        }
 
         PermissionsOperationsParameters permissionsOperationsParameters = new PermissionsOperationsParameters(permission);
         permissionsOperationsParameters.setParametersCurrentUser(getCurrentUser());
