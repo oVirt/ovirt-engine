@@ -3790,3 +3790,12 @@ FROM labels
 LEFT JOIN labels_map
     ON labels_map.label_id = labels.label_id
 GROUP BY labels.label_id, labels.label_name, labels.read_only;
+
+
+
+CREATE OR REPLACE VIEW disk_vm_element_extended AS
+    SELECT dve.*, vd.is_plugged
+    FROM disk_vm_element dve
+    JOIN vm_device vd
+        ON dve.disk_id = vd.device_id
+            AND dve.vm_id = vd.vm_id;
