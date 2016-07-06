@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
@@ -57,7 +58,9 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
      */
     public String getVdcObjectName() {
         Permission perms = getParameters().getPermission();
-        return entityDao.getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
+        return StringUtils.isNotEmpty(perms.getObjectName()) ?
+                perms.getObjectName() :
+                entityDao.getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
     }
 
     public String getRoleName() {
@@ -81,7 +84,9 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
 
     public String getAuthz() {
         initUserAndGroupData();
-        return dbUser == null ? dbGroup == null ? "" : dbGroup.getDomain() : dbUser.getDomain();
+        Permission perms = getParameters().getPermission();
+        return StringUtils.isNotEmpty(perms.getAuthz()) ?
+                perms.getAuthz() : dbUser == null ? dbGroup == null ? "" : dbGroup.getDomain() : dbUser.getDomain();
 
     }
 
