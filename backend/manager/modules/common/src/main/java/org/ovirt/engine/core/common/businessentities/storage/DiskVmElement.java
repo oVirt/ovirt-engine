@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.TransientField;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -19,6 +20,13 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
     private boolean boot;
 
     private DiskInterface diskInterface;
+
+    /**
+     * This field is transient and is taken from the corresponding VM device.
+     * It is used solely for UI/API purposes and is not persisted or updated through DiskVmElement.
+     */
+    @TransientField
+    private boolean plugged;
 
     public DiskVmElement() {
     }
@@ -54,6 +62,14 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
 
     public void setDiskInterface(DiskInterface diskInterface) {
         this.diskInterface = diskInterface;
+    }
+
+    public boolean isPlugged() {
+        return plugged;
+    }
+
+    public void setPlugged(boolean plugged) {
+        this.plugged = plugged;
     }
 
     public Guid getDiskId() {
