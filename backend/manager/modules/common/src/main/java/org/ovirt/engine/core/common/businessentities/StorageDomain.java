@@ -276,6 +276,10 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         return getStorageType().isLocal();
     }
 
+    public boolean isShared() {
+        return getStorageType().isShared();
+    }
+
     private StorageDomainSharedStatus storageDomainSharedStatus;
 
     public StorageDomainSharedStatus getStorageDomainSharedStatus() {

@@ -63,6 +63,10 @@ public enum StorageType implements Identifiable {
         return this == LOCALFS;
     }
 
+    public boolean isShared() {
+        return !isLocal();
+    }
+
     public boolean isOpenStackDomain() {
         return this == GLANCE || this == CINDER;
     }
