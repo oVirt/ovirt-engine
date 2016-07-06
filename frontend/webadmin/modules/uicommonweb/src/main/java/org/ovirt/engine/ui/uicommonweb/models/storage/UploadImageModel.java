@@ -455,6 +455,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         if (validate()) {
             diskModel.flush();
             ((DiskImage) getDiskModel().getDisk()).setVolumeFormat(getVolumeFormat().getSelectedItem());
+            ((DiskImage) getDiskModel().getDisk()).setActualSizeInBytes(getImageSize());
             return true;
         }
         return false;
