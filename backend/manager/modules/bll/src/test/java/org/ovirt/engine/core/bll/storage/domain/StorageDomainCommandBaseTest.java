@@ -37,6 +37,8 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
             new Guid("22222222-2222-2222-2222-222222222222")
     };
     private final Guid HE_SD_ID = new Guid("33333333-3333-3333-3333-333333333333");
+    private final Guid SHARED_SD_ID = new Guid("44444444-4444-4444-4444-444444444444");
+    private final Guid LOCAL_SD_ID = new Guid("55555555-5555-5555-5555-555555555555");
 
     private static final String HE_STORAGE_DOMAIN_NAME = "heStorageDomain";
 
@@ -184,20 +186,112 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         assertEquals(null, cmd.electNewMaster(false, true, false));
     }
 
+    @Test
+    public void shouldElectActiveSharedDataDomain() {
+        final StorageDomain domain =
+                prepareSharedStorageDomainForElection(StorageDomainStatus.Active, "shared domain name");
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
+        assertEquals(domain, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldElectActiveLocalDataDomain() {
+        StorageDomain domain = prepareLocalStorageDomainForElection(StorageDomainStatus.Active, "local domain name");
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
+        assertEquals(domain, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldElectActiveSharedBeforeLocalDataDomain() {
+        StorageDomain localDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "local domain name", LOCAL_SD_ID);
+        localDomain.setStorageType(StorageType.LOCALFS);
+        StorageDomain sharedDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(localDomain, sharedDomain));
+        cmd.setStoragePool(new StoragePool());
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
+        assertEquals(sharedDomain, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldElectActiveSharedBeforeLocalDataDomain2() {
+        StorageDomain localDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "local domain name", LOCAL_SD_ID);
+        localDomain.setStorageType(StorageType.LOCALFS);
+        StorageDomain sharedDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
+        cmd.setStoragePool(new StoragePool());
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
+        assertEquals(sharedDomain, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldElectStorageTypeAfterLastUsedAsMasterDataDomain() {
+        StorageDomain localDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "local domain name", LOCAL_SD_ID);
+        localDomain.setLastTimeUsedAsMaster(System.currentTimeMillis() - 1000);
+        localDomain.setStorageType(StorageType.LOCALFS);
+        StorageDomain sharedDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
+        sharedDomain.setLastTimeUsedAsMaster(System.currentTimeMillis());
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
+        cmd.setStoragePool(new StoragePool());
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
+        assertEquals(localDomain, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldElectStorageTypeAfterLastUsedAsMasterDataDomain2() {
+        StorageDomain localDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "local domain name", LOCAL_SD_ID);
+        localDomain.setLastTimeUsedAsMaster(System.currentTimeMillis());
+        localDomain.setStorageType(StorageType.LOCALFS);
+        StorageDomain sharedDomain =
+                createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
+        sharedDomain.setLastTimeUsedAsMaster(System.currentTimeMillis() - 1000);
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
+        cmd.setStoragePool(new StoragePool());
+        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
+        assertEquals(sharedDomain, cmd.electNewMaster());
+    }
+
+    private StorageDomain prepareLocalStorageDomainForElection(StorageDomainStatus status, String name) {
+        final StorageDomain localDomain = createDataStorageDomain(status, name, LOCAL_SD_ID);
+        localDomain.setStorageType(StorageType.LOCALFS);
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(localDomain));
+        cmd.setStoragePool(new StoragePool());
+        return localDomain;
+    }
+
+    private StorageDomain prepareSharedStorageDomainForElection(StorageDomainStatus status, String name) {
+        final StorageDomain sharedDomain = createDataStorageDomain(status, name, SHARED_SD_ID);
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain));
+        cmd.setStoragePool(new StoragePool());
+        return sharedDomain;
+    }
+
     private StorageDomain prepareStorageDomainForElection(StorageDomainStatus status, String name) {
-        final StorageDomain domain = createDataStorageDomain(status, name);
+        final StorageDomain domain = createDataStorageDomain(status, name, HE_SD_ID);
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(domain));
         cmd.setStoragePool(new StoragePool());
         return domain;
     }
 
-    private StorageDomain createDataStorageDomain(StorageDomainStatus status, String name) {
+    private StorageDomain createDataStorageDomain(StorageDomainStatus status, String name, Guid sdId) {
         final StorageDomain storageDomain = new StorageDomain();
         storageDomain.setStorageName(name);
         storageDomain.setStatus(status);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
-        storageDomain.setId(HE_SD_ID);
+        storageDomain.setId(sdId);
         return storageDomain;
     }
 

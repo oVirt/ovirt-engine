@@ -359,7 +359,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             return null;
         }
 
-        Collections.sort(storageDomains, Comparator.comparing(StorageDomain::getLastTimeUsedAsMaster));
+        Collections.sort(storageDomains,
+                Comparator.comparing(StorageDomain::getLastTimeUsedAsMaster)
+                        .thenComparing(Comparator.comparing(StorageDomain::isLocal)));
 
         StorageDomain newMaster = null;
         StorageDomain storageDomain = getStorageDomain();
