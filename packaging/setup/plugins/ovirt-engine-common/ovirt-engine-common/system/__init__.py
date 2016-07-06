@@ -24,14 +24,12 @@ from otopi import util
 
 from . import environment
 from . import apache
-from . import he
 
 
 @util.export
 def createPlugins(context):
     environment.Plugin(context=context)
     apache.Plugin(context=context)
-    he.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

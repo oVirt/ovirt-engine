@@ -466,7 +466,6 @@ class ConfigEnv(object):
 
     ISO_PATHS_TO_UPLOAD = 'OVESETUP_CONFIG/isoPathsToUpload'
     TOTAL_MEMORY_MB = 'OVESETUP_CONFIG/totalMemoryMB'
-    CONTINUE_SETUP_ON_HE_VM = 'OVESETUP_CONFIG/continueSetupOnHEVM'
 
 
 @util.export
