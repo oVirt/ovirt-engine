@@ -9,13 +9,13 @@ import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 @RunWith(Theories.class)
-public class StorageTypeComparatorTest extends StorageDomainComparatorAbstractTest {
+public class StorageTypeFileComparatorTest extends StorageDomainComparatorAbstractTest {
 
     @DataPoints
     public static StorageType[] storageTypes = StorageType.values();
 
-    public StorageTypeComparatorTest() {
-        comparator = new StorageTypeComparator();
+    public StorageTypeFileComparatorTest() {
+        comparator = new StorageTypeFileComparator();
     }
 
     @Theory

@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 
-public class StorageTypeComparator implements Comparator<StorageDomain> {
+public class StorageTypeFileComparator implements Comparator<StorageDomain> {
 
     @Override
     public int compare(StorageDomain storageDomain, StorageDomain storageDomain2) {
