@@ -10,6 +10,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainAvailableDiskSizeComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeFileComparator;
+import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeSharedComparator;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainStatusFilter;
@@ -97,6 +98,7 @@ public class MemoryStorageHandler {
     protected List<? extends Comparator<StorageDomain>> getStorageDomainComparators(
             List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
         return Arrays.asList(new StorageDomainNumberOfVmDisksComparator(domainsInPool, vmDisks),
+                new StorageTypeSharedComparator(),
                 new StorageTypeFileComparator(),
                 new StorageDomainAvailableDiskSizeComparator());
     }
