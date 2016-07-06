@@ -55,11 +55,11 @@ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAllFromDiskVmElement()
-RETURNS SETOF disk_vm_element STABLE AS $PROCEDURE$
+RETURNS SETOF disk_vm_element_extended STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM disk_vm_element;
+    FROM disk_vm_element_extended;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -68,11 +68,11 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GetDiskVmElementByDiskVmElementId(
     v_disk_id UUID,
     v_vm_id UUID)
-RETURNS SETOF disk_vm_element STABLE AS $PROCEDURE$
+RETURNS SETOF disk_vm_element_extended STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM disk_vm_element
+    FROM disk_vm_element_extended
     WHERE disk_id = v_disk_id
         AND vm_id = v_vm_id;
 END;$PROCEDURE$
@@ -82,11 +82,11 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskVmElementsForVm(
     v_vm_id UUID)
-RETURNS SETOF disk_vm_element STABLE AS $PROCEDURE$
+RETURNS SETOF disk_vm_element_extended STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM disk_vm_element
+    FROM disk_vm_element_extended
     WHERE vm_id = v_vm_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -95,12 +95,11 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskVmElementsPluggedToVm(
     v_vm_id UUID)
-RETURNS SETOF disk_vm_element STABLE AS $PROCEDURE$
+RETURNS SETOF disk_vm_element_extended STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
-    SELECT dve.*
-    FROM disk_vm_element dve
-    JOIN vm_device vd ON dve.disk_id = vd.device_id AND dve.vm_id = vd.vm_id
-    WHERE vm_id = v_vm_id AND vd.is_plugged = true;
+    SELECT *
+    FROM disk_vm_element_extended
+    WHERE vm_id = v_vm_id AND is_plugged = true;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
