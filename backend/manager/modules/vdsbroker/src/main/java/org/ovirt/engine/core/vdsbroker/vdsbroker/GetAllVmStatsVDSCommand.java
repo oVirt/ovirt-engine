@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
+import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 
 @Logged(executionLevel = LogLevel.DEBUG)
 public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VmStatsVdsBrokerCommand<P> {

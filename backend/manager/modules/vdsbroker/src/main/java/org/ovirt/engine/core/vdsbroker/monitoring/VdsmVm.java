@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.vdsbroker.entities;
+package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.Collections;
 import java.util.List;

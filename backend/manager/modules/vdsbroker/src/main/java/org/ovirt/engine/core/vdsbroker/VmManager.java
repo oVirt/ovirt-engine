@@ -13,7 +13,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VdsmVm;
+import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 
 public class VmManager {
 
