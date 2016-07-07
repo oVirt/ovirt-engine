@@ -108,6 +108,10 @@ public class CommandBaseTest extends BaseCommandTest {
         @Override
         public void setCommandExecuted() {
         }
+
+        @Override
+        protected void updateCommand() {
+        }
     }
 
     /** Testing the constructor, which adds the user id to the thread local container */
