@@ -6,13 +6,15 @@ import javax.validation.constraints.NotNull;
 import org.ovirt.engine.core.common.businessentities.Label;
 
 public class LabelActionParameters extends LabelActionParametersBase {
+
+    @Valid
     @NotNull
     protected Label label;
 
     private LabelActionParameters() {
     }
 
-    public LabelActionParameters(@Valid @NotNull Label label) {
+    public LabelActionParameters(@NotNull Label label) {
         super(label.getId());
         this.label = label;
     }

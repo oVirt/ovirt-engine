@@ -5,11 +5,13 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.metadata.ConstraintDescriptor;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -109,6 +111,17 @@ public class ValidationUtils {
 
             for (ConstraintViolation<T> constraintViolation : violations) {
                 messages.add(constraintViolation.getMessage());
+                ConstraintDescriptor<?> constraintDescriptor = constraintViolation.getConstraintDescriptor();
+                //this will extract all violation attributes and will create messages of the type:
+                //${violationkey} violationValue
+                //these values can later be used for formatting the returned messages.
+                if(constraintDescriptor != null) {
+                    Map<String, Object> violationAttributes = constraintDescriptor.getAttributes();
+                    for (Map.Entry violationAttribute : violationAttributes.entrySet()) {
+                        String message =  String.format("$%s %s", violationAttribute.getKey(), violationAttribute.getValue());
+                        messages.add(message);
+                    }
+                }
                 if (constraintViolation.getPropertyPath() != null) {
                     messages.add(EngineMessage.ACTION_TYPE_FAILED_ATTRIBUTE_PATH.name());
                     messages.add(

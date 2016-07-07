@@ -24,7 +24,7 @@ public class Label implements Serializable, BusinessEntity<Guid>, Nameable, IVdc
     @NotNull
     private Guid id;
 
-    @Size(min = 1, max = BusinessEntitiesDefinitions.TAG_NAME_SIZE)
+    @Size(min = 1, max = BusinessEntitiesDefinitions.TAG_NAME_SIZE, message = "AFFINITY_LABEL_NAME_SIZE_INVALID")
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_I18N, message = "AFFINITY_LABEL_BAD_NAME")
     private String name;
 

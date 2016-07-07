@@ -2585,6 +2585,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String AFFINITY_LABEL_BAD_NAME();
 
+    String AFFINITY_LABEL_NAME_SIZE_INVALID();
+
     String AFFINITY_LABEL_NOT_EMPTY();
 
     String AFFINITY_LABEL_ID_ALREADY_EXISTS();
