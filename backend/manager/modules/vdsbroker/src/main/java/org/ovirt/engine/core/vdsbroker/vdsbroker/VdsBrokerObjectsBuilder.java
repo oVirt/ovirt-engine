@@ -1555,11 +1555,11 @@ public class VdsBrokerObjectsBuilder {
                 return (Date) input.get(name);
             }
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+            String dateStr = input.get(name).toString().replaceFirst("T", " ").trim();
             try {
-                String dateStr = input.get(name).toString().replaceFirst("T", " ").trim();
                 return formatter.parse(dateStr);
             } catch (ParseException e) {
-                e.printStackTrace();
+                log.error("Failed parsing {}", dateStr, e);
             }
         }
         return null;
