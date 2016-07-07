@@ -65,7 +65,7 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            log.error("Error removing Cinder disk", e);
         }
         return null;
     }

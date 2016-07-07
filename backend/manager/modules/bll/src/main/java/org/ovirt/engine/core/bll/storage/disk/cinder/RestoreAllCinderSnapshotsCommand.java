@@ -63,8 +63,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                log.error("Error removing Cinder disk");
+                log.error("Error removing Cinder disk", e);
             }
         }
         List<CinderDisk> cinderVolumesToRemove = getParameters().getCinderVolumesToRemove();
@@ -82,8 +81,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                log.error("Error removing Cinder disk");
+                log.error("Error removing Cinder disk", e);
             }
         }
         setSucceeded(true);
@@ -117,8 +115,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            log.error("Error restoring snapshot");
+            log.error("Error restoring snapshot", e);
         }
         return null;
     }

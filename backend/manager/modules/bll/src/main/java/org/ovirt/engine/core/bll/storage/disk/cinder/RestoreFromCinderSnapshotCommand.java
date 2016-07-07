@@ -52,7 +52,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
                 return false;
             }
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            log.error("Error removing Cinder volume", e);
             return false;
         }
         return true;
